@@ -1,0 +1,92 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Avisos y banners{% endblock %}
+{% block topbar_title %}Avisos · {{ product_name }}{% endblock %}
+
+{% block extra_css %}
+  <style nonce="{{ request.state.csp_nonce }}">
+    .form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap:14px; }
+    .form-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .check-row { display:flex; align-items:center; gap:8px; }
+    .check-row .form-label { margin:0; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Avisos y banners</h1>
+  <p class="page-subtitle">Mantenimiento programado, aviso legal, anuncio de versión o estado del servicio. <span class="sub-op">Lo activo y dentro de su ventana es lo que ve el público.</span></p>
+
+  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <div class="card-header"><h2>Nuevo aviso</h2></div>
+    <div class="card-body">
+      <form class="crear-operador-form" method="post" action="/admin/avisos/crear">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="tipo">Tipo</label>
+            <select class="form-control" id="tipo" name="tipo">
+              {% for tipo in tipos %}<option value="{{ tipo }}">{{ tipo }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nivel">Nivel</label>
+            <select class="form-control" id="nivel" name="nivel">
+              {% for nivel in niveles %}<option value="{{ nivel }}">{{ nivel }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="titulo">Título</label>
+            <input class="form-control" id="titulo" name="titulo" type="text" required maxlength="180">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inicio">Inicio</label>
+            <input class="form-control" id="inicio" name="inicio" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fin">Fin</label>
+            <input class="form-control" id="fin" name="fin" type="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="mensaje">Mensaje</label>
+          <textarea class="form-control" id="mensaje" name="mensaje" rows="3"></textarea>
+        </div>
+        <div class="form-group check-row">
+          <input type="checkbox" id="activo" name="activo" value="1">
+          <label class="form-label" for="activo">Activo de inmediato</label>
+        </div>
+        <button class="btn" type="submit">Crear aviso</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Avisos</h2><span class="badge badge-neutral">{{ avisos|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Tipo</th><th>Nivel</th><th>Título</th><th>Ventana</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for aviso in avisos %}
+          <tr>
+            <td><span class="badge badge-neutral">{{ aviso.tipo }}</span></td>
+            <td><span class="badge {{ 'badge-warning' if aviso.nivel == 'warning' else ('badge-danger' if aviso.nivel == 'danger' else 'badge-info') }}">{{ aviso.nivel }}</span></td>
+            <td class="org-name">{{ aviso.titulo }}</td>
+            <td class="muted">{{ aviso.inicio or '—' }} → {{ aviso.fin or '—' }}</td>
+            <td>
+              {% if aviso.activo %}<span class="badge badge-success">Activo</span>
+              {% else %}<span class="badge badge-neutral">Inactivo</span>{% endif %}
+            </td>
+            <td>
+              <form class="form-inline" method="post" action="/admin/avisos/{{ aviso.id }}/alternar?activo={{ '0' if aviso.activo else '1' }}">
+                <button class="btn btn-sm {{ 'btn-secondary' if aviso.activo else '' }}" type="submit">{{ 'Desactivar' if aviso.activo else 'Activar' }}</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

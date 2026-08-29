@@ -1,0 +1,56 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Automatizaciones{% endblock %}
+{% block topbar_title %}Automatizaciones · {{ product_name }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Automatizaciones</h1>
+  <p class="page-subtitle">Reglas que trabajan por ti y su estado hoy.</p>
+
+  <div class="kpis">
+    <div class="kpi-card"><div class="kpi-value">{{ estado.por_renovar }}</div><div class="kpi-label">Por vencer</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ estado.recordatorios_hoy }}</div><div class="kpi-label">Disparan hoy</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ estado.compras_pendientes }}</div><div class="kpi-label">Compras pendientes</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ estado.sin_plan }}</div><div class="kpi-label">Sin plan</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Reglas</h2></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Regla</th><th>Descripción</th><th>Frecuencia</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for r in reglas %}
+          <tr>
+            <td class="org-name">{{ r.nombre }}</td>
+            <td class="muted detalle-celda">{{ r.descripcion }}</td>
+            <td><span class="badge badge-neutral">{{ r.frecuencia }}</span></td>
+            <td>
+              {% if r.ejecutable %}
+              <form class="form-inline" method="post" action="/admin/automatizaciones/{{ r.id }}/ejecutar">
+                <button class="btn btn-sm" type="submit">Ejecutar</button>
+              </form>
+              {% else %}
+              <span class="muted-note">Se calcula en vivo</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Nota de despliegue</h2></div>
+    <div class="card-body">
+      <p class="muted">
+        Los recordatorios y el mantenimiento corren también por los
+        <code>cron</code> declarados en <code>vercel.json</code> con
+        <code>CRON_SECRET</code>. El botón «Ejecutar» del panel usa la misma
+        lógica, para que puedas probarla o adelantar un barrido sin esperar al
+        programador.
+      </p>
+    </div>
+  </div>
+{% endblock %}

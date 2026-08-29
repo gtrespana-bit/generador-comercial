@@ -1,0 +1,59 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Renovaciones{% endblock %}
+{% block topbar_title %}Renovaciones · {{ product_name }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Panel de renovaciones</h1>
+  <p class="page-subtitle">Qué vence este mes, cuánto importa y a quién empujar.</p>
+
+  <div class="kpis">
+    <div class="kpi-card"><div class="kpi-value">{{ data.total }}</div><div class="kpi-label">Renovaciones</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ data.por_renovar }}</div><div class="kpi-label">Por vencer</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ '%.2f'|format(data.importe_mes) }}</div><div class="kpi-label">Importe US$</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Mes {{ data.mes.strftime('%m/%Y') }}</h2>
+      <a class="btn btn-secondary" href="/admin/renovaciones.csv?mes={{ data.mes.strftime('%Y-%m') }}">Exportar CSV</a>
+    </div>
+    <div class="card-body">
+      <form class="filtros-form" method="get" action="/admin/renovaciones">
+        <div class="form-group">
+          <label class="form-label" for="mes">Mes</label>
+          <input class="form-control" id="mes" name="mes" type="month" value="{{ data.mes.strftime('%Y-%m') }}">
+        </div>
+        <button class="btn" type="submit">Ver mes</button>
+      </form>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>Cliente</th><th>Vence</th><th>Días</th><th>Importe</th><th>Origen</th><th>Estado</th><th>Avisado hoy</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          {% for f in data.filas %}
+          <tr>
+            <td><a class="org-name" href="/admin/clientes/{{ f.organizacion_id }}">{{ f.organizacion.nombre }}</a></td>
+            <td>{{ f.vence.strftime('%d/%m/%Y') }}</td>
+            <td><span class="badge {{ 'badge-danger' if f.dias_restantes <= 3 else 'badge-warning' }}">{{ f.dias_restantes }}d</span></td>
+            <td>{{ '%.2f'|format(f.importe) }}</td>
+            <td>{{ f.origen or '—' }}</td>
+            <td>
+              {% if f.estado == 'por_renovar' %}<span class="badge badge-warning">Por renovar</span>
+              {% else %}<span class="badge badge-success">Activa</span>{% endif %}
+            </td>
+            <td>{% if f.avisado_hoy %}<span class="badge badge-success">Sí</span>{% else %}<span class="badge badge-neutral">No</span>{% endif %}</td>
+            <td>
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ f.organizacion_id }}">Ficha</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8"><div class="empty-pad muted text-center">Sin renovaciones en este mes.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

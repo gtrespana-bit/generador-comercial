@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "e3a5c7d9b1f4"
+EXPECTED_ALEMBIC_HEAD = "d3e5f7a9c2b4"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -169,6 +169,7 @@ def _aplicar_contexto_postgresql(connection, info: dict) -> None:
               set_config('cotizat.auth_email', :auth_email, true),
               set_config('cotizat.organization_id', :organization_id, true),
               set_config('cotizat.es_operador', :es_operador, true),
+              set_config('cotizat.operador_rol', :operador_rol, true),
               set_config('cotizat.proposal_token_hash', :proposal_token_hash, true)
         """),
         {
@@ -176,11 +177,12 @@ def _aplicar_contexto_postgresql(connection, info: dict) -> None:
             "auth_email": str(info.get("auth_email") or "").lower(),
             "organization_id": str(info.get("organizacion_id") or ""),
             "proposal_token_hash": str(info.get("proposal_token_hash") or ""),
-            # Marca que habilita las políticas RLS de `licencias`. Vale 'on'
-            # solo si el correo verificado figura en COTIZAT_OPERADORES; para
-            # cualquier sesión de cliente queda en 'off' y la tabla se comporta
-            # como si estuviera vacía (revisión f4c1d8e37a95).
+            # Marca que habilita las políticas RLS de `licencias` y del panel.
+            # Vale 'on' solo si el correo verificado es operador (env o tabla);
+            # para cualquier sesión de cliente queda en 'off' y las tablas de
+            # negocio del titular se comportan como vacías.
             "es_operador": "on" if info.get("es_operador") else "off",
+            "operador_rol": str(info.get("operador_rol") or "").lower(),
         },
     )
 
@@ -192,7 +194,7 @@ def _restaurar_contexto_postgresql(db, _transaction, connection):
 
 
 def _establecer_contexto_identidad(db, identidad) -> None:
-    from .operadores import es_operador
+    from .operadores import es_operador, rol_operador
 
     db.info["auth_user_id"] = identidad.auth_user_id
     db.info["auth_email"] = identidad.email
@@ -200,7 +202,18 @@ def _establecer_contexto_identidad(db, identidad) -> None:
     # Supabase, y nunca a partir de datos de la petición: así ninguna ruta puede
     # concedérsela por su cuenta.
     db.info["es_operador"] = es_operador(
-        identidad.email, email_verificado=identidad.email_verified
+        identidad.email,
+        email_verificado=identidad.email_verified,
+        db=db,
+    )
+    db.info["operador_rol"] = (
+        rol_operador(
+            identidad.email,
+            email_verificado=identidad.email_verified,
+            db=db,
+        )
+        if db.info.get("es_operador")
+        else ""
     )
 
 

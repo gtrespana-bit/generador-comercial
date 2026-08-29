@@ -464,6 +464,66 @@
     .tbl-strong { font-weight: 700; }
     .muted-note { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
 
+    /* Buscador global / paleta ⌘K */
+    .admin-kit-searchbtn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 8px 12px; font: inherit; font-size: .82rem;
+      font-weight: 600; color: var(--text-muted); cursor: pointer;
+    }
+    .admin-kit-searchbtn:hover { border-color: var(--brand-color); color: var(--text-main); }
+    .admin-kit-searchbtn kbd { background: #eef3f0; border-radius: 5px; padding: 2px 6px; font-size: .7rem; color: var(--text-muted); }
+    .admin-kit-overlay {
+      position: fixed; inset: 0; z-index: 2000; display: none;
+      background: rgba(10,23,17,.45); backdrop-filter: blur(4px); padding-top: 12vh;
+      justify-content: center; align-items: flex-start;
+    }
+    .admin-kit-overlay.open { display: flex; }
+    .admin-kit-panel {
+      width: min(620px, calc(100vw - 28px)); background: #fff; border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.28); overflow: hidden;
+    }
+    .admin-kit-panel input {
+      width: 100%; border: 0; border-bottom: 1px solid var(--border-color);
+      font: inherit; font-size: 1.05rem; padding: 18px 20px; outline: none;
+    }
+    .admin-kit-results { max-height: 420px; overflow-y: auto; }
+    .admin-kit-empty { padding: 34px 20px; color: var(--text-muted); font-size: .88rem; text-align: center; }
+    .admin-kit-item {
+      display: flex; align-items: center; gap: 13px; padding: 13px 18px;
+      border-bottom: 1px solid #f0f4f1; text-decoration: none; color: var(--text-main);
+    }
+    .admin-kit-item:hover, .admin-kit-item.sel { background: #f3f8f5; }
+    .admin-kit-item .ico { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #eef3f0; color: var(--brand-color); flex-shrink: 0; }
+    .admin-kit-item b { display: block; font-size: .88rem; }
+    .admin-kit-item small { color: var(--text-muted); display: block; margin-top: 2px; }
+    .admin-kit-hint { padding: 11px 18px; font-size: .74rem; color: var(--text-muted); border-top: 1px solid var(--border-color); }
+
+    /* Campana de notificaciones */
+    .admin-bell {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border: 1px solid var(--border-color); border-radius: 11px;
+      background: #fff; color: var(--text-main); cursor: pointer;
+    }
+    .admin-bell:hover { border-color: var(--brand-color); }
+    .admin-bell .cnt {
+      position: absolute; top: -6px; right: -6px; background: var(--danger); color: #fff;
+      font-size: .66rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 999px;
+      display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff;
+    }
+    .admin-notify-pop {
+      position: absolute; top: 50px; right: 0; width: min(380px, calc(100vw - 28px));
+      background: #fff; border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 16px 50px rgba(0,0,0,.14); display: none; z-index: 1200; overflow: hidden;
+    }
+    .admin-notify-pop.open { display: block; }
+    .admin-notify-pop h3 { padding: 14px 16px; border-bottom: 1px solid var(--border-color); margin: 0; font-size: .95rem; }
+    .admin-notify-list { max-height: 320px; overflow-y: auto; }
+    .admin-notify-item { display: block; padding: 12px 16px; border-bottom: 1px solid #f0f4f1; text-decoration: none; color: var(--text-main); }
+    .admin-notify-item:hover { background: #f3f8f5; }
+    .admin-notify-item b { font-size: .84rem; }
+    .admin-notify-item small { display: block; color: var(--text-muted); margin-top: 2px; }
+    .admin-notify-empty { padding: 30px 16px; color: var(--text-muted); text-align: center; font-size: .84rem; }
+
     @media (max-width: 1080px) {
       .sidebar { width: 78px; }
       .sidebar-header { padding: 18px 12px; }
@@ -547,6 +607,153 @@
       .card { box-shadow: none; border-radius: 0; }
     }
 
+    /* Kit del panel: buscador ⌘K y centro de notificaciones (A3/A4) */
+    .admin-kit-bell-wrap { position: relative; }
+    .admin-bell-wrap { position: relative; }
+    body.admin-kit-abierto { overflow: hidden; }
+    .admin-kit-searchbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      font: inherit;
+      cursor: pointer;
+    }
+    .admin-kit-searchbtn kbd {
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: var(--bg-body);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+    }
+    .admin-bell {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .admin-bell .cnt {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .admin-bell .cnt[hidden] { display: none !important; }
+    .admin-kit-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 12vh 16px 16px;
+      background: rgba(7, 22, 16, 0.62);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    .admin-kit-overlay.open { opacity: 1; pointer-events: auto; }
+    .admin-kit-panel {
+      width: min(620px, 100%);
+      border-radius: 14px;
+      background: var(--card-bg);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.32);
+      overflow: hidden;
+    }
+    .admin-kit-panel input {
+      width: 100%;
+      padding: 16px 18px;
+      border: 0;
+      border-bottom: 1px solid var(--border-color);
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+    }
+    .admin-kit-results { max-height: 46vh; overflow: auto; }
+    .admin-kit-empty, .admin-notify-empty {
+      padding: 14px 18px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .admin-kit-item, .admin-notify-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 18px;
+      color: var(--text-main);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .admin-kit-item:last-child, .admin-notify-item:last-child { border-bottom: 0; }
+    .admin-kit-item.sel, .admin-kit-item:hover, .admin-notify-item:hover { background: var(--success-bg); }
+    .admin-kit-item .ico { width: 28px; text-align: center; }
+    .admin-kit-item b, .admin-notify-item b { display: block; font-size: 0.9rem; }
+    .admin-kit-item small, .admin-notify-item small { display: block; color: var(--text-muted); font-size: 0.78rem; }
+    .admin-kit-hint { padding: 10px 18px; color: var(--text-muted); font-size: 0.75rem; }
+    .admin-notify-pop {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 65;
+      width: min(360px, 82vw);
+      border-radius: 12px;
+      background: var(--card-bg);
+      box-shadow: 0 18px 52px rgba(0,0,0,0.22);
+      overflow: hidden;
+      display: none;
+    }
+    .admin-notify-pop.open { display: block; }
+    .admin-notify-pop h3 { margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+    .admin-notify-list { max-height: 320px; overflow: auto; }
+
+    /* Serie de ingresos (B6) */
+    .serie-barras {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 150px;
+      padding-top: 8px;
+    }
+    .serie-col { flex: 1; text-align: center; min-width: 24px; }
+    .serie-svg { display: block; width: 100%; height: 118px; }
+    .serie-bar { fill: var(--brand-color); }
+    .serie-label { margin-top: 5px; font-size: 0.7rem; }
+    .serie-valor { font-size: 0.74rem; }
+
+    /* Equipo y auditoría */
+    .filtros-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .filtros-form .form-group { margin: 0; }
+    .page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .nota-form .form-group { flex: 1; min-width: 220px; }
+    .accion-code { font-size: 0.78rem; }
+    .detalle-celda { max-width: 320px; }
+    .notas-celda { max-width: 230px; }
+    .rol-form { display: flex; gap: 6px; align-items: center; }
+    .rol-form select { padding: 6px 9px; font-size: 0.8rem; }
+    .form-inline { display: inline; }
+    .crear-operador-form { max-width: 720px; }
+
     {% block extra_css %}{% endblock %}
   </style>
 </head>
@@ -579,6 +786,22 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         <span>Compras</span>
       </a>
+      <a href="/admin/clientes" class="{{ 'activo' if current_path.startswith('/admin/clientes') else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Clientes</span>
+      </a>
+      <a href="/admin/cobros" class="{{ 'activo' if current_path == '/admin/cobros' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span>Cobros</span>
+      </a>
+      <a href="/admin/renovaciones" class="{{ 'activo' if current_path == '/admin/renovaciones' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        <span>Renovaciones</span>
+      </a>
+      <a href="/admin/automatizaciones" class="{{ 'activo' if current_path == '/admin/automatizaciones' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <span>Automatiz.</span>
+      </a>
       <a href="/admin/analitica" class="{{ 'activo' if current_path == '/admin/analitica' else '' }}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
         <span>Analítica</span>
@@ -587,15 +810,57 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         <span>Correos</span>
       </a>
+      <span class="nav-seccion">Web</span>
+      <a href="/admin/web" class="{{ 'activo' if current_path == '/admin/web' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 12 21 12"></polyline><path d="M3 6h18v12H3z"></path><path d="M3 6l9 6 9-6"></path></svg>
+        <span>Web / SEO</span>
+      </a>
+      <a href="/admin/avisos" class="{{ 'activo' if current_path == '/admin/avisos' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span>Avisos</span>
+      </a>
+      <a href="/admin/releases" class="{{ 'activo' if current_path == '/admin/releases' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Versiones</span>
+      </a>
+      <a href="/admin/flags" class="{{ 'activo' if current_path == '/admin/flags' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V2"></path><path d="M4 4h12l-2 4 2 4H4"></path></svg>
+        <span>Flags</span>
+      </a>
+      <span class="nav-seccion">Escala</span>
+      <a href="/admin/crm" class="{{ 'activo' if current_path == '/admin/crm' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h10"></path><path d="M7 12h6"></path></svg>
+        <span>CRM</span>
+      </a>
+      <a href="/admin/vistas" class="{{ 'activo' if current_path == '/admin/vistas' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>Vistas</span>
+      </a>
+      <a href="/admin/salud-datos" class="{{ 'activo' if current_path == '/admin/salud-datos' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+        <span>Salud datos</span>
+      </a>
+      <a href="/admin/api-keys" class="{{ 'activo' if current_path == '/admin/api-keys' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+        <span>API keys</span>
+      </a>
       <a href="/admin/operacion" class="{{ 'activo' if current_path == '/admin/operacion' else '' }}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         <span>Operación</span>
+      </a>
+      <a href="/admin/equipo" class="{{ 'activo' if current_path == '/admin/equipo' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Equipo</span>
+      </a>
+      <a href="/admin/auditoria" class="{{ 'activo' if current_path == '/admin/auditoria' else '' }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Auditoría</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
       <span class="operador">{{ operador }}</span>
-      <span class="operador-role">Panel de operador</span>
+      <span class="operador-role">{% if operador_rol %}Rol: {{ operador_rol }}{% else %}Panel de operador{% endif %}</span>
       <a href="/organizaciones" class="volver-btn">
         <svg class="svg-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         <span>Volver a la app</span>
@@ -607,9 +872,34 @@
     <header class="topbar">
       <h2 class="topbar-title">{% block topbar_title %}Panel de administración{% endblock %}</h2>
       <div class="topbar-actions">
+        <button type="button" class="admin-kit-searchbtn" data-admin-search data-hint="⌘K">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Buscar</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <div class="admin-bell-wrap">
+          <button type="button" class="admin-bell" data-admin-bell aria-label="Notificaciones" title="Centro de notificaciones">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="cnt" data-admin-bell-count hidden>0</span>
+          </button>
+          <div class="admin-notify-pop" data-admin-bell-pop>
+            <h3>Centro de notificaciones</h3>
+            <div class="admin-notify-list" data-admin-bell-list><div class="admin-notify-empty">Cargando…</div></div>
+          </div>
+        </div>
         {% block topbar_actions %}{% endblock %}
       </div>
     </header>
+
+    <div class="admin-kit-overlay" data-admin-search-overlay>
+      <div class="admin-kit-panel">
+        <input type="search" data-admin-search-input placeholder="Buscar clientes, licencias, compras, equipo…" autocomplete="off" aria-label="Buscador global">
+        <div class="admin-kit-results" data-admin-search-results>
+          <div class="admin-kit-empty">Pulsa <b>⌘K</b>/<b>Ctrl+K</b> y escribe para buscar.</div>
+        </div>
+        <div class="admin-kit-hint">↑↓ navega · Enter abre · Esc cierra</div>
+      </div>
+    </div>
 
     <main class="content">
       {% if error %}
@@ -630,6 +920,7 @@
     </main>
   </div>
 
+  <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/admin-kit.js' | asset }}"></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,81 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Versiones y changelog{% endblock %}
+{% block topbar_title %}Versiones · {{ product_name }}{% endblock %}
+
+{% block extra_css %}
+  <style nonce="{{ request.state.csp_nonce }}">
+    .form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap:14px; }
+    .check-row { display:flex; align-items:center; gap:8px; margin-top:14px; }
+    .check-row .form-label { margin:0; }
+    .btn-top { margin-top:14px; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Versiones y changelog</h1>
+  <p class="page-subtitle">Notas de versión visibles a clientes. <span class="sub-op">Solo las marcadas como publicadas salen en /novedades.</span></p>
+
+  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <div class="card-header"><h2>Nueva versión</h2></div>
+    <div class="card-body">
+      <form class="crear-operador-form" method="post" action="/admin/releases/crear">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="version">Versión</label>
+            <input class="form-control" id="version" name="version" type="text" required placeholder="v2.4.0">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="titulo">Título</label>
+            <input class="form-control" id="titulo" name="titulo" type="text" required maxlength="200">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fecha">Fecha</label>
+            <input class="form-control" id="fecha" name="fecha" type="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="notas">Notas</label>
+          <textarea class="form-control" id="notas" name="notas" rows="6"></textarea>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="destacado" name="destacado" value="1">
+          <label class="form-label" for="destacado">Destacada</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="publicado" name="publicado" value="1">
+          <label class="form-label" for="publicado">Publicar desde ya</label>
+        </div>
+        <button class="btn btn-top" type="submit">Crear</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Versiones</h2><span class="badge badge-neutral">{{ releases|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Versión</th><th>Título</th><th>Fecha</th><th>Destacada</th><th>Publicada</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for r in releases %}
+          <tr>
+            <td class="org-name">{{ r.version }}</td>
+            <td>{{ r.titulo }}</td>
+            <td class="muted">{{ r.fecha }}</td>
+            <td>{% if r.destacado %}<span class="badge badge-success">Sí</span>{% else %}<span class="badge badge-neutral">No</span>{% endif %}</td>
+            <td>{% if r.publicado %}<span class="badge badge-success">Sí</span>{% else %}<span class="badge badge-neutral">Borrador</span>{% endif %}</td>
+            <td>
+              <form class="form-inline" method="post" action="/admin/releases/{{ r.id }}/alternar?publicado={{ '0' if r.publicado else '1' }}">
+                <button class="btn btn-sm {{ 'btn-secondary' if r.publicado else '' }}" type="submit">{{ 'Ocultar' if r.publicado else 'Publicar' }}</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

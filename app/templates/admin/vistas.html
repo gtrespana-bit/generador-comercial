@@ -1,0 +1,74 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Vistas guardadas{% endblock %}
+{% block topbar_title %}Vistas guardadas · {{ product_name }}{% endblock %}
+
+{% block extra_css %}
+  <style nonce="{{ request.state.csp_nonce }}">
+    .form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:14px; }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Vistas guardadas</h1>
+  <p class="page-subtitle">Filtros persistentes por módulo: guarda cómo ves Clienteles, Cobros, Renovaciones, Compras o Automatizaciones. <span class="sub-op">Solo operador.</span></p>
+
+  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <div class="card-header"><h2>Guardar vista</h2></div>
+    <div class="card-body">
+      <form class="crear-operador-form" method="post" action="/admin/vistas/crear">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="modulo">Módulo</label>
+            <select class="form-control" id="modulo" name="modulo">
+              {% for modulo in modulos %}<option value="{{ modulo }}">{{ modulo }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre</label>
+            <input class="form-control" id="nombre" name="nombre" type="text" required maxlength="120" placeholder="Cobros pendientes julio">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="filtros">Filtros (JSON)</label>
+          <textarea class="form-control" id="filtros" name="filtros" rows="4" spellcheck="false">{"mes": "2026-07"}</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="columnas">Columnas (JSON)</label>
+          <textarea class="form-control" id="columnas" name="columnas" rows="3" spellcheck="false">["organizacion", "estado", "importe"]</textarea>
+        </div>
+        <button class="btn" type="submit">Guardar vista</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Vistas</h2><span class="badge badge-neutral">{{ vistas|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Módulo</th><th>Nombre</th><th>Filtros</th><th>Columnas</th><th>Creada por</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for vista in vistas %}
+          <tr>
+            <td><span class="badge badge-info">{{ vista.modulo }}</span></td>
+            <td class="org-name">{{ vista.nombre }}</td>
+            <td class="muted">{{ vista.filtros_dict() | tojson }}</td>
+            <td class="muted">{{ vista.columnas_lista() | join(', ') }}</td>
+            <td class="muted">{{ vista.creada_por }}</td>
+            <td>
+              <form class="form-inline" method="post" action="/admin/vistas/{{ vista.id }}/eliminar">
+                <button class="btn btn-sm btn-danger" type="submit">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="muted text-center">Aún no tienes vistas guardadas.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

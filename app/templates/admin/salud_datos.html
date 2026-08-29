@@ -1,0 +1,54 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Salud de datos{% endblock %}
+{% block topbar_title %}Salud de datos · {{ product_name }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Salud de datos y configuración</h1>
+  <p class="page-subtitle">Señales para saber si el catálogo o el despliegue están en condiciones de operar. <span class="sub-op">No muestra contenido de presupuestos de clientes.</span></p>
+
+  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+  {% if salud.error %}
+  <div class="alert alert-warning">
+    <svg class="svg-fix" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    <div>{{ salud.error }}</div>
+  </div>
+  {% else %}
+  <div class="kpis">
+    {% if salud.total is defined %}
+    <div class="kpi-card"><div class="kpi-value">{{ salud.total }}</div><div class="kpi-label">Partidas visibles</div></div>
+    {% endif %}
+    {% if salud.sin_precio is defined %}
+    <div class="kpi-card"><div class="kpi-value">{{ salud.sin_precio }}</div><div class="kpi-label">Sin precio</div></div>
+    {% endif %}
+    {% if salud.sin_coste is defined %}
+    <div class="kpi-card"><div class="kpi-value">{{ salud.sin_coste }}</div><div class="kpi-label">Sin coste</div></div>
+    {% endif %}
+    {% if salud.precios_absurdos is defined %}
+    <div class="kpi-card"><div class="kpi-value">{{ salud.precios_absurdos }}</div><div class="kpi-label">Precios anómalos</div></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Detalle</h2></div>
+    <div class="card-body">
+      <div class="grid-two">
+        <div>
+          <h3 class="muted">Catálogo</h3>
+          <p>Con precio: <strong>{{ salud.con_precio if salud.con_precio is defined else '—' }}</strong></p>
+          <p>Con coste: <strong>{{ salud.con_coste if salud.con_coste is defined else '—' }}</strong></p>
+          <p>Con tiempo: <strong>{{ salud.con_tiempo if salud.con_tiempo is defined else '—' }}</strong></p>
+              <p>Margen bajo: <strong>{{ salud.margen_bajo if salud.margen_bajo is defined else '—' }}</strong></p>
+              <p>Desactualizadas: <strong>{{ salud.desactualizadas if salud.desactualizadas is defined else '—' }}</strong></p>
+        </div>
+        <div>
+          <h3 class="muted">Configuración</h3>
+          <pre>{{ configuracion | tojson(indent=2) }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

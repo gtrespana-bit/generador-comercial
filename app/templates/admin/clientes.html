@@ -1,0 +1,105 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Clientes{% endblock %}
+{% block topbar_title %}Clientes · {{ product_name }}{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Clientes</h1>
+  <p class="page-subtitle">La ficha de cada empresa: plan, uso, cobros y notas internas de gestión.</p>
+
+  <div class="kpis">
+    <div class="kpi-card"><div class="kpi-value">{{ resumen.totales.filtradas }}</div><div class="kpi-label">Clientes</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ resumen.totales.con_plan }}</div><div class="kpi-label">Con plan</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ resumen.totales.sin_plan }}</div><div class="kpi-label">Sin plan</div></div>
+    <div class="kpi-card"><div class="kpi-value">{{ resumen.totales.por_vencer }}</div><div class="kpi-label">Por vencer ≤15d</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Directorio</h2>
+      <a class="btn btn-secondary" href="/admin/clientes.csv{% if q %}?q={{ q|urlencode }}{% endif %}">Exportar CSV</a>
+    </div>
+    <div class="card-body">
+      <form class="filtros-form" method="get" action="/admin/clientes">
+        <div class="form-group">
+          <label class="form-label" for="q">Buscar</label>
+          <input class="form-control" id="q" name="q" value="{{ q }}" placeholder="nombre o slug…">
+        </div>
+        <button class="btn" type="submit">Filtrar</button>
+        <a class="btn btn-secondary" href="/admin/clientes">Limpiar</a>
+      </form>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Plan</th>
+            <th>Vence</th>
+            <th>Días</th>
+            <th>Ingresos</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resumen.filas %}
+          <tr>
+            <td>
+              <a class="org-name" href="/admin/clientes/{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}</a>
+              <div class="muted small">{{ fila.organizacion.slug }} · {{ fila.emails|join(', ') }}</div>
+            </td>
+            <td>
+              {% if fila.estado == 'activa' %}
+              <span class="badge badge-success">Activo</span>
+              {% elif fila.estado == 'por_vencer' %}
+              <span class="badge badge-warning">Por vencer</span>
+              {% elif fila.estado == 'vencida' %}
+              <span class="badge badge-danger">Vencido</span>
+              {% else %}
+              <span class="badge badge-neutral">Sin plan</span>
+              {% endif %}
+            </td>
+            <td>{{ fila.plan_label or '—' }}</td>
+            <td>{{ fila.vence.strftime('%d/%m/%Y') if fila.vence else '—' }}</td>
+            <td>
+              {% if fila.estado != 'sin_licencia' %}{{ fila.dias_restantes }} días{% else %}—{% endif %}
+            </td>
+            <td>{{ '%.2f'|format(fila.ingresos) }} US$</td>
+            <td>
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ fila.organizacion.id }}">Ficha</a>
+              {% if fila.compras_pendientes %}
+              <span class="badge badge-warning">{{ fila.compras_pendientes|length }} compra(s)</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7"><div class="empty-pad muted text-center">No hay clientes con ese filtro.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if proximas %}
+  <div class="card">
+    <div class="card-header"><h2>Próximas renovaciones</h2><span class="badge badge-neutral">{{ proximas|length }}</span></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Cliente</th><th>Vence</th><th>Días</th><th>Importe</th><th></th></tr></thead>
+        <tbody>
+          {% for p in proximas %}
+          <tr>
+            <td class="org-name">{{ p.organizacion.nombre }}</td>
+            <td>{{ p.vence.strftime('%d/%m/%Y') }}</td>
+            <td><span class="badge {{ 'badge-danger' if p.dias_restantes <= 3 else 'badge-warning' }}">{{ p.dias_restantes }}d</span></td>
+            <td>{{ '%.2f'|format(p.importe) }} US$</td>
+            <td><a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ p.organizacion_id }}">Ficha</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

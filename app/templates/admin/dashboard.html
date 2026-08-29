@@ -98,6 +98,71 @@
   {% endif %}
 
   <div class="kpis">
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.mrr) }} <small>US$</small></div>
+      <div class="kpi-label">MRR</div>
+      <div class="muted note-sub">Suscrito mensual + anual/12</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.arr) }} <small>US$</small></div>
+      <div class="kpi-label">ARR</div>
+      <div class="muted note-sub">Proyección anual de MRR</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.ingresos_mes) }} <small>US$</small></div>
+      <div class="kpi-label">Ingresos del mes</div>
+      <div class="muted note-sub">{{ finanzas.licencias_activas }} licencias activas</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.renovaciones_mes) }} <small>US$</small></div>
+      <div class="kpi-label">Renovaciones del mes</div>
+      <div class="muted note-sub">{{ finanzas.licencias_renovando_mes }} vencen este mes</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.ticket_medio) }} <small>US$</small></div>
+      <div class="kpi-label">Ticket medio</div>
+      <div class="muted note-sub">Por licencia de pago</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.1f"|format(finanzas.tasa_pago) }}<small>%</small></div>
+      <div class="kpi-label">Tasa pago→plan</div>
+      <div class="muted note-sub">{{ finanzas.clientes_con_pago }} de {{ finanzas.organizaciones }} clientes</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.ltv_medio) }} <small>US$</small></div>
+      <div class="kpi-label">LTV medio</div>
+      <div class="muted note-sub">Por cliente que pagó</div>
+    </div>
+  </div>
+
+  {% if finanzas.serie %}
+  <div class="card">
+    <div class="card-header"><h2>Ingresos de los últimos {{ finanzas.serie|length }} meses</h2><span class="badge badge-neutral">US$</span></div>
+    <div class="card-body">
+      {% set punto_max = finanzas.serie | max(attribute='ingresos') %}
+      {% set maximo = punto_max.ingresos if punto_max else 0 %}
+      {% if maximo > 0 %}
+      <div class="serie-barras">
+        {% for punto in finanzas.serie %}
+        <div class="serie-col">
+          {% set alto = ((punto.ingresos / maximo * 118) if punto.ingresos else 2) %}
+          {% set y = 128 - alto %}
+          <svg class="serie-svg" viewBox="0 0 20 132" role="img" aria-label="{{ punto.label }}: {{ '%.0f'|format(punto.ingresos) }} US$">
+            <rect class="serie-bar" x="3" y="{{ y|round(1) }}" width="14" height="{{ alto|round(1) }}" rx="3"></rect>
+          </svg>
+          <div class="muted serie-label">{{ punto.label }}</div>
+          <div class="text-bold serie-valor">{{ "%.0f"|format(punto.ingresos) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-pad muted text-center">Aún no hay ingresos registrados para mostrar la serie.</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="kpis">
     <div class="kpi-card">
       <div class="kpi-value">{{ resumen.totales.clientes }}</div>
       <div class="kpi-label">Clientes</div>
@@ -202,6 +267,14 @@
             <tr class="fila-acciones oculta" id="acc-{{ org.id }}" data-de="{{ org.id }}">
               <td colspan="7">
                 <div class="acc">
+
+                  <div class="acc-bloque">
+                    <h3>Ficha completa</h3>
+                    <p class="acc-nota">Plan, uso, facturas, pagos, actividad y notas internas del cliente.</p>
+                    <div class="acc-botones">
+                      <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Abrir ficha</a>
+                    </div>
+                  </div>
 
                   <div class="acc-bloque">
                     <h3>{% if fila.vigente %}Renovar{% else %}Conceder acceso{% endif %}</h3>

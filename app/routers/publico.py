@@ -112,6 +112,22 @@ def _resolver_pais_landing(request: Request) -> tuple[dict | None, str]:
     return None, ""
 
 
+def _web_publico():
+    """Mejor esfuerzo: contenido gobernado desde /admin si la tabla existe.
+
+    Nunca rompe una página si la base no está disponible o aún no se ha
+    migrado. En PostgreSQL una sesión pública solo ve publicado/activo (RLS).
+    """
+    from ..database import SessionLocal
+    from ..services.web_publica import contexto_web_publico
+
+    try:
+        with SessionLocal() as db:
+            return contexto_web_publico(db)
+    except Exception:
+        return None
+
+
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
     from ..paises import PAIS_GENERICO, PAISES, lista_paises
@@ -133,6 +149,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "seo_defer_jsonld": True,
             }
             ctx.update(contexto_seo(request, codigo=codigo))
+            web = _web_publico()
+            if web:
+                ctx["web"] = web
             return ctx
     pais_actual, pais_codigo = _resolver_pais_landing(request)
     ctx = {
@@ -147,6 +166,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "seo_defer_jsonld": True,
     }
     ctx.update(contexto_seo(request, codigo=pais_codigo))
+    web = _web_publico()
+    if web:
+        ctx["web"] = web
     return ctx
 
 
@@ -235,6 +257,21 @@ def mapa_del_sitio(request: Request):
     ctx["articulos"] = lista_articulos()
     ctx["temas_seo"] = TEMAS
     return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
+
+
+@router.get("/novedades", response_class=HTMLResponse, include_in_schema=False)
+def novedades_publicas(request: Request):
+    """Changelog público: solo releases marcadas como publicadas (C5)."""
+    from ..seo import contexto_pagina_estatica
+
+    web = _web_publico() or {"contenido": {}, "avisos": [], "releases": []}
+    ctx = {
+        "web": web,
+        "releases": web["releases"],
+        "avisos_web": web["avisos"],
+    }
+    ctx.update(contexto_pagina_estatica(request, "novedades"))
+    return TEMPLATES.TemplateResponse(request, "novedades.html", ctx)
 
 
 @router.get("/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)

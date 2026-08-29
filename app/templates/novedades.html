@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  <style nonce="{{ request.state.csp_nonce }}">
+    .novedad { border-bottom:1px solid rgba(11,91,56,0.14); padding:18px 0; }
+    .novedad-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .novedad h2 { margin:8px 0 6px; font-size:1.25rem; }
+    .novedad p { white-space:pre-line; }
+  </style>
+</head>
+<body class="landing hub-page">
+{% include "_nav.html" %}
+<main class="hub-hero-int">
+  <h1>Novedades y versiones</h1>
+  <p class="sub">Mejoras nuevas de {{ product_name }}, software de presupuestos de obra para España y Latinoamérica.</p>
+
+  {% if releases %}
+  <section class="hub-bloque">
+    {% for r in releases %}
+    <article class="novedad">
+      <div class="novedad-meta">
+        <strong>{{ r.version }}</strong>
+        <span class="muted">{{ r.fecha }}</span>
+        {% if r.destacado %}<span class="badge badge-success">Destacado</span>{% endif %}
+      </div>
+      <h2>{{ r.titulo }}</h2>
+      <p class="muted">{{ r.notas }}</p>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="hub-bloque">
+    <p class="muted">Todavía no hay novedades publicadas. Vuelve pronto.</p>
+  </section>
+  {% endif %}
+</main>
+{% include "_footer_publico.html" %}
+</body>
+</html>
