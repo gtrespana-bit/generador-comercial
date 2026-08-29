@@ -1,213 +1,232 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Licencias · {{ product_name }}</title>
-  <style nonce="{{ request.state.csp_nonce }}">
-    :root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#17211d;background:#f3f7f5}
-    *{box-sizing:border-box}
-    body{margin:0;padding:26px 16px 60px}
-    main{max-width:1060px;margin:auto}
-    header.site{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-    .brand{font-size:1.3rem;font-weight:900;color:#0b5b38}
-    .operador{color:#66776f;font-size:.85rem}
-    h1{margin:0 0 4px;font-size:1.5rem}
-    .muted{color:#66776f}
-    .cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0 26px}
-    .cifra{background:white;border-radius:12px;padding:14px 16px;box-shadow:0 6px 22px rgba(10,48,34,.07)}
-    .cifra b{display:block;font-size:1.5rem;line-height:1.2}
-    .cifra span{color:#66776f;font-size:.82rem}
-    .alerta b{color:#9b6114}
-    .card{background:white;border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(10,48,34,.08);margin-bottom:18px}
-    table{border-collapse:collapse;width:100%;font-size:.88rem}
-    th,td{border-bottom:1px solid #e4ede8;padding:9px 8px;text-align:left;vertical-align:top}
-    th{background:#eef5f1;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
-    .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:.75rem;font-weight:800}
-    .ok{background:#e9f6ef;color:#11623f}
-    .warn{background:#fdf3e2;color:#9b6114}
-    .off{background:#f1f1f1;color:#6b6b6b}
-    .bad{background:#fff0f0;color:#9b2529}
-    label{display:block;font-weight:700;margin:12px 0 5px;font-size:.85rem}
-    input,select,textarea{width:100%;border:1px solid #b9c8c1;border-radius:9px;padding:9px;font:inherit;font-size:.9rem}
-    textarea{min-height:60px;resize:vertical}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 14px}
-    button{border:0;border-radius:9px;background:#146c43;color:white;padding:10px 15px;font:inherit;font-weight:800;cursor:pointer;margin-top:14px}
-    button.link{background:none;color:#9b2529;padding:2px 0;margin:0;font-size:.8rem;font-weight:700;text-decoration:underline}
-    .alert,.notice{border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:.9rem}
-    .alert{background:#fff0f0;color:#9b2529}
-    .notice{background:#e9f6ef;color:#11623f}
-    details summary{cursor:pointer;color:#0b5b38;font-weight:700;font-size:.82rem}
-    .hist{margin:8px 0 0;padding-left:16px;color:#66776f;font-size:.82rem}
-    .aviso{background:#fdf6e7;border:1px solid #ecd9a8;border-radius:10px;padding:11px 14px;font-size:.85rem;margin-bottom:18px}
-    form.inline{display:inline}
-  </style>
-</head>
-<body><main>
+{% extends "admin/base_admin.html" %}
 
-<header class="site">
-  <div>
-    <span class="brand">{{ product_name }}</span>
-    <div class="operador">Panel de operador · {{ operador }}</div>
-  </div>
-  <div><a href="/admin/analitica">Analítica</a> · <a href="/admin/emails">Correos</a> · <a href="/admin/operacion">Operación</a> · <a href="/organizaciones">Volver a la aplicación</a></div>
-</header>
+{% block title %}Licencias{% endblock %}
+{% block topbar_title %}Licencias y Clientes{% endblock %}
 
-<h1>Licencias</h1>
-<p class="muted">Registro interno de acceso al producto. Fecha de hoy: {{ hoy }}.</p>
+{% block extra_css %}
+<style>
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px; }
+  
+  .form-group-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 16px; }
+  
+  .history-list { list-style: none; padding: 0; margin: 16px 0 0 0; display: flex; flex-direction: column; gap: 12px; }
+  .history-list li { background: #f8fafc; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border: 1px solid var(--border-color); }
+  .history-list li .date { color: var(--text-main); font-weight: 600; min-width: 140px; }
+  .history-list li .info { color: var(--text-muted); flex: 1; }
+  .history-list li a { color: var(--brand-color); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+  .history-list li a:hover { text-decoration: underline; }
+  
+  @media (max-width: 768px) {
+    .form-group-row { grid-template-columns: 1fr; }
+    .history-list li { flex-direction: column; align-items: flex-start; }
+    .history-list li > div { width: 100%; justify-content: flex-start; margin-left: 0; }
+  }
+</style>
+{% endblock %}
 
-{% if error %}<div class="alert">{{ error }}</div>{% endif %}
-{% if msg %}<div class="notice">{{ msg }}</div>{% endif %}
+{% block content %}
+  <p class="page-subtitle">Registro interno de acceso al producto. Fecha de hoy: {{ hoy }}.</p>
 
-<div class="aviso">
-  Esta pantalla solo muestra el estado de las licencias: nombre de la
-  organización, período y cobro. <strong>No da acceso a los datos de negocio de
-  ningún cliente</strong> (presupuestos, clientes o precios), que siguen
-  aislados por organización.
-</div>
-
-{% if not exigencia_licencias %}
-<div class="aviso">
-  <strong>El corte automático de acceso está desactivado.</strong> Hoy una
-  organización sin licencia vigente puede seguir usando la aplicación. Cuando
-  empiece el cobro de los pilotos, actívalo con
-  <code>COTIZAT_EXIGIR_LICENCIA=true</code> en el despliegue (y concede antes
-  una licencia de cortesía a tu propia organización).
-</div>
-{% endif %}
-
-<div class="cifras">
-  <div class="cifra"><b>{{ totales.organizaciones }}</b><span>Organizaciones</span></div>
-  <div class="cifra"><b>{{ totales.con_licencia }}</b><span>Con licencia vigente</span></div>
-  <div class="cifra"><b>{{ totales.sin_licencia }}</b><span>Sin licencia</span></div>
-  <div class="cifra alerta"><b>{{ totales.por_vencer }}</b><span>Vencen en 15 días o menos</span></div>
-  <div class="cifra"><b>{{ '%.2f'|format(totales.ingresos) }}</b><span>Ingresos registrados (USD)</span></div>
-</div>
-
-{% if totales.por_vencer %}
-<div class="card">
-  <h2>Avisos de vencimiento</h2>
-  <p class="muted">Envía un correo a los administradores de
-  {{ totales.por_vencer }} organización(es) cuya licencia vence en 15 días o
-  menos, invitándoles a renovar. Cada licencia queda anotada con el envío y no
-  se repite el mismo día.</p>
-  <form method="post" action="/admin/licencias/avisos">
-    <button type="submit">Enviar avisos de vencimiento</button>
-  </form>
-</div>
-{% endif %}
-
-<div class="card">
-  <h2>Conceder o renovar licencia</h2>
-  <p class="muted">Si la organización ya tiene una licencia vigente, la nueva
-  empieza el día siguiente a su vencimiento: renovar nunca resta días.</p>
-  <form method="post" action="/admin/licencias">
-    <div class="grid">
-      <div>
-        <label for="organizacion_id">Organización</label>
-        <select id="organizacion_id" name="organizacion_id" required>
-          <option value="">Selecciona…</option>
-          {% for fila in filas %}
-          <option value="{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="origen">Tipo</label>
-        <select id="origen" name="origen" required>
-          {% for valor, etiqueta in origenes %}
-          <option value="{{ valor }}">{{ etiqueta }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="duracion">Duración</label>
-        <select id="duracion" name="duracion" required>
-          {% for clave, texto in duraciones %}
-          <option value="{{ clave }}">{{ texto }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label for="importe">Importe (0 si no es de pago)</label>
-        <input id="importe" name="importe" type="number" min="0" step="0.01" value="0">
-      </div>
-      <div>
-        <label for="moneda">Moneda</label>
-        <input id="moneda" name="moneda" maxlength="10" value="USD">
-      </div>
-      <div>
-        <label for="metodo_cobro">Método de cobro</label>
-        <input id="metodo_cobro" name="metodo_cobro" maxlength="80" placeholder="transferencia, Zelle…">
-      </div>
-      <div>
-        <label for="referencia">Referencia</label>
-        <input id="referencia" name="referencia" maxlength="150" placeholder="nº de operación">
-      </div>
+  <div class="alert alert-warning" style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    <div>
+      <strong style="display: block; margin-bottom: 4px;">Atención Operador</strong>
+      Esta pantalla solo muestra el estado de las licencias. No da acceso a los datos de negocio de ningún cliente, que siguen aislados por organización.
     </div>
-    <label for="notas">Notas internas</label>
-    <textarea id="notas" name="notas" placeholder="Motivo de la cortesía, incidencia compensada, acuerdo alcanzado…"></textarea>
-    <button type="submit">Registrar licencia</button>
-  </form>
-</div>
+  </div>
 
-<div class="card">
-  <h2>Estado por organización</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Organización</th><th>Estado</th><th>Vence</th>
-        <th>Tipo</th><th>Ingresos</th><th>Historial</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for fila in filas %}
-      <tr>
-        <td><strong>{{ fila.organizacion.nombre }}</strong></td>
-        <td>
-          {% if fila.vigente %}
-            {% if fila.por_vencer %}
-            <span class="pill warn">Vence en {{ fila.dias_restantes }} d</span>
-            {% else %}
-            <span class="pill ok">Activa</span>
-            {% endif %}
-          {% else %}
-            <span class="pill off">Sin licencia</span>
-          {% endif %}
-        </td>
-        <td>{{ fila.vence if fila.vence else '—' }}</td>
-        <td>{{ fila.vigente.origen if fila.vigente else '—' }}</td>
-        <td>{{ '%.2f'|format(fila.ingresos) }}</td>
-        <td>
-          {% if fila.licencias %}
-          <details>
-            <summary>{{ fila.licencias|length }} registro(s)</summary>
-            <ul class="hist">
-              {% for licencia in fila.licencias %}
-              <li>
-                {{ licencia.inicio }} → {{ licencia.vence }} ·
-                {{ licencia.origen }} ·
-                {{ '%.2f'|format(licencia.importe) }} {{ licencia.moneda }} ·
-                <span class="pill {{ 'ok' if licencia.estado == 'activa' else ('bad' if licencia.estado == 'cancelada' else 'off') }}">{{ licencia.estado }}</span>
-                {% if licencia.origen == 'pago' and licencia.importe > 0 %}
-                · <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf">recibo PDF</a>
-                {% endif %}
-                {% if licencia.estado != 'cancelada' %}
-                <form class="inline" method="post" action="/admin/licencias/{{ licencia.id }}/cancelar">
-                  <button class="link" type="submit">cancelar</button>
-                </form>
-                {% endif %}
-              </li>
+  {% if not exigencia_licencias %}
+  <div class="alert alert-danger" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+    <div>
+      <strong style="display: block; margin-bottom: 4px;">El corte automático está desactivado</strong>
+      Hoy una organización sin licencia vigente puede seguir usando la aplicación. Actívalo con <code>COTIZAT_EXIGIR_LICENCIA=true</code> en el despliegue cuando empiece el cobro.
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="kpis">
+    <div class="kpi-card">
+      <div class="kpi-value">{{ totales.organizaciones }}</div>
+      <div class="kpi-label">Organizaciones</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ totales.con_licencia }}</div>
+      <div class="kpi-label">Con Licencia</div>
+    </div>
+    <div class="kpi-card danger">
+      <div class="kpi-value">{{ totales.sin_licencia }}</div>
+      <div class="kpi-label">Sin Licencia</div>
+    </div>
+    <div class="kpi-card warn">
+      <div class="kpi-value">{{ totales.por_vencer }}</div>
+      <div class="kpi-label">Por Vencer (≤15d)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">${{ '%.2f'|format(totales.ingresos) }}</div>
+      <div class="kpi-label">Ingresos USD</div>
+    </div>
+  </div>
+
+  {% if totales.por_vencer %}
+  <div class="card" style="border-color: #fcd34d;">
+    <div class="card-header" style="background: #fffbeb;">
+      <h2>Avisos de vencimiento</h2>
+      <span class="badge badge-warning">{{ totales.por_vencer }} pendientes</span>
+    </div>
+    <div class="card-body">
+      <p style="margin-top: 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Envía un correo a los administradores de {{ totales.por_vencer }} organización(es) cuya licencia vence en 15 días o menos, invitándoles a renovar. Cada licencia queda anotada con el envío y no se repite el mismo día.</p>
+      <form method="post" action="/admin/licencias/avisos" style="margin: 0;">
+        <button type="submit" class="btn" style="background: #d97706;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Enviar avisos de vencimiento
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Conceder o renovar licencia</h2>
+    </div>
+    <div class="card-body">
+      <form method="post" action="/admin/licencias">
+        <div class="form-group-row">
+          <div>
+            <label for="organizacion_id" class="form-label">Organización</label>
+            <select id="organizacion_id" name="organizacion_id" class="form-control" required>
+              <option value="">Selecciona…</option>
+              {% for fila in filas %}
+              <option value="{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}</option>
               {% endfor %}
-            </ul>
-          </details>
-          {% else %}<span class="muted">—</span>{% endif %}
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="6" class="muted">Todavía no hay organizaciones registradas.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+            </select>
+          </div>
+          <div>
+            <label for="origen" class="form-label">Tipo</label>
+            <select id="origen" name="origen" class="form-control" required>
+              {% for valor, etiqueta in origenes %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label for="duracion" class="form-label">Duración</label>
+            <select id="duracion" name="duracion" class="form-control" required>
+              {% for clave, texto in duraciones %}
+              <option value="{{ clave }}">{{ texto }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group-row">
+          <div>
+            <label for="importe" class="form-label">Importe (0 si no es de pago)</label>
+            <input id="importe" name="importe" type="number" class="form-control" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label for="moneda" class="form-label">Moneda</label>
+            <input id="moneda" name="moneda" class="form-control" maxlength="10" value="USD">
+          </div>
+          <div>
+            <label for="metodo_cobro" class="form-label">Método de cobro</label>
+            <input id="metodo_cobro" name="metodo_cobro" class="form-control" maxlength="80" placeholder="Transferencia, Zelle…">
+          </div>
+          <div>
+            <label for="referencia" class="form-label">Referencia</label>
+            <input id="referencia" name="referencia" class="form-control" maxlength="150" placeholder="Nº de operación">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="notas" class="form-label">Notas internas</label>
+          <textarea id="notas" name="notas" class="form-control" placeholder="Motivo de la cortesía, incidencia compensada, acuerdo alcanzado…" rows="3"></textarea>
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+          <button type="submit" class="btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Registrar licencia
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-</main></body></html>
+  <div class="card">
+    <div class="card-header">
+      <h2>Estado por organización</h2>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Organización</th>
+            <th>Estado</th>
+            <th>Vence</th>
+            <th>Tipo</th>
+            <th>Ingresos</th>
+            <th>Historial</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in filas %}
+          <tr>
+            <td style="font-weight: 600;">{{ fila.organizacion.nombre }}</td>
+            <td>
+              {% if fila.vigente %}
+                {% if fila.por_vencer %}
+                <span class="badge badge-warning">Vence en {{ fila.dias_restantes }}d</span>
+                {% else %}
+                <span class="badge badge-success">Activa</span>
+                {% endif %}
+              {% else %}
+                <span class="badge badge-danger">Sin licencia</span>
+              {% endif %}
+            </td>
+            <td class="muted">{{ fila.vence.strftime("%d/%m/%Y") if fila.vence else '—' }}</td>
+            <td class="muted">{{ fila.vigente.origen if fila.vigente else '—' }}</td>
+            <td style="font-weight: 600;">{{ '%.2f'|format(fila.ingresos) }}</td>
+            <td>
+              {% if fila.licencias %}
+              <details style="cursor: pointer;">
+                <summary style="font-weight: 600; color: var(--brand-color);">{{ fila.licencias|length }} registro(s)</summary>
+                <ul class="history-list">
+                  {% for licencia in fila.licencias %}
+                  <li>
+                    <span class="badge {{ 'badge-success' if licencia.estado == 'activa' else ('badge-danger' if licencia.estado == 'cancelada' else 'badge-neutral') }}">{{ licencia.estado }}</span>
+                    <span class="date">{{ licencia.inicio.strftime("%d/%m/%Y") }} → {{ licencia.vence.strftime("%d/%m/%Y") }}</span>
+                    <span class="info">{{ licencia.origen }} · {{ '%.2f'|format(licencia.importe) }} {{ licencia.moneda }}</span>
+                    
+                    <div style="display: flex; gap: 12px; align-items: center; margin-left: auto;">
+                      {% if licencia.origen == 'pago' and licencia.importe > 0 %}
+                      <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf" target="_blank">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        PDF
+                      </a>
+                      {% endif %}
+                      {% if licencia.estado != 'cancelada' %}
+                      <form method="post" action="/admin/licencias/{{ licencia.id }}/cancelar" style="margin: 0;" data-confirmar="¿Confirmas que deseas cancelar esta licencia?">
+                        <button type="submit" style="background: none; border: none; color: var(--danger); font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0;">Cancelar</button>
+                      </form>
+                      {% endif %}
+                    </div>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </details>
+              {% else %}
+              <span class="muted">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">Todavía no hay organizaciones registradas.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
