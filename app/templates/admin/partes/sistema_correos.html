@@ -1,0 +1,45 @@
+{# Sistema › Correos de prueba. Enviar cualquier plantilla transaccional a un
+   buzón real, con el mismo remitente que producción. #}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Catálogo de correos</h2>
+    <span class="card-nota">{{ correos|length }} plantillas</span>
+  </div>
+
+  <div class="destino-global">
+    <label class="form-label" for="destino-global">Destino por omisión</label>
+    <input id="destino-global" type="email" value="{{ destino }}" placeholder="correo@ejemplo.com" autocomplete="email">
+    <span class="muted-note">Al escribirlo se rellenan todas las tarjetas; cada una sigue admitiendo su propio destino.</span>
+  </div>
+
+  <div class="card-body">
+    <div class="correo-cuadricula">
+      {% for c in correos %}
+      <div class="card correo-tarjeta">
+        <div class="card-header">
+          <h2 class="seccion-titulo">{{ c.titulo }}</h2>
+          <span class="badge {{ 'badge-success' if c.grupo == 'cliente' else 'badge-info' }}">{{ c.grupo_label }}</span>
+        </div>
+        <div class="card-body">
+          <p class="note-fine">{{ c.descripcion }}</p>
+          <form class="correo-form" method="post" action="/admin/emails/enviar">
+            <input type="hidden" name="slug" value="{{ c.slug }}">
+            <label class="visualmente-oculto" for="dest-{{ c.slug }}">Destino</label>
+            <input id="dest-{{ c.slug }}" class="correo-destino" type="email" name="destino" value="{{ destino }}" placeholder="correo@ejemplo.com" required>
+            <button class="btn btn-sm" type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card-pie">
+    <span class="muted-note">Los datos de estos correos son de ejemplo. El envío usa el mismo remitente y las mismas plantillas que producción; revisa también spam. Los marcados «Interno» llegan al buzón de soporte real, aquí puedes redirigirlos a cualquiera.</span>
+    <span class="toolbar-limpiar">
+      <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=estado">Comprobar que Resend está configurado</a>
+    </span>
+  </div>
+</div>
+

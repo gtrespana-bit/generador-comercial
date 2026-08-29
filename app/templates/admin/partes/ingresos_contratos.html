@@ -1,0 +1,159 @@
+{# Ingresos › Contratos y licencias. El registro de acceso al producto: quién
+   está dentro, hasta cuándo, por qué importe y con qué historial. #}
+
+{% if not exigencia_licencias %}
+<div class="alert alert-warning">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="12" x2="12" y2="8"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+  <div><strong>El corte automático de acceso está apagado.</strong> Hoy una organización sin licencia vigente puede seguir usando la aplicación: para ella el vencimiento es solo información. Se activa con <code>COTIZAT_EXIGIR_LICENCIA=true</code>.</div>
+</div>
+{% endif %}
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ totales.con_licencia }}</div>
+    <div class="kpi-label">Con acceso vigente</div>
+    <p class="note-sub">de {{ totales.organizaciones }} organizaciones</p>
+  </div>
+  <div class="kpi-card danger">
+    <div class="kpi-value">{{ totales.sin_licencia }}</div>
+    <div class="kpi-label">Sin acceso</div>
+    <p class="note-sub">Registradas y fuera: hay que decidir si se les concede</p>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-value">{{ totales.por_vencer }}</div>
+    <div class="kpi-label">Vencen en 15 días</div>
+    <p class="note-sub"><a href="/admin/ingresos?tab=renovaciones">Gestionar el mes</a></p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ "%.2f"|format(totales.ingresos) }} <small>US$</small></div>
+    <div class="kpi-label">Ingresos registrados</div>
+    <p class="note-sub">Suma de licencias de pago, sin convertir divisas</p>
+  </div>
+</div>
+
+<div class="card" id="conceder">
+  <div class="card-header">
+    <h2>Conceder o renovar acceso</h2>
+    <span class="card-nota">Renovar encadena: nunca resta días</span>
+  </div>
+  <div class="card-body">
+    {% set conceder_org_id = None %}
+    {% set conceder_destino = '/admin/ingresos?tab=contratos' %}
+    {% set conceder_filas = resumen.filas %}
+    {% include "admin/partes/_form_conceder.html" %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Registro de acceso</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ resumen.filas|length }} cliente{{ 's' if resumen.filas|length != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="/admin/contratos.csv">CSV</a>
+    </div>
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/ingresos">
+    <input type="hidden" name="tab" value="contratos">
+    <label class="visualmente-oculto" for="filtro-q">Buscar cliente</label>
+    <input class="toolbar-buscar" id="filtro-q" type="search" name="q" value="{{ q }}" placeholder="Nombre o slug del cliente…">
+    <label class="visualmente-oculto" for="filtro-estado">Filtrar por estado</label>
+    <select id="filtro-estado" name="estado">
+      {% for valor, etiqueta in opciones_estado %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_estado == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm" type="submit">Aplicar</button>
+    <span class="toolbar-limpiar">
+      <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=contratos">Limpiar</a>
+    </span>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Plan vigente</th>
+          <th>Vigencia</th>
+          <th class="tabla-num">Días</th>
+          <th>Estado</th>
+          <th class="tabla-num">Ingresos</th>
+          <th>Historial</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fila in resumen.filas %}
+        {% set org = fila.organizacion %}
+        <tr>
+          <td class="org-name">
+            <a href="/admin/clientes/{{ org.id }}?tab=acceso">{{ org.nombre }}</a>
+            <div class="org-sub">{{ fila.emails|join(' · ') or org.slug }}</div>
+          </td>
+          <td>
+            {% if fila.vigente %}
+            <b>{{ fila.plan_label }}</b>
+            {% if fila.vigente.importe %}<div class="muted">{{ "%.2f"|format(fila.vigente.importe) }} {{ fila.vigente.moneda }} · {{ fila.vigente.metodo_cobro or 'sin método' }}</div>{% endif %}
+            {% else %}
+            <span class="muted">—</span>
+            {% endif %}
+          </td>
+          <td class="muted">
+            {{ fila.inicio.strftime('%d/%m/%Y') if fila.inicio else '—' }}
+            → <b>{{ fila.vence.strftime('%d/%m/%Y') if fila.vence else '—' }}</b>
+          </td>
+          <td class="tabla-num">
+            {% if fila.vigente %}
+            <span class="badge {{ 'badge-danger' if fila.dias_restantes <= 3 else ('badge-warning' if fila.dias_restantes <= 15 else 'badge-neutral') }}">{{ fila.dias_restantes }}d</span>
+            {% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td>
+            {% if fila.estado == 'activa' %}<span class="badge badge-success">{{ fila.estado_label }}</span>
+            {% elif fila.estado == 'por_vencer' %}<span class="badge badge-warning">{{ fila.estado_label }}</span>
+            {% elif fila.estado == 'vencida' %}<span class="badge badge-danger">{{ fila.estado_label }}</span>
+            {% else %}<span class="badge badge-neutral">{{ fila.estado_label }}</span>{% endif %}
+          </td>
+          <td class="tabla-num">{{ "%.2f"|format(fila.ingresos) }}</td>
+          <td>
+            <details class="desplegable-celda">
+              <summary>{{ fila.licencias|length }} licencia{{ 's' if fila.licencias|length != 1 else '' }}</summary>
+              <ul class="hist">
+                {% for licencia in fila.licencias %}
+                <li>
+                  <span class="badge {{ 'badge-success' if licencia.estado == 'activa' else ('badge-danger' if licencia.estado == 'cancelada' else 'badge-neutral') }}">{{ licencia.estado }}</span>
+                  <span>{{ licencia.inicio.strftime('%d/%m/%Y') }} → {{ licencia.vence.strftime('%d/%m/%Y') }}</span>
+                  <span class="muted">{{ etiquetas_origen.get(licencia.origen, licencia.origen) }}{% if licencia.importe %} · {{ "%.2f"|format(licencia.importe) }} {{ licencia.moneda }}{% endif %}</span>
+                  {% if licencia.origen == 'pago' and licencia.importe > 0 %}
+                  <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf" target="_blank" rel="noopener">recibo</a>
+                  {% endif %}
+                  {% if licencia.estado != 'cancelada' %}
+                  <form class="inline" method="post" action="/admin/licencias/{{ licencia.id }}/cancelar"
+                        data-confirmar="Se cancelará esta licencia concreta. Si hay renovaciones encadenadas, el acceso puede seguir activo.">
+                    <input type="hidden" name="volver" value="/admin/ingresos?tab=contratos{% if q %}&amp;q={{ q|urlencode }}{% endif %}">
+                    <button class="link" type="submit">cancelar</button>
+                  </form>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+            </details>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>Ningún cliente encaja con ese filtro.</b>
+            <p>Las organizaciones recién registradas aparecen aquí aunque no tengan licencia: son las que hay que mirar.</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=contratos">Quitar los filtros</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-pie">
+    <span class="muted-note">Esta pantalla solo muestra el estado del acceso. Los datos de negocio de cada cliente siguen aislados por organización (RLS).</span>
+    <span class="toolbar-limpiar"><a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=automatizaciones">Recordatorios automáticos</a></span>
+  </div>
+</div>

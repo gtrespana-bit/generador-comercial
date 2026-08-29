@@ -1188,12 +1188,21 @@ Sustituye la idea de paneles sueltos por un **hub único** (`/admin`):
   caducidad, estado, ingresos) y filtrable por texto/email y estado
   (`app/static/js/admin-panel.js`, solo `classList`/`addEventListener`,
   cumple CSP; el filtro oculta filas con clase `oculta` en vez de `.style`).
+  *(Descripción de aquella capa: el 30/08/2026 el panel se reorganizó y esa
+  tabla del hub desapareció —el listado vive en `/admin/clientes` con filtros y
+  orden **en el servidor**, por URL—, los filtros dejaron de ser de
+  navegador y `admin-panel.js` se borró: su parte útil (`data-confirmar`) pasó
+  a `app/static/js/admin-kit.js`, que es el único script global. Ver
+  `docs/PANEL_DE_OPERADOR.md` §11.)*
 - **Compras por activar** en línea: ver comprobante → activar / rechazar.
 - **Concesión manual** de licencia (prueba/cortesía/compensación/pago) plegable.
 - Datos: `resumen_admin()` en `app/services/panel_admin.py` (une
   organizaciones + licencias + compras + emails de membresías).
 - Los enlaces antiguos `/admin/licencias`, `/admin/compras` y
   `/admin/operacion` siguen funcionando; el hub enlaza entre ellos.
+  *(Hoy los dieciséis caminos fusionados responden con un 302 a su pestaña
+  conservando los parámetros, y el hub ya no enlaza entre pantallas: enlaza a
+  pestañas.)*
 
 ### 3. Gestión de la organización (perfil de empresa)
 

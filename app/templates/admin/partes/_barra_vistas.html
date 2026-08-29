@@ -1,0 +1,50 @@
+{# Vistas guardadas integradas en la barra de la lista (A5).
+
+   Antes era una página aparte donde había que teclear el JSON de filtros a
+   mano y no se aplicaba en ningún sitio. Aquí: los filtros que estás usando se
+   guardan con un nombre y el nombre vuelve a la barra como un enlace. #}
+<div class="chips">
+  <span class="chips-titulo">Vistas</span>
+  <a class="chip {{ 'sel' if not vista_activa else '' }}" href="{{ vista_ruta_base }}">
+    Todas
+    {% if vista_total is defined %}<span class="chip-cnt">{{ vista_total }}</span>{% endif %}
+  </a>
+  {% for vista in vistas_guardadas %}
+  <a class="chip chip-vista {{ 'sel' if vista_activa == vista.id else '' }}" href="{{ vista.url }}" title="{{ vista.filtros_texto }}">
+    {{ vista.nombre }}
+  </a>
+  {% endfor %}
+
+  <details class="vista-flotante">
+    <summary class="chip chip-accion" aria-label="Guardar la vista actual">Guardar actual</summary>
+    <form class="vista-form" method="post" action="{{ vista_accion }}">
+      <input type="hidden" name="modulo" value="{{ vista_modulo }}">
+      <input type="hidden" name="filtros" value="{{ vista_filtros|tojson }}">
+      <input type="hidden" name="volver" value="{{ vista_ruta_actual }}">
+      <label class="form-label" for="vista-nombre-{{ vista_modulo }}">Nombre de la vista</label>
+      <div class="vista-form-linea">
+        <input class="form-control" id="vista-nombre-{{ vista_modulo }}" name="nombre" type="text" required maxlength="120" placeholder="Vence este mes, pagos por revisar…">
+        <button class="btn btn-sm" type="submit">Guardar</button>
+      </div>
+    </form>
+  </details>
+
+  {% if vistas_guardadas %}
+  <details class="vista-flotante">
+    <summary class="chip chip-accion">Gestionar ({{ vistas_guardadas|length }})</summary>
+    <ul class="vista-lista">
+      {% for vista in vistas_guardadas %}
+      <li>
+        <b>{{ vista.nombre }}</b>
+        <code>{{ vista.filtros_texto }}</code>
+        <form class="form-inline" method="post" action="/admin/vistas/{{ vista.id }}/eliminar"
+              data-confirmar="Se borrará la vista «{{ vista.nombre }}». ¿Continuar?">
+          <input type="hidden" name="volver" value="{{ vista_ruta_actual }}">
+          <button class="link" type="submit">borrar</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+</div>

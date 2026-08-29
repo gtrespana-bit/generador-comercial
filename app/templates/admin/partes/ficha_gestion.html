@@ -1,0 +1,92 @@
+{# Ficha › CRM y notas. El estado comercial y las notas internas viven junto al
+   cliente, no en una página aparte que había que recordar. #}
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h2>Estado comercial</h2>
+      <span class="card-nota">Solo lo ve el equipo</span>
+    </div>
+    <div class="card-body">
+      <form method="post" action="/admin/crm/{{ ficha.organizacion.id }}/guardar">
+        <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}?tab=gestion">
+        <div class="form-group">
+          <label class="form-label" for="crm-estado">Etapa del canal</label>
+          <select class="form-control" id="crm-estado" name="estado">
+            <option value="">Sin asignar</option>
+            {% for valor, etiqueta in estados_crm %}
+            <option value="{{ valor }}" {{ 'selected' if crm and crm.estado == valor else '' }}>{{ etiqueta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="crm-proximo">Próximo contacto</label>
+          <input class="form-control" id="crm-proximo" name="proximo_contacto" type="date"
+                 value="{{ crm.proximo_contacto.isoformat() if crm and crm.proximo_contacto else '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="crm-notas">Resumen del trato</label>
+          <textarea class="form-control" id="crm-notas" name="notas" rows="4" placeholder="Quién decide, qué pidió, qué se le prometió…">{{ crm.notas if crm else '' }}</textarea>
+        </div>
+        <div class="form-acciones">
+          <button class="btn" type="submit">Guardar estado comercial</button>
+          <span class="muted-note">Cambiar la etapa no concede ni quita acceso.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Notas internas</h2>
+      <span class="badge badge-neutral">{{ ficha.notas|length }}</span>
+    </div>
+    <div class="card-body">
+      <form method="post" action="/admin/clientes/{{ ficha.organizacion.id }}/notas">
+        <div class="form-group">
+          <label class="form-label" for="nota-contenido">Nueva nota de gestión</label>
+          <textarea class="form-control" id="nota-contenido" name="contenido" rows="3" required placeholder="Ej.: pidió prueba extendida hasta el 15; paga por Binance; quien decide es la arquitecta."></textarea>
+        </div>
+        <button class="btn" type="submit">Guardar nota</button>
+      </form>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Autor</th><th>Nota</th></tr></thead>
+        <tbody>
+          {% for nota in ficha.notas %}
+          <tr>
+            <td class="muted">{{ nota.created_at.strftime('%d/%m/%Y %H:%M') if nota.created_at else '—' }}</td>
+            <td class="muted">{{ nota.autor_email or '—' }}</td>
+            <td>{{ nota.contenido }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3"><div class="vacio"><b>Sin notas todavía.</b><p>La primera nota suele ser la que evita prometer dos precios distintos.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Contactos que tocan</h2></div>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>Cliente</th><th>Estado</th><th>Próximo contacto</th><th>Notas</th><th></th></tr></thead>
+      <tbody>
+        {% for fila in proximos_contactos %}
+        <tr class="{{ 'fila-urgente' if fila.toque_hoy else '' }}">
+          <td class="org-name"><a href="/admin/clientes/{{ fila.organizacion.id }}?tab=gestion">{{ fila.organizacion.nombre }}</a></td>
+          <td><span class="badge {{ 'badge-warning' if fila.estado == 'riesgo' else 'badge-neutral' }}">{{ fila.estado_etiqueta }}</span></td>
+          <td>{{ fila.proximo_contacto }}{% if fila.toque_hoy %} <span class="badge badge-danger">hoy o antes</span>{% endif %}</td>
+          <td class="muted notas-celda">{{ fila.notas|truncate(120) }}</td>
+          <td><a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ fila.organizacion.id }}?tab=gestion">Atender</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5"><div class="vacio"><b>Ningún contacto pendiente.</b><p>Cuando fijes una fecha de próximo contacto en algún cliente, aparecerá aquí para no dejarlo olvidado.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

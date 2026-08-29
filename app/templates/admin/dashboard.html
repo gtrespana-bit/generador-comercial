@@ -1,464 +1,230 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Panel de administración{% endblock %}
-{% block topbar_title %}Panel Principal{% endblock %}
-{% block topbar_actions %}
-  <span class="muted">
-    <svg class="svg-inline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-    Hoy: {{ resumen.hoy.strftime("%d/%m/%Y") }}
-  </span>
+{% block title %}Hoy · Panel de administración{% endblock %}
+
+{% block page_subtitle %}
+  {{ resumen.hoy.strftime('%d/%m/%Y') }} · {{ operador }}.
+  Las cifras del negocio y todo lo que espera una decisión tuya.
 {% endblock %}
 
-{% block extra_css %}
-<style nonce="{{ request.state.csp_nonce }}">
-  .filtros { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .filtros input { flex: 1; max-width: 360px; }
-  .filtros select { min-width: 180px; }
-  .tbl-chev { width: 24px; }
-  .topbar-date { font-size: 0.88rem; font-weight: 500; }
+{% block page_title_extra %}{% endblock %}
 
-  .pend-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid #f0f5f2; flex-wrap: wrap; }
-  .pend-item:last-child { border-bottom: 0; }
-  .pend-info { flex: 1; min-width: 240px; }
-  .pend-info b { font-size: 0.92rem; }
-  .pend-info small { display: block; color: #7c9186; font-size: 0.78rem; margin-top: 3px; }
-  .acciones-pend { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-
-  .tbl-org-actions { font-size: 0.82rem; display: inline-flex; gap: 10px; align-items: center; }
-  .tbl-org-actions a { font-weight: 700; }
-
-  /* Ficha de acciones pegada a la fila */
-  tbody tr.fila-cliente { cursor: pointer; }
-  tbody tr.fila-cliente:focus-visible { outline: 2px solid var(--brand-color); outline-offset: -2px; }
-  .chev { display: inline-block; width: 16px; color: var(--text-muted); font-size: 0.8rem; transition: transform 0.18s; }
-  tr.abierta .chev { transform: rotate(90deg); color: var(--brand-color); }
-  tr.abierta { background: #f3f8f5; }
-  tr.fila-acciones.oculta { display: none; }
-  tr.fila-acciones > td { background: #f7faf8; border-bottom: 2px solid var(--border-color); padding: 0; }
-
-  .acc { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; padding: 18px; }
-  .acc-bloque { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-  .acc-bloque.peligro { border-color: #f2c6c9; background: #fffafa; }
-  .acc-bloque h3 { margin: 0 0 6px; font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-main); }
-  .acc-nota { margin: 0 0 14px; color: var(--text-muted); font-size: 0.84rem; line-height: 1.5; }
-  .acc-botones { display: flex; flex-wrap: wrap; gap: 8px; }
-  .acc-botones form { margin: 0; }
-  .acc-botones button {
-    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
-    background: var(--brand-color); color: #fff; border: 0; border-radius: 9px; padding: 10px 14px; font: inherit; font-size: 0.83rem; font-weight: 700; cursor: pointer; transition: background 0.18s, transform 0.08s;
-  }
-  .acc-botones button:hover { background: var(--brand-hover); transform: translateY(-1px); }
-  .acc-botones button small { font-weight: 500; font-size: 0.7rem; opacity: 0.85; }
-  .acc-botones button.alt { background: #fff; color: var(--text-main); border: 1px solid var(--border-color); }
-  .acc-botones button.alt:hover { background: #f4f7f5; }
-
-  .acc-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 12px; }
-  .acc-campos label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin: 10px 0 4px; }
-  .acc-campos input, .acc-campos select { width: 100%; padding: 8px 10px; }
-  .acc-form button { margin-top: 14px; }
-
-  .acc-form-linea { display: flex; gap: 8px; flex-wrap: wrap; }
-  .acc-form-linea input { flex: 1; min-width: 180px; }
-
-  .cnt-mini { font-size: 0.7rem; color: var(--brand-color); background: var(--success-bg); border-radius: 999px; padding: 2px 8px; margin-left: 4px; }
-  .hist { margin: 0; padding-left: 0; list-style: none; max-height: 230px; overflow-y: auto; }
-  .hist li { font-size: 0.8rem; color: #5a7165; padding: 7px 0; border-bottom: 1px solid #f0f5f2; line-height: 1.6; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-  .hist li:last-child { border-bottom: 0; }
-  .hist a { color: var(--brand-color); font-weight: 700; }
-  form.inline { display: inline; }
-  button.link { background: none; color: var(--danger); padding: 0; margin: 0; font-size: 0.76rem; font-weight: 700; text-decoration: underline; }
-  button.link:hover { background: none; color: var(--danger-hover); }
-
-  .grant-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0 14px; padding: 0 20px 20px; }
-  .grant-form .full { grid-column: 1 / -1; }
-  details.grant summary { cursor: pointer; color: var(--brand-color); font-weight: 800; font-size: 0.84rem; padding: 16px 20px; list-style: none; }
-  details.grant summary::-webkit-details-marker { display: none; }
-  details.grant summary::before { content: "▸ "; }
-  details.grant[open] summary::before { content: "▾ "; }
-
-  @media (max-width: 640px) {
-    .acc-campos { grid-template-columns: 1fr; }
-    .acc { padding: 14px; }
-  }
-</style>
+{% block page_acciones %}
+  <a class="btn btn-secondary" href="/admin/ingresos?tab=contratos#conceder">Conceder acceso</a>
+  <form class="form-inline" method="post" action="/admin/licencias/avisos"
+        data-confirmar="Se enviará un correo a cada organización cuyo acceso vence en 15 días o menos. ¿Continuar?">
+    <button class="btn" type="submit" {% if not resumen.totales.por_vencer %}disabled{% endif %}>
+      Enviar avisos de vencimiento
+    </button>
+  </form>
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-title">Panel de administración</h1>
-  <p class="page-subtitle">
-    Operador: <span class="sub-op">{{ operador }}</span> · Hoy: {{ resumen.hoy.strftime("%d/%m/%Y") }}
-    · <span class="muted">Todo el negocio en una sola vista: clientes, planes, compras y cobros.</span>
-  </p>
-
   {% if not exigencia_licencias %}
   <div class="alert alert-warning">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-    <div><strong>Aviso:</strong> el corte automático por licencia está <strong>apagado</strong> (COTIZAT_EXIGIR_LICENCIA). Las licencias vencidas no suspenden el acceso.</div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    <div><strong>El corte automático de acceso está apagado.</strong> Una organización sin licencia vigente puede seguir usando la aplicación. Se activa con <code>COTIZAT_EXIGIR_LICENCIA=true</code>.</div>
   </div>
   {% endif %}
 
-  <div class="kpis">
-    <div class="kpi-card info">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.mrr) }} <small>US$</small></div>
-      <div class="kpi-label">MRR</div>
-      <div class="muted note-sub">Suscrito mensual + anual/12</div>
-    </div>
-    <div class="kpi-card info">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.arr) }} <small>US$</small></div>
-      <div class="kpi-label">ARR</div>
-      <div class="muted note-sub">Proyección anual de MRR</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.ingresos_mes) }} <small>US$</small></div>
-      <div class="kpi-label">Ingresos del mes</div>
-      <div class="muted note-sub">{{ finanzas.licencias_activas }} licencias activas</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.renovaciones_mes) }} <small>US$</small></div>
-      <div class="kpi-label">Renovaciones del mes</div>
-      <div class="muted note-sub">{{ finanzas.licencias_renovando_mes }} vencen este mes</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.ticket_medio) }} <small>US$</small></div>
-      <div class="kpi-label">Ticket medio</div>
-      <div class="muted note-sub">Por licencia de pago</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ "%.1f"|format(finanzas.tasa_pago) }}<small>%</small></div>
-      <div class="kpi-label">Tasa pago→plan</div>
-      <div class="muted note-sub">{{ finanzas.clientes_con_pago }} de {{ finanzas.organizaciones }} clientes</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ "%.2f"|format(finanzas.ltv_medio) }} <small>US$</small></div>
-      <div class="kpi-label">LTV medio</div>
-      <div class="muted note-sub">Por cliente que pagó</div>
-    </div>
-  </div>
-
-  {% if finanzas.serie %}
-  <div class="card">
-    <div class="card-header"><h2>Ingresos de los últimos {{ finanzas.serie|length }} meses</h2><span class="badge badge-neutral">US$</span></div>
-    <div class="card-body">
-      {% set punto_max = finanzas.serie | max(attribute='ingresos') %}
-      {% set maximo = punto_max.ingresos if punto_max else 0 %}
-      {% if maximo > 0 %}
-      <div class="serie-barras">
-        {% for punto in finanzas.serie %}
-        <div class="serie-col">
-          {% set alto = ((punto.ingresos / maximo * 118) if punto.ingresos else 2) %}
-          {% set y = 128 - alto %}
-          <svg class="serie-svg" viewBox="0 0 20 132" role="img" aria-label="{{ punto.label }}: {{ '%.0f'|format(punto.ingresos) }} US$">
-            <rect class="serie-bar" x="3" y="{{ y|round(1) }}" width="14" height="{{ alto|round(1) }}" rx="3"></rect>
-          </svg>
-          <div class="muted serie-label">{{ punto.label }}</div>
-          <div class="text-bold serie-valor">{{ "%.0f"|format(punto.ingresos) }}</div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <div class="empty-pad muted text-center">Aún no hay ingresos registrados para mostrar la serie.</div>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-
-  <div class="kpis">
-    <div class="kpi-card">
-      <div class="kpi-value">{{ resumen.totales.clientes }}</div>
-      <div class="kpi-label">Clientes</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ resumen.totales.con_plan }}</div>
-      <div class="kpi-label">Con plan activo</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-value">{{ resumen.totales.por_vencer }}</div>
-      <div class="kpi-label">Por vencer</div>
-      <div class="muted note-sub">Próximos 15 días</div>
-    </div>
-    <div class="kpi-card danger">
-      <div class="kpi-value">{{ resumen.totales.sin_plan }}</div>
-      <div class="kpi-label">Sin plan</div>
-      <div class="muted note-sub">Vencidos o sin licencia</div>
-    </div>
-    <div class="kpi-card info">
-      <div class="kpi-value">{{ resumen.totales.pendientes }}</div>
-      <div class="kpi-label">Compras por activar</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-value">{{ "%.2f"|format(resumen.totales.ingresos) }} <small>US$</small></div>
-      <div class="kpi-label">Ingresos registrados</div>
-    </div>
-  </div>
-
-  {% if resumen.pendientes %}
+  {# --------------------------------------------------------------- #}
+  {# 1. Lo que espera: la agenda del día, no un catálogo de opciones #}
+  {# --------------------------------------------------------------- #}
   <div class="card">
     <div class="card-header">
-      <h2>Compras por activar</h2>
-      <span class="badge badge-warning">{{ resumen.totales.pendientes }} pendiente{{ 's' if resumen.totales.pendientes != 1 else '' }}</span>
+      <h2>Requiere tu acción hoy</h2>
+      <div class="card-header-acc">
+        {% if pendientes|length %}
+        <span class="badge badge-warning">{{ pendientes|length }} pendiente{{ 's' if pendientes|length != 1 else '' }}</span>
+        {% else %}
+        <span class="badge badge-success">Al día</span>
+        {% endif %}
+      </div>
     </div>
-    {% for item in resumen.pendientes %}
-    {% set c = item.compra %}
+    {% for aviso in pendientes %}
     <div class="pend-item">
+      <span class="punto punto-{{ aviso.severidad }}" aria-hidden="true"></span>
       <div class="pend-info">
-        <b>#{{ c.id }} · {{ item.plan_label }} · {{ item.organizacion_nombre }}</b>
-        <small>{{ c.creada_por_email }} · {{ (c.created_at or resumen.hoy).strftime("%d/%m/%Y %H:%M") }} · {{ c.metodo_pago | replace("_", " ") }}</small>
+        <b>{{ aviso.titulo }}</b>
+        <small>{{ aviso.detalle }}</small>
       </div>
-      <div class="acciones-pend">
-        <a class="btn btn-secondary btn-sm" href="/admin/compras/{{ c.id }}/comprobante" target="_blank" rel="noopener">Ver comprobante</a>
-        <form method="POST" action="/admin/compras/{{ c.id }}/activar"><button class="btn btn-sm" type="submit">✓ Activar</button></form>
-        <form method="POST" action="/admin/compras/{{ c.id }}/rechazar"><button class="btn btn-danger btn-sm" type="submit">✕ Rechazar</button></form>
+      <div class="pend-acc">
+        <a class="btn btn-sm btn-secondary" href="{{ aviso.url }}">Atender</a>
       </div>
+    </div>
+    {% else %}
+    <div class="vacio">
+      <b>Nada pendiente.</b>
+      <p>Ninguna licencia vence en 15 días, no hay compras por activar y el equipo está completo. Buen momento para revisar la analítica.</p>
+      <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver analítica</a>
     </div>
     {% endfor %}
-  </div>
-  {% endif %}
-
-  <div class="card">
-    <div class="card-header">
-      <h2>Clientes y licencias</h2>
-      <span class="badge badge-neutral">{{ resumen.filas | length }} organizaciones</span>
+    <div class="card-pie">
+      <span class="muted-note">
+        Se recalcula al abrir el panel: renovaciones ≤15 días, compras por activar, salud del equipo y clientes sin plan.
+      </span>
+      <span class="toolbar-limpiar">
+        <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=automatizaciones">Automatizaciones</a>
+      </span>
     </div>
-    <div class="card-body">
-      <div class="filtros">
-        <input type="search" id="buscar" placeholder="Buscar por cliente o email…" aria-label="Buscar organizaciones">
-        <select id="filtro-estado" aria-label="Filtrar por estado">
-          <option value="">Todos los estados</option>
-          <option value="activa">Activo</option>
-          <option value="por_vencer">Por vencer</option>
-          <option value="vencida">Vencido</option>
-          <option value="sin_licencia">Sin plan</option>
-        </select>
+  </div>
+
+  {# --------------------------------------------------------------- #}
+  {# 2. El negocio en movimiento                                     #}
+  {# --------------------------------------------------------------- #}
+  <div class="kpis">
+    <a class="kpi-card enlaza info" href="/admin/ingresos?tab=cobros">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.mrr) }} <small>US$/mes</small></div>
+      <div class="kpi-label">MRR</div>
+      <p class="note-sub">ARR {{ "%.2f"|format(finanzas.arr) }} US$ · {{ finanzas.licencias_activas }} licencias activas</p>
+    </a>
+    <a class="kpi-card enlaza" href="/admin/ingresos?tab=cobros">
+      <div class="kpi-value">{{ "%.2f"|format(finanzas.ingresos_mes) }} <small>US$</small></div>
+      <div class="kpi-label">Ingresos del mes</div>
+      <p class="note-sub">Renovaciones {{ "%.2f"|format(finanzas.renovaciones_mes) }} US$ · {{ finanzas.licencias_renovando_mes }} licencias</p>
+    </a>
+    <a class="kpi-card enlaza warn" href="/admin/ingresos?tab=renovaciones">
+      <div class="kpi-value">{{ resumen.totales.por_vencer }}</div>
+      <div class="kpi-label">Clientes por vencer</div>
+      <p class="note-sub">En 15 días o menos · {{ "%.2f"|format(finanzas.renovaciones_mes) }} US$ en juego este mes</p>
+    </a>
+    <a class="kpi-card enlaza {{ 'danger' if resumen.totales.pendientes else '' }}" href="/admin/ingresos?tab=compras">
+      <div class="kpi-value">{{ resumen.totales.pendientes }}</div>
+      <div class="kpi-label">Compras por activar</div>
+      <p class="note-sub">Comprobantes esperando verificación</p>
+    </a>
+    <a class="kpi-card enlaza" href="/admin/clientes?estado=sin_licencia">
+      <div class="kpi-value">{{ resumen.totales.sin_plan }}</div>
+      <div class="kpi-label">Clientes sin plan</div>
+      <p class="note-sub">Registrados sin acceso activo</p>
+    </a>
+    <a class="kpi-card enlaza" href="/admin/clientes">
+      <div class="kpi-value">{{ resumen.totales.clientes }}</div>
+      <div class="kpi-label">Clientes</div>
+      <p class="note-sub">{{ resumen.totales.con_plan }} con plan activo · {{ "%.2f"|format(resumen.totales.ingresos) }} US$ acumulados</p>
+    </a>
+  </div>
+
+  <div class="grid-lateral">
+    <div>
+      {% if finanzas.serie %}
+      <div class="card">
+        <div class="card-header">
+          <h2>Ingresos de los últimos {{ finanzas.serie|length }} meses</h2>
+          <span class="badge badge-neutral">US$</span>
+        </div>
+        <div class="card-body">
+          {% set punto_max = finanzas.serie | max(attribute='ingresos') %}
+          {% set maximo = punto_max.ingresos if punto_max else 0 %}
+          {% if maximo > 0 %}
+          <div class="serie-barras">
+            {% for punto in finanzas.serie %}
+            <div class="serie-col">
+              {% set alto = ((punto.ingresos / maximo * 118) if punto.ingresos else 2) %}
+              {% set y = 128 - alto %}
+              <svg class="serie-svg" viewBox="0 0 20 132" role="img" aria-label="{{ punto.label }}: {{ '%.0f'|format(punto.ingresos) }} US$">
+                <rect class="serie-bar" x="3" y="{{ y|round(1) }}" width="14" height="{{ alto|round(1) }}" rx="3"></rect>
+              </svg>
+              <div class="muted serie-label">{{ punto.label }}</div>
+              <div class="text-bold serie-valor">{{ "%.0f"|format(punto.ingresos) }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="vacio">
+            <b>Sin ingresos registrados todavía.</b>
+            <p>Cuando concedas la primera licencia de pago o actives una compra, la serie mensual se dibujará aquí.</p>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-pie">
+          <span class="muted-note">Ticket medio {{ "%.2f"|format(finanzas.ticket_medio) }} US$ · conversión a pago {{ "%.1f"|format(finanzas.tasa_pago) }}% · LTV medio {{ "%.2f"|format(finanzas.ltv_medio) }} US$</span>
+        </div>
       </div>
+      {% endif %}
 
-      <div class="table-container">
-        <table id="tabla-clientes">
-          <thead>
-            <tr>
-              <th class="tbl-chev"></th>
-              <th data-sort="text" data-key="cliente">Cliente <span class="arr">↓</span></th>
-              <th data-sort="text" data-key="plan">Plan <span class="arr">↓</span></th>
-              <th data-sort="fecha" data-key="compra">Alta <span class="arr">↓</span></th>
-              <th data-sort="fecha" data-key="vence">Caducidad <span class="arr">↓</span></th>
-              <th data-sort="text" data-key="estado">Estado <span class="arr">↓</span></th>
-              <th data-sort="num" data-key="ingresos">LTV (US$) <span class="arr">↓</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for fila in resumen.filas %}
-            {% set org = fila.organizacion %}
-            <tr class="fila-cliente" data-estado="{{ fila.estado }}" data-org="{{ org.id }}" tabindex="0" aria-expanded="false" aria-controls="acc-{{ org.id }}">
-              <td><span class="chev" aria-hidden="true">▸</span></td>
-              <td data-sort-key="cliente" data-text="{{ org.nombre | lower }}">
-                <div class="org-name">{{ org.nombre }}</div>
-                {% for email in fila.emails[:2] %}<div class="muted org-sub">{{ email }}</div>{% endfor %}
-              </td>
-              <td data-sort-key="plan" data-text="{{ fila.plan_label | lower }}">{{ fila.plan_label }}{% if fila.metodo_cobro %}<span class="muted"> · {{ fila.metodo_cobro }}</span>{% endif %}</td>
-              <td class="muted" data-sort-key="compra" data-fecha="{{ fila.inicio.isoformat() if fila.inicio else '' }}">{{ fila.inicio.strftime("%d/%m/%Y") if fila.inicio else "—" }}</td>
-              <td class="muted" data-sort-key="vence" data-fecha="{{ fila.vence.isoformat() if fila.vence else '' }}">{{ fila.vence.strftime("%d/%m/%Y") if fila.vence else "—" }}</td>
-              <td data-sort-key="estado" data-text="{{ fila.estado }}">
-                {% if fila.estado == "activa" %}<span class="badge badge-success">{{ fila.estado_label }}</span>
-                {% elif fila.estado == "por_vencer" %}<span class="badge badge-warning">{{ fila.estado_label }} · {{ fila.dias_restantes }} d</span>
-                {% elif fila.estado == "vencida" %}<span class="badge badge-danger">{{ fila.estado_label }}</span>
-                {% else %}<span class="badge badge-neutral">{{ fila.estado_label }}</span>{% endif %}
-              </td>
-              <td class="text-bold" data-sort-key="ingresos" data-num="{{ fila.ingresos }}">{{ "%.2f"|format(fila.ingresos) }}</td>
-            </tr>
-            <tr class="fila-acciones oculta" id="acc-{{ org.id }}" data-de="{{ org.id }}">
-              <td colspan="7">
-                <div class="acc">
-
-                  <div class="acc-bloque">
-                    <h3>Ficha completa</h3>
-                    <p class="acc-nota">Plan, uso, facturas, pagos, actividad y notas internas del cliente.</p>
-                    <div class="acc-botones">
-                      <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Abrir ficha</a>
-                    </div>
-                  </div>
-
-                  <div class="acc-bloque">
-                    <h3>{% if fila.vigente %}Renovar{% else %}Conceder acceso{% endif %}</h3>
-                    <p class="acc-nota">{% if fila.vigente %}Se encadena al final del acceso actual ({{ fila.vence.strftime("%d/%m/%Y") if fila.vence else "—" }}): renovar nunca resta días.{% else %}Empieza hoy mismo.{% endif %}</p>
-                    <div class="acc-botones">
-                      <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
-                        <input type="hidden" name="volver" value="/admin">
-                        <input type="hidden" name="origen" value="pago">
-                        <input type="hidden" name="duracion" value="1a">
-                        <button type="submit">Pago · 1 año <small>89 US$</small></button>
-                      </form>
-                      <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
-                        <input type="hidden" name="volver" value="/admin">
-                        <input type="hidden" name="origen" value="pago">
-                        <input type="hidden" name="duracion" value="1m">
-                        <button type="submit">Pago · 1 mes <small>9,99 US$</small></button>
-                      </form>
-                      <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
-                        <input type="hidden" name="volver" value="/admin">
-                        <input type="hidden" name="origen" value="prueba">
-                        <input type="hidden" name="duracion" value="7d">
-                        <button class="alt" type="submit">Prueba · 7 días</button>
-                      </form>
-                      <form method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
-                        <input type="hidden" name="volver" value="/admin">
-                        <input type="hidden" name="origen" value="cortesia">
-                        <input type="hidden" name="duracion" value="1m">
-                        <button class="alt" type="submit">Cortesía · 1 mes</button>
-                      </form>
-                    </div>
-                  </div>
-
-                  <div class="acc-bloque">
-                    <h3>Caso especial</h3>
-                    <p class="acc-nota">Otro importe, referencia del cobro o nota interna.</p>
-                    <form class="acc-form" method="POST" action="/admin/organizaciones/{{ org.id }}/conceder">
-                      <input type="hidden" name="volver" value="/admin">
-                      <div class="acc-campos">
-                        <div>
-                          <label for="o-{{ org.id }}">Tipo</label>
-                          <select id="o-{{ org.id }}" name="origen">
-                            <option value="pago">Pago</option>
-                            <option value="prueba">Prueba</option>
-                            <option value="cortesia">Cortesía</option>
-                            <option value="compensacion">Compensación</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label for="d-{{ org.id }}">Duración</label>
-                          <select id="d-{{ org.id }}" name="duracion">
-                            <option value="7d">7 días</option>
-                            <option value="1m">1 mes</option>
-                            <option value="3m">3 meses</option>
-                            <option value="6m">6 meses</option>
-                            <option value="1a" selected>1 año</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label for="i-{{ org.id }}">Importe (USD)</label>
-                          <input id="i-{{ org.id }}" name="importe" type="number" min="0" step="0.01" placeholder="según plan">
-                        </div>
-                        <div>
-                          <label for="m-{{ org.id }}">Método</label>
-                          <input id="m-{{ org.id }}" name="metodo_cobro" placeholder="Zelle, Binance…">
-                        </div>
-                        <div>
-                          <label for="r-{{ org.id }}">Referencia</label>
-                          <input id="r-{{ org.id }}" name="referencia" placeholder="nº de operación">
-                        </div>
-                        <div>
-                          <label for="n-{{ org.id }}">Nota interna</label>
-                          <input id="n-{{ org.id }}" name="notas" placeholder="acuerdo, motivo…">
-                        </div>
-                      </div>
-                      <button class="btn" type="submit">Registrar licencia</button>
-                    </form>
-                  </div>
-
-                  {% if fila.vigente %}
-                  <div class="acc-bloque peligro">
-                    <h3>Suspender acceso</h3>
-                    <p class="acc-nota">Cancela <strong>todo el acceso vigente</strong>, incluidas las renovaciones encadenadas. Los datos no se borran.</p>
-                    <form class="acc-form-linea" method="POST" action="/admin/organizaciones/{{ org.id }}/suspender" data-confirmar="Se cancelará todo el acceso vigente de «{{ org.nombre }}». ¿Continuar?">
-                      <input type="hidden" name="volver" value="/admin">
-                      <input name="motivo" placeholder="Motivo (queda anotado)" aria-label="Motivo de la suspensión">
-                      <button class="btn btn-danger" type="submit">Suspender</button>
-                    </form>
-                  </div>
-                  {% endif %}
-
-                  <div class="acc-bloque">
-                    <h3>Historial <span class="cnt-mini">{{ fila.licencias | length }}</span></h3>
-                    {% if fila.licencias %}
-                    <ul class="hist">
-                      {% for licencia in fila.licencias %}
-                      <li>
-                        <span class="badge {{ 'badge-success' if licencia.estado == 'activa' else ('badge-danger' if licencia.estado == 'cancelada' else 'badge-neutral') }}">{{ licencia.estado }}</span>
-                        <span>{{ licencia.inicio.strftime("%d/%m/%Y") }} → {{ licencia.vence.strftime("%d/%m/%Y") }}</span>
-                        <span class="muted">· {{ licencia.origen }}{% if licencia.importe %} · {{ "%.2f"|format(licencia.importe) }} {{ licencia.moneda }}{% endif %}</span>
-                        {% if licencia.origen == 'pago' and licencia.importe > 0 %}
-                        · <a href="/admin/licencias/{{ licencia.id }}/recibo.pdf" target="_blank" rel="noopener">recibo PDF</a>
-                        {% endif %}
-                        {% if licencia.estado != 'cancelada' %}
-                        <form class="inline" method="POST" action="/admin/licencias/{{ licencia.id }}/cancelar" data-confirmar="Se cancelará esta licencia concreta. ¿Continuar?">
-                          <input type="hidden" name="volver" value="/admin">
-                          <button class="link" type="submit">cancelar</button>
-                        </form>
-                        {% endif %}
-                      </li>
-                      {% endfor %}
-                    </ul>
-                    {% else %}
-                    <p class="acc-nota">Sin licencias todavía.</p>
-                    {% endif %}
-                  </div>
-
+      <div class="card">
+        <div class="card-header">
+          <h2>Van a vencer</h2>
+          <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=renovaciones">Ver el mes completo</a>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Cliente</th><th>Vence</th><th class="tabla-num">Días</th><th class="tabla-num">Importe US$</th><th></th></tr></thead>
+            <tbody>
+              {% for p in proximas %}
+              <tr>
+                <td class="org-name"><a href="/admin/clientes/{{ p.organizacion_id }}">{{ p.organizacion.nombre }}</a></td>
+                <td>{{ p.vence.strftime('%d/%m/%Y') }}</td>
+                <td class="tabla-num"><span class="badge {{ 'badge-danger' if p.dias_restantes <= 3 else 'badge-warning' }}">{{ p.dias_restantes }}d</span></td>
+                <td class="tabla-num">{{ "%.2f"|format(p.importe) }}</td>
+                <td><a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ p.organizacion_id }}?tab=acceso">Renovar</a></td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5">
+                <div class="vacio">
+                  <b>Nada vence en los próximos 15 días.</b>
+                  <p>Los avisos automáticos se disparan a 5 días y a 1 día del vencimiento.</p>
                 </div>
-              </td>
-            </tr>
+              </td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="ficha-lado">
+      <div class="card">
+        <div class="card-header"><h2>Ir a</h2></div>
+        <div class="card-body cuerpo-atajos">
+          {% for atajo in atajos %}
+          <a class="atajo" href="{{ atajo.ruta }}">
+            <b>{{ atajo.nombre }}</b>
+            <small>{{ atajo.descripcion }}</small>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Últimas acciones del panel</h2>
+          <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=auditoria">Auditoría</a>
+        </div>
+        <div class="card-body">
+          <ul class="hist">
+            {% for evento in eventos %}
+            <li>
+              <code class="accion-code">{{ evento.accion }}</code>
+              <span class="muted">{{ evento.operador_email or '—' }}</span>
+              <span class="muted">· {{ evento.created_at.strftime('%d/%m %H:%M') if evento.created_at else '' }}</span>
+            </li>
             {% else %}
-            <tr><td colspan="7" class="text-center muted empty-pad-sm">Aún no hay clientes registrados.</td></tr>
+            <li class="muted">Aún no hay acciones registradas desde el panel.</li>
             {% endfor %}
-          </tbody>
-        </table>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="card">
-    <details class="grant">
-      <summary>Conceder / renovar licencia manualmente</summary>
-      <form class="grant-form" method="POST" action="/admin/licencias">
-        <div class="form-group">
-          <label for="grant-org" class="form-label">Cliente</label>
-          <select id="grant-org" name="organizacion_id" required class="form-control">
-            {% for fila in resumen.filas %}
-            <option value="{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="grant-origen" class="form-label">Origen</label>
-          <select id="grant-origen" name="origen" class="form-control">
-            <option value="prueba">Prueba</option>
-            <option value="cortesia">Cortesía</option>
-            <option value="compensacion">Compensación</option>
-            <option value="pago">Pago</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="grant-duracion" class="form-label">Duración</label>
-          <select id="grant-duracion" name="duracion" class="form-control">
-            <option value="7d">7 días</option>
-            <option value="1m">1 mes</option>
-            <option value="3m">3 meses</option>
-            <option value="6m">6 meses</option>
-            <option value="1a">1 año</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="grant-importe" class="form-label">Importe (USD, solo pago)</label>
-          <input type="number" id="grant-importe" name="importe" min="0" step="0.01" value="0" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="grant-metodo" class="form-label">Método de cobro</label>
-          <input type="text" id="grant-metodo" name="metodo_cobro" placeholder="Pago móvil, Binance…" class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="grant-ref" class="form-label">Referencia</label>
-          <input type="text" id="grant-ref" name="referencia" placeholder="Operación, TXID…" class="form-control">
-        </div>
-        <div class="full">
-          <label for="grant-notas" class="form-label">Notas</label>
-          <textarea id="grant-notas" name="notas" class="form-control"></textarea>
-        </div>
-        <div class="full flex-end">
-          <button class="btn" type="submit">Registrar licencia</button>
-        </div>
-      </form>
-    </details>
-  </div>
-
 {% endblock %}
 
-{% block extra_js %}
-<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/admin-panel.js' | asset }}"></script>
+{% block extra_css %}
+  .pend-item { display: flex; align-items: center; gap: 14px; padding: 13px 18px; border-bottom: 1px solid #f0f5f2; flex-wrap: wrap; }
+  .pend-item:last-of-type { border-bottom: 0; }
+  .pend-info { flex: 1; min-width: 220px; }
+  .pend-info b { font-size: 0.9rem; }
+  .pend-info small { display: block; color: var(--text-muted); font-size: 0.78rem; margin-top: 3px; }
+  .pend-acc { display: flex; gap: 8px; align-items: center; }
+  .punto { width: 9px; height: 9px; border-radius: 999px; background: var(--blue); flex-shrink: 0; }
+  .punto-warning { background: var(--warn); }
+  .punto-critical { background: var(--danger); }
+  .punto-info { background: var(--blue); }
+  .cuerpo-atajos { display: flex; flex-direction: column; gap: 10px; }
+  .atajo { display: block; text-decoration: none; border: 1px solid var(--border-color); border-radius: 11px; padding: 10px 12px; background: #fbfdfb; }
+  .atajo:hover { border-color: var(--brand-color); background: var(--success-bg); }
+  .atajo b { display: block; color: var(--text-main); font-size: 0.86rem; }
+  .atajo small { display: block; color: var(--text-muted); font-size: 0.76rem; margin-top: 2px; line-height: 1.45; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 {% endblock %}

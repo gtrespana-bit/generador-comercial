@@ -1,0 +1,151 @@
+{# Ficha › Resumen. Todo lo que responde a «¿quién es este cliente y cómo está?»
+   sin bajar y subir por ocho tarjetas. #}
+
+<div class="grid-lateral">
+  <div>
+    <div class="card">
+      <div class="card-header"><h2>Situación</h2></div>
+      <div class="card-body">
+        <dl class="dato-lista">
+          <dt>Acceso</dt>
+          <dd>
+            {% if ficha.vigente %}
+            <span class="badge badge-success">Vigente hasta {{ (ficha.vence_total or ficha.vigente.vence)|fecha }}</span>
+            <span class="muted"> · {{ ficha.dias_restantes }} días</span>
+            {% else %}
+            <span class="badge badge-danger">Sin acceso activo</span>
+            {% endif %}
+          </dd>
+          <dt>Plan</dt>
+          <dd>{{ plan_label }}{% if ficha.vigente and ficha.vigente.importe %} · {{ "%.2f"|format(ficha.vigente.importe) }} {{ ficha.vigente.moneda }}{% endif %}</dd>
+          <dt>Origen</dt>
+          <dd>{{ etiquetas_origen.get(ficha.vigente.origen, ficha.vigente.origen) if ficha.vigente else '—' }}</dd>
+          <dt>Alta</dt>
+          <dd>{{ ficha.organizacion.created_at|fecha if ficha.organizacion.created_at else '—' }}</dd>
+          <dt>Ingresos</dt>
+          <dd>{{ "%.2f"|format(ficha.ingresos) }} US$ acumulados</dd>
+          <dt>Último acceso</dt>
+          <dd>
+            {% if ficha.agregados.ultimo_acceso %}
+            {{ ficha.agregados.ultimo_acceso.strftime('%d/%m/%Y %H:%M') if ficha.agregados.ultimo_acceso.strftime is defined else ficha.agregados.ultimo_acceso }}
+            {% else %}<span class="muted">Sin registros de acceso</span>{% endif %}
+          </dd>
+          <dt>Estado comercial</dt>
+          <dd>
+            {% if crm and crm.estado %}<span class="badge badge-info">{{ crm.estado_etiqueta }}</span>
+            {% else %}<span class="muted">Sin asignar · <a href="/admin/clientes/{{ ficha.organizacion.id }}?tab=gestion">definir</a></span>{% endif %}
+          </dd>
+        </dl>
+      </div>
+      <div class="card-pie">
+        <span class="muted-note">El uso se lee agregado (contajes), nunca el contenido de los presupuestos: el aislamiento por organización se mantiene.</span>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <a class="kpi-card enlaza" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
+        <div class="kpi-value">{{ ficha.agregados.presupuestos }}</div>
+        <div class="kpi-label">Presupuestos</div>
+        <p class="note-sub">{{ "%.2f"|format(ficha.agregados.total_presupuestado) }} US$ presupuestados</p>
+      </a>
+      <a class="kpi-card enlaza" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
+        <div class="kpi-value">{{ ficha.agregados.facturas }}</div>
+        <div class="kpi-label">Facturas</div>
+        <p class="note-sub">{{ ficha.agregados.pagos }} pago(s) registrado(s)</p>
+      </a>
+      <a class="kpi-card enlaza info" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
+        <div class="kpi-value">{{ "%.2f"|format(ficha.agregados.total_cobrado) }} <small>US$</small></div>
+        <div class="kpi-label">Cobrado al cliente</div>
+        <p class="note-sub">Pagos confirmados en la app</p>
+      </a>
+      <div class="kpi-card">
+        <div class="kpi-value">{{ ficha.agregados.clientes }}</div>
+        <div class="kpi-label">Clientes suyos</div>
+        <p class="note-sub">Fichas de cliente final en su organización</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Notas más recientes</h2>
+        <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=gestion">Escribir una</a>
+      </div>
+      <div class="card-body">
+        {% for nota in ficha.notas[:3] %}
+        <div class="nota-bloque">
+          <b>{{ nota.contenido|truncate(220) }}</b>
+          <small class="muted">{{ nota.autor_email or '—' }} · {{ nota.created_at.strftime('%d/%m/%Y %H:%M') if nota.created_at else '' }}</small>
+        </div>
+        {% else %}
+        <div class="vacio">
+          <b>Sin notas internas.</b>
+          <p>Anota aquí acuerdos, contextos o compromisos de precio: es lo que evita que dos personas del equipo negocien distinto.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ficha-lado">
+    <div class="card">
+      <div class="card-header"><h2>Accesos del cliente</h2></div>
+      <div class="card-body">
+        <ul class="lista-miembros">
+          {% for email in ficha.emails %}
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span class="mono">{{ email }}</span>
+          </li>
+          {% else %}
+          <li class="muted">Ningún miembro activo con correo verificado.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Qué hacer ahora</h2></div>
+      <div class="card-body cuerpo-lista">
+        {% if not ficha.vigente %}
+        <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#conceder">
+          <b>Conceder acceso</b><small>Prueba de 7 días o pago anual</small>
+        </a>
+        {% elif ficha.dias_restantes <= 15 %}
+        <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#conceder">
+          <b>Renovar antes de que venza</b><small>Quedan {{ ficha.dias_restantes }} días</small>
+        </a>
+        {% endif %}
+        {% for compra in ficha.compras %}
+        {% if compra.estado == 'pendiente' %}
+        <a class="atajo" href="/admin/ingresos?tab=compras&estado=pendiente&compra={{ compra.id }}">
+          <b>Comprar pendiente #{{ compra.id }}</b><small>Verificar el comprobante y activar</small>
+        </a>
+        {% endif %}
+        {% endfor %}
+        <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
+          <b>Revisar cobros</b><small>{{ ficha.cobros|length }} factura(s) y pago(s) visibles</small>
+        </a>
+        <a class="atajo" href="/admin/sistema?tab=correos">
+          <b>Probar un correo</b><small>Envíale un aviso de ejemplo a su buzón</small>
+        </a>
+        {% if ficha.vigente %}
+        <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#suspender">
+          <b>Suspender acceso</b><small>Cancela toda la cadena vigente</small>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Contexto rápido</h2></div>
+      <div class="card-body">
+        {% if ficha.notas %}
+        <p class="note-block">{{ ficha.notas|length }} nota(s) de gestión acumulada(s).</p>
+        {% endif %}
+        <div class="aviso-corto">
+          Nº de organización: <b>#{{ ficha.organizacion.id }}</b> · slug <code>{{ ficha.organizacion.slug }}</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Sistema · {{ pestana_nombre }}{% endblock %}
+
+{% block page_acciones %}
+  {% if pestana == 'estado' %}
+  <a class="btn btn-secondary" href="/readyz" target="_blank" rel="noopener">JSON de /readyz</a>
+  {% elif pestana == 'auditoria' %}
+  <a class="btn btn-secondary" href="/admin/sistema?tab=auditoria&amp;resultado=error">Solo lo que falló</a>
+  {% elif pestana == 'equipo' %}
+  <span class="badge {{ 'badge-danger' if superadmins < 1 else 'badge-neutral' }}" title="Si quedan a cero, nadie puede administrar el panel">{{ superadmins }} superadmin{{ 's' if superadmins != 1 else '' }} activo{{ 's' if superadmins != 1 else '' }}</span>
+  {% elif pestana == 'correos' %}
+  <span class="badge badge-neutral">{{ correos|length }} plantillas</span>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% include "admin/partes/sistema_" + pestana + ".html" %}
+{% endblock %}
+
+{% block extra_js %}
+  {% if pestana == 'correos' %}
+  <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/admin-correos.js' | asset }}" defer></script>
+  {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+  .estado-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .estado-caja { background: #fbfdfb; border: 1px solid var(--border-color); border-radius: 11px; padding: 12px 14px; }
+  .estado-caja.completa { grid-column: 1 / -1; }
+  .estado-caja .label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.05em; margin-bottom: 5px; }
+  .estado-caja .value { font-size: 0.92rem; font-weight: 700; overflow-wrap: anywhere; }
+  .estado-tabla td { padding: 10px 14px; border-bottom: 1px dashed var(--border-color); }
+  .estado-tabla th { background: transparent; }
+  .lista-problema { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .lista-problema li { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; background: var(--danger-bg); border: 1px solid #f2c6c9; font-size: 0.86rem; color: var(--danger-hover); }
+  .lista-problema li.aviso { background: var(--warn-bg); border-color: #ecd9a8; color: #8a5b10; }
+  .bloque-regla { display: flex; gap: 14px; align-items: flex-start; padding: 14px 18px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+  .bloque-regla:last-child { border-bottom: 0; }
+  .bloque-regla-txt { flex: 1; min-width: 240px; }
+  .bloque-regla-txt b { display: block; font-size: 0.92rem; }
+  .bloque-regla-txt small { display: block; color: var(--text-muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.5; max-width: 70ch; }
+  .bandera-fila { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+  .bandera-fila:last-child { border-bottom: 0; }
+  .bandera-txt { flex: 1; min-width: 220px; }
+  .bandera-txt b { display: block; }
+  .bandera-txt small { color: var(--text-muted); font-size: 0.8rem; }
+  .token-caja { background: #071b12; color: #e7f6ec; padding: 16px; border-radius: 12px; font-family: ui-monospace, monospace; word-break: break-all; }
+  .correo-cuadricula { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .correo-tarjeta p { color: var(--text-muted); font-size: 0.84rem; line-height: 1.55; }
+  .correo-form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .correo-form input { flex: 1; min-width: 170px; }
+  .destino-global { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 14px 18px; background: #fbfdfb; border-bottom: 1px solid var(--border-color); }
+{% endblock %}

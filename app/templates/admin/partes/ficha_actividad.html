@@ -1,0 +1,51 @@
+{# Ficha › Actividad: qué hizo el cliente en la app y qué se hizo desde el
+   panel, en una sola cronología. #}
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h2>Actividad del cliente</h2>
+      <span class="badge badge-neutral">{{ ficha.eventos_cliente|length }}</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Actor</th><th>Acción</th></tr></thead>
+        <tbody>
+          {% for e in ficha.eventos_cliente %}
+          <tr>
+            <td class="muted">{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
+            <td>{{ e.actor_email or '—' }}</td>
+            <td><code class="accion-code">{{ e.accion }}</code></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3"><div class="vacio"><b>Sin eventos de auditoría del cliente.</b><p>Se registran dentro de la organización; el panel solo ve el nombre de la acción, no su contenido.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Acciones desde el panel</h2>
+      <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=auditoria&organizacion_id={{ ficha.organizacion.id }}">Ver en auditoría</a>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Fecha</th><th>Operador</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody>
+          {% for e in ficha.eventos_admin %}
+          <tr>
+            <td class="muted">{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
+            <td>{{ e.operador_email or '—' }}</td>
+            <td><code class="accion-code">{{ e.accion }}</code></td>
+            <td class="muted detalle-celda">{{ e.detalle }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4"><div class="vacio"><b>El panel no ha tocado a este cliente todavía.</b><p>Cada concesión, suspensión, aviso o cambio de CRM queda anotado aquí.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

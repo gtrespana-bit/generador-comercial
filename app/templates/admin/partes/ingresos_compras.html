@@ -1,0 +1,103 @@
+{# Ingresos › Compras por revisar (E1-059). La cola de verificación: cada
+   comprobante con sus datos de pago y los dos botones que deciden. #}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Compras de plan</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ compras|length }} visible{{ 's' if compras|length != 1 else '' }}</span>
+      {% if filtro_estado == 'pendiente' and compras|length %}
+      <a class="btn btn-sm" href="/admin/ingresos?tab=compras&estado=todas">Ver el histórico</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Estado</span>
+    {% for valor, etiqueta, contador in opciones_estado %}
+    <a class="chip {{ 'sel' if filtro_estado == valor else '' }}" href="{{ ruta_filtro(estado=valor) }}">{{ etiqueta }} <span class="chip-cnt">{{ contador }}</span></a>
+    {% endfor %}
+    {% if compra_concreta %}
+    <span class="chip sel">Filtro por compra #{{ compra_concreta }} <a class="chip-x" href="/admin/ingresos?tab=compras&estado={{ filtro_estado }}" aria-label="Quitar el filtro por compra">×</a></span>
+    {% endif %}
+  </div>
+
+  {% set vista_modulo = 'compras' %}
+  {% set vistas_guardadas = vistas %}
+  {% set vista_activa = 0 %}
+  {% set vista_ruta_base = '/admin/ingresos?tab=compras' %}
+  {% set vista_ruta_actual = '/admin/ingresos?tab=compras&estado=' ~ filtro_estado %}
+  {% set vista_accion = '/admin/vistas/crear' %}
+  {% set vista_filtros = dict_filtros %}
+  {% set vista_total = compras|length %}
+  {% include "admin/partes/_barra_vistas.html" %}
+
+  {% if compras %}
+  <div class="lista-compras">
+    {% for fila in compras %}
+    {% set c = fila.compra %}
+    <article class="compra">
+      <div class="compra-cab">
+        <div class="compra-cliente">
+          <span class="badge {{ 'badge-warning' if c.estado == 'pendiente' else ('badge-success' if c.estado == 'activa' else 'badge-danger') }}">{{ c.etiqueta_estado }}</span>
+          <b class="org-name"><a href="/admin/clientes/{{ c.organizacion_id }}">{{ fila.organizacion_nombre }}</a></b>
+          <span class="muted">compra #{{ c.id }} · {{ fila.plan_nombre }} · {{ "%.2f"|format(c.importe) }} {{ c.moneda }}</span>
+        </div>
+        <div class="compra-meta">
+          <span class="muted">{{ c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else '—' }}</span>
+          <span class="muted">{{ fila.metodo_nombre }} · {{ c.creada_por_email }}</span>
+        </div>
+        <div class="compra-acc">
+          {% if c.estado == 'pendiente' %}
+          <form class="form-inline" method="post" action="/admin/compras/{{ c.id }}/activar"
+                data-confirmar="Se activará la compra #{{ c.id }} y se concederá la licencia del plan. ¿Comprobante verificado?">
+            <input type="hidden" name="volver" value="/admin/ingresos?tab=compras&estado={{ filtro_estado }}">
+            <button class="btn btn-sm" type="submit">Verificar y activar</button>
+          </form>
+          <form class="form-inline" method="post" action="/admin/compras/{{ c.id }}/rechazar"
+                data-confirmar="Se rechazará la compra #{{ c.id }}. El cliente no pierde sus datos.">
+            <input type="hidden" name="volver" value="/admin/ingresos?tab=compras&estado={{ filtro_estado }}">
+            <button class="btn btn-sm btn-danger" type="submit">Rechazar</button>
+          </form>
+          {% elif c.licencia_id %}
+          <a class="btn btn-sm btn-secondary" href="/admin/licencias/{{ c.licencia_id }}/recibo.pdf">Recibo PDF</a>
+          {% endif %}
+        </div>
+      </div>
+      <details class="compra-detalle">
+        <summary>Datos de verificación y comprobante</summary>
+        <div class="compra-cuerpo">
+          <dl class="dato-lista">
+            {% for etiqueta, valor in fila.verificacion.items() %}
+            <dt>{{ etiqueta }}</dt><dd>{{ valor }}</dd>
+            {% endfor %}
+            {% if not fila.verificacion %}
+            <dt>Verificación</dt><dd class="muted">El cliente no declaró datos de verificación.</dd>
+            {% endif %}
+            <dt>Comprobante</dt>
+            <dd>
+              {% if c.comprobante_reference %}
+              <a href="/admin/compras/{{ c.id }}/comprobante" target="_blank" rel="noopener">Ver o descargar</a>
+              {% else %}
+              <span class="muted">No adjuntado</span>
+              {% endif %}
+            </dd>
+            {% if c.licencia_id %}<dt>Licencia concedida</dt><dd>#{{ c.licencia_id }}</dd>{% endif %}
+            {% if c.revisado_por_email %}
+            <dt>Revisada por</dt>
+            <dd>{{ c.revisado_por_email }} · {{ c.revisado_at.strftime('%d/%m/%Y %H:%M') if c.revisado_at else '' }}</dd>
+            {% endif %}
+          </dl>
+        </div>
+      </details>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="vacio">
+    <b>No hay compras {% if filtro_estado == 'pendiente' %}por activar{% else %}con ese estado{% endif %}.</b>
+    <p>Cuando un cliente compre un plan desde la web con pago manual, aparecerá aquí con su comprobante para que lo verifiques.</p>
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras&estado=todas">Ver todas las compras</a>
+  </div>
+  {% endif %}
+</div>

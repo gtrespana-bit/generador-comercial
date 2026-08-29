@@ -1,9 +1,10 @@
 {% extends "admin/base_admin.html" %}
 
 {% block title %}Analítica{% endblock %}
-{% block topbar_title %}Analítica de Producto{% endblock %}
-{% block topbar_actions %}
-  <div class="alc-window-group">
+{% block page_title %}Analítica de producto{% endblock %}
+{% block page_subtitle %}Embudo, retención y uso real del producto · Operador: <span class="sub-op">{{ operador }}</span> · {{ resumen.hoy.strftime("%d/%m/%Y") }}{% endblock %}
+{% block page_acciones %}
+  <div class="alc-window-group" role="group" aria-label="Ventana de la medición">
     <a href="/admin/analitica?dias=7" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 7 else 'btn-secondary' }}">7 días</a>
     <a href="/admin/analitica?dias=30" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 30 else 'btn-secondary' }}">30 días</a>
     <a href="/admin/analitica?dias=90" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 90 else 'btn-secondary' }}">90 días</a>
@@ -11,7 +12,6 @@
 {% endblock %}
 
 {% block extra_css %}
-<style nonce="{{ request.state.csp_nonce }}">
   .btn-primary { background: var(--brand-color); color: #fff; }
   .btn-secondary { color: var(--text-muted); }
   .btn-secondary:hover { background: #f4f7f5; }
@@ -96,14 +96,9 @@
     .cohorte-table th, .cohorte-table td { padding: 8px 4px; font-size: 0.74rem; }
     .cel { width: 36px; height: 28px; }
   }
-</style>
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-title">Analítica de producto</h1>
-  <p class="page-subtitle">
-    Embudo, retención y uso real del producto · Operador: <span class="sub-op">{{ operador }}</span> · {{ resumen.hoy.strftime("%d/%m/%Y") }}
-  </p>
   <p class="note-h">Medición propia en el servidor (sin cookies, sin terceros). Los pasos de presupuestación cuentan desde la implantación de la telemetría.</p>
 
   <div class="kpis">

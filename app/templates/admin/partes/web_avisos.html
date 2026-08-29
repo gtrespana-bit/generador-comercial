@@ -1,0 +1,159 @@
+{# Web › Avisos y banners (C4). Crear, activar/desactivar y editar en línea:
+   el servicio `actualizar_aviso` ya existía pero ninguna ruta lo usaba. #}
+
+<div class="grid-lateral">
+  <div class="card">
+    <div class="card-header">
+      <h2>Avisos publicados</h2>
+      <div class="card-header-acc">
+        <span class="badge badge-success">{{ visibles }} visible{{ 's' if visibles != 1 else '' }}</span>
+        <span class="badge badge-neutral">{{ avisos|length }} en total</span>
+      </div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Aviso</th><th>Ventana</th><th>Estado público</th><th>Acciones</th></tr></thead>
+        <tbody>
+          {% for aviso in avisos %}
+          <tr>
+            <td>
+              <div class="fila-dato">
+                <b>{{ aviso.titulo }}</b>
+                <small class="muted">{{ aviso.mensaje|truncate(150) if aviso.mensaje else 'Sin mensaje, solo título.' }}</small>
+              </div>
+              <div class="fila-meta">
+                <span class="badge badge-neutral">{{ aviso.tipo }}</span>
+                <span class="badge {{ 'badge-danger' if aviso.nivel == 'danger' else ('badge-warning' if aviso.nivel == 'warning' else 'badge-info') }}">{{ aviso.nivel }}</span>
+              </div>
+            </td>
+            <td class="muted">
+              {{ aviso.inicio|fecha if aviso.inicio else 'abierto' }}
+              → {{ aviso.fin|fecha if aviso.fin else 'sin fin' }}
+            </td>
+            <td>
+              {% if aviso.activo and aviso.en_ventana %}
+              <span class="badge badge-success">Visible</span>
+              {% elif aviso.activo and aviso.inicio and aviso.inicio > hoy %}
+              <span class="badge badge-info">Programado</span>
+              {% elif aviso.activo %}
+              <span class="badge badge-warning">Fuera de ventana</span>
+              {% else %}
+              <span class="badge badge-neutral">Oculto</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="tabla-acciones">
+                <form class="form-inline" method="post" action="/admin/avisos/{{ aviso.id }}/alternar?activo={{ '0' if aviso.activo else '1' }}">
+                  <input type="hidden" name="volver" value="/admin/web?tab=avisos">
+                  <button class="btn btn-sm {{ 'btn-secondary' if aviso.activo else '' }}" type="submit">{{ 'Desactivar' if aviso.activo else 'Activar' }}</button>
+                </form>
+                <details class="desplegable-celda">
+                  <summary>Editar</summary>
+                  <form class="mini-form" method="post" action="/admin/avisos/{{ aviso.id }}/editar">
+                    <label class="campo-etiqueta">Título</label>
+                    <input class="form-control" name="titulo" type="text" maxlength="180" value="{{ aviso.titulo }}" required>
+                    <label class="campo-etiqueta">Mensaje</label>
+                    <textarea class="form-control" name="mensaje" rows="3">{{ aviso.mensaje }}</textarea>
+                    <div class="campos-dos">
+                      <div>
+                        <label class="campo-etiqueta">Tipo</label>
+                        <select class="form-control" name="tipo">
+                          {% for tipo in tipos %}<option value="{{ tipo }}" {{ 'selected' if aviso.tipo == tipo else '' }}>{{ tipo }}</option>{% endfor %}
+                        </select>
+                      </div>
+                      <div>
+                        <label class="campo-etiqueta">Nivel</label>
+                        <select class="form-control" name="nivel">
+                          {% for nivel in niveles %}<option value="{{ nivel }}" {{ 'selected' if aviso.nivel == nivel else '' }}>{{ nivel }}</option>{% endfor %}
+                        </select>
+                      </div>
+                      <div>
+                        <label class="campo-etiqueta">Inicio</label>
+                        <input class="form-control" name="inicio" type="date" value="{{ aviso.inicio.isoformat() if aviso.inicio else '' }}">
+                      </div>
+                      <div>
+                        <label class="campo-etiqueta">Fin</label>
+                        <input class="form-control" name="fin" type="date" value="{{ aviso.fin.isoformat() if aviso.fin else '' }}">
+                      </div>
+                    </div>
+                    <label class="check-row campo-check">
+                      <input type="checkbox" name="activo" value="1" {{ 'checked' if aviso.activo else '' }}>
+                      <span class="form-label">Activo</span>
+                    </label>
+                    <div class="form-acciones">
+                      <button class="btn btn-sm" type="submit">Guardar aviso</button>
+                    </div>
+                  </form>
+                </details>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4">
+            <div class="vacio">
+              <b>No hay avisos.</b>
+              <p>Crea uno para mantenimiento programado, un aviso legal o un anuncio de versión: aparecerá como banda en la web pública durante su ventana.</p>
+            </div>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ficha-lado">
+    <div class="card">
+      <div class="card-header"><h2>Nuevo aviso</h2></div>
+      <div class="card-body">
+        <form method="post" action="/admin/avisos/crear">
+          <input type="hidden" name="volver" value="/admin/web?tab=avisos">
+          <div class="form-group">
+            <label class="form-label" for="aviso-titulo">Título</label>
+            <input class="form-control" id="aviso-titulo" name="titulo" type="text" required maxlength="180" placeholder="Mantenimiento el sábado 06/09">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="aviso-mensaje">Mensaje</label>
+            <textarea class="form-control" id="aviso-mensaje" name="mensaje" rows="3" placeholder="Qué pasa, desde cuándo y qué debe hacer el cliente."></textarea>
+          </div>
+          <div class="campos-dos">
+            <div class="form-group">
+              <label class="form-label" for="aviso-tipo">Tipo</label>
+              <select class="form-control" id="aviso-tipo" name="tipo">
+                {% for tipo in tipos %}<option value="{{ tipo }}">{{ tipo }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="aviso-nivel">Nivel</label>
+              <select class="form-control" id="aviso-nivel" name="nivel">
+                {% for nivel in niveles %}<option value="{{ nivel }}" {{ 'selected' if nivel == 'info' else '' }}>{{ nivel }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="aviso-inicio">Inicio</label>
+              <input class="form-control" id="aviso-inicio" name="inicio" type="date">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="aviso-fin">Fin</label>
+              <input class="form-control" id="aviso-fin" name="fin" type="date">
+            </div>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="aviso-activo" name="activo" value="1">
+            <span class="form-label">Activo de inmediato</span>
+          </label>
+          <div class="form-acciones">
+            <button class="btn btn-bloque" type="submit">Crear aviso</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Cómo se ven</h2></div>
+      <div class="card-body">
+        <p class="note-block">Un aviso es público si está <b>activo</b> y hoy cae dentro de su ventana. El nivel <code>info</code> y <code>warning</code> se muestra como banda; <code>danger</code> como aviso de mantenimiento en toda la web.</p>
+        <a class="btn btn-sm btn-secondary" href="/" target="_blank" rel="noopener">Comprobar en la landing</a>
+      </div>
+    </div>
+  </div>
+</div>

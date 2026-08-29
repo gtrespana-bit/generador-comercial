@@ -571,8 +571,14 @@ def test_el_panel_no_expone_datos_de_negocio_del_cliente(entorno, monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_el_panel_admin_es_el_hub_del_operador(entorno, monkeypatch):
-    """/admin muestra clientes, planes, fechas y compras en una sola vista."""
+def test_el_panel_admin_es_la_agenda_y_no_una_tabla_de_todo(entorno, monkeypatch):
+    """`/admin` es la agenda del día; el listado de clientes vive en Clientes.
+
+    Antes el hub repetía la tabla entera de clientes —con orden y filtros en JS—
+    y por eso había que cargar toda la base para mirar qué vencía hoy. El contrato
+    ahora es: aquí cifras y pendientes; las filas, en su área, filtradas y
+    ordenadas en el servidor (la URL se puede compartir y el CSV la respeta).
+    """
     Session, datos, estado = entorno
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
     from datetime import date
@@ -587,16 +593,25 @@ def test_el_panel_admin_es_el_hub_del_operador(entorno, monkeypatch):
         db.commit()
 
     with _cliente() as client:
-        r = client.get("/admin")
+        agenda = client.get("/admin")
+        directorio = client.get("/admin/clientes")
 
-    assert r.status_code == 200
-    assert "Panel de administración" in r.text
-    assert "Constructora Cliente" in r.text
-    assert "Caducidad" in r.text
-    assert "data-sort" in r.text          # tabla ordenable
-    assert "filtro-estado" in r.text      # filtros
-    assert "admin-panel.js" in r.text     # JS del panel
-    assert "Mensual" in r.text or "Anual" in r.text
+    assert agenda.status_code == 200
+    # El hub ya no es una tabla universal de clientes con sus acciones: aquí se
+    # mira la agenda y se decide a dónde ir. Conceder o suspender se hace en la
+    # lista (Ingresos › Contratos) o en la ficha del cliente.
+    assert "/admin/organizaciones/" not in agenda.text
+    assert "Compras por activar" in agenda.text
+    assert "Clientes por vencer" in agenda.text
+    assert "/admin/clientes" in agenda.text               # y a un clic
+
+    assert directorio.status_code == 200
+    assert "Constructora Cliente" in directorio.text
+    assert "Mensual" in directorio.text or "Anual" in directorio.text
+    # Filtro y orden server-side: no dependen de un JS que cargue las filas.
+    assert 'name="estado"' in directorio.text
+    assert "orden=vence" in directorio.text
+    assert "Vencimiento" in directorio.text
 
 
 def test_el_panel_admin_es_solo_de_operador(entorno, monkeypatch):
@@ -633,14 +648,19 @@ def test_panel_admin_muestra_compras_pendientes_y_activacion(entorno, monkeypatc
         compra_id = compra.id
 
     with _cliente() as client:
-        r = client.get("/admin")
+        r = client.get("/admin/ingresos?tab=compras")
         assert r.status_code == 200
-        assert "Compras por activar" in r.text
-        assert "Anual" in r.text
+        assert "Compras por revisar" in r.text
+        assert "Plan anual" in r.text
+        assert "1 visible" in r.text
         assert f"compras/{compra_id}/activar" in r.text
+        # La acción se dispara desde la propia fila: sin salir de la lista.
+        assert 'name="volver" value="/admin/ingresos?tab=compras&amp;estado=pendiente"' in r.text
 
         r2 = client.post(f"/admin/compras/{compra_id}/activar", follow_redirects=False)
         assert r2.status_code == 303
+        assert r2.headers["location"].startswith("/admin/licencias") or \
+            r2.headers["location"].startswith("/admin/ingresos?tab=compras")
 
     with Session() as db:
         from app.models import CompraPlan
@@ -660,8 +680,15 @@ def test_panel_admin_muestra_compras_pendientes_y_activacion(entorno, monkeypatc
 # ---------------------------------------------------------------------------
 
 
-def test_cada_fila_del_panel_trae_su_ficha_de_acciones(entorno, monkeypatch):
-    """Pulsar un cliente basta para tener delante todo lo que se le puede hacer."""
+def test_cada_cliente_lleva_a_su_ficha_y_ahi_estan_las_acciones(entorno, monkeypatch):
+    """La fila enlaza a la ficha; las acciones viven en la ficha, con su contexto.
+
+    El panel anterior desplegaba un cajón de acciones dentro de cada fila de la
+    tabla universal: con decenas de clientes eso eran decenas de formularios
+    renderizados por si acaso. Ahora la fila aporta el enlace y la pestaña
+    «Acceso y licencias» tiene el formulario completo, la cadena de licencias y
+    la suspensión, que es donde se puede decidir con los datos delante.
+    """
     Session, datos, estado = entorno
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
     org_id = datos["organizacion_id"]
@@ -679,16 +706,18 @@ def test_cada_fila_del_panel_trae_su_ficha_de_acciones(entorno, monkeypatch):
         db.commit()
 
     with _cliente() as client:
-        r = client.get("/admin")
+        fila = client.get("/admin/clientes")
+        ficha = client.get(f"/admin/clientes/{org_id}?tab=acceso")
 
-    assert r.status_code == 200
-    # La fila es el disparador y la ficha su panel asociado (accesible).
-    assert f'data-org="{org_id}"' in r.text
-    assert f'id="acc-{org_id}"' in r.text
-    assert f'aria-controls="acc-{org_id}"' in r.text
-    # Las acciones del cliente, sin salir de su fila.
-    assert f"/admin/organizaciones/{org_id}/conceder" in r.text
-    assert f"/admin/organizaciones/{org_id}/suspender" in r.text
+    assert fila.status_code == 200
+    assert f"/admin/clientes/{org_id}" in fila.text
+    assert f"/admin/clientes/{org_id}?tab=gestion" in fila.text
+
+    assert ficha.status_code == 200
+    assert f"/admin/organizaciones/{org_id}/conceder" in ficha.text
+    assert f"/admin/organizaciones/{org_id}/suspender" in ficha.text
+    # Lo irreversible se confirma, y se confirma en el propio formulario.
+    assert "data-confirmar" in ficha.text
 
 
 def test_conceder_desde_la_fila_no_pide_elegir_organizacion(entorno, monkeypatch):

@@ -1,0 +1,94 @@
+{# Sistema › Flags y claves (D3 + A6). Dos cosas que son lo mismo: «qué está
+   encendido en este despliegue». Flags = funciones; claves = integraciones. #}
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h2>Feature flags</h2>
+      <span class="badge badge-neutral">{{ flags|length }}</span>
+    </div>
+    {% for flag in flags %}
+    <div class="bandera-fila">
+      <div class="bandera-txt">
+        <b>{{ flag.nombre }}</b>
+        <small><code>{{ flag.clave }}</code>{% if flag.descripcion %} · {{ flag.descripcion }}{% endif %}</small>
+      </div>
+      {% if flag.activo %}<span class="badge badge-success">Activado</span>
+      {% else %}<span class="badge badge-neutral">Desactivado</span>{% endif %}
+      <form class="form-inline" method="post" action="/admin/flags/{{ flag.clave }}/alternar?activo={{ '0' if flag.activo else '1' }}">
+        <button class="btn btn-sm {{ 'btn-secondary' if flag.activo else '' }}" type="submit">{{ 'Desactivar' if flag.activo else 'Activar' }}</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="vacio">
+      <b>Sin flags configurados.</b>
+      <p>Los flags se declaran en el código (funciones piloto, onboarding, planos, IA). Aquí se conmutan sin redesplegar.</p>
+    </div>
+    {% endfor %}
+    <div class="card-pie">
+      <span class="muted-note">Un flag apaga la función para todo el mundo: no es un permiso por cliente.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Claves de integración</h2>
+      <span class="badge badge-neutral">{{ claves|length }}</span>
+    </div>
+    <div class="card-body">
+      <form class="form-cuadricula" method="post" action="/admin/api-keys/crear">
+        <div class="form-group">
+          <label class="form-label" for="api-nombre">Nombre</label>
+          <input class="form-control" id="api-nombre" name="nombre" type="text" required maxlength="100" placeholder="Cron de informes">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="api-scopes">Scopes (separados por coma)</label>
+          <input class="form-control" id="api-scopes" name="scopes" type="text" placeholder="cobros.leer, licencias.escribir">
+        </div>
+        <div class="form-group form-acciones-sin">
+          <button class="btn" type="submit">Crear clave</button>
+        </div>
+      </form>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Nombre</th><th>Scopes</th><th>Estado</th><th>Último uso</th><th></th></tr></thead>
+        <tbody>
+          {% for clave in claves %}
+          <tr>
+            <td class="org-name">{{ clave.nombre }}<div class="muted">por {{ clave.creada_por or '—' }}</div></td>
+            <td class="muted">{{ clave.scopes|join(', ') or '—' }}</td>
+            <td>
+              {% if clave.activo %}<span class="badge badge-success">Activa</span>
+              {% else %}<span class="badge badge-danger">{{ 'Revocada' if clave.revoked_at else 'Inactiva' }}</span>{% endif %}
+            </td>
+            <td class="muted">{{ clave.last_used_at or 'nunca' }}</td>
+            <td>
+              {% if clave.activo %}
+              <form class="form-inline" method="post" action="/admin/api-keys/{{ clave.id }}/revocar"
+                    data-confirmar="Se revocará «{{ clave.nombre }}» y la integración dejará de funcionar.">
+                <button class="btn btn-sm btn-danger" type="submit">Revocar</button>
+              </form>
+              {% else %}
+              <span class="muted-note">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5"><div class="vacio"><b>Ninguna clave creada.</b><p>Una clave permite a un trabajo externo llamar al panel con los scopes que le des. Se muestra una sola vez: de la base solo se guarda el hash SHA-256.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if token_nuevo %}
+<div class="card">
+  <div class="card-header"><h2>Copia la clave ahora</h2><span class="badge badge-warning">Solo se muestra una vez</span></div>
+  <div class="card-body">
+    <p class="muted">Guárdala como secreto de la integración. No se puede recuperar: si se pierde, se crea otra.</p>
+    <pre class="token-caja">{{ token_nuevo }}</pre>
+  </div>
+</div>
+{% endif %}

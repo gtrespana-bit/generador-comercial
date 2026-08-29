@@ -1,79 +1,27 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Web pública{% endblock %}
-{% block topbar_title %}Web · {{ product_name }}{% endblock %}
+{% block title %}Web · {{ pestana_nombre }}{% endblock %}
 
-{% block extra_css %}
-  <style nonce="{{ request.state.csp_nonce }}">
-    .form-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center; }
-    .vista-item { border-top:1px solid var(--border-color); padding-top:18px; margin-top:18px; }
-    .vista-item .head { width:100%; }
-    .vista-item h3 { margin:0; font-size:1rem; }
-    .vista-item .head .muted { margin-left:auto; }
-  </style>
+{% block page_acciones %}
+  {% if pestana == 'contenido' %}
+  <a class="btn btn-secondary" href="/" target="_blank" rel="noopener">Ver la landing</a>
+  {% elif pestana == 'avisos' %}
+  <a class="btn btn-secondary" href="/" target="_blank" rel="noopener">Ver los avisos en vivo</a>
+  {% elif pestana == 'versiones' %}
+  <a class="btn btn-secondary" href="/novedades" target="_blank" rel="noopener">Ver /novedades</a>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-title">Web pública</h1>
-  <p class="page-subtitle">El contenido que se ve en la landing y en las páginas SEO, sin tocar código. <span class="sub-op">El borrador nunca sale al público; solo cuando publicas.</span></p>
+  {% include "admin/partes/web_" + pestana + ".html" %}
+{% endblock %}
 
-  {% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
-  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-
-  <div class="card">
-    <div class="card-header">
-      <h2>Contenido</h2>
-      <span class="badge badge-neutral">{{ contenido|length }} claves</span>
-    </div>
-    <div class="card-body">
-      {% for item in contenido %}
-      <div class="vista-item">
-        <div class="head">
-          <h3>{{ item.nombre }}</h3>
-          <span class="muted">{{ item.clave }}</span>
-        </div>
-        <p class="muted">{{ item.descripcion }}</p>
-        {% if item.publicado %}
-          <p class="muted">Publicado {{ item.publicado_at|string }} por {{ item.publicado_por }}</p>
-        {% else %}
-          <p class="muted-note">Sin contenido publicado todavía.</p>
-        {% endif %}
-
-        <form class="grid-form" method="post" action="/admin/web/guardar">
-          <input type="hidden" name="clave" value="{{ item.clave }}">
-          <div class="form-group">
-            <label class="form-label" for="contenido-{{ loop.index }}">Borrador (JSON)</label>
-            <textarea class="form-control" id="contenido-{{ loop.index }}" name="contenido_json" rows="8" spellcheck="false">{{ item.borrador | tojson }}</textarea>
-          </div>
-          <div class="form-actions">
-            <button class="btn" type="submit">Guardar borrador</button>
-          </div>
-        </form>
-
-        <div class="form-actions">
-          <form class="form-inline" method="post" action="/admin/web/{{ item.clave }}/publicar">
-            <button class="btn" type="submit">Publicar</button>
-          </form>
-          <form class="form-inline" method="post" action="/admin/web/{{ item.clave }}/descartar">
-            <button class="btn btn-secondary" type="submit">Descartar</button>
-          </form>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Claves disponibles</h2></div>
-    <div class="table-container">
-      <table>
-        <thead><tr><th>Clave</th><th>Página objetivo</th></tr></thead>
-        <tbody>
-          {% for item in contenido %}
-          <tr><td class="org-name">{{ item.clave }}</td><td class="muted">{{ item.nombre }}</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+{% block extra_css %}
+  .clave-bloque { border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; background: #fbfdfb; }
+  .clave-cab { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .clave-cab h3 { margin: 0; font-size: 0.98rem; }
+  .clave-cab code { font-size: 0.76rem; }
+  .clave-est { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .json-editor textarea { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.8rem; line-height: 1.5; }
+  .json-nota { font-size: 0.76rem; color: var(--text-muted); margin: 6px 0 0; }
 {% endblock %}

@@ -1,0 +1,55 @@
+{# Web › Contenido y SEO (C1/C2). Cada clave de contenido se edita como un
+   bloque con su estado (publicado / borrador pendiente) justo al lado, en vez
+   de una tabla aparte que repetía las mismas claves. #}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Bloques de contenido</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ contenido|length }} clave{{ 's' if contenido|length != 1 else '' }}</span>
+      <span class="badge badge-warning">{{ pendientes_publicar }} con borrador sin publicar</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="note-block">
+      Escribe en el campo <b>Campos</b> usando JSON: <code>{"titulo": "…", "cta": "…"}</code>.
+      Guardar deja un <b>borrador</b>; la web pública no cambia hasta que pulsas <b>Publicar</b>.
+      <b>Descartar</b> tira el borrador y deja visible lo publicado.
+    </p>
+
+    {% for item in contenido %}
+    <section class="clave-bloque">
+      <div class="clave-cab">
+        <h3>{{ item.nombre }}</h3>
+        <code>{{ item.clave }}</code>
+        <div class="clave-est">
+          {% if item.borrador and item.borrador != item.publicado %}
+          <span class="badge badge-warning" title="El borrador es distinto a lo publicado">Borrador sin publicar</span>
+          {% endif %}
+          {% if item.publicado %}
+          <span class="badge badge-success">Publicado {{ item.publicado_at.strftime('%d/%m/%Y %H:%M') if item.publicado_at else '—' }}{% if item.publicado_por %} · {{ item.publicado_por }}{% endif %}</span>
+          {% else %}
+          <span class="badge badge-neutral">Nunca publicado</span>
+          {% endif %}
+        </div>
+      </div>
+      <p class="muted">{{ item.descripcion }}</p>
+
+      <form class="json-editor" method="post" action="/admin/web/guardar">
+        <input type="hidden" name="clave" value="{{ item.clave }}">
+        <div class="form-group">
+          <label class="form-label" for="contenido-{{ loop.index }}">Campos (JSON)</label>
+          <textarea class="form-control" id="contenido-{{ loop.index }}" name="contenido_json" rows="{{ item.filas }}" spellcheck="false">{{ item.borrador_texto }}</textarea>
+        </div>
+        <div class="form-acciones">
+          <button class="btn" type="submit">Guardar borrador</button>
+          <button class="btn btn-secondary" type="submit" formaction="/admin/web/{{ item.clave }}/publicar">Publicar</button>
+          <button class="btn btn-secondary" type="submit" formaction="/admin/web/{{ item.clave }}/descartar"
+                  data-confirmar="Se tirará el borrador de «{{ item.nombre }}» y la web seguirá mostrando lo publicado.">Descartar borrador</button>
+          <span class="muted-note">Campos disponibles: {{ item.campos|join(', ') if item.campos else 'los que defina la plantilla' }}</span>
+        </div>
+      </form>
+    </section>
+    {% endfor %}
+  </div>
+</div>

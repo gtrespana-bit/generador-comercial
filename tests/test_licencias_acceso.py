@@ -769,21 +769,28 @@ def test_el_panel_explica_si_el_correo_no_esta_configurado(
 
 
 def test_el_panel_avisa_cuando_el_corte_esta_desactivado(entorno_panel, monkeypatch):
-    """Sin corte automático, una licencia vencida es solo información."""
+    """Sin corte automático, una licencia vencida es solo información.
+
+    El aviso se ve dos veces a propósito: en la agenda (donde el operador abre el
+    día) y en Ingresos › Contratos (donde concede o suspende). No es redundancia
+    de pantallas, es que el aviso esté donde se toma la decisión.
+    """
     _Session, _datos, _estado = entorno_panel
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
     monkeypatch.delenv("COTIZAT_EXIGIR_LICENCIA", raising=False)
 
     with _cliente_api() as client:
-        respuesta = client.get("/admin/licencias")
+        respuesta = client.get("/admin/ingresos?tab=contratos")
+        agenda = client.get("/admin")
 
     assert respuesta.status_code == 200
     assert "corte automático de acceso está" in respuesta.text
     assert "COTIZAT_EXIGIR_LICENCIA" in respuesta.text
+    assert "corte automático de acceso está" in agenda.text
 
     monkeypatch.setenv("COTIZAT_EXIGIR_LICENCIA", "true")
     with _cliente_api() as client:
-        respuesta = client.get("/admin/licencias")
+        respuesta = client.get("/admin/ingresos?tab=contratos")
     assert "corte automático de acceso está" not in respuesta.text
 
 

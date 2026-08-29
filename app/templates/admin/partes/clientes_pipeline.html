@@ -1,0 +1,79 @@
+{# Clientes › Pipeline comercial (B4). El CRM era una tabla paralela que
+   repetía las mismas organizaciones; aquí es una vista del mismo directorio,
+   agrupada por estado y editable sin salir del tablero. #}
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ resumen_crm.total }}</div>
+    <div class="kpi-label">En el canal</div>
+    <p class="note-sub">Organizaciones con estado comercial asignado o no</p>
+  </div>
+  {% for estado, etiqueta in estados_crm %}
+  <div class="kpi-card {{ 'warn' if estado == 'riesgo' else '' }}">
+    <div class="kpi-value">{{ resumen_crm.por_estado.get(estado, 0) }}</div>
+    <div class="kpi-label">{{ etiqueta }}</div>
+    <p class="note-sub">{{ descripciones_crm.get(estado, '') }}</p>
+  </div>
+  {% endfor %}
+  <div class="kpi-card danger">
+    <div class="kpi-value">{{ resumen_crm.proximos|length }}</div>
+    <div class="kpi-label">Contacto hoy o atrasado</div>
+    <p class="note-sub">Próxima fecha de contacto vencida</p>
+  </div>
+</div>
+
+<div class="tablero">
+  {% for estado, etiqueta in columnas_pipeline %}
+  <section class="columna-tablero">
+    <div class="columna-tablero-cab">
+      <h3>{{ etiqueta }}</h3>
+      <span class="cnt">{{ pipeline[estado]|length }}</span>
+    </div>
+    <div class="columna-tablero-cuerpo">
+      {% for ficha in pipeline[estado] %}
+      <article class="tarjeta-cliente">
+        <a href="/admin/clientes/{{ ficha.organizacion.id }}?tab=gestion">{{ ficha.organizacion.nombre }}</a>
+        <small>
+          {% if ficha.acceso %}{{ ficha.acceso }}{% else %}sin acceso{% endif %}
+          {% if ficha.ingresos %} · {{ "%.2f"|format(ficha.ingresos) }} US${% endif %}
+        </small>
+        {% if ficha.proximo_contacto %}
+        <small class="{{ 'texto-peligro' if ficha.vence_hoy else '' }}">
+          Contacto: {{ ficha.proximo_contacto }}{{ ' · hoy' if ficha.vence_hoy else '' }}
+        </small>
+        {% endif %}
+        {% if ficha.notas %}<small>{{ ficha.notas|truncate(80) }}</small>{% endif %}
+        <form method="post" action="/admin/crm/{{ ficha.organizacion.id }}/guardar">
+          <label class="visualmente-oculto" for="crm-{{ ficha.organizacion.id }}">Mover a…</label>
+          <select id="crm-{{ ficha.organizacion.id }}" name="estado">
+            {% for valor, nombre_estado in estados_crm %}
+            <option value="{{ valor }}" {{ 'selected' if valor == estado else '' }}>{{ nombre_estado }}</option>
+            {% endfor %}
+          </select>
+          <input type="hidden" name="proximo_contacto" value="{{ ficha.proximo_contacto or '' }}">
+          <input type="hidden" name="notas" value="{{ ficha.notas or '' }}">
+          <input type="hidden" name="volver" value="/admin/clientes?tab=pipeline">
+          <button class="btn btn-sm btn-secondary" type="submit">Mover</button>
+        </form>
+      </article>
+      {% else %}
+      <div class="vacio-tablero">Ningún cliente en esta etapa.</div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Cómo se mueve un cliente</h2>
+    <span class="card-nota">El estado comercial es del equipo, no del cliente: nunca se muestra en la app.</span>
+  </div>
+  <div class="card-body">
+    <p class="note-block">
+      Mover una tarjeta solo cambia la etiqueta del canal y su fecha de próximo contacto; no concede ni quita acceso.
+      Para el acceso usa <a href="/admin/ingresos?tab=contratos">Ingresos › Contratos</a> o la pestaña
+      «Acceso y licencias» de la ficha del cliente.
+    </p>
+  </div>
+</div>

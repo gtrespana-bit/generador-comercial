@@ -1,0 +1,87 @@
+{# Ingresos › Cobros del mes (B2). El libro del mes: licencias de pago, compras
+   y facturas/pagos de los clientes en una sola tabla. #}
+
+<div class="kpis">
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ "%.2f"|format(cobros.ingresos_mes) }} <small>US$</small></div>
+    <div class="kpi-label">Licencias facturadas</div>
+    <p class="note-sub">Concesiones de pago registradas en {{ periodo.etiqueta|lower }}</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ "%.2f"|format(cobros.cobrado_mes) }} <small>US$</small></div>
+    <div class="kpi-label">Cobrado confirmado</div>
+    <p class="note-sub">Pagos confirmados y compras activadas</p>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-value">{{ cobros.pendientes_mes }}</div>
+    <div class="kpi-label">Pendientes</div>
+    <p class="note-sub">Facturas emitidas o compras sin verificar</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ cobros.total_movimientos }}</div>
+    <div class="kpi-label">Movimientos</div>
+    <p class="note-sub">{{ periodo.rango }}</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Movimientos de {{ periodo.etiqueta|lower }}</h2>
+    <div class="card-header-acc">
+      {% include "admin/partes/_cambio_mes.html" %}
+      <a class="btn btn-sm btn-secondary" href="/admin/cobros.csv?mes={{ periodo.actual }}{% if filtro_tipo %}&amp;tipo={{ filtro_tipo }}{% endif %}">CSV</a>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Tipo</span>
+    {% for valor, etiqueta, contador in opciones_tipo %}
+    <a class="chip {{ 'sel' if filtro_tipo == valor else '' }}" href="{{ ruta_filtro(tipo=valor) }}">{{ etiqueta }} <span class="chip-cnt">{{ contador }}</span></a>
+    {% endfor %}
+  </div>
+
+  {% set vista_modulo = 'cobros' %}
+  {% set vistas_guardadas = vistas %}
+  {% set vista_activa = 0 %}
+  {% set vista_ruta_base = '/admin/ingresos?tab=cobros' %}
+  {% set vista_ruta_actual = '/admin/ingresos?tab=cobros&mes=' ~ periodo.actual ~ ('&tipo=' ~ filtro_tipo if filtro_tipo else '') %}
+  {% set vista_accion = '/admin/vistas/crear' %}
+  {% set vista_filtros = dict_filtros %}
+  {% set vista_total = cobros.total_movimientos %}
+  {% include "admin/partes/_barra_vistas.html" %}
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr><th>Fecha</th><th>Tipo</th><th>Número</th><th>Cliente</th><th class="tabla-num">Importe</th><th>Moneda</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        {% for m in cobros.movimientos %}
+        <tr>
+          <td>{{ m.fecha.strftime('%d/%m/%Y') if m.fecha else '—' }}</td>
+          <td><span class="badge {{ etiquetas_badge.get(m.tipo, 'badge-neutral') }}">{{ etiquetas_tipo.get(m.tipo, m.tipo) }}</span></td>
+          <td><code class="accion-code">{{ m.numero }}</code></td>
+          <td class="org-name"><a href="/admin/clientes/{{ m.organizacion_id }}?tab=cobros">{{ m.organizacion_nombre }}</a></td>
+          <td class="tabla-num">{{ "%.2f"|format(m.importe) }}</td>
+          <td class="muted">{{ m.moneda }}</td>
+          <td>
+            <span class="badge {{ 'badge-success' if m.estado in ('pagada', 'confirmado', 'Activada') else ('badge-warning' if m.estado in ('pendiente', 'Pendiente', 'emitida') else 'badge-neutral') }}">{{ etiquetas_estado.get(m.estado, m.estado) }}</span>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>Sin movimientos en {{ periodo.etiqueta|lower }}{% if filtro_tipo %} de ese tipo{% endif %}.</b>
+            <p>Aquí aparecen las licencias de pago concedidas, las compras de plan activadas y las facturas y pagos que registran los clientes.</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=cobros&mes={{ periodo.anterior_mes }}">Revisa el mes anterior</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-pie">
+    <span class="muted-note">Los cobros de clientes se leen solo agregados (número, fecha, importe y estado): el panel nunca abre el contenido de sus presupuestos.</span>
+  </div>
+</div>

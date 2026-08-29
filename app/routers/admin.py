@@ -2,9 +2,11 @@
 
 import hmac
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Form
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..panel_arquitectura import es_destino_panel
+from .admin_paginas import _respuesta as _respuesta_panel, contexto_sistema
 from ..database import get_cron_db
 from ..datos_pago import PLANES
 from ..services import telemetria
@@ -32,6 +34,9 @@ from ..services.web_admin import (
     TIPOS_AVISO,
     alternar_aviso,
     alternar_release,
+    actualizar_aviso,
+    actualizar_release,
+    borrar_crm,
     claves_contenido_disponibles,
     crear_api_key,
     crear_aviso,
@@ -57,6 +62,26 @@ from ..models import ROLES_OPERADOR, ROLES_OPERADOR_ETIQUETA
 
 router = APIRouter()
 
+#: A dónde devuelve cada acción del panel. Con las áreas agrupadas en pestañas
+#: el destino ya no es una ruta suelta: es la pestaña concreta, y se puede
+#: sobrescribir con `volver` cuando la acción se disparó desde otra pantalla
+#: (la ficha de un cliente, la campana, el buscador).
+VOLVER_ESTADO = "/admin/sistema?tab=estado"
+VOLVER_CONTRATOS = "/admin/ingresos?tab=contratos"
+VOLVER_COMPRAS = "/admin/ingresos?tab=compras"
+VOLVER_COBROS = "/admin/ingresos?tab=cobros"
+VOLVER_RENOVACIONES = "/admin/ingresos?tab=renovaciones"
+VOLVER_EQUIPO = "/admin/sistema?tab=equipo"
+VOLVER_ACCESOS = "/admin/sistema?tab=accesos"
+VOLVER_AUDITORIA = "/admin/sistema?tab=auditoria"
+VOLVER_AUTOMATIZACIONES = "/admin/sistema?tab=automatizaciones"
+VOLVER_CORREOS = "/admin/sistema?tab=correos"
+VOLVER_CONTENIDO = "/admin/web?tab=contenido"
+VOLVER_AVISOS = "/admin/web?tab=avisos"
+VOLVER_VERSIONES = "/admin/web?tab=versiones"
+VOLVER_DIRECTORIO = "/admin/clientes?tab=directorio"
+VOLVER_PIPELINE = "/admin/clientes?tab=pipeline"
+
 #: Ruta del trabajo programado de Vercel (vercel.json → `crons`). Un solo
 #: punto de verdad: `tests/test_vercel_cron_config.py` comprueba que la ruta
 #: declarada en vercel.json coincide con esta, y /readyz lo publica.
@@ -68,14 +93,19 @@ CRON_RECORDATORIOS_PATH = "/api/cron/recordatorios-vencimiento"
 CRON_MANTENIMIENTO_PATH = "/api/cron/mantenimiento"
 
 # ---------------------------------------------------------------------------
-# Panel de operador: licencias del producto (E1-060)
+# Acciones del panel de operador (E1-060)
 #
-# Estas rutas son la única excepción al aislamiento multi-tenant, y por eso
-# están agrupadas y marcadas. `get_operator_db` exige que el correo autenticado
-# y verificado figure en COTIZAT_OPERADORES; en PostgreSQL, además, las
-# políticas RLS de `licencias` solo devuelven filas a una sesión marcada como
-# operador. El panel muestra datos de licencia (quién, cuánto, hasta cuándo),
-# nunca datos de negocio de las organizaciones.
+# Este módulo contiene **solo acciones** (POST) y los trabajos programados: las
+# pantallas —Hoy, Clientes, Ingresos, Web, Analítica y Sistema— viven en
+# `app/routers/admin_paginas.py`. Separarlas es lo que permite que seis pantallas
+# sustituyan a las diecisiete rutas planas que había.
+#
+# Ninguna de estas rutas escapa al control de acceso: son la única excepción al
+# aislamiento multi-tenant y por eso están agrupadas y marcadas. `get_operator_db`
+# exige que el correo autenticado y verificado figure en COTIZAT_OPERADORES; en
+# PostgreSQL, además, las políticas RLS de `licencias` solo devuelven filas a una
+# sesión marcada como operador. Después de cada acción se audita y se vuelve a la
+# pestaña de origen (`_volver_a`), nunca a una página fija.
 # ---------------------------------------------------------------------------
 
 
@@ -119,156 +149,6 @@ def _rol_actual(db: Session) -> str:
     return str(db.info.get("operador_rol") or "").lower()
 
 
-def _render_licencias(
-    request: Request,
-    db: Session,
-    *,
-    msg: str = "",
-    error: str = "",
-    status_code: int = 200,
-):
-    filas = resumen_organizaciones(db)
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/licencias.html",
-        {
-            "filas": filas,
-            "totales": totales(filas),
-            "duraciones": [(clave, texto) for clave, (texto, _) in DURACIONES.items()],
-            "origenes": [
-                (origen, ORIGENES_LICENCIA_ETIQUETA[origen])
-                for origen in ORIGENES_LICENCIA
-            ],
-            "hoy": date.today(),
-            "operador": db.info.get("auth_email", ""),
-            # El panel avisa en cabecera si el corte automático está
-            # apagado: sin él, una licencia vencida solo es información, no
-            # una suspensión real del acceso.
-            "exigencia_licencias": exigencia_licencia_activada(),
-            "msg": msg or request.query_params.get("msg", ""),
-            "error": error or request.query_params.get("error", ""),
-        },
-        status_code=status_code,
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/licencias", response_class=HTMLResponse, include_in_schema=False)
-def panel_licencias(request: Request, db: Session = Depends(get_operator_db)):
-    return _render_licencias(request, db)
-
-
-@router.get("/admin", response_class=HTMLResponse, include_in_schema=False)
-def panel_admin(request: Request, db: Session = Depends(get_operator_db)):
-    """Panel de administración premium: clientes, planes y compras en una vista."""
-    from ..services.panel_admin import resumen_admin
-
-    resumen = resumen_admin(db)
-    finanzas = resumen_financiero(db)
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/dashboard.html",
-        {
-            "resumen": resumen,
-            "finanzas": finanzas,
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "exigencia_licencias": exigencia_licencia_activada(),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/analitica", response_class=HTMLResponse, include_in_schema=False)
-def panel_analitica(
-    request: Request,
-    dias: int = 30,
-    db: Session = Depends(get_operator_db),
-):
-    """Panel de analítica de producto (E5-012): embudo, retención y uso.
-
-    Dato propio del servidor que complementa a Google Analytics (que solo ve
-    la capa pública). Solo el operador: las métricas agregan toda la base de
-    clientes y no pertenecen a una organización concreta.
-    """
-    from ..services.analitica import resumen_analitica
-
-    resumen = resumen_analitica(db, dias=dias)
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/analitica.html",
-        {
-            "resumen": resumen,
-            "operador": db.info.get("auth_email", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/operacion", response_class=HTMLResponse, include_in_schema=False)
-def panel_operacion(request: Request, db: Session = Depends(get_operator_db)):
-    """Diagnóstico operativo del despliegue (E3-024), solo para el operador.
-
-    Reutiliza los chequeos de `/readyz` y añade los errores no capturados del
-    proceso. Sin datos de tenant: el panel es del producto, no de un cliente.
-    """
-    diagnostico = diagnostico_operacion()
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/operacion.html",
-        {
-            "diagnostico": diagnostico,
-            "operador": db.info.get("auth_email", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/emails", response_class=HTMLResponse, include_in_schema=False)
-def panel_emails(request: Request, db: Session = Depends(get_operator_db)):
-    """Página para enviar cualquiera de los correos a un buzón y revisarlo.
-
-    Permite al operador ver los correos transaccionales **tal cual llegan** en
-    un cliente real (Gmail, Zoho, Outlook), no como se ven en una vista previa.
-    El destino por omisión es el propio correo del operador.
-    """
-    from ..services.correos_prueba import catalogo_correos
-
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/emails.html",
-        {
-            "correos": catalogo_correos(),
-            "operador": db.info.get("auth_email", ""),
-            "destino": request.query_params.get("destino", "") or db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/equipo", response_class=HTMLResponse, include_in_schema=False)
-def panel_equipo(request: Request, db: Session = Depends(get_operator_db)):
-    """Equipo de operadores: roles, altas y suspensiones (A1)."""
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/equipo.html",
-        {
-            "operadores": listar_operadores(db),
-            "roles": [(rol, ROLES_OPERADOR_ETIQUETA[rol]) for rol in ROLES_OPERADOR],
-            "rol_actual": _rol_actual(db),
-            "es_superadmin": _rol_actual(db) == "superadmin",
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
 @router.post("/admin/equipo/crear", include_in_schema=False)
 async def crear_operador_web(request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
@@ -291,12 +171,12 @@ async def crear_operador_web(request: Request, db: Session = Depends(get_operato
         )
     except (GestionEquipoError, ValueError, TypeError) as exc:
         db.rollback()
-        return _redirect("/admin/equipo", error=str(exc))
+        return _redirect(VOLVER_EQUIPO, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error creando operador:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/equipo", msg=f"Operador {operador.email} dado de alta.")
+    return _redirect(VOLVER_EQUIPO, msg=f"Operador {operador.email} dado de alta.")
 
 
 @router.post("/admin/equipo/{operador_id}/rol", include_in_schema=False)
@@ -322,12 +202,12 @@ async def rol_operador_web(
         )
     except (GestionEquipoError, ValueError, TypeError) as exc:
         db.rollback()
-        return _redirect("/admin/equipo", error=str(exc))
+        return _redirect(VOLVER_EQUIPO, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error cambiando rol de operador:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/equipo", msg=f"Rol de {operador.email} actualizado.")
+    return _redirect(VOLVER_EQUIPO, msg=f"Rol de {operador.email} actualizado.")
 
 
 @router.post("/admin/equipo/{operador_id}/suspender", include_in_schema=False)
@@ -350,12 +230,12 @@ async def suspender_operador_web(
         )
     except (GestionEquipoError, ValueError, TypeError) as exc:
         db.rollback()
-        return _redirect("/admin/equipo", error=str(exc))
+        return _redirect(VOLVER_EQUIPO, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error suspendiendo operador:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/equipo", msg=f"{operador.email} suspendido.")
+    return _redirect(VOLVER_EQUIPO, msg=f"{operador.email} suspendido.")
 
 
 @router.post("/admin/equipo/{operador_id}/activar", include_in_schema=False)
@@ -378,48 +258,12 @@ async def activar_operador_web(
         )
     except (GestionEquipoError, ValueError, TypeError) as exc:
         db.rollback()
-        return _redirect("/admin/equipo", error=str(exc))
+        return _redirect(VOLVER_EQUIPO, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error activando operador:\n%s", traceback.format_exc())
         raise
-    return _redirect("/admin/equipo", msg=f"{operador.email} activado.")
-
-
-@router.get("/admin/auditoria", response_class=HTMLResponse, include_in_schema=False)
-def panel_auditoria(
-    request: Request,
-    db: Session = Depends(get_operator_db),
-    actor: str = "",
-    accion: str = "",
-    organizacion_id: int | None = None,
-):
-    """Auditoría de las acciones del propio panel (A2)."""
-    eventos = resumen_auditoria_admin(
-        db,
-        actor=actor,
-        accion=accion,
-        organizacion_id=organizacion_id,
-        limite=250,
-    )
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/auditoria.html",
-        {
-            "eventos": eventos,
-            "acciones": sorted(ACCIONES_LECIBLES.items()),
-            "filtros": {
-                "actor": actor,
-                "accion": accion,
-                "organizacion_id": organizacion_id,
-            },
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+    return _redirect(VOLVER_EQUIPO, msg=f"{operador.email} activado.")
 
 
 @router.get("/admin/buscar", include_in_schema=False)
@@ -468,32 +312,32 @@ async def enviar_correo_prueba_web(
 
     if not destino or not email_destino_valido(destino):
         return _redirect(
-            f"/admin/emails?destino={quote(destino)}",
+            f"/admin/sistema?tab=correos&destino={quote(destino)}",
             error="Escribe un email de destino válido.",
         )
     try:
         envio_id = enviar_correo_prueba(slug, destino)
     except ValueError as exc:
-        return _redirect("/admin/emails", error=str(exc))
+        return _redirect(VOLVER_CORREOS, error=str(exc))
     except EmailNotConfigured as exc:
         return _redirect(
-            f"/admin/emails?destino={quote(destino)}",
+            f"/admin/sistema?tab=correos&destino={quote(destino)}",
             error=f"Correo no configurado: {exc}",
         )
     except (EmailSendError, EmailValidationError) as exc:
         log.warning("No se pudo enviar el correo de prueba (%s).", exc)
         return _redirect(
-            f"/admin/emails?destino={quote(destino)}",
+            f"/admin/sistema?tab=correos&destino={quote(destino)}",
             error=f"No se pudo enviar: {exc}",
         )
     except Exception:
         log.error("Error enviando correo de prueba:\n%s", traceback.format_exc())
         return _redirect(
-            f"/admin/emails?destino={quote(destino)}",
+            f"/admin/sistema?tab=correos&destino={quote(destino)}",
             error="Error inesperado enviando el correo de prueba.",
         )
     return _redirect(
-        f"/admin/emails?destino={quote(destino)}",
+        f"/admin/sistema?tab=correos&destino={quote(destino)}",
         msg=f"Correo enviado a {destino} (id {envio_id}).",
     )
 
@@ -506,27 +350,43 @@ _IMPORTE_POR_DURACION = {
     ficha["duracion_licencia"]: ficha["importe"] for ficha in PLANES.values()
 }
 
-#: Páginas del panel a las que una acción puede devolver al operador.
-#: Se valida contra esta lista en vez de aceptar cualquier URL: un `volver`
-#: libre en un formulario es una redirección abierta.
-_DESTINOS_PANEL = {"/admin", "/admin/licencias", "/admin/renovaciones", "/admin/cobros"}
-_DESTINO_CLIENTE_RE = re.compile(r"^/admin/clientes/\d+$")
 
+def _importe_formulario(form, origen: str):
+    """Importe de una licencia creada desde el panel cuando no se teclea.
 
-def _destino_panel_valido(destino: str) -> bool:
-    return destino in _DESTINOS_PANEL or bool(_DESTINO_CLIENTE_RE.match(destino))
+    Una licencia de pago sin importe es un error de negocio (``crear_licencia``
+    lo rechaza), y el formulario largo no lo pide cuando el precio ya se conoce
+    por la duración. La concesión rápida aplicaba esa regla y el alta manual no:
+    ahora las dos usan el mismo importe publicado.
+    """
+    importe = form.get("importe")
+    if importe not in (None, ""):
+        return str(importe)
+    if (origen or "").strip().lower() == "pago":
+        return _IMPORTE_POR_DURACION.get(str(form.get("duracion") or "").strip(), 0.0)
+    return 0.0
 
-
-def _volver_a(form, por_omision: str = "/admin/licencias") -> str:
+def _volver_a(form, por_omision: str = "/admin") -> str:
     """Destino de la redirección tras una acción, limitado a las páginas del panel.
 
-    Las mismas acciones se disparan desde `/admin` y desde `/admin/licencias`;
-    devolver siempre al listado de licencias sacaría al operador de la pantalla
-    en la que estaba trabajando. La Fase 2 añade la ficha de cliente, renovaciones
-    y cobros como destinos válidos.
+    Las mismas acciones se disparan desde varias pantallas (la lista de
+    contratos, la ficha de un cliente, la campana). Devolver siempre al mismo
+    sitio sacaría al operador de donde estaba trabajando, así que cada
+    formulario trae su `volver`; se valida contra el mapa de rutas y pestañas
+    del panel porque un `volver` libre en un POST es una redirección abierta.
     """
-    destino = str(form.get("volver") or "").strip()
-    return destino if _destino_panel_valido(destino) else por_omision
+    destino = str((form.get("volver") if form is not None else "") or "").strip()
+    return destino if es_destino_panel(destino) else por_omision
+
+
+def _volver_valor(valor, por_omision: str = "/admin") -> str:
+    """Destino a partir del valor `volver` ya leído (query, form o dict).
+
+    Las rutas sincrónicas no pueden hacer `await request.form()`, así que
+    declaran el campo como parámetro `Form` de FastAPI y lo pasan por aquí.
+    """
+    destino = str(valor or "").strip()
+    return destino if es_destino_panel(destino) else por_omision
 
 
 @router.post("/admin/organizaciones/{organizacion_id}/conceder", include_in_schema=False)
@@ -638,7 +498,7 @@ async def crear_licencia_web(
             organizacion_id=int(form.get("organizacion_id") or 0),
             origen=str(form.get("origen") or ""),
             duracion=str(form.get("duracion") or ""),
-            importe=str(form.get("importe") or 0),
+            importe=_importe_formulario(form, str(form.get("origen") or "")),
             moneda=str(form.get("moneda") or "USD"),
             metodo_cobro=str(form.get("metodo_cobro") or ""),
             referencia=str(form.get("referencia") or ""),
@@ -728,7 +588,11 @@ def recibo_licencia_web(
 
 
 @router.post("/admin/licencias/avisos", include_in_schema=False)
-def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
+def enviar_avisos_web(
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
     """Envía los avisos de vencimiento a las organizaciones por vencer.
 
     Lo dispara el operador a mano: no hay trabajos programados en un
@@ -737,6 +601,7 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
     """
     from ..services.email import EmailNotConfigured, enviar_aviso_licencia
 
+    destino = _volver_valor(volver, VOLVER_RENOVACIONES)
     try:
         resultado = enviar_avisos_vencimiento(db, remitente=enviar_aviso_licencia)
         db.commit()
@@ -752,7 +617,7 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
     except EmailNotConfigured:
         db.rollback()
         return _redirect(
-            "/admin/licencias",
+            destino,
             error=(
                 "El correo no está configurado: faltan RESEND_API_KEY o "
                 "COTIZAT_EMAIL_FROM en el despliegue."
@@ -774,7 +639,7 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
         )
     if not partes and not resultado["fallidas"]:
         return _redirect(
-            "/admin/licencias",
+            destino,
             msg="Ninguna licencia vence dentro del plazo de aviso.",
         )
     if resultado["fallidas"]:
@@ -783,11 +648,11 @@ def enviar_avisos_web(request: Request, db: Session = Depends(get_operator_db)):
         )
         if partes:
             partes.append(f"errores: {detalle}")
-            return _redirect("/admin/licencias", error=" | ".join(partes))
+            return _redirect(destino, error=" | ".join(partes))
         return _redirect(
-            "/admin/licencias", error=f"No se pudo enviar ningún aviso: {detalle}"
+            destino, error=f"No se pudo enviar ningún aviso: {detalle}"
         )
-    return _redirect("/admin/licencias", msg="; ".join(partes) + ".")
+    return _redirect(destino, msg="; ".join(partes) + ".")
 
 
 # ---------------------------------------------------------------------------
@@ -920,42 +785,18 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
 # Compras de plan: revisión y activación manual (E1-059)
 # ---------------------------------------------------------------------------
 
-def _render_compras(
-    request: Request,
-    db: Session,
-    *,
-    msg: str = "",
-    error: str = "",
-    status_code: int = 200,
-):
-    from ..services.compras import resumen_compras
-
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/compras.html",
-        {
-            "filas": resumen_compras(db),
-            "operador": db.info.get("auth_email", ""),
-            "msg": msg or request.query_params.get("msg", ""),
-            "error": error or request.query_params.get("error", ""),
-        },
-        status_code=status_code,
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/compras", response_class=HTMLResponse, include_in_schema=False)
-def panel_compras(request: Request, db: Session = Depends(get_operator_db)):
-    return _render_compras(request, db)
-
 
 @router.post("/admin/compras/{compra_id}/activar", include_in_schema=False)
 def activar_compra_web(
-    compra_id: int, request: Request, db: Session = Depends(get_operator_db)
+    compra_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
 ):
     """Verifica el comprobante y concede la licencia del plan comprado."""
     from ..services.compras import GestionCompraError, activar_compra
 
+    destino = _volver_valor(volver, VOLVER_COMPRAS)
     try:
         compra_previa = db.get(CompraPlan, compra_id)
         compra, licencia = activar_compra(
@@ -978,7 +819,7 @@ def activar_compra_web(
         )
     except (GestionCompraError, ValueError) as exc:
         db.rollback()
-        return _redirect("/admin/compras", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error activando compra #%s:\n%s", compra_id, traceback.format_exc())
@@ -998,7 +839,7 @@ def activar_compra_web(
         detalle={"plan": compra.plan, "origen": "manual"},
     )
     return _redirect(
-        "/admin/compras",
+        destino,
         msg=(
             f"Compra #{compra_id} activada · licencia #{licencia.id} concedida. "
             f"{aviso}"
@@ -1077,10 +918,14 @@ def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
 
 @router.post("/admin/compras/{compra_id}/rechazar", include_in_schema=False)
 def rechazar_compra_web(
-    compra_id: int, request: Request, db: Session = Depends(get_operator_db)
+    compra_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
 ):
     from ..services.compras import GestionCompraError, rechazar_compra
 
+    destino = _volver_valor(volver, VOLVER_COMPRAS)
     try:
         compra = rechazar_compra(
             db,
@@ -1098,12 +943,84 @@ def rechazar_compra_web(
         )
     except (GestionCompraError, ValueError) as exc:
         db.rollback()
-        return _redirect("/admin/compras", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error rechazando compra #%s:\n%s", compra_id, traceback.format_exc())
         raise
-    return _redirect("/admin/compras", msg=f"Compra #{compra_id} rechazada.")
+    return _redirect(destino, msg=f"Compra #{compra_id} rechazada.")
+
+
+@router.post("/admin/avisos/{aviso_id}/editar", include_in_schema=False)
+async def avisos_editar(aviso_id: int, request: Request, db: Session = Depends(get_operator_db)):
+    """Edita un aviso existente sin borrarlo y volverlo a crear.
+
+    El panel solo tenía «crear» y «ocultar/mostrar»: corregir una tilde en un
+    aviso publicado obligaba a crear otro. Se reutiliza el servicio ya probado
+    `actualizar_aviso`, que valida tipo, nivel y rango de fechas.
+    """
+    form = await request.form()
+    destino = _volver_a(form, VOLVER_AVISOS)
+    try:
+        actualizar_aviso(
+            db,
+            aviso_id,
+            campos={
+                "tipo": str(form.get("tipo") or ""),
+                "nivel": str(form.get("nivel") or ""),
+                "titulo": str(form.get("titulo") or ""),
+                "mensaje": str(form.get("mensaje") or ""),
+                "activo": str(form.get("activo") or "").lower() in {"1", "true", "on", "si"},
+                "inicio": _fecha_desde_form(str(form.get("inicio") or "")),
+                "fin": _fecha_desde_form(str(form.get("fin") or "")),
+            },
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+        _auditar_admin(
+            db, request, accion="web.aviso_editado", entidad="avisos_web", entidad_id=aviso_id
+        )
+    except GestionWebError as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error editando el aviso #%s:\n%s", aviso_id, traceback.format_exc())
+        return _redirect(destino, error="Error inesperado al guardar el aviso.")
+    return _redirect(destino, msg="Aviso actualizado.")
+
+
+@router.post("/admin/releases/{release_id}/editar", include_in_schema=False)
+async def releases_editar(release_id: int, request: Request, db: Session = Depends(get_operator_db)):
+    """Corrige una versión publicada desde su propia fila del changelog."""
+    form = await request.form()
+    destino = _volver_a(form, VOLVER_VERSIONES)
+    try:
+        actualizar_release(
+            db,
+            release_id,
+            campos={
+                "version": str(form.get("version") or ""),
+                "titulo": str(form.get("titulo") or ""),
+                "notas": str(form.get("notas") or ""),
+                "destacado": str(form.get("destacado") or "").lower() in {"1", "true", "on", "si"},
+                "publicado": str(form.get("publicado") or "").lower() in {"1", "true", "on", "si"},
+                "fecha": _fecha_desde_form(str(form.get("fecha") or "")),
+            },
+            operador_email=str(db.info.get("auth_email") or ""),
+        )
+        db.commit()
+        _auditar_admin(
+            db, request, accion="web.release_editada", entidad="releases", entidad_id=release_id
+        )
+    except GestionWebError as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("Error editando la versión #%s:\n%s", release_id, traceback.format_exc())
+        return _redirect(destino, error="Error inesperado al guardar la versión.")
+    return _redirect(destino, msg="Versión actualizada.")
 
 
 @router.get("/admin/compras/{compra_id}/comprobante", include_in_schema=False)
@@ -1141,105 +1058,8 @@ def comprobante_compra(
 
 
 # ---------------------------------------------------------------------------
-# Fase 2: ficha de cliente, centro de cobros, renovaciones y automatizaciones
+# Notas de cliente y ejecución manual de reglas (antes páginas aparte)
 # ---------------------------------------------------------------------------
-
-
-def _mes_parametro(valor: str | None):
-    """Convierte ``YYYY-MM`` al primer día del mes; por defecto el actual."""
-    hoy = date.today()
-    valor = (valor or "").strip()
-    if not valor:
-        return hoy.replace(day=1)
-    try:
-        año, mes = (int(parte) for parte in valor.split("-", 1))
-        return date(año, mes, 1)
-    except (TypeError, ValueError):
-        return hoy.replace(day=1)
-
-
-def _filtrar_clientes(filas, q: str):
-    q = (q or "").strip().lower()
-    if not q:
-        return filas
-    return [
-        f for f in filas
-        if q in f["organizacion"].nombre.lower()
-        or q in f["organizacion"].slug.lower()
-    ]
-
-
-def _render_clientes(
-    request: Request,
-    db: Session,
-    *,
-    q: str = "",
-    msg: str = "",
-    error: str = "",
-    status_code: int = 200,
-):
-    from ..services.panel_admin import resumen_admin
-    from ..services.panel_renovaciones import proximas_renovaciones
-
-    resumen = resumen_admin(db)
-    resumen["filas"] = _filtrar_clientes(resumen["filas"], q)
-    resumen["totales"].update({"filtradas": len(resumen["filas"])})
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/clientes.html",
-        {
-            "resumen": resumen,
-            "proximas": proximas_renovaciones(db),
-            "q": q,
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "msg": msg or request.query_params.get("msg", ""),
-            "error": error or request.query_params.get("error", ""),
-        },
-        status_code=status_code,
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/clientes", response_class=HTMLResponse, include_in_schema=False)
-def panel_clientes(
-    request: Request,
-    q: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Listado de clientes con acceso directo a la ficha completa (B1)."""
-    return _render_clientes(request, db, q=q)
-
-
-@router.get("/admin/clientes/{organizacion_id}", response_class=HTMLResponse, include_in_schema=False)
-def ficha_cliente(
-    organizacion_id: int,
-    request: Request,
-    db: Session = Depends(get_operator_db),
-):
-    """Ficha de cliente: plan, uso, cobros, actividad y notas internas (B1)."""
-    from ..services.panel_clientes import resumen_cliente
-
-    ficha = resumen_cliente(db, organizacion_id)
-    if ficha is None:
-        return _redirect("/admin/clientes", error="El cliente indicado no existe.")
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/cliente_detalle.html",
-        {
-            "ficha": ficha,
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "duraciones": [(clave, texto) for clave, (texto, _) in DURACIONES.items()],
-            "origenes": [
-                (origen, ORIGENES_LICENCIA_ETIQUETA[origen])
-                for origen in ORIGENES_LICENCIA
-            ],
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
 
 
 @router.post("/admin/clientes/{organizacion_id}/notas", include_in_schema=False)
@@ -1252,6 +1072,7 @@ async def crear_nota_cliente_web(
     from ..services.panel_clientes import crear_nota_operador
 
     form = await request.form()
+    destino = _volver_a(form, f"/admin/clientes/{organizacion_id}?tab=gestion")
     try:
         nota = crear_nota_operador(
             db,
@@ -1270,156 +1091,12 @@ async def crear_nota_cliente_web(
         )
     except ValueError as exc:
         db.rollback()
-        return _redirect(f"/admin/clientes/{organizacion_id}", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error creando nota de cliente #%s:\n%s", organizacion_id, traceback.format_exc())
-        return _redirect(f"/admin/clientes/{organizacion_id}", error="No se pudo guardar la nota.")
-    return _redirect(f"/admin/clientes/{organizacion_id}", msg="Nota guardada.")
-
-
-@router.get("/admin/clientes.csv", include_in_schema=False)
-def exportar_clientes_csv(
-    request: Request,
-    q: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Exporta la vista de clientes (B1/A5) en CSV."""
-    from ..services.panel_admin import resumen_admin
-
-    resumen = resumen_admin(db)
-    resumen["filas"] = _filtrar_clientes(resumen["filas"], q)
-    filas = [["Cliente", "Slug", "Estado", "Plan", "Inicio", "Vence", "Días", "Ingresos"]]
-    for f in resumen["filas"]:
-        org = f["organizacion"]
-        filas.append([
-            org.nombre,
-            org.slug,
-            f["estado_label"],
-            f["plan_label"] or "",
-            f["inicio"].strftime("%Y-%m-%d") if f["inicio"] else "",
-            f["vence"].strftime("%Y-%m-%d") if f["vence"] else "",
-            str(f["dias_restantes"]),
-            f"{f['ingresos']:.2f}",
-        ])
-    return _csv_response(filas, "clientes.csv")
-
-
-@router.get("/admin/cobros", response_class=HTMLResponse, include_in_schema=False)
-def panel_cobros(
-    request: Request,
-    mes: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Centro de cobros del mes (B2)."""
-    from ..services.panel_cobros import resumen_cobros
-
-    data = resumen_cobros(db, mes=_mes_parametro(mes))
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/cobros.html",
-        {
-            "data": data,
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/cobros.csv", include_in_schema=False)
-def exportar_cobros_csv(
-    request: Request,
-    mes: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Exporta el centro de cobros del mes (B2/A5) en CSV."""
-    from ..services.panel_cobros import resumen_cobros
-
-    data = resumen_cobros(db, mes=_mes_parametro(mes))
-    filas = [["Mes", "Tipo", "Número", "Fecha", "Importe", "Moneda", "Estado", "Cliente"]]
-    for m in data["movimientos"]:
-        filas.append([
-            data["mes"].strftime("%Y-%m"),
-            m["tipo"],
-            m["numero"],
-            m["fecha"].strftime("%Y-%m-%d") if m["fecha"] else "",
-            f"{m['importe']:.2f}",
-            m["moneda"],
-            m["estado"],
-            m["organizacion_nombre"],
-        ])
-    return _csv_response(filas, f"cobros_{data['mes'].strftime('%Y-%m')}.csv")
-
-
-@router.get("/admin/renovaciones", response_class=HTMLResponse, include_in_schema=False)
-def panel_renovaciones(
-    request: Request,
-    mes: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Qué renueva este mes y qué clientes hay que empujar (B3)."""
-    from ..services.panel_renovaciones import renovaciones_del_mes
-
-    data = renovaciones_del_mes(db, mes=_mes_parametro(mes))
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/renovaciones.html",
-        {
-            "data": data,
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/renovaciones.csv", include_in_schema=False)
-def exportar_renovaciones_csv(
-    request: Request,
-    mes: str = "",
-    db: Session = Depends(get_operator_db),
-):
-    """Exporta las renovaciones del mes (B3/A5) en CSV."""
-    from ..services.panel_renovaciones import renovaciones_del_mes
-
-    data = renovaciones_del_mes(db, mes=_mes_parametro(mes))
-    filas = [["Mes", "Cliente", "Vence", "Días", "Importe", "Estado", "Avisado hoy"]]
-    for f in data["filas"]:
-        filas.append([
-            data["mes"].strftime("%Y-%m"),
-            f["organizacion"].nombre,
-            f["vence"].strftime("%Y-%m-%d"),
-            str(f["dias_restantes"]),
-            f"{f['importe']:.2f}",
-            f["estado"],
-            "Sí" if f["avisado_hoy"] else "No",
-        ])
-    return _csv_response(filas, f"renovaciones_{data['mes'].strftime('%Y-%m')}.csv")
-
-
-@router.get("/admin/automatizaciones", response_class=HTMLResponse, include_in_schema=False)
-def panel_automatizaciones(request: Request, db: Session = Depends(get_operator_db)):
-    """Vista de reglas activas y su impacto hoy (B5)."""
-    from ..services.automatizaciones_admin import REGLAS, estado_automatizaciones
-
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/automatizaciones.html",
-        {
-            "reglas": REGLAS,
-            "estado": estado_automatizaciones(db),
-            "operador": db.info.get("auth_email", ""),
-            "operador_rol": _rol_actual(db),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(destino, error="No se pudo guardar la nota.")
+    return _redirect(destino, msg="Nota guardada.")
 
 
 @router.post("/admin/automatizaciones/{regla}/ejecutar", include_in_schema=False)
@@ -1457,20 +1134,21 @@ async def ejecutar_automatizacion_web(
         )
     except EmailNotConfigured as exc:
         db.rollback()
-        return _redirect("/admin/automatizaciones", error=f"Correo no configurado: {exc}")
+        return _redirect(VOLVER_AUTOMATIZACIONES, error=f"Correo no configurado: {exc}")
     except GestionAutomatizacionError as exc:
         db.rollback()
-        return _redirect("/admin/automatizaciones", error=str(exc))
+        return _redirect(VOLVER_AUTOMATIZACIONES, error=str(exc))
     except Exception:
         db.rollback()
         log.error("Error ejecutando automatización %s:\n%s", regla, traceback.format_exc())
-        return _redirect("/admin/automatizaciones", error="Error inesperado al ejecutar la regla.")
+        return _redirect(VOLVER_AUTOMATIZACIONES, error="Error inesperado al ejecutar la regla.")
 
-    return _redirect("/admin/automatizaciones", msg=f"Regla «{regla}» ejecutada.")
+    return _redirect(VOLVER_AUTOMATIZACIONES, msg=f"Regla «{regla}» ejecutada.")
 
 
 # ---------------------------------------------------------------------------
-# Fase 3: la web se gobierna desde el panel (C1/C2/C4/C5, D3)
+# La web se gobierna desde el panel (C1/C2/C4/C5, D3): contenido, avisos,
+# versiones y flags. Todo se edita en la pantalla de Web y de Sistema › Accesos.
 # ---------------------------------------------------------------------------
 
 def _fecha_desde_form(valor: str | None):
@@ -1483,21 +1161,6 @@ def _fecha_desde_form(valor: str | None):
         raise GestionWebError("La fecha indicada no es válida.") from None
 
 
-@router.get("/admin/web", response_class=HTMLResponse, include_in_schema=False)
-def panel_web(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/web.html",
-        {
-            "contenido": listar_contenido(db),
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
 @router.post("/admin/web/guardar", include_in_schema=False)
 async def web_guardar(request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
@@ -1505,7 +1168,7 @@ async def web_guardar(request: Request, db: Session = Depends(get_operator_db)):
     try:
         campos = json.loads(str(form.get("contenido_json") or "{}"))
     except ValueError:
-        return _redirect(f"/admin/web?clave={quote(clave, safe='')}", error="El contenido no es JSON válido.")
+        return _redirect(f"/admin/web?tab=contenido&clave={quote(clave, safe='')}", error="El contenido no es JSON válido.")
     try:
         guardar_contenido(
             db, clave=clave, campos=campos,
@@ -1515,11 +1178,11 @@ async def web_guardar(request: Request, db: Session = Depends(get_operator_db)):
         _auditar_admin(db, request, accion="web.contenido_guardado", entidad="contenido_web", detalle={"clave": clave})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect(f"/admin/web?clave={quote(clave, safe='')}", error=str(exc))
+        return _redirect(f"/admin/web?tab=contenido&clave={quote(clave, safe='')}", error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/web", error="Error inesperado al guardar el contenido.")
-    return _redirect(f"/admin/web?clave={quote(clave, safe='')}", msg="Borrador guardado; aún no es público.")
+        return _redirect(VOLVER_CONTENIDO, error="Error inesperado al guardar el contenido.")
+    return _redirect(f"/admin/web?tab=contenido&clave={quote(clave, safe='')}", msg="Borrador guardado; aún no es público.")
 
 
 @router.post("/admin/web/{clave}/publicar", include_in_schema=False)
@@ -1530,11 +1193,11 @@ def web_publicar(clave: str, request: Request, db: Session = Depends(get_operato
         _auditar_admin(db, request, accion="web.contenido_publicado", entidad="contenido_web", detalle={"clave": clave})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/web", error=str(exc))
+        return _redirect(VOLVER_CONTENIDO, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/web", error="Error inesperado al publicar.")
-    return _redirect("/admin/web", msg="Contenido publicado.")
+        return _redirect(VOLVER_CONTENIDO, error="Error inesperado al publicar.")
+    return _redirect(VOLVER_CONTENIDO, msg="Contenido publicado.")
 
 
 @router.post("/admin/web/{clave}/descartar", include_in_schema=False)
@@ -1545,33 +1208,17 @@ def web_descartar(clave: str, request: Request, db: Session = Depends(get_operat
         _auditar_admin(db, request, accion="web.contenido_descartado", entidad="contenido_web", detalle={"clave": clave})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/web", error=str(exc))
+        return _redirect(VOLVER_CONTENIDO, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/web", error="Error inesperado al descartar.")
-    return _redirect("/admin/web", msg="Borrador descartado; se mantiene lo publicado.")
-
-
-@router.get("/admin/avisos", response_class=HTMLResponse, include_in_schema=False)
-def panel_avisos(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/avisos.html",
-        {
-            "avisos": listar_avisos(db),
-            "tipos": list(TIPOS_AVISO),
-            "niveles": list(NIVELES_AVISO),
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(VOLVER_CONTENIDO, error="Error inesperado al descartar.")
+    return _redirect(VOLVER_CONTENIDO, msg="Borrador descartado; se mantiene lo publicado.")
 
 
 @router.post("/admin/avisos/crear", include_in_schema=False)
 async def avisos_crear(request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
+    destino = _volver_a(form, VOLVER_AVISOS)
     try:
         inicio = _fecha_desde_form(str(form.get("inicio") or ""))
         fin = _fecha_desde_form(str(form.get("fin") or ""))
@@ -1590,16 +1237,21 @@ async def avisos_crear(request: Request, db: Session = Depends(get_operator_db))
         _auditar_admin(db, request, accion="web.aviso_creado", entidad="avisos_web", entidad_id=aviso.id)
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/avisos", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/avisos", error="Error inesperado al crear el aviso.")
-    return _redirect("/admin/avisos", msg="Aviso creado.")
+        return _redirect(destino, error="Error inesperado al crear el aviso.")
+    return _redirect(destino, msg="Aviso creado.")
 
 
 @router.post("/admin/avisos/{aviso_id}/alternar", include_in_schema=False)
-def avisos_alternar(aviso_id: int, request: Request, db: Session = Depends(get_operator_db)):
-    form = None
+def avisos_alternar(
+    aviso_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    destino = _volver_valor(volver, VOLVER_AVISOS)
     activo = str(request.query_params.get("activo", "")).lower() in {"1", "true", "on", "si"}
     try:
         alternar_aviso(db, aviso_id, activo=activo)
@@ -1607,28 +1259,14 @@ def avisos_alternar(aviso_id: int, request: Request, db: Session = Depends(get_o
         _auditar_admin(db, request, accion="web.aviso_alternado", entidad="avisos_web", entidad_id=aviso_id, detalle={"activo": activo})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/avisos", error=str(exc))
-    return _redirect("/admin/avisos", msg="Estado del aviso actualizado.")
-
-
-@router.get("/admin/releases", response_class=HTMLResponse, include_in_schema=False)
-def panel_releases(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/releases.html",
-        {
-            "releases": listar_releases(db),
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(destino, error=str(exc))
+    return _redirect(destino, msg="Estado del aviso actualizado.")
 
 
 @router.post("/admin/releases/crear", include_in_schema=False)
 async def releases_crear(request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
+    destino = _volver_a(form, VOLVER_VERSIONES)
     try:
         release = crear_release(
             db,
@@ -1644,15 +1282,21 @@ async def releases_crear(request: Request, db: Session = Depends(get_operator_db
         _auditar_admin(db, request, accion="web.release_creada", entidad="releases", entidad_id=release.id)
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/releases", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/releases", error="Error inesperado al crear la versión.")
-    return _redirect("/admin/releases", msg="Versión creada.")
+        return _redirect(destino, error="Error inesperado al crear la versión.")
+    return _redirect(destino, msg="Versión creada.")
 
 
 @router.post("/admin/releases/{release_id}/alternar", include_in_schema=False)
-def releases_alternar(release_id: int, request: Request, db: Session = Depends(get_operator_db)):
+def releases_alternar(
+    release_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    destino = _volver_valor(volver, VOLVER_VERSIONES)
     publicado = str(request.query_params.get("publicado", "")).lower() in {"1", "true", "on", "si"}
     try:
         alternar_release(db, release_id, publicado=publicado)
@@ -1660,23 +1304,8 @@ def releases_alternar(release_id: int, request: Request, db: Session = Depends(g
         _auditar_admin(db, request, accion="web.release_alternada", entidad="releases", entidad_id=release_id, detalle={"publicado": publicado})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/releases", error=str(exc))
-    return _redirect("/admin/releases", msg="Visibilidad de la versión actualizada.")
-
-
-@router.get("/admin/flags", response_class=HTMLResponse, include_in_schema=False)
-def panel_flags(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/flags.html",
-        {
-            "flags": listar_flags(db),
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(destino, error=str(exc))
+    return _redirect(destino, msg="Visibilidad de la versión actualizada.")
 
 
 @router.post("/admin/flags/{clave}/alternar", include_in_schema=False)
@@ -1693,73 +1322,52 @@ def flags_alternar(clave: str, request: Request, db: Session = Depends(get_opera
         _auditar_admin(db, request, accion="web.flag_cambiado", entidad="feature_flags", detalle={"clave": clave, "activo": activo})
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/flags", error=str(exc))
-    return _redirect("/admin/flags", msg="Feature flag actualizado.")
+        return _redirect(VOLVER_ACCESOS, error=str(exc))
+    return _redirect(VOLVER_ACCESOS, msg="Feature flag actualizado.")
 
 
 # ---------------------------------------------------------------------------
-# Fase 4: CRM ligero (B4), vistas guardadas, salud de datos y API keys (A6)
+# CRM ligero (B4), vistas guardadas y API keys (A6)
 # ---------------------------------------------------------------------------
-
-@router.get("/admin/crm", response_class=HTMLResponse, include_in_schema=False)
-def panel_crm(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/crm.html",
-        {
-            "filas": listar_crm(db),
-            "resumen": resumen_crm(db),
-            "estados": [(clave, etiqueta) for clave, etiqueta in ESTADOS_CRM_ETIQUETA.items()],
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
 
 
 @router.post("/admin/crm/{organizacion_id}/guardar", include_in_schema=False)
 async def crm_guardar(organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
+    destino = _volver_a(form, VOLVER_PIPELINE)
+    estado = str(form.get("estado") or "").strip().lower()
     try:
-        guardar_crm(
-            db,
-            organizacion_id=organizacion_id,
-            estado=str(form.get("estado") or ""),
-            proximo_contacto=_fecha_desde_form(str(form.get("proximo_contacto") or "")),
-            notas=str(form.get("notas") or ""),
-            operador_email=str(db.info.get("auth_email") or ""),
-        )
+        if estado:
+            guardar_crm(
+                db,
+                organizacion_id=organizacion_id,
+                estado=estado,
+                proximo_contacto=_fecha_desde_form(str(form.get("proximo_contacto") or "")),
+                notas=str(form.get("notas") or ""),
+                operador_email=str(db.info.get("auth_email") or ""),
+            )
+            detalle = {"estado": estado}
+        else:
+            # «Sin asignar» no es un estado: borra la ficha comercial para que
+            # el cliente salga del embudo tal y como entró.
+            borrar_crm(db, organizacion_id=organizacion_id)
+            detalle = {"estado": "", "accion": "borrado"}
         db.commit()
-        _auditar_admin(db, request, accion="crm.cliente_actualizado", entidad="crm_clientes", organizacion_id=organizacion_id)
+        _auditar_admin(db, request, accion="crm.cliente_actualizado", entidad="crm_clientes",
+                       organizacion_id=organizacion_id, detalle=detalle)
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/crm", error=str(exc))
+        return _redirect(destino, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/crm", error="Error inesperado al guardar el CRM.")
-    return _redirect("/admin/crm", msg="Cliente actualizado en el canal.")
-
-
-@router.get("/admin/vistas", response_class=HTMLResponse, include_in_schema=False)
-def panel_vistas(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/vistas.html",
-        {
-            "vistas": listar_vistas(db),
-            "modulos": ["clientes", "cobros", "renovaciones", "compras", "automatizaciones"],
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(destino, error="Error inesperado al guardar el CRM.")
+    return _redirect(destino, msg="Cliente actualizado en el canal.")
 
 
 @router.post("/admin/vistas/crear", include_in_schema=False)
 async def vistas_crear(request: Request, db: Session = Depends(get_operator_db)):
     form = await request.form()
+    destino = _volver_a(form, VOLVER_DIRECTORIO)
     try:
         filtros = json.loads(str(form.get("filtros") or "{}"))
         columnas = json.loads(str(form.get("columnas") or "[]"))
@@ -1775,59 +1383,26 @@ async def vistas_crear(request: Request, db: Session = Depends(get_operator_db))
         _auditar_admin(db, request, accion="admin.vista_guardada", entidad="vistas_guardadas", entidad_id=vista.id)
     except (GestionWebError, ValueError) as exc:
         db.rollback()
-        return _redirect("/admin/vistas", error=str(exc) if isinstance(exc, GestionWebError) else "Los filtros o columnas deben ser JSON válido.")
-    return _redirect("/admin/vistas", msg="Vista guardada.")
+        return _redirect(destino, error=str(exc) if isinstance(exc, GestionWebError) else "Los filtros o columnas deben ser JSON válido.")
+    return _redirect(destino, msg="Vista guardada en su lista.")
 
 
 @router.post("/admin/vistas/{vista_id}/eliminar", include_in_schema=False)
-def vistas_eliminar(vista_id: int, request: Request, db: Session = Depends(get_operator_db)):
+def vistas_eliminar(
+    vista_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    destino = _volver_valor(volver, VOLVER_DIRECTORIO)
     try:
         eliminar_vista(db, vista_id)
         db.commit()
         _auditar_admin(db, request, accion="admin.vista_eliminada", entidad="vistas_guardadas", entidad_id=vista_id)
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/vistas", error=str(exc))
-    return _redirect("/admin/vistas", msg="Vista eliminada.")
-
-
-@router.get("/admin/salud-datos", response_class=HTMLResponse, include_in_schema=False)
-def panel_salud_datos(request: Request, db: Session = Depends(get_operator_db)):
-    from ..config import resumen_configuracion
-
-    try:
-        salud = analizar_salud_catalogo(db, incluir_anomalias=True)
-    except Exception:
-        db.rollback()
-        salud = {"error": "No se pudo auditar el catálogo sin contexto de cliente."}
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/salud_datos.html",
-        {
-            "salud": salud,
-            "configuracion": resumen_configuracion(),
-            "operador": db.info.get("auth_email", ""),
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
-
-
-@router.get("/admin/api-keys", response_class=HTMLResponse, include_in_schema=False)
-def panel_api_keys(request: Request, db: Session = Depends(get_operator_db)):
-    return TEMPLATES.TemplateResponse(
-        request,
-        "admin/api_keys.html",
-        {
-            "claves": listar_api_keys(db),
-            "operador": db.info.get("auth_email", ""),
-            "token_nuevo": "",
-            "msg": request.query_params.get("msg", ""),
-            "error": request.query_params.get("error", ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+        return _redirect(destino, error=str(exc))
+    return _redirect(destino, msg="Vista eliminada.")
 
 
 @router.post("/admin/api-keys/crear", include_in_schema=False)
@@ -1843,24 +1418,21 @@ async def api_keys_crear(request: Request, db: Session = Depends(get_operator_db
         )
         db.commit()
         _auditar_admin(db, request, accion="api_key.creada", entidad="api_keys_operador", detalle={"nombre": str(form.get("nombre") or "")[:100]})
-        return TEMPLATES.TemplateResponse(
+        # El token solo existe en esta respuesta: no viaja por la URL ni se
+        # guarda en sesión, así que recargar la página ya no lo muestra.
+        return _respuesta_panel(
             request,
-            "admin/api_keys.html",
-            {
-                "claves": listar_api_keys(db),
-                "operador": db.info.get("auth_email", ""),
-                "token_nuevo": token,
-                "msg": "Clave creada. Guárdala ahora; no se podrá volver a ver.",
-                "error": "",
-            },
-            headers={"Cache-Control": "no-store"},
+            "sistema.html",
+            contexto_sistema(request, db, pestana="accesos",
+                             msg="Clave creada. Guárdala ahora; no se podrá volver a ver.",
+                             extra={"token_nuevo": token}),
         )
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/api-keys", error=str(exc))
+        return _redirect(VOLVER_ACCESOS, error=str(exc))
     except Exception:
         db.rollback()
-        return _redirect("/admin/api-keys", error="Error inesperado al crear la clave.")
+        return _redirect(VOLVER_ACCESOS, error="Error inesperado al crear la clave.")
 
 
 @router.post("/admin/api-keys/{api_key_id}/revocar", include_in_schema=False)
@@ -1871,5 +1443,5 @@ def api_keys_revocar(api_key_id: int, request: Request, db: Session = Depends(ge
         _auditar_admin(db, request, accion="api_key.revocada", entidad="api_keys_operador", entidad_id=api_key_id)
     except GestionWebError as exc:
         db.rollback()
-        return _redirect("/admin/api-keys", error=str(exc))
-    return _redirect("/admin/api-keys", msg="Clave revocada.")
+        return _redirect(VOLVER_ACCESOS, error=str(exc))
+    return _redirect(VOLVER_ACCESOS, msg="Clave revocada.")
