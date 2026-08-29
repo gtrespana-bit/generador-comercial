@@ -1,9 +1,9 @@
 # Panel profesional — estado exacto
 
-**Fecha:** 2026-08-29
-**Rama de trabajo:** `arena/01a04bd3-generador-comercial`
-**Commit actual:** `2a9ef6e` — "Fase 3/4 panel web: CMS, avisos, releases, flags, CRM, vistas, API keys y salud"
-**Head Alembic esperado por runtime:** `d3e5f7a9c2b4`
+**Fecha:** 2026-08-30 (última capa: Fase 5 · arquitectura del panel, §3bis)
+**Rama de trabajo:** `arena/01a04f52-generador-comercial`
+**Commit de partida:** `bc8a8ca` — "Fase 3/4 panel web: CMS, avisos, releases, flags, CRM, vistas, API keys y salud"
+**Head Alembic esperado por runtime:** `d3e5f7a9c2b4` — la Fase 5 **no añade migración**: reorganiza pantallas, rutas y contexto; no toca el esquema
 
 ---
 
@@ -15,9 +15,11 @@
 | Fase 2 (ficha cliente, cobros, renovaciones, automatizaciones núcleo, CSV) | ✅ Completa |
 | Fase 3 (web como producto: CMS, SEO, avisos, releases, flags) | ✅ Completa |
 | Fase 4 (CRM, vistas, API keys, salud de datos, informe) | 🟡 Núcleo implementado; 4–6 ítems pendientes |
+| Fase 5 (arquitectura del panel: seis áreas, pestañas, filtros server-side, acciones en la lista) | ✅ Completa — ver §3bis |
 
-- **Suite completa:** 1153 passed, 9 skipped, 2 warnings (la última ejecución completa).
-- **Adicional después de la ejecución completa:** test `/novedades` añadido en `tests/test_panel_pro_fase34.py`; también pasa.
+- **Suite completa tras la Fase 5:** **1223 passed, 9 skipped** (`.venv/bin/python -m pytest -q -p no:randomly`, 284 s; 2 avisos preexistentes: `SAWarning` en `catalogo_propio` y `DeprecationWarning` de `TestClient` en `test_seo`).
+- Desglose: 1154 de la capa anterior + 69 nuevas en `tests/test_panel_arquitectura.py`. Los cuatro archivos que probaban la navegación antigua (`test_licencias.py`, `test_licencias_acceso.py`, `test_operacion.py`, `test_panel_emails.py`) se reescribieron al contrato nuevo, no se relajaron.
+- Sin cambios de esquema ni de permisos: `get_operator_db`, el RLS de operador y la CSP (`nonce`, sin atributos `on*`) quedan intactos; hay pruebas que lo siguen exigiendo (`tests/test_web_security.py`, `tests/test_panel_aislamiento*.py`).
 - **SQL manual** `docs/staging_upgrade_d3e5f7a9c2b4.sql` → **ya fue ejecutado por el usuario en Supabase** (confirmado).
 - **Cambios empujados** a la rama `arena/01a04bd3-generador-comercial`.
 
@@ -84,11 +86,101 @@
 
 ---
 
+## 3bis. Fase 5 · arquitectura del panel (30/08/2026)
+
+No añade funciones: cambia **dónde vive cada pantalla y desde dónde se actúa**.
+El panel era una lista de ~17 rutas planas con siete tablas de las mismas
+organizaciones; ahora son seis áreas con pestañas, filtros en el servidor y
+acciones en la propia fila. Documento para el operador: `docs/PANEL_DE_OPERADOR.md` §11.
+
+**Mapa único de verdad** — `app/panel_arquitectura.py`:
+
+- `SECCIONES` (6): id, nombre, ruta, descripción, icono SVG, `atajo` de teclado
+  y sus `Pestana` (cada una con `vista_modulo` si admite vistas guardadas).
+- De ahí salen el menú lateral, la barra de pestañas, el migado de pan, los
+  contadores de los badges, el `?tab=` válido de cada ruta (`pestanas_de_ruta`),
+  la lista blanca de destinos de `volver` (`es_destino_panel`) y las
+  redirecciones de las 16 rutas fusionadas (`RUTAS_ANTIGUAS` → 302 conservando
+  la query). **Ninguna plantilla repite navegación ni título: se lee del mapa.**
+- `VISTAS_EN_PANEL` conecta cada módulo de vistas guardadas con el área y la
+  pestaña que lo muestra; `FICHA_PESTANAS` hace lo propio con las cinco
+  pestañas de la ficha de cliente (independientes del área).
+
+**Rutas** — `app/routers/admin_paginas.py` (nuevo): **11 GET** —siete pantallas
+(`hoy`, `clientes`, `cliente_detalle`, `ingresos`, `web`, `sistema`, `analitica`)
+y cuatro CSV (`clientes.csv`, `ingresos.csv?tab=`, y las históricas
+`renovaciones.csv`/`cobros.csv`)—, más las redirecciones 302 de las 16 rutas
+fusionadas, **registradas en bucle desde `RUTAS_ANTIGUAS`** (no son 16
+funciones copiadas). `app/routers/admin.py` se queda solo con
+acciones POST, la API de ⌘K/campana y los endpoints del cron, y perdió ~330
+líneas de plantillas duplicadas. `contexto_sistema()` es compartido por las
+acciones que vuelven a pintar Sistema (p. ej. crear una API key muestra el token
+una sola vez).
+
+**Contexto de lista** — `app/services/panel_contextos.py`: `url_panel`,
+`filtrar_filas`, `ordenar_filas`, `chips`, `enlace_filtro`, `enlace_orden`
+(devuelve un dict, nunca HTML), `vistas_en_barra`, `filtros_json`,
+`contadores_panel` (dos consultas), `periodo_mes`, `vecinos_del_mes` y las
+tablas de etiquetas (`ESTADOS_ACCESO`, `FILTROS_PLAN`, `TIPOS_COBRO`,
+`RENOVACION_ESTADOS`, `ALCANCES_ROL`, `DESCRIPCIONES_CRM`, `NOTAS_CHEQUEOS`).
+Contrato deliberate: **el router aporta datos crudos + `vistas`/`url_filtros`/
+`dict_filtros`/`periodo`/`opciones_*`; cada parcial fija sus `vista_*`** para no
+escribir dos veces el mismo bloque.
+
+**Plantillas** — `app/templates/admin/`: ocho pantallas (`dashboard`,
+`clientes`, `cliente_detalle`, `ingresos`, `web`, `sistema`, `analitica` +
+`base_admin`) y veinte parciales en `partes/`, incluidos con
+`"admin/partes/<área>_" + pestana + ".html"`. Se borraron las 16 plantillas
+huérfanas. El `<style>` del base envuelve el bloque `extra_css` de los hijos
+(los hijos meten CSS crudo, no `<style>`), y `extra_js` es un bloque suelto: el
+hijo escribe el `<script nonce src>` completo. Toda clase usada tiene que existir
+en `base_admin.html`, que es el único CSS del panel.
+
+**JavaScript** — un solo script global, `app/static/js/admin-kit.js`: ⌘K,
+campana, `/` (abre el buscador), `g`+letra (lee `data-atajo` del nav, que viene
+del mapa), `data-confirmar` (portado desde `admin-panel.js`, borrado) y
+`data-hint`. `admin-correos.js` cubre el destino de prueba de la pestaña de
+correos. Sin `innerHTML`, sin `.style.` y sin atributos `on*` (CSP con `nonce`).
+
+**Funciones que estaban huérfanas y ahora se ven/editan desde la lista**:
+editar avisos (`POST /admin/avisos/{id}/editar`) y versiones
+(`POST /admin/releases/{id}/editar`) —nuevos servicios `actualizar_release` y
+`borrar_crm` en `app/services/web_admin.py`—; quitar el estado comercial desde
+la propia pestaña; flags y API keys en Sistema › Accesos; vistas guardadas en la
+barra de cada lista. Los enlaces que fabricaban `panel_busqueda.py` y
+`panel_notificaciones.py` se reescribieron a las rutas nuevas (apuntaban a
+páginas fusionadas o a parámetros que nadie leía).
+
+**Auditoría** — `app/services/audit_admin.py` añade `RESULTADOS_AUDITORIA`, la
+acción `web.release_editada` y el filtro `resultado` (ver solo lo que falló);
+`ACCIONES_LECIBLES` es el mapa acción → etiqueta y una prueba en
+`tests/test_panel_arquitectura.py` recorre los routers exigiendo que toda
+`accion="…"` emitida tenga etiqueta.
+
+**Pruebas** — `tests/test_panel_arquitectura.py` (69): mapa y límites del menú,
+los 16 302 con sus parámetros, render de las 16 pestañas y de las 5 de la ficha,
+filtros/orden/vistas/CSV server-side, acciones que vuelven a su pestaña y
+auditan, `volver` validado contra redirecciones abiertas, token de API key
+legible una sola vez y revocable, etiquetas de auditoría completas y que ningún
+enlace generado por los servicios cae en una pantalla muerta. Se reescribieron
+además los contratos obsoletos de `tests/test_licencias.py`,
+`tests/test_licencias_acceso.py`, `tests/test_operacion.py` y
+`tests/test_panel_emails.py` (el hub ya no es la tabla de clientes; `/admin/operacion`
+y `/admin/emails` son redirecciones).
+
+---
+
 ## 4. Qué queda pendiente (ordenado por prioridad)
 
-1. **Vistas guardadas conectadas a las páginas** (A5 real)
-   - Ya existe `vistas_guardadas` + `/admin/vistas`.
-   - Falta que Clientes, Cobros, Renovaciones, Compras y Automatizaciones puedan **guardar/cargar** su filtro/columnas actuales desde la propia página.
+1. **Vistas guardadas conectadas a las páginas** (A5 real) — ✅ **cerrado el 30/08/2026**
+   - Ya existe `vistas_guardadas`; `/admin/vistas` desapareció como página.
+   - Cada lista que admite vistas (Clientes › directorio, Ingresos › cobros,
+     compras, renovaciones y contratos, Sistema › automatizaciones) las muestra
+     como chips en su propia barra, con «guardar la vista actual» y «borrar»
+     ahí mismo; `?vista=ID` reconstruye los filtros en el servidor.
+   - Queda pendiente, si algún día hace falta: guardar **columnas** (la tabla
+     `vistas_guardadas` ya tiene la columna `columnas`; la barra solo persiste
+     filtros).
 
 2. **Reenvío masivo de facturas** (B2)
    - Solo hay reenvío individual.
@@ -121,7 +213,12 @@
 | `app/models.py` | Modelos `ContenidoWeb`, `AvisoWeb`, `ReleaseWeb`, `FeatureFlag`, `VistaGuardada`, `CrmCliente`, `ApiKeyOperador`. |
 | `app/services/web_admin.py` | Servicios de CMS, avisos, releases, flags, CRM, vistas, API keys. |
 | `app/services/web_publica.py` | Lectura pública (solo publicado/activo). |
-| `app/routers/admin.py` | Rutas `/admin/web`, `/admin/avisos`, `/admin/releases`, `/admin/flags`, `/admin/crm`, `/admin/vistas`, `/admin/salud-datos`, `/admin/api-keys`. |
+| `app/panel_arquitectura.py` | **Mapa del panel**: secciones, pestañas, iconos, atajos, rutas antiguas → pestaña, destinos válidos de `volver`. |
+| `app/routers/admin_paginas.py` | Las 11 GET del panel (7 pantallas + 4 CSV) y las 16 redirecciones 302. |
+| `app/services/panel_contextos.py` | Filtros, orden, vistas y contadores compartidos por las listas del panel. |
+| `app/routers/admin.py` | **Solo acciones**: `/admin/web`, `/admin/avisos`, `/admin/releases`, `/admin/flags`, `/admin/crm`, `/admin/vistas`, `/admin/api-keys`, ⌘K, campana y crons. |
+| `app/static/js/admin-kit.js` | Único script global del panel: ⌘K, campana, `/`, `g`+letra, `data-confirmar`. |
+| `tests/test_panel_arquitectura.py` | Contrato de la Fase 5 (69 pruebas). |
 | `app/routers/publico.py` | `/novedades` + lectura de contenido web en landing. |
 | `app/templates/admin/*.html` | Pantallas nuevas del panel. |
 | `app/templates/novedades.html` | Changelog público. |

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from sqlalchemy import or_
+from urllib.parse import quote
 from sqlalchemy.orm import joinedload
 
 from ..models import CompraPlan, EventoAdmin, Licencia, OperadorProducto, Organizacion
@@ -52,7 +53,10 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "licencia",
             "titulo": f"Licencia · {nombre}",
             "subtitulo": f"{lic.estado} · vence {lic.vence}",
-            "url": f"/admin/licencias?licencia={lic.id}",
+            # El resultado del buscador lleva a la lista donde la fila se ve y se
+            # puede actuar: `?q=` por el nombre del cliente, no a un `?licencia=`
+            # que ninguna pantalla del panel interpreta.
+            "url": f"/admin/ingresos?tab=contratos&q={quote(nombre, safe='')}",
         })
 
     for compra in db.query(CompraPlan).join(
@@ -68,7 +72,7 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "compra",
             "titulo": f"Compra #{compra.id} · {nombre}",
             "subtitulo": f"{compra.plan} · {compra.estado}",
-            "url": f"/admin/compras?compra={compra.id}",
+            "url": "/admin/ingresos?tab=compras&estado=todas",
         })
 
     for op in db.query(OperadorProducto).filter(
@@ -79,7 +83,7 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "operador",
             "titulo": op.email,
             "subtitulo": f"{op.etiqueta_rol} · {'activo' if op.activo else 'suspendido'}",
-            "url": f"/admin/equipo?operador={op.id}",
+            "url": "/admin/sistema?tab=equipo",
         })
 
     for evento in db.query(EventoAdmin).filter(
@@ -91,7 +95,7 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "auditoria",
             "titulo": evento.accion,
             "subtitulo": f"{evento.operador_email} · {evento.created_at:%d/%m/%Y %H:%M}",
-            "url": f"/admin/auditoria?accion={evento.accion}",
+            "url": f"/admin/sistema?tab=auditoria&accion={quote(evento.accion, safe='')}",
         })
 
     resultados.sort(key=lambda r: (_orden_tipo(r["tipo"]), r["titulo"].lower()))

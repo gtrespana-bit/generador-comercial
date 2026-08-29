@@ -1,0 +1,132 @@
+{# Sistema › Equipo (A1). Roles del operador: quién puede entrar y con qué. #}
+
+{% if not es_superadmin %}
+<div class="alert alert-warning">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  <div>Tu rol es <strong>{{ rol_actual }}</strong>: puedes consultar el equipo pero no cambiarlo. Solo un superadmin da de alta, cambia roles o suspende.</div>
+</div>
+{% endif %}
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ operadores|length }}</div>
+    <div class="kpi-label">Operadores</div>
+    <p class="note-sub">Con acceso al panel</p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ superadmins }}</div>
+    <div class="kpi-label">Superadmins</div>
+    <p class="note-sub">Pueden gestionar el propio equipo</p>
+  </div>
+  <div class="kpi-card {{ 'danger' if suspendidos else '' }}">
+    <div class="kpi-value">{{ suspendidos }}</div>
+    <div class="kpi-label">Suspendidos</div>
+    <p class="note-sub">Sin acceso hasta reactivar</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ desde_env }}</div>
+    <div class="kpi-label">Sembrados por entorno</div>
+    <p class="note-sub">COTIZAT_OPERADORES, sin fila en la base</p>
+  </div>
+</div>
+
+<div class="grid-lateral">
+  <div class="card">
+    <div class="card-header">
+      <h2>Operadores</h2>
+      <span class="card-nota">El rol decide qué áreas se ven; los datos que se pueden leer siguen siendo los de siempre</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Correo</th><th>Rol</th><th>Estado</th><th>Origen</th><th>Notas</th><th></th></tr></thead>
+        <tbody>
+          {% for op in operadores %}
+          <tr>
+            <td class="org-name">{{ op.email }}{% if op.email == operador %} <span class="badge badge-info">tú</span>{% endif %}</td>
+            <td>
+              {% if es_superadmin and op.id %}
+              <form class="rol-form" method="post" action="/admin/equipo/{{ op.id }}/rol">
+                <label class="visualmente-oculto" for="rol-{{ op.id }}">Rol de {{ op.email }}</label>
+                <select id="rol-{{ op.id }}" name="rol" class="form-control">
+                  {% for valor, etiqueta in roles %}
+                  <option value="{{ valor }}" {{ 'selected' if op.rol == valor else '' }}>{{ etiqueta }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-sm btn-secondary" type="submit">Cambiar</button>
+              </form>
+              {% else %}
+              <span class="badge {{ 'badge-info' if op.rol == 'superadmin' else 'badge-neutral' }}">{{ op.rol_label }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if op.activo %}<span class="badge badge-success">Activo</span>
+              {% else %}<span class="badge badge-danger">Suspendido</span>{% endif %}
+            </td>
+            <td class="muted">{{ 'Base de datos' if op.origen == 'tabla' else 'Entorno' }}</td>
+            <td class="muted notas-celda">{{ op.notas or '—' }}</td>
+            <td>
+              {% if es_superadmin and op.id %}
+              <div class="tabla-acciones">
+                {% if op.activo %}
+                <form class="form-inline" method="post" action="/admin/equipo/{{ op.id }}/suspender"
+                      data-confirmar="Se quitará el acceso al panel a {{ op.email }}.">
+                  <button class="btn btn-sm btn-danger" type="submit">Suspender</button>
+                </form>
+                {% else %}
+                <form class="form-inline" method="post" action="/admin/equipo/{{ op.id }}/activar">
+                  <button class="btn btn-sm" type="submit">Reactivar</button>
+                </form>
+                {% endif %}
+              </div>
+              {% elif op.origen == 'env' %}
+              <span class="muted-note">Gestionar en COTIZAT_OPERADORES</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if es_superadmin %}
+  <div class="ficha-lado">
+    <div class="card">
+      <div class="card-header"><h2>Dar de alta</h2></div>
+      <div class="card-body">
+        <form method="post" action="/admin/equipo/crear">
+          <div class="form-group">
+            <label class="form-label" for="nuevo-email">Correo</label>
+            <input class="form-control" id="nuevo-email" name="email" type="email" required placeholder="soporte@tuempresa.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nuevo-rol">Rol</label>
+            <select class="form-control" id="nuevo-rol" name="rol">
+              {% for valor, etiqueta in roles %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nuevo-notas">Notas</label>
+            <textarea class="form-control" id="nuevo-notas" name="notas" rows="2" placeholder="Responsabilidad o motivo del acceso"></textarea>
+          </div>
+          <div class="form-acciones">
+            <button class="btn btn-bloque" type="submit">Dar de alta</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h2>Qué puede hacer cada rol</h2></div>
+      <div class="card-body">
+        <ul class="lista-roles">
+          {% for rol, alcance in alcances_rol %}
+          <li><b>{{ rol }}</b><small>{{ alcance }}</small></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>

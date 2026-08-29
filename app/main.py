@@ -51,6 +51,7 @@ from .storage import StorageError  # noqa: E402
 
 from .routers import (  # noqa: E402
     admin,
+    admin_paginas,
     auth,
     clientes,
     configuracion,
@@ -457,6 +458,9 @@ app.include_router(auth.router)
 app.include_router(publico.router)
 app.include_router(pagos.router)
 app.include_router(admin.router)
+# Las pantallas del panel (seis áreas con pestañas) van junto a sus acciones:
+# `admin` son las acciones y los cron, `admin_paginas` son las lecturas.
+app.include_router(admin_paginas.router)
 app.include_router(inicio.router)
 app.include_router(clientes.router)
 app.include_router(presupuestos.router)

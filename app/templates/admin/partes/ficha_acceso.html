@@ -1,0 +1,98 @@
+{# Ficha › Acceso y licencias: la cadena completa, el formulario de concesión y
+   la suspensión. Es lo que antes estaba repartido entre «Licencias» y la ficha. #}
+
+<div class="card" id="conceder">
+  <div class="card-header">
+    <h2>{% if ficha.vigente %}Renovar acceso{% else %}Conceder acceso{% endif %}</h2>
+    <span class="card-nota">{% if ficha.vigente %}Se encadena al {{ (ficha.vence_total or ficha.vigente.vence)|fecha }}{% else %}Empieza hoy{% endif %}</span>
+  </div>
+  <div class="card-body">
+    {% set conceder_org_id = ficha.organizacion.id %}
+    {% set conceder_destino = '/admin/clientes/%s?tab=acceso'|format(ficha.organizacion.id) %}
+    {% set conceder_filas = [] %}
+    {% include "admin/partes/_form_conceder.html" %}
+  </div>
+  {% if ficha.vigente %}
+  <div class="card-pie">
+    <form class="form-inline" method="post" action="/admin/organizaciones/{{ ficha.organizacion.id }}/suspender"
+          data-confirmar="Se cancelará todo el acceso vigente de «{{ ficha.organizacion.nombre }}», incluidas las renovaciones encadenadas. Los datos no se borran.">
+      <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso">
+      <input name="motivo" placeholder="Motivo (queda anotado)" aria-label="Motivo de la suspensión">
+      <button class="btn btn-sm btn-danger" type="submit">Suspender acceso</button>
+    </form>
+    <span class="muted-note" id="suspender">Suspender corta la cadena entera: cancelar una sola licencia dejaría acceso detrás.</span>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Cadena de licencias</h2>
+    <span class="badge badge-neutral">{{ ficha.licencias|length }}</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr><th>Inicio</th><th>Vence</th><th>Tipo</th><th class="tabla-num">Importe</th><th>Estado</th><th>Cobro / referencia</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for lic in ficha.licencias %}
+        <tr>
+          <td>{{ lic.inicio|fecha }}</td>
+          <td>{{ lic.vence|fecha }}</td>
+          <td>{{ etiquetas_origen.get(lic.origen, lic.origen) }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(lic.importe) }} <span class="muted">{{ lic.moneda }}</span></td>
+          <td>
+            {% if lic.estado == 'activa' %}<span class="badge badge-success">Activa</span>
+            {% elif lic.estado == 'vencida' %}<span class="badge badge-neutral">Vencida</span>
+            {% elif lic.estado == 'cancelada' %}<span class="badge badge-danger">Cancelada</span>
+            {% else %}<span class="badge badge-neutral">{{ lic.estado }}</span>{% endif %}
+          </td>
+          <td class="muted">
+            {{ lic.metodo_cobro or '—' }}
+            {% if lic.referencia %}<div><code class="accion-code">{{ lic.referencia }}</code></div>{% endif %}
+            {% if lic.notas %}<div>{{ lic.notas|truncate(90) }}</div>{% endif %}
+          </td>
+          <td>
+            <div class="tabla-acciones">
+              {% if lic.origen == 'pago' and lic.importe > 0 %}
+              <a class="btn btn-sm btn-secondary" href="/admin/licencias/{{ lic.id }}/recibo.pdf" target="_blank" rel="noopener">Recibo</a>
+              {% endif %}
+              {% if lic.estado != 'cancelada' %}
+              <form class="form-inline" method="post" action="/admin/licencias/{{ lic.id }}/cancelar"
+                    data-confirmar="Se cancelará solo esta licencia.">
+                <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso">
+                <button class="btn btn-sm btn-danger" type="submit">Cancelar</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>Este cliente no tiene licencias registradas.</b>
+            <p>Concédele una prueba de 7 días o un plan de pago arriba: el acceso se activa en cuanto se guarda la licencia.</p>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Avisos de vencimiento</h2></div>
+  <div class="card-body">
+    <p class="note-block">
+      Los recordatorios a 5 y 1 día los envía el cron diario. Si quieres avisar a este cliente
+      fuera de ese momento, usa el barrido manual: solo alcanza a las organizaciones que vencen
+      en los próximos 15 días y no repite el envío el mismo día.
+    </p>
+    <form class="form-inline" method="post" action="/admin/licencias/avisos"
+          data-confirmar="Se avisará a todas las organizaciones por vencer (no solo a este cliente).">
+      <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso">
+      <button class="btn btn-sm btn-secondary" type="submit">Barrido de avisos manual</button>
+    </form>
+  </div>
+</div>

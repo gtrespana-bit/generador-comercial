@@ -48,7 +48,9 @@ def notificaciones_admin(
                 "critical" if dias <= 3 else "warning",
                 f"{nombres.get(org_id, 'Cliente')} vence en {dias} día(s)",
                 f"El acceso caduca el {vence_total:%d/%m/%Y}.",
-                "/admin/renovaciones",
+                # Directo a la ficha del cliente que vence: es donde se renueva o
+                # se concede, no a una lista genérica.
+                f"/admin/clientes/{org_id}?tab=acceso",
             ))
         if len(avisos) >= 8:
             break
@@ -64,7 +66,7 @@ def notificaciones_admin(
             "warning",
             f"Compra #{compra.id} de {nombre} por activar",
             f"Plan {compra.plan} · {compra.moneda} {compra.importe:,.2f}",
-            "/admin/cobros",
+            "/admin/ingresos?tab=compras&estado=pendiente",
         ))
 
     # --- Seguridad del equipo -----------------------------------------
@@ -76,7 +78,7 @@ def notificaciones_admin(
             "critical",
             "Equipo vacío: nadie puede administrar el panel",
             "Configura COTIZAT_OPERADORES o da de alta un superadmin.",
-            "/admin/equipo",
+            "/admin/sistema?tab=equipo",
         ))
     superadmins_activos = sum(
         1 for op in equipo_db if op.rol == "superadmin" and op.activo
@@ -87,7 +89,7 @@ def notificaciones_admin(
             "warning",
             "Sin superadmin activo en la base",
             "El acceso por COTIZAT_OPERADORES sigue funcionando como semilla.",
-            "/admin/equipo",
+            "/admin/sistema?tab=equipo",
         ))
 
     # --- Estado del negocio -------------------------------------------
@@ -100,7 +102,7 @@ def notificaciones_admin(
             "info",
             f"{sin_plan} cliente(s) sin plan activo",
             "Revisar la conversión y las oportunidades de renovación.",
-            "/admin/clientes",
+            "/admin/clientes?tab=directorio&plan=sin",
         ))
 
     return _ordenar(avisos)[:12]

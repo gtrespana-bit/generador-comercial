@@ -180,10 +180,15 @@ def test_el_operador_ve_la_pagina_con_los_ocho_correos(entorno_panel, monkeypatc
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
 
     with _cliente() as client:
-        respuesta = client.get("/admin/emails")
+        # La página propia ya no existe: es una pestaña de Sistema, y la URL
+        # histórica redirige a ella.
+        redirección = client.get("/admin/emails", follow_redirects=False)
+        assert redirección.status_code == 302
+        assert redirección.headers["location"] == "/admin/sistema?tab=correos"
+        respuesta = client.get("/admin/sistema?tab=correos")
 
     assert respuesta.status_code == 200
-    assert "Correos de CotizaT" in respuesta.text
+    assert "Catálogo de correos" in respuesta.text
     assert 'value="titular@example.com"' in respuesta.text  # destino por omisión
     for titulo in (
         "Recordatorio de vencimiento",

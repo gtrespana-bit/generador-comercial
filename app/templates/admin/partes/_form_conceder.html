@@ -1,0 +1,62 @@
+{# Formulario de concesión/renovación compartido por:
+   - Ingresos › Contratos (hay que elegir cliente)
+   - la ficha del cliente (el cliente ya está elegido)
+   Un solo formulario para las dos pantallas evita que la sintaxis del POST
+   diverja entre ellas. #}
+<form class="form-cuadricula" method="post" action="{{ '/admin/licencias' if not conceder_org_id else '/admin/organizaciones/%s/conceder'|format(conceder_org_id) }}">
+  <input type="hidden" name="volver" value="{{ conceder_destino }}">
+  {% if conceder_org_id %}
+  <input type="hidden" name="organizacion_id" value="{{ conceder_org_id }}">
+  {% endif %}
+  {% if not conceder_org_id %}
+  <div class="form-group grid-full">
+    <label class="form-label" for="conceder-org">Cliente</label>
+    <select class="form-control" id="conceder-org" name="organizacion_id" required>
+      <option value="">Selecciona…</option>
+      {% for fila in conceder_filas %}
+      <option value="{{ fila.organizacion.id }}">{{ fila.organizacion.nombre }}{% if fila.vigente %} · vence {{ fila.vence.strftime('%d/%m/%Y') if fila.vence else '—' }}{% else %} · sin acceso{% endif %}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <label class="form-label" for="conceder-origen">Tipo</label>
+    <select class="form-control" id="conceder-origen" name="origen">
+      {% for valor, etiqueta in origenes %}
+      <option value="{{ valor }}">{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="conceder-duracion">Duración</label>
+    <select class="form-control" id="conceder-duracion" name="duracion">
+      {% for clave, texto in duraciones %}
+      <option value="{{ clave }}" {{ 'selected' if clave == '1a' else '' }}>{{ texto }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="conceder-importe">Importe (0 = sin cobro)</label>
+    <input class="form-control" id="conceder-importe" name="importe" type="number" min="0" step="0.01" value="0">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="conceder-moneda">Moneda</label>
+    <input class="form-control" id="conceder-moneda" name="moneda" maxlength="10" value="USD">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="conceder-metodo">Método de cobro</label>
+    <input class="form-control" id="conceder-metodo" name="metodo_cobro" maxlength="80" placeholder="Zelle, transferencia, Binance…">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="conceder-ref">Referencia</label>
+    <input class="form-control" id="conceder-ref" name="referencia" maxlength="120" placeholder="nº de operación, TXID…">
+  </div>
+  <div class="form-group grid-full">
+    <label class="form-label" for="conceder-notas">Notas internas</label>
+    <textarea class="form-control" id="conceder-notas" name="notas" rows="2" placeholder="Acuerdo, motivo, quién lo pidió…"></textarea>
+  </div>
+  <div class="grid-full form-acciones">
+    <button class="btn" type="submit">{{ 'Conceder o renovar' if not conceder_org_id else 'Registrar acceso' }}</button>
+    <span class="muted-note">Si ya hay acceso vigente, la nueva licencia empieza al día siguiente de su vencimiento: renovar nunca resta días. Deja el importe en 0 para una prueba o cortesía; si el tipo es «Pago» y el importe queda en 0, se usa el del plan publicado.</span>
+  </div>
+</form>

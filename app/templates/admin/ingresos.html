@@ -1,0 +1,9 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Ingresos · {{ pestana_nombre }}{% endblock %}
+
+{% block page_subtitle %}{{ cabecera.get('subtitulo', '') }} · Hoy: {{ hoy.strftime('%d/%m/%Y') }}.{% endblock %}
+
+{% block content %}
+  {% include "admin/partes/ingresos_" + pestana + ".html" %}
+{% endblock %}

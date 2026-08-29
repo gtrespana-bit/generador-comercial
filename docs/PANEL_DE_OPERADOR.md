@@ -427,15 +427,17 @@ momento, y el propio cliente puede renovarse solo (§8).
   `POST /admin/organizaciones/{id}/suspender`. La organización viaja **en la
   URL**, que es lo que elimina el desplegable y el error de fila.
 - El campo `volver` decide a qué panel se regresa, contra una **lista blanca**
-  (`_DESTINOS_PANEL` en `app/routers/admin.py`). Un `volver` externo se ignora
-  y cae a `/admin`: un parámetro de retorno sin filtrar es una redirección
-  abierta.
-- El despliegue de la ficha vive en `app/static/js/admin-panel.js`, sin
-  `innerHTML` ni estilos en línea (la CSP del proyecto usa `nonce`). Las
-  acciones son formularios POST normales: **sin JavaScript el panel sigue
-  siendo operativo**, solo que las fichas aparecen desplegadas.
-- Al ordenar o filtrar la tabla, cada ficha se mueve pegada a su fila; nunca
-  puede quedar bajo el cliente equivocado.
+  derivada del mapa de navegación (`es_destino_panel` en
+  `app/panel_arquitectura.py`). Un `volver` externo se ignora y cae al destino
+  por omisión de la acción: un parámetro de retorno sin filtrar es una
+  redirección abierta.
+- El único JavaScript global del panel es `app/static/js/admin-kit.js` (buscador
+  ⌘K, campana, `data-confirmar`, atajos `g`+letra y `/`), sin `innerHTML` ni
+  estilos en línea (la CSP del proyecto usa `nonce`). Las acciones son
+  formularios POST normales: **sin JavaScript el panel sigue siendo operativo**.
+  Desde la capa del 30/08/2026 (§11) las fichas ya no se despliegan en la tabla
+  sino que son una pantalla propia por pestañas, así que el desplegable y su
+  hoja de estilo desaparecieron con `admin-panel.js`.
 
 ### Pruebas
 
@@ -468,3 +470,88 @@ En resumen: no existe forma de quedarse encerrado fuera del sistema por
 encender el interruptor. El único orden que sí es obligatorio es tener aplicada
 la migración y **desplegado el PR #38** antes de activarlo, porque la prueba
 gratuita que cubre a las organizaciones nuevas viaja en ese PR.
+
+---
+
+## 11. El panel se reorganiza en seis áreas (30/08/2026)
+
+El panel había crecido como una lista de páginas: diecisiete rutas planas, siete
+de ellas recorriendo las mismas organizaciones desde ángulos distintos
+(``/admin``, ``/admin/licencias``, ``/admin/clientes``, ``/admin/cobros``,
+``/admin/renovaciones``, ``/admin/compras``, ``/admin/crm``), y varias
+convertidas en tablas de miles de filas que no servían para decidir nada. Se
+reorganizó sin añadir funciones nuevas: lo que cambia es **dónde está cada
+cosa** y **desde dónde se actúa**.
+
+### Las seis entradas
+
+| Área | Pregunta que responde | Pestañas |
+|---|---|---|
+| **Hoy** (`/admin`) | qué necesita una decisión antes de cerrar el día | agenda, KPIs, serie de ingresos, actividad reciente |
+| **Clientes** | quién es el cliente y cómo lo gestiono | directorio · CRM (embudo) — y la ficha: resumen, acceso, cobros, gestión, actividad |
+| **Ingresos** | el dinero, sin abrir cuatro páginas | renovaciones del mes · compras · cobros · contratos |
+| **Web** | lo que ve el público | contenido · avisos · versiones |
+| **Analítica** | cómo va el producto | una sola pantalla, sin barra |
+| **Sistema** | operación y control | salud · automatizaciones · salud de datos · equipo · accesos · auditoría · correos |
+
+Atajos de teclado, declarados en el mapa y no en el JavaScript: `g h`, `g c`,
+`g i`, `g w`, `g a`, `g s` y `/` para el buscador.
+
+### Qué se fusionó y adónde va el enlace antiguo
+
+Las dieciséis páginas que dejaron de existir responden con **302 a su pestaña
+conservando los parámetros**: un favorito a `/admin/cobros?mes=2026-07` aterriza
+en `/admin/ingresos?tab=cobros&mes=2026-07` y sigue mostrando julio. El mapa
+completo está en `RUTAS_ANTIGUAS` (`app/panel_arquitectura.py`), que es también
+el origen del menú, del migado de pan, de los contadores y de las validaciones
+de `volver`. **Añadir una página nueva pasa por tocar ese mapa**, no por copiar
+otro `base_admin.html`.
+
+### Cómo se opera ahora
+
+- **Filtros, búsqueda y orden viajan en la URL** (`?q=`, `?estado=`, `?plan=`,
+  `?orden=&dir=`, `?mes=`, `?vista=`) y se aplican en el servidor. La pantalla
+  se puede enlazar, compartir y recargar; no depende de que un script cargue las
+  filas.
+- **El CSV de cada lista es exactamente lo filtrado**: `/admin/clientes.csv?q=…`
+  exporta las filas que se ven, con las columnas del CRM dentro.
+- **La acción está en la fila**: verificar y activar una compra, conceder,
+  suspender, renovar, enviar avisos, alternar un flag, editar un aviso o una
+  versión. Tras la acción se vuelve a la misma pestaña con el mismo filtro
+  (`volver`), y el badge del menú se recalcula.
+- **Las vistas guardadas dejaron de ser una página**: son un chip con nombre en
+  la barra de su propia lista (se crean desde los filtros que estás usando y se
+  borran desde ahí).
+- **La ficha del cliente tiene cinco pestañas** con URL propia
+  (`/admin/clientes/12?tab=acceso`), y el CRM es una pestaña más del área, no un
+  panel paralelo.
+
+### Qué se corrigió de paso
+
+- Editar un aviso o una versión publicada obligaba a borrarlo y volverlo a
+  crear: existen `POST /admin/avisos/{id}/editar` y
+  `POST /admin/releases/{id}/editar`, con su etiqueta de auditoría
+  (`web.aviso_editado`, `web.release_editada`).
+- Las API keys y los feature flags eran dos páginas sueltas sin enlace desde
+  ningún sitio; son la pestaña **Accesos** de Sistema, y la token creada sigue
+  viéndose una sola vez.
+- Las vistas guardadas y las API keys estaban huérfanas de navegación: ahora
+  viven en su área (la barra de la lista y la pestaña de Accesos). Los enlaces
+  que fabrican el buscador ⌘K y la campana se reescribieron a esa dirección:
+  antes apuntaban a rutas ya fusionadas o a parámetros (`?licencia=`,
+  `?compra=`, `?operador=`) que ninguna pantalla del panel interpreta.
+- Quitar el estado comercial de un cliente petaba contra el `CHECK` de
+  `crm_clientes`: el formulario vacío se trata como «quitar del embudo».
+- `fmt_fecha(None)` reventaba en fichas sin factura: las plantillas usan el
+  filtro `|fecha` tolerante con huecos.
+
+### Pruebas
+
+`tests/test_panel_arquitectura.py` (69 pruebas) fija el contrato: el menú de
+seis entradas, cada 302 con sus parámetros, que las dieciséis pestañas y las cinco de
+la ficha renderizan, que filtrar y ordenar cambia las filas y el CSV, que la
+vista guardada vive y muere en su lista, que cada acción vuelve a su pestaña y
+queda auditada, que un `volver` externo se ignora, que la token de una API key
+no se puede volver a leer y que **toda acción que el panel audita tiene etiqueta
+legible** (se comprueba recorriendo los routers, así que una acción nueva sin
+etiqueta falla en CI). La suite completa: ver `docs/PROGRESO_PANEL_ADMIN.md`.

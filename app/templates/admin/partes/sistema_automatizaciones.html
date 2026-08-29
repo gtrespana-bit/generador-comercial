@@ -1,0 +1,52 @@
+{# Sistema › Automatizaciones (B5). Las reglas del cron hechas visibles: qué
+   harían hoy y un botón para dispararlas sin esperar al programador. #}
+
+<div class="kpis">
+  <div class="kpi-card warn">
+    <div class="kpi-value">{{ estado.por_renovar }}</div>
+    <div class="kpi-label">Vencen en ≤15 días</div>
+    <p class="note-sub">A estos les corresponde un aviso</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ estado.recordatorios_hoy }}</div>
+    <div class="kpi-label">Disparan hoy</div>
+    <p class="note-sub">A 5 días o a 1 día del vencimiento</p>
+  </div>
+  <div class="kpi-card {{ 'danger' if estado.compras_pendientes else '' }}">
+    <div class="kpi-value">{{ estado.compras_pendientes }}</div>
+    <div class="kpi-label">Compras esperando</div>
+    <p class="note-sub"><a href="/admin/ingresos?tab=compras">Atenderlas</a></p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ estado.sin_plan }}</div>
+    <div class="kpi-label">Clientes sin plan</div>
+    <p class="note-sub"><a href="/admin/clientes?estado=sin_licencia">Ver el listado</a></p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Reglas</h2>
+    <span class="card-nota">Misma lógica que el cron: el botón no duplica envíos</span>
+  </div>
+  {% for r in reglas %}
+  <div class="bloque-regla">
+    <div class="bloque-regla-txt">
+      <b>{{ r.nombre }}</b>
+      <small>{{ r.descripcion }}</small>
+    </div>
+    <span class="badge badge-neutral">{{ r.frecuencia }}</span>
+    {% if r.ejecutable %}
+    <form class="form-inline" method="post" action="/admin/automatizaciones/{{ r.id }}/ejecutar"
+          data-confirmar="Se ejecutará «{{ r.nombre }}» ahora. ¿Continuar?">
+      <button class="btn btn-sm" type="submit">Ejecutar ahora</button>
+    </form>
+    {% else %}
+    <span class="muted-note">Se calcula al abrir el panel</span>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="card-pie">
+    <span class="muted-note">Los trabajos programados se declaran en <code>vercel.json</code> y se protegen con <code>CRON_SECRET</code>: <code>{{ cron_recordatorios }}</code> y <code>{{ cron_mantenimiento }}</code>.</span>
+  </div>
+</div>

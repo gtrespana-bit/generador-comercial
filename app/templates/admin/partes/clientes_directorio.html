@@ -1,0 +1,151 @@
+{# Clientes › Directorio (B1). Un listado, filtros de verdad y la ficha a un
+   clic. Todo lo que antes estaba repartido en «Licencias», «Clientes» y «CRM»
+   se ve aquí con las mismas filas. #}
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ resumen.totales.filtradas }}</div>
+    <div class="kpi-label">Clientes</div>
+    <p class="note-sub">{{ resumen.totales.clientes }} en total</p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ resumen.totales.con_plan }}</div>
+    <div class="kpi-label">Con plan activo</div>
+    <p class="note-sub">{{ "%.2f"|format(resumen.totales.ingresos) }} US$ cobrados en licencias</p>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-value">{{ resumen.totales.por_vencer }}</div>
+    <div class="kpi-label">Por vencer ≤15 días</div>
+    <p class="note-sub"><a href="/admin/ingresos?tab=renovaciones">Ver renovaciones del mes</a></p>
+  </div>
+  <div class="kpi-card danger">
+    <div class="kpi-value">{{ resumen.totales.sin_plan }}</div>
+    <div class="kpi-label">Sin plan</div>
+    <p class="note-sub">Vencidos o nunca concedidos</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Directorio</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ resumen.filas|length }} fila{{ 's' if resumen.filas|length != 1 else '' }}</span>
+      {% for clave, valor in filtros_activos.items() %}
+      <span class="badge badge-info">{{ clave }}: {{ valor }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/clientes">
+    <input type="hidden" name="tab" value="directorio">
+    <label class="visualmente-oculto" for="clientes-q">Buscar</label>
+    <input class="toolbar-buscar" id="clientes-q" type="search" name="q" value="{{ q }}" placeholder="Nombre o slug…">
+    <label class="visualmente-oculto" for="clientes-estado">Estado del acceso</label>
+    <select id="clientes-estado" name="estado">
+      {% for valor, etiqueta in opciones_estado %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_estado == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <label class="visualmente-oculto" for="clientes-plan">Plan</label>
+    <select id="clientes-plan" name="plan">
+      {% for valor, etiqueta in opciones_plan %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_plan == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <label class="visualmente-oculto" for="clientes-crm">Estado comercial</label>
+    <select id="clientes-crm" name="crm">
+      {% for valor, etiqueta in opciones_crm %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_crm == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm" type="submit">Filtrar</button>
+    <span class="toolbar-limpiar">
+      {% if hay_filtros %}
+      <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=directorio">Limpiar</a>
+      {% endif %}
+      <a class="btn btn-sm btn-secondary" href="/admin/clientes.csv?{{ url_filtros }}">Con filtros → CSV</a>
+    </span>
+  </form>
+
+  {% set vista_modulo = 'clientes' %}
+  {% set vistas_guardadas = vistas %}
+  {% set vista_activa = vista_id %}
+  {% set vista_ruta_base = '/admin/clientes?tab=directorio' %}
+  {% set vista_ruta_actual = '/admin/clientes?tab=directorio&' ~ url_filtros %}
+  {% set vista_accion = '/admin/vistas/crear' %}
+  {% set vista_filtros = dict_filtros %}
+  {% set vista_total = resumen.totales.clientes %}
+  {% include "admin/partes/_barra_vistas.html" %}
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="{{ 'orden-active' if orden == 'nombre' else '' }}">{{ enlace_orden('nombre', 'Cliente') }}</th>
+          <th>Estado</th>
+          <th class="{{ 'orden-active' if orden == 'plan' else '' }}">{{ enlace_orden('plan', 'Plan') }}</th>
+          <th class="tabla-num">{{ enlace_orden('ingresos', 'Ingresos') }}</th>
+          <th>{{ enlace_orden('vence', 'Vencimiento') }}</th>
+          <th>Comercial</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fila in resumen.filas %}
+        {% set org = fila.organizacion %}
+        {% set crm = crm_por_org.get(org.id) %}
+        <tr>
+          <td class="org-name">
+            <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a>
+            <div class="org-sub" title="{{ fila.emails|join(', ') }}">{{ org.slug }}{% if fila.emails %} · {{ fila.emails[0] }}{% if fila.emails|length > 1 %} +{{ fila.emails|length - 1 }}{% endif %}{% endif %}</div>
+          </td>
+          <td>
+            {% if fila.estado == 'activa' %}<span class="badge badge-success">{{ fila.estado_label }}</span>
+            {% elif fila.estado == 'por_vencer' %}<span class="badge badge-warning">{{ fila.estado_label }} · {{ fila.dias_restantes }}d</span>
+            {% elif fila.estado == 'vencida' %}<span class="badge badge-danger">{{ fila.estado_label }}</span>
+            {% else %}<span class="badge badge-neutral">{{ fila.estado_label }}</span>{% endif %}
+            {% if fila.compras_pendientes %}
+            <span class="badge badge-info" title="{{ fila.compras_pendientes|length }} compra(s) esperando verificación">{{ fila.compras_pendientes|length }} compra{{ 's' if fila.compras_pendientes|length != 1 else '' }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {{ fila.plan_label }}
+            {% if fila.vigente and fila.vigente.importe %}
+            <div class="muted">{{ "%.2f"|format(fila.vigente.importe) }} {{ fila.vigente.moneda }}{% if fila.metodo_cobro %} · {{ fila.metodo_cobro }}{% endif %}</div>
+            {% endif %}
+          </td>
+          <td class="tabla-num">{{ "%.2f"|format(fila.ingresos) }}</td>
+          <td class="muted">
+            {{ fila.vence.strftime('%d/%m/%Y') if fila.vence else '—' }}
+            {% if fila.vigente %}<div class="muted">{{ fila.dias_restantes }} días restantes</div>{% endif %}
+          </td>
+          <td>
+            {% if crm %}
+            <span class="badge {{ 'badge-warning' if crm.estado == 'riesgo' else ('badge-neutral' if crm.estado in ('lead', 'inactivo') else 'badge-success') }}">{{ crm.estado_etiqueta }}</span>
+            {% if crm.proximo_contacto %}
+            <div class="muted">Contacto: {{ crm.proximo_contacto }}</div>
+            {% endif %}
+            {% else %}
+            <span class="muted">Sin asignar</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="tabla-acciones">
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Ficha</a>
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}?tab=gestion">Notas</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>No hay clientes con esos filtros.</b>
+            <p>Prueba a limpiar los filtros: si una organización se registró pero nunca recibió acceso, aparece como «Sin plan».</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=directorio">Ver todos</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

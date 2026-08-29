@@ -255,8 +255,8 @@ def test_el_operador_ve_salud_errores_y_hechos(entorno_operador, monkeypatch, re
 
     assert respuesta.status_code == 200
     assert respuesta.headers["cache-control"] == "no-store"
-    assert "Estado del despliegue" in respuesta.text
-    assert "Hechos operativos" in respuesta.text
+    assert "Salud del despliegue" in respuesta.text
+    assert "Hechos del despliegue" in respuesta.text
     assert "explosion" in respuesta.text
     # Jinja2 escapa los corchetes del segmento saneado
     assert "&lt;token&gt;" in respuesta.text
@@ -267,15 +267,27 @@ def test_el_operador_ve_salud_errores_y_hechos(entorno_operador, monkeypatch, re
     assert "memoria de esta instancia" in respuesta.text
 
 
-def test_el_panel_de_licencias_enlaza_con_operacion(entorno_operador, monkeypatch):
+def test_la_url_antigua_de_operacion_lleva_a_la_pestana_de_estado(entorno_operador, monkeypatch):
+    """El diagnóstico no se pierde: la URL vieja apunta a Sistema › Estado.
+
+    Se prueba la redirección y el contenido nuevo por separado. La ruta antigua
+    sigue viva porque quedan enlaces en favoritos y en correos del equipo; lo que
+    ya no existe es una pantalla duplicada de lo mismo.
+    """
     _Session, _datos, _estado = entorno_operador
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
 
     with _cliente_operador() as cliente:
-        respuesta = cliente.get("/admin/licencias")
+        respuesta = cliente.get("/admin/operacion", follow_redirects=False)
+        assert respuesta.status_code == 302
+        assert respuesta.headers["location"] == "/admin/sistema?tab=estado"
 
-    assert respuesta.status_code == 200
-    assert "/admin/operacion" in respuesta.text
+        pagina = cliente.get("/admin/sistema?tab=estado")
+
+    assert pagina.status_code == 200
+    assert "Salud del despliegue" in pagina.text
+    # El JSON crudo sigue a un clic, para quien quiera compararlo con el panel.
+    assert "/readyz" in pagina.text
 
 
 def test_readyz_sigue_respondiendo_con_el_middleware(entorno_operador):

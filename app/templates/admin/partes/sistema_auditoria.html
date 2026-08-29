@@ -1,0 +1,72 @@
+{# Sistema › Auditoría (A2).Quién hizo qué desde el panel, con filtros que se
+   quedan en la URL (enlazables desde el buscador y desde la ficha de cliente). #}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Registro de acciones</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ eventos|length }} evento{{ 's' if eventos|length != 1 else '' }}</span>
+      {% if filtros_activos %}
+      <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=auditoria">Quitar filtros</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/sistema">
+    <input type="hidden" name="tab" value="auditoria">
+    <label class="visualmente-oculto" for="aud-actor">Actor</label>
+    <input class="toolbar-buscar" id="aud-actor" type="search" name="actor" value="{{ filtros.actor }}" placeholder="correo del operador…">
+    <label class="visualmente-oculto" for="aud-accion">Acción</label>
+    <select id="aud-accion" name="accion">
+      <option value="">Todas las acciones</option>
+      {% for valor, etiqueta in acciones %}
+      <option value="{{ valor }}" {{ 'selected' if filtros.accion == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <label class="visualmente-oculto" for="aud-resultado">Resultado</label>
+    <select id="aud-resultado" name="resultado">
+      {% for valor, etiqueta in resultados %}
+      <option value="{{ valor }}" {{ 'selected' if filtros.resultado == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <label class="visualmente-oculto" for="aud-org">Organización</label>
+    <input id="aud-org" type="number" min="1" name="organizacion_id" value="{{ filtros.organizacion_id or '' }}" placeholder="ID de organización" aria-label="Filtrar por organización">
+    <button class="btn btn-sm" type="submit">Filtrar</button>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr><th>Fecha</th><th>Operador</th><th>Rol</th><th>Acción</th><th>Entidad</th><th>Cliente</th><th>Detalle</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        {% for evento in eventos %}
+        <tr>
+          <td class="muted">{{ evento.created_at.strftime('%d/%m/%Y %H:%M') if evento.created_at else '—' }}</td>
+          <td class="org-name">{{ evento.operador_email or '—' }}</td>
+          <td>{% if evento.operador_rol %}<span class="badge badge-info">{{ evento.operador_rol }}</span>{% else %}—{% endif %}</td>
+          <td><code class="accion-code" title="{{ etiquetas_acciones.get(evento.accion, evento.accion) }}">{{ evento.accion }}</code></td>
+          <td>{{ evento.entidad or '—' }}{% if evento.entidad_id %} <span class="muted">#{{ evento.entidad_id }}</span>{% endif %}</td>
+          <td>
+            {% if evento.organizacion_id %}
+            <a href="/admin/clientes/{{ evento.organizacion_id }}?tab=actividad">#{{ evento.organizacion_id }}</a>
+            {% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td class="muted detalle-celda">{{ evento.detalle }}</td>
+          <td><span class="badge {{ 'badge-success' if evento.resultado == 'ok' else 'badge-danger' }}">{{ evento.resultado }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8">
+          <div class="vacio">
+            <b>Nada registrado con esos filtros.</b>
+            <p>Cada concesión, suspensión, activación de compra, aviso enviado o cambio de equipo se anota aquí con su autor y su IP hasheada.</p>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-pie">
+    <span class="muted-note">Solo inserción y lectura: la tabla no admite edición ni borrado (RLS sin UPDATE/DELETE en PostgreSQL).</span>
+  </div>
+</div>

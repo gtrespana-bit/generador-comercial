@@ -1,0 +1,25 @@
+{# Selector de mes reutilizable (cobros y renovaciones).
+
+   Recibe `periodo`, un dict construido por el router con: `etiqueta`, `actual`
+   (AAAA-MM), `anterior` y `siguiente` (URLs completas conservando los filtros
+   activos) y `ocultos` (los parámetros que el formulario debe reenviar).
+
+   Se construyen las URLs en el servidor y no con aritmética de fechas en la
+   plantilla: Jinja no suma meses y un «mes anterior» mal calculado (diciembre →
+   mes 0) es justo el tipo de fallo que se cuela en un panel. #}
+<div class="cambio-mes">
+  <a class="btn btn-sm btn-secondary" href="{{ periodo.anterior }}" title="Mes anterior" aria-label="Mes anterior">←</a>
+  <div class="cambio-mes-actual">
+    <b>{{ periodo.etiqueta }}</b>
+    <small class="muted">{{ periodo.rango }}</small>
+  </div>
+  <a class="btn btn-sm btn-secondary" href="{{ periodo.siguiente }}" title="Mes siguiente" aria-label="Mes siguiente">→</a>
+  <form class="cambio-mes-form" method="get" action="{{ periodo.accion }}">
+    {% for clave, valor in periodo.ocultos.items() %}
+    <input type="hidden" name="{{ clave }}" value="{{ valor }}">
+    {% endfor %}
+    <label class="visualmente-oculto" for="cambio-mes-input">Ir a otro mes</label>
+    <input id="cambio-mes-input" type="month" name="mes" value="{{ periodo.actual }}">
+    <button class="btn btn-sm btn-secondary" type="submit">Ir</button>
+  </form>
+</div>

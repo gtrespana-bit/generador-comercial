@@ -291,6 +291,42 @@ def alternar_release(db: Session, release_id: int, publicado: bool) -> ReleaseWe
     return release
 
 
+def actualizar_release(
+    db: Session, release_id: int, *, campos: dict, operador_email: str = ""
+) -> ReleaseWeb:
+    """Edita una versión existente desde su propia fila del panel.
+
+    Sin esto, corregir una nota de changelog significaba crear una versión
+    nueva y borrar la antigua a mano (y el changelog público se quedaba con
+    las dos). Solo se tocan las claves presentes en ``campos``.
+    """
+    release = db.get(ReleaseWeb, release_id)
+    if release is None:
+        raise GestionWebError("La versión indicada no existe.")
+    if "version" in campos:
+        valor = str(campos.get("version") or "").strip()
+        if not valor:
+            raise GestionWebError("La versión es obligatoria.")
+        release.version = valor[:30]
+    if "titulo" in campos:
+        valor = str(campos.get("titulo") or "").strip()
+        if not valor:
+            raise GestionWebError("El título es obligatorio.")
+        release.titulo = valor[:200]
+    if "notas" in campos:
+        release.notas = str(campos.get("notas") or "")[:8000]
+    if "destacado" in campos:
+        release.destacado = bool(campos.get("destacado"))
+    if "publicado" in campos:
+        release.publicado = bool(campos.get("publicado"))
+    if "fecha" in campos:
+        release.fecha = campos.get("fecha") or date.today()
+    release.updated_at = datetime.utcnow()
+    release.creado_por = str(operador_email or "").lower()[:254]
+    db.flush()
+    return release
+
+
 # ---------------------------------------------------------------------------
 # Feature flags (D3)
 # ---------------------------------------------------------------------------
@@ -488,6 +524,22 @@ def guardar_crm(
     return fila
 
 
+def borrar_crm(db: Session, *, organizacion_id: int) -> bool:
+    """Quita el estado comercial de un cliente (devuelve si había algo que quitar).
+
+    La columna tiene una restricción CHECK con los cinco estados del embudo, así
+    que «sin asignar» no se guarda como estado vacío: se borra la fila. Sin esta
+    función el selector «Sin asignar» del panel devolvía un error de base de
+    datos y el operador no podía sacar a nadie del embudo.
+    """
+    fila = db.query(CrmCliente).filter(
+        CrmCliente.organizacion_id == organizacion_id
+    ).one_or_none()
+    if fila is None:
+        return False
+    db.delete(fila)
+    db.flush()
+    return True
 def resumen_crm(db: Session) -> dict:
     try:
         filas = listar_crm(db)
@@ -513,7 +565,9 @@ def resumen_crm(db: Session) -> dict:
 # Vistas guardadas persistentes (A5 completo)
 # ---------------------------------------------------------------------------
 
-_MODULOS_VISTA = ("clientes", "cobros", "renovaciones", "compras", "automatizaciones")
+_MODULOS_VISTA = (
+    "clientes", "cobros", "renovaciones", "compras", "contratos", "automatizaciones"
+)
 
 
 def listar_vistas(db: Session, modulo: str = "") -> list[VistaGuardada]:

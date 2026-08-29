@@ -1,0 +1,92 @@
+{# Ficha › Cobros: compras de plan y facturas/pagos del cliente. #}
+{% set pendientes_compra = ficha.compras | selectattr('estado', 'equalto', 'pendiente') | list %}
+
+<div class="kpis">
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ "%.2f"|format(ficha.ingresos) }} <small>US$</small></div>
+    <div class="kpi-label">Pagado por el plan</div>
+    <p class="note-sub">Suma de licencias de pago</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ "%.2f"|format(ficha.agregados.total_cobrado) }} <small>US$</small></div>
+    <div class="kpi-label">Cobrado en la app</div>
+    <p class="note-sub">Pagos confirmados de sus presupuestos</p>
+  </div>
+  <div class="kpi-card {{ 'warn' if pendientes_compra else '' }}">
+    <div class="kpi-value">{{ pendientes_compra|length }}</div>
+    <div class="kpi-label">Compras por activar</div>
+    <p class="note-sub">Comprobantes esperando verificación</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Compras de plan</h2>
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras&estado=todas">Ver todas las compras</a>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>Fecha</th><th>Plan</th><th>Método</th><th class="tabla-num">Importe</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody>
+        {% for c in ficha.compras %}
+        <tr>
+          <td>{{ c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else '—' }}</td>
+          <td>{{ c.plan }}</td>
+          <td class="muted">{{ c.metodo_pago }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(c.importe) }} <span class="muted">{{ c.moneda }}</span></td>
+          <td>
+            <span class="badge {{ 'badge-warning' if c.estado == 'pendiente' else ('badge-success' if c.estado == 'activa' else 'badge-danger') }}">{{ c.etiqueta_estado }}</span>
+          </td>
+          <td>
+            <div class="tabla-acciones">
+              <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras&compra={{ c.id }}">Revisar</a>
+              {% if c.licencia_id %}
+              <a class="btn btn-sm btn-secondary" href="/admin/licencias/{{ c.licencia_id }}/recibo.pdf">Recibo</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">
+          <div class="vacio">
+            <b>Este cliente no ha comprado planes desde la web.</b>
+            <p>Si pagó por otro canal, la licencia se registra en la pestaña <a href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso">Acceso y licencias</a>.</p>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Facturas y pagos</h2>
+    <span class="badge badge-neutral">{{ ficha.cobros|length }}</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>Tipo</th><th>Número</th><th>Fecha</th><th class="tabla-num">Importe</th><th>Moneda</th><th>Estado</th><th>Descripción</th></tr></thead>
+      <tbody>
+        {% for m in ficha.cobros %}
+        <tr>
+          <td><span class="badge {{ 'badge-info' if m.tipo == 'factura' else 'badge-success' }}">{{ m.tipo }}</span></td>
+          <td><code class="accion-code">{{ m.numero }}</code></td>
+          <td>{{ m.fecha|fecha if m.fecha else '—' }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(m.importe) }}</td>
+          <td class="muted">{{ m.moneda }}</td>
+          <td>{{ m.estado }}</td>
+          <td class="muted detalle-celda">{{ m.descripcion }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>Sin facturas ni pagos visibles.</b>
+            <p>El panel solo ve los importes y estados que la función de agregados expone; el contenido de los presupuestos sigue cerrado por RLS.</p>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

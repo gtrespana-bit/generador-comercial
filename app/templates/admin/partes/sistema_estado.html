@@ -1,0 +1,154 @@
+{# Sistema › Estado del servicio (D4). Los chequeos de /readyz presentados para
+   una persona, más respaldo, correo y los errores no capturados. #}
+
+<div class="kpis">
+  <div class="kpi-card {{ '' if diagnostico.salud.ok else 'danger' }}">
+    <div class="kpi-value">{{ 'OK' if diagnostico.salud.ok else 'Errores' }}</div>
+    <div class="kpi-label">Salud del despliegue</div>
+    <p class="note-sub">{{ diagnostico.salud.checks|length }} chequeos de <code>/readyz</code></p>
+  </div>
+  <div class="kpi-card {{ 'danger' if diagnostico.errores else '' }}">
+    <div class="kpi-value">{{ diagnostico.errores|length }}</div>
+    <div class="kpi-label">Errores no capturados</div>
+    <p class="note-sub">En esta instancia desde que arrancó</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ diagnostico.hechos.arrancado_hace_segundos }} <small>s</small></div>
+    <div class="kpi-label">Tiempo activo</div>
+    <p class="note-sub">{{ 'Serverless efímero' if diagnostico.hechos.efimero else 'Proceso persistente' }}</p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ 'Sí' if exigencia_licencias else 'No' }}</div>
+    <div class="kpi-label">Corte por licencia</div>
+    <p class="note-sub">COTIZAT_EXIGIR_LICENCIA</p>
+  </div>
+</div>
+
+<div class="grid-lateral">
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Chequeos</h2>
+        {% if diagnostico.salud.ok %}
+        <span class="badge badge-success chip-lg">Saludable</span>
+        {% else %}
+        <span class="badge badge-danger chip-lg">Con errores</span>
+        {% endif %}
+      </div>
+      <div class="table-container">
+        <table class="estado-tabla">
+          <thead><tr><th>Chequeo</th><th>Resultado</th><th>Qué significa</th></tr></thead>
+          <tbody>
+            {% for clave, valor in diagnostico.salud.checks.items() %}
+            <tr>
+              <td class="text-bold">{{ clave|replace("_", " ") }}</td>
+              <td>
+                {% if 'error' in valor|string or 'no-configurado' in valor|string or 'mal-' in valor|string or 'inesperado' in valor|string %}
+                <span class="badge badge-danger">{{ valor }}</span>
+                {% elif 'no-aplica' in valor|string or 'verificacion-desactivada' in valor|string %}
+                <span class="badge badge-neutral">{{ valor }}</span>
+                {% else %}
+                <span class="badge badge-success">{{ valor }}</span>
+                {% endif %}
+              </td>
+              <td class="muted">{{ notas_chequeos.get(clave, 'Comprobación interna del despliegue.') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if diagnostico.salud.errors %}
+      <div class="card-body">
+        <h3 class="seccion-titulo">Errores de salud</h3>
+        <ul class="lista-problema">
+          {% for error in diagnostico.salud.errors %}
+          <li><span class="badge badge-danger">error</span> {{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Errores recientes no capturados</h2></div>
+      {% if diagnostico.errores %}
+      <div class="table-container">
+        <table class="estado-tabla">
+          <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th class="tabla-num">Veces</th></tr></thead>
+          <tbody>
+            {% for error in diagnostico.errores %}
+            <tr>
+              <td class="muted">{{ error.ultima_vez }}</td>
+              <td><code>{{ error.metodo }} {{ error.ruta }}</code></td>
+              <td>{{ error.tipo }}</td>
+              <td class="detalle-celda">{{ error.mensaje }}</td>
+              <td class="tabla-num">{{ error.ocurrencias }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="card-body"><p class="muted-note">Ningún error no capturado en esta instancia desde que arrancó. Que siga así.</p></div>
+      {% endif %}
+      <div class="card-pie"><p class="note-bottom">{{ diagnostico.nota_errores }}</p></div>
+    </div>
+  </div>
+
+  <div class="ficha-lado">
+    <div class="card">
+      <div class="card-header"><h2>Hechos del despliegue</h2></div>
+      <div class="card-body estado-grid">
+        <div class="estado-caja"><div class="label">Base de datos</div><div class="value">{{ diagnostico.hechos.backend }}</div></div>
+        <div class="estado-caja"><div class="label">Serverless efímero</div><div class="value">{{ 'sí' if diagnostico.hechos.efimero else 'no' }}</div></div>
+        <div class="estado-caja"><div class="label">Head de Alembic</div><div class="value">{{ diagnostico.hechos.head_esperado }}</div></div>
+        <div class="estado-caja"><div class="label">Almacenamiento</div><div class="value">{{ diagnostico.hechos.storage }}</div></div>
+        <div class="estado-caja"><div class="label">Rate limit</div><div class="value">{{ diagnostico.hechos.rate_limit }}</div></div>
+        <div class="estado-caja"><div class="label">Entorno</div><div class="value">{{ diagnostico.hechos.configuracion.entorno_etiqueta }}</div></div>
+        <div class="estado-caja completa">
+          <div class="label">Operadores (COTIZAT_OPERADORES)</div>
+          <div class="value">{% if diagnostico.hechos.operadores %}{{ diagnostico.hechos.operadores|join(', ') }}{% else %}ninguno — el panel queda cerrado{% endif %}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Secretos por entorno</h2></div>
+      <div class="table-container">
+        <table class="estado-tabla">
+          <tbody>
+            {% for nombre, definido in diagnostico.hechos.configuracion.secretos.items() %}
+            <tr>
+              <td><code>{{ nombre }}</code></td>
+              <td>{% if definido %}<span class="badge badge-success">definido</span>{% else %}<span class="badge badge-neutral">sin definir</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if diagnostico.hechos.configuracion.problemas %}
+      <div class="card-body">
+        <h3 class="seccion-titulo">Validación</h3>
+        <ul class="lista-problema">
+          {% for problema in diagnostico.hechos.configuracion.problemas %}
+          <li class="{{ 'aviso' if problema.gravedad != 'error' else '' }}">
+            {% if problema.gravedad == 'error' %}<span class="badge badge-danger">error</span>{% else %}<span class="badge badge-warning">aviso</span>{% endif %}
+            {{ problema.mensaje }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% else %}
+      <div class="card-body"><p class="muted-note">Sin problemas de configuración para el entorno actual.</p></div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Continuidad</h2></div>
+      <div class="card-body">
+        <p class="note-block">El respaldo automático y la verificación diaria corren en el cron de mantenimiento. Puedes dispararlos a mano desde <a href="/admin/sistema?tab=automatizaciones">Automatizaciones</a>.</p>
+        <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=automatizaciones">Ir a automatizaciones</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+{# Ingresos › Renovaciones (B3). Qué vence, cuánto importa y con un gesto para
+   renovar sin salir de la fila. #}
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ renovaciones.total }}</div>
+    <div class="kpi-label">Accesos que vencen</div>
+    <p class="note-sub">{{ periodo.etiqueta }}</p>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-value">{{ renovaciones.por_renovar }}</div>
+    <div class="kpi-label">Por renovar (≤15 días)</div>
+    <p class="note-sub">Aún dentro de plazo: es cuando más se renueva</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ "%.2f"|format(renovaciones.importe_mes) }} <small>US$</small></div>
+    <div class="kpi-label">En juego este mes</div>
+    <p class="note-sub">Suma de importes de las licencias que vencen</p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ avisos_hoy }}</div>
+    <div class="kpi-label">Avisados hoy</div>
+    <p class="note-sub">Un mismo correo no se repite en el mismo día</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Renovaciones de {{ periodo.etiqueta|lower }}</h2>
+    <div class="card-header-acc">
+      {% include "admin/partes/_cambio_mes.html" %}
+      <a class="btn btn-sm btn-secondary" href="/admin/renovaciones.csv?mes={{ periodo.actual }}{% if filtro_estado %}&amp;estado={{ filtro_estado }}{% endif %}">CSV</a>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Estado</span>
+    {% for valor, etiqueta, contador in opciones_estado %}
+    <a class="chip {{ 'sel' if filtro_estado == valor else '' }}" href="{{ ruta_filtro(estado=valor) }}">{{ etiqueta }} <span class="chip-cnt">{{ contador }}</span></a>
+    {% endfor %}
+  </div>
+
+  {% set vista_modulo = 'renovaciones' %}
+  {% set vistas_guardadas = vistas %}
+  {% set vista_activa = 0 %}
+  {% set vista_ruta_base = '/admin/ingresos?tab=renovaciones' %}
+  {% set vista_ruta_actual = '/admin/ingresos?tab=renovaciones&mes=' ~ periodo.actual ~ ('&estado=' ~ filtro_estado if filtro_estado else '') %}
+  {% set vista_accion = '/admin/vistas/crear' %}
+  {% set vista_filtros = dict_filtros %}
+  {% set vista_total = renovaciones.total %}
+  {% include "admin/partes/_barra_vistas.html" %}
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Vence</th>
+          <th class="tabla-num">Días</th>
+          <th class="tabla-num">Importe</th>
+          <th>Origen</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in renovaciones.filas %}
+        <tr>
+          <td class="org-name">
+            <a href="/admin/clientes/{{ f.organizacion_id }}">{{ f.organizacion.nombre }}</a>
+            <div class="org-sub">{{ f.organizacion.slug }}</div>
+          </td>
+          <td>{{ f.vence.strftime('%d/%m/%Y') }}</td>
+          <td class="tabla-num">
+            <span class="badge {{ 'badge-danger' if f.dias_restantes <= 3 else ('badge-warning' if f.dias_restantes <= 15 else 'badge-neutral') }}">{{ f.dias_restantes }}d</span>
+          </td>
+          <td class="tabla-num">{{ "%.2f"|format(f.importe) }} US$</td>
+          <td class="muted">{{ etiquetas_origen.get(f.origen, f.origen or '—') }}</td>
+          <td>
+            {% if f.estado == 'por_renovar' %}<span class="badge badge-warning">Por renovar</span>
+            {% elif f.estado == 'vencida' %}<span class="badge badge-danger">Vencida</span>
+            {% else %}<span class="badge badge-success">Activa</span>{% endif %}
+            {% if f.avisado_hoy %}<span class="badge badge-info" title="Recordatorio enviado hoy">Avisado</span>{% endif %}
+          </td>
+          <td>
+            <div class="tabla-acciones">
+              <form class="form-inline" method="post" action="/admin/organizaciones/{{ f.organizacion_id }}/conceder"
+                    data-confirmar="Se renovará 1 año (89 US$) el acceso de «{{ f.organizacion.nombre }}», encadenado al final del actual.">
+                <input type="hidden" name="volver" value="/admin/ingresos?tab=renovaciones&mes={{ periodo.actual }}">
+                <input type="hidden" name="origen" value="pago">
+                <input type="hidden" name="duracion" value="1a">
+                <input type="hidden" name="importe" value="">
+                <button class="btn btn-sm" type="submit">Renovar 1 año</button>
+              </form>
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ f.organizacion_id }}?tab=acceso">Ficha</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>Ninguna licencia vence en {{ periodo.etiqueta|lower }}{% if filtro_estado %} con ese estado{% endif %}.</b>
+            <p>Cuando algo empiece a vencer aparecerá aquí con el botón de renovación y el aviso automático a 5 y 1 día.</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=contratos">Ver todos los contratos</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-pie">
+    <form class="form-inline" method="post" action="/admin/licencias/avisos"
+          data-confirmar="Se enviará un correo a cada organización cuyo acceso vence en 15 días o menos.">
+      <input type="hidden" name="volver" value="/admin/ingresos?tab=renovaciones&mes={{ periodo.actual }}">
+      <button class="btn btn-sm" type="submit">Enviar avisos de vencimiento ahora</button>
+    </form>
+    <span class="muted-note">El cron diario de <code>vercel.json</code> ya lo hace solo; este botón es para adelantar un barrido.</span>
+  </div>
+</div>

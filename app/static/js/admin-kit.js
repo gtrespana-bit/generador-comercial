@@ -129,13 +129,56 @@
     });
   }
 
+  /* ---------- Navegación por teclado ---------- *
+   * Un operador recorre el panel con las manos en el teclado: `/` busca y
+   * `g` + letra salta a un área. Las letras salen del `data-atajo` del menú,
+   * declarado en app/panel_arquitectura.py: si mañana hay una séptima área, su
+   * atajo existe sin tocar este archivo. */
+  var atajos = {};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-atajo]"), function (enlace) {
+    atajos[(enlace.getAttribute("data-atajo") || "").toLowerCase()] = enlace.getAttribute("href");
+  });
+  var esperandoG = false;
+  var temporizadorG;
+
+  function seEstaEscribiendo(ev) {
+    var nodo = ev.target;
+    if (!nodo || !nodo.tagName) return false;
+    var nombre = nodo.tagName.toLowerCase();
+    return nombre === "input" || nombre === "textarea" || nombre === "select" || nodo.isContentEditable;
+  }
+
   document.addEventListener("keydown", function (ev) {
     var mod = ev.metaKey || ev.ctrlKey;
     if (mod && (ev.key === "k" || ev.key === "K")) {
       ev.preventDefault();
       overlay && overlay.classList.contains("open") ? cerrarBusqueda() : abrirBusqueda();
+      return;
     }
-    if (ev.key === "Escape" && overlay && overlay.classList.contains("open")) cerrarBusqueda();
+    if (ev.key === "Escape" && overlay && overlay.classList.contains("open")) {
+      cerrarBusqueda();
+      return;
+    }
+    if (mod || ev.altKey || seEstaEscribiendo(ev)) return;
+    if (ev.key === "/" && overlay) {
+      ev.preventDefault();
+      abrirBusqueda();
+      return;
+    }
+    if (ev.key === "g" || ev.key === "G") {
+      esperandoG = true;
+      clearTimeout(temporizadorG);
+      temporizadorG = setTimeout(function () { esperandoG = false; }, 1200);
+      return;
+    }
+    if (esperandoG) {
+      var destino = atajos[(ev.key || "").toLowerCase()];
+      esperandoG = false;
+      if (destino) {
+        ev.preventDefault();
+        window.location.href = destino;
+      }
+    }
   });
 
   /* ---------- Centro de notificaciones ---------- */
@@ -202,4 +245,17 @@
   });
 
   if (bellList) cargarNotif();
+
+  /* ---------- Confirmación de lo irreversible ---------- *
+   * Suspenden, cancelan, revocan o borran: hay que decirlo antes, y se hace aquí
+   * y no con un `onsubmit` en el HTML porque la CSP prohíbe el script en línea.
+   * Sin JavaScript el formulario sigue enviándose: la confirmación es un extra,
+   * nunca un requisito para que la pantalla funcione. */
+  var arriesgados = document.querySelectorAll("form[data-confirmar]");
+  Array.prototype.forEach.call(arriesgados, function (formulario) {
+    formulario.addEventListener("submit", function (ev) {
+      var aviso = formulario.getAttribute("data-confirmar");
+      if (aviso && !window.confirm(aviso)) ev.preventDefault();
+    });
+  });
 })();

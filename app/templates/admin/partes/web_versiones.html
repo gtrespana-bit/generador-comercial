@@ -1,0 +1,120 @@
+{# Web › Versiones (C5). Changelog público en /novedades: crear, publicar u
+   ocultar y corregir el texto sin borrar la fila. #}
+
+<div class="grid-lateral">
+  <div class="card">
+    <div class="card-header">
+      <h2>Notas de versión</h2>
+      <div class="card-header-acc">
+        <span class="badge badge-success">{{ publicadas }} publicadas</span>
+        <span class="badge badge-neutral">{{ releases|length }} en total</span>
+        <a class="btn btn-sm btn-secondary" href="/novedades" target="_blank" rel="noopener">Ver /novedades</a>
+      </div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Versión</th><th>Qué cuenta</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+          {% for r in releases %}
+          <tr>
+            <td>
+              <b class="org-name">{{ r.version }}</b>
+              {% if r.destacado %}<div><span class="badge badge-info">Destacada</span></div>{% endif %}
+            </td>
+            <td>
+              <div class="fila-dato">
+                <b>{{ r.titulo }}</b>
+                <small class="muted">{{ r.notas|truncate(160) if r.notas else 'Sin notas.' }}</small>
+              </div>
+            </td>
+            <td class="muted">{{ r.fecha|fecha if r.fecha else '—' }}</td>
+            <td>
+              {% if r.publicado %}<span class="badge badge-success">Publicada</span>
+              {% else %}<span class="badge badge-neutral">Borrador</span>{% endif %}
+            </td>
+            <td>
+              <div class="tabla-acciones">
+                <form class="form-inline" method="post" action="/admin/releases/{{ r.id }}/alternar?publicado={{ '0' if r.publicado else '1' }}">
+                  <button class="btn btn-sm {{ 'btn-secondary' if r.publicado else '' }}" type="submit">{{ 'Ocultar' if r.publicado else 'Publicar' }}</button>
+                </form>
+                <details class="desplegable-celda">
+                  <summary>Editar</summary>
+                  <form class="mini-form" method="post" action="/admin/releases/{{ r.id }}/editar">
+                    <div class="campos-dos">
+                      <div>
+                        <label class="campo-etiqueta" for="ver-{{ r.id }}">Versión</label>
+                        <input class="form-control" id="ver-{{ r.id }}" name="version" type="text" maxlength="40" value="{{ r.version }}" required>
+                      </div>
+                      <div>
+                        <label class="campo-etiqueta" for="fecha-{{ r.id }}">Fecha</label>
+                        <input class="form-control" id="fecha-{{ r.id }}" name="fecha" type="date" value="{{ r.fecha.isoformat() if r.fecha else '' }}">
+                      </div>
+                    </div>
+                    <label class="campo-etiqueta" for="titulo-{{ r.id }}">Título</label>
+                    <input class="form-control" id="titulo-{{ r.id }}" name="titulo" type="text" maxlength="200" value="{{ r.titulo }}" required>
+                    <label class="campo-etiqueta" for="notas-{{ r.id }}">Notas</label>
+                    <textarea class="form-control" id="notas-{{ r.id }}" name="notas" rows="4">{{ r.notas }}</textarea>
+                    <label class="check-row campo-check">
+                      <input type="checkbox" name="destacado" value="1" {{ 'checked' if r.destacado else '' }}>
+                      <span class="form-label">Destacar en la cabecera de /novedades</span>
+                    </label>
+                    <div class="form-acciones">
+                      <button class="btn btn-sm" type="submit">Guardar versión</button>
+                    </div>
+                  </form>
+                </details>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5">
+            <div class="vacio">
+              <b>Aún no hay versiones.</b>
+              <p>Publica la primera y saldrá en <code>/novedades</code>: es donde un cliente ve que el producto sigue vivo.</p>
+            </div>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ficha-lado">
+    <div class="card">
+      <div class="card-header"><h2>Nueva versión</h2></div>
+      <div class="card-body">
+        <form method="post" action="/admin/releases/crear">
+          <div class="campos-dos">
+            <div class="form-group">
+              <label class="form-label" for="nueva-version">Versión</label>
+              <input class="form-control" id="nueva-version" name="version" type="text" required placeholder="v2.4.0" maxlength="40">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nueva-fecha">Fecha</label>
+              <input class="form-control" id="nueva-fecha" name="fecha" type="date" value="{{ hoy.isoformat() }}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nueva-titulo">Título</label>
+            <input class="form-control" id="nueva-titulo" name="titulo" type="text" required maxlength="200" placeholder="Presupuestos con APU guardado">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nueva-notas">Notas</label>
+            <textarea class="form-control" id="nueva-notas" name="notas" rows="5" placeholder="Qué cambia para el cliente, en su idioma."></textarea>
+          </div>
+          <label class="check-row">
+            <input type="checkbox" id="nueva-destacada" name="destacado" value="1">
+            <span class="form-label">Destacada</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox" id="nueva-publicar" name="publicado" value="1">
+            <span class="form-label">Publicar desde ya</span>
+          </label>
+          <div class="form-acciones">
+            <button class="btn btn-bloque" type="submit">Crear versión</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

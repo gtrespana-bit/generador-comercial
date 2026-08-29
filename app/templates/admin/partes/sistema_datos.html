@@ -1,0 +1,95 @@
+{# Sistema › Salud de datos (D2). El servicio ya devolvía score, estado y la
+   lista de problemas con su enlace; la página anterior los adivinaba con
+   «is defined» y los mostraba como un volcado de JSON. #}
+
+{% if salud.error %}
+<div class="alert alert-warning">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  <div>{{ salud.error }}</div>
+</div>
+{% else %}
+
+<div class="card">
+  <div class="card-header">
+    <h2>{{ salud.titulo }}</h2>
+    <div class="card-header-acc">
+      <span class="badge {{ 'badge-success' if salud.estado == 'ok' else ('badge-warning' if salud.estado == 'revisar' else 'badge-danger') }}">
+        Puntuación {{ salud.score }}/100
+      </span>
+      <span class="badge badge-neutral">{{ salud.total }} partidas visibles</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="medidor-fila">
+      <meter class="medidor" min="0" max="100" low="64" high="84" optimum="100" value="{{ salud.score }}">{{ salud.score }}/100</meter>
+      <span class="muted">{{ salud.score }} de 100</span>
+    </div>
+    <p class="muted-note">
+      Precio y coste pesan un 35% cada uno, el tiempo un 20% y la revisión reciente un 10%.
+      Los importes se comparan con el rango del país para cazar conversiones de moneda aplicadas de más.
+    </p>
+  </div>
+  <div class="table-container">
+    <table class="estado-tabla">
+      <thead><tr><th>Señal</th><th class="tabla-num">Partidas</th><th></th></tr></thead>
+      <tbody>
+        {% for problema in salud.problemas %}
+        <tr>
+          <td>
+            <b>{{ problema.label }}</b>
+            <div class="muted">{{ etiquetas_problemas.get(problema.clave, 'Revisar desde el catálogo.') }}</div>
+          </td>
+          <td class="tabla-num">
+            {% if problema.count %}<span class="badge {{ 'badge-danger' if problema.clave in ('sin_precio', 'precio_absurdo') else 'badge-warning' }}">{{ problema.count }}</span>
+            {% else %}<span class="badge badge-success">0</span>{% endif %}
+          </td>
+          <td><a class="btn btn-sm btn-secondary" href="{{ problema.url }}">Abrir en el catálogo</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-pie">
+    <span class="muted-note">Cobertura: {{ salud.con_precio }} con precio · {{ salud.con_coste }} con coste · {{ salud.con_tiempo }} con tiempo. Margen mínimo considerado: {{ salud.margen_minimo }}%. Sin revisión: {{ salud.dias_sin_revision }} días.</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Configuración del despliegue</h2>
+    <span class="card-nota">{{ config.entorno_etiqueta }} · <code>{{ config.entorno }}</code></span>
+  </div>
+  <div class="grid-2">
+    <div class="table-container">
+      <table class="estado-tabla">
+        <thead><tr><th>Secreto</th><th>Estado</th></tr></thead>
+        <tbody>
+          {% for nombre, definido in config.secretos.items() %}
+          <tr>
+            <td><code>{{ nombre }}</code></td>
+            <td>{% if definido %}<span class="badge badge-success">definido</span>{% else %}<span class="badge badge-neutral">sin definir</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body">
+      <h3 class="seccion-titulo">Validación por entorno</h3>
+      {% if config.problemas %}
+      <ul class="lista-problema">
+        {% for problema in config.problemas %}
+        <li class="{{ 'aviso' if problema.gravedad != 'error' else '' }}">
+          {% if problema.gravedad == 'error' %}<span class="badge badge-danger">error</span>{% else %}<span class="badge badge-warning">aviso</span>{% endif %}
+          {{ problema.mensaje }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted-note">Sin problemas de configuración para el entorno actual.</p>
+      {% endif %}
+      <p class="note-block">Los valores de las credenciales nunca se muestran: el panel solo dice si están definidos.</p>
+      <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=estado">Salud del servicio</a>
+    </div>
+  </div>
+</div>
+{% endif %}
