@@ -821,6 +821,24 @@ def test_la_ficha_del_cliente_tiene_seis_pestanas_y_todas_pintan(entorno):
     assert "00/00/0000" not in cliente.get(f"/admin/clientes/{datos['por_vencer']}").text
 
 
+def test_pestana_presupuestos_degrada_sin_500_si_falla_la_lectura(entorno, monkeypatch):
+    """Una función SQL pendiente no puede derribar la ficha completa (B7)."""
+    from app.services import panel_presupuestos
+
+    cliente, _Session, datos = entorno
+
+    def _fallar(*_args, **_kwargs):
+        raise RuntimeError("función SECURITY DEFINER no instalada")
+
+    monkeypatch.setattr(panel_presupuestos, "resumen_uso_presupuestos", _fallar)
+    pagina = cliente.get(
+        f"/admin/clientes/{datos['por_vencer']}?tab=presupuestos"
+    )
+    assert pagina.status_code == 200
+    assert "No se pudo abrir la lectura de presupuestos" in pagina.text
+    assert "Internal Server Error" not in pagina.text
+
+
 def test_la_pestana_de_presupuestos_es_solo_lectura_y_queda_auditada(entorno):
     """Sin presupuestos pinta vacío; con ellos se ve el detalle sin acciones."""
     from app.models import Capitulo, Cliente, Presupuesto, PresupuestoItem

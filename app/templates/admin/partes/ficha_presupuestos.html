@@ -11,6 +11,19 @@
     </div>
   </div>
 </div>
+{% elif uso_presupuestos.error %}
+<div class="card">
+  <div class="card-body">
+    <div class="vacio">
+      <b>No se pudo abrir la lectura de presupuestos.</b>
+      <p>
+        Los datos del cliente siguen protegidos y no se ha modificado nada.
+        Revisa el estado del esquema en Sistema › Estado y vuelve a intentarlo
+        cuando la actualización de la base de datos esté aplicada.
+      </p>
+    </div>
+  </div>
+</div>
 {% elif uso_presupuestos.restringido %}
 <div class="card">
   <div class="card-body">

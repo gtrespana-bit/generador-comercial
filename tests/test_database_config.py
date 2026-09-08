@@ -222,6 +222,25 @@ def test_auto_reparacion_incluye_altura_libre_de_planos():
     assert "if politicas_planos == 8 and altura_creada:" in bloque_b1
 
 
+def test_auto_reparacion_recupera_las_funciones_del_panel_de_presupuestos():
+    """Un deploy sin f6 no puede dejar Admin › Presupuestos en 500."""
+    fuente = (RAIZ_REPO / "app" / "database.py").read_text(encoding="utf-8")
+    helper = (
+        RAIZ_REPO / "app" / "services" / "lectura_admin_presupuestos.py"
+    ).read_text(encoding="utf-8")
+
+    assert "_asegurar_funciones_lectura_admin_postgres" in fuente
+    assert "lectura_admin_lista = _asegurar_funciones_lectura_admin_postgres(eng)" in fuente
+    assert 'cur == "d3e5f7a9c2b4"' in fuente
+    assert "version_num = 'f6d1a9c3e8b2'" in fuente
+    assert "if lectura_admin_lista:" in fuente
+    # Las funciones siguen siendo la frontera de seguridad: no se sustituye por
+    # un SELECT ORM del operador que pudiese saltarse RLS.
+    assert "SECURITY DEFINER" in helper
+    assert "cotizat.es_operador" in helper
+    assert "GRANT EXECUTE" in helper
+
+
 def test_existe_sql_de_rescate_desde_b1_con_contenido_planos_ya_creado():
     """Rescate b1→e4 para bases cuya marca se quedó atrás (incidente planos).
 
