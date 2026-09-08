@@ -455,7 +455,23 @@ def pagina_detalle_presupuesto_cliente(
             ruta_panel("clientes"),
             error="Solo el superadmin puede ver el contenido de los presupuestos.",
         )
-    detalle = detalle_presupuesto_cliente(db, organizacion_id, presupuesto_id)
+    try:
+        detalle = detalle_presupuesto_cliente(db, organizacion_id, presupuesto_id)
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        log.error(
+            "No se pudo cargar el detalle del presupuesto %s del cliente %s:\n%s",
+            presupuesto_id,
+            organizacion_id,
+            _traza(),
+        )
+        return _redirect(
+            f"/admin/clientes/{organizacion_id}?tab=presupuestos",
+            error="No se pudo abrir el detalle de presupuestos. Revisa el estado del esquema e inténtalo de nuevo.",
+        )
     if detalle is None:
         return _redirect(
             f"/admin/clientes/{organizacion_id}?tab=presupuestos",
@@ -489,12 +505,33 @@ def _es_superadmin(db: Session) -> bool:
 
 
 def _uso_presupuestos_cliente(db: Session, request: Request, organizacion_id: int):
-    """Contenido de la ficha (solo superadmin) + nota para el resto del equipo."""
+    """Contenido de la ficha (solo superadmin) + nota para el resto del equipo.
+
+    Una migración pendiente, un permiso revocado o una fila histórica dañada no
+    debe derribar toda la ficha del cliente. La lectura de tenant se mantiene
+    cerrada (no se intenta un acceso ORM alternativo que eludiría RLS), se
+    revierte la transacción fallida y se muestra un aviso interno controlado.
+    """
     from ..services.panel_presupuestos import resumen_uso_presupuestos
 
     if not _es_superadmin(db):
         return {"restringido": True}
-    datos = resumen_uso_presupuestos(db, organizacion_id)
+    try:
+        datos = resumen_uso_presupuestos(db, organizacion_id)
+    except Exception:
+        # PostgreSQL deja la transacción en estado abortado tras, por ejemplo,
+        # una función SECURITY DEFINER que falta. Sin rollback, incluso el
+        # render/auditoría posterior acabaría en otro 500.
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        log.error(
+            "No se pudo cargar la pestaña de presupuestos del cliente %s:\n%s",
+            organizacion_id,
+            _traza(),
+        )
+        return {"error": True}
     _auditar_lectura(
         db,
         request,

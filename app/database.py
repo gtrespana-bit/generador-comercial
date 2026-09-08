@@ -785,6 +785,54 @@ def _asegurar_permisos_planos_postgres(eng) -> None:
     _reparar_permisos_planos_elementos_postgres(eng)
 
 
+def _asegurar_funciones_lectura_admin_postgres(eng) -> bool:
+    """Recupera la ventana de solo lectura del panel si falta la migración f6.
+
+    El despliegue web no puede usar el rol runtime para crear funciones ni
+    conceder permisos. Por eso se aprovecha el mismo motor de migración que la
+    auto-reparación de columnas. Si no hay URL con privilegios DDL, no se
+    simula una lectura directa: RLS seguiría protegiendo los presupuestos de
+    los clientes y la ruta mostrará un aviso controlado en lugar de un 500.
+    """
+    from .services.lectura_admin_presupuestos import (
+        funciones_lectura_admin_disponibles,
+        instalar_funciones_lectura_admin,
+    )
+
+    try:
+        with eng.connect() as conn:
+            if funciones_lectura_admin_disponibles(conn):
+                return True
+    except Exception as exc:
+        logging.getLogger("cotizat").warning(
+            "No se pudo verificar la ventana de lectura de presupuestos del panel: %s",
+            exc,
+        )
+
+    try:
+        with eng.begin() as conn:
+            instalar_funciones_lectura_admin(conn)
+        with eng.connect() as conn:
+            listas = funciones_lectura_admin_disponibles(conn)
+        if listas:
+            logging.getLogger("cotizat").info(
+                "Funciones de lectura de presupuestos del panel verificadas."
+            )
+            return True
+        logging.getLogger("cotizat").warning(
+            "Las funciones de lectura de presupuestos se crearon, pero el rol "
+            "cotizat_app aún no puede ejecutarlas."
+        )
+    except Exception as exc:
+        logging.getLogger("cotizat").warning(
+            "No se pudieron instalar las funciones de lectura de presupuestos "
+            "del panel (ejecuta la migración f6d1a9c3e8b2 con "
+            "MIGRATION_DATABASE_URL): %s",
+            exc,
+        )
+    return False
+
+
 def _asegurar_esquema_postgres() -> None:
     """Intenta añadir columnas/permisos faltantes tras un deploy sin migrar (best-effort).
 
@@ -868,6 +916,11 @@ def _asegurar_esquema_postgres() -> None:
         # no la tiene y el dibujo de muros/huecos fallaría después de arreglar
         # ``planos_obra.origen``.
         _crear_planos_elementos_postgres(eng)
+        # f6 solo incorpora estas dos funciones SECURITY DEFINER. Sin ellas
+        # la pestaña Admin › Presupuestos y precios intenta llamar una función
+        # inexistente y PostgreSQL responde 500. Se comprueban/reparan con el
+        # motor de migración, nunca con el usuario runtime.
+        lectura_admin_lista = _asegurar_funciones_lectura_admin_postgres(eng)
         with eng.begin() as conn:
             # Si la versión sigue en el head anterior y ya añadimos la columna,
             # avanzamos la marca para que el próximo ``alembic upgrade head``
@@ -969,6 +1022,20 @@ def _asegurar_esquema_postgres() -> None:
                         logging.getLogger("cotizat").warning(
                             "Falta contenido del editor vectorial de planos: "
                             "no se avanza alembic_version (ejecuta `alembic upgrade head`)."
+                        )
+                elif cur == "d3e5f7a9c2b4":
+                    # La migración f6 no toca tablas: solo crea las dos
+                    # funciones SECURITY DEFINER del panel. Marcarla es seguro
+                    # únicamente tras comprobar existencia y GRANT EXECUTE;
+                    # hacerlo a ciegas ocultaría el error 500 sin recuperar la
+                    # lectura protegida de presupuestos.
+                    if lectura_admin_lista:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'f6d1a9c3e8b2'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de d3e5f7a9c2b4 a f6d1a9c3e8b2 tras reparar la lectura de presupuestos del panel.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Faltan las funciones de lectura del panel: no se avanza "
+                            "alembic_version. Ejecuta `alembic upgrade head`."
                         )
                 elif cur is None:
                     logging.getLogger("cotizat").warning(
