@@ -73,12 +73,18 @@ La interfaz sigue mostrando la confianza `derivado` y el aviso de verificación.
 
 ## Mano de obra
 
-Los jornales se normalizan a una jornada de ocho horas. Cuando la ronda 5
-ofrece una tarifa del oficio se usa como `referencia`; cuando solo existe el
-oficial general, la especialidad hereda esa tarifa como `derivado`. Ayudante
-especializado se sitúa entre ayudante y oficial. Las cargas del empleador no se
-mezclan silenciosamente con el jornal y cada empresa puede introducir su coste
-real.
+Los jornales se normalizan a una jornada de ocho horas. Desde la ronda 7
+(2026-09-08) la referencia nacional de mano de obra es **coste-empresa**:
+jornal bruto de mercado × factor (aportes patronales + prestaciones legales)
+÷ 8 h. El factor por país, con detalle y fuentes, está en
+`docs/INVESTIGACION_PRECIOS_RONDA_7_COSTE_EMPRESA_MANO_OBRA.md`. Cuando la
+ronda 5 ofrece una tarifa del oficio se usa como `referencia`; cuando solo
+existe el oficial general, la especialidad hereda esa tarifa como
+`derivado`. Ayudante especializado se sitúa entre ayudante y oficial. El
+coste-empresa **no** incluye margen de beneficio (el catálogo lo aplica
+encima) ni costes indirectos (gestoría, EPI, transporte, inactividad):
+esos son del margen de cada empresa. La empresa siempre puede sobrescribir
+con su coste real.
 
 ## Reglas de presentación
 

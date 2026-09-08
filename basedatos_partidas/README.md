@@ -644,3 +644,23 @@ el 17 %.
 **Importante para el cálculo**: estas tarifas son **coste**, no precio de venta.
 El margen del 30 % se aplica encima del coste directo, de modo que no hay doble
 margen sobre la mano de obra.
+
+## Mano de obra en matrices nacionales (España y Latam)
+
+Lo mismo aplica a las referencias nacionales de mano de obra: son **coste para
+la empresa**, no sueldo del trabajador ni tarifa de autónomo con beneficio.
+
+- **España** (`salida/precios_recursos_espana.csv`): coste-empresa revisado el
+  2026-08-25 — bruto convenio + Seguridad Social (≈32 %) + costes fijos
+  → 21 €/h oficial 1ª, 15 €/h peón. Fuente: `docs/INVESTIGACION_PRECIOS_ESPANA.md`.
+- **Latam** (`salida/precios_recursos_latam.csv`): desde la ronda 7
+  (2026-09-08) cada jornal de mercado se multiplica por el factor de
+  coste-empresa del país (aportes patronales + prestaciones legales, 1,25–1,50
+  según país) antes de dividir por 8 h. Fuente, detalle y tasas por país:
+  `docs/INVESTIGACION_PRECIOS_RONDA_7_COSTE_EMPRESA_MANO_OBRA.md`.
+
+No se incluyen en el coste: beneficio, gestoría, EPI, transporte a obra ni
+inactividad por clima. Esos son costes propios del margen de cada empresa;
+meterlos en la referencia sería doble margen. La jerarquía de la aplicación
+permite a cada organización sobrescribir con su tarifa real
+(`app/services/precios_mercado.py`).
