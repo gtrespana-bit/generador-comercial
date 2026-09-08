@@ -1,0 +1,134 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{{ detalle.presupuesto.numero }} · Presupuesto del cliente{% endblock %}
+
+{% block page_title %}{{ detalle.presupuesto.numero }} · {{ detalle.presupuesto.titulo or 'Sin título' }}{% endblock %}
+
+{% block page_subtitle %}
+  Cliente: {{ detalle.presupuesto.cliente_nombre or '—' }} ·
+  Fecha: {{ detalle.presupuesto.fecha|fecha if detalle.presupuesto.fecha else '—' }} ·
+  Total: {{ "%.2f"|format(detalle.presupuesto.monto) }} {{ detalle.presupuesto.moneda }}
+{% endblock %}
+
+{% block migas_extra %}
+<span class="sep" aria-hidden="true">›</span>
+<a href="/admin/clientes?tab=directorio">Clientes</a>
+<span class="sep" aria-hidden="true">›</span>
+<a href="/admin/clientes/{{ org_id }}?tab=presupuestos">Presupuestos y precios</a>
+<span class="sep" aria-hidden="true">›</span>
+<span class="actual">{{ detalle.presupuesto.numero }}</span>
+{% endblock %}
+
+{% block page_acciones %}
+  <a class="btn btn-secondary" href="/admin/clientes/{{ org_id }}?tab=presupuestos">Volver al cliente</a>
+{% endblock %}
+
+{% block content %}
+<div class="card aviso-corto aviso-bloque">
+  <b>🔒 Solo lectura.</b>
+  <span class="muted">
+    Ves el contenido real del presupuesto para entender qué precios usa el cliente.
+    No hay ninguna acción de modificar ni eliminar, y esta consulta queda registrada
+    en la auditoría del panel.
+  </span>
+</div>
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ detalle.resumen.items }}</div>
+    <div class="kpi-label">Partidas</div>
+  </div>
+  <div class="kpi-card {{ 'warn' if detalle.resumen.modificadas else '' }}">
+    <div class="kpi-value">{{ detalle.resumen.modificadas }}</div>
+    <div class="kpi-label">Precios modificados vs catálogo</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ detalle.resumen.personalizadas }}</div>
+    <div class="kpi-label">Partidas personalizadas</div>
+  </div>
+  <div class="kpi-card {{ 'danger' if detalle.resumen.ajustes else '' }}">
+    <div class="kpi-value">{{ detalle.resumen.ajustes }}</div>
+    <div class="kpi-label">Con ajuste recomendado</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Partidas</h2>
+    <span class="card-nota">Los precios del catálogo se muestran en la moneda del presupuesto</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Partida</th>
+          <th class="tabla-num">Ud.</th>
+          <th class="tabla-num">Cantidad</th>
+          <th class="tabla-num">Precio</th>
+          <th class="tabla-num">Importe</th>
+          <th class="tabla-num">Catálogo</th>
+          <th class="tabla-num">Coste</th>
+          <th>Señales</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cap in detalle.capitulos %}
+        <tr class="fila-capitulo">
+          <td colspan="8" class="capitulo-nombre">{{ cap.capitulo }}</td>
+        </tr>
+        {% for item in cap.partidas %}
+        <tr>
+          <td class="org-name">
+            {{ item.nombre }}
+            {% if item.codigo_externo %}<div class="org-sub mono">{{ item.codigo_externo }}</div>{% endif %}
+            {% if item.producto_nombre %}<div class="org-sub">Producto: {{ item.producto_nombre }} ({{ "%.2f"|format(item.producto_precio or 0) }} {{ item.moneda }})</div>{% endif %}
+          </td>
+          <td class="tabla-num muted">{{ item.unidad }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(item.cantidad) }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(item.precio_unitario) }} <span class="muted">{{ item.moneda }}</span></td>
+          <td class="tabla-num">{{ "%.2f"|format(item.importe) }}</td>
+          <td class="tabla-num">
+            {% if item.catalogo_precio is not none %}
+              {{ "%.2f"|format(item.catalogo_precio) }}
+              {% if item.modificado and item.desviacion_pct is not none %}
+              <div class="{{ 'texto-peligro' if item.desviacion_pct > 50 else 'muted' }}">{{ "%+.1f"|format(item.desviacion_pct) }}%</div>
+              {% endif %}
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+          </td>
+          <td class="tabla-num muted">
+            {% if item.coste %}{{ "%.2f"|format(item.coste) }}{% else %}—{% endif %}
+          </td>
+          <td>
+            {% if item.modificado %}<span class="badge badge-warning" title="El precio difiere del catálogo">modificado</span>{% endif %}
+            {% if item.personalizada %}<span class="badge badge-neutral">personalizada</span>{% endif %}
+            {% for label in item.motivos_ajuste_label %}
+            <span class="badge badge-danger" title="{{ label }}">ajuste</span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="8">
+          <div class="vacio"><b>Este presupuesto no tiene partidas.</b></div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-pie">
+    <span class="muted-note">
+      «Modificado» = el precio difiere del que tiene la partida en el catálogo de la organización.
+      «Personalizada» = partida escrita a mano, sin origen en el catálogo.
+      «Ajuste» = sin precio, precio por debajo del coste o cifra con posible error de moneda.
+    </span>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+  .fila-capitulo td { background: var(--surface-2, #f5f7fa); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em; color: var(--text-muted); }
+  .capitulo-nombre { text-transform: uppercase; }
+  .mono { font-family: ui-monospace, monospace; }
+{% endblock %}

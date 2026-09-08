@@ -1,0 +1,218 @@
+{# Ficha › Presupuestos y precios: el uso real del cliente, en SOLO LECTURA.
+   Reservada al superadmin; cada consulta queda en la auditoría del panel.
+   No hay formularios ni botones de guardar/borrar: esto es una ventana. #}
+
+{% if not uso_presupuestos %}
+<div class="card">
+  <div class="card-body">
+    <div class="vacio">
+      <b>No se pudo cargar el uso del cliente.</b>
+      <p>Vuelve a abrir la ficha o revisa el diagnóstico del sistema.</p>
+    </div>
+  </div>
+</div>
+{% elif uso_presupuestos.restringido %}
+<div class="card">
+  <div class="card-body">
+    <div class="vacio">
+      <b>Contenido reservado al superadmin.</b>
+      <p>
+        Los presupuestos y precios de un cliente son información privada del titular.
+        Solo el superadmin puede verlos, cada consulta queda auditada y nunca se
+        modifica ni se elimina nada.
+      </p>
+    </div>
+  </div>
+</div>
+{% else %}
+{% set totales = uso_presupuestos.totales %}
+
+<div class="card aviso-corto aviso-bloque">
+  <b>🔒 Solo lectura · 100 % interno.</b>
+  <span class="muted">
+    Ves presupuestos, partidas y precios reales del cliente para ajustar el catálogo.
+    Ninguna consulta modifica datos, el contenido no se comparte fuera del panel y
+    cada vista queda registrada en Auditoría.
+  </span>
+</div>
+
+<div class="kpis">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ totales.presupuestos }}</div>
+    <div class="kpi-label">Presupuestos reales</div>
+    <p class="note-sub">
+      {% if totales.demo %}+{{ totales.demo }} de ejemplo{% else %}sin datos de demostración{% endif %}
+    </p>
+  </div>
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ totales.partidas }}</div>
+    <div class="kpi-label">Partidas</div>
+    <p class="note-sub">{{ totales.partidas_unicas }} distintas · {{ totales.personalizadas }} personalizadas</p>
+  </div>
+  <div class="kpi-card {{ 'warn' if totales.modificadas else '' }}">
+    <div class="kpi-value">{{ totales.modificadas }}</div>
+    <div class="kpi-label">Precios modificados vs catálogo</div>
+    <p class="note-sub">El cliente cambió el precio al insertar la partida</p>
+  </div>
+  <div class="kpi-card {{ 'danger' if totales.ajustes else '' }}">
+    <div class="kpi-value">{{ totales.ajustes }}</div>
+    <div class="kpi-label">Con ajuste recomendado</div>
+    <p class="note-sub">Sin precio, bajo coste o precio sospechoso</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Presupuestos del cliente</h2>
+    <span class="badge badge-neutral">{{ uso_presupuestos.presupuestos|length }}</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Fecha</th>
+          <th>Título / obra</th>
+          <th>Cliente final</th>
+          <th>Estado</th>
+          <th class="tabla-num">Partidas</th>
+          <th class="tabla-num">Modificadas</th>
+          <th class="tabla-num">Total</th>
+          <th>Actualizado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in uso_presupuestos.presupuestos %}
+        <tr>
+          <td><code class="accion-code">{{ p.numero }}</code></td>
+          <td>{{ p.fecha|fecha if p.fecha else '—' }}</td>
+          <td>
+            {{ p.titulo or '—' }}
+            {% if p.es_demo %}<span class="badge badge-neutral">ejemplo</span>{% endif %}
+          </td>
+          <td class="muted">{{ p.cliente_nombre or '—' }}</td>
+          <td><span class="badge {{ 'badge-success' if p.estado in ('aprobado', 'finalizado') else ('badge-warning' if p.estado in ('enviado', 'en_revision') else 'badge-neutral') }}">{{ p.estado_label }}</span></td>
+          <td class="tabla-num">{{ p.n_items }}</td>
+          <td class="tabla-num {{ 'texto-peligro' if p.modificadas else '' }}">{{ p.modificadas }}</td>
+          <td class="tabla-num">{{ "%.2f"|format(p.monto) }} <span class="muted">{{ p.moneda }}</span></td>
+          <td class="muted">{{ p.updated_at|fecha if p.updated_at else '—' }}</td>
+          <td>
+            <div class="tabla-acciones">
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ ficha.organizacion.id }}/presupuestos/{{ p.id }}">Ver detalle</a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="10">
+          <div class="vacio">
+            <b>Este cliente todavía no ha creado presupuestos.</b>
+            <p>Cuando genere su primer presupuesto aparecerá aquí con sus partidas y precios.</p>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h2>Partidas del catálogo con precio cambiado</h2>
+      <span class="card-nota">Las más desviadas primero</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Partida</th>
+            <th class="tabla-num">Precio catálogo</th>
+            <th class="tabla-num">Veces usada</th>
+            <th class="tabla-num">Desviación</th>
+            <th>Último uso</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in uso_presupuestos.top_modificadas %}
+          <tr>
+            <td class="org-name">
+              {{ g.nombre }}
+              <div class="org-sub">{{ g.unidad }}</div>
+            </td>
+            <td class="tabla-num">{{ "%.2f"|format(g.catalogo_precio_base or 0) }} <span class="muted">US$</span></td>
+            <td class="tabla-num">{{ g.veces }}</td>
+            <td class="tabla-num {{ 'texto-peligro' if g.desviacion_max and g.desviacion_max > 50 else '' }}">
+              {% if g.desviacion_max is not none %}
+                {{ "%+.1f"|format(g.desviacion_media or 0) }}% <span class="muted">(máx {{ "%+.1f"|format(g.desviacion_max) }}%)</span>
+              {% else %}—{% endif %}
+            </td>
+            <td class="muted">
+              {{ g.ultimo_numero or '—' }}
+              {% if g.ultimo_uso %}<div class="muted">{{ g.ultimo_uso|fecha }}</div>{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5">
+            <div class="vacio">
+              <b>Sin precios modificados.</b>
+              <p>Usa las partidas del catálogo tal cual: sus precios son coherentes.</p>
+            </div>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-pie">
+      <span class="muted-note">Solo se comparan partidas insertadas desde el catálogo; las escritas a mano cuentan como «personalizadas».</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Ajustes recomendados</h2>
+      <span class="badge badge-neutral">{{ uso_presupuestos.ajustes|length }}</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Partida</th>
+            <th class="tabla-num">Precio</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in uso_presupuestos.ajustes %}
+          <tr>
+            <td class="org-name">
+              {{ a.nombre }}
+              <div class="org-sub">{{ a.presupuesto_numero }} · {{ a.capitulo }}</div>
+            </td>
+            <td class="tabla-num">
+              {{ "%.2f"|format(a.precio_unitario) }} <span class="muted">{{ a.moneda }}</span>
+              {% if a.coste > 0 %}<div class="muted">coste {{ "%.2f"|format(a.coste) }}</div>{% endif %}
+            </td>
+            <td>
+              {% for label in a.motivos_ajuste_label %}
+              <span class="badge badge-warning">{{ label }}</span>
+              {% endfor %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3">
+            <div class="vacio">
+              <b>Sin ajustes pendientes.</b>
+              <p>Todas las partidas tienen precio y margen coherente.</p>
+            </div>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-pie">
+      <span class="muted-note">Motivos: partida sin precio, precio por debajo del coste o cifras con posible error de moneda (mismos umbrales que la herramienta de catálogo).</span>
+    </div>
+  </div>
+</div>
+{% endif %}

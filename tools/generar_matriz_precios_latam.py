@@ -29,6 +29,7 @@ R3 = "docs/INVESTIGACION_PRECIOS_RONDA_3.md"
 R4 = "docs/INVESTIGACION_PRECIOS_RONDA_4.md"
 R5 = "docs/INVESTIGACION_PRECIOS_RONDA_5_MANO_OBRA.md"
 R6 = "docs/INVESTIGACION_PRECIOS_RONDA_6_EQUIPOS.md"
+R7 = "docs/INVESTIGACION_PRECIOS_RONDA_7_COSTE_EMPRESA_MANO_OBRA.md"
 RPA = "docs/INVESTIGACION_PRECIOS_PA_SV.md"
 RCL = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
 RAR = "docs/INVESTIGACION_PRECIOS_CL_AR.md"
@@ -57,6 +58,7 @@ class Referencia:
     observaciones: str = "Referencia nacional normalizada; puede variar por proveedor, marca, disponibilidad, IVA y volumen."
     incluye_iva: str = "por_verificar"
     incluye_transporte: str = "no_confirmado"
+    fecha: str | None = None
 
 
 def ref(precio, minimo, maximo, fuente, **kwargs) -> Referencia:
@@ -284,6 +286,31 @@ OFICIAL_GENERAL = {
     "HN": (800, 700, 1000),
     "NI": (532.6, 400, 600),
 }
+
+# Coste real para la empresa: jornal bruto de mercado (R5) × factor de
+# coste-empresa (1 + aportes patronales + prestaciones legales). Los
+# jornales publicados hasta 2026-08-25 eran el sueldo del trabajador sin
+# cargas; esta ronda los eleva al coste que asume la empresa, sin margen de
+# beneficio (el catálogo aplica el margen encima). Fuente y detalle por
+# país: R7. España ya usa coste-empresa (ver generar_matriz_precios_espana.py).
+FACTOR_COSTE_EMPRESA: dict[str, tuple[float, str]] = {
+    "CO": (1.45, "Pensión 12% + ARL V 6,96% + caja 4% (22,96%) + prestaciones 21,83% (cesantías 8,33 + prima 8,33 + intereses 1 + vacaciones 4,17); exento parafiscales SENA/ICBF/salud <10 SMMLV (art. 114-1 Ley 1607)"),
+    "PE": (1.45, "EsSalud 9% + gratificaciones 2×1,09/12 (18,17%) + CTS ≈9,75% + vacaciones 30 días 8,33%"),
+    "MX": (1.46, "IMSS patronal ≈35,7% sobre SBC (fijo 26,15 + cesantía/vejez 7,51 + riesgos 2) × factor integración 1,0493 ≈ 37,4% + aguinaldo/prima/vacaciones 8,2%"),
+    "EC": (1.35, "IESS 11,15% + IECE 0,50% + SECAP 0,50% = 12,15%; décimos (13º 8,33 + 14º ≈7,5) + vacaciones 4,17% + fondo reserva 8,33% (desde año 2); 1,32 sin fondo → 1,40 con fondo"),
+    "CL": (1.25, "Cesantía 3% por obra + SIS 1,53% + mutualidad 0,90% + riesgo ≈1,5% + reforma previsional 3,5% ≈ 10,4%; vacaciones/feriados/indemnización ≈15% (AFP 10% y salud 7% los descuenta el trabajador, no la empresa)"),
+    "AR": (1.50, "Contribuciones patronales construcción (UOCRA) ≈23% (incl. ART ≈10%) + fondo de cese 12% + SAC 8,33% + vacaciones ≈6%"),
+    "DO": (1.30, "TSS 16,39% (SFS 7,09 + AFP 7,10 + SRL 1,20 + INFOTEP 1,00) + regalía 8,33% + vacaciones 4,17% + cesantía ≈5%"),
+    "UY": (1.32, "BPS 12,625% (7,50 + 5,00 + 0,10 + 0,025) + BSE ≈4% + aguinaldo 8,33% + salario vacacional 5,5%"),
+    "PY": (1.30, "IPS 16,5% + riesgo laboral ≈1,5% + aguinaldo 8,33% + vacaciones ≈3,3% + indemnización ≈4% (total publicado 125-135%)"),
+    "BO": (1.36, "SIP/AFP patronal 4,71% + CNS 10% + vivienda 2% = 16,71%; aguinaldo 8,33% + indemnización 8,33% + vacaciones 4,17%"),
+    "CR": (1.41, "CCSS patronal 26,83% (2026) + INS ≈2,5% + aguinaldo 8,33% + vacaciones 4,17%"),
+    "GT": (1.43, "IGSS 10,67% + IRTRA 1% + INTECAP 1% = 12,67%; bono 14 8,33% + aguinaldo 8,33% + vacaciones 4,17% + indemnización 9,72%"),
+    "HN": (1.25, "IHSS 5% + RAP 1,5% + INFOP 1% = 7,5%; aguinaldo 8,33% + catorceavo ≈5% + vacaciones 4,17%"),
+    "NI": (1.40, "INSS 21,5% + INATEC 2% = 23,5%; aguinaldo 8,33% + vacaciones 8,33% (con indemnización el total sería 1,46)"),
+    "PA": (1.33, "CSS 13,25% + SE 1,50% + riesgos ≈1,5% = 16,25%; XIII mes 8,33% + vacaciones 8,33%"),
+    "SV": (1.26, "ISSS 7,5% (tope $1.000) + AFP 8,75% + INCAF 1% = 17,25%; aguinaldo ≈3,4% + vacaciones 15 días+30% ≈5,3%"),
+}
 AYUDANTE = {
     "CO": (72_500, 60_000, 85_000),
     "PE": (62.80, 62.80, 62.80),
@@ -305,7 +332,14 @@ AYUDANTE = {
 
 
 def referencias_mano_obra() -> dict[str, dict[str, Referencia]]:
-    """Precio por hora para los 17 roles, con directos y derivados explícitos."""
+    """Coste-empresa por hora para los 17 roles, con directos y derivados explícitos.
+
+    El jornal bruto de mercado (R5) se multiplica por el factor de
+    coste-empresa del país (R7: aportes patronales + prestaciones legales)
+    antes de normalizar a 8 h. La referencia nacional del catálogo es un
+    coste para la empresa, no el sueldo del trabajador ni una tarifa con
+    beneficio (el margen se aplica encima en el catálogo).
+    """
     salida: dict[str, dict[str, Referencia]] = {}
     for codigo in sorted(OFICIALES):
         salida[codigo] = {}
@@ -313,37 +347,49 @@ def referencias_mano_obra() -> dict[str, dict[str, Referencia]]:
             jornal = ESPECIALIDAD_DIRECTA.get(codigo, {}).get(pais)
             directo = jornal is not None or codigo in {"MO-OF1", "MO-OF1-ALB"}
             precio, minimo, maximo = jornal or general
+            factor, detalle = FACTOR_COSTE_EMPRESA[pais]
             salida[codigo][pais] = ref(
-                precio / 8, minimo / 8, maximo / 8, R5,
+                precio * factor / 8, minimo * factor / 8, maximo * factor / 8, R7,
                 confianza="referencia" if directo else "derivado",
                 incluye_iva="no_aplica",
                 incluye_transporte="no_aplica",
+                fecha="2026-09-08",
                 observaciones=(
-                    "Jornal del oficio normalizado a 8 h; no incluye automáticamente cargas del empleador."
+                    f"Coste-empresa por hora: jornal de mercado × {factor:.2f} ÷ 8 h"
+                    f" ({detalle}). Jornal base y rango: {R5}."
                     if directo else
-                    "Tarifa derivada del oficial general por falta de jornal local del oficio; no incluye automáticamente cargas del empleador."
+                    f"Coste-empresa derivado del oficial general del país (factor {factor:.2f});"
+                    f" sin jornal local del oficio. Jornal base: {R5}."
                 ),
             )
-    salida["MO-AYU"] = {
-        pais: ref(
-            p / 8, mn / 8, mx / 8, R5,
+    def _coste_ayudante(pais: str) -> Referencia:
+        (p, mn, mx) = AYUDANTE[pais]
+        factor, detalle = FACTOR_COSTE_EMPRESA[pais]
+        return ref(
+            p * factor / 8, mn * factor / 8, mx * factor / 8, R7,
             incluye_iva="no_aplica", incluye_transporte="no_aplica",
-            observaciones="Jornal de ayudante/peón normalizado a 8 h; no incluye automáticamente cargas del empleador.",
+            fecha="2026-09-08",
+            observaciones=(
+                f"Coste-empresa por hora: jornal de ayudante/peón × {factor:.2f} ÷ 8 h"
+                f" ({detalle}). Jornal base y rango: {R5}."
+            ),
         )
-        for pais, (p, mn, mx) in AYUDANTE.items()
-    }
+
+    salida["MO-AYU"] = {pais: _coste_ayudante(pais) for pais in AYUDANTE}
     salida["MO-AYU-ESP"] = {}
     for pais, (ayu, ayu_min, ayu_max) in AYUDANTE.items():
         oficial, of_min, of_max = OFICIAL_GENERAL[pais]
+        factor, _detalle = FACTOR_COSTE_EMPRESA[pais]
         salida["MO-AYU-ESP"][pais] = ref(
-            (ayu + oficial) / 16,
-            (ayu_min + of_min) / 16,
-            (ayu_max + of_max) / 16,
-            R5,
+            (ayu + oficial) * factor / 16,
+            (ayu_min + of_min) * factor / 16,
+            (ayu_max + of_max) * factor / 16,
+            R7,
             confianza="derivado",
             incluye_iva="no_aplica",
             incluye_transporte="no_aplica",
-            observaciones="Tarifa horaria derivada del punto medio entre ayudante y oficial; validar con la empresa.",
+            fecha="2026-09-08",
+            observaciones=f"Coste-empresa por hora derivado del punto medio entre ayudante y oficial (factor {factor:.2f}); validar con la empresa. Jornal base: {R5}.",
         )
     return salida
 
@@ -449,8 +495,9 @@ def main():
                 "precio_max": _numero(dato.maximo) if dato else "",
                 "fuente": dato.fuente if dato else "",
                 "fecha_consulta": (
-                    FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
-                    else FECHA if dato else ""
+                    dato.fecha
+                    or (FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA else FECHA)
+                    if dato else ""
                 ),
                 "confianza": dato.confianza if dato else "pendiente",
                 "incluye_iva": dato.incluye_iva if dato else "por_verificar",

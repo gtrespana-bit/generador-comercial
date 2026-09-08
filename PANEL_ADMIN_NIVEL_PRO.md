@@ -71,6 +71,7 @@ Cada módulo nuevo debe responder una de estas preguntas:
 | **B3. Panel de renovaciones** ✅ | `/admin/renovaciones` mensual: qué vence, importe, estado del aviso y acceso a la ficha. | Media | 🔥🔥🔥 |
 | **B4. Canal/CRM ligero** | Estado comercial del cliente (lead, prueba, activo, en riesgo, inactivo), notas, onboarding, próximo contacto. | Media | 🔥🔥 |
 | **B5. Automatizaciones** ✅ (núcleo) | `/admin/automatizaciones`: reglas visibles y ejecutables (recordatorios 5/1d, avisos 15d, mantenimiento) más alertas de clientes sin plan. Las reglas visuales completas siguen en Fase 4. | Alta | 🔥🔥🔥 |
+| **B7. Uso real de presupuestos** ✅ (solo lectura) | Pestaña «Presupuestos y precios» en la ficha del cliente: presupuestos, partidas, precios, detección de precios modificados vs. catálogo y ajustes recomendados (sin precio, bajo coste, sospechosos). Reservada al superadmin, auditada y sin ninguna vía de modificar/eliminar. | Alta | 🔥🔥🔥 |
 | **B6. Métricas financieras** ✅ | MRR/ARR, renovaciones del mes, tasa de pago por origen, LTV por cohorte, ticket medio, ingresos por país/plan. | Media | 🔥🔥🔥 |
 
 ### C) Web pública y contenido
@@ -114,6 +115,7 @@ Cada módulo nuevo debe responder una de estas preguntas:
 8. **B3: Panel de renovaciones** con campaña de avisos ✅.
 9. **B5: Automatizaciones** ✅ reglas visibles/ejecutables (recordatorios, avisos, mantenimiento).
 10. **A5: Vista guardadas + CSV** ✅ CSV y filtros; vistas guardadas persistentes en Fase 4.
+11. **B7: Uso real de presupuestos** ✅ (solo lectura, superadmin) — pestaña «Presupuestos y precios» + orden por fecha de alta en el directorio.
 
 **Qué ganas:** pasas de "gestionar licencias" a "gestionar relaciones comerciales".
 
@@ -170,10 +172,11 @@ Cada módulo nuevo debe responder una de estas preguntas:
 
 ## 5. Restricciones técnicas a respetar
 
-1. **RLS de operador vs. datos de tenant.** El operador hoy no puede leer `presupuestos`/`clientes` de una organización (RLS tenant). Para la ficha de cliente, la opción recomendada es:
-   - **Agregados vía función `SECURITY DEFINER`** en `cotizat_security` (métricas de uso, nº de presupuestos, estados, sin exponer contenido).
-   - O añadir política `SELECT` RLS explícita "solo operador" si quieres ver detalle real; **nunca** desactivar aislamiento.
-2. **Nunca exponer datos de negocio de un cliente en un panel que comparta el operador sin rol**.
+1. **RLS de operador vs. datos de tenant.** El operador no puede leer `presupuestos`/`clientes` de una organización (RLS tenant). La lectura del panel entra **solo** por funciones `SECURITY DEFINER` en `cotizat_security` con guardia `cotizat.es_operador`:
+   - `admin_resumen_cliente` y `admin_cobros_cliente` (agregados, Fase 2);
+   - `admin_presupuestos_cliente` y `admin_presupuesto_items_cliente` (B7: contenido en **solo lectura**, único rol `superadmin` y cada consulta auditada).
+   - **nunca** desactivar aislamiento; el contenido nunca se comparte fuera del panel.
+2. **Nunca exponer datos de negocio de un cliente en un panel que comparta el operador sin rol** — el detalle de presupuestos es superadmin-only; soporte/analista solo ven agregados.
 3. Los **cron de Vercel** siguen en `vercel.json`; las automatizaciones nuevas deben tener su propia ruta con `CRON_SECRET`.
 4. Todo lo nuevo debe quedar **indexado** y verificable con tests (el repo ya tiene buen hábito de tests).
 5. Los cambios de contenido web deben tener **publicar/descartar**, nunca editar en producción directamente.

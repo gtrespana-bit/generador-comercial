@@ -76,6 +76,7 @@ RENOVACION_ESTADOS = (
 #: cabecera de la tabla.
 ORDENES = {
     "nombre": "Cliente",
+    "alta": "Alta",
     "plan": "Plan",
     "vence": "Vencimiento",
     "ingresos": "Ingresos",
@@ -372,17 +373,32 @@ def ordenar_filas(filas, orden: str, direccion: str):
     def valor(fila):
         if clave == "nombre":
             return fila["organizacion"].nombre.lower()
+        if clave == "alta":
+            alta = getattr(fila["organizacion"], "created_at", None)
+            # Sin fecha de alta va al final en ambas direcciones.
+            return _fecha_clave(alta, invertido)
         if clave == "plan":
             return (fila.get("plan_label") or "").lower()
         if clave == "vence":
             vence = fila.get("vence")
             # Sin fecha de vencimiento va al final en ambas direcciones.
-            return (1, vence.toordinal()) if vence else (2, 0)
+            return _fecha_clave(vence, invertido)
         if clave == "ingresos":
             return float(fila.get("ingresos") or 0)
         return PESO_ESTADO.get(fila.get("estado", ""), 9)
 
     return sorted(filas, key=valor, reverse=invertido)
+
+
+def _fecha_clave(fecha, invertido: bool):
+    """Clave de orden para fechas: las filas sin fecha quedan al final.
+
+    Con ``reverse`` activo (descendente) el grupo vacío debe seguir siendo el
+    menor (o el mayor en ascendente) para no colarse al principio.
+    """
+    if fecha is None:
+        return (-1 if invertido else 1, 0)
+    return (0, fecha.toordinal())
 
 
 # ---------------------------------------------------------------------------

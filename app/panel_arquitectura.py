@@ -264,6 +264,11 @@ FICHA_PESTANAS: tuple[Pestana, ...] = (
         "Qué tiene contratado, cuánto paga y desde cuándo.",
     ),
     Pestana(
+        "presupuestos",
+        "Presupuestos y precios",
+        "Uso real del cliente: presupuestos, partidas, precios modificados y ajustes (solo lectura).",
+    ),
+    Pestana(
         "acceso",
         "Acceso y licencias",
         "La cadena de licencias completa: conceder, renovar, recibo y suspensión.",

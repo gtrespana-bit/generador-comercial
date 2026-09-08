@@ -18,6 +18,7 @@ from migrations.versions import (
     a1b8c2d4e6f0_roles_operador_y_auditoria_admin as panel_migracion,
     c2d4e6f8a1b3_operador_gestion_cliente_y_cobros as fase2_migracion,
     d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migracion,
+    f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_presupuestos_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -233,9 +234,10 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [fase3_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({fase3_migracion.revision}); "
+    assert cabezas == [uso_presupuestos_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({uso_presupuestos_migracion.revision}); "
         f"hay: {cabezas}"
     )
+    assert uso_presupuestos_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision
     assert fase2_migracion.down_revision == "a1b8c2d4e6f0"

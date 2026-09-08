@@ -3,6 +3,11 @@
 **Fecha:** 2026-08-19  
 **Mercados:** Colombia, Perú, México y Ecuador
 
+> **Actualizado por la ronda 7 (2026-09-08):** los jornales de aquí son el
+> **jornal bruto de mercado** (base). El coste-empresa por país con aportes
+> patronales y prestaciones se aplica en
+> `docs/INVESTIGACION_PRECIOS_RONDA_7_COSTE_EMPRESA_MANO_OBRA.md`.
+
 > Los jornales de fuentes de mercado no equivalen automáticamente al coste laboral total. Se separan jornal base, cargas/beneficios y tarifa interna de la empresa.
 
 | Categoría | Colombia / día | Perú / día | México / día | Ecuador / día |

@@ -20,7 +20,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from .common import TEMPLATES, Session, _csv_response, log  # noqa: F401
+from .common import TEMPLATES, Session, _csv_response, _redirect, log  # noqa: F401
 from ..database import get_operator_db
 from ..panel_arquitectura import (
     RUTAS_ANTIGUAS,
@@ -367,7 +367,7 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
         crm_por_org=crm_por_org,
     )
     contenido = [[
-        "Cliente", "Slug", "Emails", "Estado", "Plan", "Inicio", "Vence", "Días",
+        "Cliente", "Slug", "Emails", "Alta", "Estado", "Plan", "Inicio", "Vence", "Días",
         "Ingresos US$", "Estado comercial", "Próximo contacto", "Compras pendientes",
     ]]
     for fila in filas:
@@ -377,6 +377,7 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
             org.nombre,
             org.slug,
             " ".join(fila.get("emails") or []),
+            f"{org.created_at:%Y-%m-%d}" if org.created_at else "",
             fila.get("estado_label", ""),
             fila.get("plan_label") or "",
             f"{fila['inicio']:%Y-%m-%d}" if fila.get("inicio") else "",
@@ -392,7 +393,7 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
 
 @router.get("/admin/clientes/{organizacion_id}", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)):
-    """Ficha del cliente en cinco pestañas (antes: ocho tarjetas apiladas)."""
+    """Ficha del cliente en seis pestañas (antes: ocho tarjetas apiladas)."""
     from ..services.panel_admin import ETIQUETA_ORIGEN, PLAN_POR_IMPORTE
     from ..services.panel_clientes import resumen_cliente
 
@@ -426,7 +427,112 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
             if fila.get("proximo_contacto") and fila["proximo_contacto"] <= hoy
         ][:20],
     })
+    # La pestaña «Presupuestos y precios» abre el contenido real de la
+    # organización: solo lectura, auditada y reservada al superadmin.
+    if pestana == "presupuestos":
+        contexto["uso_presupuestos"] = _uso_presupuestos_cliente(db, request, organizacion_id)
+    else:
+        contexto["uso_presupuestos"] = None
     return _respuesta(request, "cliente_detalle.html", contexto)
+
+
+@router.get(
+    "/admin/clientes/{organizacion_id}/presupuestos/{presupuesto_id}",
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
+def pagina_detalle_presupuesto_cliente(
+    organizacion_id: int,
+    presupuesto_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Detalle de un presupuesto del cliente, en solo lectura y auditado."""
+    from ..services.panel_presupuestos import detalle_presupuesto_cliente
+
+    if not _es_superadmin(db):
+        return _redirect(
+            ruta_panel("clientes"),
+            error="Solo el superadmin puede ver el contenido de los presupuestos.",
+        )
+    detalle = detalle_presupuesto_cliente(db, organizacion_id, presupuesto_id)
+    if detalle is None:
+        return _redirect(
+            f"/admin/clientes/{organizacion_id}?tab=presupuestos",
+            error="El presupuesto indicado no existe o no pertenece a este cliente.",
+        )
+    _auditar_lectura(
+        db,
+        request,
+        accion="cliente.presupuesto_detalle_visto",
+        organizacion_id=organizacion_id,
+        detalle={
+            "presupuesto_id": presupuesto_id,
+            "numero": detalle["presupuesto"]["numero"],
+            "partidas": detalle["resumen"]["items"],
+        },
+    )
+    contexto = contexto_base(request, db, seccion="clientes")
+    contexto.update({
+        "pestanas": _pestanas_ficha(organizacion_id, "presupuestos"),
+        "pestana": "presupuestos",
+        "pestana_nombre": _nombre_ficha("presupuestos"),
+        "cabecera": {"titulo": "", "subtitulo": "", "migas": [], "seccion": "clientes"},
+        "detalle": detalle,
+        "org_id": organizacion_id,
+    })
+    return _respuesta(request, "presupuesto_cliente_detalle.html", contexto)
+
+
+def _es_superadmin(db: Session) -> bool:
+    return str(db.info.get("operador_rol") or "").strip().lower() == "superadmin"
+
+
+def _uso_presupuestos_cliente(db: Session, request: Request, organizacion_id: int):
+    """Contenido de la ficha (solo superadmin) + nota para el resto del equipo."""
+    from ..services.panel_presupuestos import resumen_uso_presupuestos
+
+    if not _es_superadmin(db):
+        return {"restringido": True}
+    datos = resumen_uso_presupuestos(db, organizacion_id)
+    _auditar_lectura(
+        db,
+        request,
+        accion="cliente.presupuestos_vistos",
+        organizacion_id=organizacion_id,
+        detalle={
+            "presupuestos": datos["totales"]["presupuestos"],
+            "partidas": datos["totales"]["partidas"],
+        },
+    )
+    return datos
+
+
+def _auditar_lectura(
+    db: Session,
+    request: Request,
+    *,
+    accion: str,
+    organizacion_id: int,
+    detalle: dict | None = None,
+) -> None:
+    """Registra la consulta de contenido del cliente (sin incluir contenido)."""
+    from ..services.audit_admin import registrar_evento_admin
+    from ..services.prueba_gratuita import hash_ip
+    from ..security import ip_de_request
+
+    registrar_evento_admin(
+        db,
+        accion=accion,
+        operador_email=str(db.info.get("auth_email") or ""),
+        operador_rol=str(db.info.get("operador_rol") or ""),
+        entidad="organizacion",
+        entidad_id=organizacion_id,
+        organizacion_id=organizacion_id,
+        detalle=detalle,
+        ip_hash=hash_ip(ip_de_request(request)),
+        resultado="ok",
+    )
 
 
 def _redirect_cliente_inexistente() -> RedirectResponse:
