@@ -162,8 +162,9 @@ def test_un_area_de_una_sola_pantalla_no_pinta_barra():
 
 def test_las_pestanas_de_la_ficha_no_dependen_del_area():
     assert pestana_ficha_valida("cobros") == "cobros"
+    assert pestana_ficha_valida("presupuestos") == "presupuestos"
     assert pestana_ficha_valida("inventada") == "resumen"
-    assert len(FICHA_PESTANAS) == 5
+    assert len(FICHA_PESTANAS) == 6
 
 
 def test_el_breadcrumb_sale_del_mapa_no_de_cada_plantilla():
@@ -810,14 +811,71 @@ def test_todas_las_pestanas_de_todas_las_areas_renderizan(entorno):
             assert "jinja2" not in respuesta.text.lower()
 
 
-def test_la_ficha_del_cliente_tiene_cinco_pestanas_y_todas_pintan(entorno):
+def test_la_ficha_del_cliente_tiene_seis_pestanas_y_todas_pintan(entorno):
     cliente, _Session, datos = entorno
-    for pestana in ("resumen", "acceso", "cobros", "gestion", "actividad"):
+    for pestana in ("resumen", "presupuestos", "acceso", "cobros", "gestion", "actividad"):
         respuesta = cliente.get(f"/admin/clientes/{datos['por_vencer']}?tab={pestana}")
         assert respuesta.status_code == 200, pestana
         assert f"tab={pestana}" in respuesta.text        # la pestaña activa, enlazada
     assert "Obras Norte" in cliente.get(f"/admin/clientes/{datos['por_vencer']}").text
     assert "00/00/0000" not in cliente.get(f"/admin/clientes/{datos['por_vencer']}").text
+
+
+def test_la_pestana_de_presupuestos_es_solo_lectura_y_queda_auditada(entorno):
+    """Sin presupuestos pinta vacío; con ellos se ve el detalle sin acciones."""
+    from app.models import Capitulo, Cliente, Presupuesto, PresupuestoItem
+
+    cliente, Session, datos = entorno
+    pagina = cliente.get(f"/admin/clientes/{datos['por_vencer']}?tab=presupuestos")
+    assert pagina.status_code == 200
+    assert "Solo lectura" in pagina.text
+    assert "todavía no ha creado presupuestos" in pagina.text
+
+    with Session() as db:
+        cliente_final = Cliente(nombre="Obra Norte S.A.", organizacion_id=datos["por_vencer"])
+        db.add(cliente_final)
+        db.flush()
+        p = Presupuesto(
+            numero="P-2026-001", year=2026, fecha=date(2026, 9, 1),
+            titulo="Reforma", moneda="USD", moneda_base="USD",
+            estado="enviado", total_calculado=100.0,
+            client_id=cliente_final.id, organizacion_id=datos["por_vencer"],
+        )
+        db.add(p)
+        db.flush()
+        cap = Capitulo(nombre="PINTURA", orden=1, presupuesto_id=p.id)
+        db.add(cap)
+        db.flush()
+        db.add(PresupuestoItem(
+            capitulo_id=cap.id, nombre="Pintura exterior", unidad="m2",
+            cantidad=10.0, precio_unitario=10.0, moneda="USD",
+            organizacion_id=datos["por_vencer"],
+        ))
+        db.commit()
+        pid = p.id
+
+    detalle = cliente.get(f"/admin/clientes/{datos['por_vencer']}/presupuestos/{pid}")
+    assert detalle.status_code == 200
+    assert "P-2026-001" in detalle.text
+    assert "Solo lectura" in detalle.text
+    assert "Pintura exterior" in detalle.text
+
+    # El detalle de un presupuesto inexistente redirige sin romper.
+    respuesta = cliente.get(
+        f"/admin/clientes/{datos['por_vencer']}/presupuestos/9999",
+        follow_redirects=False,
+    )
+    assert respuesta.status_code in (302, 303)
+
+    # El contenido de tenant no tiene ninguna ruta de escritura desde el panel.
+    for r in app.routes:
+        ruta = getattr(r, "path", "") or ""
+        if "clientes" in ruta and "presupuestos" in ruta:
+            metodos = getattr(r, "methods", None) or ()
+            assert "POST" not in metodos and "PUT" not in metodos and "DELETE" not in metodos, ruta
+    # La consulta del contenido quedó en la auditoría (sin incluir contenido).
+    pagina_auditoria = cliente.get(f"/admin/sistema?tab=auditoria&organizacion_id={datos['por_vencer']}")
+    assert pagina_auditoria.status_code == 200
 
 
 def test_el_hub_es_agenda_y_no_un_muro_de_tablas(entorno):

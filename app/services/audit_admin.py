@@ -40,6 +40,8 @@ ACCIONES_LECIBLES = {
     "compra.rechazada": "Compra rechazada",
     "aviso.licencias_enviadas": "Avisos de vencimiento enviados",
     "cliente.nota_creada": "Nota de cliente creada",
+    "cliente.presupuestos_vistos": "Presupuestos del cliente vistos",
+    "cliente.presupuesto_detalle_visto": "Detalle de presupuesto visto",
     "automatizacion.ejecutada": "Automatización ejecutada",
     "crm.cliente_actualizado": "Estado comercial del cliente",
     "admin.vista_guardada": "Vista guardada",

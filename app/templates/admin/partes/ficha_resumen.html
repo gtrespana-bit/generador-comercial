@@ -38,12 +38,12 @@
         </dl>
       </div>
       <div class="card-pie">
-        <span class="muted-note">El uso se lee agregado (contajes), nunca el contenido de los presupuestos: el aislamiento por organización se mantiene.</span>
+        <span class="muted-note">El contenido de los presupuestos solo lo abre el superadmin desde la pestaña «Presupuestos y precios», en solo lectura y con auditoría.</span>
       </div>
     </div>
 
     <div class="kpis">
-      <a class="kpi-card enlaza" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
+      <a class="kpi-card enlaza" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=presupuestos">
         <div class="kpi-value">{{ ficha.agregados.presupuestos }}</div>
         <div class="kpi-label">Presupuestos</div>
         <p class="note-sub">{{ "%.2f"|format(ficha.agregados.total_presupuestado) }} US$ presupuestados</p>
@@ -122,6 +122,9 @@
         </a>
         {% endif %}
         {% endfor %}
+        <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=presupuestos">
+          <b>Ver uso real</b><small>Presupuestos, partidas y precios modificados</small>
+        </a>
         <a class="atajo" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=cobros">
           <b>Revisar cobros</b><small>{{ ficha.cobros|length }} factura(s) y pago(s) visibles</small>
         </a>

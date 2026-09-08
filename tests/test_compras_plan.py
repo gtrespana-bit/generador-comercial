@@ -674,11 +674,13 @@ def test_miembro_ve_configuracion_solo_lectura(entorno, monkeypatch):
 def test_configuracion_muestra_el_plan_del_cliente(entorno):
     """La tarjeta 'Tu plan' refleja licencia vigente con fecha y días."""
     Session, ids, _rol = entorno
+    hoy = date.today()
+    vence = hoy + timedelta(days=30)
     with Session() as db:
         db.add(Licencia(
             organizacion_id=ids[0],
             estado="activa", origen="pago",
-            inicio=date(2026, 8, 1), vence=date(2026, 9, 1),
+            inicio=hoy - timedelta(days=38), vence=vence,
             importe=9.99, metodo_cobro="Pago móvil",
         ))
         db.commit()
@@ -688,7 +690,7 @@ def test_configuracion_muestra_el_plan_del_cliente(entorno):
     assert r.status_code == 200
     assert "Tu plan" in r.text
     assert "Plan mensual" in r.text
-    assert "Vence el 01/09/2026" in r.text
+    assert f"Vence el {vence.strftime('%d/%m/%Y')}" in r.text
     assert "día" in r.text  # días restantes
 
 

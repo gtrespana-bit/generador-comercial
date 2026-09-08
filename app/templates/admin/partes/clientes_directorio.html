@@ -82,6 +82,7 @@
       <thead>
         <tr>
           <th class="{{ 'orden-active' if orden == 'nombre' else '' }}">{{ enlace_orden('nombre', 'Cliente') }}</th>
+          <th class="{{ 'orden-active' if orden == 'alta' else '' }}">{{ enlace_orden('alta', 'Alta') }}</th>
           <th>Estado</th>
           <th class="{{ 'orden-active' if orden == 'plan' else '' }}">{{ enlace_orden('plan', 'Plan') }}</th>
           <th class="tabla-num">{{ enlace_orden('ingresos', 'Ingresos') }}</th>
@@ -99,6 +100,7 @@
             <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a>
             <div class="org-sub" title="{{ fila.emails|join(', ') }}">{{ org.slug }}{% if fila.emails %} · {{ fila.emails[0] }}{% if fila.emails|length > 1 %} +{{ fila.emails|length - 1 }}{% endif %}{% endif %}</div>
           </td>
+          <td class="muted" title="Fecha de registro">{{ org.created_at.strftime('%d/%m/%Y') if org.created_at else '—' }}</td>
           <td>
             {% if fila.estado == 'activa' %}<span class="badge badge-success">{{ fila.estado_label }}</span>
             {% elif fila.estado == 'por_vencer' %}<span class="badge badge-warning">{{ fila.estado_label }} · {{ fila.dias_restantes }}d</span>
@@ -137,7 +139,7 @@
           </td>
         </tr>
         {% else %}
-        <tr><td colspan="7">
+        <tr><td colspan="8">
           <div class="vacio">
             <b>No hay clientes con esos filtros.</b>
             <p>Prueba a limpiar los filtros: si una organización se registró pero nunca recibió acceso, aparece como «Sin plan».</p>
