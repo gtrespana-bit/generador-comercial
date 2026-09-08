@@ -769,6 +769,15 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
         respaldo = {"ok": False, "error": "Error interno en el respaldo automático."}
 
     try:
+        from ..services.conversaciones_ia import purgar_conversaciones_expiradas
+
+        chats_expirados = purgar_conversaciones_expiradas(db)
+    except Exception:
+        db.rollback()
+        log.error("Error purgando conversaciones expiradas:\n%s", traceback.format_exc())
+        chats_expirados = None
+
+    try:
         verificacion = ejecutar_verificacion_diaria()
     except Exception:
         log.error("Error en la verificación diaria del cron:\n%s", traceback.format_exc())
@@ -776,7 +785,9 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
 
     return JSONResponse(
         {"ok": respaldo.get("ok", True) and verificacion.get("ok", True),
-         "respaldo": respaldo, "verificacion": verificacion},
+         "respaldo": respaldo,
+         "conversaciones_expiradas": chats_expirados,
+         "verificacion": verificacion},
         headers={"Cache-Control": "no-store"},
     )
 

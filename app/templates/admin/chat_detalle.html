@@ -1,0 +1,60 @@
+{% extends "admin/base_admin.html" %}
+
+{% set conversacion = chat.conversacion %}
+{% block title %}Conversación del asistente{% endblock %}
+{% block page_title %}Conversación del asistente{% endblock %}
+{% block page_subtitle %}Lectura interna para entender la duda y mejorar CotizaT · {{ conversacion.public_id }}{% endblock %}
+{% block page_acciones %}
+  <form method="post" action="/admin/analitica/chats/{{ conversacion.public_id }}/eliminar" data-confirmar="¿Eliminar esta conversación y todos sus mensajes? Esta acción no se puede deshacer.">
+    <button class="btn btn-sm btn-danger" type="submit">Eliminar conversación</button>
+  </form>
+  <a class="btn btn-sm btn-secondary" href="/admin/analitica/chats">← Todas las conversaciones</a>
+{% endblock %}
+
+{% block extra_css %}
+  .chat-detalle-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .chat-detalle-meta div { padding: 13px 15px; border: 1px solid var(--border-color); border-radius: 11px; background: #fbfdfb; }
+  .chat-detalle-meta dt { color: var(--text-muted); font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .chat-detalle-meta dd { margin: 5px 0 0; font-size: .86rem; font-weight: 700; overflow-wrap: anywhere; }
+  .chat-detalle-meta code { font-size: .7rem; overflow-wrap: anywhere; }
+  .chat-mensajes { display: grid; gap: 12px; padding: 18px; }
+  .chat-mensaje { display: grid; grid-template-columns: 110px 1fr; gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px solid #eef3f0; }
+  .chat-mensaje:last-child { border-bottom: 0; padding-bottom: 0; }
+  .chat-mensaje:first-child { padding-top: 0; }
+  .chat-mensaje-rol { font-size: .72rem; font-weight: 900; color: var(--brand-color); text-transform: uppercase; letter-spacing: .04em; }
+  .chat-mensaje-rol small { display: block; margin-top: 5px; color: var(--text-muted); font-size: .68rem; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .chat-mensaje-contenido { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .88rem; line-height: 1.6; }
+  .chat-mensaje-usuario .chat-mensaje-contenido { color: var(--text-main); }
+  .chat-mensaje-asistente .chat-mensaje-contenido { padding: 11px 13px; border-radius: 10px; background: #f4f8f5; border: 1px solid var(--border-color); }
+  .chat-detalle-aviso { margin-top: 16px; color: var(--text-muted); font-size: .76rem; line-height: 1.5; }
+  @media (max-width: 620px) {
+    .chat-mensaje { grid-template-columns: 1fr; gap: 5px; }
+  }
+{% endblock %}
+
+{% block content %}
+  <dl class="chat-detalle-meta">
+    <div><dt>Organización</dt><dd>{{ chat.organizacion.nombre if chat.organizacion else '—' }}</dd></div>
+    <div><dt>Usuario</dt><dd>{{ conversacion.usuario_email or 'Cuenta local / no identificada' }}</dd></div>
+    <div><dt>Inicio</dt><dd>{{ conversacion.created_at.strftime('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}</dd></div>
+    <div><dt>Último turno</dt><dd>{{ conversacion.ultimo_mensaje_at.strftime('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</dd></div>
+  </dl>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>{{ conversacion.titulo or 'Conversación sin título' }}</h2>
+      <span class="badge badge-neutral">{{ chat.mensajes|length }} mensaje{{ 's' if chat.mensajes|length != 1 else '' }}</span>
+    </div>
+    <div class="chat-mensajes">
+      {% for mensaje in chat.mensajes %}
+      <article class="chat-mensaje {{ 'chat-mensaje-usuario' if mensaje.rol == 'user' else 'chat-mensaje-asistente' }}">
+        <div class="chat-mensaje-rol">{{ 'Usuario' if mensaje.rol == 'user' else 'Asistente' }}<small>{{ mensaje.created_at.strftime('%d/%m/%Y %H:%M:%S') if mensaje.created_at else '—' }}{% if not mensaje.completo %} · respuesta interrumpida{% endif %}</small></div>
+        <p class="chat-mensaje-contenido">{{ mensaje.contenido }}</p>
+      </article>
+      {% else %}
+      <p class="muted">Esta conversación no tiene mensajes.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <p class="chat-detalle-aviso">Contenido visible únicamente para operadores autorizados. No copies aquí datos sensibles del cliente; si una persona solicita acceso o eliminación de sus conversaciones, tramita la petición en <a href="/legal/privacidad">Privacidad</a>.</p>
+{% endblock %}

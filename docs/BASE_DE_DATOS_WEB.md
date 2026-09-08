@@ -123,3 +123,14 @@ navegador, y la prueba manual de que la URL pública del bucket privado niega el
 acceso.
 
 Las copias `.db` y su restauración están desactivadas cuando el backend no es SQLite. La estrategia web será backup administrado y exportación por organización. Consulta también `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y `docs/SEGURIDAD_WEB.md`.
+
+**Actualización vigente 08/09/2026:** el head exigido por el runtime pasa a
+`g7c8d9e0f1a2` para registrar las conversaciones del asistente (`conversaciones_ia`
+y `mensajes_ia`). Aplicar `docs/staging_upgrade_g7c8d9e0f1a2.sql` únicamente cuando
+`public.alembic_version` sea `f6d1a9c3e8b2`, o ejecutar `alembic upgrade head` con
+`MIGRATION_DATABASE_URL`. Ambas tablas tienen RLS forzado: tenant para la
+aplicación y lectura global solo para la sesión de operador. La baja completa,
+el cron de purga y la exportación separada de conversaciones quedan descritos
+en [`CONVERSACIONES_ASISTENTE.md`](CONVERSACIONES_ASISTENTE.md). El backup de
+negocio no incluye texto de chats para mantener su retención y tratamiento de
+privacidad separados.

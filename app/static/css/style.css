@@ -7241,6 +7241,14 @@ body { -webkit-tap-highlight-color: transparent; }
   color: var(--text-muted);
   text-align: center;
 }
+.ia-privacy-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.61rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+  text-align: center;
+}
+.ia-privacy-note a { color: inherit; text-decoration: underline; }
 
 /* Confirmaciones de acciones estructuradas del asistente */
 .ia-action-overlay { z-index: 1400; }

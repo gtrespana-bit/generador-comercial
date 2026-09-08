@@ -1,0 +1,139 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Conversaciones del asistente{% endblock %}
+{% block page_title %}Conversaciones del asistente{% endblock %}
+{% block page_subtitle %}Dudas reales para identificar oportunidades de mejora · Operador: <span class="sub-op">{{ operador }}</span>{% endblock %}
+{% block page_acciones %}
+  <a class="btn btn-sm btn-secondary" href="/admin/analitica/chats/exportar">⬇ Exportar activas</a>
+  <a class="btn btn-sm btn-secondary" href="/admin/analitica">← Volver a Analítica</a>
+{% endblock %}
+
+{% block extra_css %}
+  .chat-notice {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid #cfe3d7;
+    border-radius: 12px;
+    background: #f5fbf7;
+    color: var(--text-main);
+    font-size: .84rem;
+    line-height: 1.5;
+  }
+  .chat-notice strong { color: var(--brand-color); }
+  .chat-notice p { margin: 0; }
+  .chat-filtros {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.7fr) minmax(180px, 1fr) minmax(180px, 1fr) repeat(2, minmax(140px, .7fr)) auto;
+    gap: 10px;
+    align-items: end;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border-color);
+    background: #fbfdfb;
+  }
+  .chat-filtros label { display: grid; gap: 5px; color: var(--text-muted); font-size: .72rem; font-weight: 800; }
+  .chat-filtros input, .chat-filtros select { width: 100%; min-width: 0; }
+  .chat-filtros-acciones { display: flex; gap: 7px; align-items: center; }
+  .chat-tabla-wrap { overflow-x: auto; }
+  .chat-tabla { min-width: 760px; }
+  .chat-tabla td { vertical-align: top; }
+  .chat-conv-titulo { max-width: 440px; }
+  .chat-conv-titulo a { color: var(--text-main); font-weight: 800; text-decoration: none; }
+  .chat-conv-titulo a:hover { color: var(--brand-color); }
+  .chat-conv-titulo small { display: block; margin-top: 5px; color: var(--text-muted); font-size: .75rem; line-height: 1.35; }
+  .chat-meta { display: flex; gap: 7px; flex-wrap: wrap; color: var(--text-muted); font-size: .76rem; }
+  .chat-usuario { max-width: 210px; overflow-wrap: anywhere; }
+  .chat-paginacion { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text-muted); font-size: .78rem; }
+  .chat-paginacion-acciones { display: flex; gap: 8px; }
+  .chat-paginacion-acciones a { text-decoration: none; }
+  @media (max-width: 1050px) {
+    .chat-filtros { grid-template-columns: repeat(3, minmax(160px, 1fr)); }
+    .chat-filtros-acciones { grid-column: 1 / -1; }
+  }
+  @media (max-width: 620px) {
+    .chat-filtros { grid-template-columns: 1fr; }
+    .chat-filtros-acciones { grid-column: auto; }
+    .chat-paginacion { align-items: flex-start; flex-direction: column; }
+  }
+{% endblock %}
+
+{% block content %}
+  <div class="chat-notice" role="note">
+    <span aria-hidden="true">🔒</span>
+    <p><strong>Uso interno del equipo de CotizaT.</strong> Estas conversaciones pueden contener información comercial introducida por la persona usuaria. Se muestran para detectar dudas y mejorar el producto, no para entrenar modelos. Se conservan durante 12 meses desde el último turno y después se purgan automáticamente.</p>
+  </div>
+
+  <div class="card">
+    <form class="chat-filtros" method="get" action="/admin/analitica/chats">
+      <label>Buscar en empresa, usuario o conversación
+        <input type="search" name="q" value="{{ filtros_chats.q }}" placeholder="Ej.: mediciones, porcelanato…" autocomplete="off">
+      </label>
+      <label>Usuario
+        <input type="search" name="usuario" value="{{ filtros_chats.usuario }}" placeholder="Email del usuario" autocomplete="off">
+      </label>
+      <label>Organización
+        <select name="organizacion_id">
+          <option value="">Todas las organizaciones</option>
+          {% for organizacion in organizaciones %}
+          <option value="{{ organizacion.id }}" {{ 'selected' if organizacion.id == filtros_chats.organizacion_id else '' }}>{{ organizacion.nombre }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Desde
+        <input type="date" name="desde" value="{{ filtros_chats.desde }}">
+      </label>
+      <label>Hasta
+        <input type="date" name="hasta" value="{{ filtros_chats.hasta }}">
+      </label>
+      <div class="chat-filtros-acciones">
+        <button class="btn btn-primary btn-sm" type="submit">Filtrar</button>
+        {% if filtros_chats.q or filtros_chats.usuario or filtros_chats.organizacion_id or filtros_chats.desde or filtros_chats.hasta %}
+        <a class="btn btn-secondary btn-sm" href="/admin/analitica/chats">Limpiar</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <div class="card-header">
+      <h2>{{ chats.total }} conversación{{ 'es' if chats.total != 1 else '' }}</h2>
+      <span class="muted">{{ chats.pagina }} / {{ chats.paginas }} página{{ 's' if chats.paginas != 1 else '' }}</span>
+    </div>
+
+    <div class="table-container chat-tabla-wrap">
+      <table class="chat-tabla">
+        <thead>
+          <tr><th>Conversación</th><th>Organización</th><th>Usuario</th><th>Mensajes</th><th>Último turno</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for fila in chats.filas %}
+          {% set conversacion = fila.conversacion %}
+          <tr>
+            <td class="chat-conv-titulo">
+              <a href="/admin/analitica/chats/{{ conversacion.public_id }}">{{ conversacion.titulo or 'Conversación sin título' }}</a>
+              <small>Iniciada {{ conversacion.created_at.strftime('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}{% if conversacion.pagina_inicio %} · {{ conversacion.pagina_inicio }}{% endif %}</small>
+            </td>
+            <td class="text-bold">{{ fila.organizacion.nombre if fila.organizacion else '—' }}</td>
+            <td class="chat-usuario muted">{{ conversacion.usuario_email or 'Cuenta local / no identificada' }}</td>
+            <td><span class="badge badge-neutral">{{ fila.mensajes }}</span></td>
+            <td class="muted">{{ conversacion.ultimo_mensaje_at.strftime('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</td>
+            <td><a class="btn btn-sm btn-secondary" href="/admin/analitica/chats/{{ conversacion.public_id }}">Leer</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6"><div class="vacio"><b>No hay conversaciones con estos filtros.</b><p>Las nuevas dudas aparecerán aquí cuando alguien use el asistente.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if chats.paginas > 1 %}
+    <div class="chat-paginacion">
+      <span>Mostrando {{ ((chats.pagina - 1) * chats.por_pagina) + 1 if chats.total else 0 }}–{{ [chats.pagina * chats.por_pagina, chats.total]|min }} de {{ chats.total }}</span>
+      <div class="chat-paginacion-acciones">
+        {% if chats.pagina > 1 %}<a class="btn btn-sm btn-secondary" href="{{ request.url.include_query_params(pagina=chats.pagina - 1) }}">← Anteriores</a>{% endif %}
+        {% if chats.pagina < chats.paginas %}<a class="btn btn-sm btn-secondary" href="{{ request.url.include_query_params(pagina=chats.pagina + 1) }}">Siguientes →</a>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

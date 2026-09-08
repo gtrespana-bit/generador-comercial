@@ -1,7 +1,7 @@
 """Mantenimiento automático del despliegue (E4-021 / E4-023).
 
 Un único trabajo programado (Vercel Cron, ``/api/cron/mantenimiento``) ejecuta
-cada día las dos tareas de operación que no dependen de una sesión humana:
+cada día las tareas de operación que no dependen de una sesión humana:
 
 * **Respaldo automático por organización (E4-021).** Para cada organización se
   genera el mismo paquete verificable de E3-020 (``app/services/respaldo.py``)
@@ -17,6 +17,11 @@ cada día las dos tareas de operación que no dependen de una sesión humana:
   anteriores. Las organizaciones cuyo paquete supere el límite configurable
   (``COTIZAT_RESPALDO_MAX_MB``, 12 MB por omisión, el tope del bucket) se
   reportan como omitidas, nunca rompen la ejecución.
+
+* **Purga de conversaciones del asistente.** El mismo disparo elimina los
+  agregados cuyo ``expires_at`` ya venció (365 días desde el último turno).
+  La consulta exige la sesión de operador del cron y no exporta ni registra el
+  contenido eliminado.
 
 * **Verificación diaria con alerta (E4-023).** Ejecuta los mismos chequeos de
   ``/readyz``; si algo falla, avisa por correo a los operadores

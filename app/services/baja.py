@@ -13,9 +13,10 @@ Orden del borrado, para no dejar residuos ni huérfanos:
    reintentar. Si algún objeto falla, la baja se aborta entera y no se borra
    nada en la base (reintentar es seguro).
 2. **Datos y organización.** En PostgreSQL se invoca
-   ``cotizat_security.baja_organizacion`` (SECURITY DEFINER, revisión
-   ``a3d7e9c1b5f2``): borra en una sola transacción todas las tablas de
-   negocio, licencias, membresías y la propia organización, con guardias del
+   ``cotizat_security.baja_organizacion`` (SECURITY DEFINER, actualizada por
+   ``g7c8d9e0f1a2``): borra en una sola transacción todas las tablas de
+   negocio, conversaciones del asistente, licencias, membresías y la propia
+   organización, con guardias del
    claim de sesión y del rol de propietario. En SQLite el mismo orden se
    ejecuta por ORM dentro de la sesión autenticada.
 
@@ -51,6 +52,8 @@ from ..models import (
     Cliente,
     CompraPlan,
     Configuracion,
+    ConversacionIA,
+    MensajeIA,
     DescomposicionFila,
     DescomposicionPartida,
     EnlacePropuesta,
@@ -118,6 +121,10 @@ _ORDEN_BORRADO: tuple[Any, ...] = (
     ArchivoAlmacenado,
     InvitacionOrganizacion,
     Configuracion,
+    # Las respuestas del asistente son datos tenant y deben desaparecer junto
+    # con la organización, antes de que se elimine su agregado padre.
+    MensajeIA,
+    ConversacionIA,
     #: Añadida el 19/08/2026: faltaba desde su creación (e5f2a8d31b6c) y su
     #: FK RESTRICT impedía la baja de cualquier organización con compras.
     CompraPlan,

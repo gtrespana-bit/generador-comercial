@@ -15,10 +15,10 @@ vistas guardadas.
 from __future__ import annotations
 
 import json
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 from .common import TEMPLATES, Session, _csv_response, _redirect, log  # noqa: F401
 from ..database import get_operator_db
@@ -1006,6 +1006,258 @@ def pagina_analitica(request: Request, dias: int = 30, db: Session = Depends(get
     contexto = contexto_base(request, db, seccion="analitica")
     contexto.update({"resumen": resumen_analitica(db, dias=ventana), "dias": ventana})
     return _respuesta(request, "analitica.html", contexto)
+
+
+def _fecha_chat(valor: str, *, final: bool = False) -> datetime | None:
+    """Convierte un filtro ``YYYY-MM-DD`` en un límite UTC exclusivo/inclusivo."""
+    texto = str(valor or "").strip()
+    if not texto:
+        return None
+    try:
+        fecha = datetime.strptime(texto, "%Y-%m-%d")
+    except ValueError:
+        return None
+    return fecha + timedelta(days=1) if final else fecha
+
+
+def _auditar_consulta_chats(
+    db,
+    request: Request,
+    *,
+    accion: str,
+    organizacion_id: int | None = None,
+    conversacion_id: int | None = None,
+    detalle: dict | None = None,
+) -> None:
+    """Registra el acceso del operador sin guardar el texto de las dudas."""
+    from ..security import ip_de_request
+    from ..services.audit_admin import registrar_evento_admin
+    from ..services.prueba_gratuita import hash_ip
+
+    registrar_evento_admin(
+        db,
+        accion=accion,
+        operador_email=str(db.info.get("auth_email") or ""),
+        operador_rol=str(db.info.get("operador_rol") or ""),
+        entidad="conversacion_ia" if conversacion_id else "",
+        entidad_id=conversacion_id,
+        organizacion_id=organizacion_id,
+        detalle=detalle,
+        ip_hash=hash_ip(ip_de_request(request)),
+        resultado="ok",
+    )
+
+
+@router.get("/admin/analitica/chats", response_class=HTMLResponse, include_in_schema=False)
+def pagina_chats_asistente(
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Listado operativo de dudas del asistente, solo para operadores."""
+    from ..services.panel_chats import listar_conversaciones, opciones_organizaciones
+
+    q = str(request.query_params.get("q") or "").strip()[:120]
+    usuario = str(request.query_params.get("usuario") or "").strip()[:120]
+    organizacion_id = _entero(request.query_params.get("organizacion_id"))
+    if organizacion_id <= 0:
+        organizacion_id = None
+    desde_texto = str(request.query_params.get("desde") or "").strip()
+    hasta_texto = str(request.query_params.get("hasta") or "").strip()
+    desde = _fecha_chat(desde_texto)
+    hasta = _fecha_chat(hasta_texto, final=True)
+    pagina = max(1, _entero(request.query_params.get("pagina"), 1))
+
+    datos = listar_conversaciones(
+        db,
+        q=q,
+        usuario=usuario,
+        organizacion_id=organizacion_id,
+        desde=desde,
+        hasta=hasta,
+        pagina=pagina,
+    )
+    try:
+        organizaciones = opciones_organizaciones(db)
+    except Exception:
+        db.rollback()
+        organizaciones = []
+        log.warning("No se pudo cargar el selector de organizaciones para chats.")
+
+    _auditar_consulta_chats(
+        db,
+        request,
+        accion="analitica.chats_listado_visto",
+        organizacion_id=organizacion_id,
+        detalle={"resultados": datos["total"], "pagina": datos["pagina"]},
+    )
+    contexto = contexto_base(
+        request,
+        db,
+        seccion="analitica",
+        cabecera={
+            "titulo": "Conversaciones del asistente",
+            "subtitulo": "Dudas reales para detectar oportunidades de mejora del producto.",
+            "seccion": "analitica",
+            "migas": [{"nombre": "Analítica", "ruta": "/admin/analitica"}],
+        },
+    )
+    contexto.update({
+        "chats": datos,
+        "organizaciones": organizaciones,
+        "filtros_chats": {
+            "q": q,
+            "usuario": usuario,
+            "organizacion_id": organizacion_id or "",
+            "desde": desde_texto,
+            "hasta": hasta_texto,
+        },
+    })
+    return _respuesta(request, "chats.html", contexto)
+
+
+@router.get("/admin/analitica/chats/exportar", include_in_schema=False)
+def exportar_chats_asistente(
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Descarga separada de conversaciones para acceso, soporte o análisis.
+
+    No forma parte del backup/restauración de datos comerciales: el texto libre
+    tiene una retención propia y puede contener información sensible. El
+    alcance de filtros es el mismo que el listado, pero no se exporta la página
+    actual sino todos los resultados activos hasta el límite del servicio.
+    """
+    from ..services.panel_chats import exportar_conversaciones
+
+    q = str(request.query_params.get("q") or "").strip()[:120]
+    usuario = str(request.query_params.get("usuario") or "").strip()[:120]
+    organizacion_id = _entero(request.query_params.get("organizacion_id")) or None
+    desde_texto = str(request.query_params.get("desde") or "").strip()
+    hasta_texto = str(request.query_params.get("hasta") or "").strip()
+    datos = exportar_conversaciones(
+        db,
+        q=q,
+        usuario=usuario,
+        organizacion_id=organizacion_id,
+        desde=_fecha_chat(desde_texto),
+        hasta=_fecha_chat(hasta_texto, final=True),
+    )
+    _auditar_consulta_chats(
+        db,
+        request,
+        accion="analitica.chats_exportado",
+        organizacion_id=organizacion_id,
+        detalle={"conversaciones": len(datos)},
+    )
+    nombre = f"cotizat_conversaciones_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
+    return Response(
+        content=json.dumps(
+            {
+                "formato": "cotizat-conversaciones",
+                "version": 1,
+                "retencion_dias": 365,
+                "exportado_en": datetime.utcnow().isoformat() + "Z",
+                "conversaciones": datos,
+            },
+            ensure_ascii=False,
+        ),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get(
+    "/admin/analitica/chats/{public_id}",
+    response_class=HTMLResponse,
+    include_in_schema=False,
+)
+def pagina_detalle_chat_asistente(
+    public_id: str,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Detalle cronológico, sin edición ni acciones sobre el contenido."""
+    from ..services.panel_chats import obtener_conversacion
+
+    detalle = obtener_conversacion(db, public_id)
+    if detalle is None:
+        return _redirect(
+            "/admin/analitica/chats",
+            error="La conversación no existe o ya salió del período de conservación.",
+        )
+    conversacion = detalle["conversacion"]
+    _auditar_consulta_chats(
+        db,
+        request,
+        accion="analitica.chat_detalle_visto",
+        organizacion_id=conversacion.organizacion_id,
+        conversacion_id=conversacion.id,
+        detalle={"mensajes": len(detalle["mensajes"])},
+    )
+    contexto = contexto_base(
+        request,
+        db,
+        seccion="analitica",
+        cabecera={
+            "titulo": "Conversación del asistente",
+            "subtitulo": "Lectura interna para entender la duda y mejorar CotizaT.",
+            "seccion": "analitica",
+            "migas": [{"nombre": "Analítica", "ruta": "/admin/analitica"}],
+        },
+    )
+    contexto.update({"chat": detalle})
+    return _respuesta(request, "chat_detalle.html", contexto)
+
+
+@router.post(
+    "/admin/analitica/chats/{public_id}/eliminar",
+    include_in_schema=False,
+)
+def eliminar_chat_asistente(
+    public_id: str,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Atiende una solicitud de borrado sin tocar el backup de negocio."""
+    from ..services.conversaciones_ia import eliminar_conversacion
+    from ..services.panel_chats import obtener_conversacion
+
+    detalle = obtener_conversacion(db, public_id)
+    organizacion_id = (
+        detalle["conversacion"].organizacion_id if detalle is not None else None
+    )
+    try:
+        eliminado, _ = eliminar_conversacion(
+            db,
+            public_id,
+            global_operador=True,
+        )
+    except Exception:
+        db.rollback()
+        log.exception("No se pudo eliminar la conversación del asistente.")
+        return _redirect(
+            "/admin/analitica/chats",
+            error="No se pudo eliminar la conversación. Inténtalo de nuevo.",
+        )
+    if not eliminado:
+        return _redirect(
+            "/admin/analitica/chats",
+            error="La conversación no existe o ya fue eliminada.",
+        )
+    _auditar_consulta_chats(
+        db,
+        request,
+        accion="analitica.chat_eliminado",
+        organizacion_id=organizacion_id,
+        detalle={"motivo": "solicitud_de_borrado"},
+    )
+    return _redirect(
+        "/admin/analitica/chats",
+        msg="La conversación y sus mensajes fueron eliminados.",
+    )
 
 
 # ---------------------------------------------------------------------------
