@@ -26,6 +26,10 @@ Qué NO viaja (decisión deliberada, no olvido):
   imposible reconstruirlo. Las respuestas históricas (aceptada/rechazada)
   viajan como notas de seguimiento para no perder la trazabilidad.
 - **Invitaciones pendientes:** se regeneran desde Configuración → Equipo.
+- **Conversaciones del asistente:** no viajan en este backup de negocio porque
+  contienen texto libre y tienen una retención independiente; se exportan por
+  separado desde Analítica → Conversaciones y se pueden eliminar desde su
+  detalle.
 - **Datos de demostración** (``es_demo``): un servidor restaurado no debe
   heredar contenido ficticio como si fuera trabajo real.
 - **Identidad de la empresa destino** (nombre, RIF, logo, datos de contacto):
@@ -124,6 +128,11 @@ _OMITIDO = {
     "identidad_configuracion": (
         "nombre, RIF, logo y datos de contacto de la organización destino "
         "se conservan; los ajustes comerciales sí se restauran"
+    ),
+    "conversaciones_asistente": (
+        "no viajan en el backup de negocio: contienen texto libre y tienen una "
+        "retención independiente; se exportan por separado desde Analítica → "
+        "Conversaciones y pueden eliminarse desde su detalle"
     ),
     "datos_demo": "los registros de demostración no viajan",
 }

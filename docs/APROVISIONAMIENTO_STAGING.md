@@ -236,3 +236,22 @@ Antes de declarar staging validado, ejecuta la matriz de 14 puntos de
   (E1W-012).
 - Smoke tests HTTPS automatizados de Auth/rutas/CSP donde sea viable.
 - Validación real de CSP/interacciones en navegador.
+
+## Actualización de conversaciones del asistente (08/09/2026)
+
+Después de aplicar las migraciones anteriores, el siguiente paso obligatorio es
+`g7c8d9e0f1a2`. Ejecuta `docs/staging_upgrade_g7c8d9e0f1a2.sql` en SQL Editor
+solo si `SELECT version_num FROM public.alembic_version` devuelve
+`f6d1a9c3e8b2`, o deja que Alembic lo aplique con la URL administrativa. El
+script crea las tablas tenant, RLS forzado, permisos para `cotizat_app` y la
+baja completa. No uses `cotizat_runtime` para migrar.
+
+Tras desplegar la aplicación, comprueba `/admin/analitica/chats` con una cuenta
+operadora, una búsqueda y la exportación JSON. El cron de mantenimiento debe
+responder también con `conversaciones_expiradas`; una conversación con
+`expires_at` vencido no debe aparecer en el panel. El detalle puede eliminarla
+por una solicitud de borrado. El backup de negocio sigue separado: los chats se
+exportan desde Analítica y no se restauran junto con los presupuestos.
+
+Consulta [`CONVERSACIONES_ASISTENTE.md`](CONVERSACIONES_ASISTENTE.md) para la
+matriz de comprobación, privacidad y derechos de acceso/eliminación.

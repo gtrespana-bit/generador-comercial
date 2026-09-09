@@ -1,13 +1,13 @@
 {% extends "legal/_base_legal.html" %}
 {% block contenido %}
 <h1>Política de privacidad</h1>
-<p class="meta">Versión 1.1 · Vigente desde el 16 de agosto de 2026</p>
+<p class="meta">Versión 1.2 · Vigente desde el 8 de septiembre de 2026</p>
 
 <div class="aviso">
   En corto: guardamos lo mínimo para que el servicio funcione; tus contraseñas
-  no las vemos nunca (las gestiona Supabase Auth); tus datos comerciales no se
-  venden, no se comparten con anunciantes y no se usan para entrenar nada;
-  puedes exportarlos o pedir su eliminación cuando quieras.
+  no las vemos nunca (las gestiona Supabase Auth); tus datos comerciales y las
+  conversaciones del asistente no se venden, no se comparten con anunciantes y
+  no se usan para entrenar modelos; puedes pedir una copia o su eliminación.
 </div>
 
 <h2>1. Responsable</h2>
@@ -31,6 +31,14 @@ operador de {{ product_name }}. Contacto:
     <td>Prestarte el servicio. Son datos que tú introduces y de los que tu
         organización es titular.</td>
     <td>Ejecución del contrato</td>
+  </tr>
+  <tr>
+    <td>Conversaciones con el asistente: preguntas y respuestas, usuario cuando
+        esté disponible, fecha y página de origen</td>
+    <td>Prestar el asistente y estudiar las dudas más frecuentes para mejorar la
+        experiencia y el producto. El borrador/contexto comercial de la pantalla
+        no se copia en el registro de conversación.</td>
+    <td>Ejecución del contrato e interés legítimo en mejorar el servicio</td>
   </tr>
   <tr>
     <td>Registros técnicos mínimos (IP en el control de intentos de acceso)</td>
@@ -61,7 +69,8 @@ operador de {{ product_name }}. Contacto:
 <ul>
   <li>No vendemos ni alquilamos tus datos.</li>
   <li>No usamos tus datos comerciales para publicidad ni los compartimos con anunciantes.</li>
-  <li>No usamos tu contenido para entrenar modelos ni para ningún fin distinto de prestarte el servicio.</li>
+  <li>No usamos tu contenido ni las conversaciones del asistente para entrenar modelos ni para un fin distinto de prestarte y mejorar el servicio.</li>
+  <li>Si solicitas una respuesta generativa, enviamos el historial necesario y el contexto imprescindible al proveedor de IA indicado abajo. Las herramientas locales pueden responder sin ese envío.</li>
   <li>No instalamos rastreadores de terceros con fines publicitarios. La versión de escritorio no envía telemetría.</li>
 </ul>
 
@@ -74,6 +83,7 @@ operador de {{ product_name }}. Contacto:
   <tr><td>Resend</td><td>Envío de emails transaccionales (invitaciones, avisos y presupuestos que decides enviar).</td></tr>
   <tr><td>Stripe</td><td>Cobro con tarjeta, Apple Pay y Google Pay (nombre, email e importe de la suscripción). No vemos ni guardamos el número de tu tarjeta.</td></tr>
   <tr><td>Upstash</td><td>Contador distribuido del límite de intentos de acceso (recibe únicamente claves anonimizadas con caducidad, nunca tu IP ni tu email en claro).</td></tr>
+  <tr><td>Groq</td><td>Proveedor opcional de respuestas generativas. Cuando se usa, recibe los mensajes necesarios para contestar y el contexto funcional imprescindible; CotizaT no le autoriza a usar ese contenido para entrenar modelos.</td></tr>
   <tr><td>GoDaddy</td><td>Registro del dominio <code>cotizat.online</code> y DNS.</td></tr>
 </table>
 <p>Estos proveedores pueden ubicar servidores fuera de tu país. Elegimos
@@ -98,10 +108,15 @@ que no requieren consentimiento adicional.</p>
 <h2>7. Conservación</h2>
 <ul>
   <li>Los datos de tu organización se conservan mientras la cuenta esté activa.</li>
+  <li>Las conversaciones del asistente se conservan durante <strong>365 días
+      desde el último turno</strong>. Un trabajo automático las elimina al
+      vencer ese plazo; el panel deja de mostrarlas antes de la purga.</li>
   <li>Si cancelas, los datos permanecen disponibles para exportación durante un
       plazo razonable (mínimo 30 días) y después pueden eliminarse.</li>
-  <li>Las copias de seguridad administradas rotan y las eliminaciones se
-      propagan a ellas con la cadencia de esa rotación.</li>
+  <li>Puedes pedir antes el acceso, la exportación o el borrado de tus
+      conversaciones escribiendo a soporte. Las copias de seguridad
+      administradas rotan y las eliminaciones se propagan a ellas con la
+      cadencia de esa rotación.</li>
 </ul>
 
 <h2>8. Tus derechos</h2>
@@ -114,7 +129,8 @@ que no requieren consentimiento adicional.</p>
       hacerlo tú mismo desde la aplicación).</li>
   <li><strong>Eliminación</strong>: pedir el borrado de tu cuenta y de los datos de
       tu organización (si la organización tiene más miembros, la solicitud debe
-      venir de su propietario).</li>
+      venir de su propietario). También puedes solicitar el borrado de una
+      conversación concreta.</li>
 </ul>
 <p>Respondemos en un plazo máximo de 30 días.</p>
 

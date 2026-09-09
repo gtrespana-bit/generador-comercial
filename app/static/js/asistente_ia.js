@@ -13,7 +13,15 @@
   "use strict";
 
   var chatHistorial = [];
+  var conversationId = null;
   var estaGenerando = false;
+
+  function crearClaveCliente() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return "chat-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+  }
 
   // -------------------------------------------------------------------------
   // Renderizador seguro de Markdown a DOM nativo
@@ -558,6 +566,7 @@
 
   function limpiarConversacion() {
     chatHistorial = [];
+    conversationId = null;
     var messagesContainer = document.getElementById("cotizat-ia-messages");
     if (!messagesContainer) return;
 
@@ -679,6 +688,11 @@
       if (window.CotizatStyles) window.CotizatStyles.set(input, "height", "auto");
     }
 
+    // Una conversación sobrevive a los turnos y se reinicia solo al pulsar
+    // «Limpiar». La clave no contiene datos del usuario.
+    if (!conversationId) conversationId = crearClaveCliente();
+    var turnId = crearClaveCliente();
+
     // Agregar mensaje del usuario en UI y en el historial
     crearBurbujaMensaje("user", texto);
     chatHistorial.push({ role: "user", content: texto });
@@ -715,6 +729,8 @@
       body: JSON.stringify({
         messages: chatHistorial,
         stream: true,
+        conversation_id: conversationId,
+        turn_id: turnId,
         contexto: obtenerContextoActual(texto)
       })
     })
@@ -745,6 +761,9 @@
                 if (!jsonStr) return;
                 try {
                   var data = JSON.parse(jsonStr);
+                  if (data.conversation_id || data.conversacion_id) {
+                    conversationId = data.conversation_id || data.conversacion_id;
+                  }
                   if (data.texto) {
                     // Retirar el indicador de escribiendo si aún existe
                     if (indicadorEscribiendo && indicadorEscribiendo.parentNode) {

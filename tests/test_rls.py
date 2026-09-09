@@ -28,6 +28,7 @@ from migrations.versions import (
     f4c1d8e37a95_add_operator_licenses as licenses_migration,
     e7b3c1d5a204_market_prices_grants_and_rls as market_prices_migration,
     f8a1b2c3d4e5_catalog_taxonomy_v2 as taxonomy_migration,
+    g7c8d9e0f1a2_conversaciones_asistente as chats_migration,
 )
 
 RAIZ_REPO = Path(__file__).resolve().parent.parent
@@ -178,7 +179,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_migration
     assert vectorial_migration.down_revision == "e4b8c2d6a190"
     assert uso_migration.down_revision == fase3_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == uso_migration.revision
+    assert chats_migration.down_revision == uso_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == chats_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision
@@ -266,6 +268,8 @@ def test_migracion_rls_cubre_cada_modelo_tenant():
         "planos_obra",
         "planos_mediciones",
         "planos_elementos",
+        "conversaciones_ia",
+        "mensajes_ia",
     }
 
 
@@ -559,6 +563,9 @@ def test_toda_tabla_del_modelo_recibe_permisos_del_rol_de_aplicacion():
     # (`TABLE = "compras_plan"`), que es como se nombran las tablas en los
     # `GRANT` con f-string.
     concedidas = set(migration.ALL_APP_TABLES)  # revisión inicial, en bloque
+    # La migración de conversaciones instala los GRANT dinámicamente para dos
+    # tablas relacionadas, por lo que se declara aquí junto al inventario ORM.
+    concedidas.update({"conversaciones_ia", "mensajes_ia"})
     for ruta in sorted((RAIZ_REPO / "migrations" / "versions").glob("*.py")):
         texto = ruta.read_text(encoding="utf-8")
         for nombre, valor in re.findall(

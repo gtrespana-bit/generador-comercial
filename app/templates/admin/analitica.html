@@ -4,6 +4,7 @@
 {% block page_title %}Analítica de producto{% endblock %}
 {% block page_subtitle %}Embudo, retención y uso real del producto · Operador: <span class="sub-op">{{ operador }}</span> · {{ resumen.hoy.strftime("%d/%m/%Y") }}{% endblock %}
 {% block page_acciones %}
+  <a href="/admin/analitica/chats" class="btn btn-sm btn-secondary">💬 Ver conversaciones</a>
   <div class="alc-window-group" role="group" aria-label="Ventana de la medición">
     <a href="/admin/analitica?dias=7" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 7 else 'btn-secondary' }}">7 días</a>
     <a href="/admin/analitica?dias=30" class="btn btn-sm btn-topbar {{ 'btn-primary' if resumen.dias == 30 else 'btn-secondary' }}">30 días</a>

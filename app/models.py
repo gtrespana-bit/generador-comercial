@@ -11,6 +11,7 @@ Estructura de un presupuesto (fiel al formato de referencia):
 """
 from datetime import date, datetime, timedelta
 import json
+import uuid
 from types import SimpleNamespace
 
 from sqlalchemy import (
@@ -380,6 +381,135 @@ class TenantMixin:
             default=1,  # compatibilidad temporal con la única empresa local
             index=True,
         )
+
+
+class ConversacionIA(TenantMixin, Base):
+    """Conversación del asistente perteneciente a una organización.
+
+    La conversación es un agregado tenant, no un registro operativo global:
+    una empresa solo puede consultar sus propias conversaciones y el panel de
+    operador las lee mediante ``get_operator_db``. ``public_id`` es el
+    identificador que viaja por el navegador; no se expone el ``id`` interno.
+
+    Se guarda una instantánea del correo porque la cuenta puede cambiar o
+    desvincularse después. No se guarda el borrador/contexto de la pantalla:
+    para analizar dudas basta el texto del turno y la página de origen, y así
+    no convertimos cada presupuesto abierto en una copia adicional del chat.
+    """
+
+    __tablename__ = "conversaciones_ia"
+    __table_args__ = (
+        UniqueConstraint("public_id", name="uq_conversacion_ia_public_id"),
+        CheckConstraint(
+            "estado IN ('activa', 'archivada')",
+            name="ck_conversacion_ia_estado_valido",
+        ),
+        Index(
+            "ix_conversaciones_ia_org_ultimo",
+            "organizacion_id",
+            "ultimo_mensaje_at",
+        ),
+        Index(
+            "ix_conversaciones_ia_org_usuario",
+            "organizacion_id",
+            "usuario_id",
+        ),
+        Index("ix_conversaciones_ia_expira", "expires_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    #: UUID/clave opaca estable para reintentos del frontend y enlaces internos.
+    public_id = Column(
+        String(64),
+        nullable=False,
+        default=lambda: uuid.uuid4().hex,
+    )
+    usuario_id = Column(
+        Integer,
+        ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    usuario_email = Column(String(254), nullable=False, default="")
+    titulo = Column(String(180), nullable=False, default="")
+    pagina_inicio = Column(String(240), nullable=False, default="")
+    estado = Column(String(20), nullable=False, default="activa")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    ultimo_mensaje_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    #: Retención de 365 días desde el último turno. El cron oculta y purga lo
+    #: vencido; mantener la fecha en cada conversación hace la regla auditable.
+    expires_at = Column(DateTime, nullable=False, default=lambda: datetime.utcnow() + timedelta(days=365))
+
+    organizacion = relationship("Organizacion")
+    usuario = relationship("Usuario")
+    mensajes = relationship(
+        "MensajeIA",
+        back_populates="conversacion",
+        cascade="all, delete-orphan",
+        order_by="MensajeIA.orden",
+    )
+
+
+class MensajeIA(TenantMixin, Base):
+    """Mensaje ordenado de una conversación del asistente.
+
+    ``turn_id`` permite que un reintento del navegador sea idempotente: cada
+    turno puede tener como máximo un mensaje de usuario y una respuesta del
+    asistente. Es nullable para poder importar/reconciliar historiales que
+    fueron creados por versiones antiguas del frontend.
+    """
+
+    __tablename__ = "mensajes_ia"
+    __table_args__ = (
+        CheckConstraint(
+            "rol IN ('user', 'assistant')",
+            name="ck_mensaje_ia_rol_valido",
+        ),
+        CheckConstraint("orden >= 0", name="ck_mensaje_ia_orden_no_negativo"),
+        UniqueConstraint(
+            "conversacion_id",
+            "orden",
+            name="uq_mensaje_ia_conversacion_orden",
+        ),
+        UniqueConstraint(
+            "conversacion_id",
+            "rol",
+            "turn_id",
+            name="uq_mensaje_ia_conversacion_turno_rol",
+        ),
+        Index(
+            "ix_mensajes_ia_conversacion_orden",
+            "conversacion_id",
+            "orden",
+        ),
+        Index("ix_mensajes_ia_org_fecha", "organizacion_id", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    conversacion_id = Column(
+        Integer,
+        ForeignKey("conversaciones_ia.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    rol = Column(String(20), nullable=False)
+    contenido = Column(Text, nullable=False, default="")
+    orden = Column(Integer, nullable=False)
+    #: Clave del turno generada por el cliente y validada por la ruta.
+    turn_id = Column(String(80), nullable=True)
+    #: False cuando el cliente cerró la conexión durante un streaming y solo
+    #: se pudo conservar la parte recibida.
+    completo = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    conversacion = relationship("ConversacionIA", back_populates="mensajes")
+
+
+# Nombres de compatibilidad para integraciones que prefieren el término
+# «chat». Las clases ORM canónicas y las tablas siguen siendo las anteriores.
+ConversacionChat = ConversacionIA
+MensajeChat = MensajeIA
 
 
 class InvitacionOrganizacion(TenantMixin, Base):

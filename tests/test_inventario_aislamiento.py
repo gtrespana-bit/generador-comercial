@@ -29,6 +29,8 @@ from app.models import (
     Cliente,
     CompraPlan,
     Configuracion,
+    ConversacionIA,
+    MensajeIA,
     DescomposicionFila,
     DescomposicionPartida,
     EnlacePropuesta,
@@ -171,6 +173,18 @@ def _construir_grafo(db, organizacion_id: int) -> dict:
     proyecto.cambios.append(cambio)
     proyecto.pagos.append(Pago(importe=100))
     db.add(proyecto)
+
+    # --- Conversaciones del asistente -------------------------------------
+    conversacion = ConversacionIA(
+        public_id=f"chat-inv-{organizacion_id}",
+        usuario_email="propietario@example.com",
+        titulo="Duda de inventario",
+        pagina_inicio="/inicio",
+    )
+    conversacion.mensajes.append(
+        MensajeIA(rol="user", contenido="¿Cómo creo un presupuesto?", orden=0)
+    )
+    db.add(conversacion)
 
     # --- Compra de plan (pago manual) -------------------------------------
     db.add(CompraPlan(
