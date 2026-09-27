@@ -524,15 +524,12 @@
       </div>
 
       <div class="partida-modal-footer">
-        <div class="catalog-save-confirm" id="editor-save-scope-confirm" hidden>
-          <div class="catalog-save-title">Esta partida ya existe en el catálogo. ¿Dónde aplico los cambios?</div>
-          <div class="catalog-save-confirm-actions">
-            <button type="button" class="btn" data-scope="local">Solo este presupuesto</button>
-            <button type="button" class="btn btn-primary" data-scope="catalog">Guardar también en base de datos</button>
-          </div>
-          <small class="hint">Si eliges la base de datos, se actualizará la ficha del catálogo para futuros presupuestos; ningún presupuesto ya emitido se verá afectado.</small>
+        <div class="actions partida-actions-scope">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="button" class="btn" id="editor-partida-save-catalog" hidden>💾 Guardar también en base de datos</button>
+          <button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button>
         </div>
-        <div class="actions"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button></div>
+        <small class="hint" id="editor-partida-scope-hint" hidden>La partida ya existe en el catálogo: «Aplicar cambios» afecta solo a este presupuesto. Usa «Guardar también en base de datos» si quieres actualizar la ficha para futuros presupuestos; ningún presupuesto ya emitido se verá afectado.</small>
       </div>
     </form>
   </div>

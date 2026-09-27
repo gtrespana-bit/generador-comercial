@@ -3313,18 +3313,10 @@ button:focus-visible, a:focus-visible {
   box-shadow: 0 -8px 20px rgba(0,0,0,.05);
 }
 .partida-modal-footer .actions { display: flex; gap: .45rem; margin-left: auto; }
-.catalog-save-confirm {
-  display: flex; flex-direction: column; gap: .55rem;
-  padding: .7rem .8rem;
-  border: 1px solid var(--accent);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  width: 100%;
-}
-.catalog-save-title { flex-basis: 100%; font-size: .7rem; font-weight: 800; color: var(--text-soft); text-transform: uppercase; letter-spacing: .04em; }
-.catalog-save-confirm-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
-.catalog-save-confirm small { line-height: 1.3; }
+/* Alcance del guardado de partida: la aclaración queda a la izquierda y los
+   botones a la derecha; en pantallas pequeñas se apilan. */
+.partida-modal-footer .actions.partida-actions-scope { flex-wrap: wrap; }
+#editor-partida-scope-hint { flex: 1 1 240px; min-width: 0; line-height: 1.3; }
 .budget-line-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .cantidad-con-plano { display: flex; align-items: center; gap: .35rem; }
 .cantidad-con-plano input { flex: 1; min-width: 0; }
@@ -3369,9 +3361,10 @@ button:focus-visible, a:focus-visible {
   .catalog-editor-grid .field { grid-column: auto; }
   .partida-editor-tabs { overflow-x: auto; }
   .partida-editor-tabs button { white-space: nowrap; }
-  .partida-modal-footer { align-items: flex-end; }
-  .catalog-save-title { display: none; }
-  .catalog-save-confirm-actions { flex-direction: column; align-items: stretch; }
+  .partida-modal-footer { align-items: flex-end; flex-wrap: wrap; }
+  .partida-modal-footer .actions.partida-actions-scope { margin-left: 0; width: 100%; }
+  .partida-modal-footer .actions.partida-actions-scope .btn { flex: 1 1 auto; }
+  #editor-partida-scope-hint { flex-basis: 100%; }
   .editor-medicion-row { grid-template-columns: 1fr 100px 36px; }
   .medicion-row { grid-template-columns: minmax(0, 1fr) 82px 82px 30px; gap: .3rem; }
   .partida-mediciones-inline { padding-left: .6rem; }

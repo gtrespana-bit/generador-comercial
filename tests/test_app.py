@@ -91,6 +91,24 @@ def test_editor_incluye_importador_excel_embebido():
         assert "/static/js/editor/partida_modal.js" in resp.text
 
 
+def test_modal_partida_aplica_cambios_en_un_clic():
+    """«✓ Aplicar cambios» debe aplicar sin preguntar de más.
+
+    Antes el primer clic solo desplegaba una pregunta de alcance y el botón
+    parecía no hacer nada; ahora el alcance vive en dos botones: el principal
+    (solo este presupuesto) y «Guardar también en base de datos».
+    """
+    with TestClient(app) as client:
+        resp = client.get("/presupuestos/nuevo")
+        assert resp.status_code == 200
+        assert 'id="editor-partida-save-catalog"' in resp.text
+        assert 'id="editor-partida-scope-hint"' in resp.text
+        assert 'id="editor-partida-save"' in resp.text
+        # La pregunta de dos pasos ya no existe en la ficha.
+        assert "editor-save-scope-confirm" not in resp.text
+        assert 'data-scope="local"' not in resp.text
+
+
 def test_catalogo_y_presupuesto_comparten_editor_completo_de_partida():
     with TestClient(app) as client:
         catalogo = client.get("/partidas/nueva")
