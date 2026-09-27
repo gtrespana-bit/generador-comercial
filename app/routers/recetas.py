@@ -162,6 +162,23 @@ def restaurar_recetas_demo(db: Session = Depends(get_db)):
 # multiplicaba por 17 al insertarlo en uno en dólares.
 # ---------------------------------------------------------------------------
 
+#: Campos monetarios del producto asociado a cada partida del pack. Se
+#: convierten junto al precio de la partida: si el precio viajara a otra
+#: moneda y el producto se quedara en la original, el total del pack ya no
+#: cuadraría al insertarlo.
+CAMPOS_MONETARIOS_PRODUCTO_PACK = ("prod_precio", "prod_coste")
+
+
+def _numero_o_none(valor):
+    """Lee un importe opcional del payload; None si viene vacío o inválido."""
+    if valor is None or isinstance(valor, bool):
+        return None
+    try:
+        return float(valor)
+    except (TypeError, ValueError):
+        return None
+
+
 def _items_en_moneda(items, factor):
     """Pasa los precios de los ítems de un pack a la moneda pedida."""
     salida = []
@@ -172,6 +189,9 @@ def _items_en_moneda(items, factor):
         copia = dict(item)
         if isinstance(copia.get("precio"), (int, float)):
             copia["precio"] = _convertir(copia["precio"], factor)
+        for campo in CAMPOS_MONETARIOS_PRODUCTO_PACK:
+            if isinstance(copia.get(campo), (int, float)):
+                copia[campo] = _convertir(copia[campo], factor)
         salida.append(copia)
     return salida
 
@@ -250,9 +270,20 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
             cant = float(it.get("cantidad", 0) or 0)
         except ValueError:
             cant = 1.0
+
+        # El producto asociado (material comercial) viaja DENTRO del pack: si
+        # se perdiera, al insertarlo la partida quedaba con base + producto
+        # sumados en el precio pero sin el producto, inflando la mano de obra.
+        # `precio` debe ser SOLO la base de la partida (mano de obra); el
+        # precio total de la línea se reconstruye al insertar como base +
+        # producto, igual que en el resto del editor.
+        prod_nombre = str(it.get("prod_nombre", "") or "").strip()
+        prod_precio = _numero_o_none(it.get("prod_precio"))
+        prod_coste = _numero_o_none(it.get("prod_coste"))
+
         tipo_calc = "proporcional" if calcular_coeficientes else "fijo"
         coef = round(cant / cantidad_base, 4) if (calcular_coeficientes and cantidad_base > 0) else cant
-        items_out.append({
+        item_out = {
             "nombre": str(it.get("nombre", "")).strip(),
             "descripcion": str(it.get("descripcion", "")).strip(),
             "unidad": str(it.get("unidad", "")).strip() or "und",
@@ -261,7 +292,23 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
             "tipo_calculo": tipo_calc,
             "coeficiente": coef,
             "cantidad_fija": cant,
-        })
+        }
+        if prod_nombre or prod_precio is not None:
+            item_out["prod_nombre"] = prod_nombre
+            if prod_precio is not None:
+                item_out["prod_precio"] = _a_moneda_base(prod_precio, _factor_g)
+            if prod_coste is not None:
+                item_out["prod_coste"] = _a_moneda_base(prod_coste, _factor_g)
+            prod_unidad = str(it.get("prod_unidad", "") or "").strip()
+            if prod_unidad:
+                item_out["prod_unidad"] = prod_unidad
+            prod_categoria = str(it.get("prod_categoria", "") or "").strip()
+            if prod_categoria:
+                item_out["prod_categoria"] = prod_categoria
+            prod_imagen = str(it.get("prod_imagen", "") or "").strip()
+            if prod_imagen:
+                item_out["prod_imagen"] = prod_imagen
+        items_out.append(item_out)
     rec = RecetaEstancia(
         nombre=nombre or "Nuevo Pack de Estancia",
         categoria=categoria,

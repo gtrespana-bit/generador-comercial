@@ -1,7 +1,8 @@
 -r requirements.txt
 # Herramientas de prueba, fijadas igual que el runtime (E1-037).
 pytest==9.1.1
-httpx2==2.10.0
+# 2.12.0 corrige PYSEC-2026-3846/3848/3849 (avisadas por pip-audit en CI).
+httpx2==2.12.0
 # Usada por las pruebas que validan el flujo de integración continua.
 PyYAML==6.0.3
 # Validación de sintaxis del CSS en las pruebas de la capa móvil.

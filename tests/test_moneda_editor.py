@@ -228,6 +228,96 @@ def test_los_packs_se_guardan_en_moneda_base_y_se_leen_convertidos(entorno, clie
     assert pack_usd["items"][0]["precio"] == pytest.approx(25.0, rel=1e-3)
 
 
+def test_los_packs_guardan_la_base_y_el_producto_por_separado(entorno, cliente_web):
+    """Regresión del pack inflado: partida 19,50 + producto 22,50.
+
+    El P.U. visible de la línea es base + producto. Si al guardar el pack se
+    guardaba ese total SIN el producto asociado, al insertarlo la partida de
+    mano de obra quedaba con 42,00 «de colocación» y sin el material. Ahora el
+    pack guarda la base por un lado y el producto (nombre, precio, coste…) por
+    otro, todo normalizado a la moneda base.
+    """
+    Session, _ids, _rol = entorno
+    _mexico(Session)
+
+    creado = cliente_web.post(
+        "/recetas/api/guardar-desde-capitulo",
+        json={
+            "nombre": "Baño con producto",
+            "unidad_base": "m²",
+            "cantidad_base_default": 10,
+            "moneda": "MXN",
+            "tasa": TASA_MXN,
+            "items": [
+                {
+                    "nombre": "Colocación de porcelanato",
+                    "unidad": "m2",
+                    "cantidad": 10,
+                    # El editor envía la BASE (19,50 en USD → 341,25 MXN), no
+                    # el total de la línea.
+                    "precio": 19.5 * TASA_MXN,
+                    "prod_nombre": "Porcelanato Calacatta 60x120",
+                    "prod_precio": 22.5 * TASA_MXN,
+                    "prod_coste": 15.0 * TASA_MXN,
+                    "prod_unidad": "m2",
+                    "prod_categoria": "Revestimientos",
+                },
+                # Partida sin producto: no debe ganar campos prod_*.
+                {"nombre": "Demolición", "unidad": "m2", "cantidad": 10, "precio": 5.0 * TASA_MXN},
+            ],
+        },
+    ).json()
+    assert creado["ok"] is True
+
+    with Session() as db:
+        receta = db.get(RecetaEstancia, creado["id"])
+        items = json.loads(receta.datos)
+        colocacion = items[0]
+        # En la base quedan 19,50 y 22,50 (no 42,00 sumados).
+        assert colocacion["precio"] == pytest.approx(19.5, rel=1e-3)
+        assert colocacion["prod_nombre"] == "Porcelanato Calacatta 60x120"
+        assert colocacion["prod_precio"] == pytest.approx(22.5, rel=1e-3)
+        assert colocacion["prod_coste"] == pytest.approx(15.0, rel=1e-3)
+        assert colocacion["prod_unidad"] == "m2"
+        assert "prod_nombre" not in items[1]
+        assert items[1]["precio"] == pytest.approx(5.0, rel=1e-3)
+
+    # Al leer en pesos, base y producto llegan convertidos y separados: la
+    # línea se reconstruye como 341,25 + 393,75 = 735,00 MXN/m².
+    en_pesos = cliente_web.get("/recetas/api/list", params={"moneda": "MXN", "tasa": TASA_MXN}).json()
+    pack = next(r for r in en_pesos["recetas"] if r["id"] == creado["id"])
+    item = pack["items"][0]
+    assert item["precio"] == pytest.approx(19.5 * TASA_MXN, rel=1e-3)
+    assert item["prod_precio"] == pytest.approx(22.5 * TASA_MXN, rel=1e-3)
+    assert item["prod_coste"] == pytest.approx(15.0 * TASA_MXN, rel=1e-3)
+    assert pytest.approx(item["precio"] + item["prod_precio"], rel=1e-3) == 42.0 * TASA_MXN
+
+
+def test_los_packs_antiguos_sin_producto_se_siguen_leyendo_igual(entorno, cliente_web):
+    """Compatibilidad: un pack guardado antes del producto asociado no cambia."""
+    Session, _ids, _rol = entorno
+    _mexico(Session)
+    with Session() as db:
+        receta = RecetaEstancia(
+            nombre="Pack histórico",
+            categoria="Baños",
+            unidad_base="m²",
+            cantidad_base_default=10.0,
+            datos=json.dumps([{
+                "nombre": "Alicatado", "unidad": "m2", "precio": 12.0,
+                "tipo_calculo": "proporcional", "coeficiente": 1.0, "cantidad_fija": 10.0,
+            }]),
+        )
+        db.add(receta)
+        db.commit()
+        receta_id = receta.id
+
+    en_pesos = cliente_web.get("/recetas/api/list", params={"moneda": "MXN", "tasa": TASA_MXN}).json()
+    pack = next(r for r in en_pesos["recetas"] if r["id"] == receta_id)
+    assert pack["items"][0]["precio"] == pytest.approx(12.0 * TASA_MXN, rel=1e-3)
+    assert "prod_precio" not in pack["items"][0]
+
+
 def test_el_producto_se_edita_y_se_guarda_en_la_misma_moneda(entorno, cliente_web):
     Session, _ids, _rol = entorno
     _mexico(Session)

@@ -33,6 +33,43 @@
     return numero(valor).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  // Fuente de recursos para el autocompletado: el editor de presupuestos ya
+  // tiene la lista en `window.EDITOR.RECURSOS` (cargada en diferido); las
+  // páginas sueltas (Partidas) la consultan al servidor con
+  // `window.RECURSOS_CATALOGO_URL`.
+  function listaRecursosLocales() {
+    try {
+      if (window.EDITOR && Array.isArray(window.EDITOR.RECURSOS) && window.EDITOR.RECURSOS.length) {
+        return window.EDITOR.RECURSOS;
+      }
+    } catch (e) { /* sin editor */ }
+    return Array.isArray(window.RECURSOS_CATALOGO) ? window.RECURSOS_CATALOGO : [];
+  }
+
+  function normalizarRecurso(texto) {
+    return String(texto || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function puntuarRecurso(recurso, consultaNorm) {
+    var desc = normalizarRecurso(recurso.descripcion);
+    var cod = normalizarRecurso(recurso.codigo);
+    var grupo = normalizarRecurso(recurso.grupo);
+    var prov = normalizarRecurso(recurso.proveedor);
+    var score = -1;
+    if (consultaNorm) {
+      if (desc.indexOf(consultaNorm) === 0) score = 100;
+      else if (desc.indexOf(consultaNorm) !== -1) score = 80;
+      else if (cod && cod.indexOf(consultaNorm) !== -1) score = 70;
+      else if (grupo && grupo.indexOf(consultaNorm) !== -1) score = 60;
+      else if (prov && prov.indexOf(consultaNorm) !== -1) score = 50;
+      if (score < 0) return -1;
+    } else {
+      score = 10;
+    }
+    // Bonus por uso frecuente (máx. 20): primero lo que más se repite.
+    return score + Math.min(20, recurso.usos || 0);
+  }
+
   function filasIniciales(root) {
     var nodo = root.querySelector("[data-partida-editor-inicial]");
     if (!nodo) return [];
@@ -156,6 +193,161 @@
       return el;
     }
 
+    // -----------------------------------------------------------------
+    // Autocompletado de recursos en la descripción de cada fila.
+    // Rellena código, unidad, categoría y precio desde el catálogo de
+    // recursos (o del servidor si la página no trae la lista).
+    // -----------------------------------------------------------------
+    function buscarRecursosServidor(consulta) {
+      var url = window.RECURSOS_CATALOGO_URL;
+      if (!url) return Promise.resolve([]);
+      return fetch(url + "?q=" + encodeURIComponent(consulta || ""), {
+        headers: { Accept: "application/json" },
+        credentials: "same-origin"
+      })
+        .then(function (r) { return r.ok ? r.json() : { recursos: [] }; })
+        .then(function (d) { return (d && d.recursos) || []; })
+        .catch(function () { return []; });
+    }
+
+    function conectarAutocompleteRecursos(tr, inputDesc, wrapDesc) {
+      var dropdown = null;
+      var peticionId = 0;
+      var temporizador = null;
+
+      function cerrar() {
+        if (dropdown) { dropdown.remove(); dropdown = null; }
+      }
+
+      function formatoImporte(item) {
+        var valor = parseFloat(item.precio || 0) || 0;
+        if (window.FMT && typeof window.FMT.fmt === "function") return window.FMT.fmt(valor, item.moneda);
+        return valor.toFixed(2) + (item.moneda ? " " + item.moneda : "");
+      }
+
+      function aplicar(item) {
+        if (!item) return;
+        var set = function (nombre, valor) {
+          var el = tr.querySelector('[name="' + nombre + '"]');
+          if (el) el.value = valor == null ? "" : valor;
+        };
+        set("d_codigo", item.codigo);
+        set("d_unidad", item.unidad);
+        inputDesc.value = item.descripcion || "";
+        set("d_descripcion", item.descripcion);
+        var cat = tr.querySelector('[name="d_categoria"]');
+        if (cat && item.categoria) {
+          for (var i = 0; i < cat.options.length; i++) {
+            if (cat.options[i].value === item.categoria) { cat.selectedIndex = i; break; }
+          }
+        }
+        set("d_precio", item.precio != null ? item.precio : "");
+        cerrar();
+        calcular();
+        inputDesc.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+
+      function crearSugerencia(item) {
+        var sug = document.createElement("div");
+        sug.className = "suggestion-item";
+        CotizatStyles.setCssText(sug, "padding:7px 10px; cursor:pointer; border-bottom:1px solid var(--bg); font-size:.8rem; display:flex; align-items:center; gap:9px;");
+        var main = document.createElement("div");
+        CotizatStyles.setCssText(main, "flex:1; min-width:0;");
+        var title = document.createElement("div");
+        CotizatStyles.setCssText(title, "font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
+        title.textContent = item.descripcion || "";
+        main.appendChild(title);
+        var metaParts = [item.codigo, item.grupo, item.proveedor, item.unidad].filter(Boolean);
+        if (metaParts.length) {
+          var meta = document.createElement("div");
+          CotizatStyles.setCssText(meta, "font-size:.7rem; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;");
+          meta.textContent = metaParts.join(" · ");
+          main.appendChild(meta);
+        }
+        sug.appendChild(main);
+        var right = document.createElement("div");
+        CotizatStyles.setCssText(right, "font-weight:600; color:var(--accent); font-size:.8rem; white-space:nowrap; margin-left:auto;");
+        right.textContent = formatoImporte(item);
+        if (item.aviso_precio) {
+          right.textContent = "⚠ " + right.textContent;
+          right.title = item.aviso_precio;
+          sug.title = item.aviso_precio;
+        } else if (item.origen_precio === "nacional" || item.origen_precio === "organizacion") {
+          right.title = item.origen_precio === "organizacion"
+            ? "Precio propio de tu empresa para este mercado"
+            : "Precio nacional de referencia";
+        }
+        sug.appendChild(right);
+        sug.addEventListener("mousedown", function (e) { e.preventDefault(); });
+        sug.addEventListener("click", function (e) {
+          e.stopPropagation();
+          aplicar(item);
+        });
+        sug.addEventListener("mouseenter", function () { CotizatStyles.set(sug, "background", "var(--surface-hover)"); });
+        sug.addEventListener("mouseleave", function () { CotizatStyles.set(sug, "background", "transparent"); });
+        return sug;
+      }
+
+      function mostrar(consulta) {
+        var idPeticion = ++peticionId;
+        var locales = listaRecursosLocales();
+        if (locales.length) {
+          var qn = normalizarRecurso(consulta);
+          var scored = locales
+            .map(function (r) { return { item: r, score: puntuarRecurso(r, qn) }; })
+            .filter(function (x) { return x.score >= 0; })
+            .sort(function (a, b) { return b.score - a.score; })
+            .slice(0, 12)
+            .map(function (x) { return x.item; });
+          pintar(scored);
+          return;
+        }
+        if (window.RECURSOS_CATALOGO_URL) {
+          // La página no trae la lista en memoria: se consulta al servidor
+          // (con idPeticion se descartan respuestas viejas al seguir tecleando).
+          buscarRecursosServidor(consulta).then(function (recursos) {
+            if (idPeticion !== peticionId) return;
+            pintar(recursos.slice(0, 12));
+          });
+          return;
+        }
+        cerrar();
+      }
+
+      function pintar(recursos) {
+        cerrar();
+        if (!recursos || !recursos.length) return;
+        dropdown = document.createElement("div");
+        dropdown.className = "autocomplete-suggestions";
+        CotizatStyles.setCssText(dropdown, "position:absolute; top:100%; left:0; right:0; min-width:260px; background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius-sm); max-height:240px; overflow-y:auto; z-index:1300; box-shadow:var(--shadow-lg); margin-top:3px;");
+        recursos.forEach(function (item) {
+          dropdown.appendChild(crearSugerencia(item));
+        });
+        wrapDesc.appendChild(dropdown);
+      }
+
+      inputDesc.addEventListener("focus", function () { mostrar(inputDesc.value.trim()); });
+      inputDesc.addEventListener("input", function () {
+        clearTimeout(temporizador);
+        temporizador = setTimeout(function () { mostrar(inputDesc.value.trim()); }, 140);
+      });
+      inputDesc.addEventListener("keydown", function (evt) {
+        if (evt.key === "Escape") cerrar();
+        if (evt.key === "Enter") {
+          // Con sugerencias abiertas, Enter elige la primera (y evita el
+          // submit implícito del formulario).
+          if (dropdown && dropdown.firstElementChild) {
+            evt.preventDefault();
+            dropdown.firstElementChild.click();
+          }
+        }
+      });
+      inputDesc.addEventListener("blur", function () { setTimeout(cerrar, 150); });
+      document.addEventListener("click", function (evt) {
+        if (dropdown && !wrapDesc.contains(evt.target)) cerrar();
+      });
+    }
+
     function add(datos) {
       datos = datos || {};
       var tr = document.createElement("tr");
@@ -182,7 +374,14 @@
       tdUnidad.appendChild(input("d_unidad", "text", datos.unidad || ((datos.categoria || "") === "mano_obra" ? "h" : "ud"), { placeholder: "ud" }));
       tr.appendChild(tdUnidad);
       var tdDesc = document.createElement("td");
-      tdDesc.appendChild(input("d_descripcion", "text", datos.descripcion || "", { placeholder: "Descripción del recurso" }));
+      var descWrap = document.createElement("div");
+      CotizatStyles.setCssText(descWrap, "position:relative; display:flex; width:100%; min-width:0;");
+      var descInput = input("d_descripcion", "text", datos.descripcion || "", { placeholder: "Descripción del recurso (escribe para buscar en tus recursos…)" });
+      CotizatStyles.set(descInput, "flex", "1");
+      descInput.setAttribute("autocomplete", "off");
+      descWrap.appendChild(descInput);
+      tdDesc.appendChild(descWrap);
+      conectarAutocompleteRecursos(tr, descInput, descWrap);
       tr.appendChild(tdDesc);
       var tdRend = document.createElement("td");
       tdRend.className = "right";

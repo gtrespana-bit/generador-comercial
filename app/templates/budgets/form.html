@@ -520,19 +520,17 @@
             <div class="field"><label>Categoría</label><input name="linea_prod_categoria" list="categorias-disponibles"></div>
             <div class="field field-full"><label>Imagen del producto</label><input name="linea_prod_imagen" placeholder="Sin imagen" readonly><p class="hint">La imagen se toma del producto del catálogo. Puedes gestionarla desde Productos.</p></div>
           </div>
+          <small class="hint editor-linea-total-hint" id="editor-linea-total-hint" hidden></small>
         </section>
       </div>
 
       <div class="partida-modal-footer">
-        <div class="catalog-save-confirm" id="editor-save-scope-confirm" hidden>
-          <div class="catalog-save-title">Esta partida ya existe en el catálogo. ¿Dónde aplico los cambios?</div>
-          <div class="catalog-save-confirm-actions">
-            <button type="button" class="btn" data-scope="local">Solo este presupuesto</button>
-            <button type="button" class="btn btn-primary" data-scope="catalog">Guardar también en base de datos</button>
-          </div>
-          <small class="hint">Si eliges la base de datos, se actualizará la ficha del catálogo para futuros presupuestos; ningún presupuesto ya emitido se verá afectado.</small>
+        <div class="actions partida-actions-scope">
+          <button type="button" class="btn" data-close>Cancelar</button>
+          <button type="button" class="btn" id="editor-partida-save-catalog" hidden>💾 Guardar también en base de datos</button>
+          <button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button>
         </div>
-        <div class="actions"><button type="button" class="btn" data-close>Cancelar</button><button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Aplicar cambios</button></div>
+        <small class="hint" id="editor-partida-scope-hint" hidden>La partida ya existe en el catálogo: «Aplicar cambios» afecta solo a este presupuesto. Usa «Guardar también en base de datos» si quieres actualizar la ficha para futuros presupuestos; ningún presupuesto ya emitido se verá afectado.</small>
       </div>
     </form>
   </div>
@@ -1066,6 +1064,9 @@
   window.COTIZAT_TASA_ACTIVA = {{ (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio) | tojson }};
   window.COTIZAT_SIMBOLO_ACTIVO = {{ ((presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | simbolo) | tojson }};
   window.CATALOGO_DATOS_URL = {{ (url_datos_editor or '/presupuestos/editor/datos') | tojson }};
+  // Respaldo del autocompletado de recursos de la ficha: si el índice
+  // diferido todavía no llegó, la ficha consulta al servidor directamente.
+  window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar";
 </script>
 <!-- Módulos del editor (cargados en orden de dependencia) -->
 <script src="/static/js/utils/formato.js"></script>

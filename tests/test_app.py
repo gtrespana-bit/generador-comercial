@@ -91,6 +91,24 @@ def test_editor_incluye_importador_excel_embebido():
         assert "/static/js/editor/partida_modal.js" in resp.text
 
 
+def test_modal_partida_aplica_cambios_en_un_clic():
+    """«✓ Aplicar cambios» debe aplicar sin preguntar de más.
+
+    Antes el primer clic solo desplegaba una pregunta de alcance y el botón
+    parecía no hacer nada; ahora el alcance vive en dos botones: el principal
+    (solo este presupuesto) y «Guardar también en base de datos».
+    """
+    with TestClient(app) as client:
+        resp = client.get("/presupuestos/nuevo")
+        assert resp.status_code == 200
+        assert 'id="editor-partida-save-catalog"' in resp.text
+        assert 'id="editor-partida-scope-hint"' in resp.text
+        assert 'id="editor-partida-save"' in resp.text
+        # La pregunta de dos pasos ya no existe en la ficha.
+        assert "editor-save-scope-confirm" not in resp.text
+        assert 'data-scope="local"' not in resp.text
+
+
 def test_catalogo_y_presupuesto_comparten_editor_completo_de_partida():
     with TestClient(app) as client:
         catalogo = client.get("/partidas/nueva")
@@ -927,6 +945,64 @@ def test_flujo_completo_crear_y_modificar_presupuesto():
         resp_pdf = client.get(f"/presupuestos/{pid}/pdf")
         assert resp_pdf.status_code == 200
         assert resp_pdf.headers["content-type"] == "application/pdf"
+
+
+def test_ficha_partidas_carga_fuente_de_recursos_para_autocompletado():
+    """La ficha de partida del catálogo consulta /recursos/api/buscar para
+    autocompletar recursos (código, unidad, precio) al escribir."""
+    with TestClient(app) as client:
+        resp = client.get("/partidas/nueva")
+        assert resp.status_code == 200
+        assert 'window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar"' in resp.text
+
+
+def test_detalle_presupuesto_desglosa_base_y_producto():
+    """El P.U. de una partida con producto asociado muestra cuánto es la base
+    de la partida y cuánto el producto, sin tener que restar a mano."""
+    with TestClient(app) as client:
+        estructura = [{
+            "nombre": "CAPÍTULO DESGLOSE",
+            "partidas": [{
+                "partida_id": "",
+                "nombre": "Colocación de porcelanato con desglose",
+                "descripcion": "",
+                "unidad": "m2",
+                "cantidad": 10,
+                # P.U. total = base 19,50 + producto 22,50
+                "precio": 42.0,
+                "prod_nombre": "Porcelanato Calacatta desglose",
+                "prod_precio": 22.5,
+                "prod_coste": 15.0,
+                "prod_unidad": "m2",
+                "tipo_partida": "included",
+                "seleccionada": True,
+                "coste_materiales": 0,
+                "coste_mano_obra": 0,
+                "coste_complementarios": 0,
+                "coste_otros": 0,
+                "mediciones": [],
+            }],
+        }]
+        resp = client.post(
+            "/presupuestos/nuevo",
+            data={
+                "client_id": "1",
+                "titulo": "Desglose base y producto",
+                "fecha": date.today().isoformat(),
+                "moneda": "USD",
+                "impuesto_pct": "16",
+                "estado": "borrador",
+                "estructura_json": json.dumps(estructura),
+            },
+            follow_redirects=False,
+        )
+        assert resp.status_code == 303
+        pid = resp.headers["location"].split("?")[0].split("/")[-1]
+
+        detalle = client.get(f"/presupuestos/{pid}")
+        assert detalle.status_code == 200
+        assert ("Desglose del P.U.: base 19,50 USD · producto 22,50 USD"
+                " · total 42,00 USD / m2") in detalle.text
 
 
 def test_crear_presupuesto_con_varias_opciones_de_producto():

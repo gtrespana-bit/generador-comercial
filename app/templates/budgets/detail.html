@@ -298,12 +298,18 @@
         </div>
         {% endfor %}
       </div>
+      {% if part.producto_precio is not none %}
+      <small class="hint doc-prod-desglose">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      {% endif %}
     </div>
     {% else %}
     <div class="doc-prod">
       <strong>Producto presupuestado:</strong>
       {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
+      {% if part.producto_precio is not none %}
+      <br><small class="hint">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      {% endif %}
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto" loading="lazy" decoding="async">{% endif %}
     </div>
     {% endif %}

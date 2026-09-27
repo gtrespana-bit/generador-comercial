@@ -178,7 +178,15 @@
         cant = Math.round((item.coeficiente || 1.0) * medida * 100) / 100;
         tagTipo = "Prop. (" + (item.coeficiente || 1.0) + "x)";
       }
-      var prec = parseFloat(item.precio || 0);
+      // El precio guardado es la base de la partida; el total unitario incluye
+      // el producto asociado si el pack lo lleva (misma regla que el editor).
+      var tieneProd = (!!(item.prod_nombre && String(item.prod_nombre).trim())) ||
+        (item.prod_precio !== "" && item.prod_precio != null);
+      var precBase = parseFloat(item.precio || 0);
+      var precProd = tieneProd && item.prod_precio !== "" && item.prod_precio != null
+        ? (parseFloat(item.prod_precio) || 0)
+        : 0;
+      var prec = precBase + precProd;
       var imp = Math.round(cant * prec * 100) / 100;
       totalEst += imp;
 
@@ -195,6 +203,16 @@
       var strong = document.createElement("strong");
       strong.textContent = item.nombre || "";
       nameCell.appendChild(strong);
+      if (tieneProd) {
+        var prodLine = document.createElement("small");
+        prodLine.className = "receta-preview-muted";
+        var precioProdTxt = (item.prod_precio !== "" && item.prod_precio != null)
+          ? " · " + importe(parseFloat(item.prod_precio) || 0)
+          : "";
+        prodLine.textContent = "📦 " + (String(item.prod_nombre || "").trim() || "Producto") + precioProdTxt;
+        CotizatStyles.setCssText(prodLine, "display:block; font-size:.72rem; opacity:.75;");
+        nameCell.appendChild(prodLine);
+      }
       var typeCell = cell("", "receta-preview-center");
       var badge = document.createElement("span");
       badge.className = "badge receta-preview-badge";
@@ -218,14 +236,34 @@
     var nombreCapitulo = recetaSeleccionada.nombre + " (" + medida + " " + (recetaSeleccionada.unidad_base || "m²") + ")";
     var partidasParaCapitulo = (recetaSeleccionada.items || []).map(function (it) {
       var cant = (it.tipo_calculo === "fijo") ? (it.cantidad_fija || 1.0) : Math.round((it.coeficiente || 1.0) * medida * 100) / 100;
-      return {
+      // El precio del pack es la base de la partida (mano de obra); si el
+      // pack guarda un producto asociado, este viaja en sus propios campos y
+      // el P.U. de la línea se reconstruye como base + producto, igual que en
+      // el resto del editor. Así el material aparece como producto y el
+      // beneficio/coste sale de la ficha, no inflado dentro de la mano de obra.
+      var precioBase = parseFloat(it.precio || 0) || 0;
+      var prodNombre = String(it.prod_nombre || "").trim();
+      var prodPrecioRaw = (it.prod_precio === "" || it.prod_precio == null) ? "" : String(it.prod_precio);
+      var prodPrecio = prodPrecioRaw === "" ? 0 : (parseFloat(prodPrecioRaw) || 0);
+      var tieneProd = !!(prodNombre || prodPrecioRaw !== "");
+      var datos = {
         nombre: it.nombre || "",
         descripcion: it.descripcion || "",
         unidad: it.unidad || "m²",
         cantidad: cant,
-        precio: it.precio || 0,
+        precio: precioBase + prodPrecio,
+        precio_base: precioBase,
         categoria: it.categoria || recetaSeleccionada.categoria || "Albañilería y Revestimientos"
       };
+      if (tieneProd) {
+        datos.prod_nombre = prodNombre;
+        datos.prod_precio = prodPrecioRaw;
+        datos.prod_coste = (it.prod_coste === "" || it.prod_coste == null) ? "" : it.prod_coste;
+        datos.prod_unidad = it.prod_unidad || "";
+        datos.prod_categoria = it.prod_categoria || "";
+        datos.prod_imagen = it.prod_imagen || "";
+      }
+      return datos;
     });
 
     if (!editor.Capitulo || !editor.Capitulo.crear) {
@@ -329,14 +367,44 @@
       var undVal = und ? (und.value.trim() || "und") : "und";
       var descVal = desc ? desc.value.trim() : "";
 
-      items.push({
+      // El P.U. visible (p_precio) es base + producto asociado. El pack debe
+      // guardar la base POR UN LADO y el producto POR OTRO: si se guardara el
+      // total sin el producto, al insertar el pack la partida quedaba con la
+      // suma (p. ej. 19,50 + 22,50 = 42) como si fuera solo mano de obra.
+      var baseEl = w.querySelector('[data-f="p_precio_base"]');
+      var prodNombreEl = w.querySelector('[data-f="p_prod_nombre"]');
+      var prodPrecioEl = w.querySelector('[data-f="p_prod_precio"]');
+      var prodNombre = prodNombreEl ? String(prodNombreEl.value || "").trim() : "";
+      var prodPrecioRaw = prodPrecioEl ? String(prodPrecioEl.value || "").trim() : "";
+      var prodPrecio = prodPrecioRaw === "" ? 0 : (parseFloat(prodPrecioRaw) || 0);
+      var precioBase;
+      if (baseEl && String(baseEl.value).trim() !== "") {
+        precioBase = parseFloat(baseEl.value) || 0;
+      } else {
+        precioBase = Math.max(0, precVal - prodPrecio);
+      }
+
+      var item = {
         nombre: nomVal,
         descripcion: descVal,
         unidad: undVal,
         cantidad: cantVal,
-        precio: precVal,
+        precio: precioBase,
         categoria: categoria
-      });
+      };
+      if (prodNombre || prodPrecioRaw !== "") {
+        item.prod_nombre = prodNombre;
+        item.prod_precio = prodPrecioRaw;
+        var prodCosteEl = w.querySelector('[data-f="p_prod_coste"]');
+        if (prodCosteEl && String(prodCosteEl.value || "").trim() !== "") item.prod_coste = prodCosteEl.value;
+        var prodUnidadEl = w.querySelector('[data-f="p_prod_unidad"]');
+        if (prodUnidadEl) item.prod_unidad = prodUnidadEl.value.trim();
+        var prodCatEl = w.querySelector('[data-f="p_prod_categoria"]');
+        if (prodCatEl) item.prod_categoria = prodCatEl.value.trim();
+        var prodImagenEl = w.querySelector('[data-f="p_prod_imagen_actual"]');
+        if (prodImagenEl) item.prod_imagen = prodImagenEl.value.trim();
+      }
+      items.push(item);
     });
 
     if (!items.length) {

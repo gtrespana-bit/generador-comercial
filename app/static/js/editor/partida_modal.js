@@ -5,9 +5,9 @@
 
   var editor = window.EDITOR || {};
   var modal, form, root, api, wrapActual = null, fichaCatalogoActual = null;
-  // Alcance elegido al aplicar cambios en una partida que ya existe en el
-  // catálogo: "local" (solo este presupuesto) o "catalog" (también en BD).
-  var scopeElegido = null;
+  // Botón «Guardar también en base de datos»: fuerza la actualización de la
+  // ficha del catálogo además de aplicar los cambios en el presupuesto.
+  var forzarCatalogo = false;
 
   function $(id) { return document.getElementById(id); }
   function valor(name) { var el = form.elements[name]; return el ? el.value : ""; }
@@ -77,6 +77,27 @@
     if (archivo) archivo.value = "";
   }
 
+  function actualizarTotalLinea() {
+    // El P.U. de la línea en el presupuesto es base + producto; se muestra
+    // la descomposición para que nadie tenga que restarla a mano.
+    var hint = $("editor-linea-total-hint");
+    if (!hint) return;
+    var tieneProd = !!valor("linea_prod_nombre").trim();
+    var precioBase = num(valor("precio_unitario"));
+    if (!tieneProd) {
+      hint.hidden = true;
+      hint.textContent = "";
+      return;
+    }
+    var precioProd = valor("linea_prod_precio") === "" ? 0 : num(valor("linea_prod_precio"));
+    var money = function (v) {
+      return window.FMT && window.FMT.fmt ? window.FMT.fmt(v) : v.toFixed(2);
+    };
+    hint.textContent = "P.U. de la línea: " + money(precioBase + precioProd)
+      + " = Base " + money(precioBase) + " + Producto " + money(precioProd);
+    hint.hidden = false;
+  }
+
   function actualizarVistaProducto() {
     var vista = $("editor-producto-seleccionado");
     if (!vista || !form) return;
@@ -86,6 +107,7 @@
     var coste = valor("linea_prod_coste");
     var imagen = valor("linea_prod_imagen").trim();
     vista.hidden = !nombre;
+    actualizarTotalLinea();
     if (!nombre) return;
     var titulo = vista.querySelector("[data-producto-nombre]");
     var detalle = vista.querySelector("[data-producto-detalle]");
@@ -96,7 +118,13 @@
     var money = function (v) {
       return window.FMT && window.FMT.fmt ? window.FMT.fmt(num(v)) : num(v).toFixed(2);
     };
-    if (detalle) detalle.textContent = (precio !== "" ? "Venta " + money(precio) : "Venta sin definir") + (coste !== "" ? " · Coste " + money(coste) : "") + (unidad ? " / " + unidad : "");
+    // El precio de venta del campo ficha es la BASE de la partida; se muestra
+    // también aquí para que la suma (base + producto) quede explícita.
+    var basePartida = Math.max(0, num(valor("precio_unitario")));
+    if (detalle) detalle.textContent = "Base partida " + money(basePartida)
+      + " · " + (precio !== "" ? "Producto " + money(precio) : "Producto sin precio")
+      + (coste !== "" ? " · Coste " + money(coste) : "")
+      + (unidad ? " / " + unidad : "");
     if (img) {
       var src = imagen ? (window.cotizatArchivoUrl(imagen)) : "";
       CotizatStyles.set(img, "display", src ? "" : "none");
@@ -474,16 +502,38 @@
     }).filter(function (m) { return m.concepto || m.cantidad; });
   }
 
-  function actualizarSelectorCatalogo(cat) {
-    scopeElegido = null;
-    var confirmScope = $("editor-save-scope-confirm");
-    if (confirmScope) confirmScope.hidden = true;
+  function refrescarBotones() {
+    var vinculado = !!(fichaCatalogoActual && fichaCatalogoActual.id);
     var boton = $("editor-partida-save");
-    if (boton) boton.textContent = (cat && cat.id) ? "✓ Aplicar cambios" : "✓ Crear y aplicar";
+    if (boton) {
+      boton.disabled = false;
+      boton.textContent = vinculado ? "✓ Aplicar cambios" : "✓ Crear y aplicar";
+    }
+    var btnCatalogo = $("editor-partida-save-catalog");
+    if (btnCatalogo) btnCatalogo.hidden = !vinculado;
+    var hint = $("editor-partida-scope-hint");
+    if (hint) hint.hidden = !vinculado;
+  }
+
+  function actualizarSelectorCatalogo(cat) {
+    forzarCatalogo = false;
+    fichaCatalogoActual = cat || null;
+    refrescarBotones();
   }
 
   function cargar(datos) {
     fichaCatalogoActual = catalogoPara(datos) || null;
+    if (!fichaCatalogoActual) {
+      // El índice del catálogo llega en diferido (GET /presupuestos/editor/datos
+      // termina después de pintar la página). Una partida con id de catálogo
+      // guardado (p_catalogo_id) ya está vinculada AUNQUE el índice aún no haya
+      // llegado: sin esta pasada, al reabrir un presupuesto guardado el botón
+      // mostraba «✓ Crear y aplicar» para una partida que ya existe en la base.
+      var idVinculo = Number((datos && datos.catalogo_id) || 0);
+      if (Number.isFinite(idVinculo) && idVinculo > 0) {
+        fichaCatalogoActual = { id: idVinculo, nombre: (datos && datos.nombre) || "" };
+      }
+    }
     var cat = fichaCatalogoActual || {};
     var ficha = Object.assign({}, cat, {
       nombre: datos.nombre || cat.nombre || "",
@@ -643,27 +693,21 @@
     var boton = $("editor-partida-save");
     boton.disabled = true;
     boton.textContent = "Guardando…";
+    var btnCatalogo = $("editor-partida-save-catalog");
+    if (btnCatalogo) btnCatalogo.disabled = true;
     mostrarError("");
     try {
       var actual = editor.Partida.leerPartida(wrapActual);
       var fichaGuardada = null;
-      var guardarCatalogo = false;
 
-      // Si la partida ya existe en el catálogo, preguntamos rápido al usuario
-      // si aplica solo a este presupuesto o también a la base de datos.
-      if (fichaCatalogoActual && fichaCatalogoActual.id) {
-        if (scopeElegido == null) {
-          boton.disabled = false;
-          boton.textContent = "✓ Aplicar cambios";
-          var confirmScope = $("editor-save-scope-confirm");
-          if (confirmScope) confirmScope.hidden = false;
-          return;
-        }
-        guardarCatalogo = scopeElegido === "catalog";
-      } else {
-        // Partida nueva: se guarda sola en el catálogo como partida nueva.
-        guardarCatalogo = true;
-      }
+      // «✓ Aplicar cambios» aplica SIEMPRE en un clic y solo toca este
+      // presupuesto; la base de datos se actualiza solo con el botón
+      // «Guardar también en base de datos». Antes el primer clic se limitaba
+      // a desplegar una pregunta de alcance y el botón parecía no hacer nada.
+      var vinculadaCatalogo = !!(fichaCatalogoActual && fichaCatalogoActual.id);
+      var guardarCatalogo = forzarCatalogo || !vinculadaCatalogo;
+      forzarCatalogo = false;
+
       if (guardarCatalogo) {
         var cuerpo = new FormData(form);
         // El formulario está en la moneda del presupuesto; el catálogo se
@@ -690,7 +734,11 @@
           var maestra = actual.catalogo_id ? catalogoPorId(actual.catalogo_id) : null;
           if (maestra && norm(maestra.nombre) === nombre) return actual.catalogo_id;
           var porNombre = (editor.CATALOGO || []).find(function (p) { return norm(p.nombre) === nombre; });
-          return porNombre ? String(porNombre.id) : "";
+          if (porNombre) return String(porNombre.id);
+          // El índice del catálogo llega en diferido: si la línea ya tenía id
+          // de catálogo se conserva aunque el índice aún no lo contenga
+          // (perderlo devolvía la partida a «✓ Crear y aplicar» al reabrirla).
+          return actual.catalogo_id || "";
         })(),
         nombre: fichaGuardada ? fichaGuardada.nombre : valor("nombre"),
         descripcion: fichaGuardada ? fichaGuardada.descripcion : valor("descripcion"),
@@ -741,8 +789,8 @@
     } catch (error) {
       mostrarError(error.message || "No se pudieron aplicar los cambios.");
     } finally {
-      boton.disabled = false;
-      boton.textContent = "✓ Aplicar cambios";
+      refrescarBotones();
+      if (btnCatalogo) btnCatalogo.disabled = false;
     }
   }
 
@@ -797,6 +845,28 @@
       // Si cambia el precio manual, el hint del catálogo ya se actualiza vía calcular()
     })();
     form.addEventListener("submit", guardar);
+    // «Guardar también en base de datos»: mismo guardado, pero actualizando
+    // además la ficha del catálogo (scope global) antes de aplicar.
+    var btnGuardarCatalogo = $("editor-partida-save-catalog");
+    if (btnGuardarCatalogo) {
+      btnGuardarCatalogo.addEventListener("click", function () {
+        forzarCatalogo = true;
+        form.requestSubmit();
+      });
+    }
+    // El campo «Precio de venta» de la ficha es la BASE de la partida (el
+    // producto va aparte y la línea los suma): se aclara en la etiqueta y con
+    // la moneda real del presupuesto (la macro genérica decía «USD» fijo).
+    var campoPrecioFicha = form.elements.precio_unitario;
+    if (campoPrecioFicha) {
+      var campoField = campoPrecioFicha.closest(".field");
+      var etiquetaPrecio = campoField ? campoField.querySelector("label") : null;
+      if (etiquetaPrecio) {
+        etiquetaPrecio.textContent = "Precio de venta (base de la partida, sin producto) ("
+          + (window.COTIZAT_MONEDA_ACTIVA || "USD") + ") *";
+      }
+      campoPrecioFicha.addEventListener("input", actualizarTotalLinea);
+    }
     $("editor-add-medicion").addEventListener("click", function () {
       var fila = addMedicion({});
       fila.querySelector("input").focus();
@@ -816,18 +886,6 @@
       btn.addEventListener("click", function () { cambiarTab(btn.dataset.partidaTab); });
     });
     modal.querySelectorAll("[data-close]").forEach(function (btn) { btn.addEventListener("click", cerrar); });
-
-    // Confirmación rápida de alcance para partidas ya existentes en el catálogo
-    var confirmScope = $("editor-save-scope-confirm");
-    if (confirmScope) {
-      confirmScope.querySelectorAll("[data-scope]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          scopeElegido = btn.dataset.scope;
-          confirmScope.hidden = true;
-          form.requestSubmit();
-        });
-      });
-    }
 
     var btnQuitarModalProd = $("editor-btn-quitar-producto");
     if (btnQuitarModalProd) {

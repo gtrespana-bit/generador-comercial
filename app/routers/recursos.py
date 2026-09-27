@@ -147,6 +147,70 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         "mercado_moneda": cfg.moneda_default or "USD",
     })
 
+@router.get("/recursos/api/buscar")
+def api_buscar_recursos(q: str = "", db: Session = Depends(get_db)):
+    """Sugerencias de recursos para el autocompletado de la ficha de partida.
+
+    Misma conversión de moneda que la pestaña Recursos: el usuario elige un
+    recurso y el precio llega listo para la ficha, en la moneda de la
+    organización (o del presupuesto cuando el editor lo pide con contexto).
+    """
+    from ..services.catalogo_propio import asegurar_catalogo_propio
+
+    asegurar_catalogo_propio(db)
+    _sincronizar_recursos(db, forzar=False)
+    query = db.query(Recurso)
+    if q.strip():
+        like = f"%{q.strip()}%"
+        query = query.filter(or_(
+            Recurso.codigo.ilike(like),
+            Recurso.descripcion.ilike(like),
+            Recurso.grupo.ilike(like),
+            Recurso.proveedor.ilike(like),
+        ))
+    recursos = query.order_by(Recurso.usos.desc(), Recurso.descripcion).limit(30).all()
+    from ..services.traduccion import codigo_desde_pais
+    from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
+
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    org_id = int(db.info.get("organizacion_id") or 0)
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    try:
+        efectivos = resolver_precios_para_presupuesto_lote(
+            db, recursos, pais, org_id or None, moneda_vista,
+            tasa_usd_presupuesto=factor_vista,
+        )
+    except Exception:
+        efectivos = {}
+    salida = []
+    for r in recursos:
+        precio = tasa_convertir_precio(r.precio or 0, factor_vista)
+        moneda = moneda_vista
+        origen, aviso = "base", "Verifica el precio con tu proveedor"
+        efectivo = efectivos.get(r.id) or {}
+        if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
+            precio = float(efectivo["precio"])
+            moneda = efectivo.get("moneda") or moneda
+            origen = efectivo.get("origen", "base")
+            aviso = efectivo.get("aviso", "")
+        salida.append({
+            "id": r.id,
+            "codigo": r.codigo,
+            "descripcion": r.descripcion,
+            "unidad": r.unidad,
+            "categoria": r.categoria,
+            "grupo": r.grupo,
+            "precio": round(float(precio or 0), 2),
+            "moneda": moneda,
+            "proveedor": r.proveedor,
+            "usos": r.usos,
+            "origen_precio": origen,
+            "aviso_precio": aviso,
+        })
+    return {"ok": True, "recursos": salida, "moneda": moneda_vista}
+
+
 @router.get("/recursos/exportar")
 def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar catálogo de recursos a CSV o Excel.
