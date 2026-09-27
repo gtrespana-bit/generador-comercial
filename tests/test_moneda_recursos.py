@@ -262,3 +262,28 @@ def test_formulario_de_partida_nueva_etiqueta_la_moneda_de_la_organizacion(entor
     html = cliente_web.get("/partidas/nueva").text
 
     assert "Precio de venta (MXN)" in html
+
+def test_api_buscar_recursos_sugiere_precios_en_la_moneda_de_la_organizacion(entorno, cliente_web):
+    """El autocompletado de la ficha de partida devuelve recursos listos para
+    usar: precio ya convertido a la moneda de la organización."""
+    Session, _ids, _rol = entorno
+    recurso_id = _mexico(Session, precio_recurso=6.5)
+    with Session() as db:
+        recurso = db.get(Recurso, recurso_id)
+        descripcion = recurso.descripcion
+        unidad = recurso.unidad
+
+    datos = cliente_web.get("/recursos/api/buscar").json()
+    assert datos["ok"] is True
+    assert datos["moneda"] == "MXN"
+    uno = next(r for r in datos["recursos"] if r["id"] == recurso_id)
+    assert uno["precio"] == pytest.approx(6.5 * TASA_MXN)
+    assert uno["moneda"] == "MXN"
+    assert uno["unidad"] == unidad
+    for campo in ("codigo", "descripcion", "categoria", "grupo"):
+        assert campo in uno
+
+    # Búsqueda por texto (lo que el usuario va tecleando en la ficha)
+    datos_q = cliente_web.get("/recursos/api/buscar", params={"q": descripcion[:8]}).json()
+    assert datos_q["ok"] is True
+    assert any(r["id"] == recurso_id for r in datos_q["recursos"])

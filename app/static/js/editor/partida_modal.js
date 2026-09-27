@@ -77,6 +77,27 @@
     if (archivo) archivo.value = "";
   }
 
+  function actualizarTotalLinea() {
+    // El P.U. de la línea en el presupuesto es base + producto; se muestra
+    // la descomposición para que nadie tenga que restarla a mano.
+    var hint = $("editor-linea-total-hint");
+    if (!hint) return;
+    var tieneProd = !!valor("linea_prod_nombre").trim();
+    var precioBase = num(valor("precio_unitario"));
+    if (!tieneProd) {
+      hint.hidden = true;
+      hint.textContent = "";
+      return;
+    }
+    var precioProd = valor("linea_prod_precio") === "" ? 0 : num(valor("linea_prod_precio"));
+    var money = function (v) {
+      return window.FMT && window.FMT.fmt ? window.FMT.fmt(v) : v.toFixed(2);
+    };
+    hint.textContent = "P.U. de la línea: " + money(precioBase + precioProd)
+      + " = Base " + money(precioBase) + " + Producto " + money(precioProd);
+    hint.hidden = false;
+  }
+
   function actualizarVistaProducto() {
     var vista = $("editor-producto-seleccionado");
     if (!vista || !form) return;
@@ -86,6 +107,7 @@
     var coste = valor("linea_prod_coste");
     var imagen = valor("linea_prod_imagen").trim();
     vista.hidden = !nombre;
+    actualizarTotalLinea();
     if (!nombre) return;
     var titulo = vista.querySelector("[data-producto-nombre]");
     var detalle = vista.querySelector("[data-producto-detalle]");
@@ -96,7 +118,13 @@
     var money = function (v) {
       return window.FMT && window.FMT.fmt ? window.FMT.fmt(num(v)) : num(v).toFixed(2);
     };
-    if (detalle) detalle.textContent = (precio !== "" ? "Venta " + money(precio) : "Venta sin definir") + (coste !== "" ? " · Coste " + money(coste) : "") + (unidad ? " / " + unidad : "");
+    // El precio de venta del campo ficha es la BASE de la partida; se muestra
+    // también aquí para que la suma (base + producto) quede explícita.
+    var basePartida = Math.max(0, num(valor("precio_unitario")));
+    if (detalle) detalle.textContent = "Base partida " + money(basePartida)
+      + " · " + (precio !== "" ? "Producto " + money(precio) : "Producto sin precio")
+      + (coste !== "" ? " · Coste " + money(coste) : "")
+      + (unidad ? " / " + unidad : "");
     if (img) {
       var src = imagen ? (window.cotizatArchivoUrl(imagen)) : "";
       CotizatStyles.set(img, "display", src ? "" : "none");
@@ -825,6 +853,19 @@
         forzarCatalogo = true;
         form.requestSubmit();
       });
+    }
+    // El campo «Precio de venta» de la ficha es la BASE de la partida (el
+    // producto va aparte y la línea los suma): se aclara en la etiqueta y con
+    // la moneda real del presupuesto (la macro genérica decía «USD» fijo).
+    var campoPrecioFicha = form.elements.precio_unitario;
+    if (campoPrecioFicha) {
+      var campoField = campoPrecioFicha.closest(".field");
+      var etiquetaPrecio = campoField ? campoField.querySelector("label") : null;
+      if (etiquetaPrecio) {
+        etiquetaPrecio.textContent = "Precio de venta (base de la partida, sin producto) ("
+          + (window.COTIZAT_MONEDA_ACTIVA || "USD") + ") *";
+      }
+      campoPrecioFicha.addEventListener("input", actualizarTotalLinea);
     }
     $("editor-add-medicion").addEventListener("click", function () {
       var fila = addMedicion({});

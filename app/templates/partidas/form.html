@@ -35,5 +35,6 @@
 </datalist>
 {% endblock %}
 {% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar";</script>
 <script src="/static/js/partida_catalogo_editor.js"></script>
 {% endblock %}

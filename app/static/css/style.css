@@ -3055,6 +3055,26 @@ button:focus-visible, a:focus-visible {
 .partida-cant-plano-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .partida-cant-input,
 .partida-precio-input { text-align: right; position: relative; }
+/* Desglose del P.U. cuando la partida lleva producto: base + producto bajo
+   el precio total, para no tener que restar a mano. */
+.partida-precio-desglose {
+  display: block;
+  margin-top: 2px;
+  font-size: .64rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+/* Total de la línea en la ficha de partida (base + producto). */
+.editor-linea-total-hint {
+  display: block;
+  margin-top: .45rem;
+  font-size: .8rem;
+  font-weight: 650;
+  color: var(--text-soft);
+}
+.editor-linea-total-hint[hidden] { display: none; }
 .precio-choice-popover {
   position: fixed;
   z-index: 1250;
@@ -7740,7 +7760,8 @@ body { -webkit-tap-highlight-color: transparent; }
   .doc-mediciones td:last-child { font-weight: 600; color: var(--text); }
 
   /* Totales tipo factura: etiqueta (muted) + importe tabular alineado. */
-  .doc-totales { width: 100%; margin-top: 1.15rem; }
+  .doc-prod-desglose { display: block; margin-top: .4rem; }
+.doc-totales { width: 100%; margin-top: 1.15rem; }
   .doc-totales tr {
     display: flex;
     align-items: baseline;

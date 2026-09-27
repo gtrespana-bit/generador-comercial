@@ -947,6 +947,64 @@ def test_flujo_completo_crear_y_modificar_presupuesto():
         assert resp_pdf.headers["content-type"] == "application/pdf"
 
 
+def test_ficha_partidas_carga_fuente_de_recursos_para_autocompletado():
+    """La ficha de partida del catálogo consulta /recursos/api/buscar para
+    autocompletar recursos (código, unidad, precio) al escribir."""
+    with TestClient(app) as client:
+        resp = client.get("/partidas/nueva")
+        assert resp.status_code == 200
+        assert 'window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar"' in resp.text
+
+
+def test_detalle_presupuesto_desglosa_base_y_producto():
+    """El P.U. de una partida con producto asociado muestra cuánto es la base
+    de la partida y cuánto el producto, sin tener que restar a mano."""
+    with TestClient(app) as client:
+        estructura = [{
+            "nombre": "CAPÍTULO DESGLOSE",
+            "partidas": [{
+                "partida_id": "",
+                "nombre": "Colocación de porcelanato con desglose",
+                "descripcion": "",
+                "unidad": "m2",
+                "cantidad": 10,
+                # P.U. total = base 19,50 + producto 22,50
+                "precio": 42.0,
+                "prod_nombre": "Porcelanato Calacatta desglose",
+                "prod_precio": 22.5,
+                "prod_coste": 15.0,
+                "prod_unidad": "m2",
+                "tipo_partida": "included",
+                "seleccionada": True,
+                "coste_materiales": 0,
+                "coste_mano_obra": 0,
+                "coste_complementarios": 0,
+                "coste_otros": 0,
+                "mediciones": [],
+            }],
+        }]
+        resp = client.post(
+            "/presupuestos/nuevo",
+            data={
+                "client_id": "1",
+                "titulo": "Desglose base y producto",
+                "fecha": date.today().isoformat(),
+                "moneda": "USD",
+                "impuesto_pct": "16",
+                "estado": "borrador",
+                "estructura_json": json.dumps(estructura),
+            },
+            follow_redirects=False,
+        )
+        assert resp.status_code == 303
+        pid = resp.headers["location"].split("?")[0].split("/")[-1]
+
+        detalle = client.get(f"/presupuestos/{pid}")
+        assert detalle.status_code == 200
+        assert ("Desglose del P.U.: base 19,50 USD · producto 22,50 USD"
+                " · total 42,00 USD / m2") in detalle.text
+
+
 def test_crear_presupuesto_con_varias_opciones_de_producto():
     """Una partida puede tener varios productos a elegir. El servidor debe
     persistirlos en la tabla presupuesto_item_productos y mantener la

@@ -1116,15 +1116,15 @@
           descWrap.appendChild(recursoDropdown);
         }
         inDesc.addEventListener("focus", mostrarRecursosRelacionados);
-        // Cerrar al hacer Escape o Enter
+        // Cerrar al hacer Escape; Enter aplica la primera sugerencia visible
         inDesc.addEventListener("keydown", function(evt){
           if (evt.key === "Escape") cerrarRecursoAutocomplete();
           if (evt.key === "Enter") {
-            // Si hay sugerencias y una coincide exactamente, aplicar la primera
-            // Evitar submit
-            if (recursoDropdown && recursoDropdown.firstChild) {
-              // No cerramos con Enter para permitir escritura, pero si usuario da Enter y hay 1 sugerencia exacta, la aplicamos
-              // Por ahora solo cerramos dropdown y dejamos que el input siga
+            // Con sugerencias abiertas, Enter elige la primera (y evita el
+            // submit implícito del formulario, que podía guardar a medias).
+            if (recursoDropdown && recursoDropdown.firstElementChild) {
+              evt.preventDefault();
+              recursoDropdown.firstElementChild.click();
             }
           }
         });
@@ -1807,7 +1807,7 @@
       undCell.appendChild(undSelect);
       row.appendChild(undCell);
 
-      var precioCell = editor.FMT.h("div", "");
+      var precioCell = editor.FMT.h("div", "partida-precio-cell");
       CotizatStyles.set(precioCell, "textAlign", "right");
       CotizatStyles.set(precioCell, "padding", "0 0.5rem");
       var precioInput = editor.FMT.crearInput("number", datos.precio !== undefined ? datos.precio : "0", "0,00", "p_precio", { step: "any", min: "0" });
@@ -1816,8 +1816,34 @@
         var baseInput = wrap.querySelector('[data-f="p_precio_base"]');
         var prodInput = wrap.querySelector('[data-f="p_prod_precio"]');
         if (baseInput) baseInput.value = editorInst.FMT.parseNum(precioInput.value) - editorInst.FMT.parseNum(prodInput ? prodInput.value : 0);
+        if (wrap._actualizarDesglosePrecio) wrap._actualizarDesglosePrecio();
       });
       precioCell.appendChild(precioInput);
+      // Desglose del P.U. cuando la línea lleva producto asociado: el precio
+      // visible es la suma (base + producto) y aquí se especifica cuánto es
+      // cada cosa sin tener que restar.
+      var desglosePrecio = editor.FMT.h("small", "partida-precio-desglose", "");
+      CotizatStyles.set(desglosePrecio, "display", "none");
+      precioCell.appendChild(desglosePrecio);
+      wrap._actualizarDesglosePrecio = function () {
+        var prodNombreEl = wrap.querySelector('[data-f="p_prod_nombre"]');
+        var prodPrecioEl = wrap.querySelector('[data-f="p_prod_precio"]');
+        var prodNombre = prodNombreEl ? String(prodNombreEl.value || "").trim() : "";
+        var prodPrecioRaw = prodPrecioEl ? String(prodPrecioEl.value || "").trim() : "";
+        var tieneProd = !!(prodNombre || prodPrecioRaw !== "");
+        if (!tieneProd) {
+          CotizatStyles.set(desglosePrecio, "display", "none");
+          precioInput.title = "";
+          return;
+        }
+        var total = editorInst.FMT.parseNum(precioInput.value);
+        var prod = prodPrecioRaw === "" ? 0 : editorInst.FMT.parseNum(prodPrecioRaw);
+        var base = Math.max(0, total - prod);
+        desglosePrecio.textContent = "Base " + editorInst.FMT.fmt(base) + " · Prod. " + editorInst.FMT.fmt(prod);
+        CotizatStyles.set(desglosePrecio, "display", "");
+        precioInput.title = "P.U. total = Base " + editorInst.FMT.fmt(base)
+          + " + Producto" + (prodNombre ? " (" + prodNombre + ")" : "") + " " + editorInst.FMT.fmt(prod);
+      };
       row.appendChild(precioCell);
 
       var importeCell = editor.FMT.h("div", "partida-importe", "0,00 " + editor.simbolo());
@@ -2096,6 +2122,7 @@
         var tieneProducto = String(prodNombre || "").trim().length > 0 || opciones.length > 0;
         wrapRes.hidden = !tieneProducto;
         resumen.hidden = !tieneProducto;
+        if (partidaWrap._actualizarDesglosePrecio) partidaWrap._actualizarDesglosePrecio();
         if (!tieneProducto) {
           CotizatStyles.set(galeria, "display", "none");
           return;
@@ -2104,7 +2131,14 @@
         var precio = editorInst.FMT.parseNum(prodPrecio);
         var costeProducto = (partidaWrap.querySelector('[data-f="p_prod_coste"]') || {}).value;
         var coste = editorInst.FMT.parseNum(costeProducto);
-        meta.textContent = (prodPrecio !== "" && isFinite(precio) ? "Venta " + editorInst.FMT.fmt(precio) : "Venta sin definir") + (costeProducto !== "" ? " · Coste " + editorInst.FMT.fmt(coste) : "") + (prodUnidad ? " / " + prodUnidad : "");
+        // La base de la partida también a la vista: el P.U. de la fila es la
+        // suma (base + producto) y así no hay que restar para saber cuánto es
+        // la partida en sí y cuánto el material.
+        var basePartida = Math.max(0, editorInst.FMT.parseNum((partidaWrap.querySelector('[data-f="p_precio"]') || {}).value) - precio);
+        meta.textContent = "Base " + editorInst.FMT.fmt(basePartida)
+          + " · " + (prodPrecio !== "" && isFinite(precio) ? "Producto " + editorInst.FMT.fmt(precio) : "Producto sin precio")
+          + (costeProducto !== "" ? " · Coste " + editorInst.FMT.fmt(coste) : "")
+          + (prodUnidad ? " / " + prodUnidad : "");
         var src = rutaImagen(prodImagen);
         CotizatStyles.set(imagen, "display", src ? "" : "none");
         CotizatStyles.set(sinImagen, "display", src ? "none" : "grid");
