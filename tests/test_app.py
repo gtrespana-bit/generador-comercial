@@ -1617,3 +1617,96 @@ def test_pdf_incluye_resumen_comercial_y_titulos_claros():
     finally:
         db.close()
         engine.dispose()
+
+
+def test_ficha_del_presupuesto_avisa_del_producto_sin_coste():
+    """El detalle no debe presentar el material sin coste como beneficio.
+
+    Regresión del presupuesto real 47: un producto de 25,50 USD/m2 sin coste
+    de compra aparecía como 2.580 USD de beneficio (3.685 % s/coste).
+    """
+    with TestClient(app) as client:
+        estructura = [{
+            "nombre": "CAPÍTULO TEST",
+            "partidas": [{
+                "partida_id": "",
+                "nombre": "Material Cerámico Suelos",
+                "unidad": "m2",
+                "cantidad": 100,
+                "precio": 26.5,
+                "prod_nombre": "Porcelanato Venetian Grey",
+                "prod_precio": 25.5,
+                "prod_unidad": "m2",
+                "tipo_partida": "included",
+                "seleccionada": True,
+                "coste_materiales": 0.7,
+                "coste_mano_obra": 0.0,
+                "coste_complementarios": 0.0,
+                "coste_otros": 0.0,
+                "mediciones": [],
+            }],
+        }]
+        resp = client.post(
+            "/presupuestos/nuevo",
+            data={
+                "client_id": "1",
+                "titulo": "Presupuesto con producto sin coste",
+                "fecha": date.today().isoformat(),
+                "validez_dias": "30",
+                "moneda": "USD",
+                "impuesto_pct": "16",
+                "descuento_pct": "0",
+                "estado": "borrador",
+                "estructura_json": json.dumps(estructura),
+            },
+            follow_redirects=False,
+        )
+        assert resp.status_code == 303
+        pid = resp.headers["location"].split("?")[0].split("/")[-1]
+
+        detalle = client.get(f"/presupuestos/{pid}")
+        assert detalle.status_code == 200
+        # El beneficio ya no puede ser la venta entera del material (2.580 USD)
+        # y la ficha lo dice de forma explícita.
+        assert "Falta el coste de compra del producto" in detalle.text
+        assert "2.580,00" not in detalle.text
+        assert "Beneficio: 30,00 USD" in detalle.text
+
+        # Con el coste informado la partida pasa a tener margen real.
+        resp_edit = client.post(
+            f"/presupuestos/{pid}/editar",
+            data={
+                "client_id": "1",
+                "titulo": "Presupuesto con producto sin coste",
+                "fecha": date.today().isoformat(),
+                "validez_dias": "30",
+                "moneda": "USD",
+                "impuesto_pct": "16",
+                "descuento_pct": "0",
+                "estado": "borrador",
+                "estructura_json": json.dumps([{
+                    "nombre": "CAPÍTULO TEST",
+                    "partidas": [{
+                        "partida_id": "",
+                        "nombre": "Material Cerámico Suelos",
+                        "unidad": "m2",
+                        "cantidad": 100,
+                        "precio": 26.5,
+                        "prod_nombre": "Porcelanato Venetian Grey",
+                        "prod_precio": 25.5,
+                        "prod_coste": 20.0,
+                        "prod_unidad": "m2",
+                        "tipo_partida": "included",
+                        "seleccionada": True,
+                        "coste_materiales": 0.7,
+                        "coste_mano_obra": 0.0,
+                        "mediciones": [],
+                    }],
+                }]),
+            },
+            follow_redirects=False,
+        )
+        assert resp_edit.status_code == 303
+        detalle2 = client.get(f"/presupuestos/{pid}")
+        assert "Falta el coste de compra del producto" not in detalle2.text
+        assert "Beneficio: 580,00 USD" in detalle2.text

@@ -735,6 +735,22 @@ class Presupuesto(TenantMixin, Base):
     @property
     def total_productos(self):
         return float(self._totales.total_productos)
+
+    @property
+    def productos_con_coste(self):
+        """Venta de los productos cuyo coste de compra está informado."""
+        return float(self._totales.productos_con_coste)
+
+    @property
+    def productos_sin_coste(self):
+        """Número de partidas con producto vendido y coste sin informar."""
+        return int(self._totales.productos_sin_coste)
+
+    @property
+    def coste_productos_incompleto(self):
+        """Hay productos vendidos sin coste de compra: el margen es parcial."""
+        return bool(self._totales.coste_productos_incompleto)
+
     @property
     def coste_productos(self):
         return float(self._totales.coste_productos)
@@ -1151,6 +1167,23 @@ class PresupuestoItem(TenantMixin, Base):
     def margen_beneficio_pct(self):
         from .services.calculations import margen_partida_pct
         return float(margen_partida_pct(self))
+
+    @property
+    def producto_coste_pendiente(self):
+        """Vende un producto cuyo coste de compra no consta en ningún sitio.
+
+        Sin ese dato el beneficio real de la partida no se puede calcular: el
+        importe del material no debe presentarse como margen.
+        """
+        from .services.calculations import producto_coste_pendiente
+        return bool(producto_coste_pendiente(self))
+
+    @property
+    def coste_producto_unitario(self):
+        """Coste de compra por unidad del producto, o ``None`` si no consta."""
+        from .services.calculations import producto_coste_unitario
+        valor = producto_coste_unitario(self)
+        return float(valor) if valor is not None else None
 
     @property
     def tiene_producto(self):

@@ -434,6 +434,7 @@
         var precioInput = partidaWrap.querySelector('[data-f="p_precio"]');
         var prodNombreInput = partidaWrap.querySelector('[data-f="p_prod_nombre"]');
         var prodPrecioInput = partidaWrap.querySelector('[data-f="p_prod_precio"]');
+        var prodCosteInput = partidaWrap.querySelector('[data-f="p_prod_coste"]');
         var prodUnidadInput = partidaWrap.querySelector('[data-f="p_prod_unidad"]');
         var prodImagenInput = partidaWrap.querySelector('[data-f="p_prod_imagen_actual"]');
         var baseEl = partidaWrap.querySelector('[data-f="p_precio_base"]');
@@ -442,6 +443,12 @@
         if (precioInput) precioInput.value = (base + nuevoPrecioProd).toFixed(2);
         if (prodNombreInput) prodNombreInput.value = op.nombre || "";
         if (prodPrecioInput) prodPrecioInput.value = (nuevoPrecioProd || "").toString();
+        // El coste de compra es del producto elegido: sin copiarlo, la partida
+        // vendería un material del que no consta el coste y el beneficio
+        // contaría todo su importe como margen.
+        if (prodCosteInput) {
+          prodCosteInput.value = (op.coste != null && op.coste !== "") ? String(op.coste) : "";
+        }
         if (prodUnidadInput) prodUnidadInput.value = op.unidad || "";
         if (prodImagenInput) prodImagenInput.value = op.imagen || "";
         if (partidaWrap._actualizarResumenProducto) partidaWrap._actualizarResumenProducto();
@@ -2170,6 +2177,7 @@
               var precioInput = partidaWrap.querySelector('[data-f="p_precio"]');
               var prodNombreInput = partidaWrap.querySelector('[data-f="p_prod_nombre"]');
               var prodPrecioInput = partidaWrap.querySelector('[data-f="p_prod_precio"]');
+              var prodCosteInput = partidaWrap.querySelector('[data-f="p_prod_coste"]');
               var prodUnidadInput = partidaWrap.querySelector('[data-f="p_prod_unidad"]');
               var prodImagenInput = partidaWrap.querySelector('[data-f="p_prod_imagen_actual"]');
               var baseEl = partidaWrap.querySelector('[data-f="p_precio_base"]');
@@ -2178,6 +2186,14 @@
               if (precioInput) precioInput.value = (base + nuevoPrecioProd).toFixed(2);
               if (prodNombreInput) prodNombreInput.value = op.nombre || "";
               if (prodPrecioInput) prodPrecioInput.value = (nuevoPrecioProd || "").toString();
+              // El coste de compra viaja con el producto elegido: si no se
+              // copia, la partida pasa a vender un material del que no consta
+              // el coste y el beneficio saldría inflado (todo el importe como
+              // margen). Cada opción guarda el suyo, así que se copia tal cual
+              // (vacío si esa opción no lo tiene informado).
+              if (prodCosteInput) {
+                prodCosteInput.value = (op.coste != null && op.coste !== "") ? String(op.coste) : "";
+              }
               if (prodUnidadInput) prodUnidadInput.value = op.unidad || "";
               if (prodImagenInput) prodImagenInput.value = op.imagen || "";
               if (precioInput) precioInput.dispatchEvent(new Event("input", { bubbles: true }));

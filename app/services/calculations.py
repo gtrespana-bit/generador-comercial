@@ -44,6 +44,11 @@ class Totales:
     # calentadores, electrodomésticos...). Se separan para que el margen de
     # la obra no se distorsione con compras de paso para el cliente.
     total_productos: Decimal = Decimal("0")
+    # Productos cuyo coste de compra está informado (importe de venta) y
+    # partidas que venden un producto cuyo coste no consta. Sin esa
+    # distinción, la venta del material acababa pareciendo beneficio.
+    productos_con_coste: Decimal = Decimal("0")
+    productos_sin_coste: int = 0
     coste_productos: Decimal = Decimal("0")
     margen_productos: Decimal = Decimal("0")
     margen_productos_pct: Decimal = Decimal("0")
@@ -57,6 +62,16 @@ class Totales:
     # base_productos`` para que las dos filas del desglose sumen exactamente la
     # base imponible del documento (el céntimo de redondeo lo absorbe la obra).
     base_productos: Decimal = Decimal("0")
+
+    @property
+    def coste_productos_incompleto(self) -> bool:
+        """Hay productos vendidos cuyo coste de compra no consta.
+
+        El margen de productos que se informe será solo el de los productos
+        documentados; quien lo muestre debe decirlo, en vez de presentar un
+        cero o un beneficio inflado.
+        """
+        return self.productos_sin_coste > 0
 
 
 def tipo_partida(partida) -> str:
@@ -100,10 +115,83 @@ def importe_partida(partida) -> Decimal:
     return money(cantidad * precio)
 
 
+def producto_opcion_elegida(partida):
+    """Opción de producto que manda hoy en la partida (o ``None``).
+
+    Mismo criterio que usa el precio y el PDF: primero la opción marcada como
+    seleccionada y, si no hay ninguna, la que coincide con el nombre del
+    producto primario.
+    """
+    seleccionada = getattr(partida, "producto_seleccionado", None)
+    if seleccionada is not None:
+        return seleccionada
+    opciones = getattr(partida, "productos_opciones", None) or []
+    nombre = (getattr(partida, "producto_nombre", "") or "").strip().lower()
+    if nombre:
+        for opcion in opciones:
+            if (getattr(opcion, "nombre", "") or "").strip().lower() == nombre:
+                return opcion
+    return None
+
+
+def producto_coste_unitario(partida) -> Decimal | None:
+    """Coste de compra por unidad del producto de la partida, o ``None``.
+
+    Prioridad:
+
+      1) el coste congelado en la propia partida (``producto_coste``);
+      2) el de la opción elegida entre las alternativas, que es donde vive el
+         coste cuando la partida se montó con varios productos a elegir.
+
+    ``None`` significa «no se conoce», que no es lo mismo que un coste de 0:
+    sin este dato no se puede calcular el beneficio del producto y la venta
+    entera no debe presentarse como margen.
+    """
+    if not tiene_producto(partida):
+        return None
+    propio = getattr(partida, "producto_coste", None)
+    if _numero_informado(propio):
+        return D(propio)
+    opcion = producto_opcion_elegida(partida)
+    if opcion is not None:
+        coste = getattr(opcion, "coste", None)
+        if _numero_informado(coste):
+            return D(coste)
+    return None
+
+
+def producto_coste_pendiente(partida) -> bool:
+    """¿La partida vende un producto del que no se conoce el coste de compra?
+
+    Es la señal que impide calcular un beneficio falso: si el cliente está
+    pagando un material cuyo coste no consta, el importe de ese material no es
+    beneficio, es un dato que falta.
+    """
+    if importe_producto_partida(partida) <= 0:
+        return False
+    return producto_coste_unitario(partida) is None
+
+
+def _numero_informado(valor) -> bool:
+    """True si el campo trae un número (0 es un dato válido, vacío no)."""
+    if valor is None:
+        return False
+    if isinstance(valor, str):
+        return valor.strip() != ""
+    return True
+
+
 def coste_producto_partida(partida) -> Decimal:
-    """Coste del producto comercial asociado a una partida."""
+    """Coste del producto comercial asociado a una partida.
+
+    Devuelve 0 cuando el coste no se conoce, porque es un sumando del coste
+    interno; para distinguir «coste cero» de «coste sin informar» usa
+    :func:`producto_coste_unitario` o :func:`producto_coste_pendiente`.
+    """
+    coste_unit = producto_coste_unitario(partida)
+    if coste_unit is None:
+        return Decimal("0")
     cantidad = D(getattr(partida, "cantidad_total", 0))
-    coste_unit = D(getattr(partida, "producto_coste", 0))
     return money(cantidad * coste_unit)
 
 
@@ -213,17 +301,36 @@ def coste_obra_partida(partida) -> Decimal:
 
 
 def coste_partida(partida) -> Decimal:
+    """Coste interno de la partida: obra y recursos + producto (si consta)."""
     return money(coste_obra_partida(partida) + coste_producto_partida(partida))
 
 
 def beneficio_partida(partida) -> Decimal:
-    """Beneficio bruto de una partida = importe de venta − coste interno."""
+    """Beneficio bruto de una partida, sin contar lo que no se conoce.
+
+    Con el coste del producto informado es «venta − coste». Si la partida
+    vende un producto sin coste de compra, su importe **no** se cuenta como
+    beneficio: se devuelve el margen de la parte documentada (obra y recursos)
+    y ``producto_coste_pendiente`` queda marcado para que la ficha lo explique.
+    Presentar la venta íntegra del material como margen daría cifras absurdas
+    (miles por ciento sobre coste).
+    """
+    if producto_coste_pendiente(partida):
+        return money(importe_base_partida(partida) - coste_obra_partida(partida))
     return money(importe_partida(partida) - coste_partida(partida))
 
 
 def margen_partida_pct(partida) -> Decimal:
-    """Margen de beneficio (%) de una partida sobre su importe de venta."""
-    importe = importe_partida(partida)
+    """Margen de beneficio (%) de una partida sobre la venta que se compara.
+
+    Con productos sin coste informado el porcentaje se calcula sobre la parte
+    documentada (la base de obra), para que no mezcle material del que no se
+    sabe el coste.
+    """
+    importe = (
+        importe_base_partida(partida) if producto_coste_pendiente(partida)
+        else importe_partida(partida)
+    )
     if importe <= 0:
         return Decimal("0")
     beneficio = beneficio_partida(partida)
@@ -242,7 +349,9 @@ def calcular_totales(presupuesto) -> Totales:
     alternativas = Decimal("0")
     coste_interno = Decimal("0")
     total_productos = Decimal("0")
+    productos_con_coste = Decimal("0")
     coste_productos = Decimal("0")
+    productos_sin_coste = 0
     subtotal_obra = Decimal("0")
     coste_obra = Decimal("0")
 
@@ -263,10 +372,19 @@ def calcular_totales(presupuesto) -> Totales:
             incluido += importe
         if activa:
             importe_producto = importe_producto_partida(partida) if tiene_producto(partida) else Decimal("0")
-            # Si no se conoce el coste del producto, no se debe presentar su
-            # venta entera como beneficio. Se deja coste 0, pero el margen de
-            # productos solo será fiable cuando ese coste esté cargado.
-            coste_producto = coste_producto_partida(partida) if (tiene_producto(partida) and getattr(partida, "producto_coste", None) is not None) else Decimal("0")
+            # El coste de compra puede vivir en la partida o en la opción de
+            # producto elegida. Cuando no consta en ninguno de los dos sitios
+            # no se inventa nada: la venta del producto no se suma como
+            # beneficio y la partida queda contada aparte para poder avisar.
+            coste_unitario_producto = producto_coste_unitario(partida) if tiene_producto(partida) else None
+            if importe_producto > 0 and coste_unitario_producto is None:
+                productos_sin_coste += 1
+            elif coste_unitario_producto is not None:
+                productos_con_coste += importe_producto
+            coste_producto = (
+                money(D(getattr(partida, "cantidad_total", 0)) * coste_unitario_producto)
+                if coste_unitario_producto is not None else Decimal("0")
+            )
             importe_obra = money(importe - importe_producto)
             coste_obra_partida_total = coste_obra_partida(partida)
 
@@ -283,6 +401,7 @@ def calcular_totales(presupuesto) -> Totales:
     # hasta que el usuario los marca como seleccionados.
     base_partidas = money(incluido)
     total_productos = money(total_productos)
+    productos_con_coste = money(productos_con_coste)
     coste_productos = money(coste_productos)
     subtotal_obra = money(subtotal_obra)
     coste_obra = money(coste_obra)
@@ -318,10 +437,21 @@ def calcular_totales(presupuesto) -> Totales:
     base_obra = money(bruto_obra - descuento_obra)
     base_productos = money(bruto_productos - descuento_productos)
 
-    # Beneficio real total = obra + productos cuando se conoce el coste de
-    # compra de los productos. El IVA NO es beneficio.
+    # Los productos cuyo coste de compra NO consta quedan fuera del margen:
+    # su venta no es beneficio (es un dato que falta) y tampoco se puede
+    # decir que su margen sea 0. El margen de productos se calcula, pues,
+    # sobre los productos cuyo coste sí se conoce, con su parte proporcional
+    # del descuento comercial; ``productos_sin_coste`` avisa de los pendientes.
+    if bruto > 0:
+        descuento_productos_con_coste = money(descuento * productos_con_coste / bruto)
+    else:
+        descuento_productos_con_coste = Decimal("0")
+    base_productos_con_coste = money(productos_con_coste - descuento_productos_con_coste)
+
+    # Beneficio real total = obra + productos documentados. El IVA NO es
+    # beneficio: es un impuesto que se recauda y se entrega.
     margen_obra = money(base_obra - coste_obra - costes_adicionales)
-    margen_productos = money(base_productos - coste_productos) if coste_productos > 0 else Decimal("0")
+    margen_productos = money(base_productos_con_coste - coste_productos)
     margen = money(margen_obra + margen_productos)
 
     return Totales(
@@ -338,9 +468,11 @@ def calcular_totales(presupuesto) -> Totales:
         margen=margen,
         margen_pct=_pct_sobre_base(margen, base),
         total_productos=total_productos,
+        productos_con_coste=productos_con_coste,
+        productos_sin_coste=productos_sin_coste,
         coste_productos=coste_productos,
         margen_productos=margen_productos,
-        margen_productos_pct=_pct_sobre_base(margen_productos, base_productos),
+        margen_productos_pct=_pct_sobre_base(margen_productos, base_productos_con_coste),
         subtotal_obra=subtotal_obra,
         coste_obra=money(coste_obra),
         margen_obra=margen_obra,
