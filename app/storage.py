@@ -8,6 +8,7 @@ modelos comerciales.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import lru_cache
 import hashlib
@@ -533,9 +534,53 @@ def save_object(
     return stored
 
 
+def _cache_objetivo(key: str) -> Path:
+    """Ruta local del objeto privado dentro de la caché temporal.
+
+    La misma que usa ``materialize_reference``: el nombre es el hash de la
+    clave (opaca) más su extensión, así que dos referencias al mismo objeto
+    comparten archivo y una referencia nueva nunca reutiliza el anterior.
+    """
+    extension = Path(key).suffix.lower()[:12]
+    cache = Path(tempfile.gettempdir()) / "cotizat-storage-cache"
+    if cache.is_symlink():
+        raise StorageError("La caché temporal de archivos no es segura.")
+    cache.mkdir(parents=True, exist_ok=True, mode=0o700)
+    try:
+        os.chmod(cache, 0o700)
+    except OSError:
+        pass
+    objetivo = cache / (hashlib.sha256(key.encode()).hexdigest() + extension)
+    if objetivo.is_symlink():
+        raise StorageError("El archivo temporal no es seguro.")
+    return objetivo
+
+
+def _guardar_en_cache(objetivo: Path, datos: bytes) -> None:
+    """Escribe en la caché temporal de forma atómica (nunca a medias)."""
+    temporal = objetivo.with_name(objetivo.name + ".tmp-" + uuid.uuid4().hex[:8])
+    try:
+        temporal.write_bytes(datos)
+        os.chmod(temporal, 0o600)
+        os.replace(temporal, objetivo)
+    finally:
+        temporal.unlink(missing_ok=True)
+
+
 def read_reference(reference: str) -> bytes:
     key = object_key_from_reference(reference)
     if key is not None:
+        # Si el archivo ya está en la caché temporal (lo dejó la precarga del
+        # documento o `materialize_reference`) se devuelve de ahí: es el mismo
+        # objeto y evita otra vuelta a la red. Esta función no escribe en la
+        # caché a propósito: también se usa para exportar respaldos completos,
+        # y no debe llenar el /tmp del contenedor con todos los archivos.
+        try:
+            cacheado = _cache_objetivo(key)
+        except StorageError:
+            cacheado = None
+        if cacheado is not None and cacheado.is_file():
+            return cacheado.read_bytes()
         return get_storage_backend().read(key)
     clean = str(reference or "").strip().lstrip("/")
     if clean.startswith("static/"):
@@ -549,6 +594,24 @@ def read_reference(reference: str) -> bytes:
     if path.stat().st_size > MAX_OBJECT_SIZE:
         raise StorageError("El objeto supera el tamaño permitido.")
     return path.read_bytes()
+
+
+def read_reference_cached(reference: str) -> bytes:
+    """Lee un archivo dejándolo además en la caché temporal.
+
+    Es la lectura que usan los generadores de documentos (anexos, planos):
+    cada objeto privado se descarga por HTTP y, sin esta caché, el mismo
+    archivo se bajaba entero en cada pasada del generador y otra vez si
+    aparecía en dos sitios del documento. ``read_reference`` sigue siendo la
+    lectura general (respaldos, comprobantes), que no escribe en /tmp.
+    """
+    if object_key_from_reference(reference) is None:
+        return read_reference(reference)
+    ruta = materialize_reference(reference)
+    try:
+        return ruta.read_bytes()
+    except OSError as exc:
+        raise StorageError("El archivo solicitado no existe.") from exc
 
 
 def delete_object(db, reference: str) -> None:
@@ -610,25 +673,46 @@ def materialize_reference(reference: str) -> Path:
     local = backend.local_path(key)
     if local is not None:
         return local
-    extension = Path(key).suffix.lower()[:12]
-    cache = Path(tempfile.gettempdir()) / "cotizat-storage-cache"
-    if cache.is_symlink():
-        raise StorageError("La caché temporal de archivos no es segura.")
-    cache.mkdir(parents=True, exist_ok=True, mode=0o700)
-    try:
-        os.chmod(cache, 0o700)
-    except OSError:
-        pass
-    target = cache / (hashlib.sha256(key.encode()).hexdigest() + extension)
-    if target.is_symlink():
-        raise StorageError("El archivo temporal no es seguro.")
+    target = _cache_objetivo(key)
     if not target.is_file():
-        data = backend.read(key)
-        temporary = target.with_name(target.name + ".tmp-" + uuid.uuid4().hex[:8])
-        try:
-            temporary.write_bytes(data)
-            os.chmod(temporary, 0o600)
-            os.replace(temporary, target)
-        finally:
-            temporary.unlink(missing_ok=True)
+        _guardar_en_cache(target, backend.read(key))
     return target
+
+
+def precargar_referencias(referencias, max_workers: int = 8) -> int:
+    """Deja en la caché local las referencias privadas, en paralelo.
+
+    Cada objeto privado se descarga por HTTP, con su latencia de red. Cuando
+    un documento incrusta decenas de archivos (fotos de producto, planos,
+    anexos) hacerlo en serie multiplica esa latencia por el número de
+    archivos —de ahí las descargas que parecían colgadas—; en paralelo se
+    paga la más lenta. Es «best effort»: lo que no llegue simplemente no se
+    dibuja, igual que antes. Devuelve cuántas referencias quedaron listas.
+    """
+    pendientes: list[str] = []
+    vistas: set[str] = set()
+    for referencia in referencias:
+        texto = str(referencia or "").strip()
+        if not texto or texto in vistas:
+            continue
+        vistas.add(texto)
+        try:
+            if object_key_from_reference(texto) is None:
+                continue
+        except StorageError:
+            continue
+        pendientes.append(texto)
+    if not pendientes:
+        return 0
+
+    def _traer(referencia: str) -> bool:
+        try:
+            return materialize_reference(referencia).is_file()
+        except (StorageError, OSError, ValueError):
+            return False
+
+    if len(pendientes) == 1:
+        return 1 if _traer(pendientes[0]) else 0
+    trabajadores = max(1, min(int(max_workers or 1), len(pendientes)))
+    with ThreadPoolExecutor(max_workers=trabajadores) as ejecutor:
+        return sum(1 for listo in ejecutor.map(_traer, pendientes) if listo)

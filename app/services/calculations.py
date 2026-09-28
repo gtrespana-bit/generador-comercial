@@ -51,6 +51,12 @@ class Totales:
     coste_obra: Decimal = Decimal("0")
     margen_obra: Decimal = Decimal("0")
     margen_obra_pct: Decimal = Decimal("0")
+    # Reparto del precio que ve el cliente (desglose del PDF): importe de
+    # venta de los productos elegidos, ya con el descuento comercial repartido
+    # proporcionalmente. La parte de obra se deriva como ``base -
+    # base_productos`` para que las dos filas del desglose sumen exactamente la
+    # base imponible del documento (el céntimo de redondeo lo absorbe la obra).
+    base_productos: Decimal = Decimal("0")
 
 
 def tipo_partida(partida) -> str:
@@ -109,6 +115,55 @@ def _costes_unitarios_campos(partida) -> Decimal:
     return materiales + mano_obra + complementarios + otros
 
 
+# ---------------------------------------------------------------------------
+# Caché del recálculo de descompuestos CYPE
+# ---------------------------------------------------------------------------
+# ``recalcular_descompuesto_cype`` es una función pura de las filas, pero se
+# invoca una vez por partida y otra vez por cada lectura de totales: en un
+# presupuesto de 400 partidas con 8 lecturas de totales eran 3 200 llamadas
+# (≈1,3 s medidos con cProfile, el mayor coste de CPU del PDF). La clave es el
+# contenido de las filas —no la identidad del objeto—, así que una edición
+# siempre recalcula y la caché solo ahorra trabajo repetido. El diccionario
+# devuelto es de solo lectura para quien lo consume desde aquí.
+_CACHE_DESCOMPUESTOS: dict[tuple, dict] = {}
+_MAX_CACHE_DESCOMPUESTOS = 256
+
+
+def _filas_fingerprint(filas) -> tuple:
+    return tuple(
+        (
+            getattr(fila, "tipo", None),
+            getattr(fila, "grupo", None),
+            getattr(fila, "codigo", None),
+            getattr(fila, "unidad", None),
+            getattr(fila, "categoria", None),
+            getattr(fila, "rendimiento", None),
+            getattr(fila, "precio_unitario", None),
+        )
+        for fila in filas
+    )
+
+
+def recalcular_descompuesto_cacheado(filas) -> dict:
+    """Igual que ``importer.recalcular_descompuesto_cype`` pero sin repetir el
+    mismo cálculo dentro de la misma generación de documento."""
+    clave = _filas_fingerprint(filas)
+    resultado = _CACHE_DESCOMPUESTOS.get(clave)
+    if resultado is None:
+        from .importer import recalcular_descompuesto_cype
+
+        resultado = recalcular_descompuesto_cype(filas)
+        if len(_CACHE_DESCOMPUESTOS) >= _MAX_CACHE_DESCOMPUESTOS:
+            _CACHE_DESCOMPUESTOS.clear()
+        _CACHE_DESCOMPUESTOS[clave] = resultado
+    return resultado
+
+
+def vaciar_cache_descompuestos() -> None:
+    """Olvida los recálculos memorizados (pruebas y mantenimiento)."""
+    _CACHE_DESCOMPUESTOS.clear()
+
+
 def coste_obra_partida(partida) -> Decimal:
     """Coste interno de obra/materiales, sin contar el producto comercial.
 
@@ -139,8 +194,7 @@ def coste_obra_partida(partida) -> Decimal:
         # ve en el editor al reconstruir la misma descomposición.
         filas = getattr(descompuesto, "filas", None)
         if filas:
-            from .importer import recalcular_descompuesto_cype
-            resultado = recalcular_descompuesto_cype(filas)
+            resultado = recalcular_descompuesto_cacheado(filas)
             directo = D(resultado.get("coste_directo", 0))
             if es_cype:
                 return money(cantidad * directo)
@@ -291,4 +345,5 @@ def calcular_totales(presupuesto) -> Totales:
         coste_obra=money(coste_obra),
         margen_obra=margen_obra,
         margen_obra_pct=_pct_sobre_base(margen_obra, base_obra),
+        base_productos=base_productos,
     )

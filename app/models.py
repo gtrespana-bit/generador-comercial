@@ -634,6 +634,13 @@ class Presupuesto(TenantMixin, Base):
     estilo_pdf = Column(String(30), default="elegante")
     mostrar_ahorro = Column(Boolean, default=False)
     incluir_anexos = Column(Boolean, default=False)
+    # Desglose comercial del precio en el bloque de totales del PDF: cuánto del
+    # importe final corresponde a los productos elegidos y cuánto a la mano de
+    # obra, los recursos y la ejecución de los trabajos. Es un **reparto del
+    # precio de venta**, nunca el coste interno ni el margen (eso sigue en
+    # «Configuración → Mostrar costes internos», solo para la empresa).
+    # Apagado por defecto: se activa presupuesto a presupuesto.
+    mostrar_desglose_precio = Column(Boolean, default=False)
     numero_control = Column(String(80), default="")
     fecha_tipo_cambio = Column(Date, nullable=True)
     retencion_pct = Column(Float, default=0.0)
@@ -728,7 +735,6 @@ class Presupuesto(TenantMixin, Base):
     @property
     def total_productos(self):
         return float(self._totales.total_productos)
-
     @property
     def coste_productos(self):
         return float(self._totales.coste_productos)
@@ -740,6 +746,29 @@ class Presupuesto(TenantMixin, Base):
     @property
     def margen_productos_pct(self):
         return float(self._totales.margen_productos_pct)
+
+    @property
+    def base_productos(self):
+        """Importe de venta de los productos elegidos dentro de la base imponible."""
+        return float(self._totales.base_productos)
+
+    @property
+    def desglose_precio(self) -> tuple[float, float]:
+        """Reparto del precio de venta: (productos, mano de obra y trabajos).
+
+        Las dos cifras suman exactamente la base imponible del documento. La
+        parte de obra absorbe el céntimo de redondeo para que el cliente pueda
+        comprobar la suma sin que le falte ni le sobre nada.
+        """
+        from decimal import Decimal
+
+        from .services.calculations import money
+
+        totales = self._totales
+        productos = min(totales.base_productos, totales.base)
+        if productos < 0:
+            productos = Decimal("0")
+        return float(money(productos)), float(money(totales.base - productos))
 
     @property
     def subtotal_obra(self):
@@ -2240,6 +2269,7 @@ def migrar(engine):
             ("estilo_pdf", "VARCHAR(30) DEFAULT 'elegante'"),
             ("mostrar_ahorro", "BOOLEAN DEFAULT 0"),
             ("incluir_anexos", "BOOLEAN DEFAULT 0"),
+            ("mostrar_desglose_precio", "BOOLEAN DEFAULT 0"),
             ("total_calculado", "FLOAT"),
             ("numero_control", "VARCHAR(80) DEFAULT ''"), ("fecha_tipo_cambio", "DATE"),
             ("retencion_pct", "FLOAT DEFAULT 0"), ("operacion_exenta", "BOOLEAN DEFAULT 0"), ("clausula_cambiaria", "TEXT DEFAULT ''"),

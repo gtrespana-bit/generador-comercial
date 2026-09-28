@@ -21,7 +21,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas as pdfcanvas
 
-from ..storage import read_reference
+from ..storage import read_reference_cached
 from . import pdf_anexos
 
 log = logging.getLogger("cotizat")
@@ -112,7 +112,7 @@ def _dibujar_imagen_con_mediciones(c, plano, mediciones, x0, y0, ancho_pag):
     img = None
     if (plano.content_type or "").startswith("image/"):
         try:
-            datos = read_reference(plano.archivo)
+            datos = read_reference_cached(plano.archivo)
             img = ImageReader(io.BytesIO(datos))
             iw, ih = img.getSize()
         except Exception:

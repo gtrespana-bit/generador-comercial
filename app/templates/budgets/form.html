@@ -244,6 +244,7 @@
                 {% endif %}>
               Bloque de firmas de aceptación al final
             </label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_desglose_precio" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_desglose_precio else '' }}> Desglose del precio: productos elegidos y mano de obra</label>
             <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> Mostrar ahorro y descuento comercial</label>
             <label class="csp-s-4ef216fae4"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> Incluir anexos PDF dentro del documento</label>
           </div>

@@ -255,3 +255,30 @@ exportan desde Analítica y no se restauran junto con los presupuestos.
 
 Consulta [`CONVERSACIONES_ASISTENTE.md`](CONVERSACIONES_ASISTENTE.md) para la
 matriz de comprobación, privacidad y derechos de acceso/eliminación.
+
+## Desglose del precio en el PDF (28/09/2026)
+
+Sobre la instalación que ya está en `g7c8d9e0f1a2`, el nuevo paso obligatorio es
+`h1c4b7e9a3d2`. Ejecuta `docs/staging_upgrade_h1c4b7e9a3d2.sql` en el SQL Editor
+solo si `SELECT version_num FROM public.alembic_version` devuelve
+`g7c8d9e0f1a2`, o deja que Alembic lo aplique con la URL administrativa:
+
+```bash
+export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/cotizat?sslmode=require'
+alembic current                  # g7c8d9e0f1a2
+alembic upgrade head
+alembic current                  # h1c4b7e9a3d2
+unset MIGRATION_DATABASE_URL
+```
+
+La revisión añade `presupuestos.mostrar_desglose_precio boolean DEFAULT false`:
+la casilla con la que cada presupuesto decide si su PDF reparte la base
+imponible entre los productos elegidos y la mano de obra y ejecución. Los
+presupuestos existentes quedan como estaban (el PDF no cambia hasta que se marque
+la casilla al editar). No uses `cotizat_runtime` para migrar.
+
+Comprobación posterior: abre un presupuesto, marca «Desglose del precio:
+productos elegidos y mano de obra» en las opciones de maquetación del PDF, guarda
+y descarga; las dos filas nuevas del bloque de totales deben sumar exactamente la
+`BASE IMPONIBLE`. El detalle funcional está en
+[`DESGLOSE_DEL_PRECIO_EN_EL_PDF.md`](DESGLOSE_DEL_PRECIO_EN_EL_PDF.md).

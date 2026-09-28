@@ -123,6 +123,10 @@ def _presupuesto(cliente: Cliente) -> Presupuesto:
         mostrar_resumen_capitulos=True,
         mostrar_garantias=True,
         mostrar_firmas=True,
+        # El ejemplo público enseña el desglose del precio (productos elegidos
+        # frente a mano de obra y ejecución), la función que explica al cliente
+        # en qué se va el importe final.
+        mostrar_desglose_precio=True,
         notas=(
             NOTA_ILUSTRATIVA
             + "\nIncluye mano de obra especializada, materiales de primera "

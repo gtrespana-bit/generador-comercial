@@ -643,7 +643,7 @@ def test_pdf_del_presupuesto_incluye_anexo_de_planos(monkeypatch):
     buf = io.BytesIO()
     Image.new("RGB", (400, 300), (248, 250, 252)).save(buf, "PNG")
     almacen = {"storage://a/planta.png": buf.getvalue()}
-    monkeypatch.setattr(pdf_planos, "read_reference", lambda ref: almacen[ref])
+    monkeypatch.setattr(pdf_planos, "read_reference_cached", lambda ref: almacen[ref])
 
     plano = PlanoObra(
         nombre="Planta baja",

@@ -598,13 +598,15 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         c2d4e6f8a1b3_operador_gestion_cliente_y_cobros as fase2_migracion,
         d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migracion,
         g7c8d9e0f1a2_conversaciones_asistente as chats_migracion,
+        h1c4b7e9a3d2_mostrar_desglose_precio as desglose_migracion,
     )
     # Fase 3 (web + CRM + salud/operación), uso real de presupuestos y
     # conversaciones del asistente forman ahora la cabeza.
     from migrations.versions import (
         f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_migracion,
     )
-    assert chats_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert desglose_migracion.down_revision == chats_migracion.revision
+    assert desglose_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

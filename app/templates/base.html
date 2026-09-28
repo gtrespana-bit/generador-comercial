@@ -474,12 +474,40 @@
     }
   }
 
+  // Estado visible mientras el servidor prepara el documento: en presupuestos
+  // grandes la generación tarda unos segundos y sin esta señal parecía que la
+  // descarga se había quedado colgada.
+  function marcarDescargaEnCurso(elemento) {
+    if (!elemento || !elemento.getAttribute) return;
+    if (!elemento.dataset.textoOriginal) {
+      elemento.dataset.textoOriginal = elemento.textContent;
+    }
+    elemento.textContent = 'Generando el PDF…';
+    elemento.setAttribute('aria-busy', 'true');
+    elemento.setAttribute('title', 'El documento se está preparando; puede tardar unos segundos.');
+    CotizatStyles.set(elemento, 'opacity', '0.65');
+    CotizatStyles.set(elemento, 'pointerEvents', 'none');
+  }
+
+  function terminarDescarga(elemento) {
+    if (!elemento || !elemento.getAttribute) return;
+    if (elemento.dataset.textoOriginal) {
+      elemento.textContent = elemento.dataset.textoOriginal;
+    }
+    elemento.removeAttribute('aria-busy');
+    elemento.removeAttribute('title');
+    CotizatStyles.set(elemento, 'opacity', '');
+    CotizatStyles.set(elemento, 'pointerEvents', '');
+  }
+
   function descargarPDF(event, url, filename) {
+    var boton = event && event.currentTarget ? event.currentTarget : null;
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
     if (!url) return;
 
+    marcarDescargaEnCurso(boton);
     fetch(url)
       .then(function(response) {
         if (!response.ok) {
@@ -503,6 +531,7 @@
           if (link.parentNode) link.parentNode.removeChild(link);
           window.URL.revokeObjectURL(blobUrl);
         }, 2000);
+        terminarDescarga(boton);
       })
       .catch(function(err) {
         // Si la descarga por blob falla, se navega a la URL: el servidor
@@ -510,6 +539,7 @@
         // descarga el archivo de forma nativa (o muestra el error si la
         // generación falló).
         console.warn('Fallo en descarga directa por blob, navegando a URL:', err);
+        terminarDescarga(boton);
         window.location.href = url;
       });
   }

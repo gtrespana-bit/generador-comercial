@@ -177,10 +177,12 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     from migrations.versions import d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migration
     from migrations.versions import f1b2c3d4e5a6_planos_vectoriales_schema as vectorial_migration
     from migrations.versions import f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_migration
+    from migrations.versions import h1c4b7e9a3d2_mostrar_desglose_precio as desglose_migration
     assert vectorial_migration.down_revision == "e4b8c2d6a190"
     assert uso_migration.down_revision == fase3_migration.revision
     assert chats_migration.down_revision == uso_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == chats_migration.revision
+    assert desglose_migration.down_revision == chats_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == desglose_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

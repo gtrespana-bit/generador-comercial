@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 import pytest
 from sqlalchemy import create_engine, inspect
@@ -278,3 +279,75 @@ def test_pdf_materializa_objeto_remoto_en_tmp(tmp_path, monkeypatch):
     path = storage.materialize_reference("storage://organizaciones/1/logos/logo.png")
     assert path.parent == tmp_path / "cotizat-storage-cache"
     assert path.suffix == ".png" and path.read_bytes() == b"imagen-remota"
+
+
+class _BackendContador(storage.StorageBackend):
+    """Backend remoto con latencia y contador, para medir lecturas reales."""
+
+    name = "supabase"
+    bucket = "cotizat-private"
+    lecturas = 0
+    latencia = 0.0
+
+    def put(self, *a, **k):
+        raise AssertionError("no debe escribir")
+
+    def read(self, object_key):
+        _BackendContador.lecturas += 1
+        if _BackendContador.latencia:
+            time.sleep(_BackendContador.latencia)
+        return b"imagen-remota"
+
+    def delete(self, *a, **k):
+        raise AssertionError("no debe borrar")
+
+
+def test_read_reference_reutiliza_la_cache_temporal(tmp_path, monkeypatch):
+    """Leer dos veces el mismo objeto no debe bajarlo dos veces por HTTP.
+
+    Planos y anexos se leen al menos una vez por pasada del generador y el
+    mismo archivo puede aparecer en dos sitios del documento.
+    """
+    _BackendContador.lecturas = 0
+    _BackendContador.latencia = 0.0
+    monkeypatch.setattr(storage, "get_storage_backend", lambda: _BackendContador())
+    monkeypatch.setattr(storage.tempfile, "gettempdir", lambda: str(tmp_path))
+    referencia = "storage://organizaciones/1/anexos/planos.pdf"
+
+    assert storage.read_reference_cached(referencia) == b"imagen-remota"
+    assert storage.read_reference_cached(referencia) == b"imagen-remota"
+    assert _BackendContador.lecturas == 1
+
+    # La ruta materializada es exactamente ese archivo cacheado…
+    ruta = storage.materialize_reference(referencia)
+    assert ruta.read_bytes() == b"imagen-remota"
+    assert _BackendContador.lecturas == 1
+    # …y la lectura general también lo reutiliza (sin escribir en /tmp).
+    assert storage.read_reference(referencia) == b"imagen-remota"
+    assert _BackendContador.lecturas == 1
+
+
+def test_precargar_referencias_baja_los_objetos_en_paralelo(tmp_path, monkeypatch):
+    """Cinco archivos remotos no deben sumar cinco latencias seguidas.
+
+    Es la causa de las descargas que parecían colgadas: cada foto, plano o
+    anexo esperaba su turno antes de empezar a maquetar. Con esta prueba se
+    fija que la espera total es la del archivo más lento, no la de todos.
+    """
+    _BackendContador.lecturas = 0
+    _BackendContador.latencia = 0.2
+    monkeypatch.setattr(storage, "get_storage_backend", lambda: _BackendContador())
+    monkeypatch.setattr(storage.tempfile, "gettempdir", lambda: str(tmp_path))
+    remotas = [f"storage://organizaciones/1/partidas/foto-{i}.png" for i in range(5)]
+    # Una vacía, una local y una repetida: no deben provocar lecturas extra.
+    referencias = remotas + ["", "static/logo.png", remotas[0]]
+
+    inicio = time.perf_counter()
+    listas = storage.precargar_referencias(referencias)
+    duracion = time.perf_counter() - inicio
+
+    assert listas == 5  # las locales y las repetidas no cuentan
+    assert _BackendContador.lecturas == 5
+    # En serie serían 1,0 s; en paralelo, la latencia de una (con holgura
+    # para máquinas de CI lentas).
+    assert duracion < 0.7, f"la precarga tardó {duracion:.2f} s"
