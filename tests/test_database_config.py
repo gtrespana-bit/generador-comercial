@@ -199,6 +199,24 @@ def test_head_actual_tiene_sql_de_aplicacion_manual_en_supabase():
     assert "UPDATE public.alembic_version" in contenido
 
 
+def test_auto_reparacion_incluye_desglose_del_precio():
+    """El arranque best-effort debe curar el 500 del último despliegue.
+
+    La migración h llegó con el modelo de ``Presupuesto``. Si Vercel publica
+    el código antes de ejecutar Alembic, el primer ``SELECT`` del inicio falla
+    con ``UndefinedColumn``; la reparación debe incluir el ALTER y solo marcar
+    h como aplicada después de comprobar la columna.
+    """
+    fuente = (RAIZ_REPO / "app" / "database.py").read_text(encoding="utf-8")
+    assert (
+        "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS mostrar_desglose_precio BOOLEAN DEFAULT false"
+        in fuente
+    )
+    bloque = fuente.split('cur == "g7c8d9e0f1a2"', 1)[1]
+    assert "if desglose_creada:" in bloque
+    assert "version_num = 'h1c4b7e9a3d2'" in bloque
+
+
 def test_auto_reparacion_incluye_altura_libre_de_planos():
     """El arranque best-effort debe curar también el incidente de planos.
 
