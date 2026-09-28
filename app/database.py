@@ -836,11 +836,12 @@ def _asegurar_funciones_lectura_admin_postgres(eng) -> bool:
 def _asegurar_esquema_postgres() -> None:
     """Intenta añadir columnas/permisos faltantes tras un deploy sin migrar (best-effort).
 
-    El error reportado en producción es ``UndefinedColumn: configuracion.
-    recorrido_inicial_oculto does not exist``: el modelo ya exige la columna
-    pero la base de PostgreSQL sigue en el head anterior (c3e9a1b7d4f2) porque
-    ``alembic upgrade head`` no se ejecutó. En Vercel el arranque no puede
-    quedar 500 hasta que alguien ejecute la migración a mano.
+    Los errores reportados en producción han sido ``UndefinedColumn`` de
+    columnas que llegaron con el código antes que el esquema: primero
+    ``configuracion.recorrido_inicial_oculto`` y ahora
+    ``presupuestos.mostrar_desglose_precio``. En Vercel el arranque no puede
+    quedar 500 hasta que alguien ejecute la migración a mano, por eso se
+    intentan reparar aquí cuando existe una URL con permisos DDL.
 
     Se usa ``ADD COLUMN IF NOT EXISTS`` (idempotente) y la URL de migración
     (``MIGRATION_DATABASE_URL``) cuando existe, porque el rol de la app
@@ -879,6 +880,11 @@ def _asegurar_esquema_postgres() -> None:
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fuente_tipo_cambio VARCHAR(120) DEFAULT ''",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS fecha_tasa DATE",
             "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS total_calculado FLOAT",
+            # Desglose del precio (head h1c4b7e9a3d2). Este campo llegó en el
+            # último deploy junto con el modelo y, si se publica el código sin
+            # ejecutar Alembic, cualquier SELECT completo de Presupuesto falla
+            # antes de que la ruta pueda mostrar la página de presupuestos.
+            "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS mostrar_desglose_precio BOOLEAN DEFAULT false",
             # Bloque planos: altura libre de paramentos (head e4b8c2d6a190).
             # El deploy del 23/08/2026 subió el modelo sin ejecutar la
             # migración y cada apertura del visor de planos devolvía 500 con
@@ -940,6 +946,12 @@ def _asegurar_esquema_postgres() -> None:
                     SELECT 1 FROM information_schema.columns
                     WHERE table_name = 'planos_obra'
                       AND column_name = 'altura_libre_m'
+                """)).first() is not None
+                desglose_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'presupuestos'
+                      AND column_name = 'mostrar_desglose_precio'
                 """)).first() is not None
                 # Bloque del editor vectorial (head f1b2c3d4e5a6): origen y
                 # grosor de tabique en planos_obra + tablero planos_elementos.
@@ -1036,6 +1048,22 @@ def _asegurar_esquema_postgres() -> None:
                         logging.getLogger("cotizat").warning(
                             "Faltan las funciones de lectura del panel: no se avanza "
                             "alembic_version. Ejecuta `alembic upgrade head`."
+                        )
+                elif cur == "g7c8d9e0f1a2":
+                    # La revisión h solo añade una columna booleana. Si el
+                    # ALTER anterior se ejecutó con la URL administrativa,
+                    # avanzar la marca evita que el siguiente despliegue vuelva
+                    # a tratar la base como pendiente y deja /readyz en verde.
+                    # Nunca se marca sin verificar la columna real: de lo
+                    # contrario se ocultaría el mismo UndefinedColumn que se
+                    # está intentando reparar.
+                    if desglose_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'h1c4b7e9a3d2'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de g7c8d9e0f1a2 a h1c4b7e9a3d2 tras crear mostrar_desglose_precio.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Falta presupuestos.mostrar_desglose_precio: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
                         )
                 elif cur is None:
                     logging.getLogger("cotizat").warning(
