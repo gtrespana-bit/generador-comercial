@@ -493,7 +493,13 @@
       panel.classList.add("abierto");
       if (launcher) launcher.classList.add("activo");
       var input = document.getElementById("cotizat-ia-input");
-      if (input) setTimeout(function () { input.focus(); }, 150);
+      if (input) setTimeout(function () {
+        try {
+          input.focus({ preventScroll: true });
+        } catch (_) {
+          input.focus();
+        }
+      }, 150);
       scrollAlFinal();
     } else {
       panel.classList.remove("abierto");
