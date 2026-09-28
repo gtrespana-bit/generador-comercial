@@ -33,7 +33,7 @@ from dataclasses import dataclass
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import ArrayObject, NameObject
 
-from ..storage import StorageError, read_reference
+from ..storage import StorageError, read_reference_cached
 
 log = logging.getLogger("cotizat")
 
@@ -92,7 +92,7 @@ def _leer(adjunto) -> Anexo:
     anexo = Anexo(nombre=nombre)
     referencia = str(getattr(adjunto, "archivo", "") or "")
     try:
-        datos = read_reference(referencia)
+        datos = read_reference_cached(referencia)
     except (StorageError, OSError, ValueError) as exc:
         log.warning("Anexo '%s' no disponible (%s): %s", nombre, referencia, exc)
         anexo.motivo = MOTIVO_ILEGIBLE

@@ -20,6 +20,7 @@ from migrations.versions import (
     d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migracion,
     f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_presupuestos_migracion,
     g7c8d9e0f1a2_conversaciones_asistente as conversaciones_migracion,
+    h1c4b7e9a3d2_mostrar_desglose_precio as desglose_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -235,10 +236,11 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [conversaciones_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({conversaciones_migracion.revision}); "
+    assert cabezas == [desglose_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({desglose_migracion.revision}); "
         f"hay: {cabezas}"
     )
+    assert desglose_migracion.down_revision == conversaciones_migracion.revision
     assert conversaciones_migracion.down_revision == uso_presupuestos_migracion.revision
     assert uso_presupuestos_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

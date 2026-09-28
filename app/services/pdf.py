@@ -16,13 +16,21 @@ Genera un documento comercial estructurado para presupuestos de obra:
   · Pie de página con numeración «n/N».
 """
 import io
+import logging
+import time
+from decimal import Decimal
 from pathlib import Path
 from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
 
 from ..database import BASE_DIR, UPLOADS_DIR
-from ..storage import StorageError, materialize_reference, object_key_from_reference
+from ..storage import (
+    StorageError,
+    materialize_reference,
+    object_key_from_reference,
+    precargar_referencias,
+)
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
@@ -62,7 +70,7 @@ _CODIGO_PAIS_ACTUAL = ""
 def _money(valor: float) -> float:
     """Redondeo monetario único del PDF (ROUND_HALF_UP a 2 decimales),
     idéntico al motor de cálculos de la aplicación."""
-    from decimal import Decimal, ROUND_HALF_UP
+    from decimal import ROUND_HALF_UP
     try:
         return float(Decimal(str(valor or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     except Exception:
@@ -138,6 +146,12 @@ def _estilos():
         "tot_lab": ParagraphStyle("tot_lab", fontName="Lato-Bold", fontSize=12, leading=14.4, textColor=GRIS, alignment=TA_RIGHT),
         "tot_lab_s": ParagraphStyle("tot_lab_s", fontName="Lato-Bold", fontSize=10.5, leading=12.6, textColor=GRIS, alignment=TA_RIGHT),
         "tot_lab_g": ParagraphStyle("tot_lab_g", fontName="Lato-Bold", fontSize=13.5, leading=16.2, textColor=TEXTO, alignment=TA_RIGHT),
+        # Desglose del precio (productos / mano de obra) dentro del bloque de
+        # totales: dos filas indentadas, más pequeñas y en gris para que se
+        # lean como el detalle de la base imponible, no como otro total.
+        "desg_lab": ParagraphStyle("desg_lab", fontName="Lato", fontSize=9.6, leading=11.6, textColor=GRIS, alignment=TA_RIGHT),
+        "desg_val": ParagraphStyle("desg_val", fontName="Lato-Bold", fontSize=9.6, leading=11.6, textColor=TEXTO, alignment=TA_RIGHT),
+        "desg_nota": ParagraphStyle("desg_nota", fontName="Lato-Italic", fontSize=7.6, leading=9.4, textColor=GRIS_CLARO, alignment=TA_RIGHT),
         "nota": ParagraphStyle("nota", fontName="Lato", fontSize=9, leading=12.6, textColor=GRIS),
     }
 
@@ -163,6 +177,65 @@ def _fit_image(ruta: Path, max_w: float, max_h: float, halign="RIGHT"):
         return None
     escala = min(max_w / w, max_h / h)
     return Image(str(ruta), width=w * escala, height=h * escala, hAlign=halign)
+
+
+log = logging.getLogger("cotizat")
+
+
+def _referencias_imagenes(presupuesto, config) -> list:
+    """Archivos que el documento puede acabar incrustando.
+
+    Logotipo, foto de proyecto, firma del cliente, imágenes de producto (la
+    del producto principal de cada partida y las de cada alternativa a elegir)
+    y, cuando los anexos están activados, los archivos de anexos y planos.
+    """
+    referencias = [
+        getattr(config, "logo", ""),
+        getattr(presupuesto, "foto_proyecto", ""),
+        getattr(presupuesto, "firma_cliente", ""),
+    ]
+    try:
+        for capitulo in getattr(presupuesto, "capitulos", None) or []:
+            for partida in getattr(capitulo, "partidas", None) or []:
+                referencias.append(getattr(partida, "producto_imagen", ""))
+                for opcion in getattr(partida, "productos_opciones", None) or []:
+                    referencias.append(getattr(opcion, "imagen", ""))
+        if getattr(presupuesto, "incluir_anexos", False):
+            for anexo in getattr(presupuesto, "anexos", None) or []:
+                referencias.append(getattr(anexo, "archivo", ""))
+            for plano in getattr(presupuesto, "planos", None) or []:
+                referencias.append(getattr(plano, "archivo", ""))
+    except Exception:
+        # Un presupuesto desligado de la sesión (pruebas, objetos sueltos) no
+        # debe impedir la precarga de lo que sí se ha podido leer.
+        log.debug("No se pudieron listar todos los archivos del PDF", exc_info=True)
+    return [str(referencia) for referencia in referencias if referencia]
+
+
+def _precargar_recursos(presupuesto, config) -> int:
+    """Descarga en paralelo los archivos privados antes de maquetar.
+
+    En serie, cada foto de producto, plano o anexo sumaba su latencia de red
+    antes de empezar a dibujar (el contenedor en la nube arranca con la caché
+    temporal vacía). La descarga es best effort: lo que no llegue se dibuja
+    igual que antes, simplemente sin esa imagen.
+    """
+    referencias = _referencias_imagenes(presupuesto, config)
+    if not referencias:
+        return 0
+    inicio = time.perf_counter()
+    try:
+        listas = precargar_referencias(referencias)
+    except Exception:
+        log.debug("La precarga de archivos del PDF falló", exc_info=True)
+        return 0
+    if listas:
+        log.info(
+            "Presupuesto %s: %d archivos precargados en %.2f s (%d referencias).",
+            getattr(presupuesto, "numero", "?"), listas,
+            time.perf_counter() - inicio, len(referencias),
+        )
+    return listas
 
 
 def _static_path(rel: str) -> Path:
@@ -776,9 +849,50 @@ def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None):
 # Bloque de totales y secciones finales
 # ---------------------------------------------------------------------------
 
-def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TOTAL", ctx=None):
+class _LecturaTotales:
+    """Totales de un documento leídos una sola vez.
+
+    ``Presupuesto._totales`` vuelve a ejecutar el motor de cálculo completo en
+    cada lectura y el bloque de totales necesita ocho cifras distintas: sin
+    esta vista, el PDF pagaba ocho pasadas del motor (≈1,3 s medidos con
+    cProfile en un presupuesto de 400 partidas). Los documentos que no exponen
+    ``_totales`` (documentos de cobro, facturas) siguen funcionando igual; sus
+    valores también quedan memorizados durante el render.
+    """
+
+    _ALIAS = {"descuento_monto": "descuento", "impuesto_monto": "impuesto"}
+
+    def __init__(self, documento):
+        self._documento = documento
+        self._interno = getattr(documento, "_totales", None)
+        self._cache: dict[str, float] = {}
+
+    def __getattr__(self, nombre: str):
+        if nombre.startswith("_"):
+            raise AttributeError(nombre)
+        if nombre in self._cache:
+            return self._cache[nombre]
+        interno = self._interno
+        clave = self._ALIAS.get(nombre, nombre)
+        if interno is not None and hasattr(interno, clave):
+            valor = getattr(interno, clave)
+        else:
+            valor = getattr(self._documento, nombre)
+        # El motor de totales devuelve ``Decimal`` y las plantillas de la
+        # factura/contrato exponen ``float``: se normaliza aquí para que quien
+        # lea la vista (que mezcla ambos, p. ej. ``cap.subtotal /
+        # subtotal_general``) no dependa del tipo del documento.
+        if isinstance(valor, Decimal):
+            valor = float(valor)
+        self._cache[nombre] = valor
+        return valor
+
+
+def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TOTAL", ctx=None,
+             totales=None):
     filas = []
     ancho_valor = 135
+    tot = totales if totales is not None else _LecturaTotales(presupuesto)
 
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
@@ -792,26 +906,28 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
         )
 
     if getattr(presupuesto, "usar_funciones_avanzadas", False):
-        filas.append([Paragraph("SUBTOTAL INCLUIDO", st["tot_lab_s"]), valor("subtotal", presupuesto.subtotal, "tot_lab_s"), ""])
-        if getattr(presupuesto, "subtotal_opcional", 0):
-            filas.append([Paragraph("OPCIONALES DISPONIBLES", st["tot_lab_s"]), valor("opcional", presupuesto.subtotal_opcional, "tot_lab_s"), ""])
-        if getattr(presupuesto, "subtotal_alternativas", 0):
-            filas.append([Paragraph("ALTERNATIVAS DISPONIBLES", st["tot_lab_s"]), valor("alternativas", presupuesto.subtotal_alternativas, "tot_lab_s"), ""])
-        if getattr(presupuesto, "costes_adicionales", 0):
-            filas.append([Paragraph("COSTES ADICIONALES", st["tot_lab_s"]), valor("adicionales", presupuesto.costes_adicionales, "tot_lab_s"), ""])
-    filas.append([Paragraph("BASE IMPONIBLE", st["tot_lab"]), valor("base", presupuesto.base, "tot_lab"), ""])
+        filas.append([Paragraph("SUBTOTAL INCLUIDO", st["tot_lab_s"]), valor("subtotal", tot.subtotal, "tot_lab_s"), ""])
+        if tot.subtotal_opcional:
+            filas.append([Paragraph("OPCIONALES DISPONIBLES", st["tot_lab_s"]), valor("opcional", tot.subtotal_opcional, "tot_lab_s"), ""])
+        if tot.subtotal_alternativas:
+            filas.append([Paragraph("ALTERNATIVAS DISPONIBLES", st["tot_lab_s"]), valor("alternativas", tot.subtotal_alternativas, "tot_lab_s"), ""])
+        if tot.costes_adicionales:
+            filas.append([Paragraph("COSTES ADICIONALES", st["tot_lab_s"]), valor("adicionales", tot.costes_adicionales, "tot_lab_s"), ""])
+    filas.append([Paragraph("BASE IMPONIBLE", st["tot_lab"]), valor("base", tot.base, "tot_lab"), ""])
     if presupuesto.descuento_pct:
         filas.append([
             Paragraph(f"DESCUENTO ({fmt_pct(presupuesto.descuento_pct)} %)", st["tot_lab_s"]),
-            valor("descuento", presupuesto.descuento_monto, "tot_lab_s", prefijo="- "), "",
+            valor("descuento", tot.descuento_monto, "tot_lab_s", prefijo="- "), "",
         ])
+    filas_desglose = _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot)
+    filas += filas_desglose
     filas.append([
         Paragraph(f"I.V.A. ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
-        valor("impuesto", presupuesto.impuesto_monto, "tot_lab_s"), "",
+        valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
     ])
     filas.append([
         Paragraph(etiqueta_total, st["tot_lab_g"]),
-        valor("total", presupuesto.total, "tot_lab_g"), "",
+        valor("total", tot.total, "tot_lab_g"), "",
     ])
 
     n = len(filas)
@@ -832,7 +948,79 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     for i in range(n - 1):
         estilos.append(("LINEBELOW", (0, i), (1, i), 0.75, LINEA_TOT))
     t.setStyle(TableStyle(estilos))
-    return t
+    if not filas_desglose:
+        return t
+    return [
+        t,
+        Paragraph(
+            "El desglose reparte la base imponible entre los productos y materiales "
+            "elegidos y el resto de la obra (mano de obra, recursos y ejecución de los "
+            "trabajos). Los porcentajes se calculan sobre esa misma base imponible.",
+            st["desg_nota"],
+        ),
+    ]
+
+
+def _pct_una_decimal(importe, base) -> str:
+    """Porcentaje con un decimal y coma decimal.
+
+    Se calcula con la misma aritmética que ``DESG_TXT`` del PDF interactivo
+    (``round(x * 10) / 10``, equivalente a ``Math.round`` en JavaScript) para
+    que el desglose impreso y el recalculado al cambiar de producto digan
+    exactamente lo mismo.
+    """
+    try:
+        base = float(base or 0)
+        if base <= 0:
+            return "0,0"
+        valor = round(float(importe or 0) * 100.0 / base * 10.0) / 10.0
+    except (TypeError, ValueError):
+        return "0,0"
+    return f"{valor:.1f}".replace(".", ",")
+
+
+def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot):
+    """Desglose comercial del precio: productos elegidos / mano de obra y trabajos.
+
+    Solo se emite cuando el presupuesto lo tiene activado. Las dos cifras
+    reparten la **base imponible** (nunca el coste interno ni el margen) y
+    suman exactamente el importe que se muestra en esa misma fila: la parte de
+    obra se calcula como ``base − productos``, de modo que el cliente no tenga
+    que hacer ninguna suma ni pueda encontrar un céntimo suelto.
+    """
+    if not getattr(presupuesto, "mostrar_desglose_precio", False):
+        return []
+    reparto = getattr(presupuesto, "desglose_precio", None)
+    if reparto is None:
+        return []
+    productos, obra = reparto
+    base = tot.base
+    if base <= 0 or (productos <= 0 and obra <= 0):
+        return []
+
+    def texto(importe):
+        return f"{fmt_monto(importe, moneda)}  ({_pct_una_decimal(importe, base)} %)"
+
+    def celda(clave, importe):
+        if ctx is not None and hasattr(ctx, "txt_desglose"):
+            return ctx.campo(
+                "desg_" + clave, ctx.txt_desglose(clave), ctx.js_desglose(clave),
+                ancho_valor, alto=13, alineacion="right", tam=9.5,
+            )
+        return Paragraph(texto(importe), st["desg_val"])
+
+    return [
+        [
+            Paragraph("&#8226;&nbsp; Productos y materiales seleccionados", st["desg_lab"]),
+            celda("productos", productos),
+            "",
+        ],
+        [
+            Paragraph("&#8226;&nbsp; Mano de obra, recursos y ejecución de los trabajos", st["desg_lab"]),
+            celda("obra", obra),
+            "",
+        ],
+    ]
 
 
 def _seccion(titulo, contenido, st, azul_color):
@@ -1150,7 +1338,7 @@ def _tabla_garantias(presupuesto, st, azul_color):
     return flujo
 
 
-def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None):
+def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=None):
     """Resumen comercial corto y visible para el cliente.
 
     No muestra costes internos, beneficio ni tiempos. Solo lo que el cliente
@@ -1188,9 +1376,11 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None):
         alignment=TA_CENTER,
     )
 
+    tot = totales if totales is not None else _LecturaTotales(presupuesto)
+
     def total_cell():
         if ctx is None:
-            return Paragraph(fmt_monto(presupuesto.total, moneda), total_style)
+            return Paragraph(fmt_monto(tot.total, moneda), total_style)
         return ctx.campo(
             "resumen_total", ctx.txt_total("total"), ctx.js_total("total"),
             126, alto=18, alineacion="center", tam=12.5,
@@ -1221,7 +1411,7 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None):
     ])
 
 
-def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None):
+def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=None):
     """Genera una elegante tabla con el resumen de subtotales por capítulo.
 
     Si `ctx` está presente (PDF interactivo) el subtotal y el peso de cada
@@ -1242,7 +1432,7 @@ def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None):
         ]
     ]
     
-    subtotal_general = presupuesto.subtotal or 1.0
+    subtotal_general = float(totales.subtotal if totales is not None else presupuesto.subtotal) or 1.0
     
     for cap in presupuesto.capitulos:
         porcentaje = (cap.subtotal / subtotal_general) * 100.0
@@ -1356,6 +1546,11 @@ def generar_pdf(presupuesto, config):
     se incorporan como páginas finales del mismo archivo y el índice indica
     en qué página empieza cada uno (ver :mod:`app.services.pdf_anexos`).
     """
+    # Antes de maquetar: todos los archivos privados (fotos, planos, anexos)
+    # de una sola vez y en paralelo; después el documento los lee uno a uno, y
+    # los anexos obligan a generarlo dos o tres veces para cuadrar el índice.
+    _precargar_recursos(presupuesto, config)
+
     anexos = pdf_anexos.cargar(presupuesto)
     if getattr(presupuesto, "incluir_anexos", False):
         # Anexo generado en memoria: plano + mediciones dibujadas + tabla.
@@ -1401,6 +1596,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     ``paginas_extra`` son las páginas de anexos que se añadirán después: el
     pie «n/N» las cuenta para que el total sea el del archivo entregado.
     """
+    _inicio = time.perf_counter()
     _registrar_fuentes()
     st = _estilos()
     moneda = presupuesto.moneda
@@ -1438,12 +1634,16 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     if presupuesto.con_portada:
         story += _portada_presentacion(presupuesto, config, st, azul_color)
         
+    # Una sola pasada del motor de cálculo para todo el documento (el
+    # resumen, el bloque de totales y el cierre leen las mismas cifras).
+    totales = _LecturaTotales(presupuesto)
+
     story += _cabecera(presupuesto, config, st, azul_color)
-    story.append(_resumen_comercial(presupuesto, st, moneda, azul_color, ctx=ctx))
+    story.append(_resumen_comercial(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales))
     
     # Resumen Ejecutivo de Capítulos (Opcional)
     if presupuesto.mostrar_resumen_capitulos:
-        story.append(_resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=ctx))
+        story.append(_resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales))
 
     for i, cap in enumerate(presupuesto.capitulos):
         if i > 0:
@@ -1452,7 +1652,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
 
     # Totales (en página nueva si no caben las ~160 pt)
     story.append(Spacer(1, 22))
-    story.append(KeepTogether(_totales(presupuesto, st, moneda, azul_color, ctx=ctx)))
+    story.append(KeepTogether(_totales(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales)))
 
     if presupuesto.notas:
         story.append(Spacer(1, 19))
@@ -1479,14 +1679,14 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
             if _mon_cfg == "BS":
                 _mon_cfg = "VES"
             if presupuesto.moneda == "USD" and _mon_cfg not in ("USD", "", "PAB"):
-                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, _mon_cfg)}")
+                regional.append(f"Equivalente referencial: {fmt_monto(totales.total * presupuesto.tipo_cambio, _mon_cfg)}")
             elif presupuesto.moneda not in ("USD", "", "PAB") and presupuesto.moneda != _mon_cfg:
                 # Presupuesto en local, muestra equivalente en USD
                 if presupuesto.tipo_cambio and presupuesto.tipo_cambio != 0:
-                    regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total / presupuesto.tipo_cambio, 'USD')}")
+                    regional.append(f"Equivalente referencial: {fmt_monto(totales.total / presupuesto.tipo_cambio, 'USD')}")
             elif presupuesto.moneda == "USD":
                 # Fallback genérico si no hay moneda local configurada
-                regional.append(f"Equivalente referencial: {fmt_monto(presupuesto.total * presupuesto.tipo_cambio, 'VES')}")
+                regional.append(f"Equivalente referencial: {fmt_monto(totales.total * presupuesto.tipo_cambio, 'VES')}")
         except Exception:
             pass
     if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append("Operación exenta" if presupuesto.operacion_exenta else f"Retención aplicable: {fmt_num(presupuesto.retencion_pct)} %")
@@ -1496,9 +1696,9 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
 
     # Ahorro comercial visible solo cuando se solicita explícitamente.
     if getattr(presupuesto, "mostrar_ahorro", False) and presupuesto.descuento_pct:
-        original = presupuesto.base / max(0.0001, 1 - presupuesto.descuento_pct / 100)
-        ahorro = original - presupuesto.base
-        texto_ahorro = f"Precio original: {fmt_monto(original, moneda)}\nDescuento comercial: {fmt_monto(ahorro, moneda)}\nPrecio final antes de IVA: {fmt_monto(presupuesto.base, moneda)}"
+        original = totales.base / max(0.0001, 1 - presupuesto.descuento_pct / 100)
+        ahorro = original - totales.base
+        texto_ahorro = f"Precio original: {fmt_monto(original, moneda)}\nDescuento comercial: {fmt_monto(ahorro, moneda)}\nPrecio final antes de IVA: {fmt_monto(totales.base, moneda)}"
         story.append(Spacer(1, 16)); story.append(_seccion("Ahorro obtenido", texto_ahorro, st, azul_color))
     if texto_anexos:
         story.append(Spacer(1, 16))
@@ -1515,11 +1715,20 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(
         *a, estado=presupuesto.estado, ctx=ctx, paginas_extra=paginas_extra, **k))
     buf.seek(0)
+    # Traza de rendimiento: en producción, con la base por red, es la cifra
+    # que permite ver si una descarga lenta es CPU, consultas o almacenamiento.
+    log.info(
+        "Presupuesto %s: PDF maquetado en %.2f s (%d capítulos, %.1f KB).",
+        getattr(presupuesto, "numero", "?"), time.perf_counter() - _inicio,
+        len(getattr(presupuesto, "capitulos", None) or []),
+        len(buf.getvalue()) / 1024.0,
+    )
     return buf
 
 
 def generar_factura_pdf(factura, config):
     """Devuelve un PDF comercial de cobro, expresamente no fiscal."""
+    _precargar_recursos(factura, config)
     _registrar_fuentes()
     st = _estilos()
     moneda = factura.moneda

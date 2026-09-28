@@ -1,6 +1,13 @@
 from types import SimpleNamespace
 
-from app.services.calculations import D, calcular_totales
+from app.services.calculations import (
+    D,
+    beneficio_partida,
+    calcular_totales,
+    coste_partida,
+    margen_partida_pct,
+    producto_coste_pendiente,
+)
 
 
 def _partida(**kwargs):
@@ -164,3 +171,77 @@ def test_descomposicion_con_filas_manda_sobre_campos_cache_stale():
 
     assert totales.coste_obra == D("170")
     assert totales.margen == D("190")
+
+
+def test_producto_sin_coste_no_infla_el_beneficio_de_la_partida():
+    """Una partida que vende material sin coste informado no es «todo margen».
+
+    Caso real (presupuesto 47, partida 1276): 100 m2 a 26,50 con 0,70 de coste
+    de ejecución y un porcelanato de 25,50/m2 sin coste de compra. Antes el
+    beneficio salía 2.580 USD (3.685 % s/coste) porque el material entero
+    contaba como margen; ahora el beneficio es el de la parte documentada y la
+    partida queda marcada como «producto sin coste».
+    """
+    partida = _partida(
+        cantidad_total=100, precio_unitario=26.5,
+        coste_materiales=0.7, coste_mano_obra=0,
+        producto_nombre="Porcelanato Venetian Grey", producto_precio=25.5,
+    )
+
+    assert producto_coste_pendiente(partida) is True
+    assert coste_partida(partida) == D("70")          # solo la parte de obra
+    assert beneficio_partida(partida) == D("30")      # 100 × 0,30 documentados
+    assert margen_partida_pct(partida) == D("30.00")  # 30 / 100 de base
+
+    totales = calcular_totales(_presupuesto([partida]))
+
+    assert totales.total_productos == D("2550")
+    assert totales.coste_productos == D("0")
+    assert totales.productos_sin_coste == 1
+    assert totales.coste_productos_incompleto is True
+    # El material sin coste no aporta margen: el beneficio es el de la obra.
+    assert totales.margen_productos == D("0")
+    assert totales.margen == totales.margen_obra == D("30")
+
+
+def test_el_coste_de_la_opcion_elegida_cuenta_para_el_beneficio():
+    """El coste puede vivir en la alternativa elegida, no en el primario."""
+    elegida = SimpleNamespace(nombre="Porcelanato Gris", precio=25.5, coste=20.0,
+                              seleccionado=True)
+    descartada = SimpleNamespace(nombre="Porcelanato Blanco", precio=28.0, coste=23.0,
+                                 seleccionado=False)
+    partida = _partida(
+        cantidad_total=100, precio_unitario=26.5, coste_materiales=0.7,
+        producto_nombre="Porcelanato Gris", producto_precio=25.5,
+        productos_opciones=[elegida, descartada],
+    )
+
+    assert producto_coste_pendiente(partida) is False
+    assert coste_partida(partida) == D("2070")  # 70 de obra + 2.000 de material
+
+    totales = calcular_totales(_presupuesto([partida]))
+    assert totales.productos_sin_coste == 0
+    assert totales.coste_productos == D("2000")
+    assert totales.margen_productos == D("550")  # 2.550 − 2.000
+
+
+def test_el_margen_de_productos_se_calcula_sobre_los_productos_documentados():
+    """Con dos productos, uno documentado y otro no, el margen es el del primero."""
+    documentado = _partida(
+        cantidad_total=10, precio_unitario=100, coste_mano_obra=20,
+        producto_nombre="Calentador", producto_precio=50, producto_coste=40,
+    )
+    sin_coste = _partida(
+        cantidad_total=10, precio_unitario=30,
+        producto_nombre="Grifería", producto_precio=30,
+    )
+
+    totales = calcular_totales(_presupuesto([documentado, sin_coste]))
+
+    assert totales.productos_sin_coste == 1
+    assert totales.total_productos == D("800")        # 500 + 300
+    assert totales.productos_con_coste == D("500")    # solo el documentado
+    assert totales.coste_productos == D("400")
+    # Beneficio del producto documentado: 500 − 400 = 100.
+    assert totales.margen_productos == D("100")
+    assert totales.margen_productos_pct == D("20.00")

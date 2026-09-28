@@ -716,6 +716,51 @@ def _opciones_partidas_presupuesto(incluir_descompuesto: bool = True):
     return tuple(opciones)
 
 
+def _opciones_pdf_presupuesto():
+    """Grafo completo que recorre el generador de PDF, cargado de una vez.
+
+    A las opciones económicas se añaden las dos relaciones que el documento y
+    el motor de totales tocan **partida a partida**: los productos a elegir
+    (con su imagen y su precio) y las filas del descompuesto CYPE. Sin esto,
+    cada partida disparaba consultas perezosas individuales —medido con un
+    presupuesto de 50 partidas, 209 consultas por descarga—; con las
+    opciones de carga temprana el mismo grafo se trae en ~8 consultas fijas,
+    que es lo que se nota de verdad cuando la base responde por red.
+    """
+    return _opciones_partidas_presupuesto() + (
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.productos_opciones),
+        selectinload(Presupuesto.capitulos)
+        .selectinload(Capitulo.partidas)
+        .selectinload(PresupuestoItem.descomposicion_cype)
+        .selectinload(DescomposicionPartida.filas),
+    )
+
+
+def _presupuesto_para_pdf(db: Session, presupuesto_id: int) -> Presupuesto | None:
+    """Presupuesto con todo lo que el generador de PDF necesita ya cargado.
+
+    Se usa en los cuatro puntos que producen un documento (descarga, envío por
+    correo, enlace público y contrato). El resto de pantallas siguen con
+    `db.get` normal: cargar fotos y descompuestos donde no se usan solo
+    gastaría memoria.
+    """
+    return db.get(Presupuesto, presupuesto_id, options=_opciones_pdf_presupuesto())
+
+
+def _factura_para_pdf(db: Session, factura_id: int):
+    """Documento de cobro con capítulos y partidas cargados de una vez."""
+    return db.get(
+        Factura,
+        factura_id,
+        options=(
+            selectinload(Factura.cliente),
+            selectinload(Factura.capitulos).selectinload(FacturaCapitulo.partidas),
+        ),
+    )
+
+
 def _tiempos_catalogo(db: Session, presupuesto: Presupuesto | None) -> dict:
     """Mapa partida_catalogo_id → tiempo_estimado_horas del catálogo.
 

@@ -124,7 +124,10 @@ acceso.
 
 Las copias `.db` y su restauración están desactivadas cuando el backend no es SQLite. La estrategia web será backup administrado y exportación por organización. Consulta también `docs/AUTENTICACION_SUPABASE.md`, `docs/ALMACENAMIENTO_PRIVADO.md` y `docs/SEGURIDAD_WEB.md`.
 
-**Actualización vigente 08/09/2026:** el head exigido por el runtime pasa a
+**Actualización vigente 28/09/2026:** el head exigido por el runtime pasa a
+`h1c4b7e9a3d2` (columna `presupuestos.mostrar_desglose_precio`; ver
+[`DESGLOSE_DEL_PRECIO_EN_EL_PDF.md`](DESGLOSE_DEL_PRECIO_EN_EL_PDF.md) y
+`docs/staging_upgrade_h1c4b7e9a3d2.sql`). Antes pasó a
 `g7c8d9e0f1a2` para registrar las conversaciones del asistente (`conversaciones_ia`
 y `mensajes_ia`). Aplicar `docs/staging_upgrade_g7c8d9e0f1a2.sql` únicamente cuando
 `public.alembic_version` sea `f6d1a9c3e8b2`, o ejecutar `alembic upgrade head` con

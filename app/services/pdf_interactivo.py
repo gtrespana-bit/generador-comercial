@@ -408,8 +408,11 @@ class ContextoInteractivo:
             "otros": float(getattr(presupuesto, "otros_cargos_monto", 0) or 0),
         }
         # Importes fijos: partidas sin opciones múltiples. Se rellenan en
-        # `preparar()` y se suman como constante en cada fórmula.
-        self.fijos = {"incluido": 0.0, "opcional": 0.0, "alternativas": 0.0}
+        # `preparar()` y se suman como constante en cada fórmula. ``productos``
+        # es la parte del precio que corresponde a productos comerciales ya
+        # elegidos en partidas no interactivas: alimenta el desglose del precio
+        # (véase `_filas_desglose` en pdf.py).
+        self.fijos = {"incluido": 0.0, "opcional": 0.0, "alternativas": 0.0, "productos": 0.0}
 
     # -- identificadores estables -----------------------------------------
     def id_partida(self, partida):
@@ -443,7 +446,8 @@ class ContextoInteractivo:
         formulario).
         """
         from .calculations import (
-            importe_partida, partida_activa, tipo_partida,
+            importe_partida, importe_producto_partida, partida_activa,
+            tiene_producto, tipo_partida,
         )
 
         presupuesto = self.presupuesto
@@ -467,7 +471,14 @@ class ContextoInteractivo:
                     importe = float(importe_partida(partida))
                     if cuenta_en_capitulo:
                         datos_cap["constante"] += importe
-                    self._acumular_fijo(tipo, activa, importe)
+                    # Producto comercial ya decidido (una sola opción o el
+                    # producto primario de la partida): entra en el desglose
+                    # del precio como importe fijo.
+                    productos_fijos = (
+                        float(importe_producto_partida(partida))
+                        if tiene_producto(partida) else 0.0
+                    )
+                    self._acumular_fijo(tipo, activa, importe, productos_fijos)
                     continue
 
                 pid = self.id_partida(partida)
@@ -490,17 +501,20 @@ class ContextoInteractivo:
 
         return bool(self.partidas)
 
-    def _acumular_fijo(self, tipo, activa, importe):
+    def _acumular_fijo(self, tipo, activa, importe, productos=0.0):
         if tipo == "optional":
             self.fijos["opcional"] += importe
             if activa:
                 self.fijos["incluido"] += importe
+                self.fijos["productos"] += productos
         elif tipo == "alternative":
             self.fijos["alternativas"] += importe
             if activa:
                 self.fijos["incluido"] += importe
+                self.fijos["productos"] += productos
         elif activa:
             self.fijos["incluido"] += importe
+            self.fijos["productos"] += productos
 
     @staticmethod
     def _opciones_de(partida):
@@ -552,6 +566,11 @@ class ContextoInteractivo:
     def imp(self, pid):
         return self._r2(self.partidas[pid]["cantidad"] * self.pu(pid))
 
+    def _producto(self, pid):
+        """Importe del producto elegido en una partida interactiva."""
+        datos = self.partidas[pid]
+        return self._r2(datos["cantidad"] * datos["precios"][self._sel(pid)])
+
     def imp_medicion(self, pid, indice):
         return self._r2(self.partidas[pid]["mediciones"][indice] * self.pu(pid))
 
@@ -567,18 +586,22 @@ class ContextoInteractivo:
         incluido = self.fijos["incluido"]
         opcional = self.fijos["opcional"]
         alternativas = self.fijos["alternativas"]
+        productos = self.fijos["productos"]
         for pid, datos in self.partidas.items():
             importe = self.imp(pid)
             if datos["tipo"] == "optional":
                 opcional += importe
                 if datos["activa"]:
                     incluido += importe
+                    productos += self._producto(pid)
             elif datos["tipo"] == "alternative":
                 alternativas += importe
                 if datos["activa"]:
                     incluido += importe
+                    productos += self._producto(pid)
             elif datos["activa"]:
                 incluido += importe
+                productos += self._producto(pid)
         incluido = self._r2(incluido)
         adicionales = self._r2(
             self._r2(p["transporte"]) + self._r2(p["otros"])
@@ -589,6 +612,16 @@ class ContextoInteractivo:
         descuento = self._r2(bruto * p["descuento"] / 100)
         base = self._r2(bruto - descuento)
         impuesto = self._r2(base * p["iva"] / 100)
+
+        # Desglose del precio (productos elegidos / resto de la obra). Repite
+        # paso a paso el reparto proporcional del descuento de
+        # `calculations.calcular_totales`, y la parte de obra se deriva de la
+        # base para que las dos cifras sumen exactamente el importe de «BASE
+        # IMPONIBLE» (igual que `Presupuesto.desglose_precio`).
+        reparto = self._desglose_venta(
+            incluido, adicionales, bruto, descuento, base, productos
+        )
+
         return {
             "subtotal": incluido,
             "opcional": self._r2(opcional),
@@ -598,6 +631,42 @@ class ContextoInteractivo:
             "base": base,
             "impuesto": impuesto,
             "total": self._r2(base + impuesto),
+            "productos": reparto["productos"],
+            "obra": reparto["obra"],
+        }
+
+    def _desglose_venta(self, incluido, adicionales, bruto, descuento, base, productos):
+        """Reparte el descuento entre productos y obra y devuelve los dos tramos.
+
+        Devuelve ``{"productos": ..., "obra": ...}`` en importes de venta tras
+        descuento. Se calcula igual que
+        ``calculations.calcular_totales`` + ``Presupuesto.desglose_precio``:
+        la obra absorbe el céntimo de redondeo del reparto.
+        """
+        bruto_productos = self._r2(productos)
+        if bruto_productos > bruto:
+            bruto_productos = bruto
+        if bruto_productos < 0:
+            bruto_productos = 0.0
+        subtotal_obra = self._r2(incluido - bruto_productos)
+        bruto_obra = self._r2(subtotal_obra + adicionales)
+        if bruto > 0:
+            descuento_obra = self._r2(descuento * bruto_obra / bruto)
+            descuento_productos = self._r2(descuento * bruto_productos / bruto)
+            descuento_obra = self._r2(
+                descuento_obra + self._r2(descuento - descuento_obra - descuento_productos)
+            )
+        else:
+            descuento_obra = descuento
+            descuento_productos = 0.0
+        base_productos = self._r2(bruto_productos - descuento_productos)
+        if base_productos > base:
+            base_productos = base
+        if base_productos < 0:
+            base_productos = 0.0
+        return {
+            "productos": base_productos,
+            "obra": self._r2(base - base_productos),
         }
 
     # -- textos iniciales (idénticos a los que produce el JavaScript) -----
@@ -633,6 +702,35 @@ class ContextoInteractivo:
         if clave == "descuento":
             return "- " + self._monto(valor)
         return self._monto(valor)
+
+    @staticmethod
+    def _txt_pct_una_decimal(importe, base):
+        """Porcentaje con un decimal, en el mismo formato que el JS del PDF.
+
+        Se calcula con la aritmética de coma flotante y ``round`` para que el
+        texto inicial de los campos del desglose coincida carácter a carácter
+        con lo que escribe ``DESG_TXT`` al recalcular (misma regla que
+        ``Math.round`` de JavaScript).
+        """
+        try:
+            base = float(base or 0)
+            if base <= 0:
+                return "0,0"
+            valor = round(float(importe or 0) * 100.0 / base * 10.0) / 10.0
+        except (TypeError, ValueError):
+            return "0,0"
+        return ("%.1f" % valor).replace(".", ",")
+
+    def txt_desglose(self, clave):
+        """Texto inicial de una fila del desglose del precio."""
+        totales = self.totales()
+        importe = totales.get(clave, 0.0)
+        return "%s  (%s %%)" % (
+            self._monto(importe), self._txt_pct_una_decimal(importe, totales["base"]),
+        )
+
+    def js_desglose(self, clave):
+        return 'event.value = DESG_TXT("%s");' % clave
 
     # -- fábricas de campos ------------------------------------------------
     def campo(self, nombre, valor, js, ancho, **kw):
@@ -807,18 +905,21 @@ function PESO_TXT(cid) {
 function TOTALES() {
   var f = PRESU.fijos, p = PRESU.parametros;
   var incluido = f.incluido, opcional = f.opcional, alternativas = f.alternativas;
+  /* Productos ya elegidos en partidas no interactivas (importe fijo). */
+  var productos = f.productos;
   for (var pid in PRESU.partidas) {
     if (!PRESU.partidas.hasOwnProperty(pid)) continue;
     var d = PRESU.partidas[pid];
     var imp = IMP(pid);
+    var prod = R2(d.cantidad * d.precios[SEL(pid)]);
     if (d.tipo == "optional") {
       opcional += imp;
-      if (d.activa) incluido += imp;
+      if (d.activa) { incluido += imp; productos += prod; }
     } else if (d.tipo == "alternative") {
       alternativas += imp;
-      if (d.activa) incluido += imp;
+      if (d.activa) { incluido += imp; productos += prod; }
     } else if (d.activa) {
-      incluido += imp;
+      incluido += imp; productos += prod;
     }
   }
   incluido = R2(incluido);
@@ -832,6 +933,27 @@ function TOTALES() {
   var descuento = R2(bruto * p.descuento / 100);
   var base = R2(bruto - descuento);
   var impuesto = R2(base * p.iva / 100);
+  /* Desglose del precio: reparto proporcional del descuento entre productos y
+     obra (mismo cálculo que calculations.calcular_totales) y parte de obra
+     derivada de la base para que las dos filas sumen exactamente el importe de
+     «BASE IMPONIBLE», igual que en el PDF estático. */
+  var brutoProductos = R2(productos);
+  if (brutoProductos > bruto) brutoProductos = bruto;
+  if (brutoProductos < 0) brutoProductos = 0;
+  var subtotalObra = R2(incluido - brutoProductos);
+  var brutoObra = R2(subtotalObra + adicionales);
+  var descuentoObra, descuentoProductos;
+  if (bruto > 0) {
+    descuentoObra = R2(descuento * brutoObra / bruto);
+    descuentoProductos = R2(descuento * brutoProductos / bruto);
+    descuentoObra = R2(descuentoObra + R2(descuento - descuentoObra - descuentoProductos));
+  } else {
+    descuentoObra = descuento;
+    descuentoProductos = 0;
+  }
+  var baseProductos = R2(brutoProductos - descuentoProductos);
+  if (baseProductos > base) baseProductos = base;
+  if (baseProductos < 0) baseProductos = 0;
   return {
     subtotal: incluido,
     opcional: R2(opcional),
@@ -840,7 +962,9 @@ function TOTALES() {
     descuento: descuento,
     base: base,
     impuesto: impuesto,
-    total: R2(base + impuesto)
+    total: R2(base + impuesto),
+    productos: baseProductos,
+    obra: R2(base - baseProductos)
   };
 }
 
@@ -848,5 +972,13 @@ function TOT_TXT(clave) {
   var t = TOTALES();
   if (clave == "descuento") return "- " + MONTO(t.descuento);
   return MONTO(t[clave]);
+}
+
+/* Fila del desglose del precio: importe + porcentaje sobre la base imponible. */
+function DESG_TXT(clave) {
+  var t = TOTALES();
+  var v = (clave == "obra") ? t.obra : t.productos;
+  var pct = t.base > 0 ? Math.round(v * 100 / t.base * 10) / 10 : 0;
+  return MONTO(v) + "  (" + pct.toFixed(1).replace(".", ",") + " %)";
 }
 """

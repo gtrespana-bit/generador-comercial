@@ -2056,6 +2056,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         otros_cargos_monto=_f(form.get("otros_cargos_monto")),
         estilo_pdf=form.get("estilo_pdf") if form.get("estilo_pdf") in ("elegante", "tecnica", "minimalista", "corporativa", "compacta", "editorial") else "elegante",
         mostrar_ahorro=bool(form.get("mostrar_ahorro")), incluir_anexos=bool(form.get("incluir_anexos")),
+        mostrar_desglose_precio=bool(form.get("mostrar_desglose_precio")),
         numero_control=str(form.get("numero_control", "")).strip(), fecha_tipo_cambio=fecha_tipo_cambio, retencion_pct=_f(form.get("retencion_pct")), operacion_exenta=bool(form.get("operacion_exenta")), clausula_cambiaria=str(form.get("clausula_cambiaria", "")).strip(),
         client_id=cliente.id,
     )
@@ -2284,7 +2285,7 @@ def enviar_presupuesto_email_web(
     db: Session = Depends(get_db),
 ):
     """Genera, congela y entrega el PDF; un fallo no cambia el presupuesto."""
-    presupuesto = db.get(Presupuesto, presupuesto_id)
+    presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     cfg = _config(db)
@@ -2551,7 +2552,7 @@ def crear_enlace_publico_web(
     db: Session = Depends(get_db),
 ):
     """Congela el PDF y crea un secreto revocable; nunca publica el bucket."""
-    presupuesto = db.get(Presupuesto, presupuesto_id)
+    presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     if es_lectura(db):
@@ -3402,7 +3403,7 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
 
 @router.get("/facturas/{factura_id}/pdf")
 def descargar_pdf_factura(factura_id: int, inline: int = 0, db: Session = Depends(get_db)):
-    factura = db.get(Factura, factura_id)
+    factura = _factura_para_pdf(db, factura_id)
     if factura is None:
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
     resultado = _generar_pdf_seguro(
@@ -3623,6 +3624,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.estilo_pdf = form.get("estilo_pdf") if form.get("estilo_pdf") in ("elegante", "tecnica", "minimalista", "corporativa", "compacta", "editorial") else "elegante"
     presupuesto.mostrar_ahorro = bool(form.get("mostrar_ahorro"))
     presupuesto.incluir_anexos = bool(form.get("incluir_anexos"))
+    presupuesto.mostrar_desglose_precio = bool(form.get("mostrar_desglose_precio"))
     presupuesto.numero_control = str(form.get("numero_control", "")).strip(); presupuesto.retencion_pct = _f(form.get("retencion_pct")); presupuesto.operacion_exenta = bool(form.get("operacion_exenta")); presupuesto.clausula_cambiaria = str(form.get("clausula_cambiaria", "")).strip()
     try: presupuesto.fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError: presupuesto.fecha_tipo_cambio = None
@@ -3785,6 +3787,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         transporte_monto=original.transporte_monto,
         otros_cargos_monto=original.otros_cargos_monto,
         estilo_pdf=original.estilo_pdf, mostrar_ahorro=original.mostrar_ahorro, incluir_anexos=original.incluir_anexos,
+        mostrar_desglose_precio=original.mostrar_desglose_precio,
         numero_control=original.numero_control, fecha_tipo_cambio=original.fecha_tipo_cambio,
         retencion_pct=original.retencion_pct, operacion_exenta=original.operacion_exenta,
         clausula_cambiaria=original.clausula_cambiaria,
@@ -3987,7 +3990,7 @@ def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db))
 
 @router.get("/presupuestos/{presupuesto_id}/pdf")
 def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
-    presupuesto = db.get(Presupuesto, presupuesto_id)
+    presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     cfg = _config(db)
@@ -4010,7 +4013,7 @@ def descargar_contrato(presupuesto_id: int, inline: int = 0, db: Session = Depen
     Reemplaza a los antiguos botones "Generar Contrato (IA)" / "Generar
     Contrato Smart", que sólo mostraban un mensaje fijo sin producir ningún
     documento."""
-    presupuesto = db.get(Presupuesto, presupuesto_id)
+    presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     resultado = _generar_pdf_seguro(

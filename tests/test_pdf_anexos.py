@@ -96,7 +96,7 @@ def almacen(monkeypatch):
             raise StorageError("El archivo solicitado no existe.")
         return contenido[referencia]
 
-    monkeypatch.setattr(pdf_anexos, "read_reference", _read)
+    monkeypatch.setattr(pdf_anexos, "read_reference_cached", _read)
     return contenido
 
 

@@ -396,28 +396,37 @@
         var costeObraLinea = FMT.redondear2(cant * costeUnidadObra);
         var coste = FMT.redondear2(cant * costeUnidad);
         var hayCostesPartida = (sumCostes + costeProducto) > 0;
+        // Producto vendido sin coste de compra: su importe no es beneficio, es
+        // un dato que falta. Se calcula el margen solo de la parte documentada
+        // (obra y recursos) y se avisa, en vez de dar por bueno todo el material.
+        var productoCostePendiente = hayProducto && importeProducto > 0 && !(costeProducto > 0);
 
         if (hayCostesPartida) hayCostes = true;
 
-        var beneficio = FMT.redondear2(importe - coste);
-        var markupFila = hayCostesPartida && coste > 0 ? (beneficio / coste * 100) : 0;
-        var margenFilaPct = hayCostesPartida && importe > 0 ? (beneficio / importe * 100) : 0;
+        var importeBeneficio = productoCostePendiente ? importeObraLinea : importe;
+        var costeBeneficio = productoCostePendiente ? costeObraLinea : coste;
+        var hayCostesBeneficio = productoCostePendiente ? costeObraLinea > 0 : hayCostesPartida;
+        var beneficio = FMT.redondear2(importeBeneficio - costeBeneficio);
+        var markupFila = hayCostesBeneficio && costeBeneficio > 0 ? (beneficio / costeBeneficio * 100) : 0;
+        var margenFilaPct = hayCostesBeneficio && importeBeneficio > 0 ? (beneficio / importeBeneficio * 100) : 0;
         var avisosPartida = [];
         var nombrePartida = String((wrap && wrap.querySelector('[data-f="p_nombre"]') || {}).value || "").trim();
         if (!nombrePartida) avisosPartida.push({ tipo: "danger", texto: "Sin nombre", titulo: "Añade un nombre a la partida" });
         if (cant <= 0) avisosPartida.push({ tipo: "danger", texto: "Cantidad 0", titulo: "Esta partida no suma porque la cantidad es 0" });
         if (precio <= 0) avisosPartida.push({ tipo: "danger", texto: "Precio 0", titulo: "Indica precio unitario antes de enviar" });
         if (!hayCostesPartida) avisosPartida.push({ tipo: "muted", texto: "Sin coste", titulo: "Sin coste interno no se calcula margen real" });
+        else if (productoCostePendiente) avisosPartida.push({ tipo: "warn", texto: "Producto sin coste", titulo: "El producto vendido no tiene coste de compra: su importe no cuenta como beneficio. Añádelo en «Coste / unidad» del producto." });
         else if (beneficio < 0) avisosPartida.push({ tipo: "danger", texto: "Pérdida", titulo: "El coste supera el precio de venta" });
         else if (margenFilaPct > 0 && margenFilaPct < 20) avisosPartida.push({ tipo: "warn", texto: "Margen bajo", titulo: "Margen por debajo del 20%" });
         pintarAvisosPartida(wrap, avisosPartida);
         var margenReal = wrap.querySelector('[data-f="margen_real"]');
         if (margenReal) {
-          if (hayCostesPartida) {
-            var markupUnidad = costeUnidad > 0 ? ((precio - costeUnidad) / costeUnidad * 100) : 0;
-            var margenUnidad = precio > 0 ? ((precio - costeUnidad) / precio * 100) : 0;
+          if (hayCostesBeneficio) {
+            var markupUnidad = costeBeneficio > 0 ? ((importeBeneficio - costeBeneficio) / costeBeneficio * 100) : 0;
+            var margenUnidad = importeBeneficio > 0 ? ((importeBeneficio - costeBeneficio) / importeBeneficio * 100) : 0;
             margenReal.textContent = markupUnidad.toFixed(1).replace(".", ",") + " % s/coste · " + margenUnidad.toFixed(1).replace(".", ",") + " % margen";
             margenReal.title = "Beneficio sobre coste: " + markupUnidad.toFixed(2) + "% | Margen sobre precio: " + margenUnidad.toFixed(2) + "%";
+            if (productoCostePendiente) margenReal.title += " · solo la parte de obra: el producto no tiene coste informado";
           } else {
             margenReal.textContent = "—";
           }
@@ -425,15 +434,20 @@
 
         var benefCell = row.querySelector(".partida-beneficio");
         if (benefCell) {
-          if (!hayCostesPartida) {
+          if (!hayCostesBeneficio) {
             benefCell.textContent = "—";
             benefCell.classList.add("sin-datos");
             benefCell.classList.remove("negativo");
-            benefCell.title = "Sin datos de coste: añade descomposición o costes para ver beneficio";
+            benefCell.title = productoCostePendiente
+              ? "El producto no tiene coste de compra: indícalo para ver el beneficio real"
+              : "Sin datos de coste: añade descomposición o costes para ver beneficio";
           } else {
             // Mostrar beneficio importe + % sobre coste (lo que pide el usuario) y margen en tooltip
             benefCell.textContent = FMT.fmt(beneficio) + " · " + markupFila.toFixed(1).replace(".", ",") + "%";
-            benefCell.title = "Beneficio " + FMT.fmt(beneficio) + " | " + markupFila.toFixed(2).replace(".", ",") + "% sobre coste | " + margenFilaPct.toFixed(2).replace(".", ",") + "% margen s/precio · Coste: " + FMT.fmt(coste);
+            benefCell.title = "Beneficio " + FMT.fmt(beneficio) + " | " + markupFila.toFixed(2).replace(".", ",") + "% sobre coste | " + margenFilaPct.toFixed(2).replace(".", ",") + "% margen s/precio · Coste: " + FMT.fmt(costeBeneficio);
+            if (productoCostePendiente) {
+              benefCell.title = "Solo la parte de obra y recursos: el producto vendido (" + FMT.fmt(importeProducto) + ") no tiene coste de compra informado, así que su importe no cuenta como beneficio. " + benefCell.title;
+            }
             benefCell.classList.remove("sin-datos");
             benefCell.classList.toggle("negativo", beneficio < 0);
           }

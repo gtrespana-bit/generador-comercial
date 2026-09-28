@@ -50,7 +50,11 @@
           {% if con_costos %}
           Margen de beneficio (según los costos internos cargados en {{ con_costos | length }} de {{ p.todas_partidas | length }} partida(s)):
           {% if p.total_productos %}
-          obra <strong class="csp-s-6464799a08">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money_iso(p.moneda) }}) · productos <strong class="csp-s-6464799a08">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money_iso(p.moneda) }}) · total <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }}). El total de productos asciende a <strong class="csp-s-6464799a08">{{ p.total_productos | money_iso(p.moneda) }}</strong>.
+          obra <strong class="csp-s-6464799a08">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money_iso(p.moneda) }}) · productos
+          {% if p.coste_productos_incompleto %}<strong class="csp-s-6464799a08">sin coste de compra</strong> ({{ p.productos_sin_coste }} de {{ p.todas_partidas | selectattr('tiene_producto') | list | length }} partida(s) con producto)
+          {% else %}<strong class="csp-s-6464799a08">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money_iso(p.moneda) }}){% endif %}
+          · total <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }}). El total de productos asciende a <strong class="csp-s-6464799a08">{{ p.total_productos | money_iso(p.moneda) }}</strong>.
+          {% if p.coste_productos_incompleto %}<br><strong>⚠ {{ p.productos_sin_coste }} partida(s) venden un producto sin coste de compra</strong>: su importe no se cuenta como beneficio hasta que se indique ese coste (el margen mostrado es el de la obra y los productos documentados).{% endif %}
           {% else %}
           <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }} sobre un costo interno de {{ p.coste_interno | money_iso(p.moneda) }}).
           {% endif %}
@@ -316,7 +320,14 @@
     {% endif %}
     {% if part.tiene_costes %}
     <div class="hint csp-s-d703051526">
-      Coste: {{ part.coste | money_iso(p.moneda) }} · Beneficio: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
+      Coste: {{ part.coste | money_iso(p.moneda) }} · Beneficio: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) | replace(".", ",") }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
+      {% if part.producto_coste_pendiente %}
+      <br><strong>⚠ Falta el coste de compra del producto</strong>: el beneficio contado es solo el de la mano de obra y los recursos (base de {{ (part.precio_unitario - (part.producto_precio or 0)) | money_iso(p.moneda) }} / {{ part.unidad }}). Indícalo en la partida para ver el beneficio real del material.
+      {% endif %}
+    </div>
+    {% elif part.producto_coste_pendiente %}
+    <div class="hint csp-s-d703051526">
+      <strong>⚠ Producto sin coste de compra informado</strong>: mientras no se indique, su importe no cuenta como beneficio.
     </div>
     {% endif %}
   </div>
@@ -335,7 +346,13 @@
       <tr><td class="right">COSTE INTERNO (uso interno)</td><td class="right">{{ p.coste_interno | money_iso(p.moneda) }}</td></tr>
       {% if p.total_productos %}
       <tr><td class="right">BENEFICIO OBRA</td><td class="right csp-s-3f12fa5639">{{ p.margen_obra | money_iso(p.moneda) }} ({{ p.margen_obra_pct | num }} %)</td></tr>
-      <tr><td class="right">BENEFICIO PRODUCTOS</td><td class="right csp-s-3f12fa5639">{{ p.margen_productos | money_iso(p.moneda) }} ({{ p.margen_productos_pct | num }} %)</td></tr>
+      <tr><td class="right">BENEFICIO PRODUCTOS</td><td class="right csp-s-3f12fa5639">
+        {% if p.coste_productos_incompleto and not p.productos_con_coste %}
+        sin coste de compra informado
+        {% else %}
+        {{ p.margen_productos | money_iso(p.moneda) }} ({{ p.margen_productos_pct | num }} %){% if p.coste_productos_incompleto %} · parcial: falta el coste de {{ p.productos_sin_coste }} producto(s){% endif %}
+        {% endif %}
+      </td></tr>
       {% endif %}
       <tr><td class="right">BENEFICIO TOTAL ESTIMADO</td><td class="right csp-s-3f12fa5639">{{ p.margen | money_iso(p.moneda) }}</td></tr>
       <tr><td class="right">MARGEN TOTAL</td><td class="right csp-s-3f12fa5639">{{ p.margen_pct | num }} %</td></tr>
