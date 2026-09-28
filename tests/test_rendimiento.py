@@ -14,11 +14,13 @@ del despliegue web:
 """
 import json
 import threading
+import warnings
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from types import SimpleNamespace
 
 import pytest
 from sqlalchemy import create_engine, event
+from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import sessionmaker
 
 import app.auth as auth_module
@@ -102,7 +104,14 @@ def test_asegurar_catalogo_version_atrasada_se_repara_una_vez(catalogo_aplicado)
     db.query(Configuracion).delete()
     db.commit()
 
-    primera = asegurar_catalogo_propio(db)
+    with warnings.catch_warnings(record=True) as capturadas:
+        warnings.simplefilter("always", SAWarning)
+        primera = asegurar_catalogo_propio(db)
+
+    avisos_sqlalchemy = [
+        aviso for aviso in capturadas if issubclass(aviso.category, SAWarning)
+    ]
+    assert not avisos_sqlalchemy
     assert primera is not None and primera.get("ok") is True
 
     cfg = db.query(Configuracion).first()

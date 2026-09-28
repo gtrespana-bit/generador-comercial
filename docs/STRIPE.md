@@ -1,6 +1,14 @@
 # Stripe: cobro con tarjeta (E4-034)
 
-Fecha: **20/08/2026**.
+Fecha de la guía original: **20/08/2026**.
+
+> **Actualización 28/09/2026:** el código de esta rama exige Alembic
+> `h1c4b7e9a3d2`; la guía original más abajo menciona el head histórico de
+> Stripe (`c3e9a1b7d4f2`). No apliques ese SQL aislado sobre un esquema más
+> reciente. Verifica primero el head remoto y usa
+> [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md) para migrar.
+> El estado de las claves, webhook y cuenta Stripe de producción no se pudo
+> verificar desde el repositorio.
 
 Stripe no cubre métodos locales de todos los países (Pago móvil, PSE, Yape,
 Zelle). Lo que sí cubre, con una cuenta **española** del titular, es cobrar
@@ -42,9 +50,12 @@ pagado.
 5. En Vercel → Environment Variables (Production):
    - `STRIPE_SECRET_KEY=sk_live_…`
    - `STRIPE_WEBHOOK_SECRET=whsec_…`
-6. Aplicar `docs/staging_upgrade_c3e9a1b7d4f2.sql` en Supabase **antes** del
-   despliegue que contiene este código (`EXPECTED_ALEMBIC_HEAD = c3e9a1b7d4f2`).
-7. Redeploy. `/readyz` debe mostrar `"stripe": "configurado"`.
+6. Llevar Supabase al head esperado por el despliegue (`h1c4b7e9a3d2` en esta
+   rama) con el procedimiento de
+   [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md). La
+   migración `c3e9a1b7d4f2` forma parte de la cadena histórica de Stripe; no la
+   vuelvas a aplicar como paso aislado sobre una base más reciente.
+7. Redeploy y comprobar que `/readyz` informa `"stripe": "configurado"`.
 
 Sin estas variables el botón de tarjeta no aparece: el cobro manual sigue
 funcionando.

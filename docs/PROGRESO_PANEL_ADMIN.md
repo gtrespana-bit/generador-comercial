@@ -1,6 +1,13 @@
 # Panel profesional — estado exacto
 
-**Fecha:** 2026-08-30 (última capa: Fase 5 · arquitectura del panel, §3bis)
+> **Nota de vigencia (28/09/2026):** este documento es una instantánea de
+> trabajo del 30/08/2026. El código actual exige Alembic
+> `h1c4b7e9a3d2`; el head `d3e5f7a9c2b4` que aparece en las secciones
+> históricas ya no es el requerido por esta rama. El estado remoto de staging
+> y producción no se verificó.
+
+**Fecha del corte documentado:** 2026-08-30 (última capa: Fase 5 · arquitectura
+ del panel, §3bis)
 **Rama de trabajo:** `arena/01a04f52-generador-comercial`
 **Commit de partida:** `bc8a8ca` — "Fase 3/4 panel web: CMS, avisos, releases, flags, CRM, vistas, API keys y salud"
 **Head Alembic esperado por runtime:** `d3e5f7a9c2b4` — la Fase 5 **no añade migración**: reorganiza pantallas, rutas y contexto; no toca el esquema

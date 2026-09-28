@@ -1,6 +1,13 @@
 # Continuidad exacta: staging Vercel + Supabase
 
-Fecha de corte de fondo: 14/08/2026 (America/Caracas).
+> **Actualización 28/09/2026:** el código de la rama auditada exige Alembic
+> `h1c4b7e9a3d2`. Este documento contiene capturas históricas de staging de
+> agosto; no se verificó el estado remoto actual de Supabase ni Vercel. No
+> ejecutes pasos ni SQL históricos sin comprobar primero la versión remota y
+> contrastarla con la guía
+> [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md).
+
+Fecha de corte histórica: 14/08/2026 (America/Caracas).
 
 > **Actualización 16/08/2026 — visibilidad por organización:** el titular
 > confirmó la ejecución de `docs/staging_upgrade_d6e2f9c4b8a1.sql`. Supabase y
