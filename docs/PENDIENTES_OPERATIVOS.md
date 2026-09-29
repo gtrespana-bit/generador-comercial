@@ -1,5 +1,14 @@
 # Pendientes operativos (paso por paso)
 
+> **Aviso de vigencia — 28/09/2026:** las fechas, estados y pasos de migración
+> de este documento son una bitácora histórica (última edición propia:
+> 20/08/2026), no una confirmación del entorno actual. El código de esta rama
+> exige Alembic `h1c4b7e9a3d2`; el estado real de Supabase/Vercel no se comprobó
+> en esta revisión. **No ejecutes** los SQL antiguos citados en §§12–14 sin
+> comprobar antes `SELECT version_num FROM public.alembic_version` y seguir
+> [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md), cuya
+> actualización del 28/09 es la guía vigente para staging.
+
 Fecha: **18/08/2026**. Actualizado: **20/08/2026** — las 10 tareas originales
 están **completadas**. El cobro con Stripe (código) está listo; faltan claves
 y el webhook en el panel (ver §14).

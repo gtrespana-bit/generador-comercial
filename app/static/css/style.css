@@ -6895,6 +6895,8 @@ body { -webkit-tap-highlight-color: transparent; }
   max-width: calc(100vw - 32px);
   height: 570px;
   max-height: calc(100vh - 110px);
+  max-height: calc(100dvh - 110px);
+  min-height: 0;
   z-index: 1250;
   display: flex;
   flex-direction: column;
@@ -6917,6 +6919,7 @@ body { -webkit-tap-highlight-color: transparent; }
 
 /* Cabecera del chat */
 .ia-chat-header {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6988,8 +6991,10 @@ body { -webkit-tap-highlight-color: transparent; }
 
 /* Cuerpo de mensajes */
 .ia-chat-messages {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -7193,6 +7198,7 @@ body { -webkit-tap-highlight-color: transparent; }
 
 /* Pie del chat / Entrada */
 .ia-chat-footer {
+  flex: 0 0 auto;
   padding: 0.75rem 0.85rem;
   background: var(--surface-alt);
   border-top: 1px solid var(--border);
@@ -7347,9 +7353,16 @@ body { -webkit-tap-highlight-color: transparent; }
     width: 100%;
     max-width: 100%;
     height: calc(100vh - 64px);
+    height: calc(100dvh - 64px);
     max-height: calc(100dvh - 64px);
     border-radius: 20px 20px 0 0;
     border-bottom: none;
+  }
+  .ia-chat-footer {
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
+  .ia-input-container {
+    min-height: 48px;
   }
 }
 

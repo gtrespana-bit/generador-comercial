@@ -23,6 +23,30 @@ def test_base_lleva_viewport_con_safe_area(cliente_web):
     assert 'width=device-width' in html
 
 
+def test_chat_muestra_compositor_sin_desplazar_la_pagina(cliente_web):
+    """El panel es fijo; el scroll se limita a mensajes y el pie no se encoge."""
+    html = cliente_web.get("/inicio").text
+    assert 'id="cotizat-ia-panel"' in html
+    assert 'id="cotizat-ia-messages"' in html
+    assert 'placeholder="Escribe tu mensaje..."' in html
+
+    panel = CSS.split(".ia-chat-panel {", 1)[1].split("}", 1)[0]
+    header = CSS.split(".ia-chat-header {", 1)[1].split("}", 1)[0]
+    messages = CSS.split(".ia-chat-messages {", 1)[1].split("}", 1)[0]
+    footer = CSS.split(".ia-chat-footer {", 1)[1].split("}", 1)[0]
+    assert "position: fixed;" in panel
+    assert "flex: 0 0 auto;" in header
+    assert "min-height: 0;" in messages
+    assert "overflow-y: auto;" in messages
+    assert "overscroll-behavior-y: contain;" in messages
+    assert "flex: 0 0 auto;" in footer
+    assert "height: calc(100dvh - 64px);" in CSS
+    assert "padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));" in CSS
+
+    js = Path("app/static/js/asistente_ia.js").read_text(encoding="utf-8")
+    assert "input.focus({ preventScroll: true });" in js
+
+
 def test_las_listas_principales_se_marcan_como_tarjetas_moviles(cliente_web):
     """Presupuestos y dashboard traen la tabla-tarjeta con etiquetas."""
     html = cliente_web.get("/presupuestos").text

@@ -16,7 +16,7 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 
-from sqlalchemy import func, or_, update
+from sqlalchemy import func, inspect as sa_inspect, or_, select, update
 from sqlalchemy.orm import Session
 
 from ..models import CategoriaPartida, Configuracion, Partida, Recurso
@@ -621,9 +621,38 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
         # Organización sin fila de configuración: se crea YA con la versión
         # aplicada para que esta migración no se repita en la visita
         # siguiente (la columna tiene server_default 0 en la base).
+        # Una eliminación externa o una eliminación masiva en esta misma
+        # sesión puede dejar el objeto anterior en el identity map. SQLite
+        # puede reutilizar su id al recrear la fila y SQLAlchemy avisaría de
+        # que sustituye la identidad previa (y abortaría si SAWarning se trata
+        # como error). Se expulsa únicamente la instancia obsoleta de esta
+        # organización; no se altera el resto de objetos de la sesión.
+        organizacion_id = int(db.info.get("organizacion_id") or 1) or 1
+        for instancia in tuple(db.identity_map.values()):
+            if not isinstance(instancia, Configuracion):
+                continue
+            organizacion_cacheada = instancia.__dict__.get("organizacion_id")
+            if organizacion_cacheada == organizacion_id:
+                db.expunge(instancia)
+                continue
+            if organizacion_cacheada is not None:
+                continue
+            # Una eliminación masiva puede haber expirado también el
+            # organizacion_id del objeto; comprueba por PK si sigue habiendo
+            # una fila antes de decidir. Se usa la tabla Core para que la
+            # consulta no recicle la identidad ORM obsoleta.
+            identidad = sa_inspect(instancia).identity
+            if identidad:
+                org_en_bd = db.connection().execute(
+                    select(Configuracion.__table__.c.organizacion_id).where(
+                        Configuracion.__table__.c.id == identidad[0]
+                    )
+                ).scalar_one_or_none()
+                if org_en_bd is None or int(org_en_bd) == organizacion_id:
+                    db.expunge(instancia)
         try:
             db.add(Configuracion(
-                organizacion_id=int(db.info.get("organizacion_id") or 1) or 1,
+                organizacion_id=organizacion_id,
                 version_catalogo=CATALOGO_VERSION,
             ))
         except Exception:

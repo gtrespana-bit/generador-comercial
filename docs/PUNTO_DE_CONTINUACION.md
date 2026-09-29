@@ -1,6 +1,15 @@
 # Punto exacto de continuación
 
-Fecha de corte: **28/08/2026 — Telemetría interna (`eventos_producto`, migración `e3a5c7d9b1f4`) y panel `/admin/analitica` listos en la rama; pendiente aplicar el SQL de staging. Corte anterior: 19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
+> **Estado de código revisado el 28/09/2026:** esta rama exige Alembic
+> `h1c4b7e9a3d2` (`alembic heads`). No hay conexión autorizada a Supabase o
+> Vercel en esta auditoría; por tanto, no se confirma si la base ni el
+> despliegue remotos están al día. El texto y las fechas que siguen describen
+> sesiones anteriores y deben leerse como historial, no como instrucciones
+> operativas vigentes. Para desplegar, consulta primero
+> [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md) y verifica el
+> `version_num` real antes de aplicar cualquier SQL de migración.
+
+Fecha de corte histórica: **28/08/2026 — Telemetría interna (`eventos_producto`, migración `e3a5c7d9b1f4`) y panel `/admin/analitica` listos en la rama; pendiente aplicar el SQL de staging. Corte anterior: 19/08/2026 — Bloque E4-026/E4-027 terminado en la rama de la sesión: registro de auditoría inmutable (`eventos_auditoria`, migración `d2a7c9e4f1b3`) + fix de la baja con compras. Pendiente inmediato del titular: fusionar el PR del bloque y aplicar `docs/staging_upgrade_d2a7c9e4f1b3.sql` en Supabase. Simulacro E4-043 y día final de tests (D-019): al final, por decisión del titular** (America/Caracas).
 
 Este documento retoma el trabajo sin depender del historial del chat. Describe
 **dónde quedó exactamente** el trabajo y **qué sigue**, en ese orden. Léelo

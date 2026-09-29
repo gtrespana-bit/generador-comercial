@@ -14,7 +14,8 @@ def _cliente():
 def test_home_es_generica_aunque_haya_cookie_de_pais():
     """La cookie no puede cambiar el HTML de ``/``: una URL, un contenido."""
     with _cliente() as client:
-        resp = client.get("/", cookies={"cotizat_pais": "CO"})
+        client.cookies.set("cotizat_pais", "CO")
+        resp = client.get("/")
     assert resp.status_code == 200
     assert "Latinoamérica" in resp.text
     assert "Software de presupuestos de construcción para Colombia" not in resp.text

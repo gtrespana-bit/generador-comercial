@@ -1,5 +1,11 @@
 # Base de datos de la versión web
 
+> **Estado del código revisado el 28/09/2026:** el runtime exige el head
+> `h1c4b7e9a3d2`. Los párrafos fechados a continuación documentan
+> verificaciones históricas y no certifican el estado de una base remota hoy;
+> antes de ejecutar una migración, consulta la versión real y sigue
+> [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md).
+
 CotizaT mantiene dos caminos explícitos durante la transición:
 
 - **desarrollo/compatibilidad local:** SQLite mediante `COTIZAT_DB`;

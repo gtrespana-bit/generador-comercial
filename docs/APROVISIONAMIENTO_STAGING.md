@@ -14,6 +14,14 @@ estos pasos son manuales.
 > `COTIZAT_REQUIRE_RLS_ROLE` para «hacer arrancar» staging. Si falla, se
 > corrige la infraestructura.
 
+> **Estado verificado en el código el 28/09/2026:** el head que exige esta
+> revisión es `h1c4b7e9a3d2`. El sandbox no tiene una conexión autorizada a
+> Supabase, así que el head remoto y el estado de Vercel **no se han
+> comprobado** en esta auditoría. Antes de migrar, consulta el valor real de
+> `public.alembic_version`; no apliques los ejemplos históricos de esta guía
+> si su precondición no coincide exactamente. Para el esquema de esta rama,
+> Alembic debe terminar en `h1c4b7e9a3d2`.
+
 ## 0. Verificación previa (sin secretos en el chat)
 
 Antes de tocar nada, confirma que las variables existen en tu gestor de
@@ -29,7 +37,7 @@ La app expone dos fronteras de salud (sin autenticación, sin datos de tenant):
 | Endpoint | Uso |
 | --- | --- |
 | `/healthz` | Liveness: el proceso responde. No toca la base de datos. |
-| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`e1a4b7c9d2f0`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
+| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`h1c4b7e9a3d2`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
 
 `/readyz` devuelve **503** si el despliegue no debe recibir tráfico; **200** no
 sustituye la matriz de aceptación con dos correos y dos organizaciones.
@@ -62,18 +70,23 @@ rol administrativo. Nunca llega al runtime web.
 # el entorno de Vercel. Pide la contraseña de forma interactiva si puedes.
 export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/postgres?sslmode=require'
 
-alembic current          # antes: c93e7a4d20f1 (conocido) o inferior
+alembic current          # registra la versión remota real antes de cambiarla
 alembic upgrade head
-alembic current          # OBLIGATORIO que imprima: e1a4b7c9d2f0
+alembic current          # OBLIGATORIO que imprima: h1c4b7e9a3d2
 
 unset MIGRATION_DATABASE_URL
 ```
 
-Resultado obligatorio documentado:
+Resultado obligatorio para el código de esta rama:
 
 ```text
-e1a4b7c9d2f0
+h1c4b7e9a3d2
 ```
+
+No pegues un `staging_upgrade_*.sql` manual si el `version_num` remoto no
+coincide exactamente con la precondición que declara ese script. El camino
+preferido es `alembic upgrade head` con la URL administrativa y una copia de
+seguridad previa.
 
 ## Paso C — Crear el login runtime
 
