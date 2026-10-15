@@ -202,6 +202,7 @@ def enviar_invitacion_por_email(
     invitador_email: str,
     rol: str,
     caduca_el: datetime,
+    lang: str = "es",
 ) -> str:
     """Envía el correo de invitación y devuelve el id del envío.
 
@@ -223,8 +224,10 @@ def enviar_invitacion_por_email(
         "anio": datetime.utcnow().year,
     }
     asunto = f"{invitador} te invitó a {organizacion_nombre} · {PRODUCT_NAME}"
-    html = _jinja.get_template("emails/invitacion.html").render(**contexto)
-    texto = _jinja.get_template("emails/invitacion.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/invitacion{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/invitacion{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(
             settings, to=email, subject=asunto, html=html, text=texto
@@ -255,6 +258,7 @@ def enviar_presupuesto_por_email(
     pdf: bytes,
     nombre_pdf: str,
     responder_a: str = "",
+    lang: str = "es",
 ) -> str:
     """Entrega al cliente un presupuesto PDF y devuelve el id de Resend."""
     email = str(email or "").strip().lower()
@@ -286,8 +290,11 @@ def enviar_presupuesto_por_email(
         "permite_responder": bool(responder_a),
         "anio": datetime.utcnow().year,
     }
-    html = _jinja.get_template("emails/presupuesto.html").render(**contexto)
-    texto = _jinja.get_template("emails/presupuesto.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _lang = normalizar_idioma(lang)
+    _sufijo = "_en" if _lang == "en" else ""
+    html = _jinja.get_template(f"emails/presupuesto{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/presupuesto{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(
             settings,
@@ -323,6 +330,7 @@ def enviar_respuesta_propuesta_por_email(
     respondido_por_email: str,
     comentario: str,
     enlace_interno: str,
+    lang: str = "es",
 ) -> str:
     """Notifica a un administrador la respuesta registrada por el cliente."""
     email = str(email or "").strip().lower()
@@ -350,8 +358,10 @@ def enviar_respuesta_propuesta_por_email(
         f"Propuesta {decision}: {presupuesto_numero} · "
         f"{cliente_nombre or respondido_por_nombre}"
     )[:200]
-    html = _jinja.get_template("emails/respuesta_propuesta.html").render(**contexto)
-    texto = _jinja.get_template("emails/respuesta_propuesta.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/respuesta_propuesta{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/respuesta_propuesta{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(
             settings,
@@ -384,6 +394,7 @@ def enviar_aviso_licencia(
     organizacion_nombre: str,
     vence: date,
     dias_restantes: int,
+    lang: str = "es",
 ) -> str:
     """Avisa a un administrador de que el acceso de su organización vence.
 
@@ -405,8 +416,10 @@ def enviar_aviso_licencia(
         f"Tu acceso a {PRODUCT_NAME} vence el "
         f"{vence.strftime('%d/%m/%Y')} · {organizacion_nombre}"
     )
-    html = _jinja.get_template("emails/aviso_licencia.html").render(**contexto)
-    texto = _jinja.get_template("emails/aviso_licencia.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/aviso_licencia{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/aviso_licencia{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(settings, to=email, subject=asunto, html=html, text=texto)
     except EmailSendError as exc:
@@ -426,6 +439,7 @@ def enviar_recordatorio_vencimiento(
     es_prueba: bool,
     vence: date,
     dias_restantes: int,
+    lang: str = "es",
 ) -> str:
     """Recuerda a un administrador que su acceso vence en pocos días.
 
@@ -467,8 +481,10 @@ def enviar_recordatorio_vencimiento(
             f"{contexto['organizacion_nombre']}"
         )
     asunto = asunto[:200]
-    html = _jinja.get_template("emails/recordatorio_vencimiento.html").render(**contexto)
-    texto = _jinja.get_template("emails/recordatorio_vencimiento.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/recordatorio_vencimiento{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/recordatorio_vencimiento{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(
             settings,
@@ -485,7 +501,7 @@ def enviar_recordatorio_vencimiento(
     return envio_id
 
 
-def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict) -> str:
+def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict, lang: str = "es") -> str:
     """Alerta interna al operador cuando la verificación diaria falla (E4-023).
 
     Es un correo **interno** (solo va a `COTIZAT_OPERADORES`), no un correo de
@@ -505,8 +521,10 @@ def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict) -> s
     asunto = (
         f"Alerta operativa {PRODUCT_NAME}: {total} problema(s) en el despliegue"
     )[:200]
-    html = _jinja.get_template("emails/alerta_operador.html").render(**contexto)
-    texto = _jinja.get_template("emails/alerta_operador.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/alerta_operador{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/alerta_operador{_sufijo}.txt").render(**contexto)
     try:
         envio_id = _post_resend(
             settings,
@@ -534,6 +552,7 @@ def enviar_activacion_plan_por_email(
     vence: date,
     recibo_pdf: bytes = b"",
     recibo_nombre: str = "recibo.pdf",
+    lang: str = "es",
 ) -> str:
     """Avisa al comprador de que su plan quedó activo, con el recibo adjunto.
 
@@ -563,8 +582,10 @@ def enviar_activacion_plan_por_email(
         f"Tu {contexto['plan_nombre'].lower()} está activo hasta el "
         f"{vence.strftime('%d/%m/%Y')} · {PRODUCT_NAME}"
     )[:200]
-    html = _jinja.get_template("emails/plan_activado.html").render(**contexto)
-    texto = _jinja.get_template("emails/plan_activado.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+    html = _jinja.get_template(f"emails/plan_activado{_sufijo}.html").render(**contexto)
+    texto = _jinja.get_template(f"emails/plan_activado{_sufijo}.txt").render(**contexto)
 
     adjuntos: tuple[EmailAttachment, ...] = ()
     if recibo_pdf:
@@ -601,6 +622,7 @@ def enviar_solicitud_demo_por_email(
     presupuestos_mes: str = "",
     mensaje: str = "",
     destino_override: str = "",
+    lang: str = "es",
 ) -> str:
     """Notifica al equipo de soporte sobre una nueva solicitud de demo.
 
@@ -656,7 +678,9 @@ def enviar_solicitud_demo_por_email(
     }
     asunto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"[:200]
     try:
-        html = _jinja.get_template("emails/demo.html").render(**contexto)
+        from ..i18n import normalizar_idioma
+        _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+        html = _jinja.get_template(f"emails/demo{_sufijo}.html").render(**contexto)
     except Exception:
         html = (
             "<h2>Nueva solicitud de demo</h2>"
@@ -665,7 +689,7 @@ def enviar_solicitud_demo_por_email(
             f"<p><strong>Empresa:</strong> {empresa}</p>"
         )
     try:
-        texto = _jinja.get_template("emails/demo.txt").render(**contexto)
+        texto = _jinja.get_template(f"emails/demo{_sufijo}.txt").render(**contexto)
     except Exception:
         texto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"
 
@@ -697,6 +721,7 @@ def enviar_compra_por_email(
     comprobante_nombre: str,
     comprobante_bytes: bytes,
     destino_override: str = "",
+    lang: str = "es",
 ) -> str:
     """Notifica al titular una compra nueva con su comprobante adjunto.
 
@@ -744,8 +769,10 @@ def enviar_compra_por_email(
         f"{organizacion_nombre or email}"
     )[:200]
     try:
-        html = _jinja.get_template("emails/compra.html").render(**contexto)
-        texto = _jinja.get_template("emails/compra.txt").render(**contexto)
+        from ..i18n import normalizar_idioma
+        _sufijo = "_en" if normalizar_idioma(lang) == "en" else ""
+        html = _jinja.get_template(f"emails/compra{_sufijo}.html").render(**contexto)
+        texto = _jinja.get_template(f"emails/compra{_sufijo}.txt").render(**contexto)
     except Exception:
         html = (
             "<h2>Nueva compra registrada</h2>"

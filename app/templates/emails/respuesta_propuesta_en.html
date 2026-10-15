@@ -1,0 +1,45 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Proposal {{ decision }} · {{ presupuesto_numero }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ 'Accepted' if decision == 'aceptada' else 'Rejected' }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Proposal {{ 'accepted' if decision == 'aceptada' else 'rejected' }}
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  The proposal <strong style="color:#17211d;">{{ presupuesto_numero }}</strong>{% if presupuesto_titulo %} · {{ presupuesto_titulo }}{% endif %},
+  version <strong style="color:#17211d;">V{{ version_numero }}</strong>, was
+  <strong style="color:#17211d;">{{ decision }}</strong>.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13.5px;line-height:1.6;color:#34483f;">
+      <strong style="color:#17211d;">Client:</strong> {{ cliente_nombre or '—' }}<br>
+      <strong style="color:#17211d;">Responded by:</strong> {{ respondido_por_nombre }} · {{ respondido_por_email }}
+      {% if comentario %}<br><strong style="color:#17211d;">Comment:</strong> {{ comentario }}{% endif %}
+    </td>
+  </tr>
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td align="center">
+      <a href="{{ enlace_interno }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Open the estimate in CotizaT</a>
+    </td>
+  </tr>
+</table>
+
+{% endblock %}
+
+{% block pie %}
+The identity shown is the one declared by the person who responded to the link. {{ product_name }} keeps the exact version, the decision and the date/time; it does not certify a qualified electronic signature.
+{% endblock %}

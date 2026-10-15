@@ -1,0 +1,12 @@
+NEW DEMO REQUEST · {{ product_name }}
+
+Name: {{ nombre }}
+Email: {{ email }}
+Company: {{ empresa }}
+Phone: {{ telefono }}
+Estimates per month: {{ presupuestos_mes }}
+
+Message:
+{{ mensaje }}
+---
+This email was sent automatically from {{ product_name }}.

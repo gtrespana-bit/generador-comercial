@@ -346,6 +346,7 @@ async def registrar_compra(
             verificacion=verificacion,
             comprobante_nombre=nombre_comprobante,
             comprobante_bytes=datos_comprobante,
+            lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
         )
     except (EmailNotConfigured, EmailValidationError, StorageError) as exc:
         log.warning("Compra #%s creada sin notificación (%s).", compra.id, exc)

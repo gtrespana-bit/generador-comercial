@@ -269,7 +269,8 @@ class _CotizaTemplates(Jinja2Templates):
         if lang and lang != "es":
             base, ext = os.path.splitext(str(name))
             alt = f"{base}_{lang}{ext}"
-            if (BASE_DIR / "app" / "templates" / alt).is_file():
+            exists = (BASE_DIR / "app" / "templates" / alt).is_file()
+            if exists:
                 name = alt
         return super().TemplateResponse(
             request, name, ctx, status_code=status_code, headers=headers,
@@ -278,6 +279,15 @@ class _CotizaTemplates(Jinja2Templates):
 
 
 TEMPLATES = _CotizaTemplates(directory=str(BASE_DIR / "app" / "templates"))
+# Filtro de traducción por clave (i18n). Fallback a español si falta la clave.
+try:
+    from ..i18n import t as _t, normalizar_idioma as _norm_lang
+    TEMPLATES.env.filters["t"] = lambda clave, idioma=None, **kw: _t(clave, idioma, **kw)
+    TEMPLATES.env.globals["t"] = _t
+    TEMPLATES.env.globals["normalizar_idioma"] = _norm_lang
+except Exception:
+    pass
+
 TEMPLATES.env.filters["money"] = fmt_monto
 try:
     from ..services.monedas import formato_iso as _formato_iso

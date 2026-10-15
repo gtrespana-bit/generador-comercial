@@ -1,0 +1,16 @@
+NEW PURCHASE REGISTERED · {{ product_name }}
+
+Plan: {{ plan_nombre }}
+Amount: {{ importe_texto }}
+Payment method: {{ metodo_nombre }}
+Organization: {{ organizacion_nombre }}
+Buyer: {{ nombre }} <{{ email }}>
+
+Verification data:
+{% for etiqueta, valor in verificacion %}
+- {{ etiqueta }}: {{ valor }}
+{% endfor %}
+
+Attached receipt: {{ comprobante_nombre }}
+---
+This email was sent automatically from {{ product_name }}. Review the purchase in the operator panel.

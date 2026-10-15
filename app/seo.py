@@ -118,12 +118,19 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
     out = [
         {"hreflang": "x-default", "href": base + ruta_pais("", tema)},
         {"hreflang": "es", "href": base + ruta_pais("", tema)},
+        {"hreflang": "en", "href": base + "/en/" + (tema + "/" if tema else "")},
     ]
     for pais in lista_paises():
         out.append(
             {
                 "hreflang": hreflang_pais(pais["codigo"]),
                 "href": base + ruta_pais(pais["codigo"], tema),
+            }
+        )
+        out.append(
+            {
+                "hreflang": f"en-{pais['codigo']}",
+                "href": base + f"/en-{pais['codigo'].lower()}/" + (tema + "/" if tema else ""),
             }
         )
     return out
@@ -1362,13 +1369,13 @@ def jsonld_website(request: Request | None = None) -> dict:
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
-        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-HN", "es-NI", "es-ES"],
+        "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-HN", "es-NI", "es-ES", "en", "en-US", "en-GB"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
         "description": VALUE_PROPOSITION,
     }
 
 
-def jsonld_software(request: Request | None = None, codigo: str = "") -> dict:
+def jsonld_software(request: Request | None = None, codigo: str = "", lang: str = "es") -> dict:
     origen = origen_canonico(request)
     pais = PAISES.get(str(codigo or "").upper())
     area = {
@@ -1440,6 +1447,7 @@ def jsonld_webpage(
     title: str,
     description: str = "",
     page_type: str = "WebPage",
+    lang: str = "es",
 ) -> dict:
     """Schema WebPage para una página individual.
 
@@ -1453,7 +1461,7 @@ def jsonld_webpage(
         "name": title,
         "url": origen + path,
         "isPartOf": {"@type": "WebSite", "name": PRODUCT_NAME, "url": origen + "/"},
-        "inLanguage": "es",
+        "inLanguage": (lang or "es"),
         "dateModified": SITEMAP_LASTMOD,
     }
     if description:
@@ -1508,8 +1516,13 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     from .paises import lista_paises
     from .seo_articulos import lista_articulos
     from .seo_contenido import ficha_guia, lista_guias
+    lang = "es"
+    try:
+        lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+    except Exception:
+        lang = "es"
 
-    guia = ficha_guia(slug)
+    guia = ficha_guia(slug, lang=lang)
     if not guia:
         return None
     origen = origen_canonico(request)
@@ -1518,7 +1531,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         {
             "title": guia["title"],
             "description": guia["description"],
-            "lang": "es",
+            "lang": lang,
             "h1": guia["h1"],
             "canonical_path": path,
             "faq": list(guia.get("faq") or []),
@@ -1527,7 +1540,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     bloques = [
         jsonld_organizacion(request),
         jsonld_website(request),
-        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article"),
+        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=lang),
         jsonld_articulo(guia, request),
         jsonld_howto(guia, request),
         jsonld_breadcrumb(request, [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]),
@@ -1565,11 +1578,16 @@ def contexto_seo(
     origen = origen_canonico(request)
     canonical = origen + ficha["canonical_path"]
     og_image = origen + OG_IMAGE
+    lang = "es"
+    try:
+        lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+    except Exception:
+        lang = "es"
     bloques_ld = [
         jsonld_organizacion(request),
         jsonld_website(request),
-        jsonld_webpage(request, ficha["canonical_path"], ficha["h1"], ficha.get("description", "")),
-        jsonld_software(request, codigo),
+        jsonld_webpage(request, ficha["canonical_path"], ficha["h1"], ficha.get("description", ""), lang=lang),
+        jsonld_software(request, codigo, lang=lang),
     ]
     if ficha.get("faq"):
         bloques_ld.append(jsonld_faq(ficha["faq"]))
@@ -1769,8 +1787,11 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         )
 
     add("/", "1.0", "weekly")
+    # Variantes en inglés (locale en) para las landings de país.
+    add("/en/", "0.9", "weekly")
     for codigo in ORDEN_SELECTOR:
         add(ruta_pais(codigo), "0.9", "weekly")
+        add(f"/en-{codigo.lower()}/", "0.8", "weekly")
     for tema in TEMAS:
         add(ruta_pais("", tema), "0.8", "monthly", tema)
         for codigo in ORDEN_SELECTOR:
@@ -1783,6 +1804,13 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
 
     for guia in lista_todas_guias():
         add(f"/guia/{guia['slug']}", "0.7", "monthly")
+    # Guías en inglés (solo las traducidas).
+    try:
+        from .seo_contenido import GUIAS_EN
+        for slug in GUIAS_EN:
+            add(f"/en/guia/{slug}", "0.7", "monthly")
+    except Exception:
+        pass
     for legal in ("preguntas", "terminos", "privacidad", "soporte", "licencias"):
         add(f"/legal/{legal}", "0.3", "yearly")
     return out

@@ -1,0 +1,58 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}New demo request · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  New request
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  New demo request
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  Someone requested a demo from the {{ product_name }} landing page.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Name</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Email</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;"><a href="mailto:{{ email }}" style="color:#0b5b38;text-decoration:none;">{{ email }}</a></td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Company</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ empresa }}</td>
+  </tr>
+  {% if telefono %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Phone</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ telefono }}</td>
+  </tr>
+  {% endif %}
+  {% if presupuestos_mes %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Estimates per month</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ presupuestos_mes }}</td>
+  </tr>
+  {% endif %}
+  {% if mensaje %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Message</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;"><span style="white-space:pre-wrap;">{{ mensaje }}</span></td>
+  </tr>
+  {% endif %}
+</table>
+
+{% endblock %}
+
+{% block pie %}
+This email was sent automatically from {{ product_name }}.
+{% endblock %}

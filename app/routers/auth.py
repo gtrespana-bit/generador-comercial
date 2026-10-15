@@ -829,6 +829,7 @@ async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
             invitador_email=invitador.email if invitador else "",
             rol=invitacion.rol,
             caduca_el=invitacion.expires_at,
+            lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
         )
         email_enviado = True
     except (EmailNotConfigured, EmailSendError) as exc:

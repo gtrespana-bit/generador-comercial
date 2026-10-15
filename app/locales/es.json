@@ -1,0 +1,16 @@
+{
+  "nav.how_it_works": "Cómo funciona",
+  "nav.guides": "Guías",
+  "nav.faq": "Preguntas",
+  "nav.plans": "Planes",
+  "nav.sign_in": "Iniciar sesión",
+  "nav.my_dashboard": "Mi panel",
+  "common.save": "Guardar",
+  "common.cancel": "Cancelar",
+  "common.delete": "Eliminar",
+  "common.edit": "Editar",
+  "common.search": "Buscar",
+  "common.loading": "Cargando…",
+  "landing.cta_free_days": "Empezar mis {days} días gratis",
+  "landing.see_plans": "Ver planes"
+}

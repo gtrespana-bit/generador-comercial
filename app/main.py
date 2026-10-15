@@ -203,15 +203,26 @@ class IdiomaMiddleware:
         path = scope.get("path", "") or ""
         lang = None
         reescribir = False
-        if path == "/en" or path.startswith("/en/"):
+        import re as _re
+        _m = _re.match(r"^/en(?:-([A-Za-z]{2}))?(/.*)?$", path)
+        if _m:
             lang = "en"
             reescribir = True
-            if path == "/en":
-                nuevo = "/"
+            _pais = _m.group(1)
+            _resto = _m.group(2) or ""
+            if _pais:
+                # /en-es/... -> /es/... (datos del país, interfaz en inglés)
+                base = "/" + _pais.lower()
+                nuevo = base + (_resto if _resto else "/")
+                if nuevo.endswith("//"):
+                    nuevo = nuevo[:-1]
             else:
-                nuevo = path[3:]
-                if not nuevo:
+                if path == "/en":
                     nuevo = "/"
+                else:
+                    nuevo = path[3:]
+                    if not nuevo:
+                        nuevo = "/"
             scope["path"] = nuevo
             scope["raw_path"] = nuevo.encode("latin-1")
         # cookie

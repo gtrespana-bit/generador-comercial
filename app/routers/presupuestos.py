@@ -2323,7 +2323,7 @@ def enviar_presupuesto_email_web(
     estado_anterior = presupuesto.estado
     presupuesto.estado = _estado_despues_de_enviar(estado_anterior)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el PDF para enviar del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response):
@@ -2347,6 +2347,7 @@ def enviar_presupuesto_email_web(
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,
+            lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         db.rollback()
@@ -2467,6 +2468,7 @@ def _notificar_respuesta_propuesta(
                     enlace_interno=_url_interna_presupuesto(
                         request, enlace.presupuesto_id
                     ),
+                    lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
                 )
                 enviados.append(destinatario)
             except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
@@ -2577,7 +2579,7 @@ def crear_enlace_publico_web(
     cfg = _config(db)
     presupuesto.estado = _estado_despues_de_enviar(presupuesto.estado)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el PDF público del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response):
@@ -3989,13 +3991,13 @@ def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db))
 
 
 @router.get("/presupuestos/{presupuesto_id}/pdf")
-def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_pdf(presupuesto_id: int, inline: int = 0, request: Request = None, db: Session = Depends(get_db)):
     presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     cfg = _config(db)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es" if request else "es"),
         f"el PDF del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
@@ -4007,7 +4009,7 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
 
 
 @router.get("/presupuestos/{presupuesto_id}/contrato")
-def descargar_contrato(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_contrato(presupuesto_id: int, inline: int = 0, request: Request = None, db: Session = Depends(get_db)):
     """Genera un contrato de servicios real en PDF a partir del presupuesto.
 
     Reemplaza a los antiguos botones "Generar Contrato (IA)" / "Generar
@@ -4017,7 +4019,7 @@ def descargar_contrato(presupuesto_id: int, inline: int = 0, db: Session = Depen
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     resultado = _generar_pdf_seguro(
-        lambda: generar_contrato_pdf(presupuesto, _config(db)),
+        lambda: generar_contrato_pdf(presupuesto, _config(db), getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el contrato del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:

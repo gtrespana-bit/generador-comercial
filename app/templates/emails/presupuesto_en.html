@@ -1,0 +1,51 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Estimate {{ presupuesto_numero }} · {{ empresa_nombre }}{% endblock %}
+
+{% block marca %}{{ empresa_nombre }}{% endblock %}
+
+{% block subtitulo %}Construction estimate{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ presupuesto_numero }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 8px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Estimate {{ presupuesto_numero }}
+</h1>
+
+{% if presupuesto_titulo %}
+<p style="margin:0 0 18px;font-size:15px;color:#475a51;">{{ presupuesto_titulo }}</p>
+{% endif %}
+
+{% if cliente_nombre %}
+<p style="margin:0 0 12px;font-size:15px;line-height:1.65;color:#475a51;">Hello, <strong style="color:#17211d;">{{ cliente_nombre }}</strong>:</p>
+{% endif %}
+
+<div style="margin:0 0 22px;font-size:15px;line-height:1.7;color:#34483f;white-space:pre-line;">{{ mensaje }}</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#28503f;">
+      <strong>Attached document:</strong> estimate {{ presupuesto_numero }} as PDF{% if total_texto %} · Total {{ total_texto }}{% endif %}.
+    </td>
+  </tr>
+</table>
+
+{% if permite_responder %}
+<p style="margin:0 0 28px;font-size:13px;line-height:1.5;color:#475a51;">
+  You can reply directly to this email to contact {{ empresa_nombre }}.
+</p>
+{% endif %}
+
+{% endblock %}
+
+{% block copyright %}© {{ anio }} {{ empresa_nombre }}{% endblock %}
+
+{% block pie %}
+Sent via {{ product_name }}. This message contains a commercial proposal: review the attached PDF for scope, amounts, validity and full terms.
+{% endblock %}

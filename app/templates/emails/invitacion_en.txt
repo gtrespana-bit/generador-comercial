@@ -1,0 +1,9 @@
+{{ product_name }} — Invitation to {{ organizacion_nombre }}
+
+{{ invitador }}{% if invitador_email %} ({{ invitador_email }}){% endif %} invited you to join the organization {{ organizacion_nombre }} with the role {{ rol }}.
+
+The link is personal, single-use and expires on {{ caduca_el.strftime('%d/%m/%Y') }}. Sign in with the same email that received this invitation:
+
+{{ enlace }}
+
+If you were not expecting this invitation, ignore this email: it will expire on its own and no data of yours is used. This message is sent automatically from {{ product_name }}; do not reply to this address.

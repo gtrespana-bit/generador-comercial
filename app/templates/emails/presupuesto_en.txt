@@ -1,0 +1,12 @@
+{{ empresa_nombre }} — Estimate {{ presupuesto_numero }}
+Sent via {{ product_name }}
+
+{% if cliente_nombre %}Hello, {{ cliente_nombre }}:
+
+{% endif %}{{ mensaje }}
+
+Attached document: estimate {{ presupuesto_numero }} as PDF{% if total_texto %} · Total {{ total_texto }}{% endif %}.
+
+{% if permite_responder %}You can reply directly to this email to contact {{ empresa_nombre }}.
+
+{% endif %}This message contains a commercial proposal. Review the attached PDF for scope, amounts, validity and full terms.

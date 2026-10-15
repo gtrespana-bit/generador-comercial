@@ -142,7 +142,7 @@ class OpcionRadio(Flowable):
             textColor=self.ctx.color_acento,
             annotationFlags="print",
             fieldFlags="radio noToggleToOff",
-            tooltip=self.tooltip or "Elegir este producto",
+            tooltip=self.tooltip or ("Choose this product" if self.lang.startswith("en") else "Elegir este producto"),
         )
 
 
@@ -323,7 +323,7 @@ class TarjetaOpcionClicable(Flowable):
             _anadir_boton_hit(
                 self.canv,
                 "hit_%s_%s" % (self.grupo, self.valor),
-                self.tooltip or "Elegir este producto",
+                self.tooltip or ("Choose this product" if self.lang.startswith("en") else "Elegir este producto"),
                 w, h, js,
             )
         except Exception:
@@ -381,13 +381,14 @@ class ContextoInteractivo:
     """
 
     def __init__(self, presupuesto, moneda, color_texto, color_acento,
-                 etiqueta_total="PRESUPUESTO TOTAL"):
+                 etiqueta_total="PRESUPUESTO TOTAL", lang="es"):
         self.presupuesto = presupuesto
         self.moneda = moneda
         self.simbolo = str(moneda or "USD").upper()
         self.color_texto = color_texto
         self.color_acento = color_acento
         self.etiqueta_total = etiqueta_total
+        self.lang = lang
 
         # partidas: id → {cantidad, base, precios[], capitulo, cuenta}
         self.partidas = {}

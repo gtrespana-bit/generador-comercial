@@ -1,0 +1,20 @@
+{{ product_name }} · Construction estimates
+
+{% if dias_restantes == 1 %}Your access expires tomorrow{% else %}Your access expires in {{ dias_restantes }} days{% endif %}
+{{ '─' * 42 }}
+
+{% if es_prueba %}The free trial of {{ organizacion_nombre }} ends on {{ vence.strftime('%d/%m/%Y') }}. Choose a plan and keep working without interruptions.{% else %}The access of {{ organizacion_nombre }} to {{ product_name }} expires on {{ vence.strftime('%d/%m/%Y') }} (inclusive). After that date, the account pauses on its own until renewed.{% endif %}
+
+Organization : {{ organizacion_nombre }}
+Plan         : {{ plan_nombre }}
+Valid until  : {{ vence.strftime('%d/%m/%Y') }}
+
+{% if renovar_url %}{% if es_prueba %}Choose your plan here:{% else %}Renew your plan here:{% endif %}
+{{ renovar_url }}
+{% endif %}
+Your estimates, clients, catalog and files are NOT deleted: as soon as you renew, everything is exactly as you left it.
+
+Questions? Write to us at {{ soporte_email }}.
+
+© {{ anio }} {{ product_name }} · Estimates
+You receive this email because you administer the organization {{ organizacion_nombre }} in {{ product_name }}. This notice is sent automatically when your access is about to expire.

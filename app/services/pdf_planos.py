@@ -33,7 +33,7 @@ MARGEN = 34
 MAX_FILAS_TABLA = 13  # filas de mediciones por página (la tabla continúa en la siguiente)
 
 
-def generar_anexo(presupuesto) -> pdf_anexos.Anexo | None:
+def generar_anexo(presupuesto, lang: str = "es") -> pdf_anexos.Anexo | None:
     """Anexo listo para fusionar, o None si no hay planos con mediciones."""
     planos = [
         plano for plano in (getattr(presupuesto, "planos", None) or [])
@@ -42,20 +42,20 @@ def generar_anexo(presupuesto) -> pdf_anexos.Anexo | None:
     if not planos:
         return None
     try:
-        datos = _generar_pdf(planos)
+        datos = _generar_pdf(planos, lang)
         paginas = len(PdfReader(io.BytesIO(datos)).pages)
     except Exception:
         log.exception("No se pudo generar el anexo de planos y mediciones")
         return None
     n_med = sum(len(plano.mediciones) for plano in planos)
     return pdf_anexos.Anexo(
-        nombre=f"Planos y mediciones ({n_med} medición{'es' if n_med != 1 else ''})",
+        nombre=(f"Plans and measurements ({n_med} measurement{'s' if n_med != 1 else ''})" if lang.startswith("en") else f"Planos y mediciones ({n_med} medición{'es' if n_med != 1 else ''})"),
         datos=datos,
         paginas=paginas,
     )
 
 
-def _generar_pdf(planos: list) -> bytes:
+def _generar_pdf(planos: list, lang: str = "es") -> bytes:
     buf = io.BytesIO()
     c = pdfcanvas.Canvas(buf, pagesize=A4)
     ancho, alto_pag = A4
@@ -66,47 +66,49 @@ def _generar_pdf(planos: list) -> bytes:
         while restantes or primera:
             bloque = restantes[:MAX_FILAS_TABLA]
             restantes = restantes[MAX_FILAS_TABLA:]
-            _pagina_plano(c, plano, bloque, len(mediciones), primera, ancho, alto_pag)
+            _pagina_plano(c, plano, bloque, len(mediciones), primera, ancho, alto_pag, lang)
             c.showPage()
             primera = False
     c.save()
     return buf.getvalue()
 
 
-def _pagina_plano(c, plano, mediciones, total, es_primera, ancho, alto_pag):
+def _pagina_plano(c, plano, mediciones, total, es_primera, ancho, alto_pag, lang="es"):
     y = alto_pag - 42
 
     # Encabezado
     c.setFillColor(HexColor(AZUL))
     c.setFont("Helvetica-Bold", 13)
-    titulo = f"Plano: {plano.nombre}" if es_primera else f"Plano: {plano.nombre} (cont.)"
+    titulo = (f"Plan: {plano.nombre}" if es_primera else f"Plan: {plano.nombre} (cont.)") if lang.startswith("en") else (f"Plano: {plano.nombre}" if es_primera else f"Plano: {plano.nombre} (cont.)")
     c.drawString(MARGEN, y, titulo[:70])
     c.setFont("Helvetica", 8.5)
     c.setFillColor(HexColor(GRIS))
     escala = (
-        f"{plano.escala_px_por_metro:.2f} px/m" if plano.calibrado else "sin calibrar"
+        (f"{plano.escala_px_por_metro:.2f} px/m" if plano.calibrado else "not calibrated") if lang.startswith("en") else (f"{plano.escala_px_por_metro:.2f} px/m" if plano.calibrado else "sin calibrar")
     )
     c.drawString(
         MARGEN, y - 13,
-        f"Escala: {escala} · {total} medición{'es' if total != 1 else ''} · "
-        "valores dibujados sobre el plano como en el área de medición",
+        (f"Scale: {escala} · {total} measurement{'s' if total != 1 else ''} · "
+        "values drawn on the plan as in the measurement area") if lang.startswith("en") else
+        (f"Escala: {escala} · {total} medición{'es' if total != 1 else ''} · "
+        "valores dibujados sobre el plano como en el área de medición"),
     )
     y -= 26
 
     # Zona de imagen (solo en la primera página del plano)
     if es_primera:
-        y = _dibujar_imagen_con_mediciones(c, plano, mediciones, MARGEN, y, ancho)
+        y = _dibujar_imagen_con_mediciones(c, plano, mediciones, MARGEN, y, ancho, lang)
 
     # Tabla de mediciones
     y -= 14
     c.setFont("Helvetica-Bold", 9)
     c.setFillColor(HexColor(AZUL))
-    c.drawString(MARGEN, y, "Mediciones")
+    c.drawString(MARGEN, y, "Measurements" if lang.startswith("en") else "Mediciones")
     y -= 6
-    y = _tabla(c, mediciones, y, ancho)
+    y = _tabla(c, mediciones, y, ancho, lang)
 
 
-def _dibujar_imagen_con_mediciones(c, plano, mediciones, x0, y0, ancho_pag):
+def _dibujar_imagen_con_mediciones(c, plano, mediciones, x0, y0, ancho_pag, lang="es"):
     """Dibuja la imagen del plano (si es legible) y las mediciones encima."""
     alto_disp = 300
     img = None
@@ -128,7 +130,7 @@ def _dibujar_imagen_con_mediciones(c, plano, mediciones, x0, y0, ancho_pag):
         x = x0 + (caja_w - w) / 2
         y = y0 - h
         c.drawImage(img, x, y, width=w, height=h, preserveAspectRatio=True, mask="auto")
-        _dibujar_mediciones(c, mediciones, plano, x, y, w, h)
+        _dibujar_mediciones(c, mediciones, plano, x, y, w, h, lang)
     else:
         c.setFillColor(HexColor("#f1f5f9"))
         c.setStrokeColor(HexColor(BORDE))
@@ -137,14 +139,14 @@ def _dibujar_imagen_con_mediciones(c, plano, mediciones, x0, y0, ancho_pag):
         c.setFont("Helvetica-Oblique", 9)
         c.drawCentredString(
             x + caja_w / 2, y + caja_h / 2,
-            "Imagen del plano no disponible (PDF o archivo no embebible)",
+            ("Plan image not available (PDF or non-embeddable file)" if lang.startswith("en") else "Imagen del plano no disponible (PDF o archivo no embebible)"),
         )
     c.setStrokeColor(HexColor(BORDE))
     c.rect(x, y, w, h, stroke=1, fill=0)
     return y
 
 
-def _dibujar_mediciones(c, mediciones, plano, x, y, w, h):
+def _dibujar_mediciones(c, mediciones, plano, x, y, w, h, lang="es"):
     """Superpone los trazos de cada medición sobre la imagen ya dibujada."""
     if not plano.ancho_px or not plano.alto_px:
         return
@@ -198,7 +200,7 @@ def _dibujar_mediciones(c, mediciones, plano, x, y, w, h):
             c.drawString(pts[0][0] + 3, pts[0][1] + 3, etiqueta[:48])
 
 
-def _tabla(c, mediciones, y, ancho_pag):
+def _tabla(c, mediciones, y, ancho_pag, lang="es"):
     """Tabla compacta: etiqueta · tipo · valor · unidad. Devuelve la Y final."""
     x0 = MARGEN
     ancho_total = ancho_pag - 2 * MARGEN
@@ -213,10 +215,10 @@ def _tabla(c, mediciones, y, ancho_pag):
     c.setFillColor(HexColor(AZUL))
     c.rect(x0, y, ancho_total, 14, stroke=0, fill=1)
     c.setFillColor(HexColor("#ffffff"))
-    c.drawString(x0 + 4, y + 4, "Etiqueta")
-    c.drawString(x0 + col_etiqueta + 4, y + 4, "Tipo")
-    c.drawRightString(x0 + col_etiqueta + col_tipo + col_valor, y + 4, "Valor")
-    c.drawString(x0 + col_etiqueta + col_tipo + col_valor + 6, y + 4, "Unidad")
+    c.drawString(x0 + 4, y + 4, "Label" if lang.startswith("en") else "Etiqueta")
+    c.drawString(x0 + col_etiqueta + 4, y + 4, "Type" if lang.startswith("en") else "Tipo")
+    c.drawRightString(x0 + col_etiqueta + col_tipo + col_valor, y + 4, "Value" if lang.startswith("en") else "Valor")
+    c.drawString(x0 + col_etiqueta + col_tipo + col_valor + 6, y + 4, "Unit" if lang.startswith("en") else "Unidad")
 
     c.setFont("Helvetica", 8.5)
     for i, m in enumerate(mediciones):
@@ -228,8 +230,11 @@ def _tabla(c, mediciones, y, ancho_pag):
         etiqueta = (m.etiqueta or "—").strip()
         c.drawString(x0 + 4, y + 3.5, etiqueta[: int(col_etiqueta // 4)])
         tipo = {
-            "lineal": "Lineal", "area": "Área", "perimetro": "Perímetro",
-            "conteo": "Conteo", "volumen": "Volumen",
+            "lineal": ("Linear" if lang.startswith("en") else "Lineal"),
+            "area": ("Area" if lang.startswith("en") else "Área"),
+            "perimetro": ("Perimeter" if lang.startswith("en") else "Perímetro"),
+            "conteo": ("Count" if lang.startswith("en") else "Conteo"),
+            "volumen": ("Volume" if lang.startswith("en") else "Volumen"),
         }.get(m.tipo, m.tipo)
         c.drawString(x0 + col_etiqueta + 4, y + 3.5, tipo)
         c.drawRightString(x0 + col_etiqueta + col_tipo + col_valor, y + 3.5, f"{(m.valor or 0):.2f}")
