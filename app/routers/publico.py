@@ -778,3 +778,17 @@ async def solicitar_demo(
         f"/?demo_enviado={quote(nombre)}#demo",
         status_code=303,
     )
+
+
+# --- Piloto en inglés (locale en) ---
+@router.get("/en", include_in_schema=False)
+def landing_en(request: Request):
+    return RedirectResponse("/en/", status_code=301)
+
+
+@router.get("/en/", response_class=HTMLResponse, include_in_schema=False)
+def landing_en_slash(request: Request):
+    ctx = {"request": request}
+    resp = TEMPLATES.TemplateResponse(request, "landing_en.html", ctx)
+    resp.set_cookie("cotizat_lang", "en", max_age=365 * 24 * 3600, path="/", samesite="lax", httponly=False)
+    return resp

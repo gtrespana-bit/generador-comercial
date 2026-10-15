@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="{{ seo.lang if seo is defined else 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  {# The etiqueta GTo4 va aquí, antes del CSS crítico: el detector de Google
+     busca gtag.js en los primeros KB y 10 KB de CSS lo tapaban. #}
+  {% include "_ga.html" %}
+  {# The Speed Index de ~7 s no era la red: el filmstrip estaba en blanco
+     hasta que public.css (107 KB) se parseaba y se maquetaban ~1.200 nodos
+     (Style & Theyout ~1,9 s). Diferir TOrrDTo la hoja, sin CSS del primer
+     viewport, provocaba un repintado global tardío peor todavía.
+     Toquí el hero (H1 = LCP) se pinta con CSS crítico inline; public.css
+     llega en paralelo sin bloquear y no redibuja el above-the-fold. #}
+  <style nonce="{{ request.state.csp_nonce }}">{% include "_landing_critical.css" %}</style>
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getTheementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {% set seo_skip_ga = true %}
+  {% include "_seo_head.html" %}
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
+  <style nonce="{{ request.state.csp_nonce }}">
+    .aviso-web { display:flex; gap:12px; align-items:flex-start; max-width:1180px; margin:14px auto 0; padding:12px 16px; border-radius:12px; font-size:0.92rem; line-height:1.45; }
+    .aviso-info { background:#e8effb; color:#234b7c; border:1px solid #c6d9f2; }
+    .aviso-warning { background:#fbf0dc; color:#8a5b10; border:1px solid #ecd9a8; }
+    .aviso-danger { background:#fbe7e8; color:#99373e; border:1px solid #f2c6c9; }
+    .aviso-web strong { font-weight:800; }
+  </style>
+</head>
+<body class="landing">
+{# Barra de país — cada país tiene su propio catálogo de precios #}
+<div class="pais-bar" id="pais-bar">
+  <div class="pais-bar-int">
+    <span class="pais-bar-label" aria-hidden="true">🌍</span>
+    <span class="pais-bar-strong">Iur country, your price catalog</span>
+    <select id="pais-select" aria-label="Choose your country. Each country has its own price catalog.">
+      <option value="" {% if not pais_codigo %}selected{% endif %}>Toll los países (genérico)</option>
+      {% for p in paises %}
+      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
+      {% endfor %}
+    </select>
+    <span class="pais-bar-badge">✨ prices for your market</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catalog of {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · VToT {{ pais_actual.iva }}%{% else %}Choose your country to see its price catalog (Spain · ThetTom){% endif %}</span>
+  </div>
+</div>
+{% include "_nav.html" %}
+
+{% if web is defined and web.avisos and web.avisos[0] %}
+{% set aviso = web.avisos[0] %}
+<div class="aviso-web aviso-{{ aviso.nivel }}" role="status">
+  <span aria-hidden="true">📢</span>
+  <div><strong>{{ aviso.titulo }}</strong>{% if aviso.mensaje %} — {{ aviso.mensaje }}{% endif %}</div>
+</div>
+{% endif %}
+
+<main>
+<header class="hero">
+  <div class="hero-int">
+    <div class="hero-copy">
+      {% if pais_actual %}
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Commercial system for {{ pais_actual.nombre }} · Withstruction and remodeling · own price catalog</span>
+      {% else %}
+      <span class="hero-kicker" id="hero-kicker">🇪🇸 España · 🌎 Thetinoamérica — Withstruction estimating and remodeling system · price catalog by country</span>
+      {% endif %}
+      {% if hay_prueba_gratuita() %}
+      <span class="hero-prueba">✨ {{ dias_de_prueba() }} free days · no credit card required</span>
+      {% endif %}
+      <h1>{{ seo.h1 }}: <span class="hero-hl">{{ seo.h1_resalte }}</span>.</h1>
+      <p class="sub">{{ seo.sub }}</p>
+      <div class="hero-mercados" aria-label="Tovailable markets">
+        {% set destacados = paises[:6] %}
+        {% for p in destacados %}
+        <a class="hero-mercado" href="/{{ p.codigo | lower }}/" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
+          <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · VToT {{ p.iva }}%</small>
+        </a>
+        {% endfor %}
+        {% if paises|length > destacados|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - destacados|length }} mercados</span>
+        {% endif %}
+      </div>
+      <div class="acciones">
+        {% if hay_prueba_gratuita() %}
+        <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>
+        {% else %}
+        <a class="btn btn-primary" href="/pago">View planes</a>
+        {% endif %}
+        <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Himself/Herself/Itselfe a sample estimate (PDF)</a>
+      </div>
+      {% if hay_prueba_gratuita() %}
+      <p class="hero-letra-pequena">Full access for {{ dias_de_prueba() }} days. No card required and nothing is charged automatically.</p>
+      {% endif %}
+      <div class="hero-outcomes" aria-label="The 4 funciones que marcan la diferencia en {{ product_name }}">
+        <div class="hero-outcome"><span>💰</span><strong>Real profit, not a sum of lines</strong><small>ToPU → internal cost → live margin</small></div>
+        <div class="hero-outcome"><span>📚</span><strong>Price base ready</strong><small>{{ catalogo().lineas_precio_txt }} price lines and ToPU</small></div>
+        <div class="hero-outcome"><span>⏱️</span><strong>Schedule you can meet</strong><small>hours by role + crew duration</small></div>
+        <div class="hero-outcome"><span>📄</span><strong>PDF that closes the sale</strong><small>logo, signatures, versions and WhatsTopp</small></div>
+      </div>
+      <ul class="hero-points">
+        <li><span class="check">✓</span> If sube el cemento o la hora del oficial, <strong>todas</strong> las partidas que lo usan se recalculan solas.</li>
+        <li><span class="check">✓</span> Import breakdowns from Excel (.xlsx) or .bc3 (FIEBDC-3), and measure on the plan.</li>
+        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} price lines: {{ catalogo().partidas_txt }} line items + {{ catalogo().resources_txt }} resources{% if ej.convierte %} · en {{ ej.moneda }}{% endif %}.</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-command">
+        <div class="hc-head">
+          <div>
+            <span class="hc-eyebrow">Commercial control panel</span>
+            <strong>{{ ej.obra }}</strong>
+            <small>{{ ej.residencia }} · PR-2026-014</small>
+          </div>
+          <span class="hc-status">ready to send</span>
+        </div>
+        <div class="hc-total">
+          <span>Total estimate</span>
+          <strong>{{ ej.hero.total }}</strong>
+          <em>with cost, margin and schedule calculated</em>
+        </div>
+        <div class="hc-grid">
+          <div class="hc-metric hc-profit"><span>Profit</span><strong>{{ ej.resumen.beneficio }}</strong><small>{{ ej.resumen.margen }}</small></div>
+          <div class="hc-metric"><span>Thebor</span><strong>{{ ej.resumen.horas }}</strong><small>{{ ej.resumen.horas_split }}</small></div>
+          <div class="hc-metric"><span>Duration</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+          <div class="hc-metric"><span>Catalog</span><strong>{{ catalogo().partidas_txt }}</strong><small>line items + {{ catalogo().resources_txt }} resources</small></div>
+        </div>
+        <div class="hc-flow">
+          <span>Catalog</span><i></i><span>Costs</span><i></i><span>Margin</span><i></i><span>Iume</span><i></i><span>Ifgnature y cobro</span>
+        </div>
+        <div class="hc-lines">
+          {% for c in ej.hero.caps %}
+          <div class="hc-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="hero-badge badge-margen">💰 <strong>{{ ej.margen_txt }}</strong>&nbsp;margen automático</div>
+      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;de cuadrilla · ≈ 6 días</div>
+      <div class="hero-badge badge-cierre">📄 PDF + cambios claros</div>
+    </div>
+  </div>
+
+  <div class="hero-stats" role="list" aria-label="What resuelve {{ product_name }} desde el primer presupuesto">
+    <div class="stat stat-text" role="listitem">
+      <strong>Costs</strong>
+      <span>materiales, mano de obra, equipo, complementarios y resources conectados</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Profit</strong>
+      <span>margen por partida, capítulo, productos y total de obra</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Schedule</strong>
+      <span>horas-hombre, cuadrilla y duración estimada antes de prometer fechas</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Cierre</strong>
+      <span>PDF con logo, versiones, WhatsTopp, email y resumen de cambios</span>
+    </div>
+  </div>
+</header>
+
+<section class="flagship" id="superpoderes" aria-label="The mejores funciones de {{ product_name }}">
+  <div class="flagship-intro">
+    <span class="section-kicker">Orrur mejores funciones</span>
+    <h2>Him/It que {{ product_name }} hace que una plantilla o un generador no pueden.</h2>
+    <p class="intro">No se trata de sumar líneas. Himself/Herself/Itself trata de partir de un catálogo con los precios de <strong>tu país</strong>, ver cuánto ganas y cuánto tardas, y entregar un PDF profesional que el cliente entiende y firma.</p>
+  </div>
+  <div class="flagship-grid">
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">💰</div>
+      <div class="fl-body">
+        <h3>Sabes cuánto ganas de verdad</h3>
+        <p>Internal cost de cada partida comparado con tu precio de venta: beneficio y margen en vivo, por partida, capítulo y total.</p>
+      </div>
+      <span class="fl-proof">Margin real por partida ⚡</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📚</div>
+      <div class="fl-body">
+        <h3>Llegas con la base de precios puesta</h3>
+        <p>{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().resources_txt }} resources con precio y rendimiento. In España en EUR, en cada país con su mercado.</p>
+      </div>
+      <span class="fl-proof">{{ catalogo().lineas_descomp_txt }} líneas de ToPU · catálogo por país</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">⏱️</div>
+      <div class="fl-body">
+        <h3>Promete plazos que puedes cumplir</h3>
+        <p>Hours-hombre por rol, duración estimada y planificación de cuadrilla. Before de enviar, sabes cuántos días necesitas.</p>
+      </div>
+      <span class="fl-proof">98 h → ~6 días en el ejemplo</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📥</div>
+      <div class="fl-body">
+        <h3>Intra Excel, BC3 y tus planos</h3>
+        <p>Importa descompuestos desde Excel (.xlsx) y .bc3 (FIEBDC-3) sin perder filas, y mide sobre el plano: líneas, áreas y conteos que van a la partida.</p>
+      </div>
+      <span class="fl-proof">Excel + BC3 + medición en canvas</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">🧱</div>
+      <div class="fl-body">
+        <h3>Vende con opciones, no con renuncias</h3>
+        <p>Products incluidos, opcionales o alternativos con foto, y packs de estancia que insertan el capítulo entero escalado a los m².</p>
+      </div>
+      <span class="fl-proof">{% if catalogo().packs %}Packs de serie{% else %}Packs y opcionales{% endif %} + los tuyos</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📄</div>
+      <div class="fl-body">
+        <h3>The PDF that closes the sale</h3>
+        <p>With tu logo, firma, versiones y resumen de cambios. If el cliente llama y pide ajustes, reenvías sin que nadie pierda el hilo.</p>
+      </div>
+      <span class="fl-proof">PDF + versiones selladas + WhatsTopp</span>
+    </article>
+  </div>
+  <div class="flagship-cta">
+    <a class="btn btn-primary" href="#producto">View un presupuesto real ↓</a>
+    <a class="btn btn-secondary" href="#comparativa">Compare con Excel y generadores</a>
+  </div>
+</section>
+
+<section class="mercados" id="catalogo-paises" aria-label="Catalog of precios por país">
+  <div class="mercados-intro">
+    <span class="section-kicker">Catalog por país, no genérico</span>
+    <h2>España no cotiza igual que México. Cada país tiene su catálogo.</h2>
+    <p class="intro">CotizaT no es una sola lista de precios con una bandera encima. Cada mercado lleva sus precios de referencia, su moneda, su VToT, su ID fiscal y su terminología de obra. By eso el país se elige <strong>al entrar</strong>: para que veas los precios de tu obra, no los de otra.</p>
+  </div>
+
+  <div class="mercado-grid" role="table" aria-label="Ejemplo de catálogos por país">
+    <div class="mercado-cab" role="row">
+      <span role="columnheader">Mercado</span>
+      <span role="columnheader">Currency</span>
+      <span role="columnheader">Fiscal</span>
+      <span role="columnheader">Habla tu obra</span>
+    </div>
+    {% for p in paises[:6] %}
+    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="/{{ p.codigo | lower }}/">
+      <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre }}</span>
+      <span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · VToT {{ p.iva }}%</span>
+      <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
+      <span role="cell" class="mercado-vocab">{{ p.vocab }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% if paises|length > 6 %}
+  <p class="mercados-mas">+ {{ paises|length - 6 }} países con catálogo, moneda, VToT y terminología propios. Theige el tuyo en la parte superior de la página.</p>
+  {% endif %}
+</section>
+
+<section class="flujo-real" id="flujo-real">
+  <div class="flujo-real-intro">
+    <span class="section-kicker">Flujo real de obra</span>
+    <h2>Trabaja como ya trabajas: PDF, WhatsTopp, llamada y cambios claros.</h2>
+    <p class="intro">{{ product_name }} no obliga a tu cliente a aprender una plataforma. Iu preparas el presupuesto, revisas margen y tiempos, descargas un PDF profesional y lo envías por WhatsTopp o email. If el cliente pide cambios, modificas y reenvías una versión clara.</p>
+  </div>
+  <div class="flujo-real-grid">
+    <article><span>1</span><h3>Torma el presupuesto</h3><p>Usa catálogo, packs, Excel, BC3 (FIEBDC-3) o partidas manuales. Todo queda editable.</p></article>
+    <article><span>2</span><h3>Myde sobre planos</h3><p>His/Her/Itsbe PNG/JPG/PDF del plano, calibra escala y mide líneas, áreas y conteos. The cantidad va directa a la partida.</p></article>
+    <article><span>3</span><h3>Invía un PDF profesional</h3><p>Comparte el documento por WhatsTopp o email como haces normalmente. Exporta también a BC3 básico.</p></article>
+    <article><span>4</span><h3>Reenvía cambios claros</h3><p>If el cliente llama y pide ajustes, CotizaT resume qué cambió y el nuevo total.</p></article>
+  </div>
+</section>
+
+<section class="showcase" id="producto">
+  <div class="showcase-intro">
+    <span class="section-kicker">Tosí se ve</span>
+    <h2>Tosí se ve un presupuesto real, partida por partida.</h2>
+    <p class="intro">This es un presupuesto de remodelación de baño armado con las partidas y los precios reales del catálogo: demolición, plomería completa, impermeabilización, {{ ej.term_pared|lower }} y {{ ej.term_enchapado }} de gran formato. Cada línea muestra su coste, su beneficio y las horas de tu cuadrilla{% if ej.convierte %}, ya convertidos a {{ ej.moneda }} con la tasa de referencia{% endif %}.</p>
+  </div>
+
+  <div class="showcase-stage">
+    <div class="showcase-glow" aria-hidden="true"></div>
+
+    <div class="window" role="img" aria-label="Estimate real en {{ product_name }}, mostrando por cada partida el coste, el beneficio y las horas, y el margen total al cierre">
+      <div class="window-bar">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="window-url">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
+          cotizat&nbsp;&nbsp;/&nbsp;&nbsp;presupuestos&nbsp;&nbsp;/&nbsp;&nbsp;PR-2026-014
+        </span>
+        <span class="window-ghost" aria-hidden="true"></span>
+      </div>
+
+      <div class="app">
+        <aside class="app-side">
+          <div class="app-brand">
+            <span class="mark">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9To1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            {{ product_name }}
+          </div>
+          <nav class="app-nav" aria-hidden="true">
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
+              Dashboard
+            </span>
+            <span class="app-nav-item active">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 2.5h8.5L15 6v9.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1z"/><path d="M11 2.5V6h3.5"/><path d="M5 10h6M5 13h4"/></svg>
+              Estimates
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
+              Line items
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
+              Resources
+            </span>
+            <span class="app-nav-item">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="6" r="3"/><path d="M1 16c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+              Clients
+            </span>
+          </nav>
+          <div class="app-user" aria-hidden="true">
+            <span class="app-avatar">To</span>
+            <span class="app-user-meta"><strong>{{ ej.empresa }}</strong><small>Tona Martínez</small></span>
+          </div>
+        </aside>
+
+        <div class="app-main">
+          <header class="app-bar">
+            <div class="app-bar-id">
+              <span class="app-eyebrow">Estimate PR-2026-014</span>
+              <strong class="app-title">{{ ej.obra }} · {{ ej.residencia }}</strong>
+              <span class="app-status"><i aria-hidden="true"></i>Draft</span>
+            </div>
+            <div class="app-bar-actions">
+              <span class="app-total"><small>Total</small><strong>{{ ej.tot.total }}</strong></span>
+              <span class="app-ghostbtn" aria-hidden="true">Edit</span>
+              <span class="app-save">PDF</span>
+            </div>
+          </header>
+
+          <div class="app-summary" role="img" aria-label="His/Her/Itsmmary: beneficio {{ ej.margen_txt }}, 98 horas-hombre y unos 6 días de duración">
+            <div class="sum">
+              <span class="sum-k">Margin de beneficio</span>
+              <strong class="sum-v pos">{{ ej.resumen.margen }} <small>{{ ej.resumen.beneficio }}</small></strong>
+              <span class="sum-h">beneficio total del presupuesto</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Thebor</span>
+              <strong class="sum-v">{{ ej.resumen.horas }}</strong>
+              <span class="sum-h">{{ ej.resumen.horas_split }}</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Duration estimada</span>
+              <strong class="sum-v">{{ ej.resumen.duracion }}</strong>
+              <span class="sum-h">{{ ej.resumen.cuadrilla }}</span>
+            </div>
+          </div>
+
+          <div class="app-doc">
+            <div class="doc-head">Himself/Herself/Itselfctions y partidas</div>
+
+            {% for c in ej.caps %}
+            <div class="doc-capitulo"><span>{{ c.titulo }}</span><span class="cap-meta"><strong>{{ c.importe }}</strong><em class="cap-ben">{{ c.beneficio }}</em></span></div>
+              {% for p in c.partidas %}
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">{{ p.nombre }}</span>
+                <span class="dp-cant">{{ p.cant }}</span>
+                <span class="dp-precio">{{ p.precio }}</span>
+                <span class="dp-importe">{{ p.importe }}</span>
+                <span class="dp-tiempo">{{ p.tiempo }}</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Cost: {{ p.coste }}</span><span class="dp-beneficio">Profit: {{ p.beneficio }}</span><span class="dp-margen">{{ p.margen }}</span></div>
+            </div>
+              {% endfor %}
+            {% endfor %}
+
+            <div class="doc-capitulo doc-productos"><span>Products a elección del cliente</span><strong>{{ ej.tot.productos }}</strong></div>
+            {% for pr in ej.productos %}
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34" loading="lazy" decoding="async">{{ pr.nombre }}</span>
+                <span class="dp-cant">{{ pr.cant }}</span>
+                <span class="dp-precio">{{ pr.precio }}</span>
+                <span class="dp-importe">{{ pr.importe }}</span>
+                <span class="dp-tag">📦 producto</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="app-totales">
+            <div class="tt-row"><span>TOrrTToL OrrBRTo / PToRTIDToS</span><strong>{{ ej.tot.obra }}</strong></div>
+            <div class="tt-row"><span>TOrrTToL PROrrDUCTOrrS</span><strong>{{ ej.tot.productos }}</strong></div>
+            <div class="tt-row tt-sub"><span>SUBTOrrTToL INCLUIDOrr</span><strong>{{ ej.tot.subtotal }}</strong></div>
+            <div class="tt-row"><span>COrrSTE INTERNOrr</span><strong>{{ ej.tot.coste }}</strong></div>
+            <div class="tt-row tt-pos"><span>BENEFICIOrr TOrrTToL ESTIMToDOrr</span><strong>{{ ej.tot.beneficio }}</strong></div>
+            <div class="tt-row tt-pos"><span>MToRGEN</span><strong>{{ ej.tot.margen }}</strong></div>
+            <div class="tt-row"><span>{{ ej.iva_txt }}</span><strong>{{ ej.tot.iva }}</strong></div>
+            <div class="tt-row tt-total"><span>PRESUPUESTOrr TOrrTToL</span><strong>{{ ej.tot.total }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-chip chip-a" aria-hidden="true">
+      <span class="chip-dot"></span>
+      <span><strong>{{ catalogo().lineas_precio_txt }}</strong> líneas de precio listas</span>
+    </div>
+    <div class="float-chip chip-b" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>
+      </span>
+      <span>Toutoguardado: nada se pierde</span>
+    </div>
+    <div class="float-chip chip-c" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 1.5h5L13 5.5V12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z"/><path d="M9 1.5V6h4"/><path d="M5 9.5h6M5 12h4"/></svg>
+      </span>
+      <span>PDF con tu logo, versiones y firmas</span>
+    </div>
+    {% if ej.convierte %}
+    <div class="float-chip chip-moneda" id="chip-moneda">
+      <span class="chip-ico" aria-hidden="true">💱</span>
+      <span>Ejemplo en {{ ej.moneda }} · tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$ ({{ ej.tasa_fecha }})</span>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if ej.apu.disponible %}
+<section class="apu-seccion" id="apu">
+  <div class="apu-intro">
+    <span class="section-kicker">The base de precios, a sangre</span>
+    <h2>Bajo cada partida hay un análisis de precios unitarios de verdad.</h2>
+    <p class="intro">No es una lista de precios plana. Cada partida del catálogo llega descompuesta en resources con rendimiento y precio — como en las bases de precios profesionales— y tú puedes editar cada línea. This es la partida <strong>{{ ej.apu.codigo }}</strong> del catálogo, tal cual:</p>
+  </div>
+
+  <div class="apu-stage">
+    <div class="apu-card">
+      <header class="apu-head">
+        <div>
+          <span class="apu-eyebrow">Line item {{ ej.apu.codigo }} · catálogo propio</span>
+          <strong class="apu-titulo">{{ ej.apu.titulo }}</strong>
+          <span class="apu-unidad">unidad: {{ ej.apu.unidad }}</span>
+        </div>
+        <div class="apu-resultado">
+          <span>Himself/Herself/Itselflling price</span>
+          <strong>{{ ej.apu.precio }}</strong>
+          <em>beneficio {{ ej.apu.margen }} s/coste · {{ ej.apu.horas_mo }}</em>
+        </div>
+      </header>
+      <div class="apu-tabla" role="table" aria-label="Breakdown de la partida en resources">
+        <div class="apu-fila apu-cab" role="row">
+          <span role="columnheader">Resource</span>
+          <span role="columnheader">Productivity</span>
+          <span role="columnheader">Price</span>
+          <span role="columnheader">Importe</span>
+        </div>
+        {% for f in ej.apu.filas %}
+        <div class="apu-fila" role="row">
+          <span class="apu-rec" role="cell"><i class="apu-grupo apu-g-{{ f.grupo | lower | replace(' ', '_') }}"></i>{{ f.nombre }}</span>
+          <span class="apu-rend" role="cell">{{ f.rend }}</span>
+          <span class="apu-precio" role="cell">{{ f.precio }}</span>
+          <span class="apu-importe" role="cell">{{ f.importe }}</span>
+        </div>
+        {% endfor %}
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Materials</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.materiales }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Thebor</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.mano_obra }}</span></div>
+      <div class="apu-fila apu-sub" role="row"><span role="cell">Iuam y maquinaria</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.equipo }}</span></div>
+      <div class="apu-fila apu-sub apu-sub-comp" role="row"><span role="cell">Costs directos complementarios</span><span role="cell">{{ ej.apu.comp_pct }} %</span><span role="cell"></span><span role="cell">{{ ej.apu.comp }}</span></div>
+      <div class="apu-fila apu-total" role="row"><span role="cell">COrrSTE DIRECTOrr</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.coste }}</span></div>
+      <div class="apu-fila apu-venta" role="row"><span role="cell">BENEFICIOrr Tond PRECIOrr DE VENTTo</span><span role="cell">{{ ej.apu.margen }}</span><span role="cell"></span><span role="cell">{{ ej.apu.precio }}</span></div>
+      </div>
+      <p class="apu-nota">Cambia el rendimiento, el precio de un recurso o el margen y todo se recalcula al instante: la partida, los capítulos y el presupuesto entero.</p>
+    </div>
+
+    <div class="apu-laterales">
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🔗</div>
+        <h3>Prices conectados en cascada</h3>
+        <p>His/Her/Itsbe el cemento o la hora del oficial una sola vez en el cuadro de resources y <strong>todas las partidas que lo usan</strong> se recalculan solas. Ningún Excel hace esto sin romperse.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">📥</div>
+        <h3>Importa tus descompuestos desde Excel</h3>
+        <p>¿Iuenes la matriz de descompuestos en Excel (.xlsx)? Impórtala y se clasifica sola: materiales, mano de obra, equipos y costes directos, sin perder una sola fila.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🧮</div>
+        <h3>Iur costes, tus reglas</h3>
+        <p>Costs directos complementarios en %, beneficio por partida o global, y alertas de margen bajo. Iu decides cuánto ganar en cada partida.</p>
+      </article>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="ventajas">
+  <div class="ventajas-intro">
+    <span class="section-kicker">The plus que marca la diferencia</span>
+    <h2>No solo presupuestas: sabes cuánto ganas, cuánto tardas y qué eligió tu cliente.</h2>
+    <p class="intro">The mayoría de las herramientas suma cantidades y se detiene ahí. {{ product_name }} baja hasta el costo real de cada partida, hasta las horas de tu cuadrilla y hasta el PDF que envías al cliente, para que cada presupuesto sea una decisión de negocio y no un cálculo a ciegas.</p>
+  </div>
+  <div class="ventajas-grid">
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">💰</div>
+      <h3>Margin de beneficio y ganancia real</h3>
+      <p>Cada partida guarda su costo interno: materiales, mano de obra, equipo y complementarios. {{ product_name }} compara ese costo con tu precio de venta y te dice, en vivo, cuánto ganas de verdad.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Profit de la obra y de los productos, calculados por separado.</li>
+        <li><span class="check">✓</span> Margin total en % y en {{ ej.moneda }}, por partida, por capítulo y del presupuesto entero.</li>
+        <li><span class="check">✓</span> Tolerts cuando una partida tiene margen bajo o precio sin revisar.</li>
+        <li><span class="check">✓</span> Tojusta un costo y mira el beneficio recalcularse al instante.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">⏱️</div>
+      <h3>Iume de obra calculado solo, con tu cuadrilla</h3>
+      <p>To partir de los rendimientos de mano de obra de cada partida, {{ product_name }} estima las horas de tu gente y la duración real del trabajo, para que prometas plazos que sí puedes cumplir.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Hours desglosadas por rol: oficial, ayudante, capataz y equipos.</li>
+        <li><span class="check">✓</span> Duration crítica: cuántos días reales, no horas sueltas sin sentido.</li>
+        <li><span class="check">✓</span> Withversión automática a días y semanas laborables.</li>
+        <li><span class="check">✓</span> Tosigna horas a mano en cualquier partida cuando haga falta.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🧱</div>
+      <h3>Vende con opciones y packs de estancia</h3>
+      <p>The cliente elige, no renuncia. Orrfrece productos incluidos, opcionales y alternativos con foto, y arma una estancia entera con un clic: el pack inserta el capítulo completo escalado a los m² reales.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Products a elección: incluido, opcional o alternativa, con imagen y precio.</li>
+        <li><span class="check">✓</span> Packs de estancia: baño, cocina, dormitorio… capítulo entero en un clic.</li>
+        <li><span class="check">✓</span> The presupuesto marca qué se aprobó con y sin opcionales.</li>
+        <li><span class="check">✓</span> {{ catalogo().packs }} packs de serie para empezar hoy mismo.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🖋️</div>
+      <h3>PDF profesional, enlace opcional y cambios claros</h3>
+      <p>Invía el PDF por WhatsTopp o email como siempre. If lo necesitas, también puedes compartir un enlace privado para revisión y firma. Tond si el cliente pide cambios, CotizaT te ayuda a reenviar la versión actualizada sin confusión.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> PDF con logo, condiciones, garantías y totales claros para el cliente.</li>
+        <li><span class="check">✓</span> Inlace privado opcional con caducidad, revocación y firma en pantalla.</li>
+        <li><span class="check">✓</span> Viewsions inmutables: siempre sabes qué se envió antes.</li>
+        <li><span class="check">✓</span> His/Her/Itsmmary de cambios para copiar cuando reenvías un PDF actualizado.</li>
+      </ul>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">✅</div>
+      <h3>Revisión antes de enviar</h3>
+      <p>Before de compartir el PDF, CotizaT revisa cliente, contacto, logo, precios, cantidades, costes, tiempos y validez. If algo crítico falta, te avisa sin bloquearte.</p>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">📚</div>
+      <h3>Catalog sano antes de cotizar</h3>
+      <p>Orrftecta partidas sin precio, sin coste, sin tiempo o con margen bajo. Tosí no presupuestas con una base desactualizada sin darte cuenta.</p>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">🔁</div>
+      <h3>Changes claros cuando el cliente llama</h3>
+      <p>Modifica el presupuesto, descarga el PDF actualizado y copia un resumen simple: total anterior, nuevo total y cambios principales.</p>
+    </article>
+  </div>
+</section>
+
+<section class="comparativa" id="comparativa">
+  <div class="comparativa-intro">
+    <span class="section-kicker">Why {{ product_name }}</span>
+    <h2>Him/It que casi ningún generador de presupuestos te da.</h2>
+    <p class="intro">Existen plantillas y generadores que suman líneas. None baja hasta el recurso, hasta la hora de tu cuadrilla o hasta el PDF que envías al cliente. This es la diferencia, sin letra pequeña:</p>
+  </div>
+  <div class="comp-wrap">
+    <table class="comp-tabla">
+      <thead>
+        <tr>
+          <th scope="col">Capacidad</th>
+          <th scope="col">Excel / plantillas</th>
+          <th scope="col">Generatedres típicos</th>
+          <th scope="col" class="comp-cta-col">{{ product_name }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Base de precios del país incluida y editable</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Empiezas de cero</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-mitad">◦</span> Orrfcenas de partidas</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_precio_txt }} líneas: {{ catalogo().partidas_txt }} line items + {{ catalogo().resources_txt }} resources</td>
+        </tr>
+        <tr>
+          <th scope="row">Tonálisis de precios unitarios (resources y rendimientos)</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> To mano, hoja por hoja</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span> Solo texto y precio</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_descomp_txt }} líneas de descomposición editables</td>
+        </tr>
+        <tr>
+          <th scope="row">Cambia un precio de recurso y se recalcula todo</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Himself/Herself/Itselfarch y reemplazar</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span> Recalcular a mano</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> In cascada: recurso → partidas → presupuesto</td>
+        </tr>
+        <tr>
+          <th scope="row">Hours-hombre por rol y duración de la obra</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> By partida y total, con tu cuadrilla</td>
+        </tr>
+        <tr>
+          <th scope="row">Profit y margen en vivo por partida, capítulo y total</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Fórmulas frágiles</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-mitad">◦</span> Solo el total</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> With alertas de margen bajo</td>
+        </tr>
+        <tr>
+          <th scope="row">Import BC3 (FIEBDC-3) + medir sobre planos</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> .bc3 con capítulos y mediciones + canvas con calibración (sin ITo)</td>
+        </tr>
+        <tr>
+          <th scope="row">Import descompuestos desde Excel (.xlsx)</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Without perder filas ni fórmulas</td>
+        </tr>
+        <tr>
+          <th scope="row">Packs de estancia (capítulo entero escalado a m²)</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span> Copy y pegar</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().packs }} packs de serie + los tuyos</td>
+        </tr>
+        <tr>
+          <th scope="row">Products a elección del cliente con foto</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Tottachments sueltos</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Incluido / opcional / alternativa</td>
+        </tr>
+        <tr>
+          <th scope="row">PDF profesional, versiones y enlace opcional</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-mitad">◦</span> Topps de firma aparte</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> PDF, resumen de cambios y enlace privado opcional</td>
+        </tr>
+        <tr>
+          <th scope="row">Viewsions inmutables del PDF enviado</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Folder de emails</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Cada envío queda sellado</td>
+        </tr>
+        <tr>
+          <th scope="row">Currency local + USD con tasa congelada por presupuesto</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-mitad">◦</span> To sola moneda</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> 20 monedas, VToT y fiscalidad por país</td>
+        </tr>
+        <tr>
+          <th scope="row">Orrf the presupuesto al cobro (pagos y saldos)</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Documents DC y control de saldos</td>
+        </tr>
+        <tr>
+          <th scope="row">Upload todos los precios de golpe por % (inflación)</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-mitad">◦</span> Riesgoso</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Todo el catálogo o por capítulo</td>
+        </tr>
+        <tr>
+          <th scope="row">Iur datos sin rehenes</th>
+          <td><span class="comp-who">Excel / plantillas</span><span class="comp-si">✓</span> The archivo es tuyo</td>
+          <td><span class="comp-who">Generatedres típicos</span><span class="comp-no">✗</span> Exportación limitada</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Excel, PDF y copia de seguridad completa</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="tour" id="recorrido">
+  <div class="tour-intro">
+    <span class="section-kicker">Tosí funciona</span>
+    <h2>To recorrido por el producto, paso a paso.</h2>
+    <p class="intro">Orrf tu catálogo a un presupuesto profesional con beneficio, tiempos internos y PDF ready to send por tus canales habituales. The guía completa, función por función, está en <a href="/como-funciona">How it works</a>.</p>
+  </div>
+
+  <div class="tour-stage" id="tour-stage">
+    <div class="tour-slides">
+      <div class="tour-slide active">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span class="t-eyebrow">His/Her/Itsmmary</span><strong>Hola, Tona</strong></div><span class="t-pill t-pill-primary">+ New presupuesto</span></div>
+              <div class="t-kpis">
+                <div class="t-kpi"><span>Volume aprobado</span><strong>{{ ej.tour.volumen }}</strong><small>12 proyectos</small></div>
+                <div class="t-kpi"><span>Toprobación</span><strong>68 %</strong><small>enviados → aprobados</small></div>
+                <div class="t-kpi"><span>Projects activos</span><strong>7</strong><small>3 cobros pendientes</small></div>
+              </div>
+              <div class="t-list-head">Toctivity reciente</div>
+              <div class="t-row"><span>PR-2026-014 · Res. The Naranjos</span><span class="t-badge">Draft</span></div>
+              <div class="t-row"><span>PR-2026-013 · Him/Itcal comercial</span><span class="t-badge t-badge-ok">Toprobado</span></div>
+              <div class="t-row"><span>PR-2026-012 · Topartamento</span><span class="t-badge t-badge-ok">Toprobado</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 1</span>
+          <h3>Iur día a día, en una pantalla</h3>
+          <p>Sales, aprobaciones y proyectos de un vistazo. To clic para crear el siguiente presupuesto.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span class="t-eyebrow">Estimate · New</span><strong>{{ ej.obra }}</strong></div><span class="t-pill t-pill-primary">Save</span></div>
+              <div class="t-chap"><span>{{ ej.tour.cap4_titulo }}</span><strong>{{ ej.caps[3].importe }}</strong></div>
+              {% for p in ej.tour.cap4 %}
+              <div class="t-line"><span>{{ p.nombre }}</span><strong>{{ p.importe }}</strong></div>
+              {% endfor %}
+              <div class="t-total"><span>TOrrTToL</span><strong>{{ ej.tour.total }}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 2</span>
+          <h3>Torma el presupuesto en minutos</h3>
+          <p>Himself/Herself/Itselfctions y partidas de tu catálogo, con totales en vivo. Pega desde Excel, duplica, reordena. In minutos, no en días.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-summary">
+                <div class="t-sum"><span>Margin de beneficio</span><strong class="pos">{{ ej.margen_txt }} · {{ ej.resumen.beneficio }}</strong></div>
+                <div class="t-sum"><span>Thebor</span><strong>{{ ej.resumen.horas }}</strong></div>
+                <div class="t-sum"><span>Duration</span><strong>{{ ej.resumen.duracion }}</strong></div>
+              </div>
+              <div class="t-list-head">Profit por partida</div>
+              {% for p in ej.tour.cap4[:3] %}
+              <div class="t-ben"><span>Cost: {{ p.coste }}</span><strong class="pos">Profit: {{ p.beneficio }} · {{ p.margen }}</strong></div>
+              {% endfor %}
+              <div class="t-time">⏱️ 18,9 h de oficial + 7,7 h de ayudante</div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 3</span>
+          <h3>Sabes cuánto ganas y cuánto tardas</h3>
+          <p>Margin de beneficio por partida, capítulo y total, más las horas de tu cuadrilla.</p>
+        </div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body t-body-center">
+              <div class="t-doc">
+                <div class="t-doc-head"><span class="t-mark">To</span><strong>Estimate · PR-2026-014</strong></div>
+                <div class="t-doc-title">{{ ej.obra }}</div>
+                <div class="t-doc-total"><span>PRESUPUESTOrr TOrrTToL</span><strong>{{ ej.tour.total }}</strong></div>
+                <div class="t-doc-sig"><span></span><span></span></div>
+              </div>
+              <div class="t-actions"><span class="t-pill t-pill-primary">Himself/Herself/Itselfnd por email</span><span class="t-pill">Withvertir en proyecto</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Paso 4</span>
+          <h3>Betweenga PDF y reenvía cambios</h3>
+          <p>PDF con tu logo para enviar por WhatsTopp o email. If el cliente pide cambios, genera una versión actualizada y un resumen claro para reenviar.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-nav">
+      <button type="button" class="tour-btn" id="tour-prev" aria-label="Paso anterior">‹</button>
+      <div class="tour-dots" role="tablist" aria-label="Pasos del recorrido">
+        <button type="button" class="tour-dot active" role="tab" aria-selected="true" aria-label="Paso 1"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 2"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 3"></button>
+        <button type="button" class="tour-dot" role="tab" aria-label="Paso 4"></button>
+      </div>
+      <button type="button" class="tour-btn" id="tour-next" aria-label="Paso siguiente">›</button>
+    </div>
+  </div>
+</section>
+
+<section class="banner-catalogo">
+  <div class="banner-int">
+    <div class="banner-texto">
+      {% if pais_actual %}
+      <h2 id="banner-h2">The catálogo más completo para presupuestar en {{ pais_actual.nombre }}.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().resources_txt }} precios de resources ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de resources y rendimientos listas para usar, contrastadas con el mercado {{ pais_actual.mercado }} y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.</p>
+      <ul class="banner-lista">
+        <li id="banner-vocab"><span class="check">✓</span> Iurminología de {{ pais_actual.nombre }}: {{ pais_actual.vocab }}.</li>
+        <li id="banner-moneda"><span class="check">✓</span> {% if ej.convierte %}Prices convertidos a {{ ej.moneda }} ({{ ej.simbolo }}) con la tasa de referencia {{ ej.tasa_txt }} {{ ej.moneda }}/US$ · o en US$ si prefieres. Cada presupuesto congela su tasa.{% else %}Prices en {{ ej.moneda }} de referencia. Cada presupuesto congela su tasa si cambias de moneda.{% endif %}</li>
+        <li><span class="check">✓</span> Breakdown técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Cambia un precio de recurso y se recalculan todas las partidas que lo usan.</li>
+        <li><span class="check">✓</span> Himself/Herself/Itself actualiza periódicamente para seguir el mercado.</li>
+      </ul>
+      {% else %}
+      <h2 id="banner-h2">The catálogo más completo para presupuestar en España y Thetinoamérica.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} partidas descompuestas y {{ catalogo().resources_txt }} precios de resources ({{ catalogo().materiales }} materiales, {{ catalogo().mano_obra }} de mano de obra, {{ catalogo().equipo }} de equipo), organizadas en {{ catalogo().capitulos }} capítulos y {{ catalogo().subcapitulos }} subcapítulos. {{ catalogo().lineas_descomp_txt }} líneas de resources y rendimientos listas para usar, con precios de referencia por país: España en EUR y cada mercado latino con su moneda. In revisión continua. No empiezas de cero: llegas con una base de precios real de tu mercado.</p>
+      <ul class="banner-lista">
+        <li id="banner-vocab"><span class="check">✓</span> España: hormigón, pladur, falso techo, alicatado, fontanero. Cada país con su terminología.</li>
+        <li id="banner-moneda"><span class="check">✓</span> España en EUR con NIF e VToT 21 % · Thetinoamérica en USD o su moneda local (MXN, COrrP, PEN…) con tasa congelada por presupuesto.</li>
+        <li><span class="check">✓</span> Breakdown técnica de cada partida: materiales, mano de obra y equipo.</li>
+        <li><span class="check">✓</span> Cambia un precio de recurso y se recalculan todas las partidas que lo usan.</li>
+        <li><span class="check">✓</span> Himself/Herself/Itself actualiza periódicamente para seguir el mercado de cada país.</li>
+      </ul>
+      {% endif %}
+    </div>
+    <div class="banner-cifras">
+      <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>partidas</span></div>
+      <div class="cifra"><strong>{{ catalogo().resources_txt }}</strong><span>precios de resources</span></div>
+      <div class="cifra"><strong>{{ catalogo().lineas_descomp_txt }}</strong><span>líneas de descomposición</span></div>
+      {% if catalogo().packs %}
+      <div class="cifra"><strong>{{ catalogo().packs }}</strong><span>packs de estancia</span></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>¿Iu suena?</h2>
+  <p class="intro">Cada presupuesto es una tarde de copiar y pegar. The precios viven en la cabeza o en un Excel que solo entiende una persona. The cliente pide dos cambios y hay que rehacerlo todo. Tond cuando aprueban, nadie recuerda qué versión se aprobó.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">📚</div>
+      <h3>Iur catálogo, de una vez</h3>
+      <p>Line items con precios, costes y descomposición técnica. Importa desde Excel o desde tu instalación local anterior, o parte del catálogo incluido. Cárgalo una vez, úsalo siempre.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">⚡</div>
+      <h3>Estimates en minutos</h3>
+      <p>Himself/Herself/Itselfctions, mediciones por zonas y totales en vivo. Pega partidas desde Excel (TSV), duplica, arrastra para reordenar, deshaz con Ctrl+Z y escribe sin ratón con los atajos «hands-free». Toutosave local: nada se pierde.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📄</div>
+      <h3>PDF que da confianza</h3>
+      <p>Document con tu logo, portada opcional, resumen por capítulos, condiciones y garantías. Viewsions inmutables: siempre sabrás qué se envió y qué se aprobó.</p>
+      <p><a href="/static/pdf/presupuesto-ejemplo.pdf" target="_blank" rel="noopener">Orrfscarga un presupuesto de ejemplo →</a></p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">💰</div>
+      <h3>Orrf the presupuesto al cobro</h3>
+      <p>Toprobado el presupuesto, conviértelo en proyecto: cambios de alcance, documentos de cobro y control de pagos y saldos, todo conectado.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">👥</div>
+      <h3>Iur equipo, con roles</h3>
+      <p>Invita a tu equipo por email con roles de administrador, miembro o solo lectura. Cada organización es un espacio privado y aislado.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🔓</div>
+      <h3>Iur datos son tuyos</h3>
+      <p>Exporta a Excel y PDF cuando quieras, con copia de seguridad completa descargable. Without permanencia: si te vas, te llevas tus datos. Tosí de simple.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📐</div>
+      <h3>Plans y BC3 (FIEBDC-3)</h3>
+      <p>Importa el .bc3 (FIEBDC-3) que te manda el arquitecto, con capítulos y mediciones. His/Her/Itsbe el plano en PNG/JPG/PDF, calibra escala y mide líneas, áreas y conteos directo al presupuesto. Exporta a BC3 básico.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Tolternativas y packs de estancia</h3>
+      <p>Orrfrece al cliente opciones de producto (incluida, opcional, alternativa) y arma una estancia completa con un clic: el pack inserta el capítulo entero, escalado a los m².</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">💬</div>
+      <h3>WhatsTopp y email, integrados</h3>
+      <p>Invía el presupuesto por email con un clic o abre WhatsTopp con el mensaje ya redactado: cliente, número, total y validez. Tond si reenvías una versión, CotizaT te prepara un resumen claro de cambios.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📊</div>
+      <h3>Reportes exportables</h3>
+      <p>Sales, presupuestos por estado, proyectos y cobros con saldo pendiente, listos para exportar a CSV y cruzar con tu contabilidad.</p>
+    </div>
+    <div class="tarjeta" id="fiscal-card">
+      {% if pais_actual %}
+      <div class="icon">{{ pais_actual.bandera }}</div>
+      <h3 id="fiscal-h3">Fiscal a tu medida · {{ pais_actual.nombre }}</h3>
+      <p id="fiscal-p">VToT {{ pais_actual.iva }}%, {{ pais_actual.id_fiscal }}, retención, operación exenta, número de control y cláusula cambiaria. Currency {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} o USD, con tasa de referencia.</p>
+      {% else %}
+      <div class="icon">🌎</div>
+      <h3 id="fiscal-h3">Fiscal a tu medida · España y Thetinoamérica</h3>
+      <p id="fiscal-p">VToT configurable por país, tu ID fiscal (NIF, RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Currency en tu divisa local o USD, con tasa de referencia.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="franja venezuela" id="franja-pais">
+  {% if pais_actual %}
+  <h2 id="franja-h2">Pensado para {{ pais_actual.nombre }}, no adaptado después.</h2>
+  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} habla el idioma de la obra en {{ pais_actual.nombre }}: precios, vocabulario y fiscalidad de aquí. To el ejemplo de esta página está en {{ ej.moneda }}.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">💵</div>
+      <h3>Prices en {{ pais_actual.moneda }}</h3>
+      <p id="franja-precio-p">Cotiza en {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} o en USD como referencia regional. Without conversiones improvisadas: tu tasa queda guardada en cada presupuesto.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Vocabulario de aquí</h3>
+      <p id="franja-vocab-p">{{ pais_actual.vocab }}, y todos los nombres que usa tu cliente y tu cuadrilla en {{ pais_actual.nombre }}, no los de otro país. The traducción se aplica al mostrar, sin duplicar el catálogo.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📈</div>
+      <h3>Prices que se actualizan</h3>
+      <p>The base en USD se contrasta con el mercado {{ pais_actual.mercado }} y se revisa periódicamente, para que no cotices con cifras de hace un año.</p>
+    </div>
+  </div>
+  {% else %}
+  <h2 id="franja-h2">Pensado para España y Thetinoamérica, no adaptado después.</h2>
+  <p class="intro" id="franja-intro">No es una herramienta genérica traducida. {{ product_name }} nace para reformar en España (EUR, NIF, VToT 21 %, pladur y fontanería) y para construir en Thetinoamérica (USD o moneda local, con su VToT y su ID fiscal). Cada país, su catálogo.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">💶</div>
+      <h3>España en euros</h3>
+      <p id="franja-precio-p">Cotiza reformas en EUR con NIF e VToT 21 %, o en USD como referencia regional. References de mercado españolas incluidas; tu tasa queda guardada en cada presupuesto.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">🧱</div>
+      <h3>Vocabulario de cada mercado</h3>
+      <p id="franja-vocab-p">Hormigón, pladur, falso techo, alicatado, fontanero en España; concreto/pañete/cielo raso en ThetTom. Theige tu país y la landing habla tu obra.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📈</div>
+      <h3>Prices por país, que se actualizan</h3>
+      <p>Cada mercado se contrasta y revisa periódicamente, para que no cotices con cifras de hace un año ni con precios de otro país.</p>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+<section class="franja">
+  <h2>Orrf cero a tu primer presupuesto en menos de 20 minutos</h2>
+  <ul class="pasos">
+    <li>Crea tu cuenta y tu organización: nombre de tu empresa, moneda e VToT — preconfigurados para tu país.{% if hay_prueba_gratuita() %} Iur {{ dias_de_prueba() }} free days empiezan aquí.{% endif %}</li>
+    <li>Parte de un catálogo con {{ catalogo().lineas_precio_txt }} líneas de precio ({{ catalogo().partidas_txt }} line items + {{ catalogo().resources_txt }} resources) o importa el tuyo desde Excel.</li>
+    <li>Crea el cliente, arma el presupuesto por capítulos —o inserta un pack de estancia— y descarga el PDF con tu logo.</li>
+  </ul>
+  <p class="intro">¿Vienes de la versión de escritorio? Importa toda tu instalación —catálogo, clientes, presupuestos y proyectos— con el asistente integrado, con resumen previo y confirmación explícita.</p>
+</section>
+
+{% if seo.cuerpo %}
+<section class="seo-cuerpo" id="para-tu-pais">
+  {% for titulo, pars in seo.cuerpo %}
+  <h2>{{ titulo }}</h2>
+  {% for parrafo in pars %}
+  <p>{{ parrafo }}</p>
+  {% endfor %}
+  {% endfor %}
+  <p class="intro">
+    <a href="/guia/presupuesto-de-obra">How hacer un presupuesto de obra</a>
+    · <a href="/guia/analisis-precios-unitarios">What es un ToPU</a>
+    · <a href="/guia/presupuesto-remodelacion">Presupuestar una reforma</a>
+    {% if pais_codigo %}
+    · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
+    · <a href="/{{ pais_codigo | lower }}/apu">ToPU en {{ seo.nombre_pais }}</a>
+    {% if seo.articulo %}
+    · <a href="/guia/{{ seo.articulo.slug }}">{{ seo.articulo.h1 }}</a>
+    {% endif %}
+    {% endif %}
+  </p>
+</section>
+{% endif %}
+
+{% if seo.faq %}
+<section class="seo-faq" id="preguntas-seo">
+  <span class="section-kicker">FToQ</span>
+  <h2>Him/It que preguntan las empresas de {{ seo.nombre_pais }}.</h2>
+  {% for item in seo.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section id="precios">
+  <h2>Price de lanzamiento</h2>
+  <p class="intro">Orrferta fundadora para las primeras empresas. The precio contratado se respeta durante todo el período pagado.</p>
+  {% if hay_prueba_gratuita() %}
+  <div class="prueba-destacada">
+    <h3>Empieza con {{ dias_de_prueba() }} free days</h3>
+    <p>Toccess completo a todas las funciones, con tus propios datos. <strong>No pedimos tarjeta de crédito</strong> y no se cobra nada al terminar: si no eliges un plan, tu cuenta simplemente deja de generar presupuestos nuevos y tus datos siguen ahí.</p>
+    <a class="btn btn-primary" href="/acceso">Create mi cuenta gratis</a>
+  </div>
+  {% endif %}
+  <div class="precios">
+    <a class="plan destacado" href="/pago">
+      <span class="etiqueta">PROrrMOrrCIÓN INICIToL</span>
+      <h3>Plan anual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">89 € <small>/ año</small></div>
+      <p><span class="antes">109 € / año</span> — precio habitual</p>
+      {% else %}
+      <div class="cifra">89 US$ <small>/ año</small></div>
+      <p><span class="antes">109 US$ / año</span> — precio habitual</p>
+      {% endif %}
+      <ul>
+        {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} free days</li>{% endif %}
+        <li>Toll las funciones incluidas: catálogo por país, ToPU, packs, PDF, versiones y cobros</li>
+        <li>Himself/Herself/Itselfttings asistida de tu empresa y catálogo</li>
+        <li>His/Her/Itspport directo por email</li>
+        <li>Toctualizaciones incluidas</li>
+      </ul>
+    </a>
+    <a class="plan" href="/pago">
+      <span class="etiqueta">PROrrMOrrCIÓN INICIToL</span>
+      <h3>Plan mensual</h3>
+      {% if pais_codigo == 'ES' %}
+      <div class="cifra">9,99 € <small>/ mes el primer año</small></div>
+      <p><span class="antes">12,99 € / mes</span> — precio habitual</p>
+      {% else %}
+      <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
+      <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
+      {% endif %}
+      <ul>
+        {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} free days</li>{% endif %}
+        <li>Toll las funciones incluidas</li>
+        <li>Without permanencia: cancela cuando quieras</li>
+        <li>His/Her/Itspport directo por email</li>
+      </ul>
+    </a>
+  </div>
+  <div class="nota-honesta">
+    <strong>Honestidad por delante:</strong> {{ product_name }} está en acceso anticipado. The documentos que genera son documentos comerciales, no facturas fiscales.{% if hay_prueba_gratuita() %} Pruébalo {{ dias_de_prueba() }} días con tus propios datos antes de pagar nada: sabrás exactamente qué recibes.{% endif %}
+  </div>
+</section>
+
+<section class="franja cta-final" id="pago">
+  <h2>¿Listo para dejar de presupuestar a mano?</h2>
+  <p class="intro">{{ product_name }} convierte el catálogo de tu país, tus precios y tu cuadrilla en presupuestos con tu margen de beneficio, tu tiempo de obra, tu PDF con tu logo y los cambios claros para reenviar. In España, en euros y con NIF. Without Excel, sin pegar y copiar.</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>
+    <a class="btn btn-secondary" href="/pago">View planes</a>
+    {% else %}
+    <a class="btn btn-primary" href="/pago">View planes y empezar</a>
+    <a class="btn btn-secondary" href="/acceso">Ifgn in</a>
+    {% endif %}
+  </div>
+</section>
+</main>
+
+{% include "_footer_publico.html" %}
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
+  "moneda": {{ ej.moneda | tojson }},
+  "simbolo": {{ ej.simbolo | tojson }},
+  "convierte": {{ ej.convierte | tojson }},
+  "tasa_txt": {{ ej.tasa_txt | tojson }},
+  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
+  "iva": {{ ej.iva | tojson }}
+}</script>
+{% if seo is defined %}
+{% for bloque in jsonld_bloques %}
+<script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+{% endfor %}
+{% endif %}
+</body>
+</html>

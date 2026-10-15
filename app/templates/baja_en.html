@@ -1,0 +1,48 @@
+{% extends "base_en.html" %}
+{% block title %}Close the organization{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Close the organization</h1>
+    <p class="subtitle">Permanent deletion of all data and files of <strong>{{ resumen.nombre }}</strong></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>⚠️ This action is irreversible</h2>
+  <p class="subtitle">The following will be permanently deleted with no grace period:</p>
+  <ul>
+    <li><strong>{{ resumen.conteos.presupuestos }}</strong> estimate(s), <strong>{{ resumen.conteos.clientes }}</strong> client(s) and their sections, line items, measurements, versions and notes</li>
+    <li><strong>{{ resumen.conteos.partidas }}</strong> catalog line item(s), <strong>{{ resumen.conteos.productos }}</strong> product(s), <strong>{{ resumen.conteos.recursos }}</strong> resource(s), templates and packs</li>
+    <li><strong>{{ resumen.conteos.facturas }}</strong> billing document(s), <strong>{{ resumen.conteos.proyectos }}</strong> project(s) with changes and payments</li>
+    <li><strong>{{ resumen.archivos }}</strong> file(s) from private storage (photos, PDFs, attachments, sheets)</li>
+    <li>Commercial settings, pending invitations, memberships and the organization itself</li>
+  </ul>
+  <p>Your <strong>access account</strong> is not deleted: you will be left with no organizations and you can create a new one. The associated license is cancelled with the closure.</p>
+</div>
+
+<div class="card">
+  <h2>Before continuing, take your data with you</h2>
+  <p class="subtitle">Download the full export (readable CSVs + files + verifiable copy) and keep it safe.</p>
+  <a class="btn btn-primary" href="/configuracion/exportacion/descargar">⬇️ Download full export (.zip)</a>
+</div>
+
+<div class="card">
+  <h2>Confirm the closure</h2>
+  <form method="post" action="/configuracion/baja/confirmar" data-confirm="⚠️ ALL data and files of this organization will be permanently deleted. Continue?">
+    <div class="field">
+      <label>Type the exact name of the organization to confirm</label>
+      <input type="text" name="nombre_confirmado" required placeholder="{{ resumen.nombre }}" autocomplete="off">
+      <p class="hint">It must match exactly «{{ resumen.nombre }}». If it does not match, nothing is deleted.</p>
+    </div>
+    <div class="field">
+      <label class="hint">
+        <input type="checkbox" name="confirmar" value="si" required>
+        I understand that this action is irreversible and that I will lose all data and files of this organization.
+      </label>
+    </div>
+    <button class="btn btn-danger" type="submit">🗑️ Close permanently</button>
+    <a class="btn" href="/configuracion/respaldo">Cancel</a>
+  </form>
+</div>
+{% endblock %}

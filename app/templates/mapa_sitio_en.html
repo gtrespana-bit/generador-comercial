@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" %}
+<main class="hub-hero-int">
+  <h1>Sitemap</h1>
+  <p class="sub">Index of public pages of {{ product_name }}, construction estimating software for Spain and Latin America.</p>
+  <section class="hub-bloque">
+    <h2>Product</h2>
+    <ul>
+      <li><a href="/">Home (Latin America)</a></li>
+      <li><a href="/como-funciona">How it works</a></li>
+      <li><a href="/pago">Plans and pricing</a></li>
+      <li><a href="/legal/preguntas">FAQ</a></li>
+      <li><a href="/soporte">Support: write to the team</a></li>
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>By country</h2>
+    <ul>
+      {% for p in paises %}
+      <li>
+        <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
+        — <a href="/{{ p.codigo | lower }}/software-presupuestos">software</a>,
+        <a href="/{{ p.codigo | lower }}/apu">APU</a>,
+        <a href="/{{ p.codigo | lower }}/remodelacion">remodeling</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Intent (LatAm)</h2>
+    <ul>
+      <li><a href="/software-presupuestos">Construction estimating software</a></li>
+      <li><a href="/apu">Unit price analysis (APU)</a></li>
+      <li><a href="/remodelacion">Remodeling estimates</a></li>
+    </ul>
+  </section>
+  <section class="hub-bloque">
+    <h2>Guides (method)</h2>
+    <ul>
+      {% for g in guias %}
+      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% if articulos is defined and articulos %}
+  <section class="hub-bloque">
+    <h2>By trade and country</h2>
+    <ul>
+      {% for g in articulos %}
+      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+  <section class="hub-bloque">
+    <h2>Legal</h2>
+    <ul>
+      <li><a href="/legal/terminos">Terms</a></li>
+      <li><a href="/legal/privacidad">Privacy</a></li>
+      <li><a href="/legal/soporte">Support</a></li>
+      <li><a href="/legal/licencias">Licenses</a></li>
+    </ul>
+  </section>
+</main>
+{% include "_footer_publico_en.html" %}
+</body>
+</html>

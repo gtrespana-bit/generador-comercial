@@ -1,0 +1,241 @@
+{% extends "legal/_base_legal_en.html" %}
+{% block contenido %}
+<h1>FAQ</h1>
+<p class="meta">Version 1.1 · Updated August 20, 2026</p>
+
+<p>Answers about the product as it is today: free trial, catalog with price
+analysis, estimates, PDF, collections and plans. If yours is missing, write to
+us at <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+
+<nav class="faq-indice" aria-label="Topics">
+  <a href="#producto">Product</a>
+  <a href="#catalogo">Catalog</a>
+  <a href="#presupuesto">Estimates</a>
+  <a href="#datos">Data and team</a>
+  <a href="#fiscal">Tax</a>
+  <a href="#precio">Pricing</a>
+  <a href="#soporte">Support</a>
+</nav>
+
+<h2 id="producto">About the product</h2>
+
+<h3>What exactly is {{ product_name }}?</h3>
+<p>A web application for construction and remodeling estimates. You store (or
+use) a catalog of line items with costs and breakdowns, build estimates by
+sections, see margin and times internally, and deliver a professional PDF by
+WhatsApp or email. After the yes, it turns the estimate into a project,
+records scope changes and controls collections. It is not a loose document
+generator: it is the commercial flow of the job.</p>
+<p>The full guide is at <a href="/como-funciona">How it works</a>.</p>
+
+<h3>Do I need to install anything?</h3>
+<p>No. It runs in the browser and your data stays on the server, isolated by
+organization. There is a desktop version only as compatibility for those who
+already had it: you can import that local installation to the web from
+<code>Settings → Import installation</code>. New pilots go through the web.</p>
+
+<h3>Does it fit my type of work?</h3>
+<p>It is designed for small and medium construction companies, remodelers,
+contractors and installers in Latin America and Spain. If you prepare between
+2 and 50 estimates a month and today you do them in Word or Excel, it fits.
+It brings terminology and VAT for Venezuela, Colombia, Mexico, Ecuador, Peru
+and Spain, and local currency, EUR or USD.</p>
+
+<h3>Can I try it before paying?</h3>
+<p>{% if hay_prueba_gratuita() %}Yes. When you create your account and your
+organization you get <strong>{{ dias_de_prueba() }} days of full
+access</strong>, with your own data. <strong>We do not ask for a
+card</strong> and nothing is charged at the end: if you do not choose a plan,
+you stop generating new estimates and your data stays there to export.{% else %}Current prices are at <a href="/pago">Plans</a>. Payment is manual: you pay, upload the receipt and we activate the license.{% endif %} One trial per email, forever.</p>
+
+<h3>Can I see a sample estimate?</h3>
+<p>Yes. There is a complete one in PDF from
+<a href="/">the product page</a>. All its data is fictional. The landing
+itself shows a bathroom remodel estimate with cost, profit and hours,
+converted to your country's currency.</p>
+
+<h3>Does the client have to register?</h3>
+<p>No. You send the PDF by WhatsApp or email as you already do. The client
+reviews the document and replies. There is an optional private link if you
+want them to sign on screen, but it is not required and does not replace your
+relationship with them.</p>
+
+<h2 id="catalogo">Catalog, costs and resources</h2>
+
+<h3>What catalog is included?</h3>
+<p>{{ catalogo().partidas_txt }} decomposed line items and
+{{ catalogo().recursos_txt }} resource prices, organized in
+{{ catalogo().capitulos }} sections. {{ catalogo().lineas_descomp_txt }}
+unit price analysis lines (materials, labor, equipment and complementary). They
+are our own authorship, editable, and updated to follow the market. It is not
+a flat price list.</p>
+
+<h3>Can I bring my catalog from Excel?</h3>
+<p>Yes. Import from Excel (.xlsx), including breakdowns with a resource
+matrix, productivity and formulas, without losing rows. You can also paste TSV
+copied from a sheet, or import a previous local installation of
+{{ product_name }}.</p>
+
+<h3>If I change the price of cement, do the line items update?</h3>
+<p>Yes. Resources are connected in cascade: resource → line items that use it →
+estimates in editing. Documents already sent are not rewritten: each version
+is frozen.</p>
+
+<h3>What is a room pack?</h3>
+<p>A complete section (bathroom, kitchen, floors…) inserted with
+<code>Alt+R</code> and scaled to the real m². {{ catalogo().packs or 6 }}
+packs included, and you can save your own from any assembled section.</p>
+
+<h2 id="presupuesto">Estimates, margin and delivery</h2>
+
+<h3>Does it calculate profit margin?</h3>
+<p>Yes, if you enter the internal cost of each line item. It compares cost with
+selling price and shows profit and margin in % and in money: per line item,
+per section, for the job and for the products separately. It warns when a
+line item has low margin or an unreviewed price. The client <strong>does not
+see</strong> those numbers in the PDF.</p>
+
+<h3>Does it calculate construction time?</h3>
+<p>Yes, internally. With labor productivity it estimates man-hours by role and
+duration in working days. You can assign hours by hand. That information
+<strong>never goes to the client's PDF</strong>: it is so you can promise
+schedules you can actually meet, not so they claim printed hours.</p>
+
+<h3>What does the PDF include?</h3>
+<p>Your logo, sections, line items, measurements, products with photo, terms,
+warranties, totals and VAT, and optionally cover, signatures and annexes
+merged as real pages. Configurable styles. It does not include internal costs,
+margin or crew hours.</p>
+
+<h3>Can I send via WhatsApp?</h3>
+<p>Yes. The button opens WhatsApp with the message already drafted (client,
+number, total, validity). You can also send it by email from the app, with the
+PDF attached.</p>
+
+<h3>What if the client asks for changes?</h3>
+<p>You edit the estimate. A new version is created (the previous one is sealed)
+and CotizaT builds a summary to copy: previous total, new total and main
+changes. You resend through the same channel.</p>
+
+<h2 id="datos">Data, import and control</h2>
+
+<h3>Can I export my data and leave?</h3>
+<p>Yes, and without asking permission. The data you enter is yours. You export
+to Excel and PDF whenever you want, with full backup. If you end the service
+you have a window of at least 30 days to export it, according to the
+<a href="/legal/terminos">terms of service</a>.</p>
+
+<h3>Can other companies see my prices?</h3>
+<p>No. Each organization is isolated in the database itself, not only on
+screen. Images and attachments are served after permission checks, never from
+a public address. A proposal link, if you create one, shows only that version
+until it expires or you revoke it.</p>
+
+<h3>Who can enter my organization?</h3>
+<p>Only those you invite, with the role you assign: <strong>read-only</strong>
+(view and download), <strong>member</strong> (create and edit) or
+<strong>administrator</strong> (also manage the team). Invitations expire and
+can only be used once, and whoever accepts must have the same confirmed email.</p>
+
+<h3>In which countries and currencies does it work?</h3>
+<p>Designed for Latin America and Spain. When you register you choose Venezuela,
+Colombia, Mexico, Ecuador, Peru or Spain (VAT, tax ID and vocabulary). You
+quote in USD, EUR or your local currency; each estimate freezes its rate.
+There are 20 supported ISO currencies. Without a verified rate we do not
+invent a conversion.</p>
+
+<h2 id="fiscal">Invoicing and tax scope</h2>
+
+<h3>Does {{ product_name }} issue tax invoices?</h3>
+<p><strong>No.</strong> The documents it generates —estimates and billing
+documents— are commercial documents. They do not replace a tax invoice issued
+according to the regulation that applies to you, and the documents themselves
+warn of this. For tax invoicing use the means required by your country and
+consult your advisor.</p>
+
+<h3>Does it calculate taxes automatically?</h3>
+<p>You can configure the taxes you apply (VAT, withholding, exempt operation)
+and {{ product_name }} calculates them in the document, but the
+responsibility for which type applies to each concept is yours or your
+advisor's: we do not provide tax advice.</p>
+
+<h2 id="precio">Pricing and contracting</h2>
+
+<h3>How much does it cost?</h3>
+<p>Current prices are at <a href="/pago">Plans</a>. During early access:
+<strong>89 US$ per year</strong> (usual 109 US$) or <strong>9.99 US$ per
+month the first year</strong> (usual 12.99 US$). The price you contract is
+respected for the whole paid period. All features are included: there is no
+separate “pro” plan.</p>
+
+<h3>How is payment made?</h3>
+<p>By <strong>card</strong> (Visa, Mastercard, American Express, Apple Pay or
+Google Pay) the plan activates when the charge is confirmed. The monthly and
+annual plans renew automatically; you can cancel whenever you want and keep
+the period already paid. If you do not use a card, you choose a manual method
+(mobile payment, Binance, Kontigo, USDT) and upload the receipt: we verify it
+within a maximum of 48 business hours.</p>
+
+<h3>Is there a commitment?</h3>
+<p>No. You can cancel whenever you want and keep access until the end of the
+period you already paid.</p>
+
+<h3>What happens if I stop paying?</h3>
+<p>Access ends when the paid period ends. Before that we notify you by email.
+You keep the export window described in the terms: nothing is deleted by
+surprise. With an expired license you can enter the checkout to renew.</p>
+
+<h3>Can the trial be repeated with another email?</h3>
+<p>One trial per email identity, forever. Creating another account with the
+same email does not grant another. If you already used it, you choose a plan.</p>
+
+<h2 id="paises">By country</h2>
+
+<h3>Is there a CotizaT page for my country?</h3>
+<p>Yes. Each launch market has its own URL, vocabulary, VAT and tax ID. It is
+not the same page with the country name changed:</p>
+<ul>
+  <li><a href="/ve/">Venezuela</a> — USD or Bs, RIF, 16 % VAT, concreto and friso. Also <a href="/ve/software-presupuestos">software</a> and <a href="/ve/apu">APU</a>.</li>
+  <li><a href="/co/">Colombia</a> — COP, NIT, 19 % VAT, pañete and APU. Also <a href="/co/apu">unit price analysis</a> and <a href="/co/remodelacion">remodeling</a>.</li>
+  <li><a href="/mx/">Mexico</a> — MXN, RFC, 16 % VAT, aplanado and plafón. Also <a href="/mx/remodelacion">quoting a remodel</a>.</li>
+  <li><a href="/pe/">Peru</a> — soles, RUC, 18 % IGV, metrados and tarrajeo. Also <a href="/pe/apu">APU and metrados</a>.</li>
+  <li><a href="/ec/">Ecuador</a> — USD, RUC, 15 % VAT, enlucido and tumbado. Also <a href="/ec/apu">APU in dollars</a>.</li>
+</ul>
+<p>The guides (method, not the panel) are at
+<a href="/guia/presupuesto-de-obra">construction estimate</a>,
+<a href="/guia/analisis-precios-unitarios">what an APU is</a> and
+<a href="/guia/presupuesto-remodelacion">estimating a remodel</a>.</p>
+
+<h3>Does it issue DIAN, CFDI, SUNAT or SRI invoices?</h3>
+<p><strong>No.</strong> In no country. The estimate is a commercial document.
+The electronic invoice of Colombia (DIAN), the CFDI of Mexico, the SUNAT
+receipt of Peru or the SRI invoice in Ecuador are issued with the means
+required by your jurisdiction.</p>
+
+<h2 id="soporte">Support</h2>
+
+<h3>What does support include and what not?</h3>
+<p>It is detailed in <a href="/legal/soporte">support terms</a>. In summary:
+it includes configuration, usage questions, product bugs and access problems;
+it does not include tax or legal advice, loading your whole catalog for you,
+or custom development without a separate agreement.</p>
+
+<h3>How do I report a bug?</h3>
+<p>By email to <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>,
+following the <a href="/legal/soporte">report script</a> (what you expected,
+what happened, how to reproduce it and a screenshot without your clients'
+data). With that it gets resolved much faster.</p>
+
+<h3>What state is the product in?</h3>
+<p>In <strong>early access</strong>: it is used for real work, but it keeps
+evolving and there are features on the way. We say it up front so you decide
+with the right information, not after charging you.</p>
+
+<div class="aviso aviso-final">
+  This page summarizes contractual information, but does not replace the
+  <a href="/legal/terminos">terms of service</a>, the
+  <a href="/legal/privacidad">privacy policy</a> nor the
+  <a href="/legal/soporte">support terms</a>. In case of discrepancy, those
+  documents prevail.
+</div>
+{% endblock %}

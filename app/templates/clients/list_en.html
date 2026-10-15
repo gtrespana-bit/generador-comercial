@@ -1,0 +1,47 @@
+{% extends "base_en.html" %}
+{% block title %}Clients{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Clients</h1>
+    <p class="subtitle">Client management</p>
+  </div>
+  <a class="btn btn-primary" href="/clientes/nuevo">+ New client</a>
+</div>
+
+<form class="filters" method="get" action="/clientes">
+  <input type="text" name="q" value="{{ q }}" placeholder="🔍 Search by name, {{ cfg.etiqueta_id_fiscal or 'ID' }} or email">
+  <button class="btn" type="submit">Search</button>
+  {% if q %}<a class="btn btn-sm" href="/clientes">Clear</a>{% endif %}
+</form>
+
+<div class="card">
+  {% if clientes %}
+  <table class="table table-mobile-cards">
+    <thead>
+      <tr><th>Name</th><th>{{ cfg.etiqueta_id_fiscal or "Tax ID" }}</th><th>Phone</th><th>Email</th><th class="right">Estimates</th><th class="right">Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for c in clientes %}
+      <tr>
+        <td data-label="Name"><a class="link" href="/clientes/{{ c.id }}/editar">{{ c.nombre }}</a>{% if c.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
+        <td data-label="Tax ID">{{ c.rif }}</td>
+        <td data-label="Phone">{{ c.telefono }}</td>
+        <td data-label="Email">{{ c.email }}</td>
+        <td class="right" data-label="Estimates">{{ c.presupuestos | length }}</td>
+        <td class="actions-cell" data-label="Actions">
+          <a class="btn btn-sm" href="/clientes/{{ c.id }}/editar">Edit</a>
+          <form method="post" action="/clientes/{{ c.id }}/eliminar" class="inline" data-confirm="Delete this client?">
+            <button class="btn btn-sm btn-danger" type="submit">✕</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No clients yet. <a class="link" href="/clientes/nuevo">Create the first one</a>.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing funciona-page">
+{% include "_nav_en.html" %}
+
+<header class="funciona-hero">
+  <div class="funciona-hero-int">
+    <span class="section-kicker">Product guide</span>
+    <h1>How {{ product_name }} works, feature by feature.</h1>
+    <p class="sub">It is not a PDF generator. It is the commercial flow of a job: catalog with real costs, estimate with margin and times, professional document and change control through to collection. This page explains each piece, with no fine print. If you are looking for the method (sections, APU, remodeling), start with the <a href="/guia/presupuesto-de-obra">construction estimate guides</a>, <a href="/guia/analisis-precios-unitarios">unit price analysis</a> and <a href="/guia/presupuesto-remodelacion">remodeling</a>.</p>
+    <div class="acciones">
+      {% if hay_prueba_gratuita() %}
+      <a class="btn btn-primary" href="/acceso">Try {{ dias_de_prueba() }} days free</a>
+      {% else %}
+      <a class="btn btn-primary" href="/pago">See plans</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="/legal/preguntas">FAQ</a>
+    </div>
+  </div>
+</header>
+
+<nav class="funciona-indice" aria-label="Feature index">
+  <a href="#flujo">The flow</a>
+  <a href="#catalogo">Catalog and APU</a>
+  <a href="#editor">Editor</a>
+  <a href="#planos">Plans and BC3</a>
+  <a href="#packs">Packs</a>
+  <a href="#margen">Margin and times</a>
+  <a href="#entrega">PDF and delivery</a>
+  <a href="#cierre">Projects and collections</a>
+  <a href="#equipo">Team and data</a>
+</nav>
+
+<section id="flujo" class="funciona-flujo">
+  <span class="section-kicker">End to end</span>
+  <h2>The real journey, not a tutorial's.</h2>
+  <p class="intro">{{ product_name }} does not require your client to register or learn a platform. You prepare, review and send. The client responds as always: WhatsApp, call or email.</p>
+  <ol class="funciona-pasos">
+    <li>
+      <strong>Set up your company</strong>
+      <span>Logo, tax details, currency, VAT, terms and PDF texts. When you register you choose a country and the workspace is created already configured.</span>
+    </li>
+    <li>
+      <strong>Review the catalog</strong>
+      <span>{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} resources, ready to edit. Import yours from Excel or BC3 (FIEBDC-3) if you already have it.</span>
+    </li>
+    <li>
+      <strong>Build the estimate</strong>
+      <span>Sections, line items, measurements, room packs or products with photo. Totals, margin and hours recalculate live.</span>
+    </li>
+    <li>
+      <strong>Review before sending</strong>
+      <span>Estimate health warns if price, quantity, cost, logo or client data is missing. It does not block you: it warns you.</span>
+    </li>
+    <li>
+      <strong>Send the PDF</strong>
+      <span>Download it, open it in WhatsApp with the message already drafted or send it by email. The client does not enter CotizaT.</span>
+    </li>
+    <li>
+      <strong>If they ask for changes, resend clearly</strong>
+      <span>You edit, a new version is created and you copy a summary: previous total, new total and what changed.</span>
+    </li>
+  </ol>
+</section>
+
+<section id="catalogo">
+  <span class="section-kicker">The price base</span>
+  <h2>Catalog with unit price analysis, not a flat list.</h2>
+  <p class="intro">Each line item arrives broken down into materials, labor and equipment, with productivity and price. That is what lets you know how much you earn and how long your crew takes.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Included own catalog</h3>
+      <p>{{ catalogo().partidas_txt }} line items in {{ catalogo().capitulos }} sections and {{ catalogo().subcapitulos }} subsections, plus {{ catalogo().recursos_txt }} resource prices ({{ catalogo().materiales }} materials, {{ catalogo().mano_obra }} labor, {{ catalogo().equipo }} equipment). {{ catalogo().lineas_descomp_txt }} editable breakdown lines. You do not start from zero.</p>
+    </article>
+    <article>
+      <h3>Cascading prices</h3>
+      <p>You raise cement or the worker's hourly rate once in Resources. All line items that use it recalculate on their own: the line item, the section and the estimate. No spreadsheet does this without breaking.</p>
+    </article>
+    <article>
+      <h3>Excel and BC3 import</h3>
+      <p>Paste TSV from Excel, upload an .xlsx of breakdowns or import a .bc3 (FIEBDC-3). Sections, line items, measurements and prices are preserved. You can also import a previous local installation.</p>
+    </article>
+    <article>
+      <h3>Catalog health</h3>
+      <p>Before quoting, the app flags line items without price, without cost, without time or with low margin. That way you do not quote with an outdated base without realizing it.</p>
+    </article>
+    <article>
+      <h3>Inflation adjustment</h3>
+      <p>Raise or lower all prices at once by percentage, the whole catalog or by section. Estimates already sent are not touched: each document freezes its figures.</p>
+    </article>
+    <article>
+      <h3>Terminology for your country</h3>
+      <p>Friso or pañete, concreto or hormigón, cielo raso or plafón or falso techo. You choose Venezuela, Colombia, Mexico, Ecuador, Peru or Spain and the names adapt on display, without duplicating the catalog.</p>
+    </article>
+  </div>
+</section>
+
+<section id="editor" class="franja">
+  <span class="section-kicker">The builder</span>
+  <h2>Estimates by sections, with shortcuts for those who quote every day.</h2>
+  <p class="intro">The main experience stays simple: client, sections, line items, quantities, PDF. Advanced features appear when you need them.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Sections and line items</h3>
+      <p>Unlimited sections, line items with technical description, measurements by zones and automatic numbering (1.1, 1.2…). Rows collapse when you finish editing them so you do not get lost in a long document.</p>
+    </article>
+    <article>
+      <h3>Writing without a mouse</h3>
+      <p><code>Enter</code> moves name → quantity → price. <code>Alt+P</code> adds a line item, <code>Alt+C</code> a section, <code>Ctrl+K</code> searches the catalog, <code>Ctrl+Z</code> undoes and <code>Ctrl+Enter</code> saves. Local autosave: if the browser closes, the draft is still there.</p>
+    </article>
+    <article>
+      <h3>Drag, duplicate, paste</h3>
+      <p>Reorder line items by dragging. Duplicate a line item or a whole section. Paste rows copied from Excel. What you type by hand is saved only in the catalog for reuse.</p>
+    </article>
+    <article>
+      <h3>Products at the client's choice</h3>
+      <p>Included, optional or alternative, with photo, brand and price. The estimate marks what was approved with and without optionals. The client chooses; you do not rewrite the document from scratch.</p>
+    </article>
+    <article>
+      <h3>Templates</h3>
+      <p>Save an estimate as a template and reuse it. Useful for recurring remodels: standard bathroom, standard kitchen, commercial premises.</p>
+    </article>
+    <article>
+      <h3>Currency and VAT of the document</h3>
+      <p>Each estimate freezes its currency, its rate and its VAT. You can quote in USD or in local currency. An old PDF does not change if the exchange rate moves tomorrow.</p>
+    </article>
+  </div>
+</section>
+
+<section id="planos" class="franja">
+  <span class="section-kicker">Real measurement</span>
+  <h2>Plans and BC3: from the site visit and the architect to the estimate.</h2>
+  <p class="intro">Two ways to get in without typing by hand: if the architect sends you a .bc3 you import it, if you upload a plan you measure on top of it.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>📥 Import BC3 (FIEBDC-3)</h3>
+      <p>Upload the .bc3 the architect sends. CotizaT detects sections, line items, long descriptions, measurements and prices. It keeps the original file as traceability. It also exports to basic BC3 for whoever asks.</p>
+    </article>
+    <article>
+      <h3>📐 Measure on plans (assisted manual)</h3>
+      <p>Upload PNG, JPG, WEBP or PDF of the plan. You calibrate scale by drawing a known line (“this façade is 8 m”) and measure lines, areas, perimeters and counts with the canvas. No AI and no per-use cost; it works offline on site.</p>
+    </article>
+    <article>
+      <h3>➕ From plan to line item</h3>
+      <p>Each saved measurement (e.g. “Living room floor 24.3 m²”) can be created as a measurement in the line item you choose. That way the quantity stops being a guess and becomes traceable from the plan.</p>
+    </article>
+  </div>
+</section>
+
+<section id="packs">
+  <span class="section-kicker">Speed on site</span>
+  <h2>Room packs: a whole section in one click.</h2>
+  <p class="intro">Quoting a bathroom or a kitchen should not take 40 minutes of searching for line items. A pack inserts the complete section, scaled to the real m².</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>{{ catalogo().packs or 6 }} packs included</h3>
+      <p>Main bathroom, kitchen with island, floors, suite bedroom, living-dining and electrical installation. Each brings the critical line items (waterproofing, penetrations, joints) so nothing is forgotten.</p>
+    </article>
+    <article>
+      <h3>Scaled to measure</h3>
+      <p>You enter 12 m² and the proportional quantities are calculated live. Fixed pieces (toilet, cabinet) are not multiplied. Preview before inserting.</p>
+    </article>
+    <article>
+      <h3>Yours too</h3>
+      <p>Any assembled section is saved as a pack with <em>Save pack</em>. Next time, <code>Alt+R</code> and done. You build your own library of remodels.</p>
+    </article>
+  </div>
+</section>
+
+<section id="margen" class="franja">
+  <span class="section-kicker">The difference</span>
+  <h2>You know how much you earn and how long your crew takes. The client does not.</h2>
+  <p class="intro">Margin and hours are internal information. The client's PDF carries line items, quantities, prices and totals. Never hours or calculated schedules: it avoids claims like “the paper said 5 hours”.</p>
+  <div class="funciona-grid">
+    <article>
+      <h3>Real profit</h3>
+      <p>Each line item compares internal cost (materials, labor, equipment, complementary) with the selling price. You see profit and margin in % and in money: per line item, per section, for the job and for the products, separately.</p>
+    </article>
+    <article>
+      <h3>Low margin alerts</h3>
+      <p>If a line item is below your threshold or has not had its price reviewed for months, CotizaT tells you before you send it. You adjust the cost and profit recalculates instantly.</p>
+    </article>
+    <article>
+      <h3>Man-hours by role</h3>
+      <p>From labor productivity it estimates hours of journeyman, helper, foreman and equipment. Where data is missing you can assign hours by hand. Duration is converted to working days and weeks with your workday.</p>
+    </article>
+    <article>
+      <h3>Times page</h3>
+      <p>At <code>/presupuestos/…/tiempos</code> you see data coverage, breakdown by section and the source of each estimate (breakdown, catalog or by cost). It is for internal planning, not for printing to the client.</p>
+    </article>
+  </div>
+</section>
+
+<section id="entrega">
+  <span class="section-kicker">Commercial close</span>
+  <h2>Professional PDF, WhatsApp, email and clear changes.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>PDF with your brand</h3>
+      <p>Logo, optional cover, summary by sections, terms, warranties, signatures and annexes merged as real pages. Styles: elegant, technical, minimal, corporate, compact or editorial. Watermark if in draft, rejected or expired.</p>
+    </article>
+    <article>
+      <h3>WhatsApp and email</h3>
+      <p>One click opens WhatsApp with the message already drafted: client, number, total and validity. Or you send the PDF by email from the app itself. You work as you already work.</p>
+    </article>
+    <article>
+      <h3>Immutable versions</h3>
+      <p>Each send, resend or approval seals a version. You always know what was sent. You can compare two versions. Editing an already sent document creates a new version, it does not rewrite history.</p>
+    </article>
+    <article>
+      <h3>Change summary</h3>
+      <p>When the client calls and asks “remove the porcelain and put ceramic”, you modify, download the new PDF and copy a summary: previous total, new total and main changes. No more “which was the last one?”</p>
+    </article>
+    <article>
+      <h3>Optional private link</h3>
+      <p>If you need it, a secret link with expiry and revocation. The recipient sees only that version and can sign on screen. They do not browse your organization. It is not a qualified electronic signature: we say so in the terms.</p>
+    </article>
+    <article>
+      <h3>Review before sending</h3>
+      <p>Client, contact, logo, zero prices, zero quantities, missing costs, validity. If something critical is missing, it warns you. You decide whether to send anyway.</p>
+    </article>
+  </div>
+</section>
+
+<section id="cierre" class="franja">
+  <span class="section-kicker">After approval</span>
+  <h2>From estimate to collection, without another spreadsheet.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>Projects</h3>
+      <p>An approved estimate becomes a project. It is linked to the contracted version. File with dates, status, contracted, changes, paid and balance.</p>
+    </article>
+    <article>
+      <h3>Scope changes</h3>
+      <p>Numbered changes with added or removed line items, price difference and status (draft, sent, approved, applied). The project total updates with what is approved, not with what someone noted in a chat.</p>
+    </article>
+    <article>
+      <h3>Billing documents</h3>
+      <p>From an approved estimate you generate a commercial document (<code>DC-2026-001</code>) with its PDF. <strong>It is not a tax invoice</strong> and the document itself says so. It serves for advances, payments and balances.</p>
+    </article>
+    <article>
+      <h3>Reports</h3>
+      <p>Sales, estimates by status, projects and collections with pending balance. Exportable to CSV to cross with your accounting. The dashboard shows volume, approval rate and active projects.</p>
+    </article>
+  </div>
+</section>
+
+<section id="equipo">
+  <span class="section-kicker">Company and data</span>
+  <h2>Your team, your country, your data. No hostages.</h2>
+  <div class="funciona-grid">
+    <article>
+      <h3>Roles</h3>
+      <p>You invite by email. <strong>Read-only</strong> views and downloads. <strong>Member</strong> creates and edits. <strong>Administrator</strong> manages the team. Invitations expire and are single-use. Each organization is isolated in the database, not only on screen.</p>
+    </article>
+    <article>
+      <h3>Tax to your measure</h3>
+      <p>VAT, tax ID (RIF, NIT, RUT, CUIT, RUC, RFC…), withholding, exempt operation and exchange clause. Local currency or USD, with rate frozen per estimate. {{ product_name }} calculates what you configure; it does not provide tax advice.</p>
+    </article>
+    <article>
+      <h3>Export and leave</h3>
+      <p>Excel, PDF and full backup. If you cancel, there is a window of at least 30 days to take your data. No commitment: access lasts until the end of the paid period.</p>
+    </article>
+    <article>
+      <h3>Trial and plans</h3>
+      <p>{% if hay_prueba_gratuita() %}{{ dias_de_prueba() }} days of full access without a card. {% endif %}Annual plan 89 US$ (usual 109) or monthly 9.99 US$ the first year (usual 12.99). Manual payment: mobile payment, Binance, Kontigo, USDT or local wallets. We activate the license when we verify the receipt.</p>
+    </article>
+  </div>
+</section>
+
+<section class="franja cta-final">
+  <h2>Ready to see it with your data?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}Start with {{ dias_de_prueba() }} days free, no card. {% endif %}If something is not clear, the <a href="/legal/preguntas">questions page</a> covers price, data, taxes and support.</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>
+    <a class="btn btn-secondary" href="/pago">See plans</a>
+    {% else %}
+    <a class="btn btn-primary" href="/pago">See plans and start</a>
+    <a class="btn btn-secondary" href="/acceso">Sign in</a>
+    {% endif %}
+  </div>
+</section>
+
+{% include "_footer_publico_en.html" %}
+</body>
+</html>

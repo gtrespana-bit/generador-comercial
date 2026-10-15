@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page soporte-page">
+{% include "_nav_en.html" %}
+<main class="hub-hero-int soporte-main">
+  <h1>Support</h1>
+  <p class="sub">
+    Questions, problems, complaints or ideas: write to us and we reply by email.
+    You can also write directly to
+    <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.
+  </p>
+
+  {% if enviado %}
+  <section class="soporte-aviso ok" role="status">
+    <b>Your message has reached us{% if referencia %} (no. {{ referencia }}){% endif %}.</b>
+    <p>
+      We will reply to the address you provided, normally in less than
+      24 business hours. If it is urgent and you do not receive a reply, write to
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.
+    </p>
+  </section>
+  {% endif %}
+
+  {% if error_soporte %}
+  <section class="soporte-aviso error" role="alert">
+    <b>We could not send the message.</b>
+    <p>{{ error_soporte }}</p>
+  </section>
+  {% endif %}
+
+  <div class="soporte-grid">
+    <section class="hub-bloque">
+      <h2>Tell us what is happening</h2>
+      <form class="soporte-form" method="post" action="/soporte">
+        <input type="hidden" name="desde" value="{{ desde or '/soporte' }}">
+        <div class="soporte-cebo" aria-hidden="true">
+          <label for="soporte-web">Do not fill this field</label>
+          <input id="soporte-web" type="text" name="web" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="soporte-grid-campos">
+          <div class="soporte-campo">
+            <label for="soporte-nombre">Your name</label>
+            <input id="soporte-nombre" type="text" name="nombre" maxlength="200" autocomplete="name" placeholder="What you are called">
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-email">Your email <span class="req">*</span></label>
+            <input id="soporte-email" type="email" name="email" maxlength="254" autocomplete="email" required placeholder="name@company.com">
+            <small>We reply there. It is not used for anything else.</small>
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-tipo">Reason <span class="req">*</span></label>
+            <select id="soporte-tipo" name="tipo" required>
+              {% for valor, etiqueta in tipos_soporte %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-asunto">Subject</label>
+            <input id="soporte-asunto" type="text" name="asunto" maxlength="200" placeholder="One-line summary (optional)">
+          </div>
+        </div>
+
+        <div class="soporte-campo">
+          <label for="soporte-mensaje">Message <span class="req">*</span></label>
+          <textarea id="soporte-mensaje" name="mensaje" rows="8" maxlength="8000" required
+                    placeholder="What you expected to happen, what happened and on which screen. The more specific, the sooner we resolve it."></textarea>
+        </div>
+
+        <div class="soporte-acciones">
+          <button class="btn btn-primary" type="submit">Send to support</button>
+          <span class="soporte-nota">
+            The message is saved and reaches us by email. Replying to that
+            email answers you directly.
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <aside class="soporte-lado hub-bloque">
+      <h2>What you can expect</h2>
+      <ul>
+        <li><b>Reply by email</b> to the address you write, from
+          <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</li>
+        <li><b>Indicative time:</b> less than 24 business hours for questions and
+          problems. Complaints are reviewed just as quickly.</li>
+        <li><b>Suggestions:</b> all are read and many end up as product features.</li>
+        <li><b>If it is a problem</b>, tell us what you were doing, what you
+          expected and what you saw. If you can, the exact screen and the estimate
+          number.</li>
+      </ul>
+
+      <h2>Before writing</h2>
+      <ul>
+        <li>The <a href="/legal/preguntas">FAQ</a> resolves the most common
+          things: prices, data, taxes and invoicing.</li>
+        <li>The <a href="/legal/soporte">support terms</a> explain what is
+          included and what is not.</li>
+        <li>If it is about your plan, in <b>Settings → Your plan</b> you have
+          your status, your receipt and until when your access runs.</li>
+      </ul>
+
+      {% if prueba_gratuita %}
+      <p class="soporte-cta">
+        Still not trying it? <a href="/acceso">Start {{ dias_prueba }} days
+        free</a>, no card.
+      </p>
+      {% endif %}
+    </aside>
+  </div>
+</main>
+{% include "_footer_publico_en.html" %}
+</body>
+</html>

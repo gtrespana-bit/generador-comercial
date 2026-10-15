@@ -1,0 +1,66 @@
+{% extends "base_en.html" %}
+{% block title %}Global search{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Global search</h1>
+    <p class="subtitle">Find clients, documents, catalogs, templates and notes from one place.</p>
+  </div>
+</div>
+
+<form method="get" action="/buscar" class="global-search-form">
+  <input type="search" name="q" value="{{ q }}" placeholder="Client, number, line item, SKU, supplier, note…" autofocus>
+  <button type="submit" class="btn btn-primary">🔍 Search</button>
+</form>
+
+{% if consulta %}
+<p class="search-summary"><strong>{{ total }}</strong> result(s) for «{{ consulta }}».</p>
+{% if total %}
+<div class="search-grid">
+  {% if resultados.clientes %}
+  <section class="card search-group"><div class="search-group-head"><h2>👥 Clients</h2><span class="badge">{{ resultados.clientes | length }}</span></div>
+    {% for cliente in resultados.clientes %}<a class="search-result" href="/clientes/{{ cliente.id }}/editar"><strong>{{ cliente.nombre }}</strong><small>{{ cliente.rif or 'No tax ID' }}{% if cliente.telefono %} · {{ cliente.telefono }}{% endif %}{% if cliente.email %} · {{ cliente.email }}{% endif %}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.presupuestos %}
+  <section class="card search-group"><div class="search-group-head"><h2>📄 Estimates</h2><span class="badge">{{ resultados.presupuestos | length }}</span></div>
+    {% for p in resultados.presupuestos %}<a class="search-result" href="/presupuestos/{{ p.id }}"><strong>{{ p.numero }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</strong><small>{{ p.cliente.nombre }} · {{ p.estado | capitalize }} · {{ p.total | money_iso(p.moneda) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.facturas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🧾 Billing documents</h2><span class="badge">{{ resultados.facturas | length }}</span></div>
+    {% for factura in resultados.facturas %}<a class="search-result" href="/facturas/{{ factura.id }}"><strong>{{ factura.numero }}{% if factura.titulo %} · {{ factura.titulo }}{% endif %}</strong><small>{{ factura.cliente.nombre }} · {{ factura.estado | capitalize }} · {{ factura.total | money_iso(factura.moneda) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.partidas %}
+  <section class="card search-group"><div class="search-group-head"><h2>📋 Line items</h2><span class="badge">{{ resultados.partidas | length }}</span></div>
+    {% for partida in resultados.partidas %}<a class="search-result" href="/partidas/{{ partida.id }}/editar"><strong>{{ partida.nombre }}</strong><small>{% if partida.codigo_interno %}{{ partida.codigo_interno }} · {% endif %}{{ partida.categoria }}{% if partida.subcategoria %} › {{ partida.subcategoria }}{% endif %}{% if partida.apartado %} › {{ partida.apartado }}{% endif %} · {{ partida.precio_unitario | money_iso(moneda_vista) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.productos %}
+  <section class="card search-group"><div class="search-group-head"><h2>🛍️ Products</h2><span class="badge">{{ resultados.productos | length }}</span></div>
+    {% for producto in resultados.productos %}<a class="search-result" href="/productos/{{ producto.id }}/editar"><strong>{{ producto.nombre }}</strong><small>{% if producto.marca %}{{ producto.marca }}{% if producto.modelo %} · {{ producto.modelo }}{% endif %} · {% endif %}{% if producto.sku %}{{ producto.sku }} · {% endif %}{{ producto.precio_unitario | money_iso(moneda_vista) }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.plantillas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🧩 Templates</h2><span class="badge">{{ resultados.plantillas | length }}</span></div>
+    {% for plantilla in resultados.plantillas %}<a class="search-result" href="/plantillas"><strong>{{ plantilla.nombre }}</strong><small>Reusable estimate template</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.recetas %}
+  <section class="card search-group"><div class="search-group-head"><h2>⚡ Room packs</h2><span class="badge">{{ resultados.recetas | length }}</span></div>
+    {% for rec in resultados.recetas %}<a class="search-result" href="/recetas/{{ rec.id }}/editar"><strong>{{ rec.nombre }}</strong><small>Room pack · Category: {{ rec.categoria }} · Base measure: {{ rec.cantidad_base_default }} {{ rec.unidad_base }}</small></a>{% endfor %}
+  </section>{% endif %}
+
+  {% if resultados.notas %}
+  <section class="card search-group"><div class="search-group-head"><h2>🗒️ Internal notes</h2><span class="badge">{{ resultados.notas | length }}</span></div>
+    {% for nota in resultados.notas %}<a class="search-result" href="/presupuestos/{{ nota.presupuesto.id }}#notas"><strong>{{ nota.presupuesto.numero }}{% if nota.presupuesto.titulo %} · {{ nota.presupuesto.titulo }}{% endif %}</strong><small>{{ nota.texto }}</small></a>{% endfor %}
+  </section>{% endif %}
+</div>
+{% else %}
+<div class="card empty"><p>No matches. Try another name, number, SKU or word from the description.</p></div>
+{% endif %}
+{% else %}
+<div class="card empty"><p>Type at least one word to search the whole system.</p></div>
+{% endif %}
+{% endblock %}

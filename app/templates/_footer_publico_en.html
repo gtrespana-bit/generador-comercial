@@ -1,0 +1,99 @@
+{# Premium public footer: landing, guides, legal, plans. #}
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="footer-logo" href="/" aria-label="{{ product_name }} — Home">
+          <span class="footer-logo-mark">
+            <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="ft-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#1a4a8c"/>
+                  <stop offset="1" stop-color="#082a5e"/>
+                </linearGradient>
+              </defs>
+              <rect width="28" height="28" rx="8" fill="url(#ft-grad)"/>
+              <path d="M8 7h7.5L19 10.5V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 7 20V8.5A1.5 1.5 0 0 1 8 7Z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" fill="rgba(255,255,255,.12)"/>
+              <path d="M15.5 7v3.5H19" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>
+              <path d="M10.6 15.1l2.2 2.2 4.3-4.8" stroke="#e5ae3c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="footer-logo-text">{{ product_name }}</span>
+        </a>
+        <p class="footer-tagline">Construction estimating software for Spain and Latin America. Catalog with unit price analysis, live margin and professional PDF.</p>
+        <div class="footer-trust">
+          <span class="footer-trust-item" aria-label="Data protected">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1L2 4v4c0 3.5 2.5 6.5 6 7.5 3.5-1 6-4 6-7.5V4L8 1z"/><path d="M5.5 8l2 2 3.5-4"/></svg>
+            Data protected
+          </span>
+          <span class="footer-trust-item" aria-label="No commitment">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><path d="M5.5 8l2 2 3.5-4"/></svg>
+            No commitment
+          </span>
+          <span class="footer-trust-item" aria-label="Direct support">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="2"/><path d="M1.5 5l6.5 4.5L14.5 5"/></svg>
+            Direct support
+          </span>
+        </div>
+      </div>
+
+      <nav class="footer-col" aria-label="Product">
+        <h4 class="footer-heading">Product</h4>
+        <ul>
+          <li><a href="/como-funciona">How it works</a></li>
+          <li><a href="/pago">Plans and pricing</a></li>
+          <li><a href="/software-presupuestos">Estimating software</a></li>
+          <li><a href="/apu">Unit price analysis</a></li>
+          <li><a href="/remodelacion">Remodeling estimates</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Resources">
+        <h4 class="footer-heading">Resources</h4>
+        <ul>
+          <li><a href="/guia/presupuesto-de-obra">Guide: construction estimate</a></li>
+          <li><a href="/guia/analisis-precios-unitarios">Guide: what is an APU</a></li>
+          <li><a href="/guia/presupuesto-remodelacion">Guide: estimating a remodel</a></li>
+          <li><a href="/legal/preguntas">FAQ</a></li>
+          <li><a href="/mapa-del-sitio">Sitemap</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Legal and contact">
+        <h4 class="footer-heading">Legal</h4>
+        <ul>
+          <li><a href="/legal/terminos">Terms of service</a></li>
+          <li><a href="/legal/privacidad">Privacy policy</a></li>
+          <li><a href="/legal/soporte">Support terms</a></li>
+          <li><a href="/legal/licencias">Third-party licenses</a></li>
+        </ul>
+        <h4 class="footer-heading footer-heading-contact">Contact</h4>
+        <ul>
+          <li><a href="/soporte">Contact support</a></li>
+          <li><a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  {% if paises is defined %}
+  <div class="footer-paises-wrap">
+    <div class="footer-paises-int">
+      <span class="footer-paises-label">Available markets</span>
+      <nav class="footer-paises" aria-label="{{ product_name }} by country">
+        <a href="/">🌎 LatAm</a>
+        {% for p in paises %}
+        <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-int">
+      <span class="footer-copy">© 2026 {{ titular_legal }}. All rights reserved.</span>
+      <span class="footer-made">Built with craft, for those who build.</span>
+    </div>
+  </div>
+</footer>

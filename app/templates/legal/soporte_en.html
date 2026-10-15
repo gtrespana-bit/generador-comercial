@@ -1,0 +1,55 @@
+{% extends "legal/_base_legal_en.html" %}
+{% block contenido %}
+<h1>Support terms</h1>
+<p class="meta">Version 1.0 · In force since August 15, 2026</p>
+
+<h2>1. Channel</h2>
+<p>The support channel is the email
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>. During the
+early access stage it is also the channel for suggestions and for arranging
+assisted configuration sessions.</p>
+
+<h2>2. What support includes</h2>
+<ul>
+  <li>Help configuring your company, catalog and data import.</li>
+  <li>Answers to questions about any feature.</li>
+  <li>Investigation and correction of product bugs.</li>
+  <li>Recovery from problems accessing your account or organization.</li>
+</ul>
+
+<h2>3. What it does not include</h2>
+<ul>
+  <li>Tax, legal or pricing advice for your business.</li>
+  <li>Manual loading of your full catalog (import from Excel and from the local
+      installation exists; we can guide you to use it).</li>
+  <li>Custom feature development, except under a separate written agreement.</li>
+  <li>Hardware, operating system or network support.</li>
+</ul>
+
+<h2>4. Hours and indicative times</h2>
+<ul>
+  <li>Support hours: business days, 9:00–18:00, in your country's time zone (Caracas UTC−4 · Bogotá/Lima UTC−5 · Mexico City UTC−6). We reply during the customer's business hours.</li>
+  <li>First response: normally the same business day; maximum 2 business days.</li>
+  <li>Errors that prevent work (you cannot access or generate documents): top
+      priority; we start investigating as soon as the report is received within
+      support hours.</li>
+</ul>
+<p>During the early access stage these times are effort commitments, not
+contractual guarantees with penalties.</p>
+
+<h2>5. How to report a bug</h2>
+<p>To resolve it quickly, include in your email:</p>
+<ol>
+  <li>What you were trying to do and what you expected to happen.</li>
+  <li>What happened instead (exact error message, if any).</li>
+  <li>Steps to reproduce, if you know them.</li>
+  <li>Screenshot or affected PDF, <strong>without personal data of your
+      clients</strong> if you can avoid it.</li>
+  <li>Approximate date and time, and whether you use the web or the desktop app.</li>
+</ol>
+
+<h2>6. Maintenance and notices</h2>
+<p>Scheduled maintenance that involves unavailability is announced in advance
+by email or within the application. Relevant incidents are communicated with
+their resolution and, when appropriate, with the measures to prevent recurrence.</p>
+{% endblock %}

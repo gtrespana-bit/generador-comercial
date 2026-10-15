@@ -1,0 +1,54 @@
+{% extends "base_en.html" %}
+{% block title %}Activity{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Activity log</h1>
+    <p class="subtitle">Who did what in this organization: prices, statuses, documents, team and data. The log is immutable: it is recorded, not edited.</p>
+  </div>
+</div>
+
+<div class="card">
+  {% if eventos %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Who</th>
+        <th>Action</th>
+        <th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in eventos %}
+      <tr>
+        <td>{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '' }}</td>
+        <td>{{ e.actor_email or '—' }}{% if e.actor_rol %} <span class="muted">({{ e.actor_rol }})</span>{% endif %}</td>
+        <td>{{ acciones_legibles.get(e.accion, e.accion) }}{% if e.entidad_id %} <span class="muted">#{{ e.entidad_id }}</span>{% endif %}</td>
+        <td>
+          {% set d = e.detalle_dict() %}
+          {% if d.get('de') is not none and d.get('a') is not none %}
+            {{ d.get('de') }} → {{ d.get('a') }}
+            {% if d.get('email') %} · {{ d.get('email') }}{% endif %}
+          {% elif d %}
+            {% for clave, valor in d.items() %}{{ clave }}: {{ valor }}{% if not loop.last %} · {% endif %}{% endfor %}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if paginas > 1 %}
+  <p class="muted">
+    Page {{ pagina }} of {{ paginas }} · {{ total }} event(s)
+    {% if pagina > 1 %} · <a href="/configuracion/actividad?pagina={{ pagina - 1 }}">← More recent</a>{% endif %}
+    {% if pagina < paginas %} · <a href="/configuracion/actividad?pagina={{ pagina + 1 }}">Earlier →</a>{% endif %}
+  </p>
+  {% endif %}
+  {% else %}
+  <p class="subtitle">No activity recorded yet. From now on, price changes, statuses, documents, team and data will be recorded here.</p>
+  {% endif %}
+</div>
+{% endblock %}

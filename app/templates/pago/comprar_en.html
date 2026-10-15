@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buy {{ plan_ficha.nombre }} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-page">
+{% set nav_modo = "cuenta" %}
+{% include "_nav_en.html" %}
+
+<main class="compra-main">
+  <header class="compra-head">
+    <span class="section-kicker">Checkout</span>
+    <h1>Buy {{ plan_ficha.nombre }}</h1>
+  </header>
+
+  {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
+
+  <form method="GET" action="/pago/comprar" class="compra-pais" data-pais-pago>
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <label for="pais-pago">Country you will pay from</label>
+    <div class="compra-pais-control">
+      <select id="pais-pago" name="pais" data-pais-pago-selector>
+        {% for pais in paises_pago %}
+        <option value="{{ pais.codigo }}" {% if pais.codigo == pais_pago.codigo %}selected{% endif %}>{{ pais.bandera }} {{ pais.nombre }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-secondary">Update</button>
+    </div>
+    <p>We show the methods available for {{ pais_pago.nombre }}. Your organization's country has been selected; you can change it if you will pay from another country.</p>
+  </form>
+
+    <section class="compra-resumen">
+      <div class="compra-plan">
+        <span class="etiqueta">{{ plan_ficha.etiqueta }}</span>
+        <h2>{{ plan_ficha.nombre }}</h2>
+        <div class="cifra">{{ "%.2f"|format(plan_ficha.importe) }} US$ <small>{% if plan == 'anual' %}/ year{% else %}/ month{% endif %}</small></div>
+        <ul>
+          {% for ventaja in plan_ficha.ventajas %}
+          <li><span class="check">✓</span> {{ ventaja }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% if stripe_disponible %}
+      <p class="compra-nota">Pay by card and the plan activates instantly. If you prefer mobile payment, Binance, Kontigo or USDT, use the form below.</p>
+      {% else %}
+      <p class="compra-nota">Manual payment: choose the method, pay and upload your receipt. We review it and activate your plan.</p>
+      {% endif %}
+    </section>
+
+  {% if stripe_disponible %}
+  <form method="POST" action="/pago/stripe/checkout" class="compra-stripe" data-stripe-checkout>
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <div class="compra-stripe-head">
+      <span class="compra-stripe-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg>
+      </span>
+      <div>
+        <span class="compra-stripe-eyebrow">Immediate payment</span>
+        <h2>Pay securely by card</h2>
+        <p>You will be redirected to Stripe's secure checkout to complete the payment.</p>
+      </div>
+    </div>
+
+    <div class="compra-stripe-marcas" aria-label="Accepted methods">
+      <span>Visa</span><span>Mastercard</span><span>American Express</span><span>Apple Pay</span><span>Google Pay</span>
+    </div>
+
+    <button type="submit" class="btn compra-stripe-button">
+      <svg class="compra-stripe-lock" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      <span class="compra-stripe-button-text">Pay {{ "%.2f"|format(plan_ficha.importe) }} US$ by card</span>
+      <svg class="compra-stripe-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+    </button>
+    <p class="compra-stripe-security"><span aria-hidden="true">✓</span> Charge protected and processed by Stripe. Your card does not pass through our servers.</p>
+    <p class="compra-stripe-terms">The license activates when the charge is confirmed. The plan renews automatically; you can cancel whenever you want and keep the period already paid.</p>
+  </form>
+  <p class="compra-o">or pay by transfer / crypto</p>
+  {% endif %}
+
+  <form method="POST" action="/pago/comprar" enctype="multipart/form-data" class="compra-form">
+    <input type="hidden" name="plan" value="{{ plan }}">
+    <input type="hidden" name="pais_pago" value="{{ pais_pago.codigo }}">
+
+    <section class="compra-metodos">
+      <h2>1. Choose how you will pay</h2>
+      <div class="metodo-opciones">
+        {% for clave, metodo in metodos.items() %}
+        <label class="metodo-radio">
+          <input type="radio" name="metodo_pago" value="{{ clave }}" {% if loop.first %}checked{% endif %}>
+          <span class="metodo-card">
+            <span class="metodo-icon" aria-hidden="true">{{ metodo.icono }}</span>
+            <span class="metodo-nombre">{{ metodo.nombre }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% for clave, metodo in metodos.items() %}
+    <section class="metodo-panel" data-metodo="{{ clave }}" aria-hidden="true">
+      <h2>2. Pay with {{ metodo.nombre }}</h2>
+      <p class="intro">{{ metodo.descripcion }}</p>
+
+      <div class="metodo-datos">
+        {% for etiqueta, valor in metodo.datos %}
+        <div class="dato-pago"><span>{{ etiqueta }}</span><strong>{{ valor }}</strong></div>
+        {% endfor %}
+      </div>
+
+      <h3>Confirm your payment</h3>
+      <div class="compra-campos">
+        {% for campo, etiqueta, tipo, placeholder in metodo.verificacion %}
+        <div class="compra-campo">
+          <label for="campo-{{ campo }}">{{ etiqueta }}</label>
+          <input type="{{ tipo }}" id="campo-{{ campo }}" name="{{ campo }}"
+                 placeholder="{{ placeholder }}" maxlength="300" data-metodo="{{ clave }}" data-campo>
+        </div>
+        {% endfor %}
+        <div class="compra-campo compra-campo-full">
+          <label for="comprobante-{{ clave }}">Payment receipt (image or PDF) *</label>
+          <input type="file" id="comprobante-{{ clave }}" name="comprobante_{{ clave }}"
+                 accept=".png,.jpg,.jpeg,.webp,.pdf,image/png,image/jpeg,image/webp,application/pdf"
+                 data-metodo="{{ clave }}" data-campo>
+        </div>
+      </div>
+    </section>
+    {% endfor %}
+
+    <div class="compra-acciones">
+      <button type="submit" class="btn btn-primary">Register my purchase</button>
+      <a class="btn btn-secondary" href="/pago">Back to plans</a>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Terms</a>
+      <a href="/legal/privacidad">Privacy</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pago-metodo.js' | asset }}"></script>
+</body>
+</html>

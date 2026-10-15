@@ -214,7 +214,7 @@ def test_no_quedan_plantillas_huerfanas_en_el_panel():
     declarados |= {f"ficha_{p.id}.html" for p in FICHA_PESTANAS}
     # Hoy no tiene pestañas pero su contenido está en el cuerpo de dashboard.html.
     declarados |= {f"ingresos_{p}.html" for p in ()}
-    existentes = {p.name for p in PARTES.glob("*.html") if not p.name.startswith("_")}
+    existentes = {p.name for p in PARTES.glob("*.html") if not p.name.startswith("_") and not p.name.endswith("_en.html")}
     faltan = declarados - existentes
     sobran = existentes - declarados
     assert not faltan, f"pestañas declaradas sin plantilla: {sorted(faltan)}"

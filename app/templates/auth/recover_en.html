@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recover access · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="auth-stage">
+  <main class="auth-card">
+    <a class="brand" href="/acceso">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ product_name }}
+    </a>
+
+    <h1>Recover access</h1>
+    <p>Enter your account email. If it exists, Supabase will send a temporary link.</p>
+
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+
+    <form method="post" action="/recuperar-acceso">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required autofocus>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Send recovery link</button>
+    </form>
+
+    <div class="auth-foot">
+      <a href="/acceso">Back to access</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

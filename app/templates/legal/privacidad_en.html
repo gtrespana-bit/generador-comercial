@@ -1,0 +1,154 @@
+{% extends "legal/_base_legal_en.html" %}
+{% block contenido %}
+<h1>Privacy policy</h1>
+<p class="meta">Version 1.2 · In force since September 8, 2026</p>
+
+<div class="aviso">
+  In short: we store the minimum needed for the service to work; we never see
+  your passwords (Supabase Auth manages them); your commercial data and the
+  assistant conversations are not sold, not shared with advertisers and not
+  used to train models; you can request a copy or their deletion.
+</div>
+
+<h2>1. Controller</h2>
+<p>The data controller is <strong>{{ titular_legal }}</strong>, operator of
+{{ product_name }}. Contact:
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+
+<h2>2. What data we process and for what</h2>
+<table>
+  <tr><th>Data</th><th>For what</th><th>Basis</th></tr>
+  <tr>
+    <td>Account: email, name and password</td>
+    <td>To identify you and sign you in. The password is received and held by
+        <strong>Supabase Auth</strong>; it is never stored in the
+        {{ product_name }} database.</td>
+    <td>Performance of the contract</td>
+  </tr>
+  <tr>
+    <td>Commercial data of your organization: clients, catalogs, prices,
+        estimates, documents, projects, payments and images you upload</td>
+    <td>To provide the service. It is data you enter and of which your
+        organization is the owner.</td>
+    <td>Performance of the contract</td>
+  </tr>
+  <tr>
+    <td>Conversations with the assistant: questions and answers, user when
+        available, date and origin page</td>
+    <td>To provide the assistant and study the most frequent questions to
+        improve the experience and the product. The commercial draft/context of
+        the screen is not copied into the conversation record.</td>
+    <td>Performance of the contract and legitimate interest in improving the service</td>
+  </tr>
+  <tr>
+    <td>Minimal technical records (IP in access attempt control)</td>
+    <td>Security: limiting abusive access attempts. The IP is not stored in
+        clear text: a cryptographic summary (SHA-256) with a minutes-long expiry
+        is used.</td>
+    <td>Legitimate interest (security)</td>
+  </tr>
+  <tr>
+    <td>Invitation emails and recipients of estimates</td>
+    <td>To send team invitations and, when you request it, to deliver the
+        estimate PDF to the client via Resend.</td>
+    <td>Performance of the contract</td>
+  </tr>
+  <tr>
+    <td>Proposal links: company, client, number, title, total, dates and frozen PDF</td>
+    <td>To show the specific proposal to whoever receives the secret link your organization creates. The link expires, can be revoked and does not allow browsing other data.</td>
+    <td>Performance of the contract</td>
+  </tr>
+  <tr>
+    <td>Response to a proposal: decision, declared name and email, optional comment, date and time</td>
+    <td>To record the acceptance or rejection of the exact version that was shared. We do not claim to verify identity beyond the data declared by whoever holds the link.</td>
+    <td>Performance of the contract and legitimate interest in keeping commercial traceability</td>
+  </tr>
+</table>
+
+<h2>3. What we do NOT do</h2>
+<ul>
+  <li>We do not sell or rent your data.</li>
+  <li>We do not use your commercial data for advertising or share it with advertisers.</li>
+  <li>We do not use your content or the assistant conversations to train models or for a purpose other than providing and improving the service.</li>
+  <li>If you request a generative response, we send the necessary history and indispensable context to the AI provider indicated below. Local tools can answer without that sending.</li>
+  <li>We do not install third-party trackers for advertising purposes. The desktop version sends no telemetry.</li>
+</ul>
+
+<h2>4. Where the data lives (processors)</h2>
+<p>We use infrastructure providers that act on our instructions:</p>
+<table>
+  <tr><th>Provider</th><th>Function</th></tr>
+  <tr><td>Supabase</td><td>Authentication (email and credentials), PostgreSQL database and private file storage. The bucket is not public. Files require membership, except the exact PDF of a proposal that your organization deliberately shares through a secret, temporary and revocable link.</td></tr>
+  <tr><td>Vercel</td><td>Hosting of the web application and of the page that validates proposal links.</td></tr>
+  <tr><td>Resend</td><td>Sending transactional emails (invitations, notices and estimates you decide to send).</td></tr>
+  <tr><td>Stripe</td><td>Card, Apple Pay and Google Pay collection (name, email and subscription amount). We do not see or store your card number.</td></tr>
+  <tr><td>Upstash</td><td>Distributed counter for the access attempt limit (receives only anonymized keys with expiry, never your IP or email in clear text).</td></tr>
+  <tr><td>Groq</td><td>Optional provider of generative responses. When used, it receives the messages needed to answer and the indispensable functional context; CotizaT does not authorize it to use that content to train models.</td></tr>
+  <tr><td>GoDaddy</td><td>Registration of the <code>cotizat.online</code> domain and DNS.</td></tr>
+</table>
+<p>These providers may host servers outside your country. We choose services
+with industry-standard security measures and limit the data each one receives
+to what is indispensable for its function.</p>
+
+<h2>5. Isolation between organizations</h2>
+<p>Each organization is a separate space: isolation is applied at the data layer
+(mandatory filter by organization in every query and row-level security
+policies in PostgreSQL) and in file access. A member of one organization
+cannot see another's data. The only deliberate exception is a proposal shared
+by your own organization: whoever holds its secret link can view only that
+version and its PDF until the link expires or is revoked.</p>
+
+<h2>6. Cookies</h2>
+<p>We use only technical session cookies (HttpOnly, Secure and SameSite): they
+identify your session and your active organization. There are no advertising
+or tracking cookies. Without these cookies the service cannot work, so they
+do not require additional consent.</p>
+
+<h2>7. Retention</h2>
+<ul>
+  <li>Your organization's data is retained while the account is active.</li>
+  <li>Assistant conversations are retained for <strong>365 days from the last
+      turn</strong>. An automatic job deletes them when that period expires;
+      the panel stops showing them before the purge.</li>
+  <li>If you cancel, data remains available for export for a reasonable period
+      (minimum 30 days) and may then be deleted.</li>
+  <li>You can request earlier access, export or deletion of your conversations
+      by writing to support. Managed backups rotate and deletions propagate to
+      them with the cadence of that rotation.</li>
+</ul>
+
+<h2>8. Your rights</h2>
+<p>You can exercise at any time, by writing to
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>:</p>
+<ul>
+  <li><strong>Access and portability</strong>: obtain a copy of your data (the
+      built-in exports already cover most of it).</li>
+  <li><strong>Rectification</strong>: correct inaccurate data (you can usually
+      do it yourself from the application).</li>
+  <li><strong>Deletion</strong>: request deletion of your account and of your
+      organization's data (if the organization has more members, the request
+      must come from its owner). You can also request deletion of a specific
+      conversation.</li>
+</ul>
+<p>We respond within a maximum of 30 days.</p>
+
+<h2>9. Security</h2>
+<ul>
+  <li>Encryption in transit (HTTPS) throughout the service.</li>
+  <li>Passwords managed exclusively by Supabase Auth; recovery via single-use link.</li>
+  <li>Sessions with HttpOnly cookies not accessible from JavaScript, CSRF protection and strict content security policy (CSP).</li>
+  <li>Private file storage, served only with membership authorization.</li>
+  <li>Database roles without administrative privileges and row-level isolation verified by automated tests.</li>
+</ul>
+<p>If a security incident affecting your data were to occur, we will notify you
+without undue delay together with the measures taken.</p>
+
+<h2>10. Minors</h2>
+<p>{{ product_name }} is a professional tool for companies and is not aimed at
+minors.</p>
+
+<h2>11. Changes to this policy</h2>
+<p>If we substantially change this policy we will announce it by email or
+within the application with reasonable notice. The current version will always
+be published on this page.</p>
+{% endblock %}

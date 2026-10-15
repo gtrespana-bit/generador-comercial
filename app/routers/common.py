@@ -250,7 +250,34 @@ from ..storage import (
     validate_tenant_object_key,
 )
 
-TEMPLATES = Jinja2Templates(directory=str(BASE_DIR / "app" / "templates"))
+class _CotizaTemplates(Jinja2Templates):
+    """Jinja con selección automática de plantilla por idioma.
+
+    Si el request tiene ``state.lang != 'es'`` y existe una plantilla con
+    sufijo ``_<lang>`` (p. ej. ``landing_en.html``), se usa esa; si no,
+    se cae a la plantilla base en español.
+    """
+
+    def TemplateResponse(self, request, name, context=None, status_code=200, headers=None, media_type=None, background=None):
+        ctx = dict(context or {})
+        ctx.setdefault("request", request)
+        lang = "es"
+        try:
+            lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+        except Exception:
+            lang = "es"
+        if lang and lang != "es":
+            base, ext = os.path.splitext(str(name))
+            alt = f"{base}_{lang}{ext}"
+            if (BASE_DIR / "app" / "templates" / alt).is_file():
+                name = alt
+        return super().TemplateResponse(
+            request, name, ctx, status_code=status_code, headers=headers,
+            media_type=media_type, background=background,
+        )
+
+
+TEMPLATES = _CotizaTemplates(directory=str(BASE_DIR / "app" / "templates"))
 TEMPLATES.env.filters["money"] = fmt_monto
 try:
     from ..services.monedas import formato_iso as _formato_iso

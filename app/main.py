@@ -189,7 +189,53 @@ class FormulariosUTF8Middleware:
         await self.app(scope, receive, send)
 
 
+
+class IdiomaMiddleware:
+    """Resuelve el idioma desde /en/... o la cookie y reescribe la ruta."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            await self.app(scope, receive, send)
+            return
+        path = scope.get("path", "") or ""
+        lang = None
+        reescribir = False
+        if path == "/en" or path.startswith("/en/"):
+            lang = "en"
+            reescribir = True
+            if path == "/en":
+                nuevo = "/"
+            else:
+                nuevo = path[3:]
+                if not nuevo:
+                    nuevo = "/"
+            scope["path"] = nuevo
+            scope["raw_path"] = nuevo.encode("latin-1")
+        # cookie
+        if lang is None:
+            headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
+            cookie = headers.get("cookie", "")
+            from .i18n import idioma_desde_cookie
+            lang = idioma_desde_cookie(cookie)
+        state = scope.setdefault("state", {})
+        state["lang"] = lang
+        if reescribir:
+            async def send_wrap(message):
+                if message.get("type") == "http.response.start":
+                    hs = list(message.get("headers", []))
+                    hs.append((b"set-cookie", b"cotizat_lang=en; Path=/; Max-Age=31536000; SameSite=Lax"))
+                    message["headers"] = hs
+                await send(message)
+            await self.app(scope, receive, send_wrap)
+        else:
+            await self.app(scope, receive, send)
+
+
 app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
+app.add_middleware(IdiomaMiddleware)
 app.add_middleware(FormulariosUTF8Middleware)
 app.add_middleware(RefreshedAuthCookieMiddleware)
 app.add_middleware(
