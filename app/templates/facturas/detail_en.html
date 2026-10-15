@@ -1,0 +1,101 @@
+{% extends "base_en.html" %}
+{% block title %}Payment request {{ f.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🧾 <a href="/facturas">Payment requests</a> › {{ f.numero }}</p>
+    <h1>Payment request {{ f.numero }}</h1>
+    <p class="subtitle">{% if f.titulo %}{{ f.titulo }} · {% endif %}Issued on {{ f.fecha | fecha }}</p>
+  </div>
+  <div class="actions">
+    <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/facturas/{{ f.id }}/pdf?inline=1" title="Print payment request to PDF">🖨️ Print</button>
+    <a class="btn btn-primary" href="/facturas/{{ f.id }}/pdf" download="documento_cobro_{{ f.numero }}.pdf" data-cotizat-click="download-pdf">⬇ Download PDF</a>
+    <a class="btn" href="/facturas/{{ f.id }}/pdf?inline=1" target="_blank">👁 View PDF</a>
+    {% if f.presupuesto_id %}
+    <a class="btn" href="/presupuestos/{{ f.presupuesto_id }}">📄 View source estimate</a>
+    {% endif %}
+    <form method="post" action="/facturas/{{ f.id }}/estado" class="inline">
+      <select name="estado" class="select-inline">
+        <option value="emitida" {{ 'selected' if f.estado == 'emitida' else '' }}>Issued</option>
+        <option value="anulada" {{ 'selected' if f.estado == 'anulada' else '' }}>Voided</option>
+      </select>
+      <button class="btn btn-sm" type="submit">Change status</button>
+    </form>
+    <form method="post" action="/facturas/{{ f.id }}/eliminar" class="inline" data-confirm="Delete this payment request?">
+      <button class="btn btn-danger" type="submit">🗑 Delete</button>
+    </form>
+  </div>
+</div>
+
+<div class="alert alert-warning csp-s-68227a9129" role="note">
+  <strong>Non-fiscal commercial document.</strong> It does not replace a tax invoice issued under the applicable regulations.
+</div>
+
+<div class="card">
+  <div class="form-grid">
+    <div>
+      <h2>Client</h2>
+      <p><strong>{{ f.cliente.nombre }}</strong></p>
+      {% if f.cliente.rif %}<p class="muted">Tax ID: {{ f.cliente.rif }}</p>{% endif %}
+      {% if f.cliente.pais %}<p class="muted">Country: {{ f.cliente.pais }}</p>{% endif %}
+      {% if f.cliente.telefono %}<p class="muted">📞 {{ f.cliente.telefono }}</p>{% endif %}
+    </div>
+    <div>
+      <h2>Details</h2>
+      <p class="muted">Issue date: <strong>{{ f.fecha | fecha }}</strong></p>
+      {% if f.direccion_obra %}<p class="muted">Job site: <strong>{{ f.direccion_obra }}</strong></p>{% endif %}
+      <p class="muted">Currency: <strong>{{ f.moneda }}</strong> · VAT: <strong>{{ f.impuesto_pct | round(2) }}%</strong></p>
+      <p><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Sections and line items</h2>
+  {% for cap in f.capitulos %}
+  <div class="doc-capitulo-banda"></div>
+  <div class="doc-capitulo">
+    <span>{{ cap.nombre }}</span>
+    <span>{{ cap.subtotal | money_iso(f.moneda) }}</span>
+  </div>
+  {% for part in cap.partidas %}
+  <div class="doc-partida">
+    <table class="table csp-s-768bda7dd9">
+      <tr>
+        <td>
+          <div class="doc-p-nombre">{{ part.nombre }}</div>
+          {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
+        </td>
+        <td class="right csp-s-463c663c8c">{{ part.cantidad | cant(part.unidad) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(f.moneda) }}</td>
+      </tr>
+    </table>
+  </div>
+  {% endfor %}
+  <div class="csp-s-57baee63f7"></div>
+  {% endfor %}
+
+  <table class="table doc-totales csp-s-9ccc4ca9d6">
+    <tr><td class="right csp-s-9eae69365e">TAXABLE BASE</td><td class="right">{{ f.base | money_iso(f.moneda) }}</td></tr>
+    {% if f.descuento_pct %}
+    <tr><td class="right">DISCOUNT ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money_iso(f.moneda) }}</td></tr>
+    {% endif %}
+    <tr><td class="right">VAT ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>
+    <tr class="row-total"><td class="right"><strong>TOTAL DUE</strong></td><td class="right"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td></tr>
+  </table>
+</div>
+
+{% if f.notas %}
+<div class="card">
+  <h2>Additional information</h2>
+  <p class="prewrap">{{ f.notas }}</p>
+</div>
+{% endif %}
+{% if f.condiciones %}
+<div class="card">
+  <h2>Payment terms</h2>
+  <p class="prewrap">{{ f.condiciones }}</p>
+</div>
+{% endif %}
+{% endblock %}
