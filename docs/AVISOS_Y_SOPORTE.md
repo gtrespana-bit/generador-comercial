@@ -7,8 +7,9 @@
 > vive cada pieza y cómo verificarlo.
 
 **Fecha:** 2026-10-15
-**Head Alembic:** `i4d7c1b8e2f5` (`mensajes_soporte`)
-**SQL de aplicación manual:** `docs/staging_upgrade_i4d7c1b8e2f5.sql`
+**Head Alembic:** `j5b8e1c4a9f2` (RLS activo en `alembic_version`; el buzón entra en `i4d7c1b8e2f5`)
+**SQL de aplicación manual:** `docs/staging_upgrade_i4d7c1b8e2f5.sql` (buzón) y
+`docs/staging_upgrade_j5b8e1c4a9f2.sql` (head)
 
 ---
 
@@ -126,10 +127,14 @@ Los tres correos se pueden revisar desde el panel (*Sistema → Correos*) y desd
 1. Aplicar `docs/staging_upgrade_i4d7c1b8e2f5.sql` en el SQL Editor de Supabase
    con el rol administrativo (el script aborta si la versión no es
    `h1c4b7e9a3d2` y confirma con `UPDATE public.alembic_version`).
-2. Comprobar `alembic_version` = `i4d7c1b8e2f5`.
-3. Opcional: `COTIZAT_AVISOS_EMAIL` si los avisos no deben ir al buzón de
+2. Aplicar después `docs/staging_upgrade_j5b8e1c4a9f2.sql` (guardas para
+   `i4d7c1b8e2f5`): reactiva RLS en `public.alembic_version` con lectura para
+   `cotizat_app` y cierra el aviso crítico del asesor de Supabase. No cambia
+   ninguna tabla funcional del buzón.
+3. Comprobar `alembic_version` = `j5b8e1c4a9f2`.
+4. Opcional: `COTIZAT_AVISOS_EMAIL` si los avisos no deben ir al buzón de
    soporte que ven los clientes.
-4. Verificación de humo: enviar un mensaje desde `/soporte` y confirmar que
+5. Verificación de humo: enviar un mensaje desde `/soporte` y confirmar que
    aparece en *Clientes → Buzón de soporte* y que llega el correo.
 
 ## 8. Cómo verificarlo

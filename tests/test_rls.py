@@ -15,6 +15,7 @@ from migrations.versions import (
     d7f2a9c41e63_fix_invitation_select_policy_on_acceptance as invitation_migration,
     d6e2f9c4b8a1_catalog_visibility as catalog_visibility_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
+    j5b8e1c4a9f2_alembic_version_con_rls as alembic_rls_migration,
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
     a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
@@ -184,7 +185,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert chats_migration.down_revision == uso_migration.revision
     assert desglose_migration.down_revision == chats_migration.revision
     assert soporte_migration.down_revision == desglose_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == soporte_migration.revision
+    assert alembic_rls_migration.down_revision == soporte_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == alembic_rls_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision
@@ -403,6 +405,62 @@ def test_migracion_alembic_version_no_hace_nada_fuera_de_postgresql(monkeypatch)
     monkeypatch.setattr(alembic_migration.op, "execute", lambda s: statements.append(s))
     alembic_migration.upgrade()
     alembic_migration.downgrade()
+    assert statements == []
+
+
+def test_migracion_alembic_version_reactiva_rls_con_lectura_del_rol(monkeypatch):
+    """Cierra el aviso crítico «RLS Disabled in Public» sin romper `/readyz`.
+
+    ``e1a4b7c9d2f0`` desactivó RLS para que el login limitado pudiera leer la
+    revisión de Alembic; con `public` expuesto a PostgREST, eso deja la tabla
+    abierta a la clave pública. La revisión nueva vuelve a activar RLS y
+    autoriza solo el ``SELECT`` del rol de la aplicación: el runtime lee el head
+    igual que antes y `anon`/`authenticated` quedan sin privilegio alguno.
+    """
+    statements = []
+    monkeypatch.setattr(alembic_rls_migration.op, "get_bind", lambda: _FakeBind())
+    monkeypatch.setattr(
+        alembic_rls_migration.op, "execute", lambda s: statements.append(str(s))
+    )
+
+    alembic_rls_migration.upgrade()
+    sql = "\n".join(statements)
+    assert "ALTER TABLE public.alembic_version ENABLE ROW LEVEL SECURITY" in sql
+    assert "DISABLE ROW LEVEL SECURITY" not in sql
+    assert (
+        "CREATE POLICY cotizat_alembic_version_lectura ON public.alembic_version "
+        "FOR SELECT TO cotizat_app USING (true)" in sql
+    )
+    assert "GRANT SELECT ON TABLE public.alembic_version TO cotizat_app" in sql
+    # PostgREST usa estos dos roles con la clave pública.
+    assert "FROM anon" in sql
+    assert "FROM authenticated" in sql
+    # La marca sigue avanzando solo desde el SQL Editor o `alembic upgrade head`.
+    assert "INSERT" not in sql.upper()
+    assert "UPDATE" not in sql.upper()
+
+    downgrade_statements = []
+    monkeypatch.setattr(
+        alembic_rls_migration.op,
+        "execute",
+        lambda s: downgrade_statements.append(str(s)),
+    )
+    alembic_rls_migration.downgrade()
+    revertido = "\n".join(downgrade_statements)
+    assert "DROP POLICY IF EXISTS cotizat_alembic_version_lectura" in revertido
+    assert "ALTER TABLE public.alembic_version DISABLE ROW LEVEL SECURITY" in revertido
+    assert "GRANT SELECT ON TABLE public.alembic_version TO cotizat_app" in revertido
+
+
+def test_migracion_alembic_version_rls_no_hace_nada_fuera_de_postgresql(monkeypatch):
+    statements = []
+    sqlite_bind = SimpleNamespace(dialect=SimpleNamespace(name="sqlite"))
+    monkeypatch.setattr(alembic_rls_migration.op, "get_bind", lambda: sqlite_bind)
+    monkeypatch.setattr(
+        alembic_rls_migration.op, "execute", lambda s: statements.append(s)
+    )
+    alembic_rls_migration.upgrade()
+    alembic_rls_migration.downgrade()
     assert statements == []
 
 
