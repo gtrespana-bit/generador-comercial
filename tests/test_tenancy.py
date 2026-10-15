@@ -24,6 +24,7 @@ from app.models import (
     OperadorProducto,
     ReleaseWeb,
     Licencia,
+    MensajeSoporte,
     VistaGuardada,
     Membresia,
     Organizacion,
@@ -100,6 +101,14 @@ def test_todo_modelo_comercial_declara_propietario():
       organización explícitamente (`resolver_precio`, panel `/recursos/mercado`)
       y en PostgreSQL lo aíslan las políticas `cotizat_precio_mercado_*` y
       `cotizat_historial_precio_*` (revisión `e7b3c1d5a204`).
+    - `MensajeSoporte` es el buzón de soporte: lo escribe el cliente (o un
+      visitante sin cuenta, desde /soporte) y lo lee el **titular del
+      producto**, no la organización sobre la que informa. Su
+      `organizacion_id` es nullable a propósito y con `ON DELETE SET NULL`: dar
+      de baja una empresa no puede borrar la conversación con esa persona.
+      `TenantMixin` lo exigiría NOT NULL. En PostgreSQL lo aíslan las políticas
+      `cotizat_ms_*` (revisión `i4d7c1b8e2f5`): lectura y gestión de operador,
+      INSERT abierto con `estado = 'nuevo'` forzado para el formulario público.
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
     no_tenant_justificados = {
@@ -120,6 +129,7 @@ def test_todo_modelo_comercial_declara_propietario():
         FeatureFlag,
         CrmCliente,
         ApiKeyOperador,
+        MensajeSoporte,
     }
     sin_propietario = []
     for mapper in Base.registry.mappers:

@@ -145,6 +145,53 @@ def _kwargs_demo(email: str) -> dict:
     )
 
 
+def _kwargs_venta(email: str) -> dict:
+    # `email` es el buzón del titular: es a él a quien va el aviso de venta.
+    return dict(
+        organizacion_nombre="Constructora Andina, C.A.",
+        comprador_email="juan@example.com",
+        plan_nombre="Plan anual",
+        importe_texto="89,00 $",
+        metodo_nombre="Tarjeta (Stripe)",
+        periodo_texto=f"{_hoy():%d/%m/%Y} → {_hoy() + timedelta(days=365):%d/%m/%Y}",
+        compra_id=1042,
+        renovacion=False,
+        origen="stripe",
+        panel_url="https://cotizat.online/admin/ingresos?tab=ventas",
+        destino_override=email,
+    )
+
+
+def _kwargs_registro(email: str) -> dict:
+    return dict(
+        email="ana@example.com",
+        nombre="Ana Cliente",
+        pais="Venezuela",
+        origen="prueba",
+        organizacion_nombre="Reformas del Sur",
+        prueba_texto="Prueba de 7 días · vence el " + f"{_hoy() + timedelta(days=6):%d/%m/%Y}",
+        panel_url="https://cotizat.online/admin/clientes",
+        destino_override=email,
+    )
+
+
+def _kwargs_soporte(email: str) -> dict:
+    return dict(
+        nombre="Ana Cliente",
+        email="ana@example.com",
+        tipo="sugerencia",
+        asunto="Poder duplicar un presupuesto",
+        mensaje=(
+            "Hola: uso CotizaT para reformas y me vendría muy bien duplicar un "
+            "presupuesto cambiando solo el cliente. ¿Está previsto?"
+        ),
+        organizacion_nombre="Reformas del Sur",
+        pagina="/presupuestos",
+        panel_url="https://cotizat.online/admin/clientes?tab=soporte",
+        destino_override=email,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Registro: cada entrada describe un correo y cómo enviarlo.
 # ---------------------------------------------------------------------------
@@ -214,6 +261,30 @@ _REGISTRO: tuple[tuple, ...] = (
         "interno",
         _kwargs_demo,
         "enviar_solicitud_demo_por_email",
+    ),
+    (
+        "venta",
+        "Venta confirmada",
+        "Te avisa de cada cobro confirmado (Stripe o activado a mano).",
+        "interno",
+        _kwargs_venta,
+        "enviar_aviso_venta_por_email",
+    ),
+    (
+        "registro",
+        "Alta de cuenta o prueba",
+        "Te avisa cuando alguien crea su cuenta o empieza la prueba.",
+        "interno",
+        _kwargs_registro,
+        "enviar_aviso_registro_por_email",
+    ),
+    (
+        "soporte",
+        "Mensaje del botón de soporte",
+        "Reenvía a tu buzón lo que escriben desde el formulario de soporte.",
+        "interno",
+        _kwargs_soporte,
+        "enviar_mensaje_soporte_por_email",
     ),
 )
 

@@ -91,6 +91,31 @@ fecha, IVA, transporte y observaciones a los precios nacionales. Mientras no
 se aplique, `/readyz` responde 503 para impedir ejecutar código nuevo sobre un
 esquema que perdería esa evidencia.
 
+**Actualización 15/10/2026 (buzón de soporte):** el head exigido por el runtime
+es `i4d7c1b8e2f5`, que crea `public.mensajes_soporte` (los mensajes del botón de
+soporte). Se aplica con `docs/staging_upgrade_i4d7c1b8e2f5.sql`, cuya guarda
+exige que el remoto esté en `h1c4b7e9a3d2`. La tabla **no es de tenant**:
+`organizacion_id` es opcional con `ON DELETE SET NULL` (quien escribe puede no
+tener cuenta), la lectura y la gestión son de operador (`cotizat_ms_*`), el
+INSERT del formulario público queda forzado a `estado = 'nuevo'` y no hay
+permiso de `DELETE`. El arranque best-effort (`app/database.py`) repara la
+marca solo si la tabla existe de verdad. Detalle funcional en
+[`AVISOS_Y_SOPORTE.md`](AVISOS_Y_SOPORTE.md).
+
+**Actualización 15/10/2026 (RLS en `public.alembic_version`):** el head pasa a
+`j5b8e1c4a9f2`, que **vuelve a activar RLS** en la tabla de versiones y autoriza
+solo el `SELECT` de `cotizat_app`, revocando además cualquier privilegio de
+`anon` y `authenticated`. Cierra el aviso **crítico** del asesor de Supabase
+«RLS Disabled in Public» que dejó abierto `e1a4b7c9d2f0` al desactivar RLS para
+que el login limitado pudiera leer el head: con `public` expuesto a PostgREST,
+una tabla sin RLS queda accesible con la clave pública. La lectura de `/readyz`
+no cambia (la política es para el mismo rol que ya tenía el `GRANT`), y el
+propietario de la tabla —las migraciones con la URL administrativa— no se ve
+afectado porque RLS no se aplica al dueño. Se aplica con
+`docs/staging_upgrade_j5b8e1c4a9f2.sql`, cuya guarda exige que el remoto esté en
+`i4d7c1b8e2f5`. Mientras no se aplique, el arranque no se cae (el desajuste de
+head solo se registra como aviso y `/readyz` responde 503 a propósito).
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:

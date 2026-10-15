@@ -1,0 +1,64 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}{{ "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta" }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ "Prueba iniciada" if origen == "prueba" else "Registro" }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  {% if origen == "prueba" %}Una empresa nueva ha empezado la prueba{% else %}Alguien acaba de crear su cuenta{% endif %}
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  Te lo contamos para que puedas dar la bienvenida y acompañar los primeros
+  pasos: los clientes que reciben ayuda en el alta se quedan.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Persona</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ nombre or "Sin nombre" }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Correo</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;"><a href="mailto:{{ email }}" style="color:#0b5b38;text-decoration:none;">{{ email }}</a></td>
+  </tr>
+  {% if organizacion_nombre %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Empresa</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  {% endif %}
+  {% if pais %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">País</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ pais }}</td>
+  </tr>
+  {% endif %}
+  {% if prueba_texto %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Prueba</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ prueba_texto }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.6;color:#28503f;">
+      Responde a este correo y el mensaje le llega directamente.
+      {% if panel_url %}<br><a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">Ver el panel de clientes →</a>{% endif %}
+    </td>
+  </tr>
+</table>
+
+{% endblock %}
+
+{% block pie %}
+Aviso automático de altas de {{ product_name }}. Solo se envía a los operadores del panel.
+{% endblock %}

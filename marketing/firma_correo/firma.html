@@ -1,0 +1,66 @@
+<!--
+  ════════════════════════════════════════════════════════════════════════════
+  Firma de correo · CotizaT · Ruben Romero
+  ════════════════════════════════════════════════════════════════════════════
+
+  CÓMO USARLA
+  · Gmail: abre este archivo en el navegador (doble clic), selecciona la firma
+    entera y cópiala. Luego Configuración → Ver todos los ajustes → General →
+    Firma → Crear nueva → pegar con Ctrl+V.
+  · Outlook (escritorio/web): elige «Firma» → pegar. Si el editor no respeta el
+    formato, inserta el archivo como HTML (Archivo → Opciones → Correo →
+    Firmas → nueva firma).
+  · Apple Mail: Arrastra la firma renderizada a la ventana de firmas, o pega el
+    contenido de este archivo en el editor de firmas.
+
+  POR QUÉ ESTÁ HECHA ASÍ
+  · Estructura de tablas con CSS en línea: es lo único que Outlook (motor de
+    Word) y Gmail renderizan igual.
+  · El logotipo se sirve por URL desde el propio dominio (icono oficial, el
+    mismo del favicon y del manifiesto PWA: /static/icono-192.png, con el 512
+    para pantallas retina) porque Outlook y Gmail no muestran imágenes
+    incrustadas en base64. Son archivos ya publicados con la web, así que el
+    logo se ve sin desplegar nada nuevo.
+  · Sin tipografías externas ni JavaScript: tipografía del sistema con
+    respaldo en Arial/Helvetica.
+
+  Para editar cualquier dato (nombre, cargo, teléfono…), cambia el texto entre
+  etiquetas: es HTML normal. Mantén `style="…"` en línea.
+  ════════════════════════════════════════════════════════════════════════════
+-->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <tr>
+    <td width="72" valign="top" style="vertical-align:top;padding:0 20px 0 0;">
+      <a href="https://cotizat.online" target="_blank" style="text-decoration:none;">
+        <img src="https://cotizat.online/static/icono-192.png" srcset="https://cotizat.online/static/icono-512.png 2x" width="72" height="72" alt="CotizaT" style="display:block;width:72px;height:72px;border:0;border-radius:16px;outline:none;text-decoration:none;">
+      </a>
+    </td>
+    <td valign="top" style="vertical-align:top;border-left:1px solid #dfe6ee;padding:0 0 0 20px;">
+
+      <div style="font-size:17px;line-height:1.3;font-weight:700;color:#123f78;letter-spacing:-0.2px;">Ruben Romero</div>
+
+      <div style="font-size:12px;line-height:1.5;color:#5b6b7c;margin-top:2px;">Fundador · CotizaT</div>
+
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:10px 0 0;">
+        <tr>
+          <td width="46" height="2" bgcolor="#e5ae3c" style="width:46px;height:2px;line-height:2px;font-size:0;background-color:#e5ae3c;">&nbsp;</td>
+        </tr>
+      </table>
+
+      <div style="font-size:11.5px;line-height:1.55;color:#3d4c5c;margin-top:10px;">
+        Presupuestos y control comercial para construcción y remodelación
+      </div>
+
+      <div style="font-size:11.5px;line-height:1.6;margin-top:10px;">
+        <a href="mailto:soporte@cotizat.online" style="color:#123f78;font-weight:700;text-decoration:none;">soporte@cotizat.online</a>
+        <span style="color:#b6c1cc;">&nbsp;·&nbsp;</span>
+        <a href="https://cotizat.online?utm_source=firma_correo&amp;utm_medium=email" target="_blank" style="color:#123f78;font-weight:700;text-decoration:none;">cotizat.online</a>
+      </div>
+
+      <div style="font-size:10.5px;line-height:1.5;color:#6a7a88;margin-top:8px;">
+        <span style="color:#e5ae3c;">●</span>&nbsp; Prueba gratis 7 días, sin tarjeta
+      </div>
+
+    </td>
+  </tr>
+</table>

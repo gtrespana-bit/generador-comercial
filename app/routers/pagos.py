@@ -504,6 +504,26 @@ def _avisar_activacion_stripe(db: Session, compra, licencia) -> None:
         )
 
 
+def _avisar_venta_stripe(db: Session, compra, licencia, *, renovacion: bool = False) -> None:
+    """Avisa al buzón del titular de la venta cobrada por Stripe. Nunca lanza."""
+    from ..services.avisos_negocio import avisar_venta
+
+    try:
+        avisar_venta(
+            db,
+            compra=compra,
+            licencia=licencia,
+            renovacion=renovacion,
+            origen="stripe",
+        )
+    except Exception:
+        log.error(
+            "Error avisando de la venta Stripe de la compra #%s:\n%s",
+            getattr(compra, "id", "?"),
+            traceback.format_exc(),
+        )
+
+
 @router.post("/pago/stripe/checkout", include_in_schema=False)
 def stripe_checkout(
     request: Request,
@@ -664,6 +684,15 @@ async def stripe_webhook(
                 licencia = db.get(Licencia, compra.licencia_id)
                 if licencia is not None:
                     _avisar_activacion_stripe(db, compra, licencia)
+                    # Aviso al titular: es el correo que evita enterarse de la
+                    # venta por el banco. La renovación se distingue del alta
+                    # porque llega como factura de una suscripción ya viva.
+                    _avisar_venta_stripe(
+                        db,
+                        compra,
+                        licencia,
+                        renovacion=str(evento.get("type") or "") == "invoice.paid",
+                    )
                     # Telemetría (E5-012): cierre del embudo de cobro. La
                     # sesión del webhook es de operador (sin claim de tenant),
                     # por eso la organización va explícita.

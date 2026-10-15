@@ -6,6 +6,7 @@ from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..analytics import encolar_evento_ga
 from ..services import auditoria, telemetria
+from ..services.avisos_negocio import avisar_registro
 
 router = APIRouter()
 
@@ -210,6 +211,16 @@ async def registrar_cuenta(request: Request):
     # y solo se usa agregado en el panel de analítica.
     telemetria.anotar_registro(
         email=str(form.get("email") or ""), pais=pais_reg,
+    )
+    # Aviso al buzón del titular (no bloqueante): el alta se cuenta en el
+    # servidor y el aviso es la forma de enterarse sin abrir el panel. Va en un
+    # hilo aparte porque el envío es una llamada HTTP con tiempo de espera.
+    await run_in_threadpool(
+        avisar_registro,
+        email=str(form.get("email") or ""),
+        nombre=str(form.get("nombre") or ""),
+        pais=pais_reg,
+        origen="registro",
     )
     # Helper para fijar cookie de país en cualquier redirect de registro
     def _resp_con_pais(resp):
@@ -674,6 +685,18 @@ async def crear_organizacion_web(
         "organizacion.creada",
         organizacion_id=organizacion.id,
         detalle={"pais": pais_org},
+    )
+    # Aviso al buzón del titular: aquí es donde una visita se convierte en una
+    # empresa con prueba. Es el momento en el que merece la pena escribirle.
+    # El correo sale del perfil ya sincronizado (``usuario``); la sesión no
+    # guarda el email de Supabase en ``db.info``.
+    avisar_registro(
+        email=str(getattr(usuario, "email", "") or ""),
+        nombre=str(getattr(usuario, "nombre", "") or ""),
+        pais=pais_org,
+        origen="prueba" if resultado_prueba.concedida else "empresa",
+        organizacion_nombre=organizacion.nombre,
+        prueba_texto=resultado_prueba.mensaje if resultado_prueba.concedida else "",
     )
     return response
 

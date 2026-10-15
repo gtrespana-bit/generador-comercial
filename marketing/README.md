@@ -123,3 +123,23 @@ Copys (`LABEL_TXT`, `SUB_TXT`, `ADV_STANDALONE`) y disposición
 (`CFG_STANDALONE_11`, `CFG_STANDALONE_45`) al inicio de cada sección de
 `generar_flyer.py`. Nota: la fuente Lato del proyecto no trae los glifos
 `₡` ni `→`; usa `CRC`, `»` u otros equivalentes.
+
+---
+
+## 3 · Firma de correo
+
+Firma profesional de **Ruben Romero · Fundador · CotizaT** para los correos del
+equipo, en `marketing/firma_correo/`:
+
+| Archivo | Qué es |
+|---|---|
+| `firma.html` | La firma (tablas + CSS en línea). Se abre en el navegador, se copia y se pega en el cliente de correo. |
+| `firma.txt` | La misma firma en texto plano. |
+| `vista-previa.png` | Recreación de cómo se ve con la tipografía de respaldo del correo. |
+| `generar_assets.py` | Regenera `vista-previa.png`. |
+
+El logotipo se sirve por URL desde el icono que la web ya publica
+(`https://cotizat.online/static/icono-192.png`, el del favicon y el manifiesto
+PWA) porque Outlook bloquea las imágenes incrustadas en base64. Instalación
+paso a paso, edición de datos y decisiones de compatibilidad en
+[`firma_correo/LEEME.md`](firma_correo/LEEME.md).

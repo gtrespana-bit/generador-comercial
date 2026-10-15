@@ -1,0 +1,14 @@
+{% if origen == "prueba" %}NUEVA EMPRESA EN PRUEBA{% else %}NUEVA CUENTA REGISTRADA{% endif %} · {{ product_name }}
+
+Persona: {{ nombre or "Sin nombre" }}
+Correo: {{ email }}
+{% if organizacion_nombre %}Empresa: {{ organizacion_nombre }}
+{% endif %}{% if pais %}País: {{ pais }}
+{% endif %}{% if prueba_texto %}Prueba: {{ prueba_texto }}
+{% endif %}
+Escribe directamente a {{ email }} respondiendo a este correo.
+{% if panel_url %}
+Panel de clientes: {{ panel_url }}
+{% endif %}
+---
+Aviso automático de altas de {{ product_name }}. Solo se envía a los operadores del panel.

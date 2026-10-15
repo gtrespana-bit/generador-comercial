@@ -463,3 +463,93 @@ def test_csrf_no_bloquea_el_webhook():
     with TestClient(app_segura, base_url="https://cotizat.test") as client:
         r = client.post("/pago/stripe/webhook")
     assert r.status_code == 200
+
+
+def test_el_webhook_avisa_al_titular_de_la_venta(entorno, monkeypatch):
+    """El titular no puede enterarse de un cobro por el banco.
+
+    La primera venta real de 2026-10 se descubrió por un correo de Stripe:
+    el webhook activaba la licencia, avisaba al comprador… y al titular no le
+    llegaba nada. Este test fija el aviso al buzón de soporte, que es el
+    requisito declarado como más prioritario de todo el encargo.
+    """
+    import os
+
+    from app.services import email as email_module
+
+    capturado = []
+
+    class _Respuesta:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _size=-1):
+            return b'{"id":"venta-1"}'
+
+    def fake_urlopen(request, timeout):  # noqa: ARG001
+        capturado.append(json.loads(request.data.decode("utf-8")))
+        return _Respuesta()
+
+    monkeypatch.setenv("RESEND_API_KEY", "re_prueba")
+    monkeypatch.setenv("COTIZAT_EMAIL_FROM", "CotizaT <no-responder@cotizat.test>")
+    monkeypatch.delenv("COTIZAT_AVISOS_EMAIL", raising=False)
+    monkeypatch.setattr(email_module, "urlopen", fake_urlopen)
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_1234567890abcdefghijklmn")
+    monkeypatch.setenv("STRIPE_WEBHOOK_SECRET", WEBHOOK_SECRET)
+
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = crear_compra(
+            db,
+            organizacion_id=ids[0],
+            plan="mensual",
+            metodo_pago=METODO_STRIPE,
+            datos_verificacion={},
+            comprobante_reference="",
+            comprobante_nombre="",
+            comprobante_mime="",
+            creada_por_usuario_id=ids[1],
+            creada_por_email="duena@example.com",
+            exigir_comprobante=False,
+        )
+        compra.stripe_checkout_session_id = "cs_test_aviso"
+        db.commit()
+        compra_id = compra.id
+
+        evento = {
+            "type": "checkout.session.completed",
+            "data": {
+                "object": {
+                    "id": "cs_test_aviso",
+                    "payment_status": "paid",
+                    "status": "complete",
+                    "subscription": "sub_test_aviso",
+                    "customer": "cus_test_aviso",
+                    "metadata": {"compra_id": str(compra_id), "plan": "mensual"},
+                }
+            },
+        }
+        payload = json.dumps(evento).encode("utf-8")
+        _instalar_override(db, ids)
+        try:
+            with _cliente() as client:
+                respuesta = client.post(
+                    "/pago/stripe/webhook",
+                    content=payload,
+                    headers={"stripe-signature": _firmar(payload)},
+                )
+        finally:
+            _retirar_override()
+
+    assert respuesta.status_code == 200
+    assert capturado, "La venta de Stripe debe avisar al buzón del titular"
+    aviso = capturado[-1]
+    assert aviso["to"] == ["soporte@cotizat.online"]
+    assert "9,99" in aviso["subject"] or "9.99" in aviso["subject"]
+    assert aviso["reply_to"] == "duena@example.com"
+    assert "mensual" in aviso["html"].lower()
+    assert "/admin/ingresos?tab=ventas" in aviso["text"]

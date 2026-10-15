@@ -62,6 +62,7 @@ ACCIONES_LECIBLES = {
     "web.release_editada": "Versión editada",
     "web.release_alternada": "Visibilidad de versión cambiada",
     "web.flag_cambiado": "Feature flag cambiado",
+    "soporte.mensaje_estado": "Estado de mensaje de soporte",
 }
 
 #: Resultados posibles en el registro; el panel los ofrece como filtro.

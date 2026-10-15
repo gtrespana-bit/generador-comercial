@@ -92,6 +92,72 @@ def notificaciones_admin(
             "/admin/sistema?tab=equipo",
         ))
 
+    # --- Ventas recientes ---------------------------------------------
+    # La campana avisa de lo que se acaba de vender: era el hueco más caro del
+    # panel, porque una venta de Stripe se cerraba sola y no aparecía en
+    # ninguna alerta (el titular se enteraba por el correo del banco).
+    from .panel_ventas import aviso_venta_reciente
+
+    try:
+        ventas = aviso_venta_reciente(db, horas=72, limite=3)
+    except Exception:
+        ventas = []
+    for venta in ventas:
+        etiqueta = "Renovación" if venta["renovacion"] else "Venta"
+        avisos.append(_aviso(
+            "venta",
+            "info",
+            f"{etiqueta}: {venta['plan_nombre']} · {venta['importe']:.2f} {venta['moneda']}",
+            (
+                f"{venta['organizacion_nombre']} · {venta['metodo_nombre']} · "
+                f"{venta['fecha']:%d/%m %H:%M}"
+            ),
+            "/admin/ingresos?tab=ventas",
+        ))
+
+    # --- Mensajes de soporte sin atender -------------------------------
+    from .soporte import contadores_soporte, mensajes_sin_atender
+
+    try:
+        pendientes_soporte = contadores_soporte(db).get("nuevo", 0)
+    except Exception:
+        pendientes_soporte = 0
+    if pendientes_soporte:
+        ultimos = mensajes_sin_atender(db, limite=3)
+        primero = ultimos[0] if ultimos else None
+        avisos.append(_aviso(
+            "soporte",
+            "warning",
+            f"{pendientes_soporte} mensaje(s) de soporte sin atender",
+            (
+                f"El último: «{(primero.asunto or primero.mensaje)[:70]}» de "
+                f"{primero.email}."
+                if primero
+                else "Revisa el buzón de soporte del panel."
+            ),
+            "/admin/clientes?tab=soporte&estado=nuevo",
+        ))
+
+    # --- Altas de cuenta y pruebas -------------------------------------
+    from .panel_ventas import registros_recientes
+
+    try:
+        registros = registros_recientes(db, limite=2, dias=7)
+    except Exception:
+        registros = []
+    for registro in registros:
+        avisos.append(_aviso(
+            "registro",
+            "info",
+            f"{registro['titulo']}: {registro['email'] or 'sin correo'}",
+            (
+                f"{registro['organizacion_nombre']} · {registro['fecha']:%d/%m %H:%M}"
+                if registro["organizacion_nombre"]
+                else f"Registro del {registro['fecha']:%d/%m %H:%M}"
+            ),
+            "/admin/clientes?tab=directorio",
+        ))
+
     # --- Estado del negocio -------------------------------------------
     sin_plan = len(organizaciones) - sum(
         1 for cadena in por_org.values() if any(vigente for vigente in cadena if vigente.vigente(hoy))
@@ -105,7 +171,7 @@ def notificaciones_admin(
             "/admin/clientes?tab=directorio&plan=sin",
         ))
 
-    return _ordenar(avisos)[:12]
+    return _ordenar(avisos)[:15]
 
 
 def _aviso(tipo: str, severidad: str, titulo: str, detalle: str, url: str) -> dict:

@@ -248,8 +248,9 @@ def opciones_con_contadores(contadores: dict, pares) -> list:
 def contadores_panel(db) -> dict:
     """Cifras de los badges del menú y de las pestañas.
 
-    Solo dos consultas con índice (compras pendientes y licencias por vencer):
-    decorar la navegación no puede suponer recorrer la base en cada petición.
+    Tres consultas con índice (compras pendientes, licencias por vencer y
+    mensajes de soporte sin atender): decorar la navegación no puede suponer
+    recorrer la base en cada petición.
     """
     hoy = date.today()
     try:
@@ -270,7 +271,21 @@ def contadores_panel(db) -> dict:
     except Exception:
         db.rollback()
         por_vencer = 0
-    return {"ingresos": compras + por_vencer, "compras": compras, "renovaciones": por_vencer}
+    try:
+        from ..models import MensajeSoporte
+
+        soporte = (
+            db.query(MensajeSoporte).filter(MensajeSoporte.estado == "nuevo").count()
+        )
+    except Exception:
+        db.rollback()
+        soporte = 0
+    return {
+        "ingresos": compras + por_vencer,
+        "compras": compras,
+        "renovaciones": por_vencer,
+        "soporte": soporte,
+    }
 
 
 def contexto_base(

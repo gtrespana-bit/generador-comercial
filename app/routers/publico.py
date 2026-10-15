@@ -533,6 +533,138 @@ def pagina_legal(pagina: str, request: Request):
 
 
 # ---------------------------------------------------------------------------
+# Soporte: el formulario de contacto de clientes y visitantes
+#
+# El canal era el correo a secas: quien tenía un problema dentro de la
+# aplicación salía a su cliente de correo y el mensaje dependía de que se
+# acordara de copiar la dirección. Aquí hay una página con formulario, funciona
+# con o sin sesión, y el mensaje queda guardado en el panel además de enviarse
+# al buzón de soporte.
+# ---------------------------------------------------------------------------
+
+
+def _contexto_soporte(request: Request, **extra) -> dict:
+    from ..models import TIPOS_SOPORTE
+    from ..paises import lista_paises
+    from ..seo import contexto_pagina_estatica
+    from ..services.prueba_gratuita import dias_de_prueba, prueba_activada
+
+    contexto = contexto_pagina_estatica(request, "contacto")
+    # El formulario llega con la pantalla desde la que se escribió: el botón
+    # flotante de la aplicación pasa ``?desde=/presupuestos`` para que el
+    # titular sepa dónde estaba la persona sin preguntárselo.
+    desde = str(
+        request.query_params.get("desde") or request.query_params.get("pagina") or ""
+    ).strip()[:500]
+    if not desde.startswith("/") or desde.startswith("//"):
+        desde = ""
+    contexto.update(
+        {
+            "tipos_soporte": TIPOS_SOPORTE,
+            "desde": desde,
+            "enviado": request.query_params.get("enviado") == "1",
+            "referencia": str(request.query_params.get("ref") or "")[:20],
+            "error_soporte": str(request.query_params.get("error") or "")[:300],
+            "paises": lista_paises(),
+            "prueba_gratuita": prueba_activada(),
+            "dias_prueba": dias_de_prueba(),
+        }
+    )
+    contexto.update(extra)
+    return contexto
+
+
+@router.get("/soporte", response_class=HTMLResponse, include_in_schema=False)
+def pagina_soporte(request: Request):
+    """Página pública de soporte: el formulario del botón de ayuda.
+
+    Tiene URL propia (se puede guardar en favoritos y enlazar desde un correo)
+    y funciona con o sin sesión: quien todavía no es cliente también puede
+    escribir. El mensaje se guarda en el panel y se avisa al buzón de soporte.
+    """
+    return TEMPLATES.TemplateResponse(request, "soporte.html", _contexto_soporte(request))
+
+
+@router.post("/soporte", response_class=RedirectResponse, include_in_schema=False)
+async def enviar_soporte(request: Request):
+    """Recibe el mensaje: lo guarda en el panel y avisa al buzón de soporte.
+
+    Sin autenticación (lo usa también quien no tiene cuenta). El mensaje se
+    guarda ANTES de intentar el correo: si Resend falla, el mensaje no se
+    pierde. El ``reply_to`` del aviso es el del remitente, así que responder
+    desde el buzón contesta directamente.
+    """
+    from urllib.parse import urlencode
+
+    from ..services.avisos_negocio import url_panel_absoluta
+    from ..services.email import EmailNotConfigured, EmailSendError, EmailValidationError
+    from ..services.prueba_gratuita import hash_ip
+    from ..services.soporte import SoporteError, registrar_mensaje
+
+    form = await request.form()
+    nombre = str(form.get("nombre") or "").strip()[:200]
+    email = str(form.get("email") or "").strip().lower()[:254]
+    tipo = str(form.get("tipo") or "consulta").strip().lower()[:20]
+    asunto = str(form.get("asunto") or "").strip()[:200]
+    mensaje = str(form.get("mensaje") or "").strip()
+    desde = str(form.get("desde") or "").strip()[:500]
+    cebo = str(form.get("web") or "").strip()
+
+    def _volver(**parametros) -> RedirectResponse:
+        consulta = urlencode({k: v for k, v in parametros.items() if v})
+        return RedirectResponse(f"/soporte?{consulta}" if consulta else "/soporte", status_code=303)
+
+    # Trampa para bots: un campo oculto que nadie rellena. Se responde como si
+    # se hubiera enviado (para no dar pistas) y no se guarda nada.
+    if cebo:
+        return _volver(enviado="1")
+
+    if not desde or not desde.startswith("/") or desde.startswith("//"):
+        desde = "/soporte"
+
+    # Si quien escribe tiene la sesión abierta, el mensaje llega con su
+    # empresa puesta: el titular ve de qué cliente es sin preguntarlo. Sin
+    # sesión (una visita desde la web) el mensaje se guarda igual.
+    organizacion_id = 0
+    try:
+        organizacion_id = int(request.cookies.get("cotizat_organization_id") or 0)
+    except (TypeError, ValueError):
+        organizacion_id = 0
+
+    try:
+        from ..database import SessionLocal
+
+        with SessionLocal() as db:
+            fila, _aviso = registrar_mensaje(
+                db,
+                nombre=nombre,
+                email=email,
+                tipo=tipo,
+                mensaje=mensaje,
+                asunto=asunto,
+                pagina=desde,
+                organizacion_id=organizacion_id or None,
+                ip_hash=hash_ip(ip_de_request(request)),
+                panel_url=url_panel_absoluta("/admin/clientes?tab=soporte"),
+            )
+            db.commit()
+            numero = fila.id
+    except SoporteError as exc:
+        return _volver(error=str(exc))
+    except (EmailNotConfigured, EmailValidationError, EmailSendError):
+        # El mensaje ya está guardado; el correo es el aviso, no la verdad.
+        numero = 0
+    except Exception:
+        logger = logging.getLogger("cotizat.publico")
+        logger.exception("Error guardando un mensaje de soporte.")
+        return _volver(
+            error="No hemos podido registrar tu mensaje. Inténtalo de nuevo en un minuto."
+        )
+
+    return _volver(enviado="1", ref=str(numero) if numero else "")
+
+
+# ---------------------------------------------------------------------------
 # Página de planes y métodos de pago
 # ---------------------------------------------------------------------------
 

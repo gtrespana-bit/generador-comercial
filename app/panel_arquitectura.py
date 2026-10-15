@@ -138,16 +138,26 @@ SECCIONES: tuple[Seccion, ...] = (
                 "Pipeline comercial",
                 "El estado comercial de cada cliente: lead, prueba, activo, riesgo o inactivo.",
             ),
+            Pestana(
+                "soporte",
+                "Buzón de soporte",
+                "Lo que escriben clientes y visitantes: leer, responder y cerrar cada mensaje.",
+            ),
         ),
     ),
     Seccion(
         id="ingresos",
         nombre="Ingresos",
         ruta="/admin/ingresos",
-        descripcion="El ciclo completo del cobro: contratos, compras, renovaciones y cobros del mes.",
+        descripcion="El ciclo completo del cobro: ventas, contratos, compras, renovaciones y cobros del mes.",
         icono="ingresos",
         atajo="i",
         pestanas=(
+            Pestana(
+                "ventas",
+                "Ventas",
+                "Cada cobro confirmado: qué se vendió, a quién, cuándo y por cuánto.",
+            ),
             Pestana(
                 "renovaciones",
                 "Renovaciones",

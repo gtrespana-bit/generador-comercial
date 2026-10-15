@@ -278,7 +278,18 @@ def test_la_fusion_no_arrastra_javascript_del_anexo(almacen):
     """Un anexo con acciones JavaScript no inyecta código en el presupuesto."""
     base = _pdf_de_prueba(1, "CONJS")
     escritor = PdfWriter(clone_from=io.BytesIO(base))
-    escritor.add_js("app.alert('anexo');")
+    # `add_js` está en desuso desde pypdf 6.19 (se retira en 7.0). El anexo
+    # malicioso se construye con la API vigente: lo que importa es que la
+    # fusión no arrastre la acción, no cómo se escribió en el anexo.
+    try:
+        from pypdf.actions import JavaScript
+
+        # pypdf 6.19 estrenó esta API y dejó `add_js` en desuso (se retira en
+        # 7.0). Lo que prueba el test es que la fusión no arrastre la acción,
+        # sin depender de una función que va a desaparecer.
+        escritor.add_open_action(JavaScript("app.alert('anexo');"))
+    except (AttributeError, TypeError, ImportError):
+        escritor.add_js("app.alert('anexo');")
     escritor.add_annotation(
         page_number=0,
         annotation={

@@ -1,10 +1,13 @@
 # Panel profesional — estado exacto
 
-> **Nota de vigencia (28/09/2026):** este documento es una instantánea de
-> trabajo del 30/08/2026. El código actual exige Alembic
-> `h1c4b7e9a3d2`; el head `d3e5f7a9c2b4` que aparece en las secciones
-> históricas ya no es el requerido por esta rama. El estado remoto de staging
-> y producción no se verificó.
+> **Nota de vigencia (15/10/2026):** este documento es una instantánea de
+> trabajo del 30/08/2026. El código actual exige Alembic `j5b8e1c4a9f2`
+> (RLS activo en `alembic_version`, sobre el buzón de soporte `i4d7c1b8e2f5`,
+> 15/10/2026); el head `d3e5f7a9c2b4` que aparece en las
+> secciones históricas ya no es el requerido por esta rama. El estado remoto
+> de staging y producción no se verificó. Lo añadido después de esta
+> instantánea —avisos de venta y alta, botón de soporte, pestaña de ventas—
+> está en [`AVISOS_Y_SOPORTE.md`](AVISOS_Y_SOPORTE.md).
 
 **Fecha del corte documentado:** 2026-08-30 (última capa: Fase 5 · arquitectura
  del panel, §3bis)

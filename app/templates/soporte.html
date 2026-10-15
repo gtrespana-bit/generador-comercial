@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page soporte-page">
+{% include "_nav.html" %}
+<main class="hub-hero-int soporte-main">
+  <h1>Soporte</h1>
+  <p class="sub">
+    Dudas, problemas, quejas o ideas: escríbenos y te contestamos por correo.
+    También puedes escribir directamente a
+    <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.
+  </p>
+
+  {% if enviado %}
+  <section class="soporte-aviso ok" role="status">
+    <b>Tu mensaje ya nos ha llegado{% if referencia %} (nº {{ referencia }}){% endif %}.</b>
+    <p>
+      Te responderemos a la dirección que has indicado, normalmente en menos de
+      24 horas laborables. Si es urgente y no recibes respuesta, escribe a
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.
+    </p>
+  </section>
+  {% endif %}
+
+  {% if error_soporte %}
+  <section class="soporte-aviso error" role="alert">
+    <b>No hemos podido enviar el mensaje.</b>
+    <p>{{ error_soporte }}</p>
+  </section>
+  {% endif %}
+
+  <div class="soporte-grid">
+    <section class="hub-bloque">
+      <h2>Cuéntanos qué pasa</h2>
+      <form class="soporte-form" method="post" action="/soporte">
+        <input type="hidden" name="desde" value="{{ desde or '/soporte' }}">
+        {# Trampa para bots: invisible para una persona, irresistible para un
+           rastreador que rellena todos los campos del formulario. #}
+        <div class="soporte-cebo" aria-hidden="true">
+          <label for="soporte-web">No rellenes este campo</label>
+          <input id="soporte-web" type="text" name="web" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="soporte-grid-campos">
+          <div class="soporte-campo">
+            <label for="soporte-nombre">Tu nombre</label>
+            <input id="soporte-nombre" type="text" name="nombre" maxlength="200" autocomplete="name" placeholder="Cómo te llamas">
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-email">Tu correo <span class="req">*</span></label>
+            <input id="soporte-email" type="email" name="email" maxlength="254" autocomplete="email" required placeholder="nombre@empresa.com">
+            <small>Ahí te contestamos. No se usa para nada más.</small>
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-tipo">Motivo <span class="req">*</span></label>
+            <select id="soporte-tipo" name="tipo" required>
+              {% for valor, etiqueta in tipos_soporte %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="soporte-campo">
+            <label for="soporte-asunto">Asunto</label>
+            <input id="soporte-asunto" type="text" name="asunto" maxlength="200" placeholder="Resumen en una línea (opcional)">
+          </div>
+        </div>
+
+        <div class="soporte-campo">
+          <label for="soporte-mensaje">Mensaje <span class="req">*</span></label>
+          <textarea id="soporte-mensaje" name="mensaje" rows="8" maxlength="8000" required
+                    placeholder="Qué esperabas que pasara, qué pasó y en qué pantalla. Cuanto más concreto, antes lo resolvemos."></textarea>
+        </div>
+
+        <div class="soporte-acciones">
+          <button class="btn btn-primary" type="submit">Enviar a soporte</button>
+          <span class="soporte-nota">
+            El mensaje queda guardado y nos llega por correo. Responder a ese
+            correo te contesta directamente.
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <aside class="soporte-lado hub-bloque">
+      <h2>Qué puedes esperar</h2>
+      <ul>
+        <li><b>Respuesta por correo</b> a la dirección que escribas, desde
+          <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</li>
+        <li><b>Plazo orientativo:</b> menos de 24 horas laborables para dudas y
+          problemas. Las quejas se revisan igual de rápido.</li>
+        <li><b>Sugerencias:</b> se leen todas y muchas acaban siendo funciones
+          del producto.</li>
+        <li><b>Si es un problema</b>, cuéntanos qué hacías, qué esperabas y qué
+          viste. Si puedes, la pantalla exacta y el número de presupuesto.</li>
+      </ul>
+
+      <h2>Antes de escribir</h2>
+      <ul>
+        <li>Las <a href="/legal/preguntas">preguntas frecuentes</a> resuelven lo
+          más habitual: precios, datos, impuestos y facturación.</li>
+        <li>Las <a href="/legal/soporte">condiciones de soporte</a> explican qué
+          incluye y qué no.</li>
+        <li>Si es sobre tu plan, en <b>Configuración → Tu plan</b> tienes tu
+          estado, tu recibo y hasta cuándo llega tu acceso.</li>
+      </ul>
+
+      {% if prueba_gratuita %}
+      <p class="soporte-cta">
+        ¿Todavía no lo pruebas? <a href="/acceso">Empieza {{ dias_prueba }} días
+        gratis</a>, sin tarjeta.
+      </p>
+      {% endif %}
+    </aside>
+  </div>
+</main>
+{% include "_footer_publico.html" %}
+</body>
+</html>

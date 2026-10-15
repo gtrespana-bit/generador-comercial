@@ -4873,3 +4873,130 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 
 /* ── Safe areas (notch / barra de inicio) ───────────────────────────────── */
 .footer-bottom { padding-bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px)); }
+
+
+
+/* ───────────────────── Página de soporte (/soporte) ───────────────────── */
+
+.soporte-main { max-width: 1080px; }
+
+.soporte-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.6rem;
+}
+
+.soporte-grid-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.soporte-form {
+  background: #ffffff;
+  border: 1px solid rgba(11, 91, 56, 0.14);
+  border-radius: 16px;
+  padding: 1.4rem 1.5rem 1.6rem;
+}
+
+.soporte-campo { margin-bottom: 1rem; }
+
+.soporte-campo label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #17211d;
+  margin-bottom: 0.35rem;
+}
+
+.soporte-campo .req { color: #c0392b; }
+
+.soporte-campo small {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: #6b7d74;
+}
+
+.soporte-campo input,
+.soporte-campo select,
+.soporte-campo textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.62rem 0.8rem;
+  border: 1.5px solid #d5e0d9;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #17211d;
+  background: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.soporte-campo textarea { resize: vertical; line-height: 1.55; }
+
+.soporte-campo input:focus,
+.soporte-campo select:focus,
+.soporte-campo textarea:focus {
+  outline: none;
+  border-color: #0b5b38;
+  box-shadow: 0 0 0 3px rgba(11, 91, 56, 0.12);
+}
+
+.soporte-acciones {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.2rem;
+}
+
+.soporte-nota { font-size: 0.82rem; color: #6b7d74; }
+
+.soporte-lado {
+  background: #f6faf7;
+  border: 1px solid rgba(11, 91, 56, 0.12);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+}
+
+.soporte-lado h2 { margin: 1rem 0 0.5rem; font-size: 1.02rem; }
+.soporte-lado h2:first-child { margin-top: 0; }
+.soporte-lado ul { padding-left: 1.1rem; margin: 0; }
+.soporte-lado li { font-size: 0.9rem; line-height: 1.6; margin-bottom: 0.55rem; color: #3d5148; }
+
+.soporte-cta {
+  margin: 1.1rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(11, 91, 56, 0.14);
+  font-size: 0.9rem;
+}
+
+.soporte-aviso {
+  max-width: 720px;
+  margin: 1.2rem 0 0;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.soporte-aviso.ok { background: #eefaf2; border: 1.5px solid #98e0b7; color: #0b5b38; }
+.soporte-aviso.error { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
+.soporte-aviso p { margin: 0.35rem 0 0; }
+
+/* Campo trampa: fuera de la vista, pero presente para los rastreadores. */
+.soporte-cebo {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .soporte-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+  .soporte-grid-campos { grid-template-columns: 1fr; }
+}

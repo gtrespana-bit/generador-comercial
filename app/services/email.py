@@ -785,6 +785,235 @@ _CAMPOS_VERIFICACION_ETIQUETA = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Avisos internos del negocio: venta, alta de cuenta y buzón de soporte
+#
+# Son los tres correos que el titular necesita para enterarse de lo que pasa
+# sin abrir el panel. Van al buzón de soporte por omisión
+# (``COTIZAT_SUPPORT_EMAIL``, ``soporte@cotizat.online``) y se pueden desviar a
+# otra dirección con ``COTIZAT_AVISOS_EMAIL``. Ninguno lanza hacia el flujo del
+# cliente: el hecho (la venta, el alta, el mensaje) ya está guardado en la base
+# y el correo es el aviso, no la fuente de verdad.
+# ---------------------------------------------------------------------------
+
+
+def direccion_avisos() -> str:
+    """Buzón de los avisos internos: ``COTIZAT_AVISOS_EMAIL`` → soporte."""
+    return _env("COTIZAT_AVISOS_EMAIL") or _soporte_email()
+
+
+def _enviar_aviso_interno(
+    *,
+    plantilla: str,
+    contexto: dict,
+    asunto: str,
+    destino_override: str = "",
+    reply_to: str = "",
+    etiqueta: str,
+) -> str:
+    """Renderiza y envía un aviso interno; devuelve el id o ``""``.
+
+    Comparte con los demás avisos internos el criterio de no romper nada: sin
+    correo configurado se registra un aviso en el log y se devuelve cadena
+    vacía, porque el dato ya está en la base.
+    """
+    destino = (
+        str(destino_override or "").strip() or _env("COTIZAT_AVISOS_EMAIL") or _soporte_email()
+    )
+    if not destino:
+        raise EmailNotConfigured("No hay dirección de avisos configurada.")
+    try:
+        settings = EmailSettings.from_environment()
+    except EmailNotConfigured:
+        logger.warning(
+            "Aviso «%s» sin enviar: correo no configurado "
+            "(RESEND_API_KEY / COTIZAT_EMAIL_FROM).",
+            etiqueta,
+        )
+        return ""
+    try:
+        html = _jinja.get_template(f"emails/{plantilla}.html").render(**contexto)
+        texto = _jinja.get_template(f"emails/{plantilla}.txt").render(**contexto)
+    except Exception:
+        logger.warning("Plantilla de «%s» no disponible; se usa texto plano.", etiqueta)
+        html = "".join(
+            f"<p><strong>{clave}:</strong> {valor}</p>" for clave, valor in contexto.items()
+        )
+        texto = "\n".join(f"{clave}: {valor}" for clave, valor in contexto.items())
+    try:
+        envio_id = _post_resend(
+            settings,
+            to=destino,
+            subject=asunto[:200],
+            html=html,
+            text=texto,
+            reply_to=reply_to,
+        )
+    except EmailSendError as exc:
+        logger.warning("No se pudo enviar el aviso «%s» (%s).", etiqueta, exc)
+        return ""
+    logger.info("Aviso «%s» enviado a %s (id %s).", etiqueta, destino, envio_id)
+    return envio_id
+
+
+def enviar_aviso_venta_por_email(
+    *,
+    organizacion_nombre: str,
+    comprador_email: str,
+    plan_nombre: str,
+    importe_texto: str,
+    metodo_nombre: str,
+    periodo_texto: str = "",
+    compra_id: int = 0,
+    renovacion: bool = False,
+    origen: str = "",
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Avisa al titular de una **venta confirmada** (Stripe o manual).
+
+    Es el correo que evita enterarse de un cobro por la notificación del
+    banco: se dispara cuando la compra queda activa y la licencia concedida
+    (webhook de Stripe o activación en el panel), con el plan, el importe, el
+    método y el período pagado.
+    """
+    from ..branding import PRODUCT_NAME
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "comprador_email": str(comprador_email or "").strip(),
+        "plan_nombre": str(plan_nombre or "Plan").strip(),
+        "importe_texto": str(importe_texto or "").strip(),
+        "metodo_nombre": str(metodo_nombre or "").strip(),
+        "periodo_texto": str(periodo_texto or "").strip(),
+        "compra_id": int(compra_id or 0),
+        "renovacion": bool(renovacion),
+        "origen": str(origen or "").strip(),
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    tipo = "Renovación" if renovacion else "Venta"
+    asunto = (
+        f"{tipo}: {contexto['plan_nombre']} · {contexto['importe_texto']} · "
+        f"{contexto['organizacion_nombre'] or contexto['comprador_email']}"
+    )
+    return _enviar_aviso_interno(
+        plantilla="venta",
+        contexto=contexto,
+        asunto=asunto,
+        destino_override=destino_override,
+        reply_to=contexto["comprador_email"],
+        etiqueta="venta",
+    )
+
+
+def enviar_aviso_registro_por_email(
+    *,
+    email: str,
+    nombre: str = "",
+    pais: str = "",
+    origen: str = "registro",
+    organizacion_nombre: str = "",
+    prueba_texto: str = "",
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Avisa al titular de una **cuenta nueva** (y de la prueba si se concede).
+
+    Es el correo que convierte una visita en una conversación: dice quién se
+    registró, desde qué país y si entró con prueba gratuita. Se manda en el
+    alta de la cuenta y, cuando el alta crea la empresa, se manda el segundo
+    aviso con el nombre de la organización y la prueba concedida.
+    """
+    from ..branding import PRODUCT_NAME
+
+    nombre = str(nombre or "").strip()
+    email = str(email or "").strip().lower()
+    if not email or not email_destino_valido(email):
+        raise EmailValidationError("El aviso de registro necesita un email válido.")
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "nombre": nombre,
+        "email": email,
+        "pais": str(pais or "").strip(),
+        "origen": str(origen or "registro").strip(),
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "prueba_texto": str(prueba_texto or "").strip(),
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    titulo = "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta registrada"
+    asunto = f"{titulo}: {nombre or email}" + (
+        f" · {contexto['organizacion_nombre']}" if contexto["organizacion_nombre"] else ""
+    )
+    return _enviar_aviso_interno(
+        plantilla="registro",
+        contexto=contexto,
+        asunto=asunto,
+        destino_override=destino_override,
+        reply_to=email,
+        etiqueta="registro",
+    )
+
+
+def enviar_mensaje_soporte_por_email(
+    *,
+    nombre: str,
+    email: str,
+    tipo: str,
+    mensaje: str,
+    asunto: str = "",
+    organizacion_nombre: str = "",
+    pagina: str = "",
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Reenvía al buzón de soporte un mensaje del formulario público.
+
+    ``reply_to`` es la dirección de quien escribe: responder desde el buzón
+    contesta directamente al cliente, que es lo que se espera de un botón de
+    soporte. El mensaje ya está guardado en ``mensajes_soporte``; este correo
+    es el empujón para que no se quede sin leer.
+    """
+    from ..branding import PRODUCT_NAME
+    from ..models import TIPOS_SOPORTE_ETIQUETA
+
+    nombre = str(nombre or "").strip()
+    email = str(email or "").strip().lower()
+    if not email or not email_destino_valido(email):
+        raise EmailValidationError("El mensaje de soporte necesita un email válido.")
+    mensaje = str(mensaje or "").strip()
+    if not mensaje:
+        raise EmailValidationError("El mensaje de soporte está vacío.")
+
+    tipo_clave = str(tipo or "consulta").strip().lower()
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "nombre": nombre,
+        "email": email,
+        "tipo": TIPOS_SOPORTE_ETIQUETA.get(tipo_clave, tipo_clave),
+        "asunto": str(asunto or "").strip(),
+        "mensaje": mensaje[:8000],
+        "organizacion_nombre": str(organizacion_nombre or "").strip(),
+        "pagina": str(pagina or "").strip(),
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    asunto_correo = (
+        f"Soporte · {contexto['tipo']}: {nombre or email}"
+    )
+    return _enviar_aviso_interno(
+        plantilla="soporte",
+        contexto=contexto,
+        asunto=asunto_correo,
+        destino_override=destino_override,
+        reply_to=email,
+        etiqueta="soporte",
+    )
+
+
 def _soporte_email() -> str:
     from ..branding import SUPPORT_EMAIL
 

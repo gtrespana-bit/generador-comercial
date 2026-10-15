@@ -1603,6 +1603,17 @@ _PAGINAS_ESTATICAS: dict[str, dict] = {
         "h1": "Cómo funciona CotizaT, función por función",
         "software": True,
     },
+    "contacto": {
+        "path": "/soporte",
+        "title": "Soporte de CotizaT: escríbenos y te contestamos",
+        "description": (
+            "Formulario de soporte de CotizaT: dudas, problemas, quejas o "
+            "sugerencias sobre el software de presupuestos. Respuesta por "
+            "correo en menos de 24 horas laborables."
+        ),
+        "h1": "Soporte",
+        "software": False,
+    },
     "pago": {
         "path": "/pago",
         "title": "CotizaT: planes del software de presupuestos de construcción",
@@ -1766,6 +1777,7 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
             add(ruta_pais(codigo, tema), "0.8", "monthly", tema)
     add("/como-funciona", "0.7", "monthly")
     add("/pago", "0.6", "monthly")
+    add("/soporte", "0.4", "monthly")
     add("/mapa-del-sitio", "0.4", "monthly")
     from .seo_contenido import lista_todas_guias
 

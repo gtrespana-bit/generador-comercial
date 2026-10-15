@@ -14,13 +14,14 @@ estos pasos son manuales.
 > `COTIZAT_REQUIRE_RLS_ROLE` para «hacer arrancar» staging. Si falla, se
 > corrige la infraestructura.
 
-> **Estado verificado en el código el 28/09/2026:** el head que exige esta
-> revisión es `h1c4b7e9a3d2`. El sandbox no tiene una conexión autorizada a
+> **Estado verificado en el código el 15/10/2026:** el head que exige esta
+> revisión es `j5b8e1c4a9f2` (RLS activo en `public.alembic_version` con lectura
+> para `cotizat_app`). El sandbox no tiene una conexión autorizada a
 > Supabase, así que el head remoto y el estado de Vercel **no se han
 > comprobado** en esta auditoría. Antes de migrar, consulta el valor real de
 > `public.alembic_version`; no apliques los ejemplos históricos de esta guía
 > si su precondición no coincide exactamente. Para el esquema de esta rama,
-> Alembic debe terminar en `h1c4b7e9a3d2`.
+> Alembic debe terminar en `j5b8e1c4a9f2`.
 
 ## 0. Verificación previa (sin secretos en el chat)
 
@@ -37,7 +38,7 @@ La app expone dos fronteras de salud (sin autenticación, sin datos de tenant):
 | Endpoint | Uso |
 | --- | --- |
 | `/healthz` | Liveness: el proceso responde. No toca la base de datos. |
-| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`h1c4b7e9a3d2`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
+| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`j5b8e1c4a9f2`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
 
 `/readyz` devuelve **503** si el despliegue no debe recibir tráfico; **200** no
 sustituye la matriz de aceptación con dos correos y dos organizaciones.
@@ -72,7 +73,7 @@ export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/postgres?sslmode
 
 alembic current          # registra la versión remota real antes de cambiarla
 alembic upgrade head
-alembic current          # OBLIGATORIO que imprima: h1c4b7e9a3d2
+alembic current          # OBLIGATORIO que imprima: j5b8e1c4a9f2
 
 unset MIGRATION_DATABASE_URL
 ```
@@ -80,7 +81,7 @@ unset MIGRATION_DATABASE_URL
 Resultado obligatorio para el código de esta rama:
 
 ```text
-h1c4b7e9a3d2
+j5b8e1c4a9f2
 ```
 
 No pegues un `staging_upgrade_*.sql` manual si el `version_num` remoto no
@@ -271,7 +272,7 @@ matriz de comprobación, privacidad y derechos de acceso/eliminación.
 
 ## Desglose del precio en el PDF (28/09/2026)
 
-Sobre la instalación que ya está en `g7c8d9e0f1a2`, el nuevo paso obligatorio es
+Sobre la instalación que ya está en `g7c8d9e0f1a2`, el paso de esa revisión fue
 `h1c4b7e9a3d2`. Ejecuta `docs/staging_upgrade_h1c4b7e9a3d2.sql` en el SQL Editor
 solo si `SELECT version_num FROM public.alembic_version` devuelve
 `g7c8d9e0f1a2`, o deja que Alembic lo aplique con la URL administrativa:
@@ -279,8 +280,8 @@ solo si `SELECT version_num FROM public.alembic_version` devuelve
 ```bash
 export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/cotizat?sslmode=require'
 alembic current                  # g7c8d9e0f1a2
-alembic upgrade head
-alembic current                  # h1c4b7e9a3d2
+alembic upgrade head             # hasta la cabeza vigente
+alembic current                  # j5b8e1c4a9f2 (cabeza de esta rama)
 unset MIGRATION_DATABASE_URL
 ```
 
@@ -295,3 +296,46 @@ productos elegidos y mano de obra» en las opciones de maquetación del PDF, gua
 y descarga; las dos filas nuevas del bloque de totales deben sumar exactamente la
 `BASE IMPONIBLE`. El detalle funcional está en
 [`DESGLOSE_DEL_PRECIO_EN_EL_PDF.md`](DESGLOSE_DEL_PRECIO_EN_EL_PDF.md).
+
+## Buzón de soporte y avisos del negocio (15/10/2026)
+
+La revisión `i4d7c1b8e2f5` crea `public.mensajes_soporte` (el buzón del botón de
+soporte) y es la cabeza de esta rama. Se aplica con
+`docs/staging_upgrade_i4d7c1b8e2f5.sql` solo si el remoto está en
+`h1c4b7e9a3d2`; el script aborta si la versión no coincide y termina marcando la
+revisión. La tabla no es de tenant: `organizacion_id` es opcional con
+`ON DELETE SET NULL`, la lectura y la gestión son de operador y el INSERT del
+formulario público queda forzado a `estado = 'nuevo'`, sin permiso de DELETE.
+
+Los avisos de venta y de alta por correo no necesitan migración ni variables
+nuevas: van al buzón publicado (`COTIZAT_SUPPORT_EMAIL`) y se pueden desviar con
+`COTIZAT_AVISOS_EMAIL`. El detalle funcional, el despliegue y las pruebas están
+en [`AVISOS_Y_SOPORTE.md`](AVISOS_Y_SOPORTE.md).
+
+## RLS en `public.alembic_version` (15/10/2026)
+
+La revisión `j5b8e1c4a9f2` es la cabeza de esta rama y **no toca el esquema
+funcional**: solo el endurecimiento de la tabla de versiones. Reactiva RLS en
+`public.alembic_version`, crea la política
+`cotizat_alembic_version_lectura` (`SELECT` para `cotizat_app`) y revoca todo
+privilegio de `anon` y `authenticated`, los dos roles con los que PostgREST usa
+la clave pública. Se aplica con `docs/staging_upgrade_j5b8e1c4a9f2.sql` solo si
+el remoto está en `i4d7c1b8e2f5`; el script aborta si la versión no coincide y
+termina marcando la revisión.
+
+Por qué existe: Supabase marcó «RLS Disabled in Public» como **crítico** en
+`public.alembic_version`. Esa tabla quedó sin RLS en `e1a4b7c9d2f0` para que el
+login limitado `cotizat_runtime` pudiera leer la revisión en `/readyz`. Con RLS
+activo y una política de lectura para el rol de la aplicación se consiguen las
+dos cosas: el runtime lee el head y la tabla deja de estar abierta a
+PostgREST. El rol de aplicación **no** recibe `INSERT`, `UPDATE` ni `DELETE`: la
+marca sigue avanzando solo desde el SQL Editor o con `alembic upgrade head`.
+
+Verificación posterior (en el SQL Editor):
+
+```sql
+SELECT relname, relrowsecurity, relforcerowsecurity
+  FROM pg_class WHERE relname = 'alembic_version';      -- t | f
+SELECT has_table_privilege('cotizat_app', 'public.alembic_version', 'SELECT'),
+       has_table_privilege('anon', 'public.alembic_version', 'SELECT');  -- t | f
+```
