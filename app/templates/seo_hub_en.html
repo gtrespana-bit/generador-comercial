@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  {# Fonts and deferred CSS: fonts.css is light (~3 KB) and public.css loads
+     in parallel without blocking the first viewport render. #}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" %}
+
+{% set prefijo_en = "/en-" ~ (pais_codigo | lower) if pais_codigo else "/en" %}
+
+<header class="hub-hero">
+  <div class="hub-hero-int">
+    <nav class="hub-crumbs" aria-label="Breadcrumb">
+      <a href="{{ prefijo_en }}/">Home</a>
+      {% if pais_codigo %}
+      <span aria-hidden="true">/</span>
+      <a href="{{ prefijo_en }}/">{{ ficha.nombre_pais }}</a>
+      {% endif %}
+      <span aria-hidden="true">/</span>
+      <span>{{ ficha.h1 }}</span>
+    </nav>
+    <h1>{{ ficha.h1 }}</h1>
+    <p class="sub">{{ ficha.lead }}</p>
+    <div class="acciones">
+      {% if hay_prueba_gratuita() %}
+      <a class="btn btn-primary" href="/acceso">{{ dias_de_prueba() }} days free</a>
+      {% else %}
+      <a class="btn btn-primary" href="/en/pago">See plans</a>
+      {% endif %}
+      <a class="btn btn-secondary" href="{{ prefijo_en }}/">See the product</a>
+    </div>
+  </div>
+</header>
+
+{% for bloque in ficha.body %}
+<section class="hub-bloque">
+  <h2>{{ bloque[0] }}</h2>
+  <p>{{ bloque[1] }}</p>
+</section>
+{% endfor %}
+
+{% if ficha.related %}
+<section class="hub-relacionadas">
+  <h2>Keep reading</h2>
+  <ul>
+    {% for nombre, ruta in ficha.related %}
+    <li><a href="{{ ruta }}">{{ nombre }}{% if pais_codigo %} in {{ ficha.nombre_pais }}{% endif %}</a></li>
+    {% endfor %}
+    <li><a href="/en/como-funciona">How {{ product_name }} works, feature by feature</a></li>
+  </ul>
+</section>
+{% endif %}
+
+<section class="hub-paises" aria-label="Versions by country">
+  <h2>{{ product_name }} by country</h2>
+  <p class="intro">Same tool, with the trade terms, VAT and currency of each market.</p>
+  <ul class="hub-paises-lista">
+    <li><a href="/en/{{ ficha.tema }}/">All countries</a></li>
+    {% for p in paises %}
+    <li><a href="/en-{{ p.codigo | lower }}/{{ ficha.tema }}/">{{ p.bandera }} {{ p.nombre }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% if ficha.faq %}
+<section class="seo-faq" id="preguntas">
+  <h2>Frequently asked questions</h2>
+  {% for item in ficha.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="franja cta-final">
+  <h2>Ready to estimate with your own numbers?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}Start with {{ dias_de_prueba() }} days free, no card.{% else %}See the plans and start whenever you want.{% endif %}</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">{{ dias_de_prueba() }} days free</a>
+    <a class="btn btn-secondary" href="/en/pago">See plans</a>
+    {% else %}
+    <a class="btn btn-primary" href="/en/pago">See plans</a>
+    {% endif %}
+  </div>
+</section>
+
+{% include "_footer_publico_en.html" %}
+</body>
+</html>

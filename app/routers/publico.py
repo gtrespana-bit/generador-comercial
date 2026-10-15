@@ -179,21 +179,9 @@ def _landing_con_pais(request: Request, codigo: str):
     codigo = str(codigo).strip().upper()
     if codigo not in PAISES:
         return Response("Página no encontrada.", status_code=404)
+    # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
+    # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request, pais_forzado=codigo)
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en":
-        pais = ctx.get("pais_actual")
-        nombre_pais = (pais.get("nombre") if isinstance(pais, dict) else getattr(pais, "nombre", None)) or "your country"
-        ctx["seo"] = {
-            "title": "CotizaT — Construction estimating software",
-            "description": "Construction estimating software with unit price analysis, live margin, crew time and professional PDF. Price catalog by country.",
-            "lang": "en",
-            "h1": "Construction estimating software",
-            "h1_resalte": "profit, time and PDF",
-            "sub": "Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF.",
-            "nombre_pais": nombre_pais,
-        }
-    # hreflang + canonical se inyectan en el template via ctx
     resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
     resp.set_cookie(
         "cotizat_pais",
@@ -242,20 +230,9 @@ def home_publica(request: Request):
             httponly=False,
         )
         return resp
+    # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
+    # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request)
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en":
-        pais = ctx.get("pais_actual")
-        nombre_pais = (pais.get("nombre") if isinstance(pais, dict) else getattr(pais, "nombre", None)) or "your country"
-        ctx["seo"] = {
-            "title": "CotizaT — Construction estimating software",
-            "description": "Construction estimating software with unit price analysis, live margin, crew time and professional PDF. Price catalog by country.",
-            "lang": "en",
-            "h1": "Construction estimating software",
-            "h1_resalte": "profit, time and PDF",
-            "sub": "Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF.",
-            "nombre_pais": nombre_pais,
-        }
     return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
 
@@ -278,9 +255,6 @@ def mapa_del_sitio(request: Request):
     from ..seo_contenido import lista_guias
 
     ctx = contexto_pagina_estatica(request, "mapa-del-sitio")
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en":
-        ctx["seo"] = {"title": "CotizaT: sitemap", "description": "Sitemap of CotizaT construction estimating software.", "lang": "en", "h1": "Sitemap", "canonical_path": "/mapa-del-sitio"}
     ctx["paises"] = lista_paises()
     ctx["guias"] = lista_guias()
     ctx["articulos"] = lista_articulos()
@@ -300,11 +274,6 @@ def novedades_publicas(request: Request):
         "avisos_web": web["avisos"],
     }
     ctx.update(contexto_pagina_estatica(request, "novedades"))
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en" and isinstance(ctx.get("seo"), dict):
-        ctx["seo"]["title"] = "CotizaT: news and releases"
-        ctx["seo"]["description"] = "Public changelog of CotizaT construction estimating software."
-        ctx["seo"]["lang"] = "en"
     return TEMPLATES.TemplateResponse(request, "novedades.html", ctx)
 
 
@@ -324,10 +293,8 @@ def como_funciona(request: Request):
     from ..paises import lista_paises
     from ..seo import contexto_pagina_estatica
 
+    # Copy y canónica en inglés: los resuelve contexto_pagina_estatica().
     ctx = contexto_pagina_estatica(request, "como-funciona")
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en":
-        ctx["seo"] = {"title": "CotizaT: how it works", "description": "How CotizaT construction estimating software works: catalog, estimates, margin, PDF and billing.", "lang": "en", "h1": "How it works", "canonical_path": "/como-funciona"}
     ctx["paises"] = lista_paises()
     return TEMPLATES.TemplateResponse(request, "como_funciona.html", ctx)
 
@@ -558,23 +525,8 @@ def pagina_legal(pagina: str, request: Request):
     from ..paises import lista_paises
     from ..seo import contexto_pagina_estatica
 
+    # Copy y canónica en inglés: los resuelve contexto_pagina_estatica().
     ctx = contexto_pagina_estatica(request, pagina)
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en":
-        titulos_en = {
-            "terminos": "CotizaT: terms of service",
-            "privacidad": "CotizaT: privacy policy",
-            "soporte": "CotizaT: support terms",
-            "licencias": "CotizaT: third-party licenses",
-            "preguntas": "CotizaT: frequently asked questions",
-        }
-        ctx["seo"] = {
-            "title": titulos_en.get(pagina, "CotizaT"),
-            "description": "CotizaT construction estimating software: terms, privacy, support and licenses.",
-            "lang": "en",
-            "h1": titulos_en.get(pagina, "CotizaT"),
-            "canonical_path": f"/legal/{pagina}",
-        }
     ctx.update(
         {
             "terminos_version": TERMINOS_VERSION,
@@ -636,11 +588,6 @@ def pagina_soporte(request: Request):
     escribir. El mensaje se guarda en el panel y se avisa al buzón de soporte.
     """
     ctx = _contexto_soporte(request)
-    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
-    if lang == "en" and isinstance(ctx.get("seo"), dict):
-        ctx["seo"]["title"] = "CotizaT: support"
-        ctx["seo"]["description"] = "Contact CotizaT support."
-        ctx["seo"]["lang"] = "en"
     return TEMPLATES.TemplateResponse(request, "soporte.html", ctx)
 
 
@@ -848,19 +795,10 @@ def landing_en(request: Request):
 
 @router.get("/en/", response_class=HTMLResponse, include_in_schema=False)
 def landing_en_slash(request: Request):
+    # El middleware reescribe /en/ a / antes de enrutar, así que este
+    # handler solo se alcanza si la ruta sobrevive; mantenemos el alias para
+    # no romper enlaces antiguos. El copy en inglés lo pone contexto_seo().
     ctx = _contexto_landing(request)
-    # SEO en inglés para el piloto: el contexto base viene en español.
-    pais = ctx.get("pais_actual")
-    nombre_pais = (pais.get("nombre") if isinstance(pais, dict) else getattr(pais, "nombre", None)) or "your country"
-    ctx["seo"] = {
-        "title": "CotizaT — Construction estimating software",
-        "description": "Construction estimating software with unit price analysis, live margin, crew time and professional PDF. Price catalog by country.",
-        "lang": "en",
-        "h1": "Construction estimating software",
-        "h1_resalte": "profit, time and PDF",
-        "sub": "Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF.",
-        "nombre_pais": nombre_pais,
-    }
-    resp = TEMPLATES.TemplateResponse(request, "landing_en.html", ctx)
+    resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
     resp.set_cookie("cotizat_lang", "en", max_age=365 * 24 * 3600, path="/", samesite="lax", httponly=False)
     return resp
