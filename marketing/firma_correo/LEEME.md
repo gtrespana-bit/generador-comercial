@@ -8,12 +8,18 @@ lista para pegar en Gmail, Outlook o Apple Mail.
 | `firma.html` | **La firma.** Ábrelo en el navegador, cópialo y pégalo en el editor de firmas de tu cliente de correo. |
 | `firma.txt` | La misma firma en texto plano, para clientes que no muestran HTML. |
 | `vista-previa.png` | Cómo se ve (recreación de la firma con la tipografía de respaldo del correo). |
-| `generar_assets.py` | Regenera la vista previa y los logotipos que sirve la web. |
+| `generar_assets.py` | Regenera `vista-previa.png` (Pillow + las fuentes del proyecto). |
 
-Los logotipos publicados viven en `app/static/firma/` y se sirven en:
+El logotipo se carga por URL desde el **icono oficial que la web ya publica**:
 
-- `https://cotizat.online/static/firma/cotizat-firma-72.png`
-- `https://cotizat.online/static/firma/cotizat-firma-144.png` (pantallas retina)
+- `https://cotizat.online/static/icono-192.png` (el que usa la firma)
+- `https://cotizat.online/static/icono-512.png` (pantallas retina, vía `srcset`)
+
+Son los mismos archivos del favicon y del manifiesto PWA, así que llevan
+publicados desde antes: la firma **no depende de desplegar nada nuevo** y el
+logo se ve en cuanto se pega en el cliente de correo. Si algún día quieres un
+logotipo distinto solo para la firma, publica el PNG en
+`app/static/` y cambia esas dos URLs en `firma.html`.
 
 ## Instalación
 
@@ -27,9 +33,10 @@ Los logotipos publicados viven en `app/static/firma/` y se sirven en:
    `Ctrl+V`.
 4. Baja hasta el final y pulsa **Guardar cambios**.
 
-> El logotipo aparece cuando la firma se ve en un correo (o en la vista previa
-> de Gmail), porque la imagen se carga desde cotizat.online. Al pegarla, el
-> editor puede mostrar solo el texto: es normal.
+> El logotipo se carga desde cotizat.online, así que aparece en la vista previa
+> y en los correos. Si al pegar ves un hueco, comprueba que la URL
+> `https://cotizat.online/static/icono-192.png` abre en el navegador: si abre,
+> el hueco lo pone el editor (Gmail a veces tarda en refrescar), no la imagen.
 
 ### Outlook (web o escritorio)
 
@@ -67,9 +74,11 @@ Si añades un teléfono, copia la línea de contacto y usa
   de Word) y Gmail renderizan igual. Nada de flexbox, `float` ni hojas de
   estilo: el `<style>` suele eliminarse en Gmail y Apple Mail.
 - **Sin imagen incrustada:** Outlook bloquea el base64 dentro del HTML, así que
-  el logotipo se sirve desde el dominio. El texto alt «CotizaT» cubre el caso
-  de que el cliente bloquee imágenes remotas (comportamiento por omisión en
-  muchos).
+  el logotipo se sirve desde el dominio —el icono oficial
+  `/static/icono-192.png`, que ya está publicado por el favicon y el manifiesto
+  PWA—. El texto alt «CotizaT» cubre el caso de que el cliente bloquee imágenes
+  remotas (comportamiento por omisión en muchos, y en Gmail con remitentes
+  desconocidos).
 - **Sin tipografías externas:** solo la pila del sistema con respaldo Arial /
   Helvetica; si el equipo no tiene Inter, la firma se ve igual de bien.
 - **`utm_source=firma_correo` en el enlace a la web:** permite ver en Analytics

@@ -136,9 +136,10 @@ equipo, en `marketing/firma_correo/`:
 | `firma.html` | La firma (tablas + CSS en línea). Se abre en el navegador, se copia y se pega en el cliente de correo. |
 | `firma.txt` | La misma firma en texto plano. |
 | `vista-previa.png` | Recreación de cómo se ve con la tipografía de respaldo del correo. |
-| `generar_assets.py` | Regenera la vista previa y los logotipos de `app/static/firma/`. |
+| `generar_assets.py` | Regenera `vista-previa.png`. |
 
-Los logotipos se sirven desde `https://cotizat.online/static/firma/` porque
-Outlook bloquea las imágenes incrustadas en base64. Instalación paso a paso,
-edición de datos y decisiones de compatibilidad en
+El logotipo se sirve por URL desde el icono que la web ya publica
+(`https://cotizat.online/static/icono-192.png`, el del favicon y el manifiesto
+PWA) porque Outlook bloquea las imágenes incrustadas en base64. Instalación
+paso a paso, edición de datos y decisiones de compatibilidad en
 [`firma_correo/LEEME.md`](firma_correo/LEEME.md).

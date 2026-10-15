@@ -16,10 +16,11 @@
   POR QUÉ ESTÁ HECHA ASÍ
   · Estructura de tablas con CSS en línea: es lo único que Outlook (motor de
     Word) y Gmail renderizan igual.
-  · El logotipo se sirve desde https://cotizat.online/static/firma/… porque
-    Outlook y Gmail no muestran imágenes incrustadas en base64. Por eso el
-    archivo se ve con el logo solo cuando ya está publicado; en local verás el
-    texto y el hueco del logo.
+  · El logotipo se sirve por URL desde el propio dominio (icono oficial, el
+    mismo del favicon y del manifiesto PWA: /static/icono-192.png, con el 512
+    para pantallas retina) porque Outlook y Gmail no muestran imágenes
+    incrustadas en base64. Son archivos ya publicados con la web, así que el
+    logo se ve sin desplegar nada nuevo.
   · Sin tipografías externas ni JavaScript: tipografía del sistema con
     respaldo en Arial/Helvetica.
 
@@ -31,7 +32,7 @@
   <tr>
     <td width="72" valign="top" style="vertical-align:top;padding:0 20px 0 0;">
       <a href="https://cotizat.online" target="_blank" style="text-decoration:none;">
-        <img src="https://cotizat.online/static/firma/cotizat-firma-72.png" srcset="https://cotizat.online/static/firma/cotizat-firma-144.png 2x" width="72" height="72" alt="CotizaT" style="display:block;width:72px;height:72px;border:0;border-radius:16px;outline:none;text-decoration:none;">
+        <img src="https://cotizat.online/static/icono-192.png" srcset="https://cotizat.online/static/icono-512.png 2x" width="72" height="72" alt="CotizaT" style="display:block;width:72px;height:72px;border:0;border-radius:16px;outline:none;text-decoration:none;">
       </a>
     </td>
     <td valign="top" style="vertical-align:top;border-left:1px solid #dfe6ee;padding:0 0 0 20px;">

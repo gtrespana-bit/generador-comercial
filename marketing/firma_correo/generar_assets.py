@@ -1,19 +1,16 @@
-"""Genera los recursos de la firma de correo de CotizaT (reproducible).
+"""Genera la vista previa de la firma de correo de CotizaT (reproducible).
 
-Produce dos cosas:
+Produce **``vista-previa.png``**: una recreación a escala de cómo se ve la firma
+en un cliente de correo (mismos colores, mismos saltos de línea y misma
+jerarquía que el HTML). Sirve para revisarla sin abrir el archivo en el
+navegador y para compartirla en una conversación.
 
-1. **Las dos versiones del logotipo que sirve la web**
-   (``app/static/firma/cotizat-firma-72.png`` y ``-144.png``). La firma no
-   incrusta la imagen en el HTML: los clientes de correo no renderizan
-   imágenes embebidas en base64 (Outlook de escritorio las ignora), así que la
-   firma apunta a una URL pública del propio dominio. La versión de 144 px
-   existe solo para pantallas de alta densidad (``srcset``); el tamaño visible
-   son 72 px.
-
-2. **``vista-previa.png``**: una recreación a escala de cómo se ve la firma en
-   un cliente de correo (mismos colores, mismos saltos de línea y misma
-   jerarquía que el HTML). Sirve para revisarla sin abrir el archivo en el
-   navegador y para compartirla en una conversación.
+El logotipo **no se genera aquí**: la firma apunta al icono que la web ya
+publica (``/static/icono-192.png``, con ``/static/icono-512.png`` para pantallas
+retina). Son los mismos archivos del favicon y del manifiesto PWA, así que
+están en producción desde antes y la firma no depende de publicar nada nuevo.
+La imagen no se incrusta en el HTML a base64 porque Outlook de escritorio
+ignora las imágenes embebidas.
 
 Uso:
 
@@ -32,9 +29,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 RAIZ = Path(__file__).resolve().parents[2]
+#: Icono oficial que la web ya publica (favicon y manifiesto PWA).
 LOGO_ORIGEN = RAIZ / "app" / "static" / "icono-512.png"
 FUENTES = RAIZ / "app" / "static" / "fonts"
-DESTINO_WEB = RAIZ / "app" / "static" / "firma"
 VISTA_PREVIA = Path(__file__).resolve().parent / "vista-previa.png"
 
 #: Tamaño visible del logotipo dentro de la firma (px CSS) y su versión retina.
@@ -56,20 +53,6 @@ DATOS = {
 
 #: Se dibuja al doble y se reduce: los bordes del texto quedan suaves.
 ESCALA = 2
-
-
-def generar_logotipos() -> list[Path]:
-    """Redimensiona el icono oficial a los dos tamaños que sirve la web."""
-    DESTINO_WEB.mkdir(parents=True, exist_ok=True)
-    original = Image.open(LOGO_ORIGEN).convert("RGBA")
-    salidas = []
-    for lado in (LADO_VISIBLE, LADO_VISIBLE * 2):
-        destino = DESTINO_WEB / f"cotizat-firma-{lado}.png"
-        original.resize((lado, lado), Image.LANCZOS).save(
-            destino, format="PNG", optimize=True
-        )
-        salidas.append(destino)
-    return salidas
 
 
 def _fuente(nombre: str, tamano: float) -> ImageFont.FreeTypeFont:
@@ -118,8 +101,9 @@ def _vista_previa() -> Path:
     x = margen_x
     y = margen_y
 
-    # Logotipo (con su transparencia, como en el correo).
-    logo = Image.open(DESTINO_WEB / f"cotizat-firma-{lado}.png").convert("RGBA")
+    # Logotipo (con su transparencia, como en el correo). Se reduce el icono
+    # oficial —el mismo que sirve la firma por URL— al tamaño visible.
+    logo = Image.open(LOGO_ORIGEN).convert("RGBA").resize((lado, lado), Image.LANCZOS)
     lienzo.alpha_composite(logo, (x * ESCALA, y * ESCALA))
 
     x_texto = x + lado + separacion
@@ -175,8 +159,6 @@ def _vista_previa() -> Path:
 
 
 def main() -> int:
-    for ruta in generar_logotipos():
-        print(f"Escrito {ruta.relative_to(RAIZ)} ({ruta.stat().st_size // 1024} KB)")
     print(f"Escrita {_vista_previa().relative_to(RAIZ)} ✅")
     return 0
 
