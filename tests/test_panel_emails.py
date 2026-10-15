@@ -41,9 +41,15 @@ SETTINGS = SupabaseAuthSettings(
 # ---------------------------------------------------------------------------
 
 
-def test_el_catalogo_tiene_los_ocho_correos():
+def test_el_catalogo_tiene_los_once_correos():
+    """Los tres avisos del negocio se suman a los ocho correos de producto.
+
+    «venta», «registro» y «soporte» son los que hacen que el titular se entere
+    de un cobro, de un alta y de un mensaje sin abrir el panel; poder enviarlos
+    de prueba es lo que permite revisarlos en un cliente de correo real.
+    """
     correos = correos_prueba.catalogo_correos()
-    assert len(correos) == 8
+    assert len(correos) == 11
     slugs = {c["slug"] for c in correos}
     assert slugs == {
         "recordatorio",
@@ -54,6 +60,9 @@ def test_el_catalogo_tiene_los_ocho_correos():
         "respuesta_propuesta",
         "compra",
         "demo",
+        "venta",
+        "registro",
+        "soporte",
     }
     for c in correos:
         assert c["titulo"]
@@ -175,7 +184,7 @@ def _cliente():
     return client
 
 
-def test_el_operador_ve_la_pagina_con_los_ocho_correos(entorno_panel, monkeypatch):
+def test_el_operador_ve_la_pagina_con_los_once_correos(entorno_panel, monkeypatch):
     _Session, _datos, _estado = entorno_panel
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
 

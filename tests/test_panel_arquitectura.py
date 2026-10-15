@@ -47,6 +47,7 @@ from app.panel_arquitectura import (
     nav_panel,
     pestana_ficha_valida,
     pestana_valida,
+    pestanas_panel,
     redireccion_de,
     ruta_panel,
 )
@@ -147,10 +148,16 @@ def test_el_panel_tiene_seis_entradas_como_maximo():
 
 
 def test_clientes_usa_una_sola_lista_para_dos_vistas():
-    """CRM y directorio eran dos tablas de las mismas organizaciones: hoy son pestañas."""
+    """CRM y directorio eran dos tablas de las mismas organizaciones: hoy son pestañas.
+
+    La tercera pestaña es el buzón de soporte: los mensajes que escriben los
+    clientes, que no salen de una organización y por eso no llevan vista
+    guardada (la misma lista de organizaciones no los representa).
+    """
     assert pestana_valida("clientes", "pipeline") == "pipeline"
     assert pestana_valida("clientes", "noexiste") == "directorio"
-    assert [p.vista_modulo for p in SECCIONES[1].pestanas] == ["clientes", ""]
+    assert [p.vista_modulo for p in SECCIONES[1].pestanas] == ["clientes", "", ""]
+    assert [p.id for p in SECCIONES[1].pestanas] == ["directorio", "pipeline", "soporte"]
 
 
 def test_un_area_de_una_sola_pantalla_no_pinta_barra():
@@ -920,21 +927,35 @@ def test_los_atajos_de_teclado_salen_del_mapa_del_panel(entorno):
     assert len({e["atajo"] for e in nav_panel()}) == len(SECCIONES)
 
 
-def test_los_contadores_del_menu_salen_de_dos_consultas(entorno):
-    """El badge del menú es el recuento de lo pendiente, no un adorno estático."""
+def test_los_contadores_del_menu_salen_de_tres_consultas(entorno):
+    """Los badges cuentan lo pendiente con consultas indexadas, no con adorno.
+
+    Ingresos suma dos avisos (compras por activar y licencias por vencer) y el
+    buzón de soporte cuenta los mensajes sin atender; este último se pinta en la
+    pestaña «Soporte» de Clientes, no en la entrada del menú, porque el menú de
+    seis áreas se decora solo donde hay algo que cobrar o conceder.
+    """
     cliente, Session, datos = entorno
     from app.services.panel_contextos import contadores_panel
 
     with Session() as db:
         contadores = contadores_panel(db)
-    # Una compra pendiente + una licencia que vence en dos días.
-    assert contadores == {"ingresos": 2, "compras": 1, "renovaciones": 1}
+    # Una compra pendiente + una licencia que vence en dos días + sin mensajes.
+    assert contadores == {
+        "ingresos": 2,
+        "compras": 1,
+        "renovaciones": 1,
+        "soporte": 0,
+    }
     # Solo se decora lo que tiene números fiables y baratos: el resto del menú
     # no presume de cifras que exijan recorrer la base en cada petición.
     for entrada in nav_panel(contadores):
         if entrada["id"] != "ingresos":
             assert not entrada["contador"], entrada["id"]
     assert [e["contador"] for e in nav_panel(contadores)][2] == 2
+    # …y el badget de la pestaña de soporte sale del mismo contador.
+    pestanas = {p["id"]: p["contador"] for p in pestanas_panel("clientes", "soporte", contadores)}
+    assert pestanas["soporte"] == 0
 
 def test_ZZZ(entorno):
     cliente, Session, _datos = entorno

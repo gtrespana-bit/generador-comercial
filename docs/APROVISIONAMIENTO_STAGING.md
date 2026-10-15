@@ -15,12 +15,12 @@ estos pasos son manuales.
 > corrige la infraestructura.
 
 > **Estado verificado en el código el 28/09/2026:** el head que exige esta
-> revisión es `h1c4b7e9a3d2`. El sandbox no tiene una conexión autorizada a
+> revisión es `i4d7c1b8e2f5`. El sandbox no tiene una conexión autorizada a
 > Supabase, así que el head remoto y el estado de Vercel **no se han
 > comprobado** en esta auditoría. Antes de migrar, consulta el valor real de
 > `public.alembic_version`; no apliques los ejemplos históricos de esta guía
 > si su precondición no coincide exactamente. Para el esquema de esta rama,
-> Alembic debe terminar en `h1c4b7e9a3d2`.
+> Alembic debe terminar en `i4d7c1b8e2f5`.
 
 ## 0. Verificación previa (sin secretos en el chat)
 
@@ -37,7 +37,7 @@ La app expone dos fronteras de salud (sin autenticación, sin datos de tenant):
 | Endpoint | Uso |
 | --- | --- |
 | `/healthz` | Liveness: el proceso responde. No toca la base de datos. |
-| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`h1c4b7e9a3d2`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
+| `/readyz` | Readiness: Auth, Storage, COTIZAT_PUBLIC_URL, conexión PostgreSQL, head de Alembic (`i4d7c1b8e2f5`) y rol runtime (miembro de `cotizat_app`, `NOSUPERUSER`, `NOBYPASSRLS`, `INHERIT`). |
 
 `/readyz` devuelve **503** si el despliegue no debe recibir tráfico; **200** no
 sustituye la matriz de aceptación con dos correos y dos organizaciones.
@@ -72,7 +72,7 @@ export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/postgres?sslmode
 
 alembic current          # registra la versión remota real antes de cambiarla
 alembic upgrade head
-alembic current          # OBLIGATORIO que imprima: h1c4b7e9a3d2
+alembic current          # OBLIGATORIO que imprima: i4d7c1b8e2f5
 
 unset MIGRATION_DATABASE_URL
 ```
@@ -80,7 +80,7 @@ unset MIGRATION_DATABASE_URL
 Resultado obligatorio para el código de esta rama:
 
 ```text
-h1c4b7e9a3d2
+i4d7c1b8e2f5
 ```
 
 No pegues un `staging_upgrade_*.sql` manual si el `version_num` remoto no
@@ -271,7 +271,7 @@ matriz de comprobación, privacidad y derechos de acceso/eliminación.
 
 ## Desglose del precio en el PDF (28/09/2026)
 
-Sobre la instalación que ya está en `g7c8d9e0f1a2`, el nuevo paso obligatorio es
+Sobre la instalación que ya está en `g7c8d9e0f1a2`, el paso de esa revisión fue
 `h1c4b7e9a3d2`. Ejecuta `docs/staging_upgrade_h1c4b7e9a3d2.sql` en el SQL Editor
 solo si `SELECT version_num FROM public.alembic_version` devuelve
 `g7c8d9e0f1a2`, o deja que Alembic lo aplique con la URL administrativa:
@@ -279,8 +279,8 @@ solo si `SELECT version_num FROM public.alembic_version` devuelve
 ```bash
 export MIGRATION_DATABASE_URL='postgresql://<admin>@<host>:5432/cotizat?sslmode=require'
 alembic current                  # g7c8d9e0f1a2
-alembic upgrade head
-alembic current                  # h1c4b7e9a3d2
+alembic upgrade head             # hasta la cabeza vigente
+alembic current                  # i4d7c1b8e2f5 (cabeza de esta rama)
 unset MIGRATION_DATABASE_URL
 ```
 
@@ -295,3 +295,18 @@ productos elegidos y mano de obra» en las opciones de maquetación del PDF, gua
 y descarga; las dos filas nuevas del bloque de totales deben sumar exactamente la
 `BASE IMPONIBLE`. El detalle funcional está en
 [`DESGLOSE_DEL_PRECIO_EN_EL_PDF.md`](DESGLOSE_DEL_PRECIO_EN_EL_PDF.md).
+
+## Buzón de soporte y avisos del negocio (15/10/2026)
+
+La revisión `i4d7c1b8e2f5` crea `public.mensajes_soporte` (el buzón del botón de
+soporte) y es la cabeza de esta rama. Se aplica con
+`docs/staging_upgrade_i4d7c1b8e2f5.sql` solo si el remoto está en
+`h1c4b7e9a3d2`; el script aborta si la versión no coincide y termina marcando la
+revisión. La tabla no es de tenant: `organizacion_id` es opcional con
+`ON DELETE SET NULL`, la lectura y la gestión son de operador y el INSERT del
+formulario público queda forzado a `estado = 'nuevo'`, sin permiso de DELETE.
+
+Los avisos de venta y de alta por correo no necesitan migración ni variables
+nuevas: van al buzón publicado (`COTIZAT_SUPPORT_EMAIL`) y se pueden desviar con
+`COTIZAT_AVISOS_EMAIL`. El detalle funcional, el despliegue y las pruebas están
+en [`AVISOS_Y_SOPORTE.md`](AVISOS_Y_SOPORTE.md).

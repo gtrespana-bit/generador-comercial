@@ -144,19 +144,42 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
     from ..services.panel_finanzas import resumen_financiero
     from ..services.panel_notificaciones import notificaciones_admin
     from ..services.panel_renovaciones import proximas_renovaciones
+    from ..services.panel_ventas import (
+        registros_recientes,
+        resumen_registros,
+        resumen_ventas,
+        ultimas_ventas,
+    )
+    from ..services.soporte import contadores_soporte, mensajes_sin_atender
 
     contadores = contadores_panel(db)
     contexto = contexto_base(request, db, seccion="hoy", contadores=contadores)
+    # La agenda del día es para lo que exige una decisión. Las ventas y las
+    # altas de cuenta también se anuncian en la campana, pero aquí tienen su
+    # propia tarjeta: una venta ya está cobrada y no pide nada.
+    avisos = notificaciones_admin(db)
+    pendientes_agenda = [a for a in avisos if a["tipo"] not in {"venta", "registro"}]
     contexto.update({
         "resumen": resumen_admin(db),
         "finanzas": resumen_financiero(db),
         "proximas": proximas_renovaciones(db, limite=6),
         "eventos": resumen_auditoria_admin(db, limite=6),
-        "pendientes": notificaciones_admin(db),
+        "pendientes": pendientes_agenda,
+        "avisos": avisos,
+        "ventas": resumen_ventas(db, periodo="mes"),
+        "ultimas_ventas": ultimas_ventas(db, limite=5),
+        "registros": resumen_registros(db),
+        "ultimos_registros": registros_recientes(db, limite=5, dias=30),
+        "soporte": contadores_soporte(db),
+        "soporte_ultimos": mensajes_sin_atender(db, limite=3),
         "exigencia_licencias": exigencia_licencia_activada(),
         "atajos": (
+            {"nombre": "Libro de ventas", "ruta": ruta_panel("ingresos", "ventas"),
+             "descripcion": "Qué se ha vendido, a quién y por cuánto"},
             {"nombre": "Directorio de clientes", "ruta": ruta_panel("clientes"),
              "descripcion": "Buscar una empresa y abrir su ficha"},
+            {"nombre": "Buzón de soporte", "ruta": ruta_panel("clientes", "soporte"),
+             "descripcion": "Leer y responder lo que escriben los clientes"},
             {"nombre": "Compras por activar", "ruta": ruta_panel("ingresos", "compras"),
              "descripcion": "Verificar comprobantes y conceder el plan"},
             {"nombre": "Renovaciones del mes", "ruta": ruta_panel("ingresos", "renovaciones"),
@@ -234,10 +257,17 @@ def _filtros_guardados(db, vista_id: int) -> dict:
 
 @router.get("/admin/clientes", response_class=HTMLResponse, include_in_schema=False)
 def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
-    """Directorio y embudo comercial sobre las MISMAS filas (antes eran dos listas)."""
+    """Directorio, embudo comercial y buzón de soporte.
+
+    Directorio y pipeline se pintan sobre las MISMAS filas (antes eran dos
+    listas); el buzón vive al lado porque es la otra cara de la relación con
+    el cliente: lo que él escribe.
+    """
     from ..services.panel_admin import resumen_admin
 
     pestana = pestana_valida("clientes", _texto(request, "tab")["tab"])
+    if pestana == "soporte":
+        return _respuesta(request, "clientes.html", _clientes_soporte(request, db, pestana))
     pedidos = _texto(request, "q", "estado", "plan", "crm", "orden", "dir")
     vista_id = _entero(request.query_params.get("vista"))
     guardados = _filtros_guardados(db, vista_id)
@@ -305,6 +335,52 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
                       actuales=actuales, vistas_activa=vista_id)
     )
     return _respuesta(request, "clientes.html", contexto)
+
+
+def _clientes_soporte(request: Request, db, pestana: str) -> dict:
+    """Bandeja de soporte: lo que escriben clientes y visitantes.
+
+    El canal era el correo a secas; aquí el mensaje se lee, se marca y queda
+    registrado sin salir del panel, con el remitente y su organización a mano.
+    """
+    from ..models import ESTADOS_SOPORTE, TIPOS_SOPORTE
+    from ..services.soporte import contadores_soporte, listar_mensajes
+
+    pedidos = _texto(request, "estado", "tipo", "q")
+    estado = _seleccionar(ESTADOS_SOPORTE, pedidos["estado"], permitidos={"", *dict(ESTADOS_SOPORTE)})
+    tipo = _seleccionar(TIPOS_SOPORTE, pedidos["tipo"], permitidos={"", *dict(TIPOS_SOPORTE)})
+    mensajes = listar_mensajes(db, estado=estado, tipo=tipo, q=pedidos["q"])
+    contadores = contadores_soporte(db)
+    totales = {"total": contadores["todos"], **contadores}
+
+    actuales = {"tab": pestana}
+    if estado:
+        actuales["estado"] = estado
+    if tipo:
+        actuales["tipo"] = tipo
+    if pedidos["q"]:
+        actuales["q"] = pedidos["q"]
+
+    ruta = ruta_panel("clientes")
+    contexto = contexto_base(request, db, seccion="clientes", pestana=pestana)
+    contexto.update({
+        "mensajes": mensajes,
+        "total_mensajes": len(mensajes),
+        "opciones_estado": ESTADOS_SOPORTE,
+        "opciones_tipo": TIPOS_SOPORTE,
+        "filtro_estado": estado,
+        "filtro_tipo": tipo,
+        "q": pedidos["q"],
+        "contadores_soporte": contadores,
+        "contadores_estado": [
+            (clave, etiqueta, contadores.get(clave, 0), clave in {"nuevo", "en_proceso"})
+            for clave, etiqueta in ESTADOS_SOPORTE
+        ],
+        "ruta_filtro": enlace_filtro(ruta, actuales),
+        "actuales": actuales,
+        "url_bandeja": ruta_panel("clientes", "soporte"),
+    })
+    return contexto
 
 
 def _opciones_crm() -> list:
@@ -600,7 +676,7 @@ def _nombre_ficha(pestana: str) -> str:
 
 @router.get("/admin/ingresos", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ingresos(request: Request, db: Session = Depends(get_operator_db)):
-    """Lo que vence, lo que espera, lo que se cobró y lo contratado."""
+    """Lo que se vendió, lo que vence, lo que espera, lo que se cobró y lo contratado."""
     pedidos = _texto(request, "tab")
     pestana = pestana_valida("ingresos", pedidos["tab"])
     contexto = _constructor[pestana](request, db, pestana)
@@ -618,6 +694,48 @@ def _base_ingresos(request: Request, db, pestana: str, actuales: dict, vistas_ac
         _barra_vistas(db, seccion="ingresos", pestana=pestana, ruta=ruta,
                       actuales=actuales, vistas_activa=vistas_activa)
     )
+    return contexto
+
+
+def _ingresos_ventas(request: Request, db, pestana: str) -> dict:
+    """Libro de ventas: la pregunta «¿qué he vendido?» con fecha y cliente.
+
+    Existe porque una venta de Stripe se confirmaba sola y el panel no la
+    destacaba en ninguna parte: el titular se enteraba por el banco. Aquí está
+    cada cobro confirmado, con el periodo, el método y la ficha del cliente.
+    """
+    from ..services.panel_ventas import PERIODOS, PERIODOS_ETIQUETA, resumen_ventas
+
+    pedidos = _texto(request, "periodo", "plan", "metodo", "q")
+    periodo = pedidos["periodo"] if pedidos["periodo"] in PERIODOS_ETIQUETA else "mes"
+    plan = pedidos["plan"] if pedidos["plan"] in {"anual", "mensual"} else ""
+    metodo = pedidos["metodo"] if pedidos["metodo"] in {"auto", "manual", "stripe"} else ""
+    datos = resumen_ventas(db, periodo=periodo, plan=plan, metodo=metodo, q=pedidos["q"])
+
+    actuales = {"tab": pestana, "periodo": periodo}
+    if plan:
+        actuales["plan"] = plan
+    if metodo:
+        actuales["metodo"] = metodo
+    if pedidos["q"]:
+        actuales["q"] = pedidos["q"]
+
+    contadores = {clave: 0 for clave, _ in PERIODOS}
+    contadores[periodo] = datos["total_filas"]
+    contexto = _base_ingresos(request, db, pestana, actuales)
+    contexto.update({
+        "ventas": datos,
+        "kpis": datos["kpis"],
+        "opciones_periodo": [(clave, etiqueta) for clave, etiqueta in PERIODOS],
+        "filtro_periodo": periodo,
+        "filtro_plan": plan,
+        "filtro_metodo": metodo,
+        "q": pedidos["q"],
+        "q_param": pedidos["q"],
+        "etiqueta_periodo": PERIODOS_ETIQUETA[periodo],
+        "por_plan": datos["por_plan"],
+        "por_metodo": datos["por_metodo"],
+    })
     return contexto
 
 
@@ -751,6 +869,7 @@ def _totales_contratos(filas) -> dict:
 
 
 _constructor.update({
+    "ventas": _ingresos_ventas,
     "renovaciones": _ingresos_renovaciones,
     "compras": _ingresos_compras,
     "cobros": _ingresos_cobros,
@@ -765,10 +884,10 @@ _constructor.update({
 
 @router.get("/admin/ingresos.csv", include_in_schema=False)
 def exportar_ingresos_csv(request: Request, db: Session = Depends(get_operator_db)):
-    """CSV de la pestaña activa (renovaciones, cobros o contratos)."""
+    """CSV de la pestaña activa (ventas, renovaciones, cobros, compras o contratos)."""
     pestana = pestana_valida("ingresos", _texto(request, "tab")["tab"])
     if pestana not in _EXPORTADORES:
-        pestana = "renovaciones"
+        pestana = "ventas"
     filas, nombre = _EXPORTADORES[pestana](request, db)
     return _csv_response(filas, nombre)
 
@@ -885,7 +1004,40 @@ def _csv_compras(request: Request, db):
     return filas, "compras.csv"
 
 
+def _csv_ventas(request: Request, db):
+    """El libro de ventas tal y como se está mirando, sin retoques a mano."""
+    from ..services.panel_ventas import PERIODOS_ETIQUETA, resumen_ventas
+
+    pedidos = _texto(request, "periodo", "plan", "metodo", "q")
+    periodo = pedidos["periodo"] if pedidos["periodo"] in PERIODOS_ETIQUETA else "mes"
+    plan = pedidos["plan"] if pedidos["plan"] in {"anual", "mensual"} else ""
+    metodo = pedidos["metodo"] if pedidos["metodo"] in {"auto", "manual", "stripe"} else ""
+    datos = resumen_ventas(db, periodo=periodo, plan=plan, metodo=metodo, q=pedidos["q"])
+    filas = [[
+        "Fecha", "Cliente", "Comprador", "Plan", "Importe", "Moneda", "Método",
+        "Automática", "Renovación", "Compra", "Inicio", "Vence",
+    ]]
+    for venta in datos["filas"]:
+        filas.append([
+            f"{venta['fecha']:%Y-%m-%d %H:%M}" if venta.get("fecha") else "",
+            venta["organizacion_nombre"],
+            venta["comprador_email"],
+            venta["plan_nombre"],
+            f"{venta['importe']:.2f}",
+            venta["moneda"],
+            venta["metodo_nombre"],
+            "Sí" if venta["automatica"] else "No",
+            "Sí" if venta["renovacion"] else "No",
+            str(venta["compra"].id),
+            f"{venta['inicio']:%Y-%m-%d}" if venta.get("inicio") else "",
+            f"{venta['vence']:%Y-%m-%d}" if venta.get("vence") else "",
+        ])
+    etiqueta = periodo.replace("á", "a")
+    return filas, f"ventas_{etiqueta}.csv"
+
+
 _EXPORTADORES = {
+    "ventas": _csv_ventas,
     "renovaciones": _csv_renovaciones,
     "cobros": _csv_cobros,
     "compras": _csv_compras,

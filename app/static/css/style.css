@@ -8292,3 +8292,46 @@ body { -webkit-tap-highlight-color: transparent; }
   .menu-movil,
   .menu-movil-backdrop { display: none !important; }
 }
+
+
+/* ==========================================================================
+   BOTÓN FLOTANTE DE SOPORTE (2026)
+   Convive con el lanzador del asistente: se coloca por encima para que los dos
+   accesos estén siempre visibles, también en el móvil.
+   ========================================================================== */
+.soporte-flotante {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  z-index: 1199;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--surface, #ffffff);
+  color: var(--text-main, #17211d);
+  border: 1px solid var(--border-color, #dde5e1);
+  box-shadow: 0 6px 18px rgba(18, 63, 120, 0.16);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.soporte-flotante:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent, #123f78);
+  box-shadow: 0 10px 26px rgba(18, 63, 120, 0.22);
+}
+
+.soporte-flotante svg { flex-shrink: 0; }
+
+@media (max-width: 768px) {
+  .soporte-flotante {
+    bottom: 132px;
+    right: 14px;
+    padding: 0.5rem;
+  }
+  .soporte-flotante span { display: none; }
+}

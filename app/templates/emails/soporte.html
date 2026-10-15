@@ -1,0 +1,65 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Soporte · {{ tipo }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ tipo }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Tienes un mensaje nuevo
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  Llegó por el botón de soporte. Responde a este correo desde el buzón y le
+  contestarás directamente a la persona.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Asunto</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ tipo }}{% if asunto %} · {{ asunto }}{% endif %}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">De</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ nombre or "Sin nombre" }} &lt;{{ email }}&gt;</td>
+  </tr>
+  {% if organizacion_nombre %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Empresa</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  {% endif %}
+  {% if pagina %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Escribió desde</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ pagina }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;">
+  <tr>
+    <td style="border-radius:12px;background:#f7faf8;border:1px solid #e3ece7;padding:18px 20px;font-size:14.5px;line-height:1.7;color:#17211d;white-space:pre-line;">{{ mensaje }}</td>
+  </tr>
+</table>
+
+{% if panel_url %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.6;color:#28503f;">
+      <a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">Abrir la bandeja de soporte del panel →</a>
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block pie %}
+Aviso automático del buzón de soporte de {{ product_name }}. El mensaje queda guardado en el panel.
+{% endblock %}

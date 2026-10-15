@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "h1c4b7e9a3d2"
+EXPECTED_ALEMBIC_HEAD = "i4d7c1b8e2f5"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -970,6 +970,13 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_schema = 'public'
                       AND table_name = 'planos_elementos'
                 """)).first() is not None
+                # Buzón de soporte (revisión i): sin la tabla, el formulario
+                # público devuelve 500 y el panel no puede listar nada.
+                soporte_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.tables
+                    WHERE table_schema = 'public'
+                      AND table_name = 'mensajes_soporte'
+                """)).first() is not None
                 # Contenido real del bloque planos (b2/c0): las 8 políticas
                 # solo existen si las tablas y el RLS se crearon de verdad.
                 politicas_planos = conn.execute(text("""
@@ -1063,6 +1070,19 @@ def _asegurar_esquema_postgres() -> None:
                     else:
                         logging.getLogger("cotizat").warning(
                             "Falta presupuestos.mostrar_desglose_precio: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
+                elif cur == "h1c4b7e9a3d2":
+                    # La revisión i solo crea `mensajes_soporte`, que el
+                    # `create_all` de arriba ya deja hecha. Avanzar sin la
+                    # tabla volvería a esconder el mismo fallo que se intenta
+                    # curar: el buzón de soporte devolviendo 500.
+                    if soporte_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'i4d7c1b8e2f5'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de h1c4b7e9a3d2 a i4d7c1b8e2f5 tras crear mensajes_soporte.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Falta public.mensajes_soporte: no se avanza "
                             "alembic_version (ejecuta `alembic upgrade head`)."
                         )
                 elif cur is None:

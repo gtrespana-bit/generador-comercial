@@ -14,6 +14,18 @@
 {% endblock %}
 
 {% block extra_css %}
+  /* Bandeja de soporte: cada mensaje es una tarjeta con sus botones. */
+  .mensaje-soporte { padding: 14px 18px; border-bottom: 1px solid #f0f5f2; }
+  .mensaje-soporte.sin-atender { background: #fffcf3; box-shadow: inset 3px 0 0 var(--warn); }
+  .mensaje-cabecera { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .mensaje-quien { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.86rem; }
+  .mensaje-meta { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; }
+  .mensaje-asunto { margin: 10px 0 4px; font-weight: 700; font-size: 0.88rem; }
+  .mensaje-texto { margin: 6px 0; font-size: 0.88rem; line-height: 1.6; white-space: pre-line; }
+  .mensaje-pagina { font-size: 0.75rem; margin: 4px 0; }
+  .mensaje-nota { margin: 6px 0; font-size: 0.82rem; background: #f5f8f6; border-radius: 8px; padding: 8px 10px; }
+  .mensaje-acciones { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .nota-soporte input[type="text"] { min-width: 220px; }
   .fila-crm-select { display: flex; gap: 6px; align-items: center; }
   .fila-crm-select select { font-size: 0.76rem; padding: 4px 7px; }
   .vacio-tablero { min-height: 90px; display: grid; place-items: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px; }

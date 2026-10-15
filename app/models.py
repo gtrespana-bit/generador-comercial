@@ -3377,6 +3377,104 @@ class EventoAdmin(Base):
         return datos if isinstance(datos, dict) else {}
 
 
+#: Categorías del buzón de soporte. Es una lista cerrada a propósito: el
+#: formulario público no elige la categoría libremente, y el panel filtra por
+#: estos valores sin improvisar etiquetas.
+TIPOS_SOPORTE = (
+    ("consulta", "Duda o consulta"),
+    ("problema", "Problema o error"),
+    ("queja", "Queja o reclamación"),
+    ("sugerencia", "Sugerencia o idea"),
+    ("facturacion", "Facturación y pagos"),
+    ("otro", "Otro asunto"),
+)
+TIPOS_SOPORTE_ETIQUETA = dict(TIPOS_SOPORTE)
+
+#: Estados del mensaje. «nuevo» es lo que cuenta como pendiente en el panel.
+ESTADOS_SOPORTE = (
+    ("nuevo", "Sin atender"),
+    ("en_proceso", "En proceso"),
+    ("resuelto", "Resuelto"),
+)
+ESTADOS_SOPORTE_ETIQUETA = dict(ESTADOS_SOPORTE)
+
+
+class MensajeSoporte(Base):
+    """Mensaje que un cliente (o un visitante) envía al buzón de soporte.
+
+    **No es una tabla de tenant.** El titular es quien lee el buzón, y quien
+    escribe puede no tener cuenta todavía: por eso ``organizacion_id`` y
+    ``usuario_id`` son opcionales y la fila se guarda siempre. En PostgreSQL
+    la política RLS es de operador para lectura y escritura de gestión, y de
+    inserción abierta con estado forzado a ``nuevo`` para que el formulario
+    público pueda dejar el mensaje sin conceder ningún acceso.
+
+    El envío por correo es un aviso, no la fuente de verdad: el mensaje queda
+    en la base aunque Resend falle, y el panel lo muestra igualmente.
+    """
+
+    __tablename__ = "mensajes_soporte"
+    __table_args__ = (
+        CheckConstraint(
+            "tipo IN ('consulta', 'problema', 'queja', 'sugerencia', "
+            "'facturacion', 'otro')",
+            name="ck_mensaje_soporte_tipo_valido",
+        ),
+        CheckConstraint(
+            "estado IN ('nuevo', 'en_proceso', 'resuelto')",
+            name="ck_mensaje_soporte_estado_valido",
+        ),
+        Index("ix_mensajes_soporte_estado", "estado", "created_at"),
+        Index("ix_mensajes_soporte_email", "email"),
+        Index("ix_mensajes_soporte_org", "organizacion_id", "created_at"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(200), nullable=False, default="")
+    email = Column(String(254), nullable=False, default="")
+    #: Organización del remitente, si escribió con la sesión abierta.
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    usuario_id = Column(
+        Integer,
+        ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    tipo = Column(String(20), nullable=False, default="consulta")
+    asunto = Column(String(200), nullable=False, default="")
+    mensaje = Column(Text, nullable=False, default="")
+    #: Página desde la que se escribió (para reproducir el contexto).
+    pagina = Column(String(500), nullable=False, default="")
+    estado = Column(String(20), nullable=False, default="nuevo")
+    #: Respuesta/gestión interna del equipo. Nunca se envía al cliente sola.
+    nota_interna = Column(Text, nullable=False, default="")
+    atendido_por_email = Column(String(254), nullable=False, default="")
+    atendido_at = Column(DateTime, nullable=True)
+    #: Resultado del aviso por correo al buzón de soporte (trazabilidad).
+    aviso_enviado = Column(Boolean, nullable=False, default=False)
+    ip_hash = Column(String(64), nullable=False, default="")
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+    usuario = relationship("Usuario")
+
+    @property
+    def etiqueta_tipo(self) -> str:
+        return TIPOS_SOPORTE_ETIQUETA.get(self.tipo, self.tipo)
+
+    @property
+    def etiqueta_estado(self) -> str:
+        return ESTADOS_SOPORTE_ETIQUETA.get(self.estado, self.estado)
+
 
 class ContenidoWeb(Base):
     """Contenido público de la web con publicar/descartar (Fase 3, C1/C2).

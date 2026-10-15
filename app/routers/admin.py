@@ -81,6 +81,7 @@ VOLVER_AVISOS = "/admin/web?tab=avisos"
 VOLVER_VERSIONES = "/admin/web?tab=versiones"
 VOLVER_DIRECTORIO = "/admin/clientes?tab=directorio"
 VOLVER_PIPELINE = "/admin/clientes?tab=pipeline"
+VOLVER_SOPORTE = "/admin/clientes?tab=soporte"
 
 #: Ruta del trabajo programado de Vercel (vercel.json → `crons`). Un solo
 #: punto de verdad: `tests/test_vercel_cron_config.py` comprueba que la ruta
@@ -841,6 +842,10 @@ def activar_compra_web(
     # devolver un error al operador, que ya hizo su parte; se anota en el
     # mensaje para que sepa si tiene que escribir a mano.
     aviso = _avisar_activacion_al_cliente(db, compra, licencia)
+    # Aviso de venta al buzón del titular: la activación manual es una venta
+    # confirmada igual que la que cierra Stripe, y hasta ahora solo se veía en
+    # la lista de contratos.
+    _avisar_venta_manual(db, compra, licencia)
     # Telemetría (E5-012): cierre del embudo de cobro por activación manual.
     # La sesión de operador no lleva claim de tenant: organización explícita.
     telemetria.registrar(
@@ -856,6 +861,20 @@ def activar_compra_web(
             f"{aviso}"
         ),
     )
+
+
+def _avisar_venta_manual(db: Session, compra, licencia) -> None:
+    """Avisa al buzón del titular de la venta activada a mano. Nunca lanza."""
+    from ..services.avisos_negocio import avisar_venta
+
+    try:
+        avisar_venta(db, compra=compra, licencia=licencia, origen="manual")
+    except Exception:
+        log.error(
+            "Error avisando de la venta manual de la compra #%s:\n%s",
+            getattr(compra, "id", "?"),
+            traceback.format_exc(),
+        )
 
 
 def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
@@ -925,6 +944,67 @@ def _avisar_activacion_al_cliente(db: Session, compra, licencia) -> str:
         )
         return f"No se pudo avisar a {destinatario}: escríbele tú."
     return f"Avisado {destinatario} con su recibo."
+
+
+# ---------------------------------------------------------------------------
+# Buzón de soporte: gestión de los mensajes del botón de ayuda
+# ---------------------------------------------------------------------------
+
+
+@router.post("/admin/soporte/{mensaje_id}/estado", include_in_schema=False)
+def actualizar_mensaje_soporte(
+    mensaje_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    estado: str = Form("en_proceso"),
+    nota: str = Form(""),
+    volver: str = Form(""),
+):
+    """Marca un mensaje de soporte como en proceso, resuelto o reabierto.
+
+    La nota es la gestión interna (qué se hizo, qué falta): se guarda con el
+    mensaje y queda también en la auditoría del panel, que es donde el titular
+    puede reconstruir quién atendió qué.
+    """
+    from ..services.soporte import SoporteError, marcar_estado, normalizar_estado
+
+    destino = _volver_valor(volver, VOLVER_SOPORTE)
+    estado = normalizar_estado(estado)
+    try:
+        mensaje = marcar_estado(
+            db,
+            mensaje_id=mensaje_id,
+            estado=estado,
+            operador_email=str(db.info.get("auth_email") or ""),
+            nota=nota,
+        )
+        db.commit()
+        _auditar_admin(
+            db, request,
+            accion="soporte.mensaje_estado",
+            entidad="mensaje_soporte",
+            entidad_id=mensaje.id,
+            organizacion_id=mensaje.organizacion_id,
+            detalle={"estado": estado},
+        )
+    except (SoporteError, ValueError) as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error actualizando el mensaje de soporte #%s:\n%s",
+            mensaje_id,
+            traceback.format_exc(),
+        )
+        raise
+
+    etiqueta = {
+        "nuevo": "reabierto",
+        "en_proceso": "marcado en proceso",
+        "resuelto": "marcado como resuelto",
+    }.get(estado, estado)
+    return _redirect(destino, msg=f"Mensaje #{mensaje_id} {etiqueta}.")
 
 
 @router.post("/admin/compras/{compra_id}/rechazar", include_in_schema=False)

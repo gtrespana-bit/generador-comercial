@@ -1,7 +1,7 @@
 # Almacenamiento privado de CotizaT
 
 > **Actualización 28/09/2026:** el código de esta rama exige Alembic
-> `h1c4b7e9a3d2`. El estado del bucket remoto no se verificó en esta revisión;
+> `i4d7c1b8e2f5`. El estado del bucket remoto no se verificó en esta revisión;
 > las indicaciones de provisión de la sección «acción deliberadamente
 > pendiente» son históricas y deben contrastarse con
 > [`APROVISIONAMIENTO_STAGING.md`](APROVISIONAMIENTO_STAGING.md) antes de
@@ -85,7 +85,7 @@ lista MIME. En este bloque no se creó el bucket real ni política pública.
 
 Para habilitar el entorno real:
 
-1. llevar la base al head de código vigente (`h1c4b7e9a3d2` en la revisión
+1. llevar la base al head de código vigente (`i4d7c1b8e2f5` en la revisión
    del 28/09/2026), comprobando primero la versión remota y siguiendo
    `APROVISIONAMIENTO_STAGING.md`;
 2. crear/verificar `cotizat-private` como privado;

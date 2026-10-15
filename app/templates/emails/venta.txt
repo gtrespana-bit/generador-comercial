@@ -1,0 +1,16 @@
+{% if renovacion %}RENOVACIÓN DE PLAN{% else %}VENTA CONFIRMADA{% endif %} · {{ product_name }}
+
+Plan: {{ plan_nombre }}
+Importe: {{ importe_texto }}
+Método de pago: {{ metodo_nombre }}
+Cliente: {{ organizacion_nombre }}
+Comprador: {{ comprador_email }}
+{% if periodo_texto %}Período pagado: {{ periodo_texto }}{% endif %}
+{% if compra_id %}Compra: #{{ compra_id }}{% endif %}
+
+El cobro está confirmado y el acceso del cliente activo: no hace falta ninguna acción.
+{% if panel_url %}
+Libro de ventas: {{ panel_url }}
+{% endif %}
+---
+Aviso automático de facturación de {{ product_name }}. Responde a este correo para escribir al comprador.

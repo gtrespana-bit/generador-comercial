@@ -1,0 +1,16 @@
+MENSAJE DE SOPORTE · {{ tipo }} · {{ product_name }}
+
+De: {{ nombre or "Sin nombre" }} <{{ email }}>
+{% if organizacion_nombre %}Empresa: {{ organizacion_nombre }}
+{% endif %}{% if asunto %}Asunto: {{ asunto }}
+{% endif %}{% if pagina %}Escribió desde: {{ pagina }}
+{% endif %}
+Mensaje:
+{{ mensaje }}
+
+Responde a este correo y le contestarás directamente.
+{% if panel_url %}
+Bandeja de soporte: {{ panel_url }}
+{% endif %}
+---
+Aviso automático del buzón de soporte de {{ product_name }}. El mensaje queda guardado en el panel.

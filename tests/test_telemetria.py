@@ -21,6 +21,7 @@ from migrations.versions import (
     f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_presupuestos_migracion,
     g7c8d9e0f1a2_conversaciones_asistente as conversaciones_migracion,
     h1c4b7e9a3d2_mostrar_desglose_precio as desglose_migracion,
+    i4d7c1b8e2f5_mensajes_soporte as soporte_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -236,10 +237,12 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [desglose_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({desglose_migracion.revision}); "
+    assert cabezas == [soporte_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({soporte_migracion.revision}); "
         f"hay: {cabezas}"
     )
+    # El buzón de soporte es la cabeza desde 2026-10; cuelga del desglose.
+    assert soporte_migracion.down_revision == desglose_migracion.revision
     assert desglose_migracion.down_revision == conversaciones_migracion.revision
     assert conversaciones_migracion.down_revision == uso_presupuestos_migracion.revision
     assert uso_presupuestos_migracion.down_revision == fase3_migracion.revision

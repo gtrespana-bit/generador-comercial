@@ -7,3 +7,14 @@
 {% block content %}
   {% include "admin/partes/ingresos_" + pestana + ".html" %}
 {% endblock %}
+
+{% block extra_css %}
+  /* El libro de ventas marca lo recién cobrado: si acabas de vender, la fila
+     no se pierde entre las del mes. */
+  tr.fila-nueva td { background: #f4fbf6; }
+  tr.fila-nueva td:first-child { box-shadow: inset 3px 0 0 var(--brand-color); }
+  .aviso-venta { border-left: 4px solid var(--brand-color); }
+  .aviso-venta-cuerpo { display: flex; align-items: center; gap: 14px; padding: 14px 18px; }
+  .aviso-venta-cuerpo p { margin: 3px 0 0; font-size: 0.8rem; }
+  .aviso-venta-punto { width: 10px; height: 10px; border-radius: 999px; background: var(--brand-color); flex-shrink: 0; }
+{% endblock %}

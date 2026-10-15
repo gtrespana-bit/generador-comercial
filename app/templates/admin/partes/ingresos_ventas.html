@@ -1,0 +1,201 @@
+{# Ingresos › Ventas. La pregunta «¿qué he vendido?» con respuesta directa:
+   cada cobro confirmado, su importe, su método y su cliente. Es la pantalla
+   que evita enterarse de una compra por el correo del banco. #}
+
+<div class="kpis">
+  <a class="kpi-card enlaza {{ 'info' if kpis.ventas_hoy else '' }}" href="{{ ruta_filtro(periodo='hoy') }}">
+    <div class="kpi-value">{{ kpis.ventas_hoy }}</div>
+    <div class="kpi-label">Ventas de hoy</div>
+    <p class="note-sub">{{ "%.2f"|format(kpis.importe_hoy) }} US$ cobrados hoy</p>
+  </a>
+  <a class="kpi-card enlaza" href="{{ ruta_filtro(periodo='mes') }}">
+    <div class="kpi-value">{{ kpis.ventas_mes }}</div>
+    <div class="kpi-label">Ventas del mes</div>
+    <p class="note-sub">
+      {{ "%.2f"|format(kpis.importe_mes) }} US$
+      {% if kpis.variacion_mes is not none %}
+      · {{ "%+.0f"|format(kpis.variacion_mes) }}% vs. mes anterior
+      {% else %}
+      · primer mes con cobros
+      {% endif %}
+    </p>
+  </a>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ "%.2f"|format(kpis.ticket_medio_mes) }} <small>US$</small></div>
+    <div class="kpi-label">Ticket medio del mes</div>
+    <p class="note-sub">{{ kpis.primeras_ventas_mes }} altas · {{ kpis.renovaciones_mes }} renovaciones</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ kpis.ventas_totales }}</div>
+    <div class="kpi-label">Ventas acumuladas</div>
+    <p class="note-sub">{{ "%.2f"|format(kpis.importe_total) }} US$ desde el lanzamiento</p>
+  </div>
+</div>
+
+{% if kpis.ventas_hoy %}
+<div class="card aviso-venta">
+  <div class="card-body aviso-venta-cuerpo">
+    <span class="aviso-venta-punto" aria-hidden="true"></span>
+    <div>
+      <b>{{ kpis.ventas_hoy }} venta{{ 's' if kpis.ventas_hoy != 1 else '' }} hoy</b>
+      <p class="muted">Ya está todo concedido: el cobro activa el plan solo. Aquí abajo tienes el detalle.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Libro de ventas · {{ ventas.periodo_etiqueta|lower }}</h2>
+    <div class="card-header-acc">
+      <a class="btn btn-sm btn-secondary" href="/admin/ingresos.csv?tab=ventas&amp;periodo={{ filtro_periodo }}{% if filtro_plan %}&amp;plan={{ filtro_plan }}{% endif %}{% if filtro_metodo %}&amp;metodo={{ filtro_metodo }}{% endif %}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">CSV</a>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Período</span>
+    {% for valor, etiqueta in opciones_periodo %}
+    <a class="chip {{ 'sel' if filtro_periodo == valor else '' }}" href="{{ ruta_filtro(periodo=valor) }}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Cobro</span>
+    <a class="chip {{ 'sel' if filtro_metodo == 'auto' else '' }}" href="{{ ruta_filtro(metodo='auto') }}">Automático (Stripe)</a>
+    <a class="chip {{ 'sel' if filtro_metodo == 'manual' else '' }}" href="{{ ruta_filtro(metodo='manual') }}">Manual (comprobante)</a>
+    <span class="chips-titulo">Plan</span>
+    <a class="chip {{ 'sel' if filtro_plan == 'anual' else '' }}" href="{{ ruta_filtro(plan='anual') }}">Anual</a>
+    <a class="chip {{ 'sel' if filtro_plan == 'mensual' else '' }}" href="{{ ruta_filtro(plan='mensual') }}">Mensual</a>
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/ingresos">
+    <input type="hidden" name="tab" value="ventas">
+    <input type="hidden" name="periodo" value="{{ filtro_periodo }}">
+    {% if filtro_plan %}<input type="hidden" name="plan" value="{{ filtro_plan }}">{% endif %}
+    {% if filtro_metodo %}<input type="hidden" name="metodo" value="{{ filtro_metodo }}">{% endif %}
+    <label class="visualmente-oculto" for="ventas-q">Buscar en las ventas</label>
+    <input id="ventas-q" type="search" name="q" value="{{ q }}" placeholder="Cliente, correo o nº de compra…">
+    <button class="btn btn-sm" type="submit">Buscar</button>
+    {% if q or filtro_plan or filtro_metodo or filtro_periodo != 'mes' %}
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=ventas">Limpiar</a>
+    {% endif %}
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Plan</th>
+          <th class="tabla-num">Importe</th>
+          <th>Cobro</th>
+          <th>Período concedido</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in ventas.filas %}
+        <tr class="{{ 'fila-nueva' if v.es_novedad else '' }}">
+          <td>
+            {{ v.fecha.strftime('%d/%m/%Y') }}
+            <div class="org-sub">{{ v.fecha.strftime('%H:%M') }}</div>
+          </td>
+          <td class="org-name">
+            <a href="{{ v.url_cliente }}">{{ v.organizacion_nombre }}</a>
+            <div class="org-sub">{{ v.comprador_email or 'sin correo del comprador' }}</div>
+          </td>
+          <td>
+            {{ v.plan_nombre }}
+            {% if v.renovacion %}<div class="org-sub">renovación</div>{% endif %}
+          </td>
+          <td class="tabla-num text-bold">{{ "%.2f"|format(v.importe) }} {{ v.moneda }}</td>
+          <td>
+            {% if v.automatica %}
+            <span class="badge badge-success">Automático</span>
+            {% else %}
+            <span class="badge badge-info">Manual</span>
+            {% endif %}
+            <div class="org-sub">{{ v.metodo_nombre }}</div>
+          </td>
+          <td class="muted">
+            {% if v.inicio and v.vence %}{{ v.inicio.strftime('%d/%m/%Y') }} → {{ v.vence.strftime('%d/%m/%Y') }}{% else %}—{% endif %}
+          </td>
+          <td>
+            <div class="tabla-acciones">
+              <a class="btn btn-sm btn-secondary" href="{{ v.url_cliente }}?tab=cobros">Cobros</a>
+              {% if v.es_novedad %}<span class="badge badge-warning">Nueva</span>{% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">
+          <div class="vacio">
+            <b>{% if q or filtro_plan or filtro_metodo %}Ninguna venta encaja con ese filtro.{% else %}Todavía no hay ventas en {{ ventas.periodo_etiqueta|lower }}.{% endif %}</b>
+            <p>
+              Cada cobro confirmado —tarjeta por Stripe o comprobante activado por ti—
+              aparece aquí el mismo día, con quién lo pagó y cuánto.
+            </p>
+            <a class="btn btn-sm btn-secondary" href="{{ ruta_filtro(periodo='todo') }}">Ver todo el histórico</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-pie">
+    <span class="muted-note">
+      Las <b>automáticas</b> las confirma Stripe por webhook (incluidas las
+      renovaciones mensuales). Las <b>manuales</b> son comprobantes que activaste
+      tú desde «Compras por revisar».
+    </span>
+    <span class="toolbar-limpiar">
+      <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras">Compras por revisar</a>
+      <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=cobros">Cobros del mes</a>
+    </span>
+  </div>
+</div>
+
+{% if por_plan or por_metodo %}
+<div class="grid-lateral">
+  <div class="card">
+    <div class="card-header"><h2>Este mes por plan</h2></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Plan</th><th class="tabla-num">Ventas</th><th class="tabla-num">Importe</th></tr></thead>
+        <tbody>
+          {% for fila in por_plan %}
+          <tr>
+            <td>{{ fila.nombre }}</td>
+            <td class="tabla-num">{{ fila.numero }}</td>
+            <td class="tabla-num text-bold">{{ "%.2f"|format(fila.total) }} US$</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Este mes por forma de cobro</h2></div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Método</th><th class="tabla-num">Ventas</th><th class="tabla-num">Importe</th></tr></thead>
+        <tbody>
+          {% for fila in por_metodo %}
+          <tr>
+            <td>{{ fila.nombre }}</td>
+            <td class="tabla-num">{{ fila.numero }}</td>
+            <td class="tabla-num text-bold">{{ "%.2f"|format(fila.total) }} US$</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-pie">
+      <span class="muted-note">Renovaciones automáticas del mes: {{ "%.2f"|format(kpis.importe_renovaciones_mes) }} US$.</span>
+    </div>
+  </div>
+</div>
+{% endif %}

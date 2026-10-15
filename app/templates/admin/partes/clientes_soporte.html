@@ -1,0 +1,142 @@
+{# Clientes › Buzón de soporte. Los mensajes que llegan por el botón de ayuda:
+   quién escribe, de qué se queja o qué propone, y el botón para marcarlo. #}
+
+<div class="kpis">
+  <a class="kpi-card enlaza {{ 'warn' if contadores_soporte.nuevo else '' }}" href="{{ ruta_filtro(estado='nuevo') }}">
+    <div class="kpi-value">{{ contadores_soporte.nuevo }}</div>
+    <div class="kpi-label">Sin atender</div>
+    <p class="note-sub">Mensajes que nadie ha leído todavía</p>
+  </a>
+  <a class="kpi-card enlaza" href="{{ ruta_filtro(estado='en_proceso') }}">
+    <div class="kpi-value">{{ contadores_soporte.en_proceso }}</div>
+    <div class="kpi-label">En proceso</div>
+    <p class="note-sub">Contestados a medias o pendientes de seguimiento</p>
+  </a>
+  <a class="kpi-card enlaza" href="{{ ruta_filtro(estado='resuelto') }}">
+    <div class="kpi-value">{{ contadores_soporte.resuelto }}</div>
+    <div class="kpi-label">Resueltos</div>
+    <p class="note-sub">Cerrados con su nota de gestión</p>
+  </a>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ contadores_soporte.todos }}</div>
+    <div class="kpi-label">Mensajes totales</div>
+    <p class="note-sub">Todo lo recibido desde el lanzamiento</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Bandeja de soporte{% if filtro_estado %} · {{ dict(opciones_estado).get(filtro_estado, filtro_estado) }}{% endif %}</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ total_mensajes }} mensaje{{ 's' if total_mensajes != 1 else '' }}</span>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Estado</span>
+    {% for valor, etiqueta, contador, _alerta in contadores_estado %}
+    <a class="chip {{ 'sel' if filtro_estado == valor else '' }}" href="{{ ruta_filtro(estado=valor) }}">{{ etiqueta }} <span class="chip-cnt">{{ contador }}</span></a>
+    {% endfor %}
+    <span class="chips-titulo">Motivo</span>
+    {% for valor, etiqueta in opciones_tipo %}
+    <a class="chip {{ 'sel' if filtro_tipo == valor else '' }}" href="{{ ruta_filtro(tipo=valor) }}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/clientes">
+    <input type="hidden" name="tab" value="soporte">
+    {% if filtro_estado %}<input type="hidden" name="estado" value="{{ filtro_estado }}">{% endif %}
+    {% if filtro_tipo %}<input type="hidden" name="tipo" value="{{ filtro_tipo }}">{% endif %}
+    <label class="visualmente-oculto" for="soporte-q">Buscar en los mensajes</label>
+    <input id="soporte-q" type="search" name="q" value="{{ q }}" placeholder="Correo, nombre o texto del mensaje…">
+    <button class="btn btn-sm" type="submit">Buscar</button>
+    {% if q or filtro_estado or filtro_tipo %}
+    <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=soporte">Limpiar</a>
+    {% endif %}
+  </form>
+
+  {% for fila in mensajes %}
+  {% set m = fila.mensaje %}
+  <div class="mensaje-soporte {{ 'sin-atender' if m.estado == 'nuevo' else '' }}">
+    <div class="mensaje-cabecera">
+      <div class="mensaje-quien">
+        <b>{{ m.nombre or 'Sin nombre' }}</b>
+        <a href="mailto:{{ m.email }}?subject={{ ('Re: ' ~ (m.asunto or m.etiqueta_tipo))|urlencode }}">{{ m.email }}</a>
+        {% if fila.organizacion_nombre %}
+        <span class="muted">· {{ fila.organizacion_nombre }}</span>
+        {% endif %}
+        {% if m.organizacion_id %}
+        <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ m.organizacion_id }}">Ficha</a>
+        {% endif %}
+      </div>
+      <div class="mensaje-meta">
+        <span class="badge badge-neutral">{{ m.etiqueta_tipo }}</span>
+        {% if m.estado == 'nuevo' %}
+        <span class="badge badge-warning">Sin atender</span>
+        {% elif m.estado == 'en_proceso' %}
+        <span class="badge badge-info">En proceso</span>
+        {% else %}
+        <span class="badge badge-success">Resuelto</span>
+        {% endif %}
+        <span class="muted">{{ m.created_at.strftime('%d/%m/%Y %H:%M') if m.created_at else '' }}</span>
+      </div>
+    </div>
+
+    {% if m.asunto %}<p class="mensaje-asunto">{{ m.asunto }}</p>{% endif %}
+    <p class="mensaje-texto">{{ m.mensaje }}</p>
+
+    {% if m.pagina %}<p class="mensaje-pagina muted">Escribió desde <code>{{ m.pagina }}</code></p>{% endif %}
+    {% if m.nota_interna %}
+    <p class="mensaje-nota"><b>Nota interna:</b> {{ m.nota_interna }}</p>
+    {% endif %}
+    {% if m.atendido_por_email %}
+    <p class="mensaje-pagina muted">Atendido por {{ m.atendido_por_email }}{% if m.atendido_at %} · {{ m.atendido_at.strftime('%d/%m/%Y %H:%M') }}{% endif %}</p>
+    {% endif %}
+
+    <div class="mensaje-acciones">
+      <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
+        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="estado" value="en_proceso">
+        <button class="btn btn-sm" type="submit">Marcar en proceso</button>
+      </form>
+      <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
+        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="estado" value="resuelto">
+        <button class="btn btn-sm" type="submit">Marcar resuelto</button>
+      </form>
+      {% if m.estado != 'nuevo' %}
+      <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
+        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="estado" value="nuevo">
+        <button class="btn btn-sm btn-secondary" type="submit">Reabrir</button>
+      </form>
+      {% endif %}
+      <form class="form-inline nota-soporte" method="post" action="/admin/soporte/{{ m.id }}/estado">
+        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="estado" value="{{ m.estado }}">
+        <label class="visualmente-oculto" for="nota-{{ m.id }}">Nota interna</label>
+        <input id="nota-{{ m.id }}" type="text" name="nota" value="{{ m.nota_interna }}" placeholder="Nota interna (qué hiciste, qué falta)…" maxlength="600">
+        <button class="btn btn-sm btn-secondary" type="submit">Guardar nota</button>
+      </form>
+      <a class="btn btn-sm btn-secondary" href="mailto:{{ m.email }}?subject={{ ('Re: ' ~ (m.asunto or m.etiqueta_tipo))|urlencode }}">Responder por correo</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="vacio">
+    <b>{% if q or filtro_estado or filtro_tipo %}Ningún mensaje encaja con ese filtro.{% else %}El buzón está vacío.{% endif %}</b>
+    <p>
+      Los mensajes llegan por el botón <b>Soporte</b> que está dentro de la
+      aplicación y en la web pública. Cada uno se guarda aquí y se avisa por
+      correo a la dirección de soporte.
+    </p>
+    <a class="btn btn-sm btn-secondary" href="{{ ruta_filtro(estado='', tipo='', q='') }}">Ver todos</a>
+  </div>
+  {% endfor %}
+
+  <div class="card-pie">
+    <span class="muted-note">
+      Responder desde el buzón de correo contesta directamente a la persona:
+      el aviso sale con <code>reply-to</code> del cliente.
+    </span>
+  </div>
+</div>

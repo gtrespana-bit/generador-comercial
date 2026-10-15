@@ -174,6 +174,9 @@ class AuthRateLimitMiddleware:
         # Formulario público de demo: evita que un bot inunde el buzón de
         # soporte con solicitudes falsas.
         "/demo": 3,
+        # Formulario público de soporte: mismo motivo, mismo buzón. El límite
+        # es algo más holgado porque aquí sí escribe gente que ya es cliente.
+        "/soporte": 5,
         # Crear sesiones de Stripe: evita que un bot abra cientos de checkouts.
         "/pago/stripe/checkout": 10,
     }

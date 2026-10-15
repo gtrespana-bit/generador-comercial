@@ -91,6 +91,17 @@ fecha, IVA, transporte y observaciones a los precios nacionales. Mientras no
 se aplique, `/readyz` responde 503 para impedir ejecutar código nuevo sobre un
 esquema que perdería esa evidencia.
 
+**Actualización 15/10/2026 (buzón de soporte):** el head exigido por el runtime
+es `i4d7c1b8e2f5`, que crea `public.mensajes_soporte` (los mensajes del botón de
+soporte). Se aplica con `docs/staging_upgrade_i4d7c1b8e2f5.sql`, cuya guarda
+exige que el remoto esté en `h1c4b7e9a3d2`. La tabla **no es de tenant**:
+`organizacion_id` es opcional con `ON DELETE SET NULL` (quien escribe puede no
+tener cuenta), la lectura y la gestión son de operador (`cotizat_ms_*`), el
+INSERT del formulario público queda forzado a `estado = 'nuevo'` y no hay
+permiso de `DELETE`. El arranque best-effort (`app/database.py`) repara la
+marca solo si la tabla existe de verdad. Detalle funcional en
+[`AVISOS_Y_SOPORTE.md`](AVISOS_Y_SOPORTE.md).
+
 ## Rol de runtime y migraciones
 
 `c93e7a4d20f1` crea `cotizat_app` como rol grupal `NOLOGIN`, `NOSUPERUSER` y `NOBYPASSRLS`; deliberadamente no contiene contraseña. El login de runtime debe crearse fuera de Git, con una contraseña generada en el gestor de secretos del proveedor, y recibir únicamente:

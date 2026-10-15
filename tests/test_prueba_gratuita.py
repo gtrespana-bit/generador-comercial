@@ -599,6 +599,7 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         d3e5f7a9c2b4_web_admin_crm_y_salud as fase3_migracion,
         g7c8d9e0f1a2_conversaciones_asistente as chats_migracion,
         h1c4b7e9a3d2_mostrar_desglose_precio as desglose_migracion,
+        i4d7c1b8e2f5_mensajes_soporte as soporte_migracion,
     )
     # Fase 3 (web + CRM + salud/operación), uso real de presupuestos y
     # conversaciones del asistente forman ahora la cabeza.
@@ -606,7 +607,9 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         f6d1a9c3e8b2_admin_uso_presupuestos_clientes as uso_migracion,
     )
     assert desglose_migracion.down_revision == chats_migracion.revision
-    assert desglose_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # El buzón de soporte (i4) es la cabeza desde 2026-10.
+    assert soporte_migracion.down_revision == desglose_migracion.revision
+    assert soporte_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision
