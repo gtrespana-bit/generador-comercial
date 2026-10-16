@@ -16,6 +16,7 @@ from urllib.parse import quote_plus, urlencode
 from sqlalchemy.orm import Session
 
 from .busqueda_catalogo import normalizar
+from ..paises import es_ingles
 
 log = logging.getLogger("cotizat")
 
@@ -47,7 +48,11 @@ _ETIQUETAS_ENTIDAD = {
 
 def _es_ingles(idioma) -> bool:
     """Las variantes regionales (/en-mx/) comparten vocabulario."""
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 _STOP_BUSQUEDA = frozenset({
     "a", "al", "algo", "cual", "cuales", "como", "con", "de", "del", "dame",

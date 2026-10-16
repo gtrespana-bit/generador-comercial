@@ -29,6 +29,7 @@ from pathlib import Path
 from ..utils import decimales_moneda, fmt_num, simbolo_moneda
 from .tasa import TASAS_ACTUALIZADAS, tasa_sugerida
 from .traduccion import traducir
+from ..paises import es_ingles
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Presupuesto de ejemplo (remodelación de baño) — base USD del catálogo
@@ -261,7 +262,11 @@ def _precio_u(valor: float, moneda: str, unidad: str, idioma: str = "es") -> str
 
 
 def _es_ingles(idioma: str | None) -> bool:
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 def _rotulo(texto: str, *, en: bool, codigo: str) -> str:

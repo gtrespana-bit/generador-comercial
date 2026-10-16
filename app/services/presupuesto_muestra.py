@@ -34,7 +34,9 @@ from ..models import (
     Presupuesto,
     PresupuestoItem,
 )
+from ..paises import resolver_mercado
 from . import pdf as pdf_service
+from .variante_ingles import aplicar_variante
 
 # ── Identidad ficticia (sin datos personales reales) ─────────────────────
 EMPRESA_NOMBRE = "Construcciones El Samán, C.A."
@@ -313,14 +315,17 @@ _CAMPOS_TEXTO = {
 }
 
 
-def _traducir(*objetos, en: bool = True) -> list[str]:
+def _traducir(*objetos, en: bool = True, mercado: dict | None = None) -> list[str]:
     """Pasa la muestra a inglés y devuelve los textos que no tenían traducción.
 
     Recorre el presupuesto ya construido (capítulos, partidas y mediciones) y
-    sustituye cada texto redactado por su versión inglesa. Devuelve la lista
-    de huecos —textos que no están ni en :data:`_TEXTO_EN` ni en
-    :data:`_SIN_CAMBIO`— para que la suite detecte en cuanto se añada una
-    partida nueva y se olvide traducirla.
+    sustituye cada texto redactado por su versión inglesa. Sobre esa versión
+    aplica además el vocabulario del mercado, porque «skirting» vale para el
+    Reino Unido y en Estados Unidos se dice «baseboard».
+
+    Devuelve la lista de huecos —textos que no están ni en :data:`_TEXTO_EN`
+    ni en :data:`_SIN_CAMBIO`— para que la suite detecte en cuanto se añada
+    una partida nueva y se olvide traducirla.
     """
     huecos: list[str] = []
     if not en:
@@ -341,6 +346,7 @@ def _traducir(*objetos, en: bool = True) -> list[str]:
                 continue
             if actual in _TEXTO_EN:
                 traducido = _TEXTO_EN[actual]
+                traducido = aplicar_variante(traducido, mercado)
                 if traducido != actual:
                     setattr(obj, campo, traducido)
             elif actual not in _SIN_CAMBIO:
@@ -600,9 +606,10 @@ def _presupuesto(cliente: Cliente) -> Presupuesto:
 def construir(idioma: str = "es") -> bytes:
     """Construye el presupuesto de muestra y devuelve los bytes del PDF.
 
-    Con `idioma="en"` el documento sale redactado en inglés: mismo
-    presupuesto, mismas mediciones y mismos importes, cambiando solo la
-    redacción (ver :data:`_TEXTO_EN`).
+    Con `idioma="en"` el documento sale redactado en inglés; con `idioma` un
+    mercado concreto («en-US», «en-GB», «en-AU») sale además con el
+    vocabulario de ese mercado. El presupuesto, las mediciones y los importes
+    son los mismos: cambia la redacción (ver :data:`_TEXTO_EN`).
     """
     engine = create_engine(
         "sqlite://",
@@ -619,8 +626,9 @@ def construir(idioma: str = "es") -> bytes:
         presupuesto = _presupuesto(cliente)
         # La traducción se aplica sobre el objeto, antes de guardarlo, para
         # que la estructura y las cifras tengan una única fuente.
+        mercado = resolver_mercado(idioma)
         huecos = _traducir(presupuesto, cliente, config,
-                           en=str(idioma or "es").lower().startswith("en"))
+                           en=mercado["idioma"] == "en", mercado=mercado)
         if huecos:
             raise ValueError(
                 "La muestra tiene textos sin traducir: " + "; ".join(huecos)

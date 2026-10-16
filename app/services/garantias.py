@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import unicodedata
 from typing import Iterable
+from ..paises import es_ingles, resolver_mercado
+from .variante_ingles import aplicar_variante
 
 
 def _norm(texto: str) -> str:
@@ -429,7 +431,11 @@ _EXCLUIR_TEXTO_EN = (
 
 
 def _es_ingles(idioma: str | None) -> bool:
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 def _es_auxiliar_sin_garantia(texto: str, en: bool = False) -> bool:
@@ -475,6 +481,7 @@ def _keywords_de(fam: dict, en: bool) -> tuple:
 def clasificar_familias(presupuesto, idioma: str = "es") -> list[dict]:
     """Devuelve solo las familias presentes en el presupuesto, en orden."""
     en = _es_ingles(idioma)
+    mercado = resolver_mercado(idioma)
     texto = _texto_presupuesto(presupuesto, en)
     if not texto.strip():
         return []
@@ -482,18 +489,21 @@ def clasificar_familias(presupuesto, idioma: str = "es") -> list[dict]:
     for fam in FAMILIAS_GARANTIA:
         if any(k in texto for k in _keywords_de(fam, en)):
             ext = FAMILIAS_EN.get(fam["clave"], {}) if en else {}
+            # El alcance se redacta para el mercado: en Estados Unidos los
+            # rodapiés son «baseboards», no «skirting».
             halladas.append({
                 "clave": fam["clave"],
-                "grupo": ext.get("grupo", fam["grupo"]),
-                "plazo": ext.get("plazo", fam["plazo"]),
-                "alcance": ext.get("alcance", fam["alcance"]),
+                "grupo": aplicar_variante(ext.get("grupo", fam["grupo"]), mercado),
+                "plazo": aplicar_variante(ext.get("plazo", fam["plazo"]), mercado),
+                "alcance": aplicar_variante(ext.get("alcance", fam["alcance"]), mercado),
             })
     return halladas
 
 
 def nota_legal(idioma: str = "es") -> str:
     """Nota legal de la tabla de garantías en el idioma indicado."""
-    return NOTA_LEGAL_EN if _es_ingles(idioma) else NOTA_LEGAL
+    texto = NOTA_LEGAL_EN if _es_ingles(idioma) else NOTA_LEGAL
+    return aplicar_variante(texto, resolver_mercado(idioma))
 
 
 def familias_para_pdf(presupuesto, idioma: str = "es") -> list[dict]:
@@ -512,4 +522,6 @@ def familias_para_pdf(presupuesto, idioma: str = "es") -> list[dict]:
     if _es_ingles(idioma):
         ext = FAMILIAS_EN.get("general", {})
         general = {**general, **{k: v for k, v in ext.items() if k != "keywords"}}
+        mercado = resolver_mercado(idioma)
+        general = {k: aplicar_variante(v, mercado) for k, v in general.items()}
     return [general]

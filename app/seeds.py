@@ -26,6 +26,7 @@ from .models import (
     PresupuestoItem,
     proximo_numero,
 )
+from .paises import es_ingles
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -195,7 +196,11 @@ _EN: dict[str, str] = {
 
 
 def _es_ingles(idioma: str | None) -> bool:
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 def _t(texto: str, en: bool = False) -> str:

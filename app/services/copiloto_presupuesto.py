@@ -13,6 +13,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from .busqueda_catalogo import normalizar
+from ..paises import es_ingles
 
 MAX_CAPITULOS_BORRADOR = 100
 MAX_PARTIDAS_BORRADOR = 600
@@ -25,7 +26,11 @@ _UNIDADES_CONOCIDAS = {
 
 def _es_ingles(idioma) -> bool:
     """Las variantes regionales (/en-mx/) comparten vocabulario."""
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 def _t(texto: str, en: bool = False) -> str:

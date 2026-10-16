@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from .calculations import partida_activa
+from ..paises import es_ingles
 
 MARGEN_MINIMO_RECOMENDADO = 20.0
 MAX_ITEMS_MOSTRAR = 5
@@ -56,7 +57,11 @@ class RevisionItem:
 
 def _es_ingles(idioma) -> bool:
     """Las variantes regionales (/en-mx/) comparten vocabulario."""
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 # Mensajes en inglés por (clave, estado, sub). Los marcadores se rellenan con

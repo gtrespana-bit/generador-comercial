@@ -942,7 +942,11 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
         ])
     filas_desglose = _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot, lang=lang)
     filas += filas_desglose
-    _iva_lbl = "VAT" if _en(lang) else "I.V.A."
+    # El impuesto se llama como se llama en cada mercado, no como se llame en
+    # inglés: Sales tax en Estados Unidos, VAT en Reino Unido, GST en
+    # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
+    _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
+                else mercado["etiqueta_impuesto"])
     filas.append([
         Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
         valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",

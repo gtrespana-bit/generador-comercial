@@ -27,6 +27,7 @@ from typing import Any, Generator
 from urllib.parse import quote_plus
 
 from sqlalchemy.orm import Session, load_only
+from ..paises import es_ingles
 
 log = logging.getLogger("cotizat")
 
@@ -207,7 +208,11 @@ ADVANCED FEATURES:
 
 def _es_ingles(idioma) -> bool:
     """Las variantes regionales (/en-mx/) comparten vocabulario."""
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 # Palabras conversacionales que no deben convertirse en filtros del catálogo.

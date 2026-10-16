@@ -19,6 +19,7 @@ from openpyxl.styles import (
     numbers,
 )
 from openpyxl.utils import get_column_letter
+from ..paises import es_ingles, resolver_mercado
 
 # ---------------------------------------------------------------------------
 # Estilos compartidos
@@ -136,7 +137,6 @@ _XLSX_EN: dict[str, str] = {
     "Costes adicionales": "Additional costs",
     "Descuento": "Discount",
     "Base imponible": "Taxable base",
-    "IVA": "VAT",
     # Márgenes
     "Coste interno": "Internal cost",
     "Beneficio obra": "Works profit",
@@ -214,12 +214,28 @@ _XLSX_EN: dict[str, str] = {
 
 def _es_ingles(idioma) -> bool:
     """Las variantes regionales (/en-mx/) comparten vocabulario."""
-    return str(idioma or "es").strip().lower().startswith("en")
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 
 def _t(texto: str, en: bool = False) -> str:
     """Traduce una etiqueta del libro al inglés; en español la deja igual."""
     return _XLSX_EN.get(texto, texto) if en else texto
+
+
+def _etiqueta_impuesto(idioma) -> str:
+    """Cómo se llama el impuesto en este mercado, no en este idioma.
+
+    «VAT» vale para Reino Unido e Irlanda, pero en Estados Unidos es «Sales
+    tax», en Australia «GST» y en Perú «IGV». Traducir la etiqueta no basta:
+    hay que leerla del mercado.
+    """
+    mercado = resolver_mercado(idioma)
+    return (mercado["etiqueta_impuesto_en"] if _es_ingles(idioma)
+            else mercado["etiqueta_impuesto"])
 
 
 def cabeceras(etiquetas, idioma: str = "es") -> list[str]:
@@ -342,7 +358,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
         ("Costes adicionales", _money(getattr(presupuesto, "costes_adicionales", 0))),
         ("Descuento", -_money(getattr(presupuesto, "descuento_monto", 0))),
         ("Base imponible", _money(getattr(presupuesto, "base", 0))),
-        ("IVA", _money(getattr(presupuesto, "impuesto_monto", 0))),
+        (_etiqueta_impuesto(idioma), _money(getattr(presupuesto, "impuesto_monto", 0))),
         ("TOTAL", _money(getattr(presupuesto, "total", 0))),
     ])
 
@@ -657,7 +673,7 @@ def exportar_historial_excel(presupuestos, cfg=None, idioma: str = "es"):
 
     headers = [_t(h, en) for h in (
         "Nº", "Fecha", "Cliente", "Título", "Estado", "Moneda",
-        "Base imponible", "IVA", "Descuento", "TOTAL",
+        "Base imponible", _etiqueta_impuesto(idioma), "Descuento", "TOTAL",
     )]
 
     row = 4
