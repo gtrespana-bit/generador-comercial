@@ -236,3 +236,85 @@ def test_cada_mercado_tiene_su_identificador_fiscal():
     assert PAISES["CA"]["id_fiscal"] == "BN"
     assert PAISES["ES"]["id_fiscal"] == "NIF"
     assert PAISES["MX"]["id_fiscal"] == "RFC"
+
+
+# ---------------------------------------------------------------------------
+# Un mercado nuevo se tiene que resolver solo
+# ---------------------------------------------------------------------------
+
+def test_todo_mercado_se_resuelve_por_su_nombre_oficial():
+    """Si un mercado no se resuelve, su empresa se queda sin glosario.
+
+    `traduccion.codigo_desde_pais` mantuvo una lista de países a mano que se
+    quedó vieja al dar de alta los mercados ingleses: «Estados Unidos»
+    devolvía vacío y la empresa se quedaba sin terminología sin avisar.
+    Ahora se deriva del registro, así que un mercado nuevo entra solo.
+    """
+    from app.services.traduccion import codigo_desde_pais
+
+    for codigo, pais in PAISES.items():
+        assert codigo_desde_pais(pais["nombre"]) == codigo, (
+            f"{codigo} ({pais['nombre']!r}) no se resuelve: su empresa se "
+            f"quedaría sin glosario de terminología"
+        )
+
+
+def test_todo_mercado_se_resuelve_por_su_gentilicio():
+    from app.services.traduccion import codigo_desde_pais
+
+    for codigo, pais in PAISES.items():
+        assert codigo_desde_pais(pais["mercado"]) == codigo, (
+            f"el gentilicio {pais['mercado']!r} no resuelve a {codigo}"
+        )
+
+
+def test_las_formas_colloquiales_de_llamar_a_un_pais_resuelven():
+    from app.services.traduccion import codigo_desde_pais
+
+    assert codigo_desde_pais("USA") == "US"
+    assert codigo_desde_pais("United States") == "US"
+    assert codigo_desde_pais("UK") == "GB"
+    assert codigo_desde_pais("England") == "GB"
+    assert codigo_desde_pais("México") == codigo_desde_pais("méxico") == "MX"
+    assert codigo_desde_pais("Perú") == "PE"
+    assert codigo_desde_pais("Canadá") == "CA"
+    # «Latinoamérica» no es un país: cae al genérico, que es lo correcto.
+    assert codigo_desde_pais("Latinoamérica") == ""
+
+
+def test_un_pais_desconocido_no_se_inventa():
+    from app.services.traduccion import codigo_desde_pais
+
+    assert codigo_desde_pais("") == ""
+    assert codigo_desde_pais(None) == ""
+    assert codigo_desde_pais("Wakanda") == ""
+
+
+def test_la_resolucion_tolera_acentos_y_enhe():
+    """«Espana» sin eñe y «España» son el mismo país.
+
+    La normalización antigua quitaba cinco vocales acentuadas a mano y se
+    dejaba la eñe, así que había que escribir las dos formas de cada país.
+    Ahora se normaliza en Unicode y Funciona con cualquier acento.
+    """
+    from app.services.traduccion import codigo_desde_pais
+
+    for escrito, esperado in (("España", "ES"), ("españa", "ES"),
+                              ("Espana", "ES"), ("espana", "ES"),
+                              ("México", "MX"), ("Mexico", "MX"),
+                              ("Perú", "PE"), ("Peru", "PE"),
+                              ("Canadá", "CA"), ("Canada", "CA")):
+        assert codigo_desde_pais(escrito) == esperado, (
+            f"{escrito!r} debería resolver a {esperado!r}"
+        )
+
+
+def test_ningun_mercado_choca_con_otro_al_normalizar():
+    """Si dos nombres normalizan igual, uno de los dos queda inalcanzable."""
+    from app.services.traduccion import _sin_acento_minuscula
+
+    vistos: dict[str, list[str]] = {}
+    for codigo, pais in PAISES.items():
+        vistos.setdefault(_sin_acento_minuscula(pais["nombre"]), []).append(codigo)
+    choques = {k: v for k, v in vistos.items() if len(v) > 1}
+    assert not choques, f"nombres que colisionan al normalizar: {choques}"

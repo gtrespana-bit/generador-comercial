@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from functools import lru_cache
 from pathlib import Path
 
@@ -36,20 +37,62 @@ from pathlib import Path
 BASE_GLOSARIOS = Path(__file__).resolve().parents[2] / "basedatos_partidas" / "glosarios"
 
 # Mapeo nombre de país (cfg.empresa_pais) -> código ISO
-_NOMBRE_A_CODIGO = {
-    "venezuela": "VE",
-    "colombia": "CO",
-    "méxico": "MX", "mexico": "MX",
-    "ecuador": "EC",
-    "perú": "PE", "peru": "PE",
-    "españa": "ES", "espana": "ES",
-    "chile": "CL", "argentina": "AR", "uruguay": "UY",
-    "paraguay": "PY", "bolivia": "BO", "república dominicana": "DO",
-    "dominicana": "DO", "panamá": "PA", "panama": "PA",
-    "costa rica": "CR", "guatemala": "GT", "honduras": "HN",
-    "el salvador": "SV", "nicaragua": "NI",
-    "latinoamérica": "", "latinoamerica": "",
+# Formas de llamar a un país que no son su nombre oficial: «USA», «UK»,
+# «dominicana»... Lo que SÍ es nombre oficial se deriva del registro de
+# mercados, abajo.
+_ALIAS_PAIS = {
+    "usa": "US",
+    "us": "US",
+    "united states": "US",
+    "united states of america": "US",
+    "eeuu": "US",
+    "uk": "GB",
+    "united kingdom": "GB",
+    "great britain": "GB",
+    "england": "GB",
+    "gran bretaña": "GB",
+    "australia": "AU",
+    "canada": "CA",
+    "ireland": "IE",
+    "eire": "IE",
+    "dominicana": "DO",
+    # «Latinoamérica» no es un país: cae al genérico, que es lo correcto.
+    "latinoamerica": "",
 }
+
+
+def _sin_acento_minuscula(texto: str) -> str:
+    """Minúsculas sin marcas diacríticas: «España» y «Espana» → «espana».
+
+    Se normaliza en NFD y se descartan los diacríticos combinantes, así que
+    funciona con cualquier acento y también con la eñe. La versión anterior
+    quitaba cinco vocales acentuadas a mano y se dejaba la eñe, lo que
+    obligaba a escribir las dos formas de cada país en el diccionario.
+    """
+    descompuesto = unicodedata.normalize("NFD", str(texto or "").strip().lower())
+    return "".join(c for c in descompuesto if not unicodedata.combining(c))
+
+
+def _construir_nombres() -> dict[str, str]:
+    """Nombre oficial (y gentilicio) de cada mercado -> su código.
+
+    Se deriva de `app.paises.PAISES`, que es la única fuente de verdad. Si
+    se da de alta un mercado nuevo, se resuelve solo; mantener aquí una
+    lista a mano es lo que dejó fuera a los mercados ingleses.
+    """
+    from ..paises import PAISES
+
+    mapa: dict[str, str] = {}
+    for codigo, pais in PAISES.items():
+        for clave in (pais.get("nombre"), pais.get("mercado")):
+            k = _sin_acento_minuscula(clave)
+            if k:
+                mapa[k] = codigo
+    mapa.update(_ALIAS_PAIS)
+    return mapa
+
+
+_NOMBRE_A_CODIGO = _construir_nombres()
 
 _SIN_ACENTO = str.maketrans("áéíóú", "aeiou")
 
@@ -57,10 +100,7 @@ _SIN_ACENTO = str.maketrans("áéíóú", "aeiou")
 def codigo_desde_pais(nombre_pais: str | None) -> str:
     if not nombre_pais:
         return ""
-    clave = str(nombre_pais).strip().lower()
-    # limpia acentos simples para el mapa
-    clave = clave.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-    return _NOMBRE_A_CODIGO.get(clave, "")
+    return _NOMBRE_A_CODIGO.get(_sin_acento_minuscula(nombre_pais), "")
 
 
 @lru_cache(maxsize=8)
