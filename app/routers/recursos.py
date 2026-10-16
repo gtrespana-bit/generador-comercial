@@ -1,6 +1,6 @@
 """Catálogo de recursos (precios unitarios)."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
@@ -211,8 +211,24 @@ def api_buscar_recursos(q: str = "", db: Session = Depends(get_db)):
     return {"ok": True, "recursos": salida, "moneda": moneda_vista}
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Las variantes regionales (``/en-mx/``) comparten vocabulario: lo que
+    decide la lengua del libro exportado es la lengua, no el país.
+    """
+    return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
 @router.get("/recursos/exportar")
-def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
+def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar catálogo de recursos a CSV o Excel.
 
     La exportación, igual que la lista, usa la referencia nacional cuando
@@ -251,6 +267,7 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
         buf = exportar_catalogo_recursos_excel(
             recursos, ETIQUETAS_RECURSO, moneda=_moneda_x, factor=1.0,
             precios_efectivos={r.id: _precio_export(r) for r in recursos},
+            idioma=_idioma(request),
         )
         return Response(
             content=buf.getvalue(),
@@ -260,7 +277,10 @@ def exportar_recursos(formato: str = "csv", db: Session = Depends(get_db)):
 
     # La exportación habla la misma moneda que la página: la de la
     # organización (el catálogo interno sigue en USD).
-    filas = [["Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio", "Moneda", "Usos", "Proveedor", "Última actualización"]]
+    filas = [_cabeceras_csv([
+        "Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio",
+        "Moneda", "Usos", "Proveedor", "Última actualización",
+    ], _idioma(request))]
     for r in recursos:
         filas.append([
             r.codigo or "",

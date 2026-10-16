@@ -747,12 +747,30 @@ def descomposicion_partida(
     return {"ok": True, "filas": filas, "moneda": _mon_d}
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Las variantes regionales (``/en-mx/``) comparten vocabulario: lo que
+    decide la lengua del libro exportado es la lengua, no el país.
+    """
+    return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
 @router.get("/partidas/exportar")
 def exportar_partidas(
+    request: Request,
     formato: str = "csv",
     incluir_ocultas: bool = False,
     db: Session = Depends(get_db),
 ):
+    idioma = _idioma(request)
     """Exporta las partidas visibles; las ocultas son opt-in."""
     query = db.query(Partida)
     if not incluir_ocultas:
@@ -788,18 +806,18 @@ def exportar_partidas(
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_partidas_excel
-        buf = exportar_catalogo_partidas_excel(partidas)
+        buf = exportar_catalogo_partidas_excel(partidas, idioma=idioma)
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=partidas.xlsx"},
         )
 
-    filas = [[
+    filas = [_cabeceras_csv([
         "Código", "Código anterior", "Nombre", "Descripción", "Unidad", "Precio unitario",
         "Capítulo", "Subcapítulo", "Apartado", "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
         "Rendimiento", "Desperdicio recomendado (%)", "Notas técnicas", "Última actualización de precio", "Usos",
-    ]]
+    ], idioma)]
     for p in partidas:
         filas.append([
             p.codigo_interno, p.codigo_legacy, p.nombre, p.descripcion, p.unidad,

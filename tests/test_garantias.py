@@ -369,3 +369,66 @@ def test_pdf_en_ingles_incluye_la_tabla_de_garantias_traducida():
     assert "The warranty covers defects in the execution" in texto
     assert "GARANT" not in texto.upper().replace("WARRANT", "")
     assert "años" not in texto
+
+
+def test_documento_de_cobro_en_ingles_no_deja_nada_en_castellano():
+    """El PDF de cobro comparte maquetación con el presupuesto: hay que
+    pasarle el idioma o hereda las etiquetas en castellano."""
+    import io
+    from datetime import date
+
+    from pypdf import PdfReader
+
+    from app.models import (Cliente, Configuracion, Factura, FacturaCapitulo,
+                            FacturaItem)
+    from app.services.pdf import generar_factura_pdf
+
+    def _factura():
+        cfg = Configuracion(empresa_nombre="ACME")
+        f = Factura(numero="F-EN-001", moneda="USD", fecha=date(2026, 10, 16),
+                    impuesto_pct=0.0, descuento_pct=0.0,
+                    titulo="Bathroom refurbishment",
+                    notas="Second instalment", condiciones="30 days")
+        f.cliente = Cliente(nombre="John Doe", rif="J-1")
+        c = FacturaCapitulo(nombre="PLUMBING", orden=1)
+        c.partidas.append(FacturaItem(
+            nombre="Pipework and water outlets", descripcion="",
+            cantidad=2.0, precio_unitario=100.0, unidad="ud",
+        ))
+        f.capitulos.append(c)
+        return f, cfg
+
+    def _texto(datos):
+        return "\n".join(
+            (p.extract_text() or "") for p in PdfReader(io.BytesIO(datos)).pages
+        )
+
+    en = _texto(generar_factura_pdf(*_factura(), lang="en").getvalue())
+    assert "PAYMENT DOCUMENT" in en
+    assert "Document No." in en
+    assert "TOTAL PAYABLE" in en
+    assert "Scope of this document" in en
+    assert "Additional information" in en
+    assert "Payment terms" in en
+    assert "does not replace a tax invoice" in en
+    for resto in ("DOCUMENTO DE COBRO", "TOTAL A PAGAR", "Alcance del documento",
+                  "Condiciones de pago", "Información adicional", "Nº"):
+        assert resto not in en, f"queda {resto!r} en el PDF en inglés"
+
+    es = _texto(generar_factura_pdf(*_factura()).getvalue())
+    assert "DOCUMENTO DE COBRO" in es and "TOTAL A PAGAR" in es
+    assert "Condiciones de pago" in es
+
+
+def test_etiquetas_del_pdf_aceptan_variantes_regionales():
+    """``/en-mx/`` no es ``en`` a secas: lo que decide es la lengua."""
+    from app.services.pdf import _pdf_t
+
+    assert _pdf_t("en", "fecha") == "Date"
+    assert _pdf_t("en-MX", "fecha") == "Date"
+    assert _pdf_t("en-CO", "cobro_total") == "TOTAL PAYABLE"
+    assert _pdf_t("es", "fecha") == "Fecha"
+    assert _pdf_t("es-MX", "fecha") == "Fecha"
+    assert _pdf_t("mx", "fecha") == "Fecha"
+    assert _pdf_t(None, "fecha") == "Fecha"
+    assert _pdf_t("de", "fecha") == "Fecha"

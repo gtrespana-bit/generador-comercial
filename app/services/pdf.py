@@ -1588,6 +1588,18 @@ _PDF_LABELS = {
         "firma": "Firma",
         "aceptacion": "Aceptación",
         "dias": "días",
+        # Documento de cobro (expresamente no fiscal).
+        "cobro_titulo": "DOCUMENTO DE COBRO",
+        "cobro_num": "Documento Nº",
+        "cobro_default": "Documento de cobro",
+        "cobro_asunto": "Documento comercial de cobro no fiscal",
+        "cobro_alcance": "Alcance del documento",
+        # Una sola línea: tests/test_branding.py comprueba que esta frase
+        # exacta sigue declarando que el documento no es fiscal.
+        "cobro_alcance_txt": "Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable.",
+        "cobro_total": "TOTAL A PAGAR",
+        "info_adicional": "Información adicional",
+        "condiciones_pago": "Condiciones de pago",
     },
     "en": {
         "presupuesto": "ESTIMATE",
@@ -1611,14 +1623,31 @@ _PDF_LABELS = {
         "firma": "Signature",
         "aceptacion": "Acceptance",
         "dias": "days",
+        # Payment document (expressly non-fiscal).
+        "cobro_titulo": "PAYMENT DOCUMENT",
+        "cobro_num": "Document No.",
+        "cobro_default": "Payment document",
+        "cobro_asunto": "Non-fiscal commercial payment document",
+        "cobro_alcance": "Scope of this document",
+        "cobro_alcance_txt": (
+            "Non-fiscal commercial document. It does not replace a tax "
+            "invoice issued under the applicable regulations."
+        ),
+        "cobro_total": "TOTAL PAYABLE",
+        "info_adicional": "Additional information",
+        "condiciones_pago": "Payment terms",
     },
 }
 
 
 def _pdf_t(lang: str, key: str) -> str:
+    """Etiqueta del PDF en el idioma pedido.
+
+    Acepta variantes regionales (``en-MX``, ``es-CO``…): lo que decide es
+    la lengua, no el país, porque el documento se manda a un solo cliente.
+    """
     lang = (lang or "es").strip().lower()
-    if lang not in _PDF_LABELS:
-        lang = "es"
+    lang = "en" if lang.startswith("en") else "es"
     return _PDF_LABELS[lang].get(key, _PDF_LABELS["es"].get(key, key))
 
 
@@ -1824,8 +1853,10 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     return buf
 
 
-def generar_factura_pdf(factura, config):
+def generar_factura_pdf(factura, config, lang: str = "es"):
     """Devuelve un PDF comercial de cobro, expresamente no fiscal."""
+    en = str(lang or "es").strip().lower().startswith("en")
+    t = lambda clave: _pdf_t("en" if en else "es", clave)  # noqa: E731
     _precargar_recursos(factura, config)
     _registrar_fuentes()
     st = _estilos()
@@ -1840,37 +1871,37 @@ def generar_factura_pdf(factura, config):
         rightMargin=34,
         topMargin=30,
         bottomMargin=34,
-        title=f"Documento de cobro {factura.numero} — {factura.titulo or config.empresa_nombre}",
+        title=f"{t('cobro_default')} {factura.numero} — {factura.titulo or config.empresa_nombre}",
         author=config.empresa_nombre,
-        subject="Documento comercial de cobro no fiscal",
+        subject=t("cobro_asunto"),
     )
 
     story = []
     story += _cabecera(
         factura, config, st, azul_color,
-        titulo_doc="DOCUMENTO DE COBRO", etiqueta_num="Documento Nº", titulo_por_defecto="Documento de cobro",
+        titulo_doc=t("cobro_titulo"), etiqueta_num=t("cobro_num"),
+        titulo_por_defecto=t("cobro_default"), lang=lang,
     )
     story.append(_seccion(
-        "Alcance del documento",
-        "Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable.",
-        st,
-        azul_color,
+        t("cobro_alcance"), t("cobro_alcance_txt"), st, azul_color, lang=lang,
     ))
     story.append(Spacer(1, 14))
     for i, cap in enumerate(factura.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang)
 
     story.append(Spacer(1, 22))
-    story.append(KeepTogether(_totales(factura, st, moneda, azul_color, etiqueta_total="TOTAL A PAGAR")))
+    story.append(KeepTogether(_totales(
+        factura, st, moneda, azul_color, etiqueta_total=t("cobro_total"), lang=lang,
+    )))
 
     if factura.notas:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Información adicional", factura.notas, st, azul_color))
+        story.append(_seccion(t("info_adicional"), factura.notas, st, azul_color, lang=lang))
     if factura.condiciones:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Condiciones de pago", factura.condiciones, st, azul_color))
+        story.append(_seccion(t("condiciones_pago"), factura.condiciones, st, azul_color, lang=lang))
 
     doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(*a, estado="", **k))
     buf.seek(0)

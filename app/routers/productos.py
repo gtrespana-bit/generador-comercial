@@ -1,6 +1,6 @@
 """Catálogo de productos."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services.tasa import tasa_convertir_precio
@@ -79,25 +79,41 @@ def listar_productos(request: Request, q: str = "", db: Session = Depends(get_db
     )
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Las variantes regionales (``/en-mx/``) comparten vocabulario: lo que
+    decide la lengua del libro exportado es la lengua, no el país.
+    """
+    return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
 @router.get("/productos/exportar")
-def exportar_productos(formato: str = "csv", db: Session = Depends(get_db)):
+def exportar_productos(request: Request, formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar catálogo de productos a CSV o Excel con formato profesional."""
     productos = db.query(Producto).order_by(Producto.categoria, Producto.nombre).all()
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_productos_excel
-        buf = exportar_catalogo_productos_excel(productos)
+        buf = exportar_catalogo_productos_excel(productos, idioma=_idioma(request))
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=productos.xlsx"},
         )
 
-    filas = [[
+    filas = [_cabeceras_csv([
         "Nombre", "Marca", "Modelo", "SKU", "Descripción", "Unidad", "Precio compra", "Precio venta",
         "Categoría", "Proveedor", "Color", "Acabado", "Formato", "Entrega (días)", "Variantes",
         "Ficha técnica", "Última actualización de precio", "Usos",
-    ]]
+    ], _idioma(request))]
     for producto in productos:
         filas.append([
             producto.nombre, producto.marca, producto.modelo, producto.sku, producto.descripcion, producto.unidad,
@@ -317,10 +333,10 @@ async def bulk_export_selected_productos(request: Request, db: Session = Depends
         return _csv_response([], "productos_seleccionados.csv")
 
     productos = db.query(Producto).filter(Producto.id.in_(ids)).all()
-    filas = [[
+    filas = [_cabeceras_csv([
         "Nombre", "Marca", "Modelo", "SKU", "Descripción", "Unidad",
-        "Precio compra", "Precio venta", "Categoría", "Usos"
-    ]]
+        "Precio compra", "Precio venta", "Categoría", "Usos",
+    ], _idioma(request))]
     for p in productos:
         filas.append([
             p.nombre,

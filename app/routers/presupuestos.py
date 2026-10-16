@@ -76,6 +76,7 @@ def listar_presupuestos(
 
 @router.get("/presupuestos/exportar")
 def exportar_presupuestos(
+    request: Request,
     formato: str = "csv",
     estado: str = "",
     q: str = "",
@@ -105,7 +106,7 @@ def exportar_presupuestos(
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_historial_excel
-        buf = exportar_historial_excel(presupuestos, _config(db))
+        buf = exportar_historial_excel(presupuestos, _config(db), idioma=_idioma(request))
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -116,7 +117,10 @@ def exportar_presupuestos(
     def num(v):
         return f"{v:.2f}".replace(".", ",")
 
-    filas = [["Número", "Fecha", "Cliente", "Título", "Estado", "Moneda", "Base", "IVA", "Descuento", "Total"]]
+    filas = [_cabeceras_csv(
+        ["Número", "Fecha", "Cliente", "Título", "Estado", "Moneda", "Base",
+         "IVA", "Descuento", "Total"], _idioma(request),
+    )]
     for p in presupuestos:
         filas.append([
             p.numero, p.fecha.isoformat(), p.cliente.nombre, p.titulo, p.estado, p.moneda,
@@ -2348,7 +2352,7 @@ def enviar_presupuesto_email_web(
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,
-            lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
+            lang=_idioma(request),
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         db.rollback()
@@ -2469,7 +2473,7 @@ def _notificar_respuesta_propuesta(
                     enlace_interno=_url_interna_presupuesto(
                         request, enlace.presupuesto_id
                     ),
-                    lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
+                    lang=_idioma(request),
                 )
                 enviados.append(destinatario)
             except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
@@ -3258,7 +3262,7 @@ def ver_version(presupuesto_id: int, version_id: int, request: Request, db: Sess
 
 
 @router.get("/presupuestos/{presupuesto_id}/exportar")
-def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session = Depends(get_db)):
+def exportar_presupuesto(presupuesto_id: int, request: Request, formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar presupuesto a CSV, Excel o BC3 (FIEBDC-3)."""
     p = db.get(Presupuesto, presupuesto_id)
     if p is None:
@@ -3266,7 +3270,7 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_presupuesto_excel
-        buf = exportar_presupuesto_excel(p, _config(db))
+        buf = exportar_presupuesto_excel(p, _config(db), idioma=_idioma(request))
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -3290,7 +3294,10 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
     def num(v):
         return f"{v:.2f}".replace(".", ",")
 
-    filas = [["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad", "Precio unitario", "Importe"]]
+    filas = [_cabeceras_csv(
+        ["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad",
+         "Precio unitario", "Importe"], _idioma(request),
+    )]
     for cap in p.capitulos:
         for part in cap.partidas:
             filas.append([
@@ -3298,11 +3305,20 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
                 num(part.cantidad_total), num(part.precio_unitario), num(part.importe),
             ])
     filas.append([])
-    filas.append(["BASE IMPONIBLE", "", "", "", "", "", num(p.base)])
+    # Al final, las mismas etiquetas que el resto del documento.
+    def _etiqueta(texto):
+        return _cabeceras_csv([texto], _idioma(request))[0]
+
+    def _fila_total(texto, valor):
+        return [_etiqueta(texto), "", "", "", "", "", valor]
+
+    filas.append(_fila_total("BASE IMPONIBLE", num(p.base)))
     if p.descuento_pct:
-        filas.append(["DESCUENTO (" + f"{p.descuento_pct:.1f}".replace(".", ",") + " %)", "", "", "", "", "", "- " + num(p.descuento_monto)])
-    filas.append([f"I.V.A. ({p.impuesto_pct:.1f} %)", "", "", "", "", "", num(p.impuesto_monto)])
-    filas.append(["TOTAL", "", "", "", "", "", num(p.total)])
+        _pct = f"{p.descuento_pct:.1f}".replace(".", ",")
+        filas.append(_fila_total(f"{_etiqueta('DESCUENTO')} ({_pct} %)",
+                                 "- " + num(p.descuento_monto)))
+    filas.append(_fila_total(f"I.V.A. ({p.impuesto_pct:.1f} %)", num(p.impuesto_monto)))
+    filas.append(_fila_total("TOTAL", num(p.total)))
     return _csv_response(filas, f"presupuesto_{p.numero}.csv")
 
 
@@ -3396,6 +3412,23 @@ def listar_facturas(request: Request, db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "facturas/list.html", {"facturas": facturas})
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Los prefijos regionales (``/en-mx/``) se quedan en la lengua: el
+    documento se manda a un solo cliente y el país solo cambia la moneda.
+    """
+    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+    return str(lang)
+
+
 @router.get("/facturas/{factura_id}", response_class=HTMLResponse)
 def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
@@ -3405,12 +3438,15 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
 
 
 @router.get("/facturas/{factura_id}/pdf")
-def descargar_pdf_factura(factura_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_pdf_factura(factura_id: int, request: Request, inline: int = 0, db: Session = Depends(get_db)):
     factura = _factura_para_pdf(db, factura_id)
     if factura is None:
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
+    # El idioma del panel manda: es quien descarga quien decide la lengua.
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_factura_pdf(factura, _config(db)),
+        lambda: common.pdf_service.generar_factura_pdf(
+            factura, _config(db), lang=_idioma(request),
+        ),
         f"el PDF del documento de cobro {factura.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
