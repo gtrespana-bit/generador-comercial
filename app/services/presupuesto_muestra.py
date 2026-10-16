@@ -85,28 +85,19 @@ CONDICIONES = (
 # documento y no esté en `_TEXTO_EN` es un hueco, y la suite lo detecta.
 _TEXTO_EN = {
     # ── Cabecera ──
-    TITULO: "Full apartment refurbishment — 120 m²",
+    TITULO: 'Full apartment remodel — 120 m²',
     DIRECCION_OBRA: "7th floor, Apartment 7-B, Los Álamos Residences, Caracas",
     EMPRESA_DIRECCION: (
-        "Main Avenue, Muestra Business Centre, 1st floor, Office 10"
+        'Main Avenue, Muestra Business Center, 1st floor, Office 10'
     ),
     CLIENTE_DIRECCION: (
         "Detached house, Los Álamos Residential Park, Caracas"
     ),
     NOTA_ILUSTRATIVA + NOTAS_EXTRA: (
-        "Sample document generated with CotizaT: the company, the client, the "
-        "site address and all amounts are fictitious and do not refer to any "
-        "real person or company."
-        "\nIncludes skilled labour, first-quality materials and full project "
-        "management. Excludes furniture, soft furnishings and air-conditioning "
-        "equipment."
+        'Sample document generated with CotizaT: the company, the client, the site address and all amounts are fictitious and do not refer to any real person or company.\nIncludes skilled labor, first-quality materials and full project management. Excludes furniture, window treatments and air-conditioning equipment.'
     ),
     CONDICIONES: (
-        "Payment terms: 40% deposit to start, 35% at 50% certified progress "
-        "and 25% on handover.\n"
-        "Estimated programme: 12 weeks from signature.\n"
-        "12-month warranty on installations and finishes (see the warranty "
-        "table)."
+        'Payment terms: 40% deposit to start, 35% at 50% certified progress and 25% on handover.\nEstimated schedule: 12 weeks from signature.\n12-month warranty on installations and finishes (see the warranty table).'
     ),
 
     # ── Capítulos ──
@@ -124,22 +115,17 @@ _TEXTO_EN = {
     "Demolición de tabiques interiores de bloque de concreto de hasta 20 cm "
     "de espesor, con medios manuales y sin afectar a la estabilidad de los "
     "elementos estructurales contiguos. Incluye carga y retiro de escombros.":
-        "Demolition of internal concrete block partitions up to 20 cm thick, "
-        "by hand, without affecting the stability of the adjoining structural "
-        "elements. Includes loading and removal of waste and debris.",
+        'Demolition of internal concrete block partitions up to 20 cm thick, by hand, without affecting the stability of the adjoining structural elements. Includes loading and removal of construction debris.',
     "Demolición de revestimientos de pisos y paredes":
         "Removal of existing floor and wall finishes",
     "Levantado de pavimentos cerámicos y revestimientos de paredes existentes, "
     "con medios manuales, y retiro del material a vertedero autorizado.":
-        "Lifting of existing ceramic floor and wall finishes by hand and "
-        "removal of the material to a licensed tip.",
+        'Lifting of existing ceramic floor and wall finishes by hand and removal of the material to a licensed landfill.',
     "Protección de superficies y limpieza de obra":
         "Protection of surfaces and site cleaning",
     "Protección de áreas que permanecen, montaje de andamios ligeros y "
     "limpieza general de la obra, incluida la retirada de escombros.":
-        "Protection of areas that remain in use, erection of light-duty "
-        "scaffolding and general site cleaning, including removal of waste "
-        "and debris.",
+        'Protection of areas that remain in use, erection of light-duty scaffolding and general site cleaning, including removal of construction debris.',
 
     # ── 2 · Muros y particiones ──
     "Hoja de partición de bloque de concreto de 15 cm":
@@ -150,20 +136,16 @@ _TEXTO_EN = {
         "Construction of internal partitions in 15 cm vibrated hollow "
         "concrete block laid in cement mortar, including setting out, "
         "plumbing and light-duty scaffolding.",
-    "Pañete / repello de paredes": "Cement render to walls",
+    "Pañete / repello de paredes": 'Cement stucco to walls',
     "Repello en mortero de cemento sobre paramentos verticales de hasta 10 mm "
     "de espesor, reglado y sacado de rincones y aristas, medido a cinta "
     "corrida para su posterior pintura.":
-        "Cement mortar render to vertical surfaces up to 10 mm thick, ruled "
-        "and with angles and arrises formed, measured over the whole surface, "
-        "ready for decoration.",
+        'Cement mortar stucco to vertical surfaces up to 10 mm thick, ruled and with angles and arrises formed, measured over the whole surface, ready for decoration.',
     "Reparación de grietas y nivelación de paramentos":
-        "Crack repair and levelling of surfaces",
+        'Crack repair and leveling of surfaces',
     "Saneado de grietas y fisuras, aplicación de mortero estructural y "
     "nivelación de paramentos existentes antes del acabado final.":
-        "Cutting out and making good cracks and fissures, application of "
-        "structural mortar and levelling of existing surfaces before the "
-        "final finish.",
+        'Cutting out and patching cracks and fissures, application of structural mortar and leveling of existing surfaces before the final finish.',
 
     # ── 3 · Pisos y revestimientos ──
     "Solado de porcelanato rectificado gran formato":
@@ -171,15 +153,11 @@ _TEXTO_EN = {
     "Suministro y colocación de porcelanato rectificado 90x90 cm recibido con "
     "adhesivo cementoso C2 TE y doble encolado, juntas de 2 mm con fragüe "
     "epóxico. Incluye nivelación del soporte y cortes a hilo de agua.":
-        "Supply and laying of 90x90 cm rectified porcelain tiles bedded in "
-        "C2 TE cementitious adhesive with back-buttering, 2 mm joints pointed "
-        "with epoxy grout. Includes levelling of the substrate and wet "
-        "cutting.",
-    "Zócalo / rodapié de MDF lacado": "Lacquered MDF skirting",
+        'Supply and laying of 90x90 cm rectified porcelain tiles bedded in C2 TE cementitious adhesive with back-buttering, 2 mm joints pointed with epoxy grout. Includes leveling of the substrate and wet cutting.',
+    "Zócalo / rodapié de MDF lacado": 'Lacquered MDF baseboard',
     "Suministro y montaje de rodapié en MDF lacado blanco mate de 10 cm, "
     "fijado con adhesivo de montaje y sellado perimetral con silicona.":
-        "Supply and fixing of 10 cm matt white lacquered MDF skirting, bonded "
-        "with grab adhesive and perimeter-sealed with silicone.",
+        'Supply and fixing of 10 cm flat white lacquered MDF baseboard, bonded with construction adhesive and perimeter-sealed with silicone.',
     "Revestimiento de paredes con porcelanato 60x120 cm":
         "Wall tiling in 60x120 cm porcelain",
     "Revestimiento interior con piezas de gran formato en capa fina y doble "
@@ -195,21 +173,16 @@ _TEXTO_EN = {
     "Montaje de mobiliario de cocina (muebles bajos y altos) en melamina de "
     "alta presión, con herrajes de cierre suave. Incluye nivelación, fijación "
     "y ajuste de puertas y gavetas.":
-        "Installation of kitchen units (base and wall units) in high-pressure "
-        "melamine with soft-close ironmongery. Includes levelling, fixing and "
-        "adjustment of doors and drawers.",
-    "Encimera de cuarzo": "Quartz worktop",
+        'Installation of kitchen units (base and wall units) in high-pressure melamine with soft-close ironmongery. Includes leveling, fixing and adjustment of doors and drawers.',
+    "Encimera de cuarzo": 'Quartz countertop',
     "Suministro e instalación de encimera de cuarzo con acabado pulido, "
     "perfil recto y sellado de uniones, con huecos para fregadero y cocina.":
-        "Supply and installation of polished quartz worktop with square edge "
-        "and sealed joints, cut out for sink and hob.",
+        'Supply and installation of polished quartz countertop with square edge and sealed joints, cut out for sink and cooktop.',
     "Plomería de cocina": "Kitchen plumbing",
     "Instalación de puntos de agua fría y caliente en tubería PPR, con "
     "llaves de corte y desagües nuevos en PVC sanitario para fregadero y "
     "lavaplatos. Incluye material.":
-        "Installation of hot and cold water services in PPR pipework, with "
-        "isolating valves and new PVC sanitary waste for sink and dishwasher. "
-        "Material included.",
+        'Installation of hot and cold water services in PPR piping, with isolating valves and new PVC sanitary drain for sink and dishwasher. Material included.',
 
     # ── 5 · Baños ──
     "Instalación de plato de ducha": "Shower tray installation",
@@ -219,32 +192,26 @@ _TEXTO_EN = {
         "Supply and bedding of shower tray with waste, connection to the "
         "drainage system, fixing and silicone sealing. Fully installed and "
         "tested.",
-    "Instalación de inodoro y lavamanos": "WC and washbasin installation",
+    "Instalación de inodoro y lavamanos": 'Toilet and sink installation',
     "Suministro e instalación de inodoro y lavamanos de porcelana, con "
     "grifería, conexionado, probado y en funcionamiento.":
-        "Supply and installation of porcelain WC and washbasin with "
-        "brassware, connections, tested and in working order.",
-    "Mampara de vidrio templado": "Toughened glass shower screen",
+        'Supply and installation of porcelain Toilet and sink with faucets, connections, tested and in working order.',
+    "Mampara de vidrio templado": 'Tempered glass shower screen',
     "Suministro e instalación de mampara de vidrio templado para ducha, con "
     "perfilería, fijación a paredes y sellado con silicona.":
-        "Supply and installation of toughened glass shower screen with "
-        "framing, fixing to walls and silicone sealing.",
+        'Supply and installation of tempered glass shower screen with framing, fixing to walls and silicone sealing.',
 
     # ── 6 · Instalaciones ──
     "Instalación de plomería general": "General plumbing installation",
     "Sustitución de red de agua fría y caliente en tubería PPR, llaves de "
     "corte y desagües en PVC sanitario. Incluye pruebas de estanqueidad.":
-        "Replacement of the hot and cold water distribution in PPR pipework, "
-        "with isolating valves and PVC sanitary waste. Includes watertightness "
-        "testing.",
+        'Replacement of the hot and cold water distribution in PPR piping, with isolating valves and PVC sanitary drain. Includes watertightness testing.',
     "Instalación eléctrica (puntos de luz y tomas)":
-        "Electrical installation (lighting points and sockets)",
+        'Electrical installation (lighting points and receptacles)',
     "Instalación de circuitos, tablero con protecciones, cableado y "
     "mecanismos (interruptores y tomacorrientes) según plano. Incluye "
     "pruebas de funcionamiento.":
-        "Installation of circuits, consumer unit with protective devices, "
-        "cabling and accessories (switches and socket outlets) to the layout "
-        "drawing. Includes functional testing.",
+        'Installation of circuits, breaker panel with protective devices, cabling and accessories (switches and receptacles) to the layout drawing. Includes functional testing.',
     "Suministro y montaje de luminarias LED":
         "Supply and installation of LED light fittings",
     "Suministro e instalación de luminarias LED empotradas y decorativas, "
@@ -257,14 +224,11 @@ _TEXTO_EN = {
     "Pintado de paramentos verticales con pintura plástica premium acabado "
     "mate, dos manos más imprimación previa, con reparación de "
     "desperfectos menores y lijado entre manos.":
-        "Painting of vertical surfaces in premium matt emulsion, two coats "
-        "over a priming coat, with making good of minor defects and rubbing "
-        "down between coats.",
+        'Painting of vertical surfaces in premium flat latex paint, two coats over a priming coat, with patching of minor defects and sanding between coats.',
     "Pintura de techos": "Painting of ceilings",
     "Pintado de techos con pintura plástica premium acabado mate, dos manos "
     "más imprimación previa.":
-        "Painting of ceilings in premium matt emulsion, two coats over a "
-        "priming coat.",
+        'Painting of ceilings in premium flat latex paint, two coats over a priming coat.',
 
     # ── Conceptos de medición ──
     "Sala – cocina": "Living room – kitchen",
@@ -280,7 +244,7 @@ _TEXTO_EN = {
     "Total + extras": "Total + extras",
     "Cocina (entre muebles)": "Kitchen (between units)",
     "Muebles bajos y altos": "Base and wall units",
-    "Encimera": "Worktop",
+    "Encimera": 'Countertop',
     "Paredes": "Walls",
     "Techos": "Ceilings",
 

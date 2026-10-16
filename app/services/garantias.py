@@ -238,25 +238,20 @@ FAMILIAS_EN: dict[str, dict] = {
     "estructuras": {
         "grupo": "Structure, partitions and masonry",
         "plazo": "5 years",
-        "alcance": "Execution of the structure, reinforcement, walls, partitions, "
-        "rendering and masonry. Includes workmanship cracking. Does not cover "
-        "settlement of the existing building or structural movement outside the "
-        "works contracted.",
+        "alcance": 'Execution of the structure, reinforcement, walls, partitions, stucco and masonry. Includes workmanship cracking. Does not cover settlement of the existing building or structural movement outside the works contracted.',
         "keywords": (
             "structur", "beam", "column", "slab", "rebar", "reinforc", "lintel",
             "bricklay", "bricklayer", "wall", "partition", "blockwork", "brick",
-            "concrete", "render", "masonry", "screed", "enclosure",
+            "concrete", 'stucco', "masonry", "screed", "enclosure",
         ),
     },
     "pisos": {
         "grupo": "Flooring, paving and wall tiling",
         "plazo": "5 years",
-        "alcance": "Laying of porcelain, ceramic, stone, marble, timber flooring "
-        "and skirting: adhesion, levelling and joints. The material keeps its "
-        "manufacturer's warranty.",
+        "alcance": "Laying of porcelain, ceramic, stone, marble, timber flooring and baseboard: adhesion, leveling and joints. The material keeps its manufacturer's warranty.",
         "keywords": (
             "floor", "flooring", "tiling", "tile", "porcelain", "ceramic",
-            "marble", "granite", "stone", "cladding", "skirting", "baseboard",
+            "marble", "granite", "stone", "cladding", 'baseboard', "baseboard",
             "parquet", "laminate", "vinyl",
         ),
     },
@@ -274,9 +269,7 @@ FAMILIAS_EN: dict[str, dict] = {
     "carpinteria_aluminio": {
         "grupo": "Aluminium, PVC and glass joinery",
         "plazo": "3 years",
-        "alcance": "Sealing, squareness and operation of windows, shower screens "
-        "and sliding doors. Toughened glass and branded hardware follow the "
-        "manufacturer's warranty.",
+        "alcance": "Sealing, squareness and operation of windows, shower screens and sliding doors. Tempered glass and branded hardware follow the manufacturer's warranty.",
         "keywords": (
             "aluminium", "aluminum", "window", "shower screen", "pvc", "glazing",
             "curtain wall", "glass",
@@ -285,24 +278,20 @@ FAMILIAS_EN: dict[str, dict] = {
     "fontaneria": {
         "grupo": "Plumbing and sanitary installations",
         "plazo": "5 years",
-        "alcance": "Installation: pipework, joints, wastes and water outlets "
-        "(watertightness and operation). Taps, basins, WCs, showers and other "
-        "fittings: manufacturer's warranty.",
+        "alcance": "Installation: piping, joints, wastes and faucets (watertightness and operation). Taps, basins, Toilets, showers and other fittings: manufacturer's warranty.",
         "keywords": (
-            "plumb", "sanitary", "pipe", "pipework", "drain", "waste", "tap",
-            "faucet", "hot water", "cold water", "sewer", "siphon", "wc",
-            "toilet", "basin", "washbasin", "shower", "cistern",
+            "plumb", "sanitary", "pipe", 'piping', "drain", "waste", "tap",
+            "faucet", "hot water", "cold water", "sewer", "siphon", 'Toilet',
+            "toilet", "basin", 'sink', "shower", "cistern",
         ),
     },
     "electricidad": {
         "grupo": "Electrical and lighting",
         "plazo": "5 years",
-        "alcance": "Installation: circuits, boards, containment and lighting "
-        "points. Luminaires, wiring accessories (switches, sockets) and "
-        "electronic equipment: manufacturer's warranty.",
+        "alcance": "Installation: circuits, boards, containment and lighting points. Luminaires, wiring accessories (switches, receptacles) and electronic equipment: manufacturer's warranty.",
         "keywords": (
             "electric", "lighting", "distribution board", "fuse board",
-            "consumer unit", "breaker", "breaker panel", "socket",
+            'breaker panel', "breaker", "breaker panel", 'receptacle',
             "receptacle", "switch", "wiring", "luminaire", "led", "spot",
             "downlight", "light point",
         ),
@@ -321,8 +310,7 @@ FAMILIAS_EN: dict[str, dict] = {
     "gas": {
         "grupo": "Gas installation",
         "plazo": "5 years",
-        "alcance": "Pipework, joints and gas outlets installed by us. Appliances "
-        "(cooker, water heater, boiler): manufacturer's warranty.",
+        "alcance": "Piping, joints and gas outlets installed by us. Appliances (cooker, water heater, boiler): manufacturer's warranty.",
         "keywords": (
             "gas installation", "gas pipe", "gas outlet", "gas valve",
             "gas supply",
@@ -357,7 +345,7 @@ FAMILIAS_EN: dict[str, dict] = {
         "maintenance or touch-ups from use.",
         "keywords": (
             "paint", "painting", "stucco", "varnish", "enamel", "latex",
-            "emulsion",
+            'latex paint',
         ),
     },
     "vidrio": {
@@ -377,7 +365,7 @@ FAMILIAS_EN: dict[str, dict] = {
         "warranty.",
         "keywords": (
             "appliance", "white goods", "water heater", "boiler",
-            "extractor hood", "hob", "oven", "cooker",
+            "extractor hood", 'cooktop', "oven", "cooker",
         ),
     },
     "exteriores": {

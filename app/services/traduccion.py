@@ -30,6 +30,9 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+
+from ..paises import resolver_mercado
+from .variante_ingles import aplicar_variante
 from functools import lru_cache
 from pathlib import Path
 
@@ -205,7 +208,14 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     codigo = str(pais_codigo or "").strip().upper()
     if not codigo or codigo == "VE":
         return texto
-    frases, palabras = _compilar_glosario(codigo)
+    mercado = resolver_mercado(codigo)
+    # Los cinco mercados ingleses comparten un solo glosario español->inglés:
+    # lo que los distingue no es la traducción, sino el vocabulario de obra,
+    # y de eso se encarga la variante al final. Sin esto una empresa de
+    # Estados Unidos recibía el catálogo en venezolano sin traducir, porque
+    # no existe glosarios/US.json.
+    glosario = "EN" if mercado["idioma"] == "en" else codigo
+    frases, palabras = _compilar_glosario(glosario)
     if not frases and not palabras:
         return texto
     out = texto
@@ -249,7 +259,7 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     #          para que "\x01" no pise a "\x01\x01") ----
     for token, valor in reversed(reemplazos):
         out = out.replace(token, valor)
-    return out
+    return aplicar_variante(out, mercado)
 
 
 def traducir_partida(partida, pais_codigo: str | None):

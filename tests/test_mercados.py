@@ -442,45 +442,101 @@ def test_la_muestra_en_us_no_habla_ingles_britanico():
 
 
 def test_canada_escribe_como_el_reino_unido_y_construye_como_ee_uu():
-    """Canadá es el caso que parte en dos a quien mira solo el idioma."""
+    """Canadá es el caso que parte en dos a quien mira solo el idioma.
+
+    Mantiene el vocabulario de la base (baseboard, countertop) y solo cambia
+    la ortografía, porque en Canadá se escribe «labour» y «centre».
+    """
     from app.paises import resolver_mercado
     from app.services.variante_ingles import aplicar_variante
 
     ca = resolver_mercado("en-CA")
     texto = aplicar_variante(
-        "Lacquered MDF skirting, skilled labour, quartz worktop", ca)
-    # Vocabulario de obra: estadounidense. Ortografía: británica.
+        "Lacquered MDF baseboard, skilled labor, quartz countertop", ca)
     assert "baseboard" in texto and "countertop" in texto
-    assert "labour" in texto
+    assert "labour" in texto and "labor" not in texto
 
 
 def test_australia_llama_benchtop_a_la_encimera():
     from app.paises import resolver_mercado
     from app.services.variante_ingles import aplicar_variante
 
-    au = aplicar_variante("Quartz worktop", resolver_mercado("en-AU"))
-    assert "benchtop" in au
+    au = aplicar_variante("Quartz countertop", resolver_mercado("en-AU"))
+    assert au == "Quartz benchtop"
 
 
 def test_la_variante_respeta_mayusculas_y_plural():
     from app.paises import resolver_mercado
     from app.services.variante_ingles import aplicar_variante
 
-    us = resolver_mercado("en-US")
-    assert aplicar_variante("WC and washbasin installation", us) \
-        == "Toilet and sink installation"     # sigla: sin gritar
-    assert aplicar_variante("premium matt emulsions", us) \
-        == "premium flat latex paints"        # plural al final
-    assert aplicar_variante("SKIRTING AND WORKTOP", us) \
-        == "BASEBOARD AND COUNTERTOP"         # versalitas: todo en mayúsculas
+    gb = resolver_mercado("en-GB")
+    assert aplicar_variante("baseboard and countertops", gb) \
+        == "skirting and worktops"             # plural al final
+    assert aplicar_variante("BASEBOARD AND COUNTERTOP", gb) \
+        == "SKIRTING AND WORKTOP"              # todo en mayúsculas
+    assert aplicar_variante("WC and baseboard", gb) \
+        == "WC and skirting"                   # la sigla no se toca
 
 
-def test_reino_unido_e_irlanda_no_llevan_variante():
-    """La redacción base es británica: no hay nada que ajustar."""
+def test_estados_unidos_es_la_base_y_no_lleva_variante():
+    """La redacción base es la de EE. UU., que es a donde resuelve «en»."""
     from app.paises import resolver_mercado
     from app.services.variante_ingles import aplicar_variante, necesita_variante
 
-    for clave in ("en-GB", "en-IE", "es-ES", "es-MX"):
+    for clave in ("en-US", "es-ES", "es-MX"):
         mercado = resolver_mercado(clave)
         assert not necesita_variante(mercado), clave
-        assert aplicar_variante("skirting, labour", mercado) == "skirting, labour"
+    us = resolver_mercado("en-US")
+    texto = "baseboard, labor, countertop, drywall"
+    assert aplicar_variante(texto, us) == texto
+
+
+# ── El catálogo también habla el inglés de cada mercado ──────────────────
+
+@pytest.mark.parametrize(
+    "clave,rodapie,encimera",
+    [
+        ("US", "baseboard", "countertop"),
+        ("GB", "skirting", "worktop"),
+        ("IE", "skirting", "worktop"),
+        ("AU", "skirting", "benchtop"),
+        ("CA", "baseboard", "countertop"),
+    ],
+)
+def test_el_catalogo_se_traduce_al_ingles_de_cada_mercado(clave, rodapie, encimera):
+    """Un glosario español->inglés y una variante por mercado.
+
+    No hay cinco glosarios duplicados: hay uno y el vocabulario de cada
+    mercado, que es justamente lo que los distingue.
+    """
+    from app.services.traduccion import traducir
+
+    salida = traducir("Rodapié y mesón", clave)
+    assert rodapie in salida.lower()
+    assert encimera in salida.lower()
+
+
+def test_canada_traduce_con_vocabulario_de_ee_uu_y_ortografia_britanica():
+    from app.services.traduccion import traducir
+
+    salida = traducir("Rodapié y mano de obra", "CA")
+    assert "baseboard" in salida.lower()   # vocabulario: estadounidense
+    assert "labour" in salida.lower()      # ortografía: británica
+
+
+def test_la_mano_de_obra_se_escribe_distinto_en_cada_mercado():
+    """La prueba de que esto no es un bloque «en» con variantes cosméticas."""
+    from app.services.traduccion import traducir
+
+    # La traducción respeta la mayúscula del original: se compara en minúscula
+    assert "labor" in traducir("Mano de obra", "US").lower()
+    assert "labour" in traducir("Mano de obra", "GB").lower()
+    assert "labour" in traducir("Mano de obra", "AU").lower()
+    assert "mano de obra" in traducir("Mano de obra", "CO").lower()
+
+
+def test_el_friso_es_stucco_en_ee_uu_y_render_en_el_reino_unido():
+    from app.services.traduccion import traducir
+
+    assert "stucco" in traducir("Friso de paredes", "US").lower()
+    assert "render" in traducir("Friso de paredes", "GB").lower()
