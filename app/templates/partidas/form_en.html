@@ -1,0 +1,40 @@
+{% extends "base_en.html" %}
+{% from "partidas/_editor_en.html" import editor_partida_catalogo with context %}
+{% block title %}{{ 'Edit Line Item' if partida else 'New Line Item' }}{% endblock %}
+{% block content %}
+<div class="page-head catalog-form-head">
+  <div>
+    <span class="page-eyebrow">Line item catalog</span>
+    <h1>{{ 'Edit Line Item' if partida else 'New Line Item' }}</h1>
+    <p class="subtitle">Full sheet to define the selling price, the technical data and the cost analysis.</p>
+  </div>
+  <a href="/partidas" class="btn">← Back to catalog</a>
+</div>
+
+<!-- novalidate: the «Additional data» fields live inside a collapsed
+     <details>; if a catalog value did not satisfy step/min (for example
+     tiempo_estimado_horas 0.60 or 0.35 with step 0.05 — the floating-point
+     quotient is not a whole number and the browser flags it as invalid) or a
+     decimal with a comma was pasted, native validation blocked saving with
+     «An invalid form control ... is not focusable». The server validates the
+     name and duplicates and returns the visible error below. -->
+<form class="catalog-editor-form" method="post" enctype="multipart/form-data" action="{{ '/partidas/' ~ partida.id ~ '/editar' if partida else '/partidas/nueva' }}" novalidate>
+  {% if error %}
+  <div class="alert alert-error" role="alert">{{ error }}</div>
+  {% endif %}
+  {{ editor_partida_catalogo(partida, true) }}
+  <div class="form-actions catalog-editor-actions">
+    <span class="hint">Changes apply the next times you use this line item.</span>
+    <button class="btn btn-primary">💾 Save line item</button>
+    <a href="/partidas" class="btn">Cancel</a>
+  </div>
+</form>
+
+<datalist id="categorias-disponibles">
+  {% for categoria in categorias %}<option value="{{ categoria }}"></option>{% endfor %}
+</datalist>
+{% endblock %}
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar";</script>
+<script src="/static/js/partida_catalogo_editor.js"></script>
+{% endblock %}

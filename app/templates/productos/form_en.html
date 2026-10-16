@@ -1,0 +1,150 @@
+{% extends "base_en.html" %}
+{% block title %}{{ 'Edit Product' if producto else 'New Product' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Edit Product' if producto else 'New Product' }}</h1>
+    <p class="subtitle">Keep price, supplier and technical sheet in the catalog without reloading the estimate.</p>
+  </div>
+</div>
+
+<div class="card">
+  <form method="post" action="{{ '/productos/' ~ producto.id ~ '/editar' if producto else '/productos/nuevo' }}" enctype="multipart/form-data">
+    <div class="form-grid">
+      <div class="field field-full">
+        <label>Product name *</label>
+        <input type="text" name="nombre" value="{{ producto.nombre if producto else '' }}" required placeholder="e.g. Porcelain tile 24×24 Pearl Grey">
+      </div>
+      <div class="field">
+        <label>Brand</label>
+        <input type="text" name="marca" value="{{ producto.marca if producto else '' }}" placeholder="e.g. Venis">
+      </div>
+      <div class="field">
+        <label>Model</label>
+        <input type="text" name="modelo" value="{{ producto.modelo if producto else '' }}" placeholder="Reference or collection">
+      </div>
+      <div class="field">
+        <label>SKU / supplier code</label>
+        <input type="text" name="sku" value="{{ producto.sku if producto else '' }}" placeholder="e.g. VEN-6060-GP">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <input type="text" name="categoria" value="{{ producto.categoria if producto else 'General' }}" placeholder="Flooring, Kitchen, Bathrooms…">
+      </div>
+      <div class="field">
+        <label>Unit</label>
+        <select name="unidad">
+          {% set unidades = ['ud', 'm2', 'm', 'ml', 'm3', 'juego', 'hora', 'glb', 'kg'] %}
+          {% for u in unidades %}
+          <option value="{{ u }}" {{ 'selected' if producto and producto.unidad == u else '' }}>{{ u }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Unit cost price ({{ moneda_vista | default('USD') }})</label>
+        <input type="number" name="precio_compra" step="0.01" min="0" value="{{ producto.precio_compra if producto and producto.precio_compra is not none else '' }}" placeholder="0.00">
+        <p class="hint">Purchase cost used to work out the profit when you link it to a line item.</p>
+      </div>
+      <div class="field">
+        <label>Unit selling price ({{ moneda_vista | default('USD') }}) *</label>
+        <input type="number" name="precio_unitario" step="0.01" min="0" value="{{ producto.precio_unitario if producto else 0 }}" required>
+        <p class="hint" id="producto-margen-hint">Enter cost and selling price to see the margin.</p>
+        {% if producto and producto.fecha_actualizacion_precio %}<p class="hint">Price updated: {{ producto.fecha_actualizacion_precio | fecha }}</p>{% endif %}
+      </div>
+      <div class="field field-full">
+        <label>Detailed description</label>
+        <textarea name="descripcion" rows="4" placeholder="Sales description, use, compatibility…">{{ producto.descripcion if producto else '' }}</textarea>
+      </div>
+    </div>
+
+    <details class="catalog-advanced-fields" {% if producto and (producto.precio_compra is not none or producto.proveedor or producto.ficha_tecnica or producto.variantes) %}open{% endif %}>
+      <summary>Purchasing, delivery and presentation data <span>optional</span></summary>
+      <div class="form-grid csp-s-d932cc6d8c">
+        <div class="field">
+          <label>Supplier</label>
+          <input type="text" name="proveedor" value="{{ producto.proveedor if producto else '' }}" placeholder="Company or contact">
+        </div>
+        <div class="field">
+          <label>Lead time (days)</label>
+          <input type="number" name="tiempo_entrega_dias" step="1" min="0" value="{{ producto.tiempo_entrega_dias if producto and producto.tiempo_entrega_dias is not none else '' }}" placeholder="e.g. 7">
+        </div>
+        <div class="field">
+          <label>Colour</label>
+          <input type="text" name="color" value="{{ producto.color if producto else '' }}" placeholder="Pearl grey">
+        </div>
+        <div class="field">
+          <label>Finish</label>
+          <input type="text" name="acabado" value="{{ producto.acabado if producto else '' }}" placeholder="Matte, polished, satin…">
+        </div>
+        <div class="field">
+          <label>Format</label>
+          <input type="text" name="formato" value="{{ producto.formato if producto else '' }}" placeholder="24 × 24 in">
+        </div>
+        <div class="field field-full">
+          <label>Available variants</label>
+          <textarea name="variantes" rows="3" placeholder="Colours, formats, references or commercial alternatives…">{{ producto.variantes if producto else '' }}</textarea>
+        </div>
+
+        <div class="field field-full">
+          <label>Main photo</label>
+          {% if producto and producto.imagen %}
+          <div class="catalog-image-preview">
+            <img src="{{ producto.imagen | archivo_url }}" alt="{{ producto.nombre }}">
+            <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Remove main photo</label>
+          </div>
+          {% endif %}
+          <input type="file" name="imagen" accept="image/*">
+        </div>
+
+        <div class="field field-full">
+          <label>Image gallery <span class="hint">(optional)</span></label>
+          {% if producto and producto.imagenes_lista | length > 1 %}
+          <div class="catalog-gallery">
+            {% for imagen in producto.imagenes_lista[1:] %}
+            <label class="catalog-gallery-item">
+              <img src="{{ imagen | archivo_url }}" alt="Image of {{ producto.nombre }}">
+              <span><input type="checkbox" name="quitar_imagenes" value="{{ imagen }}"> Remove</span>
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <input type="file" name="imagenes" accept="image/*" multiple>
+          <p class="hint">You can pick several images at once. The main photo is the one used in the builder.</p>
+        </div>
+
+        <div class="field field-full">
+          <label>Technical sheet (PDF)</label>
+          {% if producto and producto.ficha_tecnica %}
+          <p class="hint csp-s-4db3f8740b"><a class="link" href="{{ producto.ficha_tecnica | archivo_url }}" target="_blank">📄 View current technical sheet</a> · <label><input type="checkbox" name="quitar_ficha_tecnica" value="1"> Remove</label></p>
+          {% endif %}
+          <input type="file" name="ficha_tecnica" accept="application/pdf,.pdf">
+        </div>
+      </div>
+    </details>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">💾 Save product</button>
+      <a href="/productos" class="btn">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  var coste = document.querySelector('[name="precio_compra"]');
+  var venta = document.querySelector('[name="precio_unitario"]');
+  var hint = document.getElementById('producto-margen-hint');
+  function numero(el) { var n = parseFloat((el && el.value || '').replace(',', '.')); return isFinite(n) ? n : 0; }
+  function actualizar() {
+    if (!hint) return; var c = numero(coste), v = numero(venta);
+    if (!c) { hint.textContent = 'Enter the cost to calculate the profit.'; return; }
+    var beneficio = v - c, margen = v ? beneficio / v * 100 : 0;
+    hint.textContent = 'Profit: $' + beneficio.toFixed(2) + ' / unit · Margin: ' + margen.toFixed(1) + '%';
+    CotizatStyles.set(hint, "color", beneficio < 0 ? 'var(--rose)' : 'var(--green)');
+  }
+  [coste, venta].forEach(function (el) { if (el) el.addEventListener('input', actualizar); }); actualizar();
+})();
+</script>
+{% endblock %}

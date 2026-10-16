@@ -1,0 +1,429 @@
+{% extends "base_en.html" %}
+{% block title %}Unit Prices · Resources{% endblock %}
+{% block content %}
+<div class="page-head csp-s-5d6e5a9c91">
+  <div>
+    <h1 class="csp-s-93f4d4c3fe">Unit Prices <span class="csp-s-20db78cd99">{{ recursos|length }}</span> <span class="csp-s-2ebe03a855">· Resources</span></h1>
+    <p class="subtitle">Labor, materials and equipment organized by family. <strong>Change a price here and it is applied automatically to every line item that uses that resource</strong> (catalog and estimates), recalculating direct costs. Amounts in <strong>{{ moneda_vista }}</strong>.</p>
+  </div>
+  <div class="csp-s-33ff8b3e89">
+    <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594">
+      <button class="btn" title="Extract resources automatically from the existing breakdowns of line items and estimates">↻ Sync from line items</button>
+    </form>
+    <a href="/recursos/nuevo" class="btn btn-primary">New resource</a>
+  </div>
+</div>
+
+<div class="partidas-toolbar card csp-s-0d510e3476">
+  <div class="toolbar-row">
+    <div class="toolbar-search">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input type="text" id="buscador" placeholder="Search by code, description, group or supplier…" data-cotizat-input="recursos-filter" autocomplete="off">
+      <button id="clearSearch" class="btn btn-ghost btn-sm cotizat-hidden csp-s-dbb704fc6f" data-cotizat-click="recursos-clear-search" title="Clear">✕</button>
+    </div>
+    <div class="toolbar-actions">
+      <div class="toolbar-meta" id="filterMeta"></div>
+      <div class="toolbar-divider"></div>
+      <button class="btn btn-sm" data-cotizat-click="recursos-expand-all">Expand</button>
+      <button class="btn btn-sm" data-cotizat-click="recursos-collapse-all">Collapse</button>
+      <form method="post" action="/recursos/bulk-ajustar" data-confirm="Adjust ALL visible resources by this %?" class="csp-s-014fb690a1">
+        <input type="number" name="porcentaje" step="any" placeholder="± %" required class="csp-s-d3156a880b">
+        <button class="btn btn-sm" type="submit" title="Adjust all unit prices">% All</button>
+      </form>
+      <a class="btn btn-sm" href="/recursos/exportar">CSV</a>
+    </div>
+  </div>
+
+  <div id="bulk-bar-recursos" class="bulk-bar">
+    <div class="bulk-left">
+      <span class="bulk-count"><strong id="sel-count-recursos">0</strong> selected</span>
+      <span class="bulk-sep"></span>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="recursos-bulk-delete">🗑 Delete</button>
+      <div class="bulk-move csp-s-014fb690a1">
+        <input type="number" id="bulk-pct" placeholder="± %" step="any" class="csp-s-9e447cb85e">
+        <button type="button" class="btn btn-sm" data-cotizat-click="recursos-bulk-percent">% Adjust</button>
+        <span class="csp-s-ec2d1ea1e8">or</span>
+        <input type="number" id="bulk-precio" placeholder="Nuevo precio ({{ moneda_vista }})" step="any" class="csp-s-0dfe35f39a">
+        <button type="button" class="btn btn-sm btn-primary" data-cotizat-click="recursos-bulk-fixed">💰 Set</button>
+      </div>
+    </div>
+    <div class="bulk-right">
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-visible">Sel. visible</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="recursos-select-none">Clear</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="recursos-select-none">✕</button>
+    </div>
+  </div>
+</div>
+
+<div class="catalog-layout" id="catalogLayout">
+  <aside class="cat-sidebar card" id="catSidebar">
+    <div class="cat-sidebar-head">
+      <div>
+        <h3>Families</h3>
+        <span class="cat-sidebar-subtitle">{{ categorias|length }} familias · {{ recursos|length }} recursos</span>
+      </div>
+      <button class="btn-icon" data-cotizat-click="recursos-toggle-sidebar" title="Collapse panel">⟨</button>
+    </div>
+    <div class="cat-sidebar-body">
+      <button class="category-btn active" data-cat="todas" id="btn-cat-todas" data-cotizat-click="recursos-filter-category">
+        <span class="cat-btn-left"><span>📂</span><span class="cat-name">All</span></span>
+        <span class="cat-count">{{ recursos|length }}</span>
+      </button>
+      {% for cat in categorias %}
+        {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
+        <button class="category-btn" data-cat="{{ cat }}" id="btn-cat-{{ cat }}" data-cotizat-click="recursos-filter-category">
+          <span class="cat-btn-left">
+            <span>
+              {% if cat == 'mano_obra' %}👷{% elif cat == 'materiales' %}🧱{% elif cat == 'complementarios' %}➕{% else %}🔧{% endif %}
+            </span>
+            <span class="cat-name">{{ etiquetas[cat] }}</span>
+          </span>
+          <span class="cat-count">{{ cat_recursos|length }}</span>
+        </button>
+      {% endfor %}
+      <div class="sidebar-help">
+        <span class="hint">💡 Grouped as in the breakdowns. Adjusting here propagates to every line item that uses that code/description.</span>
+        <div class="csp-s-ca8856959a">
+          <span class="hint csp-s-aebe12c804">mano_obra → Journeyman, Labourer…</span>
+          <span class="hint csp-s-aebe12c804">materiales → Cement, Sand…</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <button id="catSidebarExpand" class="cat-sidebar-expand cotizat-hidden" data-cotizat-click="recursos-toggle-sidebar">
+    <span>☰</span> <span>Families</span> <span class="badge csp-s-451d13ae38">{{ recursos|length }}</span>
+  </button>
+
+  <div class="catalog-main" id="catalogMain">
+    {% if recursos %}
+      {% for cat in categorias %}
+        {% set cat_recursos = recursos|selectattr('categoria','equalto',cat)|list %}
+        {% if cat_recursos %}
+        <section class="cat-section collapsed" data-categoria="{{ cat }}" id="group-{{ cat }}">
+          <header class="cat-section-head" data-cotizat-click="recursos-toggle-section">
+            <button class="cat-toggle">▼</button>
+            <div class="cat-title-wrap">
+              <h2 class="cat-title">
+                <span class="cat-dot cat-dot-{{ cat if cat in ['mano_obra', 'materiales', 'complementarios'] else 'otros' }}"></span>
+                {{ etiquetas[cat] }}
+              </h2>
+              <span class="cat-meta">{{ cat_recursos|length }} recursos · {{ (totales_categoria.get(cat, 0) if totales_categoria else 0) | money_iso(moneda_vista) }} total</span>
+            </div>
+            <div class="cat-actions" data-cotizat-click="stop-propagation">
+              <label class="cat-check" title="Select the whole family">
+                <input type="checkbox" data-cotizat-change="recursos-select-category"> <span class="csp-s-6b643de52a">Sel.</span>
+              </label>
+              <button type="button" class="btn btn-sm" data-cotizat-click="recursos-toggle-section-button">⤢</button>
+            </div>
+            <span class="cat-badge">{{ cat_recursos|length }}</span>
+          </header>
+          <div class="cat-section-body">
+            <div class="subcat-body csp-s-fbff25e9fc">
+              <table class="partidas-table">
+                <thead>
+                  <tr>
+                    <th class="col-check"><input type="checkbox" data-cotizat-change="recursos-select-category"></th>
+                    <th class="col-code sortable">Code</th>
+                    <th class="col-nombre sortable csp-s-9fda40b045">Resource</th>
+                    <th class="col-und">Unit</th>
+                    <th class="col-precio right sortable csp-s-0dfe35f39a">Unit price</th>
+                    <th class="col-usos right sortable csp-s-c5f3c1cb42">Uses</th>
+                    <th class="col-grupo csp-s-f4600e914e">Group / Supplier</th>
+                    <th class="col-actions right csp-s-0dfe35f39a">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in cat_recursos|sort(attribute='descripcion') %}
+                  <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ r.descripcion ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
+                    <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" data-cotizat-change="recursos-row-check"></td>
+                    <td class="col-code">
+                      {% if r.codigo %}<code class="code-badge">{{ r.codigo[:14] }}</code>{% else %}<span class="code-empty">—</span>{% endif %}
+                    </td>
+                    <td class="col-nombre">
+                      <div class="partida-main">
+                        <span class="partida-nombre" title="{{ r.descripcion }}">{{ r.descripcion }}</span>
+                        {% if r.usos and r.usos>0 %}<span class="usos-mini" title="Usado en {{ r.usos }} partidas/filas">· {{ r.usos }} usos</span>{% endif %}
+                      </div>
+                      <div class="partida-sub">
+                        {% if r.grupo %}<span class="desc" title="{{ r.grupo }}">{{ r.grupo }}</span>{% endif %}
+                      </div>
+                    </td>
+                    <td class="col-und"><span class="und-badge">{{ r.unidad }}</span></td>
+                    {% set pv = precios_vista.get(r.id) if precios_vista else none %}
+                    {% set tiene_mercado = pv and pv.mercado is not none and pv.origen != 'base' %}
+                    {% set precio_principal = pv.mercado if tiene_mercado else none %}
+                    <td class="col-precio right" data-precio="{{ precio_principal if precio_principal is not none else '' }}">
+                      {% if tiene_mercado %}
+                        <strong class="precio-val">{{ precio_principal | money_iso(moneda_vista) }}</strong>
+                        <div class="hint">{% if pv.origen == 'organizacion' %}Tu precio{% else %}Mercado{% endif %} {{ mercado_codigo }}: {{ pv.mercado | money_iso(moneda_vista) }}</div>
+                      {% else %}
+                        <strong class="precio-val">—</strong>
+                        <div class="hint">⚠ Sin precio de mercado para {{ mercado_codigo }}</div>
+                      {% endif %}
+                      {% if pv and pv.requiere_tasa %}<div class="hint">⚠ {{ pv.aviso or 'Falta tasa para convertir el precio de mercado' }}</div>{% elif pv and pv.aviso and tiene_mercado %}<div class="hint">⚠ {{ pv.aviso }}</div>{% endif %}
+                      {% if r.fecha_actualizacion_precio %}<div class="hint csp-s-aa47175cbd">{{ r.fecha_actualizacion_precio | fecha }}</div>{% endif %}
+                    </td>
+                    <td class="col-usos right" data-usos="{{ r.usos or 0 }}">{{ r.usos or 0 }}</td>
+                    <td class="csp-s-5a86b3c2d5">
+                      {% if r.grupo %}<div title="{{ r.grupo }}" class="csp-s-525217bbb7">{{ r.grupo }}</div>{% endif %}
+                      {% if r.proveedor %}<div class="csp-s-fd9c8d013c">🏪 {{ r.proveedor }}</div>{% endif %}
+                    </td>
+                    <td class="col-actions right">
+                      <div class="row-actions">
+                        <a href="/recursos/{{ r.id }}/impacto" class="btn btn-sm btn-ghost" title="See affected line items">Impact</a>
+                        <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Edit">✏️</a>
+                        <form method="post" action="/recursos/{{ r.id }}/eliminar" class="csp-s-a91548c594" data-confirm="Delete resource «{{ r.descripcion }}»?">
+                          <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Delete">✕</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        {% endif %}
+      {% endfor %}
+      {# Resources with no mapped category (if any) #}
+      {% set otros = recursos|rejectattr('categoria','in',categorias)|list %}
+      {% if otros %}
+        <section class="cat-section" data-categoria="otros_extra">
+          <header class="cat-section-head"><h2 class="cat-title"><span class="cat-dot"></span> Other</h2><span class="cat-badge">{{ otros|length }}</span></header>
+          <div class="cat-section-body"><p class="hint csp-s-a936d34619">{{ otros|length }} recursos sin categoría estándar.</p></div>
+        </section>
+      {% endif %}
+    {% else %}
+      <div class="card empty csp-s-d6e98c0fe2">
+        <div class="csp-s-c7d3ba0dcc">🧱</div>
+        <h3 class="csp-s-261f301f5a">No unit prices yet</h3>
+        <p class="hint csp-s-ebe7313303">Create labor and material resources here. Then, once you use them in the breakdown of a line item (by code or description), the prices are linked. <strong>Changing a price here updates automatically every line item and estimate that uses it.</strong></p>
+        <div class="csp-s-eb1a6b0356">
+          <a href="/recursos/nuevo" class="btn btn-primary">+ New Resource</a>
+          <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594"><button class="btn">↻ Sync from existing line items</button></form>
+        </div>
+        <div class="card csp-s-6c25543b62">
+          <p class="csp-s-c41374837b">Typical examples:</p>
+          <ul class="csp-s-102c7973a6">
+            <li><code>mo001</code> · Journeyman, general construction · <code>h</code> · 24.50 $/h · Labor</li>
+            <li><code>mt01</code> · Cement CEM II/B-P 32.5 · <code>kg</code> · 0.18 $/kg · Materials</li>
+            <li><code>mq01</code> · Crane truck · <code>h</code> · 45.00 $/h · Equipment</li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <div id="noResults" class="card empty cotizat-hidden csp-s-5a2dfef236">
+      <p class="csp-s-6b2a94ea3b">No results</p>
+      <p class="hint">No resources match the search or the selected family.</p>
+      <button class="btn btn-sm" data-cotizat-click="recursos-clear-filters">Clear filters</button>
+    </div>
+  </div>
+</div>
+
+
+<script nonce="{{ request.state.csp_nonce }}">
+let categoriaSeleccionada = 'todas';
+function toggleCatSidebar(){
+  const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand'), l=document.getElementById('catalogLayout');
+  if(!s||!e) return;
+  const hidden=CotizatStyles.isHidden(s);
+  if(hidden){ CotizatStyles.set(s, "display", ''); CotizatStyles.set(e, "display", 'none'); l.classList.remove('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','false'); }
+  else { CotizatStyles.set(s, "display", 'none'); CotizatStyles.set(e, "display", 'inline-flex'); l.classList.add('sidebar-hidden'); localStorage.setItem('recursos-sidebar-collapsed','true'); }
+}
+function filtrarCategoria(cat){
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  categoriaSeleccionada=cat;
+  if(cat==='todas') document.getElementById('btn-cat-todas')?.classList.add('active');
+  else document.getElementById('btn-cat-'+cat)?.classList.add('active');
+  // Al elegir una familia concreta, expandir su sección para ver los recursos.
+  if(cat!=='todas'){
+    const sec=document.getElementById('group-'+cat);
+    if(sec && sec.classList.contains('collapsed')) toggleCatSection(sec.querySelector('.cat-section-head'));
+  }
+  filtrarRecursos();
+}
+function filtrarRecursos(){
+  const q=(document.getElementById('buscador')?.value||'').toLowerCase().trim();
+  const clearBtn=document.getElementById('clearSearch');
+  if(clearBtn) CotizatStyles.set(clearBtn, "display", q?'inline-flex':'none');
+  let visiblesCats=0, visiblesRows=0;
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    const cat=sec.dataset.categoria;
+    const matchCat=categoriaSeleccionada==='todas'||categoriaSeleccionada===cat;
+    if(!matchCat){ CotizatStyles.set(sec, "display", 'none'); return; }
+    let rowsVis=0;
+    sec.querySelectorAll('.recurso-tr').forEach(row=>{
+      const txt=(row.dataset.nombre||'').toLowerCase();
+      const ok=!q||txt.includes(q);
+      CotizatStyles.set(row, "display", ok?'':'none');
+      if(ok) rowsVis++;
+    });
+    if(rowsVis>0){
+      CotizatStyles.set(sec, "display", '');
+      if(q && sec.classList.contains('collapsed')){
+        sec.classList.remove('collapsed');
+        CotizatStyles.set(sec.querySelector('.cat-section-body'), "display", '');
+        sec.querySelector('.cat-toggle').textContent='▼';
+      }
+      visiblesCats++; visiblesRows+=rowsVis;
+    } else {
+      CotizatStyles.set(sec, "display", 'none');
+    }
+  });
+  CotizatStyles.set(document.getElementById('noResults'), "display", visiblesRows===0?'block':'none');
+  const meta=document.getElementById('filterMeta');
+  if(meta){
+    if(q||categoriaSeleccionada!=='todas') meta.textContent=`${visiblesRows} recursos · ${visiblesCats} familias`;
+    else meta.textContent=`${document.querySelectorAll('.recurso-tr').length} recursos en total`;
+  }
+  updateBulkBarRecursos();
+}
+function clearSearch(){ const i=document.getElementById('buscador'); if(i){ i.value=''; filtrarRecursos(); i.focus(); } }
+function clearFilters(){
+  categoriaSeleccionada='todas';
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-cat-todas')?.classList.add('active');
+  const i=document.getElementById('buscador'); if(i) i.value='';
+  document.querySelectorAll('.cat-section').forEach(s=>{ s.classList.remove('collapsed'); CotizatStyles.set(s.querySelector('.cat-section-body'), "display", ''); s.querySelector('.cat-toggle').textContent='▼'; });
+  filtrarRecursos();
+}
+function toggleCatSection(header){
+  const sec=header.closest('.cat-section'); if(!sec) return;
+  const body=sec.querySelector('.cat-section-body'); const tg=header.querySelector('.cat-toggle');
+  const c=sec.classList.contains('collapsed');
+  if(c){ sec.classList.remove('collapsed'); CotizatStyles.set(body, "display", ''); tg.textContent='▼'; }
+  else { sec.classList.add('collapsed'); CotizatStyles.set(body, "display", 'none'); tg.textContent='▶'; }
+}
+function toggleAllCats(expand){
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    const body=sec.querySelector('.cat-section-body'); const tg=sec.querySelector('.cat-toggle');
+    if(expand){ sec.classList.remove('collapsed'); CotizatStyles.set(body, "display", ''); tg.textContent='▼'; }
+    else { sec.classList.add('collapsed'); CotizatStyles.set(body, "display", 'none'); tg.textContent='▶'; }
+  });
+}
+function onRowCheck(chk){
+  const tr=chk.closest('tr'); if(!tr) return;
+  if(chk.checked) tr.classList.add('selected'); else tr.classList.remove('selected');
+  updateBulkBarRecursos();
+}
+function toggleSelectCat(cat, checked){
+  const sec=document.getElementById('group-'+cat); if(!sec) return;
+  sec.querySelectorAll('.recurso-tr').forEach(row=>{
+    if(CotizatStyles.isHidden(row)) return;
+    const cb=row.querySelector('.row-check'); if(!cb) return;
+    cb.checked=checked; if(checked) row.classList.add('selected'); else row.classList.remove('selected');
+  });
+  document.querySelectorAll('#group-'+cat+' .col-check input[type="checkbox"]').forEach(cb=>cb.checked=checked);
+  updateBulkBarRecursos();
+}
+function updateBulkBarRecursos(){
+  const bar=document.getElementById('bulk-bar-recursos'), cnt=document.getElementById('sel-count-recursos');
+  if(!bar||!cnt) return;
+  const n=document.querySelectorAll('.row-check:checked').length;
+  if(n>0){ cnt.textContent=n; bar.classList.add('show'); CotizatStyles.set(bar, "display", 'flex'); }
+  else { bar.classList.remove('show'); CotizatStyles.set(bar, "display", 'none'); }
+}
+function selectNoneRecursos(){
+  document.querySelectorAll('.row-check').forEach(c=>{ c.checked=false; c.closest('tr')?.classList.remove('selected'); });
+  document.querySelectorAll('.cat-check input, .col-check input').forEach(c=>c.checked=false);
+  updateBulkBarRecursos();
+}
+function selectVisibleRecursos(){
+  document.querySelectorAll('.cat-section').forEach(sec=>{
+    if(CotizatStyles.isHidden(sec)) return;
+    sec.querySelectorAll('.row-check').forEach(ch=>{
+      const row=ch.closest('tr'); if(row && !CotizatStyles.isHidden(row)){ ch.checked=true; row.classList.add('selected'); }
+    });
+  });
+  updateBulkBarRecursos();
+}
+async function bulkDeleteRecursos(){
+  const ids=Array.from(document.querySelectorAll('.row-check:checked')).map(c=>c.dataset.id);
+  if(!ids.length) return;
+  if(!confirm(`Delete ${ids.length} resources?`)) return;
+  const fd=new FormData(); ids.forEach(id=>fd.append('ids', id));
+  const r=await fetch('/recursos/bulk-delete',{method:'POST', body:fd});
+  if(r.redirected) window.location=r.url; else if(r.ok) window.location.reload();
+}
+async function bulkAjustarSeleccion(modo){
+  const ids=Array.from(document.querySelectorAll('.row-check:checked')).map(c=>c.dataset.id);
+  if(!ids.length) return alert('Selecciona al menos un recurso.');
+  let pct='', fijo='';
+  if(modo==='pct') pct=document.getElementById('bulk-pct')?.value||'';
+  else fijo=document.getElementById('bulk-precio')?.value||'';
+  if(modo==='pct' && !pct.trim()) return alert('Indica un % válido.');
+  if(modo==='fijo' && !fijo.trim()) return alert('Indica un precio válido.');
+  if(!confirm(`¿Aplicar ${modo==='pct' ? pct+'% a' : 'precio '+fijo+' a'} ${ids.length} recursos y propagar a todas las partidas?`)) return;
+  const fd=new FormData(); ids.forEach(id=>fd.append('ids', id));
+  if(modo==='pct') fd.append('porcentaje', pct); else fd.append('precio_fijo', fijo);
+  const r=await fetch('/recursos/bulk-ajustar-seleccion',{method:'POST', body:fd});
+  if(r.redirected) window.location=r.url; else if(r.ok) window.location.reload(); else alert('Error');
+}
+function makeTableSortable(){
+  document.querySelectorAll('.partidas-table').forEach(table=>{
+    const headers=table.querySelectorAll('th');
+    headers.forEach((th, idx)=>{
+      if(!th.classList.contains('sortable')) return;
+      let asc=true;
+      CotizatStyles.set(th, "cursor", 'pointer'); th.title='Click to sort';
+      th.addEventListener('click', ()=>{
+        sortTable(table, idx, asc);
+        asc=!asc;
+        headers.forEach(h=>h.classList.remove('sorted-asc','sorted-desc'));
+        th.classList.add(asc?'sorted-desc':'sorted-asc');
+      });
+    });
+  });
+}
+function sortTable(table, colIndex, asc){
+  const tbody=table.querySelector('tbody'); if(!tbody) return;
+  const rows=Array.from(tbody.querySelectorAll('tr.recurso-tr'));
+  rows.sort((a,b)=>{
+    const aCell=a.children[colIndex], bCell=b.children[colIndex];
+    if(!aCell||!bCell) return 0;
+    let aVal,bVal;
+    if(aCell.dataset.precio!==undefined){ aVal=aCell.dataset.precio||'0'; bVal=bCell.dataset.precio||'0'; }
+    else if(aCell.dataset.usos!==undefined){ aVal=aCell.dataset.usos||'0'; bVal=bCell.dataset.usos||'0'; }
+    else { aVal=(aCell.textContent||'').trim().toLowerCase(); bVal=(bCell.textContent||'').trim().toLowerCase(); }
+    const aNum=parseFloat(String(aVal).replace(/[^\d.,-]/g,'').replace(',','.'))||0;
+    const bNum=parseFloat(String(bVal).replace(/[^\d.,-]/g,'').replace(',','.'))||0;
+    const aIsNum=!isNaN(aNum)&&String(aVal).match(/[\d]/);
+    const bIsNum=!isNaN(bNum)&&String(bVal).match(/[\d]/);
+    if(aIsNum&&bIsNum) return asc? aNum-bNum : bNum-aNum;
+    return asc? String(aVal).localeCompare(String(bVal),'es') : String(bVal).localeCompare(String(aVal),'es');
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+}
+window.CotizatActions.register('recursos-filter', () => filtrarRecursos());
+window.CotizatActions.register('recursos-clear-search', () => clearSearch());
+window.CotizatActions.register('recursos-expand-all', () => toggleAllCats(true));
+window.CotizatActions.register('recursos-collapse-all', () => toggleAllCats(false));
+window.CotizatActions.register('recursos-bulk-delete', () => bulkDeleteRecursos());
+window.CotizatActions.register('recursos-bulk-percent', () => bulkAjustarSeleccion('pct'));
+window.CotizatActions.register('recursos-bulk-fixed', () => bulkAjustarSeleccion('fijo'));
+window.CotizatActions.register('recursos-select-visible', () => selectVisibleRecursos());
+window.CotizatActions.register('recursos-select-none', () => selectNoneRecursos());
+window.CotizatActions.register('recursos-toggle-sidebar', () => toggleCatSidebar());
+window.CotizatActions.register('recursos-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('recursos-toggle-section', element => toggleCatSection(element));
+window.CotizatActions.register('recursos-toggle-section-button', element => {
+  const header = element.closest('.cat-section')?.querySelector('.cat-section-head');
+  if (header) toggleCatSection(header);
+});
+window.CotizatActions.register('recursos-select-category', element => {
+  const section = element.closest('.cat-section');
+  toggleSelectCat(section?.dataset.categoria || '', element.checked);
+});
+window.CotizatActions.register('recursos-row-check', element => onRowCheck(element));
+window.CotizatActions.register('recursos-clear-filters', () => clearFilters());
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  const collapsed=localStorage.getItem('recursos-sidebar-collapsed')==='true';
+  const s=document.getElementById('catSidebar'), e=document.getElementById('catSidebarExpand');
+  if(collapsed && s && e){ CotizatStyles.set(s, "display", 'none'); CotizatStyles.set(e, "display", 'inline-flex'); document.getElementById('catalogLayout')?.classList.add('sidebar-hidden'); }
+  makeTableSortable(); filtrarRecursos();
+});
+</script>
+{% endblock %}

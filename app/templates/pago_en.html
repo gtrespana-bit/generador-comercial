@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing pago-page">
+{% include "_nav_en.html" %}
+
+<header class="pago-hero">
+  <div class="pago-hero-int">
+    <span class="section-kicker">Plans</span>
+    <h1>Choose the plan that fits your company</h1>
+    <p class="sub">Pay by card (instant activation) or with the payment methods available in your country. As simple as that.</p>
+    <form method="GET" action="/pago" class="pago-pais" data-pais-pago>
+      <label for="pais-pago">Country you will pay from</label>
+      <div class="pago-pais-control">
+        <select id="pais-pago" name="pais" data-pais-pago-selector>
+          {% for pais in paises_pago %}
+          <option value="{{ pais.codigo }}" {% if pais.codigo == pais_pago.codigo %}selected{% endif %}>{{ pais.bandera }} {{ pais.nombre }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-secondary">Update</button>
+      </div>
+      <p>You will see the payment methods enabled for {{ pais_pago.nombre }}.</p>
+    </form>
+    {% if msg %}<p class="pago-aviso" role="status">{{ msg }}</p>{% endif %}
+    {# The trial is only offered to those who can take it. Whoever lands here
+       with a `msg` has already used it up or is not entitled to it: telling
+       them "free trial" again would be rubbing it in. #}
+    {% if hay_prueba_gratuita() and not msg %}
+    <p class="pago-prueba">Haven’t tried it yet? <a href="/acceso">Start with {{ dias_de_prueba() }} days free</a>, no credit card.</p>
+    {% endif %}
+  </div>
+</header>
+
+<section class="pago-planes">
+  <div class="precios">
+    <div class="plan destacado">
+      <span class="etiqueta">BEST VALUE</span>
+      <h3>Annual plan</h3>
+      {% if pais_pago.codigo == 'ES' %}
+      <div class="cifra">89 € <small>/ year</small></div>
+      <p><span class="antes">109 € / year</span> &mdash; regular price</p>
+      {% else %}
+      <div class="cifra">89 US$ <small>/ year</small></div>
+      <p><span class="antes">109 US$ / year</span> &mdash; regular price</p>
+      {% endif %}
+      <ul>
+        <li>Every feature included</li>
+        <li>Guided setup of your company and catalog</li>
+        <li>Direct email support</li>
+        <li>Updates included</li>
+      </ul>
+      <a class="btn btn-primary" href="/pago/elegir?plan=anual&amp;pais={{ pais_pago.codigo }}">Subscribe annual</a>
+    </div>
+    <div class="plan">
+      <span class="etiqueta">NO COMMITMENT</span>
+      <h3>Monthly plan</h3>
+      {% if pais_pago.codigo == 'ES' %}
+      <div class="cifra">9.99 € <small>/ month the first year</small></div>
+      <p><span class="antes">12.99 € / month</span> &mdash; regular price</p>
+      {% else %}
+      <div class="cifra">9.99 US$ <small>/ month the first year</small></div>
+      <p><span class="antes">12.99 US$ / month</span> &mdash; regular price</p>
+      {% endif %}
+      <ul>
+        <li>Every feature included</li>
+        <li>No commitment: cancel whenever you want</li>
+        <li>Direct email support</li>
+      </ul>
+      <a class="btn btn-primary" href="/pago/elegir?plan=mensual&amp;pais={{ pais_pago.codigo }}">Subscribe monthly</a>
+    </div>
+  </div>
+</section>
+
+<section class="pago-metodos">
+  <h2>Payment methods for {{ pais_pago.nombre }}</h2>
+  <p class="intro">A card activates the plan instantly. Manual payments are reviewed within 48 business hours at most.</p>
+  <div class="metodos-grid">
+    {% if stripe_disponible() %}
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">💳</div>
+      <h3>Card · Apple Pay · Google Pay</h3>
+      <p>Visa, Mastercard and American Express. Instant payment in USD, processed securely by Stripe.</p>
+    </article>
+    {% endif %}
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">🪙</div>
+      <h3>USDT (TRC-20)</h3>
+      <p>Direct USDT transfer to our wallet on the TRC-20 network. Available for international payments.</p>
+    </article>
+    {% if pais_pago.codigo == 'VE' %}
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">📱</div>
+      <h3>Mobile payment</h3>
+      <p>Transfer from any Venezuelan bank using a phone number. Fast and fee-free.</p>
+    </article>
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">₿</div>
+      <h3>Binance</h3>
+      <p>Crypto transfer via Binance ID. We accept USDT.</p>
+    </article>
+    <article class="metodo">
+      <div class="metodo-icon" aria-hidden="true">💳</div>
+      <h3>Kontigo</h3>
+      <p>Venezuelan digital wallet. Top up and pay from the Kontigo app.</p>
+    </article>
+    {% endif %}
+  </div>
+</section>
+
+<section class="pago-como-funciona">
+  <h2>How it works</h2>
+  <ol class="pasos">
+    <li>
+      <strong>Choose your plan</strong>
+      <span>Annual or monthly, whichever fits the way you work.</span>
+    </li>
+    <li>
+      <strong>Click on the plan</strong>
+      <span>Go to checkout, pick the method and pay with the details shown on screen.</span>
+    </li>
+    <li>
+      <strong>Pay</strong>
+      <span>With a card the plan activates on confirmation. If you use a transfer or crypto, attach the receipt.</span>
+    </li>
+    <li>
+      <strong>We activate your license</strong>
+      <span>Cards are instant. Manual methods are verified within 48 business hours at most.</span>
+    </li>
+  </ol>
+</section>
+
+<section class="pago-dudas">
+  <h2>Any questions?</h2>
+  <p class="intro">Write to us at <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a> and we will help you choose what is best for your company.</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="mailto:{{ email_soporte }}">Contact support</a>
+    <a class="btn btn-secondary" href="/en/">Back to the home page</a>
+  </div>
+</section>
+
+{% include "_footer_publico_en.html" %}
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/pago-metodo.js' | asset }}"></script>
+</body>
+</html>

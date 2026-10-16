@@ -1,0 +1,132 @@
+{% extends "base_en.html" %}
+{% block title %}Visor de planos{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>📐 Drawing viewer</h1>
+    <p class="subtitle">All the drawings of your estimates in one place: calibrate the scale, measure on the drawing and apply the takeoffs to your line items.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/presupuestos">Go to estimates</a>
+  </div>
+</div>
+
+{% if esquema_planos_completo is defined and not esquema_planos_completo %}
+<div class="alert alert-warning" role="status">
+  <strong>Drawing update pending.</strong>
+  The gallery and the existing drawings remain available; creation and the
+  vector editor will be enabled once the data migration finishes.
+</div>
+{% endif %}
+
+{% if grupos %}
+<div class="cards planos-stats">
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ total_planos }}</strong>
+    <span class="planos-stat-label">plano{{ 's' if total_planos != 1 }}</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ planos_calibrados }}<span class="planos-stat-total">/{{ total_planos }}</span></strong>
+    <span class="planos-stat-label">calibrated</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ total_mediciones }}</strong>
+    <span class="planos-stat-label">takeoffs saved</span>
+  </div>
+  <div class="card card-stat">
+    <strong class="planos-stat-num">{{ grupos|length }}</strong>
+    <span class="planos-stat-label">presupuesto{{ 's' if grupos|length != 1 }} con planos</span>
+  </div>
+</div>
+
+{% for grupo in grupos %}
+{% set presupuesto = grupo.presupuesto %}
+<div class="card planos-grupo">
+  <div class="planos-grupo-head">
+    <div class="planos-grupo-info">
+      <h2 class="planos-grupo-titulo">
+        <a href="/presupuestos/{{ presupuesto.id }}">{{ presupuesto.numero }}</a>
+        {% if presupuesto.titulo %}<span class="planos-grupo-titulo-extra">· {{ presupuesto.titulo }}</span>{% endif %}
+      </h2>
+      <p class="hint">
+        {{ presupuesto.cliente.nombre if presupuesto.cliente else 'Sin cliente' }} ·
+        {{ grupo.planos|length }} plano{{ 's' if grupo.planos|length != 1 }} ·
+        {{ grupo.n_mediciones }} medición(es)
+      </p>
+    </div>
+    <div class="planos-grupo-accesos">
+      <a class="btn" href="/presupuestos/{{ presupuesto.id }}/planos/exportar?formato=csv" title="Download CSV with all the quantity takeoffs of the estimate">⬇ CSV</a>
+      <a class="btn btn-primary" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Open takeoff</a>
+    </div>
+  </div>
+  <div class="planos-thumb-grid">
+    {% for plano in grupo.planos %}
+    <a class="planos-thumb" href="/presupuestos/{{ presupuesto.id }}/planos?plano={{ plano.id }}" title="Abrir «{{ plano.nombre }}» en el área de medición">
+      {% if plano.content_type and plano.content_type.startswith('image/') %}
+      <span class="planos-thumb-img"><img src="/planos/{{ plano.id }}/archivo" alt="Plano {{ plano.nombre }}" loading="lazy" decoding="async"></span>
+      {% else %}
+      <span class="planos-thumb-img planos-thumb-pdf">📄<small>PDF</small></span>
+      {% endif %}
+      <span class="planos-thumb-nombre" title="{{ plano.nombre }}">{{ plano.nombre }}</span>
+      <span class="planos-thumb-meta">
+        {% if plano.calibrado %}
+        <span class="badge badge-ok">✓ True scale ready</span>
+        {% else %}
+        <span class="badge badge-warn">Not calibrated</span>
+        {% endif %}
+        <span class="badge">{{ plano.mediciones|length }} med.</span>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+{% else %}
+<div class="card planos-empty">
+  <span class="planos-empty-icon" aria-hidden="true">📐</span>
+  <h2>No drawings uploaded yet</h2>
+  <p class="hint">The drawing viewer lets you measure on your client’s floor plans with no AI and no per-use cost.</p>
+  <div class="planos-empty-pasos">
+    <div class="planos-empty-paso"><strong>1 · Upload</strong><p>Open an estimate and go to <a class="link" href="/presupuestos">📐 Drawings</a>. Accepts PNG, JPG, WEBP or PDF.</p></div>
+    <div class="planos-empty-paso"><strong>2 · Calibrate</strong><p>Draw a line over a known dimension (a door, a hallway) and tell it how many metres it is.</p></div>
+    <div class="planos-empty-paso"><strong>3 · Measure and apply</strong><p>Measure lengths, areas and counts, and send them as a takeoff to the matching line item.</p></div>
+  </div>
+  <div class="form-actions">
+    <a class="btn btn-primary" href="/presupuestos">Choose an estimate</a>
+  </div>
+</div>
+{% endif %}
+
+<style nonce="{{ request.state.csp_nonce }}">
+.planos-stats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin-bottom: 1.25rem; }
+.planos-stat-num { display: block; font-size: 1.6rem; line-height: 1.1; }
+.planos-stat-total { font-size: .9rem; color: var(--text-soft); font-weight: 500; }
+.planos-stat-label { color: var(--text-soft); font-size: .8rem; }
+.planos-grupo { margin-bottom: 1.25rem; }
+.planos-grupo-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.planos-grupo-titulo { margin: 0; font-size: 1.05rem; }
+.planos-grupo-titulo-extra { color: var(--text-soft); font-weight: 500; }
+.planos-grupo-info .hint { margin: .15rem 0 0; }
+.planos-thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .8rem; }
+.planos-thumb { display: flex; flex-direction: column; gap: .35rem; padding: .6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s ease, box-shadow .15s ease; }
+.planos-thumb:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+.planos-thumb-img { display: flex; align-items: center; justify-content: center; height: 130px; border-radius: 6px; overflow: hidden; background: var(--bg-soft, #f1f5f9); }
+.planos-thumb-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.planos-thumb-pdf { flex-direction: column; color: var(--text-soft); font-size: 1.8rem; gap: .2rem; }
+.planos-thumb-pdf small { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.planos-thumb-nombre { font-weight: 600; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.planos-thumb-meta { display: flex; gap: .3rem; flex-wrap: wrap; }
+.planos-empty { text-align: center; padding: 2.5rem 1.5rem; }
+.planos-empty-icon { font-size: 2.6rem; display: block; margin-bottom: .5rem; }
+.planos-empty-pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 1.25rem auto; max-width: 760px; text-align: left; }
+.planos-empty-paso { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .9rem 1rem; background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.planos-empty-paso strong { display: block; margin-bottom: .25rem; color: var(--accent); }
+.planos-empty-paso p { margin: 0; font-size: .84rem; color: var(--text-soft); }
+.planos-grupo-accesos { display:flex; gap:.5rem; flex-wrap:wrap; }
+@media (max-width: 700px) {
+  .planos-grupo-head { align-items: flex-start; flex-direction: column; }
+  .planos-grupo-accesos { width: 100%; }
+}
+</style>
+{% endblock %}

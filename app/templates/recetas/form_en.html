@@ -1,0 +1,249 @@
+{% extends "base_en.html" %}
+{% block title %}{{ 'Editar Pack de Estancia' if receta else 'Nuevo Pack de Estancia' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ '✏️ Editar Pack de Estancia' if receta else '＋ Nuevo Pack de Estancia' }}</h1>
+    <p class="subtitle">Set up the line items of the pack and how they scale against the base size of the room.</p>
+  </div>
+  <div>
+    <a href="/recetas" class="btn">← Back to the list</a>
+  </div>
+</div>
+
+<form method="post" action="{{ '/recetas/' ~ receta.id ~ '/editar' if receta else '/recetas/nueva' }}" id="receta-form">
+  <input type="hidden" name="datos" id="receta-datos-json" value='{{ receta.datos if (receta and receta.datos) else "[]" }}'>
+
+  <div class="card">
+    <h2>Room / Pack data</h2>
+    <div class="csp-s-10c9dd2ac4">
+      <div>
+        <label class="csp-s-b44d0ad3fc">Pack name *</label>
+        <input type="text" name="nombre" value="{{ receta.nombre if receta else '' }}" placeholder="e.g. Luxury Master Bathroom" required class="input csp-s-9ccc4ca9d6">
+      </div>
+      <div>
+        <label class="csp-s-b44d0ad3fc">Category</label>
+        <select name="categoria" class="input csp-s-9ccc4ca9d6">
+          {% set cat_actual = receta.categoria if receta else 'Baños' %}
+          <option value="Baños" {{ 'selected' if cat_actual == 'Baños' else '' }}>Baños</option>
+          <option value="Cocinas" {{ 'selected' if cat_actual == 'Cocinas' else '' }}>Cocinas</option>
+          <option value="Suelos" {{ 'selected' if cat_actual == 'Suelos' else '' }}>Suelos</option>
+          <option value="Habitaciones" {{ 'selected' if cat_actual == 'Habitaciones' else '' }}>Habitaciones</option>
+          <option value="Electricidad" {{ 'selected' if cat_actual == 'Electricidad' else '' }}>Electricidad</option>
+          <option value="Otros" {{ 'selected' if cat_actual == 'Otros' else '' }}>Otros</option>
+        </select>
+      </div>
+      <div>
+        <label class="csp-s-b44d0ad3fc">Base unit</label>
+        <input type="text" name="unidad_base" value="{{ receta.unidad_base if receta else 'm²' }}" placeholder="e.g. m² or ea" class="input csp-s-9ccc4ca9d6">
+      </div>
+      <div>
+        <label class="csp-s-b44d0ad3fc">Base size *</label>
+        <input type="number" step="0.1" name="cantidad_base_default" value="{{ receta.cantidad_base_default if receta else '10.0' }}" required class="input csp-s-9ccc4ca9d6">
+      </div>
+    </div>
+    <div class="csp-s-442b023e55">
+      <label class="csp-s-b44d0ad3fc">Description</label>
+      <input type="text" name="descripcion" value="{{ receta.descripcion if receta else '' }}" placeholder="General description of this remodel pack..." class="input csp-s-9ccc4ca9d6">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head csp-s-8158086861">
+      <h2>Line items and coefficients of the pack</h2>
+      <button type="button" class="btn btn-primary" id="btn-add-item">＋ Add line item to pack</button>
+    </div>
+    <p class="muted csp-s-68227a9129">
+      • <strong>Proportional:</strong> The quantity inserted will be <code>Coefficient × Room size</code> (e.g. 1.0 for the floor, 3.2 for wall tile).<br>
+      • <strong>Fixed:</strong> That quantity is always inserted (e.g. 1.0 toilet, 4.0 LED lights).
+    </p>
+
+    <div class="csp-s-fbff25e9fc">
+      <table class="table csp-s-647f0e7166" id="tabla-receta-items">
+        <thead>
+          <tr>
+            <th class="csp-s-4a8c07ab4e"></th>
+            <th class="csp-s-fc756b900f">Line item</th>
+            <th class="csp-s-d0b3de866a">Calculation type</th>
+            <th class="csp-s-e2bc274868">Coef. / Qty.</th>
+            <th class="csp-s-0d8e6a9a3c">Unit</th>
+            <th class="csp-s-278acc1abc">Base price ($)</th>
+            <th class="csp-s-04a74b9de2">Technical description / Category</th>
+            <th class="csp-s-eed296bb85"></th>
+          </tr>
+        </thead>
+        <tbody id="receta-tbody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="csp-s-dd6ee1b1c8">
+    <a href="/recetas" class="btn">Cancel</a>
+    <button type="submit" class="btn btn-primary csp-s-6b2a94ea3b">💾 Save Room Pack</button>
+  </div>
+</form>
+
+<script nonce="{{ request.state.csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function() {
+  var tbody = document.getElementById("receta-tbody");
+  var inputJson = document.getElementById("receta-datos-json");
+  var btnAdd = document.getElementById("btn-add-item");
+  var form = document.getElementById("receta-form");
+
+  var items = [];
+  try {
+    items = JSON.parse(inputJson.value || "[]");
+  } catch (e) {
+    items = [];
+  }
+
+  function renderRows() {
+    tbody.replaceChildren();
+    items.forEach(function(item, index) {
+      var tr = document.createElement("tr");
+      tr.dataset.idx = index;
+
+      // Drag/Index handle
+      var tdHandle = document.createElement("td");
+      CotizatStyles.set(tdHandle, "textAlign", "center");
+      CotizatStyles.set(tdHandle, "color", "var(--muted)");
+      tdHandle.textContent = (index + 1);
+      tr.appendChild(tdHandle);
+
+      // Nombre partida
+      var tdNombre = document.createElement("td");
+      var inpNombre = document.createElement("input");
+      inpNombre.type = "text";
+      inpNombre.className = "input";
+      CotizatStyles.set(inpNombre, "width", "100%");
+      inpNombre.value = item.nombre || "";
+      inpNombre.placeholder = "Nombre de la partida...";
+      inpNombre.required = true;
+      inpNombre.addEventListener("input", function() { item.nombre = this.value; });
+      tdNombre.appendChild(inpNombre);
+      tr.appendChild(tdNombre);
+
+      // Calculation type (proporcional | fijo)
+      var tdTipo = document.createElement("td");
+      var selTipo = document.createElement("select");
+      selTipo.className = "input";
+      CotizatStyles.set(selTipo, "width", "100%");
+      var proporcional = document.createElement("option");
+      proporcional.value = "proporcional";
+      proporcional.textContent = "Proporcional";
+      selTipo.appendChild(proporcional);
+      var fijo = document.createElement("option");
+      fijo.value = "fijo";
+      fijo.textContent = "Fijo";
+      selTipo.appendChild(fijo);
+      selTipo.value = item.tipo_calculo || "proporcional";
+      selTipo.addEventListener("change", function() {
+        item.tipo_calculo = this.value;
+      });
+      tdTipo.appendChild(selTipo);
+      tr.appendChild(tdTipo);
+
+      // Coeficiente / cantidad_fija
+      var tdCoef = document.createElement("td");
+      CotizatStyles.set(tdCoef, "textAlign", "center");
+      var inpCoef = document.createElement("input");
+      inpCoef.type = "number";
+      inpCoef.step = "0.01";
+      inpCoef.className = "input";
+      CotizatStyles.set(inpCoef, "width", "100%");
+      CotizatStyles.set(inpCoef, "textAlign", "center");
+      var valNum = (item.tipo_calculo === "fijo") ? (item.cantidad_fija || 1.0) : (item.coeficiente || 1.0);
+      inpCoef.value = valNum;
+      inpCoef.addEventListener("input", function() {
+        var n = parseFloat(this.value) || 0;
+        if (item.tipo_calculo === "fijo") {
+          item.cantidad_fija = n;
+        } else {
+          item.coeficiente = n;
+        }
+      });
+      tdCoef.appendChild(inpCoef);
+      tr.appendChild(tdCoef);
+
+      // Unidad
+      var tdUnd = document.createElement("td");
+      CotizatStyles.set(tdUnd, "textAlign", "center");
+      var inpUnd = document.createElement("input");
+      inpUnd.type = "text";
+      inpUnd.className = "input";
+      CotizatStyles.set(inpUnd, "width", "100%");
+      CotizatStyles.set(inpUnd, "textAlign", "center");
+      inpUnd.value = item.unidad || "m²";
+      inpUnd.addEventListener("input", function() { item.unidad = this.value; });
+      tdUnd.appendChild(inpUnd);
+      tr.appendChild(tdUnd);
+
+      // Precio base
+      var tdPrecio = document.createElement("td");
+      CotizatStyles.set(tdPrecio, "textAlign", "right");
+      var inpPrecio = document.createElement("input");
+      inpPrecio.type = "number";
+      inpPrecio.step = "0.01";
+      inpPrecio.className = "input";
+      CotizatStyles.set(inpPrecio, "width", "100%");
+      CotizatStyles.set(inpPrecio, "textAlign", "right");
+      inpPrecio.value = (item.precio != null) ? item.precio : "";
+      inpPrecio.placeholder = "0.00";
+      inpPrecio.addEventListener("input", function() { item.precio = parseFloat(this.value) || 0; });
+      tdPrecio.appendChild(inpPrecio);
+      tr.appendChild(tdPrecio);
+
+      // Description / Category
+      var tdDesc = document.createElement("td");
+      var inpDesc = document.createElement("input");
+      inpDesc.type = "text";
+      inpDesc.className = "input";
+      CotizatStyles.set(inpDesc, "width", "100%");
+      inpDesc.value = item.descripcion || "";
+      inpDesc.placeholder = "Descripción técnica y de alcance...";
+      inpDesc.addEventListener("input", function() { item.descripcion = this.value; });
+      tdDesc.appendChild(inpDesc);
+      tr.appendChild(tdDesc);
+
+      // Delete button
+      var tdDel = document.createElement("td");
+      CotizatStyles.set(tdDel, "textAlign", "center");
+      var btnDel = document.createElement("button");
+      btnDel.type = "button";
+      btnDel.className = "btn btn-sm btn-danger";
+      btnDel.textContent = "✕";
+      btnDel.title = "Eliminar partida del pack";
+      btnDel.addEventListener("click", function() {
+        items.splice(index, 1);
+        renderRows();
+      });
+      tdDel.appendChild(btnDel);
+      tr.appendChild(tdDel);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  btnAdd.addEventListener("click", function() {
+    items.push({
+      nombre: "",
+      descripcion: "",
+      unidad: "m²",
+      precio: 10.00,
+      categoria: "Albañilería y Revestimientos",
+      tipo_calculo: "proporcional",
+      coeficiente: 1.0,
+      cantidad_fija: 1.0
+    });
+    renderRows();
+  });
+
+  form.addEventListener("submit", function() {
+    inputJson.value = JSON.stringify(items);
+  });
+
+  renderRows();
+});
+</script>
+{% endblock %}
