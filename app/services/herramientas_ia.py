@@ -633,9 +633,12 @@ def resolver_herramienta_ia(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str | None:
     """Resuelve búsquedas, revisiones y planes sin llamar a un LLM."""
     texto = normalizar(consulta)
+    # Las herramientas siguen respondiendo en castellano; el idioma se acepta
+    # aquí para no romper la firma, pero su traducción llega en otra pasada.
     if _MEDICION_RE.search(consulta):
         return responder_mediciones(consulta, contexto)
     if _FALTANTES_RE.search(texto):

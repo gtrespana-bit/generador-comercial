@@ -159,6 +159,57 @@ FUNCIONES AVANZADAS:
 """
 
 
+# ---------------------------------------------------------------------------
+# Manual en inglés
+# ---------------------------------------------------------------------------
+# El asistente se lo lleva el idioma del panel: si la organización trabaja en
+# inglés, el modelo recibe el manual en inglés y contesta en inglés. Las rutas
+# son las mismas en los dos idiomas (solo cambian los prefijos públicos).
+
+MANUAL_COTIZAT_EN = """\
+=== COTIZAT MANUAL AND CAPABILITIES ===
+CotizaT is browser-first software for estimates, unit price analysis (APU) and the commercial control of works and refurbishments.
+
+MAIN ROUTES AND NAVIGATION:
+- /inicio: Dashboard with billing metrics, estimate status, estimated margin, conversion rate and shortcuts.
+- /presupuestos: Estimate list filtered by status (Draft, Sent, Approved, Rejected, Expired), client and dates.
+- /presupuestos/nuevo: Visual estimate builder with unlimited sections, line items, broken-down measurements and products.
+- /clientes: Client directory with tax ID, contact, address and phone.
+- /partidas: Catalogue of reusable line items with unit price analysis (APU), breakdown of materials / labour / plant and output rates.
+- /recursos: Price schedule of resources (materials, labour hours and plant hire).
+- /productos: Catalogue of materials and products with photograph and unit price.
+- /plantillas: Pre-built estimate models and structures, reusable with one click.
+- /recetas: Room packs of line items (standard bathroom, fitted kitchen, general painting, and so on).
+- /facturas: Non-fiscal commercial payment documents (DC-2026-001).
+- /reportes: Commercial reports, balance export and margin analysis.
+- /buscar: Instant global search across clients, estimates, line items, products and notes.
+- /configuracion: Company tax details, logo with PDF size control, currency, VAT, exchange rate, backups.
+- /guia-rapida: Quick reference manual and workflow.
+
+KEYBOARD SHORTCUTS IN THE ESTIMATE EDITOR:
+- Alt + P: add a new line item immediately.
+- Alt + C: add a new section.
+- Ctrl + K (or press /): open and focus the line-item catalogue search.
+- Enter inside the line-item fields: moves on (Title → Quantity → Unit price) without leaving the row or creating empty items.
+- Ctrl + Z: undo recent structural changes.
+- Ctrl + Enter: save the current estimate.
+- Drag and drop: reorder line items between sections.
+
+ADVANCED FEATURES:
+- Broken-down measurements: each line item can list rooms or areas (for example Bathroom 4.50 m², Hallway 2.20 m²); the sum sets the quantity automatically.
+- Import from Excel (.xlsx): accepts 8- and 10-column templates (DPT020 / RBE010). Sorts costs into materials, labour, direct sundries and other. Output rates and unit prices stay editable.
+- Currencies and exchange rate: supports USD, VES, COP, MXN, EUR and more, with automatic or manual rate updates and a currency clause.
+- Professional ReportLab PDF: corporate header, company box with navy band, status watermark (DRAFT, REJECTED, EXPIRED), digital signatures (client and company), warranty annex by type of work and optional cover page with a project photo.
+- Payment documents (DC): an approved estimate raises a commercial payment document that states it does not replace a tax invoice.
+- WhatsApp sending: opens wa.me with a summary of the estimate, written ready to send to the client.
+"""
+
+
+def _es_ingles(idioma) -> bool:
+    """Las variantes regionales (/en-mx/) comparten vocabulario."""
+    return str(idioma or "es").strip().lower().startswith("en")
+
+
 # Palabras conversacionales que no deben convertirse en filtros del catálogo.
 # El problema original era precisamente tomar las tres primeras palabras de
 # «qué partida es para demolición de porcelanato»: se buscaba ``qué partida
@@ -172,6 +223,12 @@ _PALABRAS_VACIAS_CONSULTA_PARTIDAS = frozenset({
     "tu", "una", "uno", "usar", "uso", "utilizar", "y",
     "busca", "buscar", "buscame", "encuentra", "encontrar", "localiza",
     "recomienda", "recomendar", "sugiere", "sugerir", "catalogo",
+    # Inglés: mismas palabras vacías al preguntar en inglés.
+    "a", "an", "the", "which", "what", "for", "of", "to", "need", "want",
+    "use", "using", "find", "search", "look", "up", "locate", "recommend",
+    "suggest", "item", "items", "line", "catalog", "catalogue", "please",
+    "could", "would", "should", "there", "any", "me", "my", "is", "are",
+    "and", "or", "with", "it", "this", "that", "do", "does", "can", "tell",
 })
 
 _PATRONES_INTENCION_PARTIDAS = (
@@ -180,6 +237,12 @@ _PATRONES_INTENCION_PARTIDAS = (
     r"\b(?:necesito|quiero|uso|usar)\s+(?:una\s+|la\s+)?partida\b",
     r"\b(?:busca|buscar|buscame|encuentra|encontrar|localiza|recomienda|sugiere)\w*\b.*\bpartidas?\b",
     r"\bpartidas?\b.*\b(?:busca|buscar|encuentra|localiza|recomienda|sugiere)\w*\b",
+    # Inglés: «which line item…», «line item for…», «I need a line item»…
+    r"\b(?:which|what)\s+(?:is\s+|are\s+|would\s+be\s+)?(?:the\s+)?(?:line\s+)?items?\b",
+    r"\b(?:line\s+)?items?\s+(?:for|of|to)\b",
+    r"\b(?:i\s+need|i\s+want|i\s+use|use)\s+(?:an?\s+|the\s+)?(?:line\s+)?item\b",
+    r"\b(?:find|search|look\s+up|locate|recommend|suggest)\w*\b.*\b(?:line\s+)?items?\b",
+    r"\b(?:line\s+)?items?\b.*\b(?:find|search|locate|recommend|suggest)\w*\b",
 )
 
 
@@ -188,14 +251,19 @@ def es_consulta_busqueda_partidas(consulta: str) -> bool:
     from .busqueda_catalogo import normalizar
 
     texto = normalizar(consulta)
-    if not texto or "partida" not in texto:
+    if not texto:
+        return False
+    # En castellano «partida»; en inglés «item» (con o sin «line» delante).
+    if not re.search(r"\b(?:partida|item|items)\b", texto):
         return False
     # «Qué capítulos y partidas incluyo para remodelar un baño» es una
     # planificación de alcance; la FAQ/IA puede resolverla mejor que una lista
     # plana. Una petición explícita de búsqueda sí consulta el catálogo.
     if (
-        "capitulos y partidas" in texto
-        and not re.search(r"\b(busca|buscar|encuentra|localiza)\w*\b", texto)
+        re.search(r"(?:capitulos y partidas|sections and (?:line )?items)", texto)
+        and not re.search(
+            r"\b(busca|buscar|encuentra|localiza|find|search|locate)\w*\b", texto
+        )
     ):
         return False
     return any(re.search(patron, texto) for patron in _PATRONES_INTENCION_PARTIDAS)
@@ -435,8 +503,10 @@ def responder_busqueda_partidas(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str:
     """Construye una respuesta accionable a partir de resultados verificados."""
+    en = _es_ingles(idioma)
     busqueda = buscar_partidas_catalogo(db, consulta, limite=5)
     termino = busqueda["consulta"] or extraer_consulta_partidas(consulta)
     enlace_busqueda = f"/partidas?q={quote_plus(termino)}" if termino else "/partidas"
@@ -451,6 +521,15 @@ def responder_busqueda_partidas(
                 "consulta": termino[:120],
             },
         )
+        if en:
+            return (
+                "### 🔎 Searched your catalogue\n\n"
+                f"I looked for **{_texto_catalogo_seguro(termino)}** among the "
+                "active line items, but there is no match reliable enough. I am "
+                "not going to invent a code or a price.\n\n"
+                f"[Open the catalogue with this search]({enlace_busqueda}) · "
+                "[Create a new line item](/partidas/nueva)"
+            )
         return (
             "### 🔎 Búsqueda realizada en tu catálogo\n\n"
             f"He buscado **{_texto_catalogo_seguro(termino)}** entre las partidas activas, "
@@ -459,12 +538,22 @@ def responder_busqueda_partidas(
             "[Crear una partida nueva](/partidas/nueva)"
         )
 
-    encabezado = (
-        "### 🔎 Partidas encontradas en tu catálogo\n\n"
-        f"He buscado **{_texto_catalogo_seguro(termino)}** en el catálogo activo."
-    )
+    if en:
+        encabezado = (
+            "### 🔎 Line items found in your catalogue\n\n"
+            f"I looked for **{_texto_catalogo_seguro(termino)}** in the active "
+            "catalogue."
+        )
+    else:
+        encabezado = (
+            "### 🔎 Partidas encontradas en tu catálogo\n\n"
+            f"He buscado **{_texto_catalogo_seguro(termino)}** en el catálogo activo."
+        )
     if not busqueda["coincidencia_exacta"]:
-        encabezado += " No existe una coincidencia completa; estas son las más cercanas."
+        encabezado += (
+            " There is no complete match; these are the closest ones." if en else
+            " No existe una coincidencia completa; estas son las más cercanas."
+        )
     lineas = [encabezado, ""]
     for indice, partida in enumerate(resultados, start=1):
         codigo = _texto_catalogo_seguro(partida["codigo"])
@@ -479,37 +568,67 @@ def responder_busqueda_partidas(
         precio = float(partida["precio"] or 0)
         precio_texto = (
             f"{precio:,.2f} {partida['moneda']}"
-            if precio > 0 else "sin precio de referencia"
+            if precio > 0 else ("no reference price" if en else "sin precio de referencia")
         )
-        lineas.extend((
-            f"{indice}. **{codigo} · {nombre}**",
-            f"   - Unidad: `{_texto_catalogo_seguro(partida['unidad'])}` · Catálogo: **{precio_texto}**",
-            f"   - Ubicación: {ruta or 'Catálogo general'}",
-            f"   - [Ver o editar esta partida](/partidas/{partida['id']}/editar)",
-        ))
+        if en:
+            lineas.extend((
+                f"{indice}. **{codigo} · {nombre}**",
+                f"   - Unit: `{_texto_catalogo_seguro(partida['unidad'])}` · "
+                f"Catalogue: **{precio_texto}**",
+                f"   - Location: {ruta or 'General catalogue'}",
+                f"   - [View or edit this line item](/partidas/{partida['id']}/editar)",
+            ))
+        else:
+            lineas.extend((
+                f"{indice}. **{codigo} · {nombre}**",
+                f"   - Unidad: `{_texto_catalogo_seguro(partida['unidad'])}` · Catálogo: **{precio_texto}**",
+                f"   - Ubicación: {ruta or 'Catálogo general'}",
+                f"   - [Ver o editar esta partida](/partidas/{partida['id']}/editar)",
+            ))
         pagina_actual = str((contexto or {}).get("pagina") or "")
         if (contexto or {}).get("presupuesto_id") and re.fullmatch(
             r"/presupuestos/\d+/editar", pagina_actual
         ):
             lineas.append(
+                "   - [Add to the open estimate]"
+                f"(/api/ia/accion/agregar-partida?partida_id={partida['id']})"
+                if en else
                 f"   - [Añadir al presupuesto abierto](/api/ia/accion/agregar-partida?partida_id={partida['id']})"
             )
 
     consulta_normal = termino.lower()
     if (
-        ("porcelanato" in consulta_normal or "ceram" in consulta_normal)
-        and not any(zona in consulta_normal for zona in ("piso", "pared", "rodapie", "rodapié"))
+        ("porcelanato" in consulta_normal or "ceram" in consulta_normal
+         or "tile" in consulta_normal or "tiling" in consulta_normal)
+        and not any(zona in consulta_normal for zona in (
+            "piso", "pared", "rodapie", "rodapié", "floor", "wall", "skirting",
+        ))
     ):
+        if en:
+            lineas.extend((
+                "",
+                "**To narrow it down:** tell me whether it is **floor, wall or "
+                "skirting**; they are different scopes and units.",
+            ))
+        else:
+            lineas.extend((
+                "",
+                "**Para afinar la elección:** dime si se trata de **piso, pared o rodapié**; "
+                "son alcances y unidades diferentes.",
+            ))
+    if en:
         lineas.extend((
             "",
-            "**Para afinar la elección:** dime si se trata de **piso, pared o rodapié**; "
-            "son alcances y unidades diferentes.",
+            f"[See every result in Line items]({enlace_busqueda})",
+            "Prices are references from the active catalogue; check the scope "
+            "and the unit price analysis before you budget.",
         ))
-    lineas.extend((
-        "",
-        f"[Ver todos los resultados en Partidas]({enlace_busqueda})",
-        "Los importes son referencias del catálogo activo; revisa el alcance y el APU antes de presupuestar.",
-    ))
+    else:
+        lineas.extend((
+            "",
+            f"[Ver todos los resultados en Partidas]({enlace_busqueda})",
+            "Los importes son referencias del catálogo activo; revisa el alcance y el APU antes de presupuestar.",
+        ))
     return "\n".join(lineas)
 
 
@@ -517,20 +636,24 @@ def resolver_accion_funcional(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str | None:
     """Ejecuta acciones deterministas antes de recurrir al texto generativo."""
     from .herramientas_ia import resolver_herramienta_ia
 
-    respuesta = resolver_herramienta_ia(db, consulta, contexto)
+    respuesta = resolver_herramienta_ia(db, consulta, contexto, idioma)
     if respuesta:
         return respuesta
     if es_consulta_busqueda_partidas(consulta):
-        return responder_busqueda_partidas(db, consulta, contexto)
+        return responder_busqueda_partidas(db, consulta, contexto, idioma)
     return None
 
 
-def _construir_contexto_organizacion(db: Session, consulta_usuario: str) -> str:
+def _construir_contexto_organizacion(
+    db: Session, consulta_usuario: str, idioma: str = "es",
+) -> str:
     """Extrae configuración y resultados verificados del catálogo activo."""
+    en = _es_ingles(idioma)
     contexto = []
     try:
         from ..models import Configuracion
@@ -557,7 +680,10 @@ def _construir_contexto_organizacion(db: Session, consulta_usuario: str) -> str:
                 )
         if partidas_encontradas:
             contexto.append(
-                "RESULTADOS VERIFICADOS DEL CATÁLOGO ACTIVO (datos reales, no inventar otros):\n"
+                ("VERIFIED RESULTS FROM THE ACTIVE CATALOGUE (real data, do "
+                 "not invent any others):\n" if en else
+                 "RESULTADOS VERIFICADOS DEL CATÁLOGO ACTIVO (datos reales, no "
+                 "inventar otros):\n")
                 + "\n".join(partidas_encontradas)
             )
     except Exception as exc:
@@ -570,12 +696,43 @@ def construir_system_prompt(
     db: Session,
     consulta: str = "",
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str:
     """Construye el prompt con manual, catálogo y pantalla actual verificada."""
     from .herramientas_ia import contexto_pagina_verificado
 
-    contexto_org = _construir_contexto_organizacion(db, consulta)
+    contexto_org = _construir_contexto_organizacion(db, consulta, idioma)
     contexto_pagina = contexto_pagina_verificado(db, contexto)
+    if _es_ingles(idioma):
+        return (
+            "You are the CotizaT Intelligent Assistant, an expert copilot for "
+            "estimates, refurbishments, unit price analysis (APU), technical "
+            "specifications and use of the software.\n\n"
+            "LANGUAGE: reply in English, using professional construction "
+            "terminology (US spelling; UK where it differs).\n\n"
+            "YOUR GOALS:\n"
+            "1. Solve the actual task before explaining it. If the context "
+            "contains VERIFIED RESULTS FROM THE ACTIVE CATALOGUE, show those "
+            "line items with code, unit, price and link; never answer only "
+            "'go to the search' or claim you cannot query the catalogue.\n"
+            "2. Answer software questions with exact instructions, naming "
+            "buttons, routes (such as /presupuestos/nuevo, /configuracion) and "
+            "keyboard shortcuts (Alt+P, Alt+C, Ctrl+K, Ctrl+Enter).\n"
+            "3. Help contractors, architects and builders structure "
+            "construction estimates (sections, logical line items, "
+            "measurements, output rates).\n"
+            "4. Draft professional technical descriptions for construction "
+            "line items when asked.\n"
+            "5. Be direct, concise, polite and action-oriented. Lead with the "
+            "result and use bullets, bold text and internal links in Markdown. "
+            "Never invent IDs, codes, prices or line items.\n"
+            "6. STRICT RULE ON CALCULATIONS: for sums or final totals, tell "
+            "the user how CotizaT works them out on the server, so the figures "
+            "cannot drift.\n\n"
+            f"{MANUAL_COTIZAT_EN}\n\n"
+            f"{contexto_org}\n\n"
+            f"{contexto_pagina}"
+        )
     return (
         "Eres el Asistente Inteligente de CotizaT, un copiloto experto en presupuestos, "
         "remodelaciones, análisis de precios unitarios (APU), especificaciones técnicas y uso del software.\n\n"
@@ -605,6 +762,17 @@ def construir_system_prompt(
 PREGUNTAS_FRECUENTES_LOCALES = [
     {
         "patrones": [r"atajo", r"teclado", r"shortcut", r"rapido", r"hands-free"],
+        "respuesta_en": (
+            "### ⌨️ Keyboard shortcuts in the estimate editor:\n\n"
+            "- **`Alt + P`**: add a new line item immediately.\n"
+            "- **`Alt + C`**: add a new section.\n"
+            "- **`Ctrl + K`** (or the **`/`** key): open and focus the line-item catalogue search.\n"
+            "- **`Enter`** (inside a line item): moves through the fields in order: "
+            "*Title → Quantity → Unit price*, without creating empty items.\n"
+            "- **`Ctrl + Z`**: undo recent structural changes.\n"
+            "- **`Ctrl + Enter`**: save the current estimate.\n\n"
+            "💡 *Try them out in [New estimate](/presupuestos/nuevo).*"
+        ),
         "respuesta": (
             "### ⌨️ Atajos de teclado en el Editor de Presupuestos:\n\n"
             "- **`Alt + P`**: Añadir una nueva partida inmediatamente.\n"
@@ -618,6 +786,18 @@ PREGUNTAS_FRECUENTES_LOCALES = [
     },
     {
         "patrones": [r"excel", r"descompuesto", r"dpt020", r"rbe010", r"importar"],
+        "respuesta_en": (
+            "### 📑 Importing unit price breakdowns from Excel (.xlsx):\n\n"
+            "CotizaT imports breakdown matrices exported from Excel:\n\n"
+            "1. Go to **Estimates** → [Import breakdown]"
+            "(/presupuestos/importar-descompuesto) or use the editor itself.\n"
+            "2. Upload your `.xlsx` file (it detects 8-column `DPT020` and "
+            "10-column `RBE010` layouts).\n"
+            "3. CotizaT sorts the costs into **Materials, Labour, Direct "
+            "sundries and Other** automatically.\n"
+            "4. You can edit output rates and unit prices at any time from the "
+            "breakdown view to recalculate the whole cost cascade."
+        ),
         "respuesta": (
             "### 📑 Importación de descompuestos desde Excel (.xlsx):\n\n"
             "CotizaT permite importar matrices de descompuestos exportadas desde Excel:\n\n"
@@ -629,6 +809,17 @@ PREGUNTAS_FRECUENTES_LOCALES = [
     },
     {
         "patrones": [r"tasa", r"moneda", r"dolar", r"dólar", r"bolivar", r"bolívar", r"bcv", r"cambio", r"cop", r"mxn"],
+        "respuesta_en": (
+            "### 💱 Currency and exchange rate settings:\n\n"
+            "1. Go to [Settings](/configuracion).\n"
+            "2. Under **Default currency**, choose your main currency (USD, "
+            "VES, COP, MXN and so on).\n"
+            "3. If you work in local currency alongside US dollars, tick "
+            "**Exchange rate** and enter today's rate or press *Get official "
+            "rate*.\n"
+            "4. In the PDF you can show or hide the **currency clause** and the "
+            "conversion reference."
+        ),
         "respuesta": (
             "### 💱 Configuración de Moneda y Tasa de Cambio:\n\n"
             "1. Ve a [Configuración](/configuracion).\n"
@@ -639,6 +830,26 @@ PREGUNTAS_FRECUENTES_LOCALES = [
     },
     {
         "patrones": [r"baño", r"bano", r"sanitario", r"ducha", r"remodelar baño"],
+        "respuesta_en": (
+            "### 🛁 Recommended structure for a bathroom refurbishment:\n\n"
+            "We suggest organising the estimate into these sections and line "
+            "items:\n\n"
+            "1. **Demolition and strip-out:**\n"
+            "   - Taking out existing sanitaryware and accessories.\n"
+            "   - Hacking off wall and floor tiling.\n"
+            "2. **Plumbing and sanitary installations:**\n"
+            "   - Relocating or adapting hot and cold water outlets (PVC / "
+            "fusion-welded).\n"
+            "   - Adapting wastes and the shower gully trap.\n"
+            "3. **Waterproofing and finishes:**\n"
+            "   - Waterproofing membrane to the shower area.\n"
+            "   - Wall tiling and porcelain floor tiling.\n"
+            "4. **Sanitaryware and taps:**\n"
+            "   - Installing WC, basin with vanity unit, taps and shower "
+            "column.\n\n"
+            "💡 *You can drop in a ready-made bundle from [Room packs]"
+            "(/recetas).*"
+        ),
         "respuesta": (
             "### 🛁 Estructura recomendada para remodelación de Baño:\n\n"
             "Te sugerimos organizar el presupuesto en los siguientes capítulos y partidas:\n\n"
@@ -658,6 +869,17 @@ PREGUNTAS_FRECUENTES_LOCALES = [
     },
     {
         "patrones": [r"cobro", r"factura", r"recibo", r"documento de cobro", r"dc-"],
+        "respuesta_en": (
+            "### 💵 Payment documents (DC):\n\n"
+            "In CotizaT you can issue non-fiscal commercial payment documents "
+            "from an approved estimate:\n\n"
+            "1. Open an estimate with status **Approved**.\n"
+            "2. Press **Generate payment document**.\n"
+            "3. A sequential document is created (`DC-2026-001`) with its own "
+            "downloadable PDF and history at [/facturas](/facturas).\n"
+            "*(The document states that it is a commercial, non-fiscal "
+            "record.)*"
+        ),
         "respuesta": (
             "### 💵 Documentos de Cobro (DC):\n\n"
             "En CotizaT puedes emitir documentos de cobro comerciales no fiscales a partir de un presupuesto aprobado:\n\n"
@@ -669,6 +891,20 @@ PREGUNTAS_FRECUENTES_LOCALES = [
     },
     {
         "patrones": [r"pdf", r"logo", r"firma", r"marca de agua", r"personalizar"],
+        "respuesta_en": (
+            "### 📄 Customising the commercial PDF:\n\n"
+            "In [Settings](/configuracion) you can tailor the look of your "
+            "estimates:\n\n"
+            "- **Logo:** upload your company logo and set its maximum width in "
+            "points so it fits exactly.\n"
+            "- **Brand colour:** choose the main colour of the PDF bands.\n"
+            "- **Digital signatures:** draw or capture the client's and the "
+            "company's signature for the footer.\n"
+            "- **Cover page with photo:** turn on the presentation cover with "
+            "an image of the project.\n"
+            "- **Watermarks:** applied automatically as DRAFT, REJECTED or "
+            "EXPIRED depending on status."
+        ),
         "respuesta": (
             "### 📄 Personalización del PDF Comercial:\n\n"
             "En [Configuración](/configuracion) puedes personalizar el diseño de tus presupuestos:\n\n"
@@ -682,12 +918,15 @@ PREGUNTAS_FRECUENTES_LOCALES = [
 ]
 
 
-def buscar_respuesta_local(consulta: str) -> str | None:
+def buscar_respuesta_local(consulta: str, idioma: str = "es") -> str | None:
     """Busca una respuesta en el índice local de conocimiento de CotizaT."""
     texto = consulta.lower().strip()
+    en = _es_ingles(idioma)
     for item in PREGUNTAS_FRECUENTES_LOCALES:
         for patron in item["patrones"]:
             if re.search(patron, texto, re.IGNORECASE):
+                if en and item.get("respuesta_en"):
+                    return item["respuesta_en"]
                 return item["respuesta"]
     return None
 
@@ -722,6 +961,7 @@ def consultar_asistente_stream(
     db: Session,
     mensajes: list[dict[str, str]],
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> Generator[str, None, None]:
     """Generador que emite fragmentos de texto en formato SSE (Server-Sent Events)."""
     api_key = obtener_clave_ia()
@@ -730,7 +970,7 @@ def consultar_asistente_stream(
     # Las acciones sobre datos propios se ejecutan siempre en el servidor,
     # antes del modelo externo. Así una búsqueda devuelve resultados reales
     # incluso sin clave y el modelo no puede sustituirla por consejos genéricos.
-    respuesta_funcional = resolver_accion_funcional(db, ultimo_mensaje, contexto)
+    respuesta_funcional = resolver_accion_funcional(db, ultimo_mensaje, contexto, idioma)
     if respuesta_funcional:
         yield f"data: {json.dumps({'texto': respuesta_funcional, 'finalizado': False})}\n\n"
         yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
@@ -738,20 +978,35 @@ def consultar_asistente_stream(
 
     # Si no hay clave de API configurada, utiliza el motor de respuesta local
     if not api_key:
-        respuesta_local = buscar_respuesta_local(ultimo_mensaje)
+        respuesta_local = buscar_respuesta_local(ultimo_mensaje, idioma)
         if respuesta_local:
             yield f"data: {json.dumps({'texto': respuesta_local, 'finalizado': False})}\n\n"
             yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
             return
         else:
-            guia_activacion = (
-                "### 💬 Asistente CotizaT (Herramientas locales activas)\n\n"
-                "Sin una clave externa puedo buscar datos, revisar borradores, calcular mediciones, preparar partidas, detectar faltantes y resolver dudas frecuentes.\n\n"
-                "⚡ **Para añadir conversación y redacción generativa con GPT OSS 120B:**\n"
-                "1. Obtén tu clave en [console.groq.com/keys](https://console.groq.com/keys).\n"
-                "2. Agrégala en tu archivo `.env` como `GROQ_API_KEY=gsk_...`.\n\n"
-                "¿En qué apartado o función de CotizaT te gustaría que te ayude hoy?"
-            )
+            if _es_ingles(idioma):
+                guia_activacion = (
+                    "### 💬 CotizaT assistant (local tools active)\n\n"
+                    "Without an external key I can still look up data, review "
+                    "drafts, work out measurements, prepare line items, spot "
+                    "what is missing and answer common questions.\n\n"
+                    "⚡ **To add conversation and generative drafting with "
+                    "GPT OSS 120B:**\n"
+                    "1. Get your key at "
+                    "[console.groq.com/keys](https://console.groq.com/keys).\n"
+                    "2. Add it to your `.env` file as "
+                    "`GROQ_API_KEY=gsk_...`.\n\n"
+                    "Which part of CotizaT would you like help with today?"
+                )
+            else:
+                guia_activacion = (
+                    "### 💬 Asistente CotizaT (Herramientas locales activas)\n\n"
+                    "Sin una clave externa puedo buscar datos, revisar borradores, calcular mediciones, preparar partidas, detectar faltantes y resolver dudas frecuentes.\n\n"
+                    "⚡ **Para añadir conversación y redacción generativa con GPT OSS 120B:**\n"
+                    "1. Obtén tu clave en [console.groq.com/keys](https://console.groq.com/keys).\n"
+                    "2. Agrégala en tu archivo `.env` como `GROQ_API_KEY=gsk_...`.\n\n"
+                    "¿En qué apartado o función de CotizaT te gustaría que te ayude hoy?"
+                )
             yield f"data: {json.dumps({'texto': guia_activacion, 'finalizado': False})}\n\n"
             yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
             return
@@ -795,16 +1050,20 @@ def consultar_asistente_stream(
         yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
     except urllib.error.HTTPError as err:
         log.error("Error HTTP al consultar Groq: %s", err)
-        respuesta_local = buscar_respuesta_local(ultimo_mensaje)
+        respuesta_local = buscar_respuesta_local(ultimo_mensaje, idioma)
         if respuesta_local:
             yield f"data: {json.dumps({'texto': respuesta_local, 'finalizado': False})}\n\n"
             yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
         else:
-            error_msg = f"⚠️ Error al comunicar con la IA (HTTP {err.code})."
+            error_msg = (
+                f"⚠️ Error reaching the AI service (HTTP {err.code})."
+                if _es_ingles(idioma) else
+                f"⚠️ Error al comunicar con la IA (HTTP {err.code})."
+            )
             yield f"data: {json.dumps({'texto': error_msg, 'finalizado': True, 'error': True})}\n\n"
     except Exception as exc:
         log.error("Fallo general en la consulta de IA: %s", exc)
-        respuesta_local = buscar_respuesta_local(ultimo_mensaje)
+        respuesta_local = buscar_respuesta_local(ultimo_mensaje, idioma)
         if respuesta_local:
             yield f"data: {json.dumps({'texto': respuesta_local, 'finalizado': False})}\n\n"
             yield f"data: {json.dumps({'texto': '', 'finalizado': True})}\n\n"
@@ -816,22 +1075,27 @@ def consultar_asistente_sync(
     db: Session,
     mensajes: list[dict[str, str]],
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str:
     """Consulta síncrona que devuelve la respuesta de texto completa."""
     api_key = obtener_clave_ia()
     ultimo_mensaje = mensajes[-1].get("content", "") if mensajes else ""
 
-    respuesta_funcional = resolver_accion_funcional(db, ultimo_mensaje, contexto)
+    respuesta_funcional = resolver_accion_funcional(db, ultimo_mensaje, contexto, idioma)
     if respuesta_funcional:
         return respuesta_funcional
 
     if not api_key:
-        respuesta_local = buscar_respuesta_local(ultimo_mensaje)
-        return respuesta_local or (
+        respuesta_local = buscar_respuesta_local(ultimo_mensaje, idioma)
+        if respuesta_local:
+            return respuesta_local
+        return (
+            "To switch on full AI answers, add your free Groq key to .env "
+            "(GROQ_API_KEY)." if _es_ingles(idioma) else
             "Para activar respuestas completas con IA, añade tu clave gratuita de Groq en .env (GROQ_API_KEY)."
         )
 
-    system_prompt = construir_system_prompt(db, ultimo_mensaje, contexto)
+    system_prompt = construir_system_prompt(db, ultimo_mensaje, contexto, idioma)
     historial = [{"role": "system", "content": system_prompt}]
     for m in mensajes[-6:]:
         rol = m.get("role", "user")
@@ -855,8 +1119,12 @@ def consultar_asistente_sync(
             return data["choices"][0]["message"]["content"]
     except Exception as exc:
         log.error("Fallo en consulta síncrona de IA: %s", exc)
-        respuesta_local = buscar_respuesta_local(ultimo_mensaje)
-        return respuesta_local or (
+        respuesta_local = buscar_respuesta_local(ultimo_mensaje, idioma)
+        if respuesta_local:
+            return respuesta_local
+        return (
+            "⚠️ Could not reach the AI service right now. Please try again."
+            if _es_ingles(idioma) else
             "⚠️ No se pudo conectar con el servicio de IA en este momento. Inténtalo de nuevo."
         )
 
@@ -870,6 +1138,7 @@ def redactar_descripcion_partida(
     titulo: str,
     categoria: str = "",
     unidad: str = "m2",
+    idioma: str = "es",
 ) -> str:
     """Genera una descripción técnica comercial detallada para una partida de obra."""
     titulo = titulo.strip()
@@ -879,7 +1148,26 @@ def redactar_descripcion_partida(
     api_key = obtener_clave_ia()
     if not api_key:
         # Generación determinista técnica según palabras clave
-        return _redaccion_tecnica_fallback(titulo, unidad)
+        return _redaccion_tecnica_fallback(titulo, unidad, idioma)
+
+    en = _es_ingles(idioma)
+    if en:
+        prompt = (
+            "Write a rigorous commercial technical specification for a "
+            "construction estimate line item.\n"
+            f"Line item title: {titulo}\n"
+            f"Unit of measure: {unidad}\n"
+            f"Category: {categoria or 'General'}\n\n"
+            "Rules:\n"
+            "- Three or four precise sentences at most.\n"
+            "- Cover substrate preparation, materials, skilled labour, plant "
+            "and access equipment, and the finished result.\n"
+            "- Do not invent prices or quantities.\n"
+            "- No introductions such as 'Here is the description'; return only "
+            "the text of the technical specification."
+        )
+        mensajes = [{"role": "user", "content": prompt}]
+        return consultar_asistente_sync(db, mensajes, idioma=idioma)
 
     prompt = (
         f"Redacta una especificación técnica rigurosa y comercial para una partida de presupuesto de obra.\n"
@@ -894,12 +1182,47 @@ def redactar_descripcion_partida(
     )
 
     mensajes = [{"role": "user", "content": prompt}]
-    return consultar_asistente_sync(db, mensajes)
+    return consultar_asistente_sync(db, mensajes, idioma=idioma)
 
 
-def _redaccion_tecnica_fallback(titulo: str, unidad: str) -> str:
+def _redaccion_tecnica_fallback(titulo: str, unidad: str, idioma: str = "es") -> str:
     """Generador técnico determinista local cuando no hay conexión a internet/IA."""
     t_min = titulo.lower()
+    if _es_ingles(idioma):
+        # La demolición va antes: «hacking off wall tiling» es derribo,
+        # no colocación de revestimiento.
+        if any(k in t_min for k in ("demolition", "demolit", "hacking",
+                                    "strip-out", "dismantl")):
+            return (
+                f"{titulo} carried out by hand and mechanical means. Includes "
+                f"stacking the arising material, clearance, loading by hand or "
+                f"machine and cartage of debris to a licensed tip, with "
+                f"protection of adjoining areas. Measured per {unidad} actual."
+            )
+        if any(k in t_min for k in ("porcelain", "tile", "ceramic", "tiling",
+                                    "flooring", "cladding", "enchap")):
+            return (
+                f"Supply and installation of {titulo}. Includes preparing and "
+                f"cleaning the substrate, applying a high-bond adhesive mortar, "
+                f"laying the units with level joints, grouting with a "
+                f"waterproof mould-resistant grout, final cleaning and removal "
+                f"of debris. Measured per {unidad} of finished surface."
+            )
+        if any(k in t_min for k in ("paint", "painting", "render", "skim",
+                                    "wall", "emulsion")):
+            return (
+                f"Execution of {titulo}. Includes preparing the background by "
+                f"sanding and making good, applying a stabilising primer, "
+                f"finish coats as per the manufacturer's specification, "
+                f"protecting joinery and adjacent elements with masking tape, "
+                f"and final cleaning. Measured per {unidad} finished."
+            )
+        return (
+            f"Complete execution of {titulo}. Includes all necessary "
+            f"materials, skilled labour, tools, plant and access equipment, "
+            f"testing and commissioning, and final cleaning of the working "
+            f"area. Fully complete and measured per {unidad}."
+        )
     if "porcelanato" in t_min or "ceramica" in t_min or "cerámica" in t_min or "enchap" in t_min or "piso" in t_min:
         return (
             f"Suministro e instalación de {titulo}. Incluye preparación y limpieza de la superficie soporte, "
