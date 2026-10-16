@@ -1262,6 +1262,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
     moneda = pais.get("moneda") or "USD"
     iva = pais.get("iva")
     fiscal = pais.get("id_fiscal") or "ID fiscal"
+    impuesto = pais.get("etiqueta_impuesto") or "IVA"
     vocab = pais.get("vocab") or ""
     ciudad = pais.get("ciudad_ejemplo") or ""
 
@@ -1274,7 +1275,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         lead = (
             f"CotizaT es el software de presupuestos de construcción y remodelación "
             f"para empresas de {nombre}. Catálogo con análisis de precios unitarios, "
-            f"{fiscal}, IVA {iva} % y moneda {moneda}. PDF profesional para WhatsApp."
+            f"{fiscal}, {impuesto} {iva:g} % y moneda {moneda}. PDF profesional para WhatsApp."
         )
         body = [
             (

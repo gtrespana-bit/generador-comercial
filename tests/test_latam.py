@@ -48,17 +48,21 @@ from app.utils import (
 # ---------------------------------------------------------------------------
 
 def test_selector_expone_los_paises_foco_en_orden():
-    # El selector muestra los 18 países definidos en orden explícito.
+    # El selector muestra los 23 mercados definidos en orden explícito.
     # España (ES) va primero por ser mercado prioritario (EUR, NIF, IVA
     # 21 % y referencias nacionales propias), y le sigue LatAm: el
     # histórico VE, los pioneros CO/MX/EC/PE y el resto de países de la
-    # región. El orden manda porque landing, /pago, /acceso y
+    # región. Cierran los cinco mercados de habla inglesa, que son
+    # mercados completos e independientes: cada uno con su idioma, moneda,
+    # impuesto, formato de número y fecha, sistema de unidades y
+    # terminología. El orden manda porque landing, /pago, /acceso y
     # /organizaciones/nueva iteran sobre la misma lista.
     codigos = [p["codigo"] for p in paises.lista_paises()]
     assert codigos == [
         "ES",
         "VE", "CO", "MX", "EC", "PE", "CL", "AR", "DO", "UY", "PY",
         "BO", "PA", "CR", "GT", "HN", "SV", "NI",
+        "US", "GB", "AU", "CA", "IE",
     ], f"ORDEN_SELECTOR desactualizado: {codigos}"
 
 
@@ -339,7 +343,8 @@ def test_landing_peru_muestra_ejemplo_en_soles(cliente_web):
     assert resp.status_code == 200
     t = resp.text
     assert "S/" in t
-    assert "I.V.A. (18 %)" in t
+    # El impuesto peruano es IGV, no IVA: el rótulo es el nombre legal local.
+    assert "IGV (18 %)" in t
     assert "Lima" in t
 
 

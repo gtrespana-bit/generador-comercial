@@ -7,6 +7,8 @@ igual que en los presupuestos de referencia.
 
 # Semana 2 — Bloque B: catálogo de símbolos por ISO 4217 (20 monedas LatAm + extras)
 # Bs se mantiene como alias histórico de VES para no romper presupuestos antiguos.
+# GBP/AUD/CAD entran con los mercados de habla inglesa: esta es la lista que
+# valida los formularios (normalizar_moneda), no solo la de monedas.py.
 SIMBOLOS = {
     "USD": "$",
     "VES": "Bs",
@@ -27,6 +29,9 @@ SIMBOLOS = {
     "NIO": "C$",
     "BRL": "R$",
     "EUR": "€",
+    "GBP": "£",
+    "AUD": "$",
+    "CAD": "$",
 }
 
 # Símbolo inequívoco por moneda. Doce países de la región usan «$» para
@@ -39,6 +44,9 @@ SIMBOLOS_DISTINTIVOS = {
     "COP": "COL$",
     "CLP": "CLP$",
     "ARS": "AR$",
+    "AUD": "A$",
+    "CAD": "C$",
+    "GBP": "£",
 }
 
 

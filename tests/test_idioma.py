@@ -341,7 +341,7 @@ def test_fmt_num_respeta_el_idioma():
 def test_el_ejemplo_en_ingles_rotula_capitulos_y_partidas():
     from app.services.landing_ejemplo import contexto_ejemplo
 
-    ej = contexto_ejemplo("US", "en")
+    ej = contexto_ejemplo(None, "en")
     caps = [c["titulo"] for c in ej["caps"]]
     assert caps[0] == "01 · Demolition and strip-out"
     assert caps[1] == "02 · Rough-in (bathroom plumbing)"
@@ -356,7 +356,7 @@ def test_el_ejemplo_en_ingles_formatea_los_importes_en_ingles():
     """«2,914.52 US$», no «2.914,52 US$»."""
     from app.services.landing_ejemplo import contexto_ejemplo
 
-    ej = contexto_ejemplo("US", "en")
+    ej = contexto_ejemplo(None, "en")
     assert ej["tot"]["total"] == "2,914.52 US$"
     assert ej["hero"]["total"] == "2,914.52 US$"
 
@@ -364,7 +364,7 @@ def test_el_ejemplo_en_ingles_formatea_los_importes_en_ingles():
 def test_el_ejemplo_en_espanol_no_cambia():
     from app.services.landing_ejemplo import contexto_ejemplo
 
-    ej = contexto_ejemplo("US", "es")
+    ej = contexto_ejemplo(None, "es")
     assert ej["caps"][0]["titulo"] == "01 · Demoliciones y desmontajes"
     assert ej["tot"]["total"] == "2.914,52 US$"
     assert ej["empresa"] == "Construcciones Alfa"
@@ -375,7 +375,7 @@ def test_el_ejemplo_en_espanol_no_cambia():
 def test_el_ejemplo_en_ingles_traduce_etiquetas_y_unidades():
     from app.services.landing_ejemplo import contexto_ejemplo
 
-    ej = contexto_ejemplo("US", "en")
+    ej = contexto_ejemplo(None, "en")
     assert ej["iva_txt"] == "VAT (16 %)"
     assert ej["resumen"]["horas"] == "98 man-hours"
     assert ej["resumen"]["duracion"] == "≈ 6 days"
@@ -388,7 +388,7 @@ def test_el_ejemplo_en_ingles_traduce_etiquetas_y_unidades():
 def test_el_ejemplo_en_ingles_traduce_el_apu_del_catalogo():
     from app.services.landing_ejemplo import contexto_ejemplo
 
-    ej = contexto_ejemplo("US", "en")
+    ej = contexto_ejemplo(None, "en")
     apu = ej["apu"]
     if not apu["disponible"]:
         import pytest

@@ -308,7 +308,12 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         moneda = "USD"
     dec = decimales_moneda(moneda)
     convierte = moneda != "USD"
-    iva = int(pais.get("iva") or 16)
+    iva = float(pais.get("iva") or 16)
+    # El impuesto tiene nombre legal propio (IGV, ITBMS, ITBIS, ISV), que
+    # no se traduce; el IVA genérico sí se dice VAT en inglés.
+    etiqueta_impuesto = pais.get("etiqueta_impuesto") or "I.V.A."
+    if en:
+        etiqueta_impuesto = pais.get("etiqueta_impuesto_en") or etiqueta_impuesto
 
     def monto(v: float) -> str:
         return _monto(v, moneda, dec, idioma)
@@ -472,7 +477,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         "tasa_fecha": fecha_tasa,
         "iva": iva,
         "iva_txt": (
-            _ETIQUETAS_EN["iva"].format(pct=iva) if en else f"I.V.A. ({iva} %)"
+            f"{etiqueta_impuesto} ({iva:g} %)"
         ),
         "margen_txt": f"+{margen_pct} %",
         "empresa": _ETIQUETAS_EN["empresa"] if en else empresa,

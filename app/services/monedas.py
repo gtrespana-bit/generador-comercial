@@ -38,6 +38,9 @@ MONEDAS: dict[str, DefinicionMoneda] = {
     "HNL": DefinicionMoneda("HNL", "Lempira hondureño", 2, "L"),
     "NIO": DefinicionMoneda("NIO", "Córdoba nicaragüense", 2, "C$"),
     "BRL": DefinicionMoneda("BRL", "Real brasileño", 2, "R$"),
+    "GBP": DefinicionMoneda("GBP", "Libra esterlina", 2, "£"),
+    "AUD": DefinicionMoneda("AUD", "Dólar australiano", 2, "A$"),
+    "CAD": DefinicionMoneda("CAD", "Dólar canadiense", 2, "C$"),
     "EUR": DefinicionMoneda("EUR", "Euro", 2, "€"),
     # Compatibilidad de datos antiguos; no se ofrece como moneda visible en
     # Venezuela y no se usa para nuevos valores persistidos.
