@@ -118,7 +118,7 @@
         </div>
         <div class="hc-total">
           <span>Total estimate</span>
-          <strong>$ 24,890</strong>
+          <strong>{{ ej.hero.total }}</strong>
           <em>with cost, margin and schedule calculated</em>
         </div>
         <div class="hc-grid">
@@ -132,7 +132,7 @@
         </div>
         <div class="hc-lines">
           {% for c in ej.hero.caps %}
-          <div class="hc-line"><span>Bathroom remodel</span><strong>{{ c.importe }}</strong></div>
+          <div class="hc-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
           {% endfor %}
         </div>
       </div>
@@ -306,7 +306,7 @@
           </nav>
           <div class="app-user" aria-hidden="true">
             <span class="app-avatar">To</span>
-            <span class="app-user-meta"><strong>Acme Builders</strong><small>Tona Martinez</small></span>
+            <span class="app-user-meta"><strong>{{ ej.empresa }}</strong><small>Tona Martinez</small></span>
           </div>
         </aside>
 
@@ -345,11 +345,11 @@
           <div class="app-doc">
             <div class="doc-head">Sections and line items</div>
             {% for c in ej.caps %}
-            <div class="doc-capitulo"><span>Section</span><span class="cap-meta"><strong>{{ c.importe }}</strong><em class="cap-ben">{{ c.beneficio }}</em></span></div>
+            <div class="doc-capitulo"><span>{{ c.titulo }}</span><span class="cap-meta"><strong>{{ c.importe }}</strong><em class="cap-ben">{{ c.beneficio }}</em></span></div>
               {% for p in c.partidas %}
             <div class="doc-partida">
               <div class="dp-main">
-                <span class="dp-nombre">Line item</span>
+                <span class="dp-nombre">{{ p.nombre }}</span>
                 <span class="dp-cant">{{ p.cant }}</span>
                 <span class="dp-precio">{{ p.precio }}</span>
                 <span class="dp-importe">{{ p.importe }}</span>
@@ -363,7 +363,7 @@
             {% for pr in ej.productos %}
             <div class="doc-partida dp-prod">
               <div class="dp-main">
-                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="Product" width="46" height="34" loading="lazy" decoding="async">Product</span>
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34" loading="lazy" decoding="async">{{ pr.nombre }}</span>
                 <span class="dp-cant">{{ pr.cant }}</span>
                 <span class="dp-precio">{{ pr.precio }}</span>
                 <span class="dp-importe">{{ pr.importe }}</span>
@@ -424,9 +424,9 @@
     <div class="apu-card">
       <header class="apu-head">
         <div>
-          <span class="apu-eyebrow">Line item · own catalog</span>
-          <strong class="apu-titulo">Interior wall tiling</strong>
-          <span class="apu-unidad">unit: m²</span>
+          <span class="apu-eyebrow">Line item {{ ej.apu.codigo }} · own catalog</span>
+          <strong class="apu-titulo">{{ ej.apu.titulo }}</strong>
+          <span class="apu-unidad">unit: {{ ej.apu.unidad }}</span>
         </div>
         <div class="apu-resultado">
           <span>Selling price</span>
@@ -443,7 +443,7 @@
         </div>
         {% for f in ej.apu.filas %}
         <div class="apu-fila" role="row">
-          <span class="apu-rec" role="cell"><i class="apu-grupo apu-g-resource"></i>Resource</span>
+          <span class="apu-rec" role="cell"><i class="apu-grupo apu-g-{{ f.grupo | lower | replace(' ', '_') }}"></i>{{ f.nombre }}</span>
           <span class="apu-rend" role="cell">{{ f.rend }}</span>
           <span class="apu-precio" role="cell">{{ f.precio }}</span>
           <span class="apu-importe" role="cell">{{ f.importe }}</span>

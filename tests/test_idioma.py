@@ -317,3 +317,99 @@ def test_el_filtro_mensaje_esta_disponible_en_las_plantillas():
     plantilla = TEMPLATES.env.from_string("{{ error | mensaje(_idioma) }}")
     assert plantilla.render(error="Datos inválidos.", _idioma="en") == "Invalid data."
     assert plantilla.render(error="Datos inválidos.", _idioma="es") == "Datos inválidos."
+
+
+# ---------------------------------------------------------------------------
+# Ejemplo de la landing en inglés
+# ---------------------------------------------------------------------------
+# La landing vende con un ejemplo real (partidas, capítulos, APU del catálogo).
+# En inglés no basta con traducir el interfaz: los rótulos salen del catálogo
+# venezolano y los números se formatean con coma decimal. Estas pruebas fijan
+# el contrato: en español todo sigue exactamente igual que antes.
+
+
+def test_fmt_num_respeta_el_idioma():
+    from app.utils import fmt_num
+
+    assert fmt_num(2914.52, 2) == "2.914,52"
+    assert fmt_num(2914.52, 2, "es") == "2.914,52"
+    assert fmt_num(2914.52, 2, "en") == "2,914.52"
+    assert fmt_num(9876543.21, 2, "en") == "9,876,543.21"
+    assert fmt_num(9876543.21, 2, "es") == "9.876.543,21"
+
+
+def test_el_ejemplo_en_ingles_rotula_capitulos_y_partidas():
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo("US", "en")
+    caps = [c["titulo"] for c in ej["caps"]]
+    assert caps[0] == "01 · Demolition and strip-out"
+    assert caps[1] == "02 · Rough-in (bathroom plumbing)"
+    nombres = [p["nombre"] for c in ej["caps"] for p in c["partidas"]]
+    assert nombres[0] == "Hacking off wall tiling and its setting bed"
+    # Ningún rótulo se queda a medias: si algo no está en la tabla, al menos
+    # no puede seguir siendo español literal del catálogo.
+    assert all("capa de pega" not in n for n in nombres)
+
+
+def test_el_ejemplo_en_ingles_formatea_los_importes_en_ingles():
+    """«2,914.52 US$», no «2.914,52 US$»."""
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo("US", "en")
+    assert ej["tot"]["total"] == "2,914.52 US$"
+    assert ej["hero"]["total"] == "2,914.52 US$"
+
+
+def test_el_ejemplo_en_espanol_no_cambia():
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo("US", "es")
+    assert ej["caps"][0]["titulo"] == "01 · Demoliciones y desmontajes"
+    assert ej["tot"]["total"] == "2.914,52 US$"
+    assert ej["empresa"] == "Construcciones Alfa"
+    assert ej["iva_txt"] == "I.V.A. (16 %)"
+    assert ej["resumen"]["horas"] == "98 h-hombre"
+
+
+def test_el_ejemplo_en_ingles_traduce_etiquetas_y_unidades():
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo("US", "en")
+    assert ej["iva_txt"] == "VAT (16 %)"
+    assert ej["resumen"]["horas"] == "98 man-hours"
+    assert ej["resumen"]["duracion"] == "≈ 6 days"
+    assert ej["resumen"]["cuadrilla"] == "crew of 2 · 1 journeyman + 1 helper"
+    # «ud» (unidad) se dice «ea» (each) en un APU en inglés
+    assert ej["productos"][2]["cant"] == "1 ea"
+    assert ej["productos"][2]["precio"] == "180.00 US$/ea"
+
+
+def test_el_ejemplo_en_ingles_traduce_el_apu_del_catalogo():
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo("US", "en")
+    apu = ej["apu"]
+    if not apu["disponible"]:
+        import pytest
+
+        pytest.skip("catálogo de descompuestos no disponible")
+    assert apu["titulo"] == "Concrete block boundary wall"
+    grupos = {f["grupo"] for f in apu["filas"]}
+    assert grupos <= {"Material", "Labor", "Equipment"}
+    assert any(f["nombre"] == "Journeyman bricklayer, 1st class" for f in apu["filas"])
+    assert "man-hours" in apu["horas_mo"]
+
+
+def test_el_ejemplo_sigue_siendo_por_pais_en_ingles():
+    """El idioma traduce los rótulos; el país sigue mandando en moneda e IVA."""
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    us = contexto_ejemplo("US", "en")
+    mx = contexto_ejemplo("MX", "en")
+    assert us["moneda"] == "USD"
+    assert mx["moneda"] == "MXN"
+    assert mx["iva_txt"] == "VAT (16 %)"
+    # mismos rótulos, distinta moneda
+    assert us["caps"][0]["titulo"] == mx["caps"][0]["titulo"]
+    assert us["tot"]["total"] != mx["tot"]["total"]

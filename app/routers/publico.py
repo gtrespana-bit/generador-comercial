@@ -128,6 +128,14 @@ def _web_publico():
         return None
 
 
+def _idioma_de(request: Request | None) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``)."""
+    try:
+        return getattr(getattr(request, "state", None), "lang", "") or "es"
+    except Exception:
+        return "es"
+
+
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
     from ..paises import PAIS_GENERICO, PAISES, lista_paises
@@ -142,7 +150,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
-                "ej": contexto_ejemplo(codigo),
+                "ej": contexto_ejemplo(codigo, _idioma_de(request)),
                 # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
                 # final del body para no retrasar el descubrimiento del CSS.
                 "seo_skip_fonts": True,
@@ -159,7 +167,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
-        "ej": contexto_ejemplo(pais_codigo),
+        "ej": contexto_ejemplo(pais_codigo, _idioma_de(request)),
         # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
         # final del body para no retrasar el descubrimiento del CSS.
         "seo_skip_fonts": True,
@@ -425,7 +433,7 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
             "pais_codigo": codigo,
             "pais_generico": PAIS_GENERICO,
             "paises": lista_paises(),
-            "ej": contexto_ejemplo(codigo),
+            "ej": contexto_ejemplo(codigo, _idioma_de(request)),
             "ficha": ficha,
             "guias": lista_guias(),
         }

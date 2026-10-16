@@ -75,9 +75,16 @@ def saneado(texto: str) -> str:
     return texto
 
 
-def fmt_num(valor, decimales=2) -> str:
-    """1234567.891 -> '1.234.567,89'"""
+def fmt_num(valor, decimales=2, idioma="es") -> str:
+    """1234567.891 -> '1.234.567,89' (es) o '1,234,567.89' (en).
+
+    El separador de miles y decimales es de idioma, no de moneda: una landing
+    en inglés no puede mostrar «2.914,52 US$». En español (y en cualquier
+    otro caso) se conserva exactamente el formato de siempre.
+    """
     s = f"{valor:,.{decimales}f}"
+    if str(idioma or "es").strip().lower().startswith("en"):
+        return s
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
