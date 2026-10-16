@@ -1,0 +1,1357 @@
+{% extends "base_en.html" %}
+{% from "partidas/_editor.html" import editor_partida_catalogo with context %}
+{% block title %}{{ 'Editar presupuesto' if presupuesto else 'Nuevo presupuesto' }}{% endblock %}
+{% block body_class %}editor-focus{% endblock %}
+
+{% block content %}
+{% set budget_id = presupuesto.id if presupuesto and presupuesto.id else none %}
+<form method="post" id="form-presupuesto" class="budget-builder" enctype="multipart/form-data" data-moneda-original="{{ presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD' }}"
+      action="{% if budget_id %}/presupuestos/{{ budget_id }}/editar{% else %}/presupuestos/nuevo{% endif %}">
+  <input type="hidden" name="estructura_json" id="estructura-json" value="">
+  <input type="hidden" name="confirmar_cambio_moneda" id="confirmar-cambio-moneda" value="0">
+
+  <!-- Command bar única: identidad + total + acciones principales + guardar -->
+  <header class="editor-command-bar" id="editor-command-bar" role="banner">
+    <div class="ecb-identity">
+      <a class="ecb-back" href="{% if budget_id %}/presupuestos/{{ budget_id }}{% else %}/presupuestos{% endif %}" title="Back">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+      </a>
+      <div class="ecb-title-wrap">
+        <span class="ecb-eyebrow">{{ presupuesto.numero if presupuesto else 'Nuevo' }}</span>
+        <strong class="ecb-title" id="ecb-doc-title">{{ (presupuesto.titulo if presupuesto and presupuesto.titulo else '') or ('Editar presupuesto' if presupuesto else 'Crear presupuesto') }}</strong>
+      </div>
+      <span class="ecb-status"><span class="status-dot"></span>{{ presupuesto.estado|replace('_', ' ')|capitalize if presupuesto else 'Borrador' }}</span>
+    </div>
+
+    <div class="ecb-total" title="Live estimate total">
+      <span class="ecb-total-label">Total</span>
+      <strong class="ecb-total-val" id="sticky-total-val">—</strong>
+      <div class="ecb-meta" id="editor-command-meta">
+        <span id="margen-indicator" class="ecb-chip"><span class="margen-dot"></span><span id="margen-text">—</span></span>
+        <span id="tiempo-badge" class="ecb-chip muted">—</span>
+        <span class="ecb-chip muted"><span id="builder-item-count">0</span> line items</span>
+      </div>
+    </div>
+
+    <div class="ecb-actions">
+      <details class="ecb-more">
+        <summary class="btn btn-sm btn-ghost ecb-more-btn" title="More tools">More</summary>
+        <div class="ecb-more-panel">
+      <div class="ecb-tools">
+        <button type="button" id="btn-ai-dictation" class="btn btn-sm btn-ghost" title="Dictate into the active field">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 7.5a5 5 0 0010 0M8 12.5V14.5"/></svg>
+          <span class="ecb-label">Dictate</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-abrir-generador" title="Suggest line items from your catalog">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M8 2v4M8 10v4M2 8h4M10 8h4"/><circle cx="8" cy="8" r="2.5"/></svg>
+          <span class="ecb-label">Suggest</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-modal-receta" title="Room pack (Alt+R)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 3h10v10H3z"/><path d="M6 3v10M3 6.5h10"/></svg>
+          <span class="ecb-label">Pack</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost iva-toggle-btn" id="btn-toggle-iva-top" title="Turn VAT on or off">VAT</button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-preview-pdf-top" title="PDF preview">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8s-2.5 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>
+          <span class="ecb-label">Preview</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-ghost" id="btn-density-toggle" title="Change row density" aria-pressed="false">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+          <span class="ecb-label">Density</span>
+        </button>
+      </div>
+        </div>
+      </details>
+      <span id="autosave-status" class="autosave-status" title="Autosave status"></span>
+      <button type="submit" class="btn btn-primary ecb-save" id="btn-guardar-principal">Save</button>
+    </div>
+  </header>
+
+  <nav class="builder-progress" aria-label="Builder sections">
+    <button type="button" data-scroll-builder="card-datos-generales"><span>1</span><strong>Data</strong><small>Client and document</small></button>
+    <button type="button" data-scroll-builder="builder-partidas" class="active"><span>2</span><strong>Line items</strong><small>Sections and costs</small></button>
+    <button type="button" data-scroll-builder="builder-resumen"><span>3</span><strong>Review</strong><small>Totals and terms</small></button>
+  </nav>
+
+  {% if presupuesto and presupuesto_compartido %}
+  <div class="editor-shared-notice" role="status">
+    <strong>This estimate has already been sent or has saved versions.</strong>
+    <span>Edit it as usual; when you go back to the detail view you can copy a simple summary of changes to resend the updated PDF.</span>
+  </div>
+  {% endif %}
+
+  <!-- DATOS GENERALES -->
+  <div class="card collapsible-card builder-general-card" id="card-datos-generales">
+    <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
+      <div class="csp-s-de125207c8">
+        <h2 class="csp-s-6423fe0d33">General data and client</h2>
+        <span id="datos-generales-resumen" class="csp-s-998cfa4dbf"></span>
+      </div>
+      <button type="button" id="btn-toggle-datos" class="btn btn-sm csp-s-62ebedb23a">Collapse</button>
+    </div>
+    <div class="card-collapsible-content csp-s-3f453f98f8" id="datos-generales-content">
+      <div class="form-grid">
+        <div class="field">
+          <label>Client *</label>
+          <select name="client_id" required data-cotizat-change="budget-client-selected">
+            <option value="">— Select a client —</option>
+            {% for c in clientes %}
+            <option value="{{ c.id }}" {{ 'selected' if presupuesto and presupuesto.client_id == c.id else '' }}>{{ c.nombre }}</option>
+            {% endfor %}
+          </select>
+          <p class="hint">Not there? <a class="link" href="/clientes/nuevo" target="_blank">Create the client here</a>.</p>
+        </div>
+        <div class="field">
+          <label>Project title</label>
+          <input type="text" name="titulo" value="{{ presupuesto.titulo if presupuesto else '' }}"
+                 placeholder="e.g. Full home remodel">
+        </div>
+        <div class="field field-full">
+          <label>Job site address</label>
+          <input type="text" name="direccion_obra" value="{{ presupuesto.direccion_obra if presupuesto else '' }}"
+                 placeholder="Street, district, building/residence, city">
+        </div>
+        <div class="field">
+          <label>ZIP code</label>
+          <input type="text" name="codigo_postal" value="{{ presupuesto.codigo_postal if presupuesto else '' }}" placeholder="e.g. 1060">
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" name="fecha" value="{{ presupuesto.fecha.isoformat() if presupuesto else hoy.isoformat() }}">
+        </div>
+        <div class="field">
+          <label>Valid for (days)</label>
+          <input type="number" name="validez_dias" min="1" value="{{ presupuesto.validez_dias if presupuesto else cfg.validez_default }}" required>
+        </div>
+        <div class="field">
+          <label>Currency</label>
+          <select name="moneda" id="moneda-select">
+            <option value="USD" {{ 'selected' if (presupuesto and presupuesto.moneda in ['USD','']) or (not presupuesto and (cfg.moneda_default or 'USD') in ['USD','']) else '' }}>USD — US dollar</option>
+            <option value="COP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'COP') or (not presupuesto and cfg.moneda_default == 'COP') else '' }}>COP — Colombian peso</option>
+            <option value="MXN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'MXN') or (not presupuesto and cfg.moneda_default == 'MXN') else '' }}>MXN — Mexican peso</option>
+            <option value="PEN" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PEN') or (not presupuesto and cfg.moneda_default == 'PEN') else '' }}>PEN — Peruvian sol</option>
+            <option value="CLP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CLP') or (not presupuesto and cfg.moneda_default == 'CLP') else '' }}>CLP — Chilean peso</option>
+            <option value="ARS" {{ 'selected' if (presupuesto and presupuesto.moneda == 'ARS') or (not presupuesto and cfg.moneda_default == 'ARS') else '' }}>ARS — Argentine peso</option>
+            <option value="UYU" {{ 'selected' if (presupuesto and presupuesto.moneda == 'UYU') or (not presupuesto and cfg.moneda_default == 'UYU') else '' }}>UYU — Uruguayan peso</option>
+            <option value="PYG" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PYG') or (not presupuesto and cfg.moneda_default == 'PYG') else '' }}>PYG — Paraguayan guaraní</option>
+            <option value="BOB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BOB') or (not presupuesto and cfg.moneda_default == 'BOB') else '' }}>BOB — boliviano</option>
+            <option value="DOP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'DOP') or (not presupuesto and cfg.moneda_default == 'DOP') else '' }}>DOP — Dominican peso</option>
+            <option value="PAB" {{ 'selected' if (presupuesto and presupuesto.moneda == 'PAB') or (not presupuesto and cfg.moneda_default == 'PAB') else '' }}>PAB — Panamanian balboa</option>
+            <option value="CRC" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CRC') or (not presupuesto and cfg.moneda_default == 'CRC') else '' }}>CRC — Costa Rican colón</option>
+            <option value="GTQ" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GTQ') or (not presupuesto and cfg.moneda_default == 'GTQ') else '' }}>GTQ — Guatemalan quetzal</option>
+            <option value="HNL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'HNL') or (not presupuesto and cfg.moneda_default == 'HNL') else '' }}>HNL — Honduran lempira</option>
+            <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO — Nicaraguan córdoba</option>
+            <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL — real</option>
+            <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR — euro</option>
+          </select>
+          <p class="hint" id="moneda-contexto-resumen">Contractual currency of the estimate.</p>
+        </div>
+        <div class="field">
+          <label>Exchange rate USD → contractual currency <span class="hint">(1 USD = X)</span></label>
+          <input type="number" name="tipo_cambio" step="any" min="0" placeholder="{{ ('p. ej. ' ~ tasas_sugeridas[cfg.moneda_default]) if tasas_sugeridas.get(cfg.moneda_default) else 'Tasa confirmada' }}"
+                 value="{{ presupuesto.tipo_cambio if presupuesto and presupuesto.tipo_cambio else (cfg.tasa_cambio if cfg.tasa_cambio and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Rate date</label>
+          <input type="date" name="fecha_tipo_cambio" value="{{ presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else '') }}">
+        </div>
+        <div class="field">
+          <label>Rate source</label>
+          <input type="text" name="fuente_tipo_cambio" maxlength="120" placeholder="Manual, TRM, SUNAT, API…" value="{{ presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or '') }}">
+        </div>
+        <div class="field">
+          <label>VAT (%)</label>
+          <input type="number" name="impuesto_pct" step="any" min="0" value="{{ presupuesto.impuesto_pct if presupuesto else cfg.iva_default }}">
+        </div>
+        <div class="field">
+          <label>Discount (%)</label>
+          <input type="number" name="descuento_pct" step="any" min="0" value="{{ presupuesto.descuento_pct if presupuesto else 0 }}">
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select name="estado">
+            {% set estado_actual = presupuesto.estado if presupuesto else 'borrador' %}
+            {% for e in estados %}
+            <option value="{{ e }}" {{ 'selected' if estado_actual == e else '' }}>{{ e | capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% if presupuesto and presupuesto.estado in ['enviado', 'reenviado', 'aprobado', 'aprobado_parcialmente', 'en_ejecucion', 'finalizado'] %}
+        <div class="field field-full"><label>Reason for the new version</label><input name="motivo_version" maxlength="500" placeholder="Briefly describe the change made"><p class="hint">On save, a new snapshot of the document is kept.</p></div>
+        {% endif %}
+
+        {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Regional data (optional)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Control number</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Withholding (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Tax-exempt transaction</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Currency adjustment clause</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
+        {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
+        <div class="field field-full advanced-budget-options csp-s-acdc88ecde">
+          <label class="csp-s-5898011ec9">
+            <input type="checkbox" name="usar_funciones_avanzadas" value="1" id="usar-funciones-avanzadas"
+              {{ 'checked' if presupuesto and presupuesto.usar_funciones_avanzadas or (not presupuesto and cfg.activar_funciones_avanzadas) else '' }}>
+            Enable advanced economic adjustments for this estimate
+          </label>
+          <p class="hint csp-s-20dc2ddb47">If you leave it off, the builder works in basic mode and line items are calculated as included.</p>
+          <div id="advanced-budget-fields" class="cotizat-hidden csp-s-4c24a4e230">
+            {% if cfg.mostrar_cargos_adicionales or (presupuesto and presupuesto.usar_funciones_avanzadas) %}<div class="field"><label>Overheads (%)</label><input type="number" name="gastos_indirectos_pct" min="0" step="any" value="{{ presupuesto.gastos_indirectos_pct if presupuesto else 0 }}"></div>
+            <div class="field"><label>Contingencies (%)</label><input type="number" name="imprevistos_pct" min="0" step="any" value="{{ presupuesto.imprevistos_pct if presupuesto else 0 }}"></div>
+            <div class="field"><label>Freight / fixed charge</label><input type="number" name="transporte_monto" min="0" step="any" value="{{ presupuesto.transporte_monto if presupuesto else 0 }}"></div>
+            <div class="field"><label>Other charges</label><input type="number" name="otros_cargos_monto" min="0" step="any" value="{{ presupuesto.otros_cargos_monto if presupuesto else 0 }}"></div>{% endif %}
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="field field-full csp-s-fd30acedb7">
+          <label class="csp-s-af442fc30e">PDF layout options</label>
+          <p class="hint csp-s-60ba0ca9de">
+            These checkboxes apply to <strong>this estimate</strong>. Once saved, use
+            «Preview» to check the cover, summary, warranties and signatures.
+            The defaults for new estimates are set in
+            <strong>Preferences</strong>.
+          </p>
+          <div class="field field-full"><label>PDF visual style</label><select name="estilo_pdf"><option value="elegante" {{ 'selected' if not presupuesto or presupuesto.estilo_pdf == 'elegante' }}>Elegant</option><option value="tecnica" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'tecnica' }}>Technical</option><option value="minimalista" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'minimalista' }}>Minimal</option><option value="corporativa" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'corporativa' }}>Corporate</option><option value="compacta" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'compacta' }}>Compact</option><option value="editorial" {{ 'selected' if presupuesto and presupuesto.estilo_pdf == 'editorial' }}>Editorial</option></select></div>
+          <div class="csp-s-35aa851099">
+            <label class="csp-s-4ef216fae4">
+              <input type="checkbox" name="con_portada" id="chk-con-portada" value="1" data-cotizat-change="budget-toggle-cover"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.con_portada else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.con_portada_default else '' }}
+                {% endif %}>
+              Include presentation cover
+            </label>
+            <label class="csp-s-4ef216fae4">
+              <input type="checkbox" name="mostrar_resumen_capitulos" value="1"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_resumen_capitulos else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_resumen_capitulos_default else '' }}
+                {% endif %}>
+              Executive summary of sections at the start
+            </label>
+            <label class="csp-s-4ef216fae4">
+              <input type="checkbox" name="mostrar_garantias" value="1"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_garantias else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_garantias_default else '' }}
+                {% endif %}>
+              Warranty table by type of work
+            </label>
+            <label class="csp-s-4ef216fae4">
+              <input type="checkbox" name="mostrar_firmas" id="chk-firmas" value="1" data-cotizat-change="budget-toggle-signature"
+                {% if presupuesto %}
+                  {{ 'checked' if presupuesto.mostrar_firmas else '' }}
+                {% else %}
+                  {{ 'checked' if cfg.mostrar_firmas_default else '' }}
+                {% endif %}>
+              Acceptance signature block at the end
+            </label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_desglose_precio" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_desglose_precio else '' }}> Price breakdown: chosen products and labor</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="mostrar_ahorro" value="1" {{ 'checked' if presupuesto and presupuesto.mostrar_ahorro else '' }}> Show savings and commercial discount</label>
+            <label class="csp-s-4ef216fae4"><input type="checkbox" name="incluir_anexos" value="1" {{ 'checked' if presupuesto and presupuesto.incluir_anexos else '' }}> Include PDF attachments inside the document</label>
+          </div>
+          
+          <div id="wrapper-firma" class="cotizat-hidden csp-s-726e8b317f">
+            <label class="csp-s-5949a3a251">Client signature (for the PDF signature block)</label>
+            {% if presupuesto and presupuesto.firma_cliente %}
+            <div class="csp-s-79f6faf0ac">
+              <img src="{{ presupuesto.firma_cliente | archivo_url }}" alt="Client signature" class="csp-s-604f99a379">
+              <label class="hint csp-s-cf094e4f0f">
+                <input type="checkbox" name="quitar_firma" value="1"> Remove signature
+              </label>
+            </div>
+            {% endif %}
+            <div>
+              <canvas id="firma-canvas" width="520" height="180"
+                class="csp-s-afb0a1a28f"></canvas>
+            </div>
+            <div class="csp-s-a7a0396596">
+              <button type="button" class="btn btn-sm" id="btn-limpiar-firma">Clear</button>
+              <span class="hint">Sign with the mouse or a finger (on a tablet). It is saved along with the estimate.</span>
+            </div>
+            <input type="hidden" name="firma_cliente" id="firma-data">
+          </div>
+          
+          <div id="wrapper-foto-proyecto" class="csp-s-a33b8fc2ff">
+            <label class="csp-s-5949a3a251">Featured project photo (cover)</label>
+            {% if presupuesto and presupuesto.foto_proyecto %}
+            <div class="csp-s-79f6faf0ac">
+              <img src="{{ presupuesto.foto_proyecto | archivo_url }}" alt="Project photo" class="csp-s-b1b250dca2">
+              <label class="hint csp-s-cf094e4f0f">
+                <input type="checkbox" name="quitar_foto_proyecto" value="1"> Delete photo
+              </label>
+            </div>
+            {% endif %}
+            <input type="file" name="foto_proyecto" accept="image/*">
+            <p class="hint">Upload a photo of the 3D render or of the current state. Recommended: good-quality landscape (horizontal) format.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSTRUCTOR DE PRESUPUESTO -->
+  <div class="builder-con-arbol">
+  <div id="arbol-sheet-backdrop" class="arbol-sheet-backdrop" hidden></div>
+  <aside class="arbol-catalogo" id="arbol-catalogo">
+    <div class="arbol-head">
+      <div class="arbol-titulo">
+        <span class="section-kicker">Catalog</span>
+        <h3>Line items</h3>
+      </div>
+      <button type="button" class="arbol-toggle" id="arbol-toggle" data-cotizat-click="arbol-toggle"
+              aria-expanded="true" title="Hide the catalog">‹</button>
+    </div>
+    <div class="arbol-tools">
+      <input type="search" id="arbol-buscar" placeholder="Search line item…" autocomplete="off">
+      <div class="arbol-tools-row">
+        <span id="arbol-contador" class="arbol-contador">—</span>
+        <span class="arbol-acciones">
+          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-expandir" title="Open sections and subsections">Open</button>
+          <button type="button" class="btn btn-xs btn-ghost" data-cotizat-click="arbol-plegar" title="Close all branches">Close</button>
+        </span>
+      </div>
+    </div>
+    <div class="arbol-body"></div>
+    <p class="arbol-pie hint">Drag onto a section, or <kbd>Enter</kbd> to add it to the last one.</p>
+  </aside>
+
+  <section class="builder-workspace" id="builder-partidas">
+  <div class="builder-workspace-head">
+    <div>
+      <span class="section-kicker">Estimate</span>
+      <h2>Sections and line items</h2>
+      <p class="hint">Drag from the catalog, import Excel or create line items by hand.</p>
+    </div>
+    <div class="builder-workspace-tools">
+      <button type="button" class="btn btn-sm editor-open-catalog" id="btn-open-catalog-mobile" data-cotizat-click="arbol-toggle" title="Open catalog">Catalog</button>
+      <div class="catalog-search-wrap">
+        <input type="text" id="buscar-partida" placeholder="Search…  Ctrl+K" autocomplete="off" aria-label="Search the catalog" readonly data-cotizat-click="open-spotlight" title="Open catalog search (Ctrl+K)">
+        <div id="catalogo-partidas">
+          {% if not partidas_catalogo and not catalogo_diferido %}
+          <div class="csp-s-5ee28be5f0">There are no line items in the catalog. <a class="link" href="/partidas/nueva" target="_blank">Create the first one</a>.</div>
+          {% endif %}
+        </div>
+      </div>
+      {% if plantillas %}
+      <select id="select-plantilla" class="select-inline" title="Load template">
+        <option value="">Template…</option>
+        {% for t in plantillas %}
+        <option value="{{ t.id }}">{{ t.nombre }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+      <button type="button" class="btn btn-sm" id="btn-subir-excel" title="Import Excel into the estimate">Import Excel</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-pegar-excel" title="Paste rows from Excel">Paste</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-modal-receta-seccion" title="Room pack (Alt+R)">Pack</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btn-preview-pdf" title="PDF preview">Preview</button>
+      {% if presupuesto %}<a class="btn btn-sm btn-ghost" href="/presupuestos/{{ presupuesto.id }}/planos" title="Measure on the job drawings">📐 Drawings</a>{% endif %}
+      <button type="button" class="btn btn-xs btn-ghost autosave-save-now" id="btn-autosave-save-now" title="Force-save the draft" aria-label="Save draft now">Draft</button>
+    </div>
+  </div>
+
+  <div id="capitulos"></div>
+
+  <div id="builder-empty-state" class="builder-empty-state" hidden>
+    <div>
+      <span class="empty-icon">🧱</span>
+      <strong>Start your estimate</strong>
+      <p>Pick the fastest route: add a line item, search the catalog, insert a pack or paste from Excel.</p>
+    </div>
+    <div class="empty-actions">
+      <button type="button" class="btn btn-primary btn-sm" id="empty-add-first-partida">+ Add line item</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="open-spotlight">Search catalog</button>
+      <button type="button" class="btn btn-sm" id="empty-open-pack-modal">Insert pack</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="empty-paste-excel">Paste Excel</button>
+    </div>
+  </div>
+
+  <button type="button" class="btn-add-capitulo" id="btn-agregar-capitulo"><span>+</span> Add section</button>
+  </section>
+  </div>
+
+  <!-- TOTALES (a la derecha, solos) + TEXTO debajo a ancho completo -->
+  <div id="builder-resumen" class="builder-review">
+    <div class="builder-totals-wrap">
+      <div class="card card-totales builder-totals-card">
+        <div class="totales-head">
+          <span class="section-kicker">Financial summary</span>
+          <h2>Work totals</h2>
+        </div>
+        <div class="tot-linea"><span>Included subtotal</span><strong id="ui-subtotal">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-opcional"><span>Optional items available</span><strong id="ui-opcional">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-alternativas"><span>Alternatives available</span><strong id="ui-alternativas">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-obra"><span>Total work / line items</span><strong id="ui-obra">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-productos"><span>Total products</span><strong id="ui-productos">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-adicionales"><span>Additional costs</span><strong id="ui-adicionales">—</strong></div>
+        <div class="tot-linea" id="ui-fila-desc"><span>Discount</span><strong id="ui-descuento">—</strong></div>
+        <div class="tot-linea"><span>VAT <button type="button" class="btn btn-xs iva-toggle-btn" id="btn-toggle-iva-total" title="Turn VAT on or off">ON</button></span><strong id="ui-iva">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-obra"><span>Profit on work</span><strong id="ui-beneficio-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-obra"><span>Margin on work</span><strong id="ui-margen-obra" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio-productos"><span>Profit on products</span><strong id="ui-beneficio-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen-productos"><span>Margin on products</span><strong id="ui-margen-productos" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-beneficio"><span>Estimated total profit</span><strong id="ui-beneficio" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea cotizat-hidden" id="ui-fila-margen"><span>Total margin</span><strong id="ui-margen" class="csp-s-5516851989">—</strong></div>
+        <div class="tot-linea tot-tiempo"><span>Estimated work time <small class="hint">(labor output rates)</small></span><strong id="ui-tiempo">—</strong></div>
+        <div class="tot-tiempo-nota hint csp-s-88b066e08c" id="ui-tiempo-nota"></div>
+        <div class="tot-linea tot-final"><span>TOTAL</span><strong id="ui-total">—</strong></div>
+      </div>
+    </div>
+
+    <div class="card builder-texto-card">
+      <h2>Estimate text</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label>Additional information (scope of work)</label>
+          <textarea name="notas" rows="4" placeholder="General description, inclusions and exclusions…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+        </div>
+        <div class="field">
+          <label>Terms</label>
+          <textarea name="condiciones" rows="4" placeholder="Payment method, deposit, schedule, warranty…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions budget-save-dock">
+    <div class="save-dock-copy"><strong>Final review</strong><span>Both the estimate and the new catalog line items will be saved.</span></div>
+    <button class="btn btn-primary" type="submit">Save estimate</button>
+    <button type="button" class="btn btn-ghost" id="btn-guardar-plantilla">Save as template</button>
+    <a class="btn btn-ghost" href="{% if budget_id %}/presupuestos/{{ budget_id }}{% else %}/presupuestos{% endif %}">Cancel</a>
+  </div>
+</form>
+
+<nav class="editor-mobile-bar" aria-label="Editor actions">
+  <button type="button" class="editor-mobile-bar-btn" id="emb-catalog" data-cotizat-click="arbol-toggle">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3.5h12v11H3z"/><path d="M3 7h12M7 3.5v11"/></svg>
+    <span>Catalog</span>
+  </button>
+  <button type="button" class="editor-mobile-bar-btn" id="emb-add-partida">
+    <span class="editor-mobile-bar-plus">+</span>
+    <span>Line item</span>
+  </button>
+  <button type="button" class="editor-mobile-bar-btn" id="emb-add-cap">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 4h12M3 9h12M3 14h8"/></svg>
+    <span>Section</span>
+  </button>
+  <button type="submit" form="form-presupuesto" class="editor-mobile-bar-btn editor-mobile-bar-save">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 9.2l3.2 3.2L14 5.6"/></svg>
+    <span>Save</span>
+  </button>
+</nav>
+
+<!-- Toast para deshacer / confirmaciones -->
+<div id="undo-flash" class="undo-flash"></div>
+
+<!-- Aviso de borrador recuperable (local del navegador o autoguardado del servidor) -->
+<div id="draft-banner" class="draft-banner cotizat-hidden">
+  <span id="draft-banner-text">A <strong>draft that was not saved</strong> from this session has been recovered.</span>
+  <div class="actions csp-s-c9fd821d61">
+    <button type="button" class="btn btn-sm btn-primary" id="btn-restore-draft">Restore draft</button>
+    <button type="button" class="btn btn-sm" id="btn-discard-draft">Discard</button>
+  </div>
+</div>
+
+<!-- Modal: ficha completa de partida (mismo editor que el catálogo) -->
+<div class="modal-overlay" id="modal-editor-partida" role="dialog" aria-modal="true" aria-labelledby="titulo-editor-partida">
+  <div class="modal modal-partida-completa">
+    <!-- novalidate: la ficha vive en pestañas ocultas y en un <details>
+         plegado; la validación nativa del navegador no puede enfocar un
+         control inválido oculto y bloqueaba el guardado con
+         «An invalid form control ... is not focusable» (p. ej.
+         tiempo_estimado_horas con stepMismatch o valores pegados con coma).
+         La validación real la hace el JS del modal (nombre obligatorio con
+         error visible) y el servidor. -->
+    <form id="form-editor-partida" enctype="multipart/form-data" novalidate>
+      <input type="hidden" name="partida_catalogo_id" id="editor-partida-catalogo-id">
+      <div class="modal-head partida-modal-head">
+        <div><span class="page-eyebrow">Full line item editor</span><h3 id="titulo-editor-partida">Edit line item</h3><p class="hint">The same technical sheet and the same calculation as in the Line items tab.</p></div>
+        <button type="button" class="btn btn-ghost" data-close aria-label="Close">✕</button>
+      </div>
+      <div id="editor-partida-cype-note" class="cype-origin-note cotizat-hidden"></div>
+      <div id="editor-partida-error" class="alert alert-error cotizat-hidden"></div>
+
+      <nav class="partida-editor-tabs" aria-label="Line item sections">
+        <button type="button" class="active" data-partida-tab="ficha"><span>01</span> Sheet and costs</button>
+        <button type="button" data-partida-tab="presupuesto"><span>02</span> Quantity and takeoffs</button>
+        <button type="button" data-partida-tab="producto"><span>03</span> Linked product</button>
+      </nav>
+
+      <div class="partida-tab-panel active" data-partida-panel="ficha">
+        {{ editor_partida_catalogo(None, true) }}
+      </div>
+
+      <div class="partida-tab-panel" data-partida-panel="presupuesto">
+        <section class="catalog-editor-section">
+          <div class="catalog-editor-section-head"><div><span class="section-kicker">For this estimate only</span><h3>Quantity, behaviour and takeoffs</h3></div></div>
+          <div class="form-grid budget-line-grid">
+            <div class="field"><label>Direct quantity</label>
+              <div class="cantidad-con-plano">
+                <input type="number" step="any" min="0" name="linea_cantidad" value="1">
+                <button type="button" class="btn btn-sm btn-ghost cantidad-plano-btn" id="editor-cantidad-plano" title="Add takeoff from drawing">📐</button>
+              </div>
+              <small class="hint">Or press 📐 to bring in the floor area, the perimeter or the walls from a drawing.</small>
+            </div>
+            <div class="field"><label>Line item type</label><select name="linea_tipo"><option value="included">Included</option><option value="optional">Optional</option><option value="alternative">Alternative</option><option value="excluded">Not included</option><option value="provisional">Provisional</option><option value="measurement">Subject to measurement</option></select></div>
+            <div class="field"><label>Status</label><select name="linea_seleccionada"><option value="1">Selected</option><option value="0">Not selected</option></select></div>
+            <div class="field"><label>Alternative group</label><input name="linea_grupo_alternativa" placeholder="Optional"></div>
+            <div class="field"><label>Waste for this estimate (%)</label><input type="number" step="any" min="0" name="linea_desperdicio"></div>
+            <div class="field"><label>Profit (%) on cost</label><input type="number" step="any" name="linea_margen" placeholder="e.g. 40"><small class="hint">On direct cost (markup). e.g. 40 = Cost ×1.40</small></div>
+          </div>
+        </section>
+        <section class="catalog-breakdown budget-measurements-editor">
+          <div class="breakdown-head"><div><span class="section-kicker">Quantity breakdown</span><h3>Takeoffs by zone or concept</h3><p class="hint">If you add takeoffs, their sum replaces the direct quantity.</p></div><div class="editor-mediciones-actions"><button type="button" class="btn btn-sm" id="editor-add-medicion-plano">📐 Add from drawing</button><button type="button" class="btn btn-sm btn-primary" id="editor-add-medicion">+ Add takeoff</button></div></div>
+          <div id="editor-mediciones-list" class="editor-mediciones-list"></div>
+          <div id="editor-mediciones-empty" class="breakdown-empty"><span>📐</span><strong>No broken-down takeoffs</strong><small>The direct quantity entered above is used.</small></div>
+        </section>
+      </div>
+
+      <div class="partida-tab-panel" data-partida-panel="producto">
+        <section class="catalog-editor-section">
+          <div class="catalog-editor-section-head"><div><span class="section-kicker">Product in the estimate</span><h3>Material or product linked</h3><p class="hint">Optional. It shows a specific commercial reference on this line item.</p></div></div>
+          <div id="editor-producto-seleccionado" class="editor-producto-seleccionado" hidden aria-live="polite">
+            <img alt="">
+            <span class="editor-producto-icono">▦</span>
+            <span><small>Product linked to this line item</small><strong data-producto-nombre></strong><em data-producto-detalle></em></span>
+            <button type="button" class="btn btn-sm btn-danger csp-s-c9fd821d61" id="editor-btn-quitar-producto">🗑 Delete product</button>
+          </div>
+          <div class="form-grid">
+            <div class="field field-full"><label>Search or type a product</label><input name="linea_prod_nombre" placeholder="e.g. Calacatta porcelain tile 24×48"><p class="hint">Pick a suggestion to fill in price, unit and image automatically.</p></div>
+            <div class="field"><label>Product price / unit</label><input type="number" min="0" step="any" name="linea_prod_precio"><p class="hint">Added to the base price of the line item. e.g. baseboard 10 + product 2.50 = 12.50.</p></div>
+            <div class="field"><label>Cost / unit</label><input type="number" min="0" step="any" name="linea_prod_coste"><p class="hint">Used to work out the profit.</p></div>
+            <div class="field"><label>Unit</label><input name="linea_prod_unidad" placeholder="m2, ea…"></div>
+            <div class="field"><label>Category</label><input name="linea_prod_categoria" list="categorias-disponibles"></div>
+            <div class="field field-full"><label>Product image</label><input name="linea_prod_imagen" placeholder="No image" readonly><p class="hint">The image is taken from the catalog product. You can manage it under Products.</p></div>
+          </div>
+          <small class="hint editor-linea-total-hint" id="editor-linea-total-hint" hidden></small>
+        </section>
+      </div>
+
+      <div class="partida-modal-footer">
+        <div class="actions partida-actions-scope">
+          <button type="button" class="btn" data-close>Cancel</button>
+          <button type="button" class="btn" id="editor-partida-save-catalog" hidden>💾 Also save to the database</button>
+          <button type="submit" class="btn btn-primary" id="editor-partida-save">✓ Apply changes</button>
+        </div>
+        <small class="hint" id="editor-partida-scope-hint" hidden>The line item already exists in the catalog: «Apply changes» only affects this estimate. Use «Also save to the database» if you want to update the sheet for future estimates; no estimate already issued is affected.</small>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: seleccionar mediciones ya calculadas en los planos -->
+<div class="modal-overlay" id="modal-mediciones-plano" role="dialog" aria-modal="true" aria-labelledby="titulo-mediciones-plano">
+  <div class="modal modal-mediciones-plano">
+    <div class="modal-head">
+      <div>
+        <span class="page-eyebrow">Project takeoffs</span>
+        <h3 id="titulo-mediciones-plano">Add from drawing</h3>
+        <p class="hint">Select one or more rooms and copy the perimeter, the floor area or the walls into the breakdown.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close-plano-selector aria-label="Close">✕</button>
+    </div>
+    <div class="plano-selector-toolbar">
+      <div class="field">
+        <label for="plano-selector-magnitud">Measure to add</label>
+        <select id="plano-selector-magnitud">
+          <option value="perimetro">Room perimeter · m</option>
+          <option value="suelo">Floor area · m²</option>
+          <option value="paredes">Wall area · m²</option>
+          <option value="valor">Saved measurement · per unit</option>
+        </select>
+      </div>
+      <span id="plano-selector-seleccion-count" class="plano-selector-count">0 rooms selected</span>
+      <button type="button" class="btn btn-sm btn-ghost" id="plano-selector-recargar" title="Re-read the drawings">↻</button>
+    </div>
+    <div id="plano-selector-status" class="plano-selector-status" role="status" aria-live="polite">Loading takeoffs…</div>
+    <div id="plano-selector-lista" class="plano-selector-lista"></div>
+    <div class="plano-selector-footer">
+      <p class="hint">Each selection is added as an editable row. You can adjust the concept or the quantity afterwards.</p>
+      <div class="actions"><button type="button" class="btn" data-close-plano-selector>Cancel</button><button type="button" class="btn btn-primary" id="btn-confirmar-mediciones-plano">Add selected</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: subir Excel sin abandonar el presupuesto -->
+<div class="modal-overlay" id="modal-importar-excel" role="dialog" aria-modal="true" aria-labelledby="titulo-importar-excel">
+  <div class="modal modal-import-excel">
+    <div class="modal-head">
+      <div>
+        <h3 id="titulo-importar-excel">Add line items from Excel</h3>
+        <p class="hint modal-subtitle">They are added here and also saved to your catalog, without leaving this screen.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close aria-label="Close">✕</button>
+    </div>
+
+    <div id="excel-inline-source">
+      <label class="excel-drop-zone" id="excel-drop-zone" for="excel-inline-file">
+        <span class="excel-drop-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg>
+        </span>
+        <strong>Select or drag your Excel or BC3</strong>
+        <span>.xlsx, .csv or .bc3 (FIEBDC-3) files · several Excel breakdowns allowed</span>
+        <input type="file" id="excel-inline-file" multiple accept=".csv,.xlsx,.bc3,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      </label>
+      <div id="excel-inline-files" class="excel-selected-files hint">No file selected</div>
+      <label class="check-line excel-header-check">
+        <input type="checkbox" id="excel-inline-header" checked>
+        The first row contains column names
+      </label>
+      <div class="form-actions compact-actions">
+        <button type="button" class="btn btn-primary" id="btn-analizar-excel-inline">Analyse file</button>
+        <button type="button" class="btn" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <div id="excel-inline-error" class="alert alert-error cotizat-hidden" role="alert"></div>
+    <div id="excel-inline-review" class="import-hidden">
+      <div class="excel-review-head">
+        <div>
+          <strong id="excel-inline-result-title">Line items detected</strong>
+          <p class="hint" id="excel-inline-result-meta"></p>
+        </div>
+        <button type="button" class="btn btn-sm" id="btn-cambiar-excel-inline">Change file</button>
+      </div>
+
+      <div id="excel-inline-mapping" class="import-hidden">
+        <p class="hint">Check the columns. Only <strong>Line item</strong> is required.</p>
+        <div class="table-wrap">
+          <table class="table import-map-table compact-map-table">
+            <thead><tr><th>Field</th><th>Excel column</th></tr></thead>
+            <tbody id="excel-inline-mapping-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="excel-inline-cype-chapter" class="field import-hidden">
+        <label>Destination section</label>
+        <input type="text" id="excel-inline-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
+      </div>
+
+      <div id="excel-inline-bc3-chapter" class="field import-hidden">
+        <label>BC3 section (optional)</label>
+        <input type="text" id="excel-inline-bc3-chapter-input" value="" maxlength="200" placeholder="Empty = keeps the BC3 sections">
+        <p class="hint">If you state a section, all the BC3 line items go there.</p>
+      </div>
+
+      <div class="excel-inline-preview" id="excel-inline-preview"></div>
+      <div id="excel-inline-issues"></div>
+      <div class="form-actions compact-actions">
+        <button type="button" class="btn btn-primary" id="btn-confirmar-excel-inline">✓ Add to the estimate</button>
+        <button type="button" class="btn" data-close>Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: pegar desde Excel -->
+<div class="modal-overlay" id="modal-pegar">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Paste line items from Excel</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint csp-s-f18d2d509a">
+      In Excel select the rows and press <strong>Copy</strong>, then paste them here.
+      Accepted format: <code>Name&nbsp;·&nbsp;Unit&nbsp;·&nbsp;Quantity&nbsp;·&nbsp;Price</code>
+      (unit, quantity and price optional).
+    </p>
+    <textarea id="paste-input" rows="8" placeholder="Paste here (Ctrl+V)&#10;Porcelain tile 36×36	m2	84.6	68&#10;Lacquered baseboard	m	72	9.8"></textarea>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-importar-excel">Import</button>
+      <button type="button" class="btn" data-close>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: vista previa del PDF -->
+<div class="modal-overlay modal-preview" id="modal-preview">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>PDF preview</h3>
+      <div class="actions">
+        <button type="button" class="btn btn-sm" id="btn-refresh-preview" title="Refresh">Refresh</button>
+        <button type="button" class="btn btn-ghost" data-close>✕</button>
+      </div>
+    </div>
+    <iframe id="preview-frame" title="PDF preview"></iframe>
+  </div>
+</div>
+
+<!-- Modal: guardar como plantilla -->
+<div class="modal-overlay" id="modal-plantilla">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Save as template</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint csp-s-f18d2d509a">Saves the current structure (sections, line items and takeoffs) to reuse it on future estimates.</p>
+    <div class="field">
+      <label>Template name</label>
+      <input type="text" id="plantilla-nombre" placeholder="e.g. Complete high-end kitchen">
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-save-plantilla">Save template</button>
+      <button type="button" class="btn" data-close>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Pack de Estancia (Recetas de Reforma con 1 clic - Alt+R) -->
+<div class="modal-overlay" id="modal-recetas-estancia">
+  <div class="modal modal-lg csp-s-d480531e7f">
+    <div class="modal-head">
+      <div>
+        <h3>Room packs</h3>
+        <p class="hint modal-subtitle">Select a room and the square metres of the space. The system inserts the whole section and calculates its line items proportionally.</p>
+      </div>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="modal-body csp-s-deea30875a">
+      <div class="csp-s-74e81db110">
+        <div>
+          <label class="csp-s-b44d0ad3fc">Select the room pack / recipe</label>
+          <select id="select-receta-pack" class="input csp-s-9ccc4ca9d6">
+            <option value="">Loading available packs...</option>
+          </select>
+        </div>
+        <div>
+          <label class="csp-s-b44d0ad3fc" id="label-medida-pack">Room size (m²)</label>
+          <input type="number" step="0.1" id="input-medida-pack" class="input csp-s-331aa27b27" value="10.0">
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary csp-s-14dfcb7cc9" id="btn-insertar-pack-estancia">Insert into estimate</button>
+        </div>
+      </div>
+
+      <div id="receta-pack-desc" class="muted csp-s-8f452e868d"></div>
+
+      <div class="csp-s-3574ea2cbf">
+        <div class="csp-s-323c1fa4e8">
+          <strong class="csp-s-232f9fa610">Live preview of the section to insert:</strong>
+          <span class="badge csp-s-7f2747e2b8" id="badge-total-pack">Estimated total: $0.00</span>
+        </div>
+        <div class="csp-s-de0b2c84f6">
+          <table class="table csp-s-1a46806bde">
+            <thead>
+              <tr class="csp-s-28b29075b5">
+                <th class="csp-s-9b9315757d">#</th>
+                <th>Pack line item</th>
+                <th class="csp-s-07f450c60c">Type</th>
+                <th class="csp-s-07f450c60c">Est. qty.</th>
+                <th class="csp-s-9c31662e47">Unit</th>
+                <th class="csp-s-278acc1abc">Unit price</th>
+                <th class="csp-s-251145023f">Est. amount</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-preview-pack">
+              <tr>
+                <td colspan="7" class="empty csp-s-284473c560">Select a pack in the dropdown above.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer csp-s-a25ae6e557">
+      <a href="/recetas" target="_blank" class="muted csp-s-06e5235951">Manage the pack catalog</a>
+      <button type="button" class="btn" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Guardar Capítulo como Pack de Estancia -->
+<div class="modal-overlay" id="modal-guardar-capitulo-receta">
+  <div class="modal csp-s-82c063887d">
+    <div class="modal-head">
+      <h3>Save section as a room pack</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="modal-body csp-s-deea30875a">
+      <p class="muted csp-s-2346c4facf">
+        This section is saved in your catalog of <strong>Room packs</strong> and you can insert it with one click (Alt+R) on any future estimate.
+      </p>
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-b44d0ad3fc">Pack name *</label>
+        <input type="text" id="guardar-pack-nombre" class="input csp-s-9ccc4ca9d6" required>
+      </div>
+      <div class="csp-s-b7971c41ee">
+        <div>
+          <label class="csp-s-b44d0ad3fc">Category</label>
+          <select id="guardar-pack-categoria" class="input csp-s-9ccc4ca9d6">
+            <option value="Baños">Bathrooms</option>
+            <option value="Cocinas">Kitchens</option>
+            <option value="Suelos">Flooring</option>
+            <option value="Habitaciones">Bedrooms</option>
+            <option value="Electricidad">Electrical</option>
+            <option value="Otros">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="csp-s-b44d0ad3fc">Base unit</label>
+          <input type="text" id="guardar-pack-unidad" class="input csp-s-331aa27b27" value="m²">
+        </div>
+      </div>
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-b44d0ad3fc">Reference base size</label>
+        <input type="number" step="0.1" id="guardar-pack-base" class="input csp-s-331aa27b27" value="10.0">
+      </div>
+      <div class="csp-s-68227a9129">
+        <label class="csp-s-437da90a21">
+          <input type="checkbox" id="guardar-pack-coeficientes" checked>
+          <span>Calculate proportional coefficients automatically</span>
+        </label>
+        <p class="muted csp-s-9985f0aa07">
+          If checked, line items with quantities greater than 1 are scaled according to the square metres of the room.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer csp-s-05337f4c26">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="button" class="btn btn-primary" id="btn-confirmar-guardar-pack">Save to the pack library</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: sugerencias deterministas desde el catálogo local -->
+<div class="modal-overlay" id="modal-generador">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Suggest line items from your catalog</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <p class="hint csp-s-bdf32b3fef">
+      Describe the project and matches are searched in <strong>your own catalog</strong>
+      of line items (and in your saved templates) to draft the sections. It works offline: it does not invent
+      line items or prices that are not already in your catalog. You can edit everything afterwards.
+    </p>
+    <div class="field">
+      <label>Describe the project</label>
+      <textarea id="generador-texto" rows="3" placeholder="e.g. 8 m2 bathroom remodel, premium finish, includes plumbing, electrical and paint"></textarea>
+    </div>
+    <div id="generador-resultado" class="hint cotizat-hidden csp-s-24dbb79f28"></div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary" id="btn-generar">Generate draft</button>
+      <button type="button" class="btn" data-close>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: atajos de teclado -->
+<div class="modal-overlay" id="modal-atajos">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Keyboard shortcuts</h3>
+      <button type="button" class="btn btn-ghost" data-close>✕</button>
+    </div>
+    <div class="atajos-grid">
+      <div><kbd>Enter</kbd> Moves from name → quantity → price</div>
+      <div><kbd>Alt</kbd>+<kbd>P</kbd> Add line item</div>
+      <div><kbd>Alt</kbd>+<kbd>C</kbd> Add section</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> o <kbd>/</kbd> Catalog spotlight</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>M</kbd> Change the estimate currency (ISO)</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Z</kbd> Undo structural changes</div>
+      <div><kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd> Save estimate</div>
+      <div><kbd>?</kbd> Show this help</div>
+      <div><kbd>Esc</kbd> Collapse open line items</div>
+      <div>🖱️ Drag to reorder line items <em>and sections</em></div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="unidades-comunes">
+  <option value="ud"></option>
+  <option value="m2"></option>
+  <option value="m"></option>
+  <option value="ml"></option>
+  <option value="glb"></option>
+  <option value="juego"></option>
+  <option value="kg"></option>
+  <option value="hora"></option>
+</datalist>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}" id="campos-importacion-inline" type="application/json">{{ campos_importables | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" id="datos-iniciales" type="application/json">
+{% if presupuesto %}{
+  "capitulos": [
+    {% for cap in presupuesto.capitulos %}{
+      "nombre": {{ cap.nombre | tojson }},
+      "partidas": [
+        {% for p in cap.partidas %}{
+          "partida_id": {{ p.id | tojson }},
+          "catalogo_id": {{ ((p|attr('partida_catalogo_id') if p is defined else '') or '') | tojson }},
+          "tiempo_estimado_horas": {{ ((tiempos_catalogo or {}).get(p.partida_catalogo_id) if p.partida_catalogo_id else none) | tojson }},
+          "codigo_externo": {{ p.codigo_externo | tojson }},
+          "tiene_descomposicion_cype": {{ (p.descomposicion_cype is not none) | tojson }},
+          "nombre_descomposicion_cype": {{ (p.descomposicion_cype.nombre_archivo_origen if p.descomposicion_cype else '') | tojson }},
+          "descomposicion_meta": {% if p.descomposicion_cype %}{
+            "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
+            "archivo_origen": {{ (p.descomposicion_cype.archivo_origen or '') | tojson }},
+            "codigo": {{ (p.descomposicion_cype.codigo or '') | tojson }},
+            "unidad": {{ (p.descomposicion_cype.unidad or '') | tojson }},
+            "nombre_archivo_origen": {{ (p.descomposicion_cype.nombre_archivo_origen or '') | tojson }}
+          }{% else %}{}{% endif %},
+          "nombre": {{ p.nombre | tojson }},
+          "descripcion": {{ p.descripcion | tojson }},
+          "unidad": {{ p.unidad | tojson }},
+          "precio": {{ p.precio_unitario | tojson }},
+          "cantidad": {{ p.cantidad | tojson }},
+          "prod_nombre": {{ p.producto_nombre | tojson }},
+          "prod_precio": {{ (p.producto_precio if p.producto_precio is not none else '') | tojson }},
+          "prod_coste": {{ (p.producto_coste if p.producto_coste is not none else '') | tojson }},
+          "prod_unidad": {{ p.producto_unidad | tojson }},
+          "prod_imagen": {{ p.producto_imagen | tojson }},
+          "tipo_partida": {{ (p.tipo_partida or 'included') | tojson }},
+          "seleccionada": {{ (p.seleccionada or false) | tojson }},
+          "coste_materiales": {{ (p.coste_materiales or 0) | tojson }},
+          "coste_mano_obra": {{ (p.coste_mano_obra or 0) | tojson }},
+          "coste_complementarios": {{ (p.coste_complementarios or 0) | tojson }},
+          "coste_otros": {{ (p.coste_otros or 0) | tojson }},
+          "desperdicio_pct": {{ (p.desperdicio_pct or 0) | tojson }},
+          "margen_pct": {{ (p.margen_pct or 0) | tojson }},
+          "grupo_alternativa": {{ (p.grupo_alternativa or '') | tojson }},
+          "productos_opciones": [
+            {% for op in (p.productos_opciones or []) %}{
+              "id": {{ op.id | tojson }},
+              "nombre": {{ op.nombre | tojson }},
+              "descripcion": {{ op.descripcion | tojson }},
+              "precio": {{ op.precio | tojson }},
+              "coste": {{ (op.coste if op.coste is not none else '') | tojson }},
+              "unidad": {{ op.unidad | tojson }},
+              "categoria": {{ op.categoria | tojson }},
+              "marca": {{ op.marca | tojson }},
+              "modelo": {{ op.modelo | tojson }},
+              "sku": {{ op.sku | tojson }},
+              "color": {{ op.color | tojson }},
+              "acabado": {{ op.acabado | tojson }},
+              "imagen": {{ op.imagen | tojson }},
+              "seleccionado": {{ (op.seleccionado or false) | tojson }},
+              "orden": {{ op.orden | tojson }}
+            }{{ "," if not loop.last }}{% endfor %}
+          ],
+          "descomposicion": {% if p.descomposicion_cype %}{
+            "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
+            "codigo": {{ p.descomposicion_cype.codigo | tojson }},
+            "unidad": {{ p.descomposicion_cype.unidad | tojson }},
+            "filas": [
+              {% for f in p.descomposicion_cype.filas if (f.tipo or '') != 'vacia' %}{
+                "tipo": {{ f.tipo | tojson }},
+                "grupo": {{ f.grupo | tojson }},
+                "categoria": {{ (f.categoria or '') | tojson }},
+                "codigo": {{ f.codigo | tojson }},
+                "unidad": {{ f.unidad | tojson }},
+                "descripcion": {{ f.descripcion | tojson }},
+                "rendimiento": {{ (f.rendimiento if f.rendimiento is not none else '') | tojson }},
+                "precio": {{ (f.precio_unitario if f.precio_unitario is not none else '') | tojson }},
+                "importe": {{ (f.importe if f.importe is not none else '') | tojson }},
+                "numero": {{ f.numero_fila_excel | tojson }},
+                "celdas": {{ f.celdas | tojson }},
+                "formulas": {{ f.formulas | tojson }}
+              }{{ "," if not loop.last }}{% endfor %}
+            ]
+          }{% else %}null{% endif %},
+          "mediciones": [
+            {% for m in p.mediciones %}{ "concepto": {{ m.concepto | tojson }}, "cantidad": {{ m.cantidad | tojson }} }{{ "," if not loop.last }}{% endfor %}
+          ]
+        }{{ "," if not loop.last }}{% endfor %}
+      ]
+    }{{ "," if not loop.last }}{% endfor %}
+  ]
+}{% else %}{ "capitulos": [{ "nombre": "", "partidas": [] }]}{% endif %}
+</script>
+{# El índice del catálogo no repite la moneda en cada partida (son más de mil):
+   ya viene convertido a `window.COTIZAT_MONEDA_ACTIVA`, que es lo que usa el
+   formateador del editor. #}
+<script nonce="{{ request.state.csp_nonce }}" id="datos-catalogo" type="application/json">
+[
+  {% for p in partidas_catalogo %}{
+    "id": {{ p.id | tojson }},
+    "nombre": {{ p.nombre | tojson }},
+    "precio": {{ p.precio | tojson }},
+    "unidad": {{ p.unidad | tojson }},
+    "categoria": {{ p.categoria | tojson }},
+    "subcategoria": {{ p.subcategoria | tojson }},
+    "apartado": {{ p.apartado | tojson }},
+    "codigo_clasificacion": {{ p.codigo_clasificacion | tojson }},
+    "codigo_legacy": {{ p.codigo_legacy | tojson }},
+    "codigo": {{ p.codigo | tojson }},
+    "codigo_interno": {{ p.codigo_interno | tojson }},
+    "codigo_externo": {{ p.codigo_externo | tojson }},
+    "usos": {{ p.usos | tojson }},
+    "ultimo_uso": {{ p.ultimo_uso | tojson }},
+    "buscable": {{ p.buscable | tojson }},
+    "coste_materiales": {{ p.coste_materiales | tojson }},
+    "coste_mano_obra": {{ p.coste_mano_obra | tojson }},
+    "coste_complementarios": {{ p.coste_complementarios | tojson }},
+    "coste_otros": {{ p.coste_otros | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<script nonce="{{ request.state.csp_nonce }}" id="datos-productos" type="application/json">
+[
+  {% for p in productos_catalogo %}{
+    "id": {{ p.id | tojson }},
+    "nombre": {{ p.nombre | tojson }},
+    "descripcion": {{ p.descripcion | tojson }},
+    "precio": {{ p.precio_unitario | tojson }},
+    "coste": {{ (p.precio_compra if p.precio_compra is not none else '') | tojson }},
+    "moneda": {{ p.moneda | tojson }},
+    "unidad": {{ p.unidad | tojson }},
+    "categoria": {{ p.categoria | tojson }},
+    "marca": {{ p.marca | tojson }},
+    "modelo": {{ p.modelo | tojson }},
+    "sku": {{ p.sku | tojson }},
+    "proveedor": {{ p.proveedor | tojson }},
+    "color": {{ p.color | tojson }},
+    "acabado": {{ p.acabado | tojson }},
+    "formato": {{ p.formato | tojson }},
+    "imagen": {{ p.imagen | tojson }},
+    "fecha_precio": {{ (p.fecha_actualizacion_precio.isoformat() if p.fecha_actualizacion_precio else '') | tojson }},
+    "usos": {{ p.usos | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<script nonce="{{ request.state.csp_nonce }}" id="datos-recursos" type="application/json">
+[
+  {% for r in recursos_catalogo %}{
+    "id": {{ r.id | tojson }},
+    "codigo": {{ r.codigo | tojson }},
+    "descripcion": {{ r.descripcion | tojson }},
+    "unidad": {{ r.unidad | tojson }},
+    "categoria": {{ r.categoria | tojson }},
+    "grupo": {{ r.grupo | tojson }},
+    "precio": {{ r.precio | tojson }},
+    "moneda": {{ r.moneda | tojson }},
+    "origen_precio": {{ r.origen_precio | default('base') | tojson }},
+    "confianza_precio": {{ r.confianza_precio | default('') | tojson }},
+    "aviso_precio": {{ r.aviso_precio | default('') | tojson }},
+    "proveedor": {{ r.proveedor | tojson }},
+    "usos": {{ r.usos | tojson }}
+  }{{ "," if not loop.last }}{% endfor %}
+]
+</script>
+<datalist id="categorias-disponibles">
+  {% for c in categorias %}<option value="{{ c }}"></option>{% endfor %}
+</datalist>
+<script nonce="{{ request.state.csp_nonce }}">
+  window.BUDGET_ID = {{ (budget_id or (presupuesto.id if presupuesto else none)) | tojson }};
+  // Borrador del autoguardado persistido en el servidor (solo si es más
+  // reciente que el último guardado del presupuesto).
+  window.BORRADOR_SERVIDOR = {{ borrador_servidor | tojson if borrador_servidor else 'null' }};
+  window.FUNCIONES_AVANZADAS = {{ 'true' if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_COSTES_INTERNOS = {{ 'true' if cfg.mostrar_costes_internos or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_ALTERNATIVAS = {{ 'true' if cfg.mostrar_alternativas or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  window.MOSTRAR_CARGOS = {{ 'true' if cfg.mostrar_cargos_adicionales or (presupuesto and presupuesto.usar_funciones_avanzadas) else 'false' }};
+  // Parámetros de la estimación de tiempos de obra (ver editor/tiempos.js)
+  window.TIEMPOS_CFG = {
+    jornada: {{ cfg.horas_jornada or 8 }},
+    tarifa: {{ tarifa_hora_editor or cfg.tarifa_hora_media or 8 }},
+    por_coste: {{ 'true' if cfg.estimar_tiempo_por_coste else 'false' }}
+  };
+</script>
+<script nonce="{{ request.state.csp_nonce }}">
+  // Beneficio por partida: siempre visible según petición del usuario (fila Benef. y totales)
+  document.body.classList.add('beneficio-on');
+</script>
+<script nonce="{{ request.state.csp_nonce }}">
+  // Contexto monetario del editor. La moneda del presupuesto manda sobre la
+  // preferencia de la organización, y la tasa viaja con ella para que el
+  // catálogo (guardado en la moneda base) se convierta en la misma dirección
+  // al leerlo y al escribirlo.
+  window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};
+  window.COTIZAT_TASA_ACTIVA = {{ (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio) | tojson }};
+  window.COTIZAT_SIMBOLO_ACTIVO = {{ ((presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | simbolo) | tojson }};
+  window.CATALOGO_DATOS_URL = {{ (url_datos_editor or '/presupuestos/editor/datos') | tojson }};
+  // Respaldo del autocompletado de recursos de la ficha: si el índice
+  // diferido todavía no llegó, la ficha consulta al servidor directamente.
+  window.RECURSOS_CATALOGO_URL = "/recursos/api/buscar";
+</script>
+<!-- Módulos del editor (cargados en orden de dependencia) -->
+<script src="/static/js/utils/formato.js"></script>
+<script src="/static/js/utils/catalogo.js"></script>
+<script src="/static/js/partida_catalogo_editor.js"></script>
+<script src="/static/js/editor/partida.js"></script>
+<script src="/static/js/editor/capitulo.js"></script>
+<script src="/static/js/services/autosave.js"></script>
+<script src="/static/js/editor/atajos.js"></script>
+<script src="/static/js/editor/dragdrop.js"></script>
+<script src="/static/js/editor/catalogo.js"></script>
+<script src="/static/js/editor/totales.js"></script>
+<script src="/static/js/editor/tiempos.js"></script>
+<script nonce="{{ request.state.csp_nonce }}" id="simbolos-moneda" type="application/json">{{ simbolos | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}" id="contexto-monetario" type="application/json">{{ {"moneda": (presupuesto.moneda if presupuesto else cfg.moneda_default or "USD"), "tasa": (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio), "fecha": ((presupuesto.fecha_tipo_cambio.isoformat() if presupuesto and presupuesto.fecha_tipo_cambio else (cfg.fecha_tasa.isoformat() if cfg.fecha_tasa and not presupuesto else ""))), "fuente": (presupuesto.fuente_tipo_cambio if presupuesto else (cfg.fuente_tipo_cambio or ""))} | tojson }}</script>
+<script src="/static/js/editor/main.js"></script>
+<script src="/static/js/editor/partida_modal.js"></script>
+<script src="/static/js/editor/importador_excel.js"></script>
+<script src="/static/js/editor/dictado.js"></script>
+<script src="/static/js/editor/generador.js"></script>
+<script src="/static/js/editor/recetas_modal.js"></script>
+<script src="/static/js/editor/arbol_catalogo.js"></script>
+<script src="/static/js/editor/spotlight.js"></script>
+<script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var chk = document.getElementById('usar-funciones-avanzadas');
+    var panel = document.getElementById('advanced-budget-fields');
+    function syncAdvanced() {
+      if (panel) CotizatStyles.set(panel, "display", chk && chk.checked ? 'grid' : 'none');
+      document.querySelectorAll('.advanced-item-section').forEach(function (el) {
+        CotizatStyles.set(el, "display", chk && chk.checked ? '' : 'none');
+      });
+    }
+    if (chk) { chk.addEventListener('change', function () { syncAdvanced(); if (typeof recalcular === 'function') recalcular(); }); syncAdvanced(); }
+  })();
+
+  function toggleDatosGenerales() {
+    var content = document.getElementById('datos-generales-content');
+    var btn = document.getElementById('btn-toggle-datos');
+    var card = document.getElementById('card-datos-generales');
+    if (!content || !btn || !card) return;
+    
+    if (CotizatStyles.isHidden(content)) {
+      CotizatStyles.set(content, "display", '');
+      btn.textContent = 'Contraer';
+      CotizatStyles.set(card, "borderColor", 'var(--border)');
+    } else {
+      CotizatStyles.set(content, "display", 'none');
+      btn.textContent = 'Expandir';
+      CotizatStyles.set(card, "borderColor", 'var(--accent)');
+    }
+  }
+
+  function onClienteSeleccionado(select) {
+    actualizarResumenDatosGenerales();
+    // Collapse automatically once they choose a client (creating budget)
+    if (select && select.value !== "") {
+      var content = document.getElementById('datos-generales-content');
+      if (content && !CotizatStyles.isHidden(content)) {
+        setTimeout(toggleDatosGenerales, 300);
+      }
+    }
+  }
+
+  function toggleUploaderPortadas() {
+    var chk = document.getElementById('chk-con-portada');
+    var wrapper = document.getElementById('wrapper-foto-proyecto');
+    if (chk && wrapper) {
+      CotizatStyles.set(wrapper, "display", chk.checked ? 'block' : 'none');
+    }
+  }
+
+  function toggleWrapperFirma() {
+    var chk = document.getElementById('chk-firmas');
+    var wrapper = document.getElementById('wrapper-firma');
+    if (chk && wrapper) {
+      CotizatStyles.set(wrapper, "display", chk.checked ? 'block' : 'none');
+    }
+  }
+
+  // --- Firma digital del cliente (canvas) ----------------------------------
+  (function () {
+    var canvas = document.getElementById('firma-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var input = document.getElementById('firma-data');
+    var dibujando = false;
+    var ultimo = null;
+
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var t = e.touches ? e.touches[0] : e;
+      return {
+        x: (t.clientX - r.left) * (canvas.width / r.width),
+        y: (t.clientY - r.top) * (canvas.height / r.height)
+      };
+    }
+
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1e293b';
+
+    canvas.addEventListener('mousedown', function (e) { dibujando = true; ultimo = pos(e); e.preventDefault(); });
+    canvas.addEventListener('mousemove', function (e) {
+      if (!dibujando) return;
+      var p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(ultimo.x, ultimo.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ultimo = p;
+    });
+    window.addEventListener('mouseup', function () { if (dibujando) { dibujando = false; guardarFirma(); } });
+    canvas.addEventListener('touchstart', function (e) { e.preventDefault(); dibujando = true; ultimo = pos(e); }, { passive: false });
+    canvas.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      if (!dibujando) return;
+      var p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(ultimo.x, ultimo.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ultimo = p;
+    }, { passive: false });
+    canvas.addEventListener('touchend', function () { if (dibujando) { dibujando = false; guardarFirma(); } });
+
+    function guardarFirma() {
+      input.value = canvas.toDataURL('image/png');
+    }
+
+    document.getElementById('btn-limpiar-firma').addEventListener('click', function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      input.value = '';
+    });
+  })();
+
+  (function () {
+    var form = document.getElementById('form-presupuesto');
+    var select = document.getElementById('moneda-select');
+    var confirmInput = document.getElementById('confirmar-cambio-moneda');
+    if (!form || !select || !confirmInput) return;
+    function actualizarContexto() {
+      var resumen = document.getElementById('moneda-contexto-resumen');
+      if (resumen) resumen.textContent = 'Moneda contractual del presupuesto: ' + select.value + '. Los importes se guardarán en esta moneda.';
+    }
+    select.addEventListener('change', actualizarContexto);
+    actualizarContexto();
+    form.addEventListener('submit', function (event) {
+      var original = form.getAttribute('data-moneda-original') || select.value;
+      if (original !== select.value && original) {
+        var mensaje = 'Vas a cambiar la moneda de ' + original + ' a ' + select.value + '. Se convertirán los importes del borrador usando la tasa indicada. ¿Deseas continuar?';
+        if (!window.confirm(mensaje)) {
+          event.preventDefault();
+          return;
+        }
+        confirmInput.value = '1';
+      }
+    });
+  })();
+
+  function actualizarResumenDatosGenerales() {
+    var selectCliente = document.querySelector('select[name="client_id"]');
+    var inputTitulo = document.querySelector('input[name="titulo"]');
+    var selectMoneda = document.querySelector('select[name="moneda"]');
+    var inputFecha = document.querySelector('input[name="fecha"]');
+    var selectEstado = document.querySelector('select[name="estado"]');
+    
+    var cliente = selectCliente && selectCliente.options[selectCliente.selectedIndex] ? selectCliente.options[selectCliente.selectedIndex].text : '';
+    if (!cliente || cliente === '— Select a client —') {
+      cliente = 'Sin cliente';
+    }
+    
+    var titulo = inputTitulo ? inputTitulo.value.trim() : '';
+    if (!titulo) {
+      titulo = '(Sin título)';
+    }
+    
+    var moneda = selectMoneda ? selectMoneda.value : 'USD';
+    
+    var fecha = inputFecha ? inputFecha.value : '';
+    if (fecha) {
+      var p = fecha.split('-');
+      if (p.length === 3) fecha = p[2] + '/' + p[1] + '/' + p[0];
+    }
+    
+    var estado = selectEstado ? selectEstado.options[selectEstado.selectedIndex].text : 'Borrador';
+    
+    var resumenText = cliente + " · " + titulo + " · " + fecha + " · " + moneda + " · " + estado;
+
+    var resSpan = document.getElementById('datos-generales-resumen');
+    if (resSpan) {
+      resSpan.textContent = resumenText;
+    }
+    var docTitle = document.getElementById('ecb-doc-title');
+    if (docTitle && inputTitulo) {
+      var t = inputTitulo.value.trim();
+      if (t) docTitle.textContent = t;
+    }
+  }
+
+  window.CotizatActions.register("budget-toggle-general", function () {
+    toggleDatosGenerales();
+  });
+  window.CotizatActions.register("budget-client-selected", function (element) {
+    onClienteSeleccionado(element);
+  });
+  window.CotizatActions.register("budget-toggle-cover", function () {
+    toggleUploaderPortadas();
+  });
+  window.CotizatActions.register("budget-toggle-signature", function () {
+    toggleWrapperFirma();
+  });
+  window.CotizatActions.register("budget-add-catalog", function (element) {
+    agregarDesdeCatalogo(Number(element.dataset.index || 0));
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var fields = ['client_id', 'titulo', 'moneda', 'fecha', 'estado'];
+    fields.forEach(function(fName) {
+      var el = document.querySelector('[name="' + fName + '"]');
+      if (el) {
+        el.addEventListener('change', actualizarResumenDatosGenerales);
+        el.addEventListener('input', actualizarResumenDatosGenerales);
+      }
+    });
+    actualizarResumenDatosGenerales();
+    toggleUploaderPortadas();
+    toggleWrapperFirma();
+
+    // If a client is already chosen (e.g. editing an existing budget), collapse on load to save space
+    var selectCliente = document.querySelector('select[name="client_id"]');
+    if (selectCliente && selectCliente.value !== "") {
+      toggleDatosGenerales();
+    }
+
+    // Densidad compacta / cómoda (persiste en localStorage)
+    var densityBtn = document.getElementById('btn-density-toggle');
+    if (densityBtn) {
+      var syncDensity = function () {
+        var compact = document.body.classList.contains('density-compact');
+        densityBtn.setAttribute('aria-pressed', compact ? 'true' : 'false');
+        densityBtn.title = compact ? 'Cambiar a densidad cómoda' : 'Cambiar a densidad compacta';
+      };
+      densityBtn.addEventListener('click', function () {
+        document.body.classList.toggle('density-compact');
+        localStorage.setItem(
+          'editor-density',
+          document.body.classList.contains('density-compact') ? 'compact' : 'comfy'
+        );
+        syncDensity();
+      });
+      syncDensity();
+    }
+
+    // El input de búsqueda abre el Spotlight (⌘K)
+    var buscar = document.getElementById('buscar-partida');
+    if (buscar) {
+      buscar.addEventListener('focus', function () {
+        buscar.blur();
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
+      buscar.addEventListener('click', function () {
+        if (window.EDITOR && window.EDITOR.abrirSpotlight) window.EDITOR.abrirSpotlight();
+      });
+    }
+
+    function clickIf(id) {
+      var el = document.getElementById(id);
+      if (el) el.click();
+    }
+    var embCap = document.getElementById('emb-add-cap');
+    if (embCap) {
+      embCap.addEventListener('click', function () { clickIf('btn-agregar-capitulo'); });
+    }
+    var embPart = document.getElementById('emb-add-partida');
+    if (embPart) {
+      embPart.addEventListener('click', function () {
+        var last = document.querySelector('#capitulos .btn-add-partida');
+        var all = document.querySelectorAll('#capitulos .btn-add-partida');
+        if (all.length) all[all.length - 1].click();
+        else clickIf('empty-add-first-partida');
+      });
+    }
+  });
+</script>
+{% endblock %}
