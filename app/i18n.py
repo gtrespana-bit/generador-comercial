@@ -7,13 +7,24 @@ resuelve desde el prefijo de la URL (/en/, /en-es/, ...) o desde la cookie
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote, urlsplit
 
 IDIOMAS_SOPORTADOS = ("es", "en")
 IDIOMA_POR_DEFECTO = "es"
 LOCALES_DIR = Path(__file__).resolve().parent / "locales"
+
+# Cookie que fija el idioma de la interfaz. La escribe el middleware cuando la
+# ruta trae prefijo /en y el conmutador de idioma cuando el visitante elige
+# español (que no tiene prefijo y, por tanto, el middleware no la toca).
+COOKIE_IDIOMA = "cotizat_lang"
+COOKIE_IDIOMA_MAX_AGE = 365 * 24 * 3600
+
+# /en, /en/..., /en-mx, /en-mx/...
+_RE_PREFIJO_EN = re.compile(r"^/en(?:-([A-Za-z]{2}))?(?=$|/)")
 
 
 def normalizar_idioma(valor: str | None) -> str:
@@ -69,3 +80,94 @@ def t(clave: str, idioma: str | None = None, **kwargs: Any) -> str:
         except (KeyError, ValueError):
             return valor
     return valor if isinstance(valor, str) else str(valor)
+
+
+# --------------------------------------------------------------------------
+# Rutas por idioma
+# --------------------------------------------------------------------------
+# El middleware de idioma reescribe /en-mx/apu en /mx/apu antes de enrutar, así
+# que dentro de la aplicación `request.url.path` es SIEMPRE la ruta canónica en
+# español. Estos helpers son los dos sentidos del viaje: de la canónica a la que
+# ve el navegador (`ruta_en_idioma`) y de lo que envía un enlace a una ruta de
+# la que fiarse (`ruta_segura`).
+
+
+@lru_cache(maxsize=1)
+def codigos_pais() -> frozenset[str]:
+    """Códigos ISO de dos letras con landing propia (``mx``, ``es``, …)."""
+    try:
+        from .paises import PAISES
+    except Exception:  # pragma: no cover - solo si faltara el módulo
+        return frozenset()
+    return frozenset(str(c).strip().lower() for c in PAISES)
+
+
+def partir_ruta(path: str) -> tuple[str, str]:
+    """Separa una ruta en ``(país, resto)``.
+
+    Acepta la ruta canónica en español (``/mx/apu``) y la que ve el navegador
+    en inglés (``/en-mx/apu``), porque el switcher se pinta antes de que el
+    middleware reescriba la petición y los dos formatos llegan aquí.
+    """
+    p = urlsplit(str(path or "").strip()).path or "/"
+    if not p.startswith("/"):
+        p = "/" + p
+    pais = ""
+    m = _RE_PREFIJO_EN.match(p)
+    if m:
+        if m.group(1):
+            pais = m.group(1).lower()
+        p = p[m.end():] or "/"
+        if not p.startswith("/"):
+            p = "/" + p
+    if not pais:
+        partes = p.strip("/").split("/", 1)
+        primero = partes[0].lower() if partes else ""
+        if len(primero) == 2 and primero.isalpha() and primero in codigos_pais():
+            pais = primero
+            p = "/" + partes[1] if len(partes) > 1 and partes[1] else "/"
+    return pais, (p or "/")
+
+
+def ruta_en_idioma(path: str, idioma: str | None = None) -> str:
+    """La misma página en el idioma pedido, conservando el país si lo hay.
+
+    ``/apu`` → ``/en/apu`` · ``/mx/apu`` → ``/en-mx/apu`` · ``/`` → ``/en``.
+    """
+    pais, resto = partir_ruta(path)
+    if normalizar_idioma(idioma) == "en":
+        prefijo = "/en" + (f"-{pais}" if pais else "")
+        return prefijo if resto == "/" else prefijo + resto
+    if pais:
+        return f"/{pais}" if resto == "/" else f"/{pais}{resto}"
+    return resto or "/"
+
+
+def ruta_segura(destino: str | None) -> str:
+    """Sanea el ``?destino=`` del conmutador para que no sea un open redirect.
+
+    Solo se aceptan rutas internas: empiezan por una única barra, no son
+    relativas a protocolo (``//malo.com``), no vuelven al propio conmutador y
+    se descartan la query y el fragmento, que se reincorporan aparte.
+    """
+    p = str(destino or "").strip()
+    if not p or p.startswith("//"):
+        return "/"
+    partes = urlsplit(p)
+    # Con esquema o dominio no es una ruta interna, aunque su `path` lo parezca
+    # (``http://malo.com/x`` tiene path ``/x`` y sería un open redirect).
+    if partes.scheme or partes.netloc:
+        return "/"
+    p = partes.path or "/"
+    if not p.startswith("/") or p.startswith("//"):
+        return "/"
+    if "\\" in p or p.startswith("/idioma"):
+        return "/"
+    return p
+
+
+def url_cambio_idioma(destino: str | None, idioma: str | None = None) -> str:
+    """Enlace del conmutador: ``/idioma/en?destino=/apu`` (con la query)."""
+    lang = normalizar_idioma(idioma)
+    objetivo = str(destino or "/")
+    return f"/idioma/{lang}?destino={quote(objetivo, safe='/?&=')}"

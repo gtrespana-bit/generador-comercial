@@ -285,6 +285,14 @@ try:
     TEMPLATES.env.filters["t"] = lambda clave, idioma=None, **kw: _t(clave, idioma, **kw)
     TEMPLATES.env.globals["t"] = _t
     TEMPLATES.env.globals["normalizar_idioma"] = _norm_lang
+    # Conmutador de idioma: construye el enlace a la misma página en el otro
+    # idioma (ver app/i18n.py). El middleware reescribe /en/... a la ruta
+    # canónica, así que `request.url.path` siempre sirve como punto de partida.
+    from ..i18n import ruta_en_idioma as _ruta_idioma
+    from ..i18n import url_cambio_idioma as _url_cambio_idioma
+
+    TEMPLATES.env.globals["ruta_en_idioma"] = _ruta_idioma
+    TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
 except Exception:
     pass
 

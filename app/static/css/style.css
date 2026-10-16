@@ -495,6 +495,41 @@ body.collapsed .theme-toggle-label {
   .sidebar-toggle-btn { display: none; }
 }
 
+/* ── Conmutador de idioma en el pie del sidebar ─────────────────────────── */
+.idioma-toggle-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 36px;
+  padding: 0.3rem 0.4rem 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-alt);
+  transition: all var(--dur) var(--ease-out);
+}
+.idioma-toggle-row .idioma-switch { margin-left: auto; }
+.idioma-toggle-row .idioma-switch-opcion { font-size: 0.68rem; padding: 0.24rem 0.42rem; }
+.idioma-toggle-row:hover { background: var(--accent-soft); border-color: var(--accent-light); }
+/* Con el sidebar en modo iconos solo queda el segmento ES/EN, centrado. */
+body.collapsed .idioma-toggle-row {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  justify-content: center;
+  align-self: center;
+}
+body.collapsed .idioma-toggle-row .idioma-switch {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  gap: 1px;
+}
+body.collapsed .idioma-toggle-row .idioma-switch-opcion { padding: 0.12rem 0.14rem; }
+
 /* Theme Toggle — dentro del footer, nunca encima de la nav */
 .theme-toggle-btn {
   position: relative;

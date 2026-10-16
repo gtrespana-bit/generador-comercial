@@ -225,6 +225,10 @@ class IdiomaMiddleware:
                         nuevo = "/"
             scope["path"] = nuevo
             scope["raw_path"] = nuevo.encode("latin-1")
+            # El conmutador de idioma escribe su propia cookie: si la ruta es
+            # /idioma/... manda esa, no la que implicaba el prefijo.
+            if nuevo == "/idioma" or nuevo.startswith("/idioma/"):
+                reescribir = False
         # cookie
         if lang is None:
             headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
@@ -237,7 +241,14 @@ class IdiomaMiddleware:
             async def send_wrap(message):
                 if message.get("type") == "http.response.start":
                     hs = list(message.get("headers", []))
-                    hs.append((b"set-cookie", b"cotizat_lang=en; Path=/; Max-Age=31536000; SameSite=Lax"))
+                    from .i18n import COOKIE_IDIOMA, COOKIE_IDIOMA_MAX_AGE
+
+                    hs.append(
+                        (
+                            b"set-cookie",
+                            f"{COOKIE_IDIOMA}={lang}; Path=/; Max-Age={COOKIE_IDIOMA_MAX_AGE}; SameSite=Lax".encode(),
+                        )
+                    )
                     message["headers"] = hs
                 await send(message)
             await self.app(scope, receive, send_wrap)

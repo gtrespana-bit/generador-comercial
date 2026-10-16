@@ -802,3 +802,45 @@ def landing_en_slash(request: Request):
     resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
     resp.set_cookie("cotizat_lang", "en", max_age=365 * 24 * 3600, path="/", samesite="lax", httponly=False)
     return resp
+
+
+# --- Conmutador de idioma -------------------------------------------------
+@router.get("/idioma/{idioma}", include_in_schema=False)
+def cambiar_idioma(idioma: str, destino: str = "/"):
+    """Fija el idioma y devuelve al visitante a la misma página.
+
+    El conmutador no puede limitarse a enlazar ``/en/...``: al volver al
+    español (que no lleva prefijo) la cookie seguiría en ``en`` y la interfaz
+    no cambiaría. La redirección pasa por aquí para escribir la cookie en los
+    dos sentidos y conservar país y query de la página de partida.
+    """
+    from ..i18n import (
+        COOKIE_IDIOMA,
+        COOKIE_IDIOMA_MAX_AGE,
+        normalizar_idioma,
+        ruta_en_idioma,
+        ruta_segura,
+    )
+    from urllib.parse import urlsplit
+
+    lang = normalizar_idioma(idioma)
+    # Se sanea el destino tal cual llega: partirlo antes permitiría colar un
+    # dominio ajeno (``//malo.com/x`` tiene path ``/x``) y convertir el
+    # conmutador en un open redirect.
+    ruta = ruta_en_idioma(ruta_segura(destino), lang)
+    query = urlsplit(str(destino or "/")).query
+    url = ruta + (f"?{query}" if query else "")
+
+    resp = RedirectResponse(url, status_code=307)
+    resp.set_cookie(
+        COOKIE_IDIOMA,
+        lang,
+        max_age=COOKIE_IDIOMA_MAX_AGE,
+        path="/",
+        samesite="lax",
+        httponly=False,
+    )
+    # Utilidad de navegación: no es contenido y no debe competir con la página
+    # a la que lleva.
+    resp.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return resp

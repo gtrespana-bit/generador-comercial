@@ -1,0 +1,26 @@
+{# Conmutador de idioma ES/EN.
+
+   Es el mismo partial en los dos idiomas: los únicos textos son las etiquetas
+   accesibles, que salen del catálogo i18n (``common.language``, ``idioma.es``,
+   ``idioma.en``). El conmutador enlaza a /idioma/{lang} en lugar de enlazar
+   directamente a /en/... porque al volver al español no hay prefijo en la URL
+   y sin ese salto la cookie seguiría en inglés (ver app/routers/publico.py).
+
+   El middleware reescribe /en-mx/apu a /mx/apu antes de enrutar, así que
+   `request.url.path` es siempre la ruta canónica: sirve como punto de partida
+   y `url_cambio_idioma` reconstruye el país y la query en el idioma destino.
+#}
+{% set _idioma = (request.state.lang if request is defined else '') or 'es' %}
+{% set _destino = (request.url.path if request is defined else '/') + ('?' + request.url.query if request is defined and request.url.query else '') %}
+<div class="idioma-switch" role="group" aria-label="{{ 'common.language' | t(_idioma) }}">
+  <a class="idioma-switch-opcion{% if _idioma == 'es' %} is-active{% endif %}"
+     href="{{ url_cambio_idioma(_destino, 'es') }}"
+     lang="es" hreflang="es"
+     title="{{ 'idioma.cambiar_a' | t(_idioma, nombre=('idioma.es' | t(_idioma))) }}"
+     aria-current="{{ 'true' if _idioma == 'es' else 'false' }}">ES</a>
+  <a class="idioma-switch-opcion{% if _idioma == 'en' %} is-active{% endif %}"
+     href="{{ url_cambio_idioma(_destino, 'en') }}"
+     lang="en" hreflang="en"
+     title="{{ 'idioma.cambiar_a' | t(_idioma, nombre=('idioma.en' | t(_idioma))) }}"
+     aria-current="{{ 'true' if _idioma == 'en' else 'false' }}">EN</a>
+</div>

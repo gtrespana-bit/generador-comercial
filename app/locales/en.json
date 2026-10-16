@@ -12,5 +12,9 @@
   "common.search": "Search",
   "common.loading": "Loading…",
   "landing.cta_free_days": "Start my {days} free days",
-  "landing.see_plans": "See plans"
+  "landing.see_plans": "See plans",
+  "common.language": "Language",
+  "idioma.es": "Spanish",
+  "idioma.en": "English",
+  "idioma.cambiar_a": "Switch to {nombre}"
 }

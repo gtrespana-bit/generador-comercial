@@ -288,10 +288,19 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 
 /* ────────────────────────────── Auth (tarjeta) ────────────────────────────── */
 .auth-stage {
+  position: relative;
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 2rem 1rem;
+}
+/* Conmutador de idioma en las pantallas de acceso: esquina superior derecha,
+   fuera del flujo para no desplazar la tarjeta centrada. */
+.auth-idioma {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 2;
 }
 
 .auth-card {
@@ -473,6 +482,44 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: var(--accent-h);
 }
 .landing .nav-links .btn { margin-left: 0.35rem; }
+/* ── Conmutador de idioma ES/EN (nav pública y footer) ─────────────────────
+   Segmentado y sin JS: dos enlaces a /idioma/{lang}, el activo marcado con
+   aria-current. Se pinta igual en la nav y en el footer; solo cambia el
+   tamaño, que ajusta cada contenedor. */
+.idioma-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-alt);
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.idioma-switch-opcion {
+  padding: 0.28rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
+}
+.idioma-switch-opcion:hover {
+  background: var(--surface-hover);
+  color: var(--accent-h);
+  text-decoration: none;
+}
+.idioma-switch-opcion.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+.idioma-switch-opcion.is-active:hover {
+  background: var(--accent);
+  color: #fff;
+}
 .landing .nav-toggle {
   position: absolute;
   width: 1px;
@@ -959,6 +1006,9 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   gap: 1rem;
   flex-wrap: wrap;
 }
+/* El copyright absorbe el hueco libre: el cierre («Hecho con oficio…») y el
+   conmutador de idioma quedan juntos a la derecha. */
+.site-footer .footer-copy { margin-right: auto; }
 .footer-copy {
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.35);
