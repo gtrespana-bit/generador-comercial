@@ -1,0 +1,429 @@
+{% extends "base_en.html" %}
+{% block title %}Import line items{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Import line items</h1>
+    <p class="subtitle">Import Excel tables, breakdown matrices (.xlsx) or BC3 estimates (FIEBDC-3). BC3 keeps sections, line items, takeoffs and prices.</p>
+  </div>
+  <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
+</div>
+
+<div class="import-steps" aria-label="Import steps">
+  <span class="active">1. Upload</span><span>2. Review</span><span>3. Validate</span><span>4. Confirm</span>
+</div>
+
+<div class="card" id="import-source-card">
+  <h2>1. Upload the data</h2>
+  <p class="hint">If you have a breakdown matrix in <strong>.xlsx</strong>, select one or more files: each line item, row, cell and formula is detected without flattening it into a plain table. Tabular CSV/Excel and <strong>BC3 (FIEBDC-3)</strong>.</p>
+  <div class="form-grid">
+    <div class="field">
+      <label>CSV, Excel or BC3 file</label>
+      <input type="file" id="import-file" multiple accept=".csv,.xlsx,.bc3,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      <p class="hint">You can select several files only if all of them are Excel breakdowns (.xlsx). BC3 files are uploaded one at a time.</p>
+    </div>
+    <div class="field" id="import-header-field">
+      <label>First row (tabular format only)</label>
+      <label class="check-line"><input type="checkbox" id="import-header" checked> Contains column names</label>
+      <p class="hint">Uncheck if the first row is already a line item.</p>
+    </div>
+    <div class="field field-full">
+      <label>Or paste tabular rows here</label>
+      <textarea id="import-text" rows="6" placeholder="Section	Line item	Description	Unit	Quantity	Price&#10;FLOORING	Porcelain tile 36×36	Supply and installation	m2	84.6	68"></textarea>
+      <p class="hint">Pasting accepts tabs, commas or semicolons. If you choose a file, this field is ignored. You can also paste the contents of a .bc3.</p>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn btn-primary" id="btn-analyze-import">Analyse data →</button>
+  </div>
+  <div id="import-source-error" class="alert alert-error cotizat-hidden"></div>
+</div>
+
+<div class="card import-hidden" id="import-mapping-card">
+  <h2 id="import-review-title">2. Review column detection</h2>
+  <p class="hint" id="import-review-hint">The system proposes a mapping. Only <strong>Line item</strong> is required; adjust any column before validating.</p>
+  <div id="tabular-mapping">
+    <div class="table-wrap">
+      <table class="table import-map-table">
+        <thead><tr><th>Estimate field</th><th>Detected column</th></tr></thead>
+        <tbody id="import-mapping-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="cype-summary" class="import-hidden"></div>
+  <div id="bc3-summary" class="import-hidden"></div>
+  <h3 class="csp-s-a3c9c5afaa">Preview <span id="import-preview-count" class="hint"></span></h3>
+  <div class="table-wrap import-preview-wrap" id="import-preview-wrap">
+    <table class="table" id="import-preview-table"><thead></thead><tbody></tbody></table>
+    <div id="cype-preview"></div>
+    <div id="bc3-preview"></div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn btn-primary" id="btn-validate-import">Validate import →</button>
+  </div>
+</div>
+
+<div class="card import-hidden" id="import-destination-card">
+  <h2>3. {% if modo_catalogo %}Destino: catálogo de partidas{% else %}Elige el destino{% endif %}</h2>
+  {% if modo_catalogo %}
+  <div class="csp-s-1442e8ce92">
+    <span class="csp-s-9c527edffc">📦</span>
+    <span class="csp-s-63affd90a4">The line items detected are saved in the <strong>Line Item Catalog</strong> with their code, unit, description and costs (labor, materials…), ready to be reused on any estimate. No estimate is created or modified.</span>
+  </div>
+  <input type="hidden" id="modo-catalogo" value="1">
+  {% else %}
+  <p class="hint">You can create a new estimate or add the line items to an editable estimate. If a section does not exist yet in the destination, it is created on confirmation.</p>
+  <div class="form-grid">
+    <div class="field field-full">
+      <label>Destination</label>
+      <select id="import-destination">
+        <option value="">Create a new estimate</option>
+        {% for p in presupuestos %}
+        <option value="{{ p.id }}">Añadir a {{ p.numero }} · {{ p.cliente.nombre }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field import-cype-only import-hidden" id="import-cype-chapter-field">
+      <label>Section for the line items</label>
+      <input type="text" id="import-cype-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
+      <p class="hint">Each sheet/file detected becomes a line item and keeps its full breakdown inside this section.</p>
+    </div>
+    <div class="field import-bc3-only import-hidden" id="import-bc3-chapter-field">
+      <label>Section (BC3) - optional</label>
+      <input type="text" id="import-bc3-chapter" value="" maxlength="200" placeholder="Leave empty to keep the BC3 sections">
+      <p class="hint">If you state a section, all the BC3 line items go there. If you leave it empty, the original sections of the .bc3 are kept.</p>
+    </div>
+    <div class="field import-new-only">
+      <label>Client *</label>
+      <select id="import-client">
+        <option value="">— Select a client —</option>
+        {% for cliente in clientes %}<option value="{{ cliente.id }}">{{ cliente.nombre }}</option>{% endfor %}
+      </select>
+      {% if not clientes %}<p class="hint">First <a class="link" href="/clientes/nuevo" target="_blank">create a client</a>.</p>{% endif %}
+    </div>
+    <div class="field import-new-only">
+      <label>Project title <span class="hint">(optional)</span></label>
+      <input type="text" id="import-title" placeholder="e.g. Kitchen remodel">
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card import-hidden" id="import-validation-card">
+  <h2>4. Validation and confirmation</h2>
+  <div class="import-summary" id="import-summary"></div>
+  <div id="import-issues"></div>
+  <div class="form-actions">
+    <button type="button" class="btn" id="btn-revalidate-import">↻ Validate again</button>
+    <button type="button" class="btn btn-primary" id="btn-confirm-import" disabled>✓ Confirm import</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  'use strict';
+  var CAMPOS = {{ campos_importables | tojson }};
+  var estado = { formato: 'tabular', encabezados: [], filas: [], mapeo: {}, primeraFila: 2, validacion: null, importacionId: '', cypePartidas: [], bc3Filas: [], bc3Capitulos: [] };
+  var fileInput = document.getElementById('import-file');
+  var textInput = document.getElementById('import-text');
+  var headerInput = document.getElementById('import-header');
+  var sourceError = document.getElementById('import-source-error');
+  var mappingCard = document.getElementById('import-mapping-card');
+  var destinationCard = document.getElementById('import-destination-card');
+  var validationCard = document.getElementById('import-validation-card');
+  var destination = document.getElementById('import-destination');
+  var confirmBtn = document.getElementById('btn-confirm-import');
+  var MODO_CATALOGO = !!document.getElementById('modo-catalogo');
+
+  function mostrarError(mensaje) {
+    sourceError.textContent = mensaje || '';
+    CotizatStyles.set(sourceError, "display", mensaje ? '' : 'none');
+  }
+  function ocultarValidacion() {
+    estado.validacion = null;
+    validationCard.classList.add('import-hidden');
+    confirmBtn.disabled = true;
+  }
+  function esCype() { return estado.formato === 'cype_descompuesto'; }
+  function esBc3() { return estado.formato === 'bc3'; }
+  function esTabular() { return estado.formato === 'tabular'; }
+  function payload() {
+    var base = { formato: estado.formato, modo: MODO_CATALOGO ? 'catalogo' : 'presupuesto' };
+    if (!MODO_CATALOGO) {
+      base.presupuesto_destino_id = destination ? (destination.value || null) : null;
+      base.client_id = document.getElementById('import-client').value || null;
+      base.titulo = document.getElementById('import-title').value || '';
+    }
+    if (esCype()) {
+      base.importacion_id = estado.importacionId;
+      if (!MODO_CATALOGO) base.capitulo_cype = document.getElementById('import-cype-chapter').value || '';
+      return base;
+    }
+    if (esBc3()) {
+      base.importacion_id = estado.importacionId;
+      if (!MODO_CATALOGO) {
+        var bc3Chap = document.getElementById('import-bc3-chapter');
+        base.capitulo_bc3 = bc3Chap ? bc3Chap.value || '' : '';
+      }
+      base.filas = estado.filas;
+      return base;
+    }
+    var mapeo = {};
+    document.querySelectorAll('[data-import-field]').forEach(function (select) {
+      mapeo[select.dataset.importField] = select.value === '' ? null : Number(select.value);
+    });
+    estado.mapeo = mapeo;
+    base.filas = estado.filas;
+    base.mapeo = mapeo;
+    base.primera_fila = estado.primeraFila;
+    return base;
+  }
+  function actualizarDestino() {
+    if (!destination) return;
+    var nuevo = !destination.value;
+    document.querySelectorAll('.import-new-only').forEach(function (el) { CotizatStyles.set(el, "display", nuevo ? '' : 'none'); });
+    ocultarValidacion();
+  }
+  function setModoCype(activo) {
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", activo ? 'none' : '');
+    document.getElementById('cype-summary').classList.toggle('import-hidden', !activo);
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", activo ? '' : 'none');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.toggle('import-hidden', !activo);
+    var bc3Summary = document.getElementById('bc3-summary');
+    var bc3Preview = document.getElementById('bc3-preview');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3Summary) bc3Summary.classList.add('import-hidden');
+    if (bc3Preview) CotizatStyles.set(bc3Preview, "display", 'none');
+    if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
+    if (activo) {
+      document.getElementById('import-review-title').textContent = '2. Revisa las partidas y filas detectadas';
+      document.getElementById('import-review-hint').textContent = 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.';
+    }
+  }
+  function setModoBc3(activo) {
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", activo ? 'none' : '');
+    document.getElementById('bc3-summary').classList.toggle('import-hidden', !activo);
+    CotizatStyles.set(document.getElementById('bc3-preview'), "display", activo ? '' : 'none');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", activo ? 'none' : '');
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", 'none');
+    document.getElementById('cype-summary').classList.add('import-hidden');
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.add('import-hidden');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3ChapterField) bc3ChapterField.classList.toggle('import-hidden', !activo);
+    if (activo) {
+      document.getElementById('import-review-title').textContent = '2. Revisa las partidas BC3 detectadas';
+      document.getElementById('import-review-hint').textContent = 'Se han detectado capítulos y partidas del .bc3. Se conservarán código, unidad, precio, descripción larga y mediciones.';
+    }
+  }
+  function setModoTabular() {
+    CotizatStyles.set(document.getElementById('import-header-field'), "display", '');
+    CotizatStyles.set(document.getElementById('tabular-mapping'), "display", '');
+    CotizatStyles.set(document.getElementById('import-preview-table'), "display", '');
+    CotizatStyles.set(document.getElementById('cype-preview'), "display", 'none');
+    CotizatStyles.set(document.getElementById('bc3-preview'), "display", 'none');
+    document.getElementById('cype-summary').classList.add('import-hidden');
+    document.getElementById('bc3-summary').classList.add('import-hidden');
+    var chapterField = document.getElementById('import-cype-chapter-field');
+    if (chapterField) chapterField.classList.add('import-hidden');
+    var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
+    if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
+    document.getElementById('import-review-title').textContent = '2. Review column detection';
+    document.getElementById('import-review-hint').textContent = 'The system proposes a mapping. Only Partida is required; adjust any column before validating.';
+  }
+  function renderMapeo() {
+    var body = document.getElementById('import-mapping-body');
+    body.replaceChildren();
+    Object.keys(CAMPOS).forEach(function (campo) {
+      var tr = document.createElement('tr');
+      var label = document.createElement('td');
+      var strong = document.createElement('strong');
+      strong.textContent = CAMPOS[campo] + (campo === 'partida' ? ' *' : '');
+      label.appendChild(strong);
+      var td = document.createElement('td');
+      var select = document.createElement('select');
+      select.dataset.importField = campo;
+      var empty = document.createElement('option'); empty.value = ''; empty.textContent = '— No importar —'; select.appendChild(empty);
+      estado.encabezados.forEach(function (encabezado, indice) {
+        var option = document.createElement('option'); option.value = indice; option.textContent = encabezado;
+        if (estado.mapeo[campo] === indice) option.selected = true;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', ocultarValidacion);
+      td.appendChild(select); tr.appendChild(label); tr.appendChild(td); body.appendChild(tr);
+    });
+  }
+  function renderPreviewTabular() {
+    var table = document.getElementById('import-preview-table');
+    var thead = table.querySelector('thead'); var tbody = table.querySelector('tbody');
+    thead.replaceChildren(); tbody.replaceChildren();
+    var hr = document.createElement('tr');
+    estado.encabezados.forEach(function (header) { var th = document.createElement('th'); th.textContent = header; hr.appendChild(th); });
+    thead.appendChild(hr);
+    estado.filas.slice(0, 8).forEach(function (fila) {
+      var tr = document.createElement('tr');
+      estado.encabezados.forEach(function (_, index) { var td = document.createElement('td'); td.textContent = fila[index] || ''; tr.appendChild(td); });
+      tbody.appendChild(tr);
+    });
+    document.getElementById('import-preview-count').textContent = '· mostrando 8 de ' + estado.filas.length + ' filas';
+  }
+  function appendCelda(td, valor, formula) {
+    td.textContent = valor || '';
+    if (formula) {
+      td.title = formula;
+      var fx = document.createElement('small'); fx.className = 'cype-fx'; fx.textContent = 'fx';
+      td.appendChild(fx);
+    }
+  }
+  function renderPreviewCype() {
+    var summary = document.getElementById('cype-summary');
+    var preview = document.getElementById('cype-preview');
+    summary.replaceChildren(); preview.replaceChildren();
+    var totalFilas = 0;
+    estado.cypePartidas.forEach(function (partida) {
+      totalFilas += (partida.filas || []).length;
+      var ficha = document.createElement('div'); ficha.className = 'cype-partida-summary';
+      var title = document.createElement('strong'); title.textContent = (partida.codigo || 'Sin código') + ' · ' + (partida.nombre || 'Sin nombre'); ficha.appendChild(title);
+      var meta = document.createElement('span');
+      meta.textContent = (partida.unidad || '—') + ' · coste directo unitario: ' + Number(partida.coste_directo_unitario || 0).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' · ' + (partida.filas || []).length + ' filas · hoja: ' + (partida.hoja || '—');
+      ficha.appendChild(meta); summary.appendChild(ficha);
+
+      var bloque = document.createElement('section'); bloque.className = 'cype-sheet-preview';
+      var h4 = document.createElement('h4'); h4.textContent = 'Partida ' + (partida.codigo || '') + ' · matriz original'; bloque.appendChild(h4);
+      var table = document.createElement('table'); table.className = 'table cype-table';
+      var thead = document.createElement('thead'); var hrow = document.createElement('tr');
+      var thRow = document.createElement('th'); thRow.textContent = 'Fila'; hrow.appendChild(thRow);
+      (partida.columnas || []).forEach(function (col) { var th = document.createElement('th'); th.textContent = col; hrow.appendChild(th); });
+      thead.appendChild(hrow); table.appendChild(thead);
+      var tbody = document.createElement('tbody');
+      (partida.filas || []).forEach(function (fila) {
+        var tr = document.createElement('tr');
+        tr.className = 'cype-row-' + (fila.tipo || 'otro');
+        var rowno = document.createElement('th'); rowno.scope = 'row'; rowno.textContent = fila.numero; tr.appendChild(rowno);
+        (partida.columnas || []).forEach(function (col, index) {
+          var td = document.createElement('td'); appendCelda(td, (fila.celdas || [])[index], (fila.formulas || {})[col]); tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody); bloque.appendChild(table); preview.appendChild(bloque);
+    });
+    document.getElementById('import-preview-count').textContent = '· ' + estado.cypePartidas.length + ' partida(s), ' + totalFilas + ' fila(s) conservadas';
+  }
+  function renderPreviewBc3() {
+    var summary = document.getElementById('bc3-summary');
+    var preview = document.getElementById('bc3-preview');
+    summary.replaceChildren(); preview.replaceChildren();
+    var info = document.createElement('div'); info.className = 'cype-partida-summary';
+    var title = document.createElement('strong');
+    title.textContent = 'BC3 detectado · ' + (estado.bc3Capitulos.length || 0) + ' capítulo(s) · ' + (estado.bc3Filas.length || 0) + ' partida(s)';
+    info.appendChild(title);
+    var meta = document.createElement('span');
+    meta.textContent = 'Se respetan capítulos originales y mediciones. Código BC3 se guarda como código externo.';
+    info.appendChild(meta); summary.appendChild(info);
+
+    var table = document.createElement('table'); table.className = 'table';
+    var thead = document.createElement('thead');
+    var hrow = document.createElement('tr');
+    ['Capítulo','Código','Partida','Ud','Cant','Precio'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; hrow.appendChild(th); });
+    thead.appendChild(hrow); table.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    estado.bc3Filas.slice(0, 20).forEach(function(fila){
+      var tr=document.createElement('tr');
+      var tdCap=document.createElement('td'); tdCap.textContent=fila.capitulo||''; tr.appendChild(tdCap);
+      var tdCod=document.createElement('td'); tdCod.textContent=fila.codigo||''; tr.appendChild(tdCod);
+      var tdNom=document.createElement('td'); tdNom.textContent=fila.nombre||''; tr.appendChild(tdNom);
+      var tdUd=document.createElement('td'); tdUd.textContent=fila.unidad||''; tr.appendChild(tdUd);
+      var tdCant=document.createElement('td'); tdCant.textContent=fila.cantidad||''; tr.appendChild(tdCant);
+      var tdPrec=document.createElement('td'); tdPrec.textContent=fila.precio||''; tr.appendChild(tdPrec);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); preview.appendChild(table);
+    document.getElementById('import-preview-count').textContent = '· ' + estado.bc3Filas.length + ' partida(s) BC3 · mostrando 20';
+  }
+  function issueLine(issue, type) {
+    var div = document.createElement('div');
+    div.className = type === 'error' ? 'import-issue error' : 'import-issue warning';
+    div.textContent = (issue.fila ? 'Fila ' + issue.fila + ': ' : '') + issue.mensaje;
+    return div;
+  }
+  function renderValidation(data) {
+    var summary = document.getElementById('import-summary');
+    var issues = document.getElementById('import-issues');
+    issues.replaceChildren();
+    if (!data.ok) {
+      summary.textContent = data.error || 'No se pudo validar la importación.';
+      summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;
+    }
+    var errors = data.errores || [], warnings = data.advertencias || [];
+    var etiqueta = esCype() ? 'partida(s) de descompuesto' : esBc3() ? 'partida(s) BC3' : 'partida(s)';
+    summary.textContent = data.filas.length + ' ' + etiqueta + ' lista(s) · ' + errors.length + ' error(es) · ' + warnings.length + ' advertencia(s)';
+    summary.className = 'import-summary ' + (errors.length ? 'error' : warnings.length ? 'warning' : 'ok');
+    errors.forEach(function (issue) { issues.appendChild(issueLine(issue, 'error')); });
+    warnings.slice(0, 40).forEach(function (issue) { issues.appendChild(issueLine(issue, 'warning')); });
+    if (warnings.length > 40) { var more = document.createElement('p'); more.className = 'hint'; more.textContent = 'Se ocultaron ' + (warnings.length - 40) + ' advertencias adicionales.'; issues.appendChild(more); }
+    confirmBtn.disabled = Boolean(errors.length) || !data.filas.length;
+    validationCard.classList.remove('import-hidden');
+  }
+  async function validar() {
+    var response = await fetch('/presupuestos/importar/validar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload()) });
+    var data = await response.json(); estado.validacion = data; renderValidation(data); return data;
+  }
+
+  document.getElementById('btn-analyze-import').addEventListener('click', async function () {
+    mostrarError('');
+    var form = new FormData();
+    Array.prototype.forEach.call(fileInput.files || [], function (file) { form.append('archivo', file); });
+    form.append('texto', textInput.value || ''); form.append('tiene_encabezados', headerInput.checked ? '1' : '0');
+    var button = this; button.disabled = true; button.textContent = 'Analizando…';
+    try {
+      var response = await fetch('/presupuestos/importar/analizar', {method: 'POST', body: form});
+      var data = await response.json();
+      if (!data.ok) { mostrarError(data.error || 'No se pudieron analizar los datos.'); return; }
+      estado.formato = data.formato || 'tabular';
+      estado.importacionId = data.importacion_id || '';
+      estado.cypePartidas = data.partidas || [];
+      estado.bc3Filas = data.filas || [];
+      estado.bc3Capitulos = data.capitulos || [];
+      estado.encabezados = data.encabezados || []; estado.filas = data.filas || []; estado.mapeo = data.mapeo_sugerido || {}; estado.primeraFila = data.primera_fila || 2;
+      if (esCype()) { setModoCype(true); renderPreviewCype(); }
+      else if (esBc3()) { setModoBc3(true); renderPreviewBc3(); }
+      else { setModoTabular(); renderMapeo(); renderPreviewTabular(); }
+      mappingCard.classList.remove('import-hidden'); destinationCard.classList.remove('import-hidden'); ocultarValidacion();
+      mappingCard.scrollIntoView({behavior: 'smooth', block: 'start'});
+    } catch (error) { mostrarError('No se pudo conectar con el analizador. Inténtalo otra vez.'); }
+    finally { button.disabled = false; button.textContent = 'Analyse data →'; }
+  });
+  document.getElementById('btn-validate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
+  document.getElementById('btn-revalidate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
+  if (destination) destination.addEventListener('change', actualizarDestino);
+  var importClient = document.getElementById('import-client');
+  var importTitle = document.getElementById('import-title');
+  var importChapter = document.getElementById('import-cype-chapter');
+  var importBc3Chapter = document.getElementById('import-bc3-chapter');
+  if (importClient) importClient.addEventListener('change', ocultarValidacion);
+  if (importTitle) importTitle.addEventListener('input', ocultarValidacion);
+  if (importChapter) importChapter.addEventListener('input', ocultarValidacion);
+  if (importBc3Chapter) importBc3Chapter.addEventListener('input', ocultarValidacion);
+  actualizarDestino();
+
+  confirmBtn.addEventListener('click', async function () {
+    if (!estado.validacion || !estado.validacion.ok || (estado.validacion.errores || []).length) return;
+    if (!MODO_CATALOGO && !destination.value && !document.getElementById('import-client').value) { mostrarError('Selecciona un cliente antes de crear el presupuesto.'); destinationCard.scrollIntoView({behavior: 'smooth'}); return; }
+    var button = this; button.disabled = true; button.textContent = 'Importando…';
+    try {
+      var response = await fetch('/presupuestos/importar/confirmar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload()) });
+      var data = await response.json();
+      if (data.ok && data.url) { window.location.assign(data.url); return; }
+      renderValidation(data); mostrarError(data.error || 'No se pudo confirmar la importación.');
+    } catch (error) { mostrarError('No se pudo confirmar la importación.'); }
+    finally { button.disabled = false; button.textContent = '✓ Confirm import'; }
+  });
+})();
+</script>
+{% endblock %}

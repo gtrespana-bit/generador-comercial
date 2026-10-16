@@ -1,0 +1,26 @@
+{% extends "base_en.html" %}{% block title %}{{ p.numero }} · versión {{ version.numero_version }}{% endblock %}{% block content %}
+<div class="page-head"><div><p class="crumb"><a href="/presupuestos/{{ p.id }}">Presupuesto {{ p.numero }}</a> › Versions</p><h1>Versión {{ version.numero_version }}</h1><p class="subtitle">Congelada el {{ version.fecha.strftime('%d/%m/%Y %H:%M') }} · {{ version.estado | replace('_',' ') | capitalize }}</p></div><div class="actions">{% if version.pdf_snapshot %}<a class="btn btn-primary" href="{{ version.pdf_snapshot | archivo_url(true) }}" target="_blank">View PDF sent</a>{% endif %}<a class="btn" href="/presupuestos/{{ p.id }}">← Back</a></div></div>
+<div class="card"><h2>{{ snapshot.titulo or p.numero }}</h2><p><strong>Client:</strong> {{ snapshot.cliente.nombre }} · <strong>Frozen total:</strong> {{ snapshot.totales.total | money_iso(snapshot.moneda) }}{% if snapshot.totales.total_productos %} · <strong>Products:</strong> {{ snapshot.totales.total_productos | money_iso(snapshot.moneda) }}{% endif %}</p><p class="muted">Motivo: {{ version.motivo or '—' }}</p></div>
+{% for cap in snapshot.capitulos %}<div class="card"><h2>{{ cap.nombre }}</h2><table class="table"><thead><tr><th>Line item</th><th>Qty.</th><th>Price</th><th class="right">Amount</th></tr></thead><tbody>{% for i in cap.partidas %}<tr><td><strong>{{ i.nombre }}</strong>{% if i.descripcion %}<br><small>{{ i.descripcion }}</small>{% endif %}</td><td>{{ i.cantidad_total }} {{ i.unidad }}</td><td>{{ i.precio_unitario | money_iso(snapshot.moneda) }}</td><td class="right">{{ i.importe | money_iso(snapshot.moneda) }}</td></tr>{% endfor %}</tbody></table></div>{% endfor %}
+{% if snapshot.mostrar_garantias and snapshot.garantias_familias %}
+<div class="card">
+  <h2>🛡️ Work warranties (frozen version)</h2>
+  <div class="csp-s-f827bdca4f">
+    {% for fam in snapshot.garantias_familias %}
+    <div class="csp-s-143c5275fe">
+      <div class="csp-s-66991e8561">
+        <strong class="csp-s-484a671fb4">{{ fam.grupo }}</strong>
+        <span class="badge csp-s-e4bfd0f716">{{ fam.plazo }}</span>
+      </div>
+      <p class="csp-s-8bbd12e9d0">{{ fam.alcance }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if snapshot.garantias_nota_legal %}
+  <div class="csp-s-5e082dbc8d">
+    <strong class="csp-s-6464799a08">Legal note:</strong> {{ snapshot.garantias_nota_legal }}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
