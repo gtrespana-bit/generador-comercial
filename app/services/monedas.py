@@ -78,10 +78,18 @@ def cuantizar(valor, moneda: str | None = "USD") -> Decimal:
     return Decimal(str(valor or 0)).quantize(quantum, rounding=ROUND_HALF_UP)
 
 
-def formato_iso(valor, moneda: str | None = "USD") -> str:
-    """Formato textual estable: valor + código ISO, sin símbolos ambiguos."""
+def formato_iso(valor, moneda: str | None = "USD", idioma: str = "es") -> str:
+    """Formato textual estable: valor + código ISO, sin símbolos ambiguos.
+
+    El separador de miles y decimales sigue al idioma del documento, no a la
+    moneda: un presupuesto en inglés muestra «35,041.65 USD» y el mismo
+    importe en español «35.041,65 USD».
+    """
     d = cuantizar(valor, moneda)
-    return f"{d:,.{decimales(moneda)}f}".replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
+    s = f"{d:,.{decimales(moneda)}f}"
+    if str(idioma or "es").strip().lower().startswith("en"):
+        return s + f" {codigo_iso(moneda)}"
+    return s.replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
 
 
 def convertir(valor, origen: str, destino: str, tasa_usd_destino=None,

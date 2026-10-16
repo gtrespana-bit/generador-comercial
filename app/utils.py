@@ -130,13 +130,13 @@ def fmt_monto(valor, moneda="USD") -> str:
     return f"{fmt_num(valor, decimales_moneda(clave))} {simbolo_moneda(clave)}"
 
 
-def fmt_monto_iso(valor, moneda="USD") -> str:
+def fmt_monto_iso(valor, moneda="USD", idioma="es") -> str:
     """Importe profesional con código ISO, no símbolo ambiguo."""
     try:
         from .services.monedas import formato_iso
-        return formato_iso(valor, moneda)
+        return formato_iso(valor, moneda, idioma)
     except Exception:
-        return f"{fmt_num(valor)} {str(moneda or 'USD').upper()}"
+        return f"{fmt_num(valor, idioma=idioma)} {str(moneda or 'USD').upper()}"
 
 
 def fmt_monto_raw(valor, moneda="USD") -> str:
@@ -144,9 +144,9 @@ def fmt_monto_raw(valor, moneda="USD") -> str:
     return fmt_monto(valor, moneda)
 
 
-def fmt_precio_u_iso(valor, moneda="USD", unidad="") -> str:
+def fmt_precio_u_iso(valor, moneda="USD", unidad="", idioma="es") -> str:
     """Precio unitario profesional: 32,50 COP/m2."""
-    base = fmt_monto_iso(valor, moneda)
+    base = fmt_monto_iso(valor, moneda, idioma)
     return f"{base}/{unidad}" if unidad else base
 
 
@@ -164,9 +164,14 @@ def fmt_cantidad(valor, unidad="") -> str:
     return f"{s} {unidad}".strip()
 
 
-def fmt_fecha(fecha) -> str:
-    """dd/mm/aaaa"""
-    return fecha.strftime("%d/%m/%Y")
+def fmt_fecha(fecha, idioma="es") -> str:
+    """Fecha corta con el orden propio del idioma.
+
+    Español: dd/mm/aaaa (15/08/2026). Inglés: el orden de Estados Unidos,
+    mm/dd/aaaa (08/15/2026), que es el que se usa por defecto en el producto.
+    """
+    formato = "%m/%d/%Y" if str(idioma or "es").strip().lower().startswith("en") else "%d/%m/%Y"
+    return fecha.strftime(formato)
 
 
 def fmt_pct(valor) -> str:

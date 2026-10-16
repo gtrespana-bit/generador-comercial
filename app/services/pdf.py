@@ -337,7 +337,7 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
         izq.append(Paragraph(f"<b>{_pdf_t(lang, 'direccion_obra')}:</b> {_esc(presupuesto.direccion_obra)}", st["campo"]))
     if presupuesto.codigo_postal:
         izq.append(Paragraph(f"<b>{_pdf_t(lang, 'codigo_postal')}:</b> {_esc(presupuesto.codigo_postal)}", st["campo"]))
-    izq.append(Paragraph(f"<b>{_pdf_t(lang, 'fecha')}:</b> {fmt_fecha(presupuesto.fecha)}", st["campo"]))
+    izq.append(Paragraph(f"<b>{_pdf_t(lang, 'fecha')}:</b> {fmt_fecha(presupuesto.fecha, lang)}", st["campo"]))
 
     c = presupuesto.cliente
     der = encabezado(_pdf_t(lang, "cliente"))
@@ -362,7 +362,7 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
     ))
     if presupuesto.tipo_cambio and presupuesto.moneda != "USD":
         _fuente = getattr(presupuesto, "fuente_tipo_cambio", "") or "referencia"
-        der.append(Paragraph(f"<b>{_pdf_t(lang, 'tasa')} ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_esc(presupuesto.moneda)}", st["campo"]))
+        der.append(Paragraph(f"<b>{_pdf_t(lang, 'tasa')} ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio, idioma=lang)} {_esc(presupuesto.moneda)}", st["campo"]))
     der.append(Paragraph(f"{etiqueta_num} <font color='#CC0066'>{_esc(presupuesto.numero)}</font>", st["ref"]))
 
     bloque = Table([[izq, der]], colWidths=[_ANCHO / 2, _ANCHO / 2])
@@ -415,7 +415,7 @@ def _fila_capitulo(cap, st, moneda, azul_color, ctx=None, lang="es"):
             tam=13.5,
         )
     else:
-        celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["cap_d"])
+        celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda, idioma=lang), st["cap_d"])
     cap_nombre_trad = traducir(cap.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else cap.nombre
     t = Table(
         [[Paragraph(_esc(cap_nombre_trad.upper()), st["cap"]), "", "", celda_subtotal]],
@@ -573,7 +573,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
         fila_ancho_completo(Paragraph("Quoted product:" if lang.startswith("en") else "Producto presupuestado:", st["prod_lab"]), arriba=6, abajo=1)
         linea = ""
         if datos["precio"] is not None:
-            linea = f"<b>{fmt_num(datos['precio'])} {mon_simb} / {_esc(datos['unidad'])}</b>&nbsp;&nbsp;&nbsp;&nbsp;"
+            linea = f"<b>{fmt_num(datos['precio'], idioma=lang)} {mon_simb} / {_esc(datos['unidad'])}</b>&nbsp;&nbsp;&nbsp;&nbsp;"
         linea += f"<i>{_esc(datos['nombre'])}</i>"
         if datos["detalle"]:
             linea += f"<br/><font size='8' color='#64748B'>{_esc(datos['detalle'])}</font>"
@@ -610,7 +610,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
 
         precio_txt = ""
         if datos["precio"] is not None:
-            precio_txt = f"<font color='#0F4C81'><b>{fmt_num(datos['precio'])} {mon_simb} / {_esc(datos['unidad'])}</b></font>"
+            precio_txt = f"<font color='#0F4C81'><b>{fmt_num(datos['precio'], idioma=lang)} {mon_simb} / {_esc(datos['unidad'])}</b></font>"
 
         nombre_txt = _esc(datos["nombre"]) or "—"
 
@@ -774,8 +774,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
             COLS[3],
         )
     else:
-        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud")), st["tot_c"])
-        celda_importe = Paragraph(fmt_monto(partida.importe, moneda), st["tot_c"])
+        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), idioma=lang), st["tot_c"])
+        celda_importe = Paragraph(fmt_monto(partida.importe, moneda, idioma=lang), st["tot_c"])
 
     filas.append([
         celda_texto,
@@ -803,8 +803,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
                 COLS[3], alto=10, tam=8.25, fuente="Helvetica",
             )
         else:
-            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud")), st["med_c"])
-            celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda), st["med_c"])
+            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), idioma=lang), st["med_c"])
+            celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda, idioma=lang), st["med_c"])
         filas.append([
             Paragraph(_esc(m.concepto.strip()) or "-", st["med_d"]),
             Paragraph(fmt_cantidad(m.cantidad, _esc(partida.unidad or "ud")), st["med_c"]),
@@ -911,7 +911,7 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
         if ctx is None:
-            return Paragraph(prefijo + fmt_monto(importe, moneda), st[estilo])
+            return Paragraph(prefijo + fmt_monto(importe, moneda, idioma=lang), st[estilo])
         alturas = {"tot_lab_s": 14, "tot_lab": 16, "tot_lab_g": 18}
         tamanos = {"tot_lab_s": 10.5, "tot_lab": 12, "tot_lab_g": 13.5}
         return ctx.campo(
@@ -1018,7 +1018,7 @@ def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot, lang="es"):
         return []
 
     def texto(importe):
-        return f"{fmt_monto(importe, moneda)}  ({_pct_una_decimal(importe, base)} %)"
+        return f"{fmt_monto(importe, moneda, idioma=lang)}  ({_pct_una_decimal(importe, base)} %)"
 
     def celda(clave, importe):
         if ctx is not None and hasattr(ctx, "txt_desglose"):
@@ -1232,7 +1232,7 @@ def _portada_presentacion(presupuesto, config, st, azul_color, lang="es"):
     meta_filas = [
         [Paragraph("CLIENT" if lang.startswith("en") else "CLIENTE", st_meta_lbl), Paragraph(_esc(presupuesto.cliente.nombre), st_meta_val)],
         [Paragraph("ESTIMATE No." if lang.startswith("en") else "PRESUPUESTO Nº", st_meta_lbl), Paragraph(_esc(presupuesto.numero), st_meta_val)],
-        [Paragraph("ISSUE DATE" if lang.startswith("en") else "FECHA DE EMISIÓN", st_meta_lbl), Paragraph(fmt_fecha(presupuesto.fecha), st_meta_val)],
+        [Paragraph("ISSUE DATE" if lang.startswith("en") else "FECHA DE EMISIÓN", st_meta_lbl), Paragraph(fmt_fecha(presupuesto.fecha, lang), st_meta_val)],
     ]
     if presupuesto.direccion_obra:
         meta_filas.append([Paragraph("PROJECT / ADDRESS" if lang.startswith("en") else "OBRA / DIRECCIÓN", st_meta_lbl), Paragraph(_esc(presupuesto.direccion_obra), st_meta_val)])
@@ -1411,7 +1411,7 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=No
 
     def total_cell():
         if ctx is None:
-            return Paragraph(fmt_monto(tot.total, moneda), total_style)
+            return Paragraph(fmt_monto(tot.total, moneda, idioma=lang), total_style)
         return ctx.campo(
             "resumen_total", ctx.txt_total("total"), ctx.js_total("total"),
             126, alto=18, alineacion="center", tam=12.5,
@@ -1421,7 +1421,7 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=No
     validez = f"{presupuesto.validez_dias} {_dias_txt3}" if presupuesto.validez_dias else "—"
     filas = [
         [Paragraph("TOTAL", label_style), Paragraph(_pdf_t(lang, "validez").upper(), label_style), Paragraph(_pdf_t(lang, "fecha").upper(), label_style), Paragraph(_pdf_t(lang, "moneda").upper(), label_style)],
-        [total_cell(), Paragraph(validez, value_style), Paragraph(fmt_fecha(presupuesto.fecha), value_style), Paragraph(_esc(moneda), value_style)],
+        [total_cell(), Paragraph(validez, value_style), Paragraph(fmt_fecha(presupuesto.fecha, lang), value_style), Paragraph(_esc(moneda), value_style)],
     ]
     tabla = Table(filas, colWidths=[_ANCHO * 0.34, _ANCHO * 0.22, _ANCHO * 0.22, _ANCHO * 0.22])
     tabla.setStyle(TableStyle([
@@ -1469,7 +1469,7 @@ def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=No
     for cap in presupuesto.capitulos:
         porcentaje = (cap.subtotal / subtotal_general) * 100.0
         if ctx is None:
-            celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["tot_c"])
+            celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda, idioma=lang), st["tot_c"])
             celda_peso = Paragraph(f"{porcentaje:.1f} %", st["tot_c"])
         else:
             cid = ctx.id_capitulo(cap)
@@ -1795,7 +1795,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         _mon_destino_tasa = presupuesto.moneda if presupuesto.moneda not in ("USD", "", "PAB") else _mon_tasa
         if _mon_destino_tasa in ("USD", "", "PAB"):
             _mon_destino_tasa = "VES"
-        regional.append(("Reference rate: " if lang.startswith("en") else "Tasa de referencia: ") + f"1 USD = {fmt_num(presupuesto.tipo_cambio)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
+        regional.append(("Reference rate: " if lang.startswith("en") else "Tasa de referencia: ") + f"1 USD = {fmt_num(presupuesto.tipo_cambio, idioma=lang)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio, lang)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
     if getattr(config, "mostrar_total_bs", False) and presupuesto.tipo_cambio:
         # Equivalente genérico: si presupuesto es USD -> muestra en moneda local, si es local -> muestra en USD
         try:
@@ -1803,17 +1803,17 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
             if _mon_cfg == "BS":
                 _mon_cfg = "VES"
             if presupuesto.moneda == "USD" and _mon_cfg not in ("USD", "", "PAB"):
-                regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, _mon_cfg)}")
+                regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, _mon_cfg, idioma=lang)}")
             elif presupuesto.moneda not in ("USD", "", "PAB") and presupuesto.moneda != _mon_cfg:
                 # Presupuesto en local, muestra equivalente en USD
                 if presupuesto.tipo_cambio and presupuesto.tipo_cambio != 0:
-                    regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total / presupuesto.tipo_cambio, 'USD')}")
+                    regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total / presupuesto.tipo_cambio, 'USD', idioma=lang)}")
             elif presupuesto.moneda == "USD":
                 # Fallback genérico si no hay moneda local configurada
-                regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, 'VES')}")
+                regional.append(("Referential equivalent: " if lang.startswith("en") else "Equivalente referencial: ") + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, 'VES', idioma=lang)}")
         except Exception:
             pass
-    if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append(("Tax-exempt operation" if lang.startswith("en") else "Operación exenta") if presupuesto.operacion_exenta else (("Applicable withholding: " if lang.startswith("en") else "Retención aplicable: ") + f"{fmt_num(presupuesto.retencion_pct)} %"))
+    if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append(("Tax-exempt operation" if lang.startswith("en") else "Operación exenta") if presupuesto.operacion_exenta else (("Applicable withholding: " if lang.startswith("en") else "Retención aplicable: ") + f"{fmt_num(presupuesto.retencion_pct, idioma=lang)} %"))
     if getattr(config, "datos_bancarios", ""): regional.append(("Payment data:\n" if lang.startswith("en") else "Datos de pago:\n") + config.datos_bancarios)
     if regional: story.append(Spacer(1, 16)); story.append(_seccion("Tax and payment data" if lang.startswith("en") else "Datos fiscales y pago", "\n".join(regional), st, azul_color, lang=lang))
     if getattr(config, "mostrar_clausula_cambiaria", False) and getattr(presupuesto, "clausula_cambiaria", ""): story.append(Spacer(1, 12)); story.append(_seccion("Exchange rate adjustment clause" if lang.startswith("en") else "Cláusula de ajuste cambiario", presupuesto.clausula_cambiaria, st, azul_color, lang=lang))
@@ -1823,9 +1823,9 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         original = totales.base / max(0.0001, 1 - presupuesto.descuento_pct / 100)
         ahorro = original - totales.base
         if lang.startswith("en"):
-            texto_ahorro = f"Original price: {fmt_monto(original, moneda)}\nCommercial discount: {fmt_monto(ahorro, moneda)}\nFinal price before VAT: {fmt_monto(totales.base, moneda)}"
+            texto_ahorro = f"Original price: {fmt_monto(original, moneda, idioma=lang)}\nCommercial discount: {fmt_monto(ahorro, moneda, idioma=lang)}\nFinal price before VAT: {fmt_monto(totales.base, moneda, idioma=lang)}"
         else:
-            texto_ahorro = f"Precio original: {fmt_monto(original, moneda)}\nDescuento comercial: {fmt_monto(ahorro, moneda)}\nPrecio final antes de IVA: {fmt_monto(totales.base, moneda)}"
+            texto_ahorro = f"Precio original: {fmt_monto(original, moneda, idioma=lang)}\nDescuento comercial: {fmt_monto(ahorro, moneda, idioma=lang)}\nPrecio final antes de IVA: {fmt_monto(totales.base, moneda, idioma=lang)}"
         story.append(Spacer(1, 16)); story.append(_seccion("Savings achieved" if lang.startswith("en") else "Ahorro obtenido", texto_ahorro, st, azul_color, lang=lang))
     if texto_anexos:
         story.append(Spacer(1, 16))
