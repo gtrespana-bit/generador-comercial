@@ -28,8 +28,8 @@
     <h1>Select an organization</h1>
     <p class="text-soft">{{ usuario.email }} · Access is checked against your active membership.</p>
 
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
 
     {% for invitacion in invitaciones %}
     <div class="org-card invitation">

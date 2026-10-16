@@ -235,3 +235,85 @@ def test_el_html_lang_coincide_con_el_hreflang_del_pais(cliente):
         m = re.search(r'<html[^>]*lang="([a-zA-Z-]+)"', r.text)
         assert m is not None, ruta
         assert m.group(1) == esperado, f"{ruta} → lang={m.group(1)}"
+
+
+# ---------------------------------------------------------------------------
+# Mensajes de la aplicación
+# ---------------------------------------------------------------------------
+# Los avisos viven en el código en español (los lanzan los servicios, los
+# routers los pasan como ?error= o en el JSON). Se traducen al pintarlos, así
+# que estas pruebas fijan el contrato: en español sale exactamente lo que había
+# y en inglés sale la versión catalogada (o el original si no está).
+
+
+def test_mensaje_en_espanol_devuelve_el_texto_original():
+    from app.i18n import mensaje
+
+    for texto in ("Datos inválidos.", "No hay una organización activa.", "Sin catalogar."):
+        assert mensaje(texto, "es") == texto
+        assert mensaje(texto, None) == texto
+
+
+def test_mensaje_traduce_lo_catalogado():
+    from app.i18n import mensaje
+
+    assert mensaje("Datos inválidos.", "en") == "Invalid data."
+    assert mensaje("Selecciona un método de pago.", "en") == "Select a payment method."
+    assert mensaje("No hay partidas en el catálogo.", "en") == "There are no line items in the catalog."
+
+
+def test_mensaje_interpola_los_valores_del_original():
+    """Los mensajes con valores interpolados conservan esos valores."""
+    from app.i18n import mensaje
+
+    assert mensaje("Versión 3 congelada.", "en") == "Version 3 frozen."
+    assert mensaje("Notificación enviada a ana@b.com.", "en") == "Notification sent to ana@b.com."
+    assert mensaje("No se importó el presupuesto P-7: ese número ya existe.", "en") == (
+        "Estimate P-7 was not imported: that number already exists."
+    )
+    assert mensaje("Stripe no respondió (Timeout).", "en") == "Stripe did not respond (Timeout)."
+
+
+def test_mensaje_con_varios_valores():
+    from app.i18n import mensaje
+
+    assert mensaje(
+        "El acceso de ana@b.com ya existe con rol «admin» y no se cambió a «editor».",
+        "en",
+    ) == "Access for ana@b.com already exists with the «admin» role and was not changed to «editor»."
+
+
+def test_mensaje_sin_catalogar_se_muestra_igual():
+    from app.i18n import mensaje
+
+    assert mensaje("Aviso que nadie catalogó todavía.", "en") == "Aviso que nadie catalogó todavía."
+
+
+@pytest.mark.parametrize("texto", ["", None])
+def test_mensaje_vacio_no_falla(texto):
+    from app.i18n import mensaje
+
+    assert mensaje(texto, "en") == ""
+
+
+def test_mensaje_request_usa_el_idioma_del_request():
+    from app.i18n import mensaje_request
+
+    class _Estado:
+        lang = "en"
+
+    class _Request:
+        state = _Estado()
+
+    assert mensaje_request(_Request(), "Datos inválidos.") == "Invalid data."
+    assert mensaje_request(object(), "Datos inválidos.") == "Datos inválidos."
+    assert mensaje_request(None, "Datos inválidos.") == "Datos inválidos."
+
+
+def test_el_filtro_mensaje_esta_disponible_en_las_plantillas():
+    from app.routers.common import TEMPLATES
+
+    assert "mensaje" in TEMPLATES.env.globals
+    plantilla = TEMPLATES.env.from_string("{{ error | mensaje(_idioma) }}")
+    assert plantilla.render(error="Datos inválidos.", _idioma="en") == "Invalid data."
+    assert plantilla.render(error="Datos inválidos.", _idioma="es") == "Datos inválidos."

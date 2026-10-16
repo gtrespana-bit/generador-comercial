@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..analytics import encolar_evento_ga
 from ..services import auditoria, telemetria
 from ..services.avisos_negocio import avisar_registro
@@ -93,7 +94,7 @@ async def restablecer_clave(request: Request):
         return TEMPLATES.TemplateResponse(
             request,
             "auth/reset_password.html",
-            {"error": "Las contraseñas no coinciden.", "recovery_token": token},
+            {"error": mensaje_request(request, "Las contraseñas no coinciden."), "recovery_token": token},
             status_code=400,
         )
     try:
@@ -107,7 +108,7 @@ async def restablecer_clave(request: Request):
             request,
             "auth/reset_password.html",
             {
-                "error": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+                "error": mensaje_request(request, "El enlace no es válido o ha caducado. Solicita uno nuevo."),
                 "recovery_token": "",
             },
             status_code=400,

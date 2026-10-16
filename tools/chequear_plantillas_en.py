@@ -41,6 +41,13 @@ GLOBALES = {
     "get_flashed_messages",
     "t",
     "normalizar_idioma",
+    # ``_CotizaTemplates`` inyecta el idioma resuelto en todas las plantillas;
+    # solo aparece en las traducidas (que son las que lo usan para traducir
+    # mensajes), así que no cuenta como diferencia.
+    "_idioma",
+    "mensaje",
+    "ruta_en_idioma",
+    "url_cambio_idioma",
 }
 
 

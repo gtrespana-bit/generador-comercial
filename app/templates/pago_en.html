@@ -38,7 +38,7 @@
       </div>
       <p>You will see the payment methods enabled for {{ pais_pago.nombre }}.</p>
     </form>
-    {% if msg %}<p class="pago-aviso" role="status">{{ msg }}</p>{% endif %}
+    {% if msg %}<p class="pago-aviso" role="status">{{ msg | mensaje(_idioma) }}</p>{% endif %}
     {# The trial is only offered to those who can take it. Whoever lands here
        with a `msg` has already used it up or is not entitled to it: telling
        them "free trial" again would be rubbing it in. #}

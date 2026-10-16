@@ -11,8 +11,8 @@
   </form>
 </div>
 
-{% if msg %}<div class="alert alert-ok">{{ msg }}</div>{% endif %}
-{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+{% if msg %}<div class="alert alert-ok">{{ msg | mensaje(_idioma) }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error | mensaje(_idioma) }}</div>{% endif %}
 
 <div class="card">
   <h2>Personal details</h2>

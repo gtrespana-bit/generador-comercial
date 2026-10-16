@@ -1,9 +1,10 @@
 """Presupuestos, proyectos, propuestas, documentos de cobro e importación."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..services import auditoria, telemetria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
@@ -1078,9 +1079,9 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     except (ValueError, TypeError, ErrorImportacion) as exc:
         return {"ok": False, "error": str(exc)}
     if resultado["errores"]:
-        return {"ok": False, "error": "Corrige los errores de validación antes de importar.", "errores": resultado["errores"]}
+        return {"ok": False, "error": mensaje_request(request, "Corrige los errores de validación antes de importar."), "errores": resultado["errores"]}
     if not resultado["filas"]:
-        return {"ok": False, "error": "No hay filas válidas para importar."}
+        return {"ok": False, "error": mensaje_request(request, "No hay filas válidas para importar.")}
 
     modo = str(payload.get("modo", "")).strip().lower()
     formato = str(payload.get("formato", ""))
@@ -1140,7 +1141,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     if destino is None:
         cliente = db.get(Cliente, int(_f(payload.get("client_id"), 0)))
         if cliente is None:
-            return {"ok": False, "error": "Selecciona un cliente para crear el nuevo presupuesto."}
+            return {"ok": False, "error": mensaje_request(request, "Selecciona un cliente para crear el nuevo presupuesto.")}
         cfg = _config(db)
         hoy = date.today()
         destino = Presupuesto(
@@ -2945,7 +2946,7 @@ async def guardar_tiempo_manual(presupuesto_id: int, request: Request, db: Sessi
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     # Soporta JSON y form-urlencoded
     data = {}
     ctype = request.headers.get("content-type", "")
@@ -2966,10 +2967,10 @@ async def guardar_tiempo_manual(presupuesto_id: int, request: Request, db: Sessi
     try:
         partida_id = int(str(data.get("partida_id") or data.get("partida") or 0))
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Partida no válida."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no válida.")}
     partida = db.get(PresupuestoItem, partida_id)
     if partida is None or partida.capitulo is None or partida.capitulo.presupuesto_id != presupuesto.id:
-        return {"ok": False, "error": "Partida no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no encontrada.")}
 
     def _parse_horas(key):
         raw = data.get(key)
@@ -3048,14 +3049,14 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
     """Asignación masiva rápida para partidas sin datos."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     try:
         payload = await request.json()
     except Exception:
-        return {"ok": False, "error": "JSON no válido."}
+        return {"ok": False, "error": mensaje_request(request, "JSON no válido.")}
     items = payload.get("items") if isinstance(payload, dict) else payload
     if not isinstance(items, list):
-        return {"ok": False, "error": "Formato no válido."}
+        return {"ok": False, "error": mensaje_request(request, "Formato no válido.")}
     h_of_default = _f(payload.get("horas_oficial"), None) if isinstance(payload, dict) else None
     h_ay_default = _f(payload.get("horas_ayudante"), None) if isinstance(payload, dict) else None
     h_eq_default = _f(payload.get("horas_equipo"), None) if isinstance(payload, dict) else None
@@ -3459,11 +3460,11 @@ async def guardar_borrador_presupuesto(presupuesto_id: int, request: Request, db
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     try:
         payload = await request.json()
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Datos inválidos."}
+        return {"ok": False, "error": mensaje_request(request, "Datos inválidos.")}
     capitulos = payload.get("capitulos")
     if capitulos is None:
         # Borrado explícito del borrador (botón «Descartar»).
@@ -3471,13 +3472,13 @@ async def guardar_borrador_presupuesto(presupuesto_id: int, request: Request, db
         db.commit()
         return {"ok": True, "ts": None}
     if not isinstance(capitulos, list) or len(capitulos) > MAX_FILAS:
-        return {"ok": False, "error": "Estructura no válida."}
+        return {"ok": False, "error": mensaje_request(request, "Estructura no válida.")}
     try:
         datos_json = json.dumps({"capitulos": capitulos, "ts": int(payload.get("ts") or 0)}, ensure_ascii=False)
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Datos no serializables."}
+        return {"ok": False, "error": mensaje_request(request, "Datos no serializables.")}
     if len(datos_json) > 5 * 1024 * 1024:  # 5 MB máx. de borrador
-        return {"ok": False, "error": "El borrador es demasiado grande."}
+        return {"ok": False, "error": mensaje_request(request, "El borrador es demasiado grande.")}
     borrador = db.query(BorradorPresupuesto).filter(BorradorPresupuesto.presupuesto_id == presupuesto_id).first()
     if borrador is None:
         borrador = BorradorPresupuesto(presupuesto_id=presupuesto_id, datos=datos_json)
@@ -3976,10 +3977,10 @@ def eliminar_anexo(presupuesto_id: int, anexo_id: int, db: Session = Depends(get
 
 
 @router.post("/presupuestos/{presupuesto_id}/pdf-descargado")
-def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db)):
+def registrar_pdf_descargado(request: Request, presupuesto_id: int, db: Session = Depends(get_db)):
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}, status_code=404)
     if es_lectura(db) or presupuesto.es_demo:
         return {"ok": True, "registrado": False}
     cfg = _config(db)

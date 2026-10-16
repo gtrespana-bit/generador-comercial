@@ -2,10 +2,11 @@
 
 import re
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..services import auditoria
 from ..services.tasa import factor_conversion_local, tasa_convertir_precio
 from ..services.traduccion import codigo_desde_pais, traducir
@@ -639,7 +640,7 @@ async def registrar_busqueda_catalogo_sin_resultados(
 
 @router.get("/partidas/{partida_id}/ficha")
 def ficha_partida_catalogo(
-    partida_id: int,
+    request: Request, partida_id: int,
     moneda: str = "",
     tasa: str = "",
     db: Session = Depends(get_db),
@@ -655,7 +656,7 @@ def ficha_partida_catalogo(
     if partida is None:
         return JSONResponse(
             status_code=404,
-            content={"ok": False, "error": "Partida no encontrada."},
+            content={"ok": False, "error": mensaje_request(request, "Partida no encontrada.")},
         )
     try:
         _cfg_f = _config(db)
@@ -699,7 +700,7 @@ def ficha_partida_catalogo(
 
 @router.get("/partidas/{partida_id}/descomposicion")
 def descomposicion_partida(
-    partida_id: int,
+    request: Request, partida_id: int,
     moneda: str = "",
     tasa: str = "",
     db: Session = Depends(get_db),
@@ -712,7 +713,7 @@ def descomposicion_partida(
     """
     partida = db.get(Partida, partida_id)
     if partida is None:
-        return {"ok": False, "error": "Partida no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no encontrada.")}
     try:
         valor = json.loads(partida.descomposicion_json or "[]")
     except (TypeError, ValueError):
@@ -955,14 +956,14 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
     """
     partida = db.get(Partida, partida_id)
     if partida is None:
-        return {"ok": False, "error": "Partida del catálogo no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida del catálogo no encontrada.")}
     try:
         payload = await request.json()
     except (TypeError, ValueError):
         payload = {}
     nuevo_precio = _f(payload.get("precio"), 0)
     if nuevo_precio < 0:
-        return {"ok": False, "error": "El precio no puede ser negativo."}
+        return {"ok": False, "error": mensaje_request(request, "El precio no puede ser negativo.")}
     # El editor muestra (y envía) el precio en la moneda del presupuesto; el
     # catálogo se guarda en la moneda base. Sin este paso, «actualizar el
     # catálogo» desde un presupuesto en MXN escribía el importe en pesos como
@@ -1004,7 +1005,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     partida = db.get(Partida, partida_id) if partida_id else None
     nombre = str(form.get("nombre", "")).strip()
     if not nombre:
-        return {"ok": False, "error": "El nombre de la partida es obligatorio."}
+        return {"ok": False, "error": mensaje_request(request, "El nombre de la partida es obligatorio.")}
     # Una línea importada o antigua puede no conservar el id del catálogo;
     # su nombre único permite recuperar la misma ficha en vez de duplicarla.
     if partida is None:
@@ -1013,7 +1014,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     if partida is not None:
         repetida = repetida.filter(Partida.id != partida.id)
     if repetida.first():
-        return {"ok": False, "error": "Ya existe otra partida con ese nombre."}
+        return {"ok": False, "error": mensaje_request(request, "Ya existe otra partida con ese nombre.")}
 
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)

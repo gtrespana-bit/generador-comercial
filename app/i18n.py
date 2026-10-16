@@ -171,3 +171,85 @@ def url_cambio_idioma(destino: str | None, idioma: str | None = None) -> str:
     lang = normalizar_idioma(idioma)
     objetivo = str(destino or "/")
     return f"/idioma/{lang}?destino={quote(objetivo, safe='/?&=')}"
+
+
+# ---------------------------------------------------------------------------
+# Mensajes de la aplicación
+# ---------------------------------------------------------------------------
+# Los avisos que el usuario ve (errores de validación, confirmaciones) viven en
+# el código en español: los lanzan los servicios como excepciones y los routers
+# los pasan como parámetros de la URL (?error=, ?mensaje=) o en el JSON. En
+# lugar de propagar claves por cada ``raise``, se traducen al pintarlos: el
+# catálogo ``locales/mensajes_<idioma>.json`` va del texto español al texto en
+# el idioma de destino, y lo que no esté catalogado se muestra tal cual.
+_MENSAJES_DIR = LOCALES_DIR
+_RE_PARAM_MENSAJE = re.compile(r"(\{[^{}]*\})")
+
+
+@lru_cache(maxsize=8)
+def _cargar_mensajes(idioma: str) -> dict[str, str]:
+    idioma = normalizar_idioma(idioma)
+    if idioma == IDIOMA_POR_DEFECTO:
+        return {}
+    try:
+        datos = json.loads((_MENSAJES_DIR / f"mensajes_{idioma}.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return {k: v for k, v in datos.items() if isinstance(k, str) and isinstance(v, str)}
+
+
+@lru_cache(maxsize=8)
+def _patrones_mensajes(idioma: str) -> tuple[tuple[re.Pattern[str], str], ...]:
+    """Mensajes con valores interpolados: ``(regex, plantilla_en)``."""
+    patrones: list[tuple[re.Pattern[str], str]] = []
+    for es, en in _cargar_mensajes(idioma).items():
+        if "{" not in es:
+            continue
+        trozos = _RE_PARAM_MENSAJE.split(es)
+        regex = "".join(
+            re.escape(t) if not t.startswith("{") else "(.*)" for t in trozos
+        )
+        try:
+            patrones.append((re.compile("^" + regex + "$", re.S), en))
+        except re.error:  # pragma: no cover - catálogo mal formado
+            continue
+    return tuple(patrones)
+
+
+def mensaje(texto: object, idioma: str | None = None) -> str:
+    """Traduce un mensaje escrito en español; si no está, lo devuelve igual."""
+    if texto is None:
+        return ""
+    s = str(texto)
+    lang = normalizar_idioma(idioma)
+    if lang == IDIOMA_POR_DEFECTO or not s:
+        return s
+    catalogo = _cargar_mensajes(lang)
+    if not catalogo:
+        return s
+    directo = catalogo.get(s) or catalogo.get(s.strip())
+    if directo is not None:
+        return directo
+    for patron, plantilla in _patrones_mensajes(lang):
+        m = patron.match(s) or patron.match(s.strip())
+        if not m:
+            continue
+        try:
+            return plantilla.format(*m.groups())
+        except (IndexError, KeyError):
+            return plantilla
+    return s
+
+
+def mensaje_request(request: object, texto: object) -> str:
+    """Traduce ``texto`` al idioma que lleva el ``request``.
+
+    Atajo para los routers que devuelven el error en el JSON de una API: en
+    español el texto sale tal cual, así que no cambia nada respecto a antes.
+    """
+    lang = IDIOMA_POR_DEFECTO
+    try:
+        lang = getattr(getattr(request, "state", None), "lang", "") or IDIOMA_POR_DEFECTO
+    except Exception:  # pragma: no cover - request sin state
+        lang = IDIOMA_POR_DEFECTO
+    return mensaje(texto, lang)

@@ -30,8 +30,8 @@
 
     <p class="text-soft">Only owners and administrators manage the team. Ownership is not transferred from this screen.</p>
 
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
 
     <section class="panel">
       <h2>Invite a person</h2>

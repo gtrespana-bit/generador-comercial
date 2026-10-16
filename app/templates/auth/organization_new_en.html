@@ -26,7 +26,7 @@
     <h1>Create your company workspace</h1>
     <p>The account {{ usuario.email }} will be the owner. Afterwards you can complete the commercial details and choose between a demo or a clean workspace.</p>
 
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
 
     <form action="/organizaciones/nueva" method="post">
       <div class="field">

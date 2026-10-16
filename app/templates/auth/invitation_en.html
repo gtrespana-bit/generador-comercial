@@ -30,7 +30,7 @@
     <p class="small text-soft"><strong>Don't have an account yet?</strong> Create one with that same email and confirm it from the Supabase email. When you sign in you will find the invitation waiting to be accepted with one click: you do not need to come back to this link.</p>
     {% endif %}
 
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
 
     {% if autenticado and token %}
     <form id="aceptar-invitacion" action="/invitaciones/{{ token }}/aceptar" method="post">

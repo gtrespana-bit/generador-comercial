@@ -21,7 +21,7 @@
   <h3>Warnings</h3>
   <ul>
     {% for aviso in resultado.advertencias %}
-    <li>{{ aviso }}</li>
+    <li>{{ aviso | mensaje(_idioma) }}</li>
     {% endfor %}
   </ul>
   {% endif %}
@@ -48,7 +48,7 @@
   <h3>What is NOT imported and why</h3>
   <ul>
     {% for aviso in resumen.advertencias %}
-    <li>{{ aviso }}</li>
+    <li>{{ aviso | mensaje(_idioma) }}</li>
     {% endfor %}
   </ul>
   {% endif %}

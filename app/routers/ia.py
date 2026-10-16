@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from . import common
 from .common import get_authenticated_db, get_db
+from ..i18n import mensaje_request
 from ..services.asistente_ia import (
     asistente_configurado,
     consultar_asistente_stream,
@@ -256,14 +257,14 @@ async def api_chat_ia(
 
 @router.post("/redactar-descripcion")
 async def api_redactar_descripcion(
-    solicitud: SolicitudRedaccion,
+    request: Request, solicitud: SolicitudRedaccion,
     db: Session = Depends(get_authenticated_db),
 ):
     """Genera una especificación técnica rigurosa para una partida."""
     titulo = solicitud.titulo.strip()
     if not titulo:
         return JSONResponse(
-            {"ok": False, "error": "El título de la partida es obligatorio."},
+            {"ok": False, "error": mensaje_request(request, "El título de la partida es obligatorio.")},
             status_code=400,
         )
 

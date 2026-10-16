@@ -136,8 +136,8 @@
       </div>
 
       <form class="card" method="post" action="/bienvenida" enctype="multipart/form-data" id="onboarding-form">
-        {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
-        {% if msg %}<div class="aviso-prueba" role="status">{{ msg }}</div>{% endif %}
+        {% if error %}<div class="error" role="alert">{{ error | mensaje(_idioma) }}</div>{% endif %}
+        {% if msg %}<div class="aviso-prueba" role="status">{{ msg | mensaje(_idioma) }}</div>{% endif %}
 
         <section class="wizard-panel active" data-panel="0">
           <span class="panel-kicker">Step 1 of 3</span>

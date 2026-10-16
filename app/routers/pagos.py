@@ -14,6 +14,7 @@ from fastapi import APIRouter, Form, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..analytics import encolar_purchase_unico
 from ..database import get_stripe_webhook_db
 from ..services import auditoria, telemetria
@@ -726,7 +727,7 @@ async def stripe_webhook(
         db.rollback()
         log.error("Error en el webhook de Stripe:\n%s", traceback.format_exc())
         return JSONResponse(
-            {"ok": False, "error": "Error interno."},
+            {"ok": False, "error": mensaje_request(request, "Error interno.")},
             status_code=500,
             headers={"Cache-Control": "no-store"},
         )

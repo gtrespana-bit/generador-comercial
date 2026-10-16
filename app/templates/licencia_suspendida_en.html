@@ -23,7 +23,7 @@
     </a>
 
     <h1>Access suspended</h1>
-    <p>{{ error }}</p>
+    <p>{{ error | mensaje(_idioma) }}</p>
     <div class="alert warn">Your estimates, clients, catalogs and files <strong>have not been deleted</strong>: they become available again as soon as the license is renewed.</div>
     <p class="text-soft">To reactivate access or request a copy of your data, write to us at <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
 

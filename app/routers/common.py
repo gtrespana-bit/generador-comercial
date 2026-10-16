@@ -272,6 +272,10 @@ class _CotizaTemplates(Jinja2Templates):
             exists = (BASE_DIR / "app" / "templates" / alt).is_file()
             if exists:
                 name = alt
+        # Idioma resuelto, listo para usarlo en la plantilla (``{{ error |
+        # mensaje(_idioma) }}``). ``setdefault`` para no pisar nada que el
+        # router ya traiga en el contexto.
+        ctx.setdefault("_idioma", lang or "es")
         return super().TemplateResponse(
             request, name, ctx, status_code=status_code, headers=headers,
             media_type=media_type, background=background,
@@ -290,9 +294,15 @@ try:
     # canónica, así que `request.url.path` siempre sirve como punto de partida.
     from ..i18n import ruta_en_idioma as _ruta_idioma
     from ..i18n import url_cambio_idioma as _url_cambio_idioma
+    # Traducción de *mensajes*: el texto español que los routers y los
+    # servicios ponen en pantalla (?error=, ?mensaje=, JSON de la API). Se
+    # traduce al pintarlo, así que no hay claves que propagar por el código.
+    from ..i18n import mensaje as _mensaje
 
     TEMPLATES.env.globals["ruta_en_idioma"] = _ruta_idioma
     TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
+    TEMPLATES.env.globals["mensaje"] = _mensaje
+    TEMPLATES.env.filters["mensaje"] = lambda texto, idioma=None: _mensaje(texto, idioma)
 except Exception:
     pass
 

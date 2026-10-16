@@ -18,7 +18,7 @@
     <h1>Buy {{ plan_ficha.nombre }}</h1>
   </header>
 
-  {% if error %}<div class="demo-error" role="alert"><strong>{{ error }}</strong></div>{% endif %}
+  {% if error %}<div class="demo-error" role="alert"><strong>{{ error | mensaje(_idioma) }}</strong></div>{% endif %}
 
   <form method="GET" action="/pago/comprar" class="compra-pais" data-pais-pago>
     <input type="hidden" name="plan" value="{{ plan }}">

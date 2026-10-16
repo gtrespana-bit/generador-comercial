@@ -26,8 +26,8 @@
     <h1>Recover access</h1>
     <p>Enter your account email. If it exists, Supabase will send a temporary link.</p>
 
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-    {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
 
     <form method="post" action="/recuperar-acceso">
       <div class="field">
