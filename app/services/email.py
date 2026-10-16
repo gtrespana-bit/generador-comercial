@@ -837,13 +837,20 @@ def _enviar_aviso_interno(
     destino_override: str = "",
     reply_to: str = "",
     etiqueta: str,
+    idioma: str = "es",
 ) -> str:
     """Renderiza y envía un aviso interno; devuelve el id o ``""``.
 
     Comparte con los demás avisos internos el criterio de no romper nada: sin
     correo configurado se registra un aviso en el log y se devuelve cadena
     vacía, porque el dato ya está en la base.
+
+    ``idioma`` elige la plantilla: con ``"en"`` se usa la variante
+    ``emails/<plantilla>_en.{html,txt}`` cuando existe; si no, la española.
     """
+    from ..i18n import normalizar_idioma
+
+    _sufijo = "_en" if normalizar_idioma(idioma) == "en" else ""
     destino = (
         str(destino_override or "").strip() or _env("COTIZAT_AVISOS_EMAIL") or _soporte_email()
     )
@@ -859,8 +866,8 @@ def _enviar_aviso_interno(
         )
         return ""
     try:
-        html = _jinja.get_template(f"emails/{plantilla}.html").render(**contexto)
-        texto = _jinja.get_template(f"emails/{plantilla}.txt").render(**contexto)
+        html = _jinja.get_template(f"emails/{plantilla}{_sufijo}.html").render(**contexto)
+        texto = _jinja.get_template(f"emails/{plantilla}{_sufijo}.txt").render(**contexto)
     except Exception:
         logger.warning("Plantilla de «%s» no disponible; se usa texto plano.", etiqueta)
         html = "".join(
@@ -896,6 +903,7 @@ def enviar_aviso_venta_por_email(
     origen: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Avisa al titular de una **venta confirmada** (Stripe o manual).
 
@@ -904,6 +912,7 @@ def enviar_aviso_venta_por_email(
     (webhook de Stripe o activación en el panel), con el plan, el importe, el
     método y el período pagado.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
 
     contexto = {
@@ -920,7 +929,8 @@ def enviar_aviso_venta_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
-    tipo = "Renovación" if renovacion else "Venta"
+    en = normalizar_idioma(idioma) == "en"
+    tipo = ("Renewal" if renovacion else "Sale") if en else ("Renovación" if renovacion else "Venta")
     asunto = (
         f"{tipo}: {contexto['plan_nombre']} · {contexto['importe_texto']} · "
         f"{contexto['organizacion_nombre'] or contexto['comprador_email']}"
@@ -932,6 +942,7 @@ def enviar_aviso_venta_por_email(
         destino_override=destino_override,
         reply_to=contexto["comprador_email"],
         etiqueta="venta",
+        idioma=idioma,
     )
 
 
@@ -945,6 +956,7 @@ def enviar_aviso_registro_por_email(
     prueba_texto: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Avisa al titular de una **cuenta nueva** (y de la prueba si se concede).
 
@@ -953,6 +965,7 @@ def enviar_aviso_registro_por_email(
     alta de la cuenta y, cuando el alta crea la empresa, se manda el segundo
     aviso con el nombre de la organización y la prueba concedida.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
 
     nombre = str(nombre or "").strip()
@@ -971,7 +984,10 @@ def enviar_aviso_registro_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
-    titulo = "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta registrada"
+    if normalizar_idioma(idioma) == "en":
+        titulo = "New company on trial" if origen == "prueba" else "New account registered"
+    else:
+        titulo = "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta registrada"
     asunto = f"{titulo}: {nombre or email}" + (
         f" · {contexto['organizacion_nombre']}" if contexto["organizacion_nombre"] else ""
     )
@@ -982,6 +998,7 @@ def enviar_aviso_registro_por_email(
         destino_override=destino_override,
         reply_to=email,
         etiqueta="registro",
+        idioma=idioma,
     )
 
 
@@ -996,6 +1013,7 @@ def enviar_mensaje_soporte_por_email(
     pagina: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Reenvía al buzón de soporte un mensaje del formulario público.
 
@@ -1004,6 +1022,7 @@ def enviar_mensaje_soporte_por_email(
     soporte. El mensaje ya está guardado en ``mensajes_soporte``; este correo
     es el empujón para que no se quede sin leer.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
     from ..models import TIPOS_SOPORTE_ETIQUETA
 
@@ -1028,8 +1047,9 @@ def enviar_mensaje_soporte_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
+    _prefijo = "Support" if normalizar_idioma(idioma) == "en" else "Soporte"
     asunto_correo = (
-        f"Soporte · {contexto['tipo']}: {nombre or email}"
+        f"{_prefijo} · {contexto['tipo']}: {nombre or email}"
     )
     return _enviar_aviso_interno(
         plantilla="soporte",
@@ -1038,6 +1058,7 @@ def enviar_mensaje_soporte_por_email(
         destino_override=destino_override,
         reply_to=email,
         etiqueta="soporte",
+        idioma=idioma,
     )
 
 

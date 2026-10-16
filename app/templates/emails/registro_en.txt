@@ -1,0 +1,14 @@
+{% if origen == "prueba" %}NEW COMPANY ON TRIAL{% else %}NEW ACCOUNT REGISTERED{% endif %} · {{ product_name }}
+
+Person: {{ nombre or "No name" }}
+Email: {{ email }}
+{% if organizacion_nombre %}Company: {{ organizacion_nombre }}
+{% endif %}{% if pais %}Country: {{ pais }}
+{% endif %}{% if prueba_texto %}Trial: {{ prueba_texto }}
+{% endif %}
+Write straight to {{ email }} by replying to this email.
+{% if panel_url %}
+Client dashboard: {{ panel_url }}
+{% endif %}
+---
+Automatic sign-up notice from {{ product_name }}. Sent only to panel operators.

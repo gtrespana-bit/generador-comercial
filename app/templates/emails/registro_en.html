@@ -1,0 +1,64 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}{{ "New company on trial" if origen == "prueba" else "New account" }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ "Trial started" if origen == "prueba" else "Sign-up" }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  {% if origen == "prueba" %}A new company has started the trial{% else %}Someone has just created an account{% endif %}
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  We are telling you so that you can welcome them and help with the first
+  steps: clients who get help at sign-up stay.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Person</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ nombre or "No name" }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Email</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;"><a href="mailto:{{ email }}" style="color:#0b5b38;text-decoration:none;">{{ email }}</a></td>
+  </tr>
+  {% if organizacion_nombre %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Company</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  {% endif %}
+  {% if pais %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Country</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ pais }}</td>
+  </tr>
+  {% endif %}
+  {% if prueba_texto %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Trial</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ prueba_texto }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.6;color:#28503f;">
+      Reply to this email and your message reaches them directly.
+      {% if panel_url %}<br><a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">Open the client dashboard →</a>{% endif %}
+    </td>
+  </tr>
+</table>
+
+{% endblock %}
+
+{% block pie %}
+Automatic sign-up notice from {{ product_name }}. Sent only to panel operators.
+{% endblock %}

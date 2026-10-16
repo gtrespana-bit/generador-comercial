@@ -1,0 +1,16 @@
+{% if renovacion %}PLAN RENEWAL{% else %}SALE CONFIRMED{% endif %} · {{ product_name }}
+
+Plan: {{ plan_nombre }}
+Amount: {{ importe_texto }}
+Payment method: {{ metodo_nombre }}
+Client: {{ organizacion_nombre }}
+Buyer: {{ comprador_email }}
+{% if periodo_texto %}Paid period: {{ periodo_texto }}{% endif %}
+{% if compra_id %}Purchase: #{{ compra_id }}{% endif %}
+
+The charge is confirmed and the client's access is already active: no action needed.
+{% if panel_url %}
+Sales ledger: {{ panel_url }}
+{% endif %}
+---
+Automatic billing notice from {{ product_name }}. Reply to this email to write to the buyer.

@@ -1,0 +1,16 @@
+SUPPORT MESSAGE · {{ tipo }} · {{ product_name }}
+
+From: {{ nombre or "No name" }} <{{ email }}>
+{% if organizacion_nombre %}Company: {{ organizacion_nombre }}
+{% endif %}{% if asunto %}Subject: {{ asunto }}
+{% endif %}{% if pagina %}Written from: {{ pagina }}
+{% endif %}
+Message:
+{{ mensaje }}
+
+Reply to this email and you will answer them directly.
+{% if panel_url %}
+Support inbox: {{ panel_url }}
+{% endif %}
+---
+Automatic notice from the {{ product_name }} support inbox. The message is stored in the panel.
