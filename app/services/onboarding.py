@@ -55,7 +55,9 @@ def marcar_instalacion_anterior(db: Session) -> Configuracion:
     return cfg
 
 
-def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
+def completar_onboarding(
+    db: Session, datos: dict, modo: str, idioma: str = "es"
+) -> Configuracion:
     """Guarda la empresa y aplica, una sola vez, demo o instalación limpia."""
     cfg = _configuracion(db)
     if cfg.onboarding_completado:
@@ -125,9 +127,9 @@ def completar_onboarding(db: Session, datos: dict, modo: str) -> Configuracion:
         # Las funciones son idempotentes: si el proceso se interrumpe puede
         # repetirse sin duplicar catálogos ni el documento de ejemplo.
         sembrar_catalogo(db)
-        sembrar_productos(db)
+        sembrar_productos(db, idioma)
         sembrar_recetas(db)
-        sembrar_demo(db)
+        sembrar_demo(db, idioma)
     else:
         # La opción limpia no debe inyectar contenido en arranques posteriores.
         cfg.semilla_catalogo_aplicada = True

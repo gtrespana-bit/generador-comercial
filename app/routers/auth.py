@@ -1128,6 +1128,14 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
     )
 
 
+def _idioma(request) -> str:
+    """Idioma resuelto por el middleware; decide el idioma de la demo."""
+    try:
+        return getattr(getattr(request, "state", None), "lang", "") or "es"
+    except Exception:
+        return "es"
+
+
 @router.post("/bienvenida")
 async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
@@ -1153,7 +1161,9 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
         "fecha_tasa": form.get("fecha_tasa", ""),
     }
     try:
-        cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))
+        cfg = completar_onboarding(
+            db, datos, str(form.get("modo_inicio", "")), _idioma(request)
+        )
     except ErrorOnboarding as exc:
         return _redirect("/bienvenida", error=str(exc))
 

@@ -413,3 +413,110 @@ def test_el_ejemplo_sigue_siendo_por_pais_en_ingles():
     # mismos rótulos, distinta moneda
     assert us["caps"][0]["titulo"] == mx["caps"][0]["titulo"]
     assert us["tot"]["total"] != mx["tot"]["total"]
+
+
+# ---------------------------------------------------------------------------
+# Demostración en inglés
+# ---------------------------------------------------------------------------
+# Quien entra en inglés y elige el modo demo se encuentra un presupuesto de
+# ejemplo. Las cifras tienen que ser las mismas en los dos idiomas; lo que
+# cambia es el rótulo.
+
+
+def _demo(idioma):
+    """Siembra la demo en una base SQLite aislada y devuelve (presupuesto, db)."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+
+    from app.models import Base, Presupuesto
+    from app.seeds import sembrar_demo
+
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    Base.metadata.create_all(engine)
+    db = sessionmaker(bind=engine)()
+    sembrar_demo(db, idioma)
+    return db.query(Presupuesto).first(), db
+
+
+def test_la_demo_en_espanol_no_cambia():
+    p, db = _demo("es")
+    assert p.titulo == "Remodelación residencial de demostración"
+    assert [c.nombre for c in p.capitulos] == [
+        "MUROS Y PARTICIONES",
+        "PISOS",
+        "REMODELACIÓN COCINA",
+    ]
+    assert p.capitulos[0].partidas[0].nombre == (
+        "Demolición de partición interior de bloque revestida"
+    )
+    assert "Forma de pago" in p.condiciones
+    db.close()
+
+
+def test_la_demo_en_ingles_rotula_capitulos_partidas_y_mediciones():
+    p, db = _demo("en")
+    assert p.titulo == "Residential remodel — demo"
+    assert [c.nombre for c in p.capitulos] == [
+        "WALLS AND PARTITIONS",
+        "FLOORING",
+        "KITCHEN REMODEL",
+    ]
+    assert p.capitulos[0].partidas[0].nombre == (
+        "Demolition of rendered internal block partition"
+    )
+    assert p.capitulos[2].partidas[2].nombre == (
+        "Supply and installation of quartz worktop"
+    )
+    conceptos = [m.concepto for it in p.capitulos[0].partidas for m in it.mediciones]
+    assert "Kitchen approx (4.00 x 2.50)" in conceptos
+    assert "Master bedroom wall" in conceptos
+    assert "Payment terms" in p.condiciones
+    db.close()
+
+
+def test_la_demo_en_ingles_consulta_las_mismas_cifras():
+    """Traducir no puede tocar precios ni cantidades: son el contenido."""
+    es, db1 = _demo("es")
+    en, db2 = _demo("en")
+
+    def cifras(p):
+        return [
+            (it.unidad, float(it.precio_unitario), [float(m.cantidad) for m in it.mediciones])
+            for c in p.capitulos
+            for it in c.partidas
+        ]
+
+    assert cifras(es) == cifras(en)
+    assert es.titulo != en.titulo
+    db1.close()
+    db2.close()
+
+
+def test_los_productos_de_la_demo_se_siembran_en_ingles():
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+
+    from app.models import Base, Producto
+    from app.seeds import sembrar_productos
+
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    Base.metadata.create_all(engine)
+    db = sessionmaker(bind=engine)()
+    sembrar_productos(db, "en")
+    nombres = sorted(p.nombre for p in db.query(Producto).all())
+    assert nombres == [
+        "Blanco Norte quartz, subtle veining",
+        "Calacatta-style polished porcelain tile 60x120 cm",
+        "Venetian Grey rectified porcelain tile 90x90 cm",
+    ]
+    assert sorted({p.categoria for p in db.query(Producto).all()}) == [
+        "Flooring",
+        "Kitchen",
+    ]
+    db.close()
