@@ -15,6 +15,7 @@ nacionales en esa moneda (ver ``tools/generar_matriz_precios_espana.py``).
 """
 
 from __future__ import annotations
+from functools import lru_cache
 
 # Cada entrada es lo que la landing necesita para personalizarse.
 # `vocab` es la línea corta que aparece en el banner del catálogo:
@@ -648,6 +649,82 @@ PAIS_GENERICO: dict = {
     "sistema_unidades": "metrico",
 
 }
+
+# ---------------------------------------------------------------------------
+# Resolución de mercados
+# ---------------------------------------------------------------------------
+# Un mercado se puede pedir de cuatro formas: por locale («en-GB»), por
+# código de país («GB», «mx»), por nombre («Reino Unido») o solo por idioma
+# («en»). Esta es la única función que sabe traducir eso a un mercado
+# completo; nadie debe hacer `startswith("en")` por su cuenta, porque eso
+# asume que el inglés es un bloque único y no lo es.
+
+# Mercado al que cae un idioma cuando no se dice el país.
+MERCADO_POR_DEFECTO_IDIOMA = {"en": "US", "es": "ES"}
+
+
+def normalizar_clave(texto: str) -> str:
+    """Minúsculas sin marcas diacríticas: «España» y «Espana» → «espana».
+
+    Se normaliza en NFD y se descartan los diacríticos combinantes, así que
+    resuelve cualquier acento y también la eñe, que es la que se escribe mal
+    más a menudo. Antes se quitaban cinco vocales acentuadas a mano y la eñe
+    quedaba, obligando a listar las dos formas de cada país.
+    """
+    import unicodedata
+
+    descompuesto = unicodedata.normalize("NFD", str(texto or "").strip().lower())
+    return "".join(c for c in descompuesto if not unicodedata.combining(c))
+
+
+@lru_cache(maxsize=128)
+def resolver_mercado(clave: str | None) -> dict:
+    """Devuelve el mercado que corresponde a una clave; nunca falla.
+
+    Siempre devuelve un mercado completo (con las ocho dimensiones), así que
+    quien lo llama puede usar `mercado["separador_decimal"]` o
+    `mercado["idioma"]` sin comprobar nada. Si la clave no identifica un
+    mercado concreto, cae al mercado por defecto del idioma y, si no hay
+    idioma reconocible, al genérico.
+    """
+    c = str(clave or "").strip().replace("_", "-")
+    if not c:
+        return PAIS_GENERICO
+
+    # 1 · Locale completo: «en-GB», «es-MX».
+    for pais in PAISES.values():
+        if pais["locale"].lower() == c.lower():
+            return pais
+
+    # 2 · Código de país: «GB», «mx».
+    if c.upper() in PAISES:
+        return PAISES[c.upper()]
+
+    # 3 · Nombre oficial o gentilicio: «Reino Unido», «canadiense».
+    k = normalizar_clave(c)
+    for pais in PAISES.values():
+        if k in (normalizar_clave(pais["nombre"]), normalizar_clave(pais["mercado"])):
+            return pais
+
+    # 4 · Solo el idioma: «en» -> Estados Unidos, «es» -> España.
+    defecto = MERCADO_POR_DEFECTO_IDIOMA.get(c.split("-")[0].lower())
+    if defecto:
+        return PAISES[defecto]
+    return PAIS_GENERICO
+
+
+def idioma_de(clave: str | None) -> str:
+    """«en-GB» -> «en». El idioma se pregunta al mercado, no a la cadena."""
+    return str(resolver_mercado(clave)["idioma"] or "es")
+
+
+def es_ingles(clave: str | None) -> bool:
+    """¿Este mercado redacta en inglés?
+
+    Sustituye a los `startswith("en")` repartidos por el código: la pregunta
+    no es si la cadena empieza por «en», sino de qué mercado se trata.
+    """
+    return idioma_de(clave) == "en"
 
 
 def obtener_pais(codigo: str | None) -> dict | None:

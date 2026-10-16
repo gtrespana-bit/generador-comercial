@@ -81,15 +81,23 @@ def cuantizar(valor, moneda: str | None = "USD") -> Decimal:
     return Decimal(str(valor or 0)).quantize(quantum, rounding=ROUND_HALF_UP)
 
 
-def formato_iso(valor, moneda: str | None = "USD", idioma: str = "es") -> str:
+def formato_iso(valor, moneda: str | None = "USD", idioma: str = "es",
+                mercado: dict | None = None) -> str:
     """Formato textual estable: valor + código ISO, sin símbolos ambiguos.
 
-    El separador de miles y decimales sigue al idioma del documento, no a la
-    moneda: un presupuesto en inglés muestra «35,041.65 USD» y el mismo
-    importe en español «35.041,65 USD».
+    El separador de miles y decimales sigue al **mercado** del documento, no
+    a la moneda ni al idioma: México muestra «35,041.65 MXN» y Colombia
+    «35.041,65 COP» escribiendo español los dos. `idioma` solo se usa si no
+    se pasa mercado.
     """
     d = cuantizar(valor, moneda)
     s = f"{d:,.{decimales(moneda)}f}"
+    if mercado is not None:
+        miles = mercado.get("separador_miles") or ","
+        dec = mercado.get("separador_decimal") or "."
+        s = (s.replace(".", "\x01").replace(",", "\x02")
+              .replace("\x01", dec).replace("\x02", miles))
+        return s + f" {codigo_iso(moneda)}"
     if str(idioma or "es").strip().lower().startswith("en"):
         return s + f" {codigo_iso(moneda)}"
     return s.replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
