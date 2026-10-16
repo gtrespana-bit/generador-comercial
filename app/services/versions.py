@@ -57,6 +57,11 @@ def serializar_presupuesto(p):
         "mostrar_garantias": bool(getattr(p, "mostrar_garantias", False)),
         "garantias_familias": p.garantias_familias if getattr(p, "mostrar_garantias", False) else [],
         "garantias_nota_legal": p.garantias_nota_legal if getattr(p, "mostrar_garantias", False) else "",
+        # Variante inglesa, para poder pintar la misma versión en /en/ sin
+        # recalcular. Las instantáneas anteriores no la traen y caen al
+        # castellano, que es lo que se guardó en su día.
+        "garantias_familias_en": (p.garantias_familias_en if getattr(p, "mostrar_garantias", False) else []),
+        "garantias_nota_legal_en": (p.garantias_nota_legal_en if getattr(p, "mostrar_garantias", False) else ""),
         "avanzado": bool(p.usar_funciones_avanzadas),
         "capitulos": [{"nombre": c.nombre, "partidas": [_linea(i) for i in c.partidas]} for c in p.capitulos],
         "totales": {"subtotal": p.subtotal, "opcionales": p.subtotal_opcional,

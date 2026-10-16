@@ -816,6 +816,16 @@ class Presupuesto(TenantMixin, Base):
         from .services.garantias import NOTA_LEGAL
         return NOTA_LEGAL
 
+    @property
+    def garantias_familias_en(self):
+        from .services.garantias import familias_para_pdf
+        return familias_para_pdf(self, "en")
+
+    @property
+    def garantias_nota_legal_en(self):
+        from .services.garantias import nota_legal
+        return nota_legal("en")
+
 
 class PresupuestoVersion(TenantMixin, Base):
     """Instantánea inmutable creada al enviar, aprobar o versionar un documento."""

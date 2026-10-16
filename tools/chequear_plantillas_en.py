@@ -46,6 +46,9 @@ GLOBALES = {
     # mensajes), así que no cuenta como diferencia.
     "_idioma",
     "mensaje",
+    # Globales que aportan contenido ya calculado por idioma.
+    "garantias_familias",
+    "garantias_nota_legal",
     "ruta_en_idioma",
     "url_cambio_idioma",
 }

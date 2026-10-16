@@ -303,6 +303,13 @@ try:
     TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
     TEMPLATES.env.globals["mensaje"] = _mensaje
     TEMPLATES.env.filters["mensaje"] = lambda texto, idioma=None: _mensaje(texto, idioma)
+    # Tabla de garantías: se calcula desde el presupuesto, así que el idioma
+    # llega en el momento de pintarla (el modelo no sabe de requests).
+    from ..services.garantias import familias_para_pdf as _familias_garantia
+    from ..services.garantias import nota_legal as _nota_garantias
+
+    TEMPLATES.env.globals["garantias_familias"] = _familias_garantia
+    TEMPLATES.env.globals["garantias_nota_legal"] = _nota_garantias
 except Exception:
     pass
 

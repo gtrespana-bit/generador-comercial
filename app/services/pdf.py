@@ -1278,9 +1278,9 @@ def _portada_presentacion(presupuesto, config, st, azul_color, lang="es"):
 
 def _tabla_garantias(presupuesto, st, azul_color, lang="es"):
     """Bloque de garantías al tono del resto del PDF (no una parrilla Excel)."""
-    from .garantias import NOTA_LEGAL, familias_para_pdf
+    from .garantias import familias_para_pdf, nota_legal
 
-    familias = familias_para_pdf(presupuesto)
+    familias = familias_para_pdf(presupuesto, lang)
     st_grupo = ParagraphStyle(
         "gar_grupo", fontName="Lato-Bold", fontSize=9.4, leading=12, textColor=TEXTO,
     )
@@ -1354,7 +1354,7 @@ def _tabla_garantias(presupuesto, st, azul_color, lang="es"):
         flujo.append(KeepTogether(bloque))
 
     nota = Table(
-        [[Paragraph(_esc(NOTA_LEGAL), st_nota)]],
+        [[Paragraph(_esc(nota_legal(lang)), st_nota)]],
         colWidths=[_ANCHO],
     )
     nota.setStyle(TableStyle([

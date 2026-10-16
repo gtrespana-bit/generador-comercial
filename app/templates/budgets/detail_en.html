@@ -408,7 +408,7 @@
     Periods covering the <strong>workmanship and installation</strong> of the work included in this estimate, grouped by type of work. Materials, light fittings, taps and equipment keep their manufacturer’s warranty.
   </p>
   
-  {% set familias = p.garantias_familias %}
+  {% set familias = garantias_familias(p, _idioma) %}
   {% if familias %}
   <div class="csp-s-6206e40284">
     {% for fam in familias %}
@@ -424,7 +424,7 @@
   {% endif %}
   
   <div class="csp-s-5e082dbc8d">
-    <strong class="csp-s-6464799a08">Legal note:</strong> {{ p.garantias_nota_legal }}
+    <strong class="csp-s-6464799a08">Legal note:</strong> {{ garantias_nota_legal(_idioma) }}
   </div>
 </div>
 {% endif %}
