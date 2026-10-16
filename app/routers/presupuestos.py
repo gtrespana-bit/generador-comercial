@@ -2521,7 +2521,9 @@ def _pagina_enlaces_propuesta(
         tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
     )
-    revision_envio = revisar_presupuesto_antes_de_enviar(presupuesto, cfg=cfg, tiempos=tiempos)
+    revision_envio = revisar_presupuesto_antes_de_enviar(
+        presupuesto, cfg=cfg, tiempos=tiempos, idioma=_idioma(request),
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/public_link.html",
@@ -2894,6 +2896,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         presupuesto,
         cfg=cfg,
         tiempos=tiempos,
+        idioma=_idioma(request),
     )
     ultima_version = (presupuesto.versiones or [None])[0]
     cambios_reenvio = comparar_version_con_presupuesto(ultima_version, presupuesto) if ultima_version is not None else None
