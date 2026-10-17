@@ -640,8 +640,10 @@ def test_cada_mercado_tiene_su_nombre_en_su_propia_lengua():
 
     for codigo, pais in PAISES.items():
         assert pais.get("nombre_en"), f"{codigo} sin nombre_en"
-        if pais["idioma"] == "en":
-            assert pais["nombre_en"] != pais["nombre"], codigo
+        # Australia se escribe igual en los dos idiomas; el resto de los
+        # mercados ingleses cambia (Irlanda/Ireland, Canadá/Canada...).
+        for c in ("US", "GB", "CA", "IE"):
+            assert PAISES[c]["nombre_en"] != PAISES[c]["nombre"], c
     assert PAIS_GENERICO["nombre_en"] == "Spain and Latin America"
     assert PAISES["US"]["nombre_en"] == "the United States"
     assert PAISES["GB"]["nombre_en"] == "the United Kingdom"
