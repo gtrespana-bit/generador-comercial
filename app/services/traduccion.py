@@ -267,11 +267,6 @@ def _pluralizar(nuevo: str, sufijo: str | None) -> str:
     return s + ("es" if s[-1:] not in "aeiou" else "s")
 
 
-# Nombres de obra que en inglés no admiten marca de plural. No es una lista
-# de «palabras raras»: son los materiales y las operaciones que un contratista
-# no pluraliza nunca (se dice «formwork», no «formworks», igual que se dice
-# «concrete» y no «concretes»). Incluirlos evita el plural automático cuando
-# el español sí marca el plural.
 # Preposiciones que delatan que el núcleo de un destino con espacios va
 # al principio en vez de al final (inglés y español).
 _PREPOSICIONES = frozenset({
@@ -279,6 +274,25 @@ _PREPOSICIONES = frozenset({
     "de", "del", "en", "a", "con", "para", "por", "sin", "sobre",
 })
 
+# Palabras de clase cerrada: artículos, preposiciones, conjunciones y
+# pronombres. Son invariables, así que su patrón no puede admitir el sufijo
+# de plural (es|s). Sin esto la conjunción «e» generaba el patrón e(es|s)?,
+# que casa con «Es» (verbo ser) y convertía «Es la capa que define el nivel»
+# en «Ands the layer that define the level»: 74 cadenas del catálogo.
+# Las pocas que sí flexionan (la/las, su/sus, lo/los) tienen entrada propia
+# en el glosario, así que no pierden nada.
+_INVARIABLES = frozenset({
+    "a", "al", "con", "de", "del", "desde", "durante", "e", "el", "en",
+    "entre", "hasta", "hacia", "la", "las", "lo", "los", "ni", "o", "para",
+    "pero", "por", "que", "se", "sin", "sobre", "su", "sus", "tras", "u",
+    "un", "una", "y",
+})
+
+# Nombres de obra que en inglés no admiten marca de plural. No es una lista
+# de «palabras raras»: son los materiales y las operaciones que un contratista
+# no pluraliza nunca (se dice «formwork», no «formworks», igual que se dice
+# «concrete» y no «concretes»). Incluirlos evita el plural automático cuando
+# el español sí marca el plural.
 _INCONTABLES_EN = frozenset({
     "concrete", "formwork", "falsework", "plaster", "stucco", "render",
     "mortar", "grout", "screed", "debris", "rubble", "spoil",
@@ -341,8 +355,20 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
         key=lambda c: -len(c["de"]),
     ):
         de, a = c["de"], c["a"]
-        grupos = "".join(rf"({_regex_flexible(w)})(es|s)? " for w in de.split(" "))
-        patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
+        # Grupos con nombre y no posicionales: los invariables no aportan
+        # grupo de sufijo, así que contar posiciones daba el grupo de al lado
+        # y pluralizaba con una palabra («sin dañar» -> «without damagings»,
+        # «a las» -> «tos thes»). Con nombres, la ausencia se ve a las claras.
+        grupos = []
+        for i, w in enumerate(de.split(" ")):
+            # El sufijo va PEGADO a su palabra: separarlo con un espacio lo
+            # convertía en obligatorio y partía los compuestos de tres
+            # términos («paredes de bloque» dejaba de casar).
+            trozo = rf"(?P<w{i}>{_regex_flexible(w)})"
+            if w.lower() not in _INVARIABLES:
+                trozo += rf"(?P<s{i}>es|s)?"
+            grupos.append(trozo)
+        patron = re.compile(r"\b" + " ".join(grupos) + r"\b", re.IGNORECASE)
         frases.append((patron, de, a, _clave_filtro(de.split(" ")[0])))
     # De más larga a más corta, igual que las frases: si no, la forma
     # singular enmascara la plural y la pluraliza con la regla inglesa.
@@ -354,7 +380,8 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
         key=lambda c: -len(c["de"]),
     ):
         de, a = c["de"], c["a"]
-        patron = re.compile(rf"\b({_regex_flexible(de)})(es|s)?\b", re.IGNORECASE)
+        sufijo = "" if de.lower() in _INVARIABLES else r"(?P<s>es|s)?"
+        patron = re.compile(rf"\b(?P<w>{_regex_flexible(de)}){sufijo}\b", re.IGNORECASE)
         palabras.append((patron, de, a, _clave_filtro(de)))
     return frases, palabras
 
@@ -406,8 +433,11 @@ def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
 
         def _rep_frase(m: re.Match, _a: str = a) -> str:
             nonlocal n
-            sufijo_primera = m.group(2)
-            sufijo_ultima = m.group(len(m.groups()))
+            # Los sufijos se buscan por nombre: un invariable no aporta grupo
+            # y groupdict() devuelve None en vez del grupo de al lado.
+            g = m.groupdict()
+            sufijo_primera = g.get("s0")
+            sufijo_ultima = g.get(f"s{sum(1 for k in g if k.startswith('w')) - 1}")
             if " " in _a:
                 # Dónde cae el plural del núcleo depende de la estructura del
                 # destino, no de la del origen:
@@ -443,7 +473,8 @@ def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
             continue
 
         def _rep_palabra(m: re.Match, _a: str = a) -> str:
-            return pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
+            g = m.groupdict()
+            return pluralizar(_mismo_caso(g["w"], _a), g.get("s"))
 
         out = patron.sub(_rep_palabra, out)
 

@@ -27019,6 +27019,754 @@
       "de": "sin dañar",
       "a": "without damaging",
       "motivo": "Sin dañar el elemento."
+    },
+    {
+      "de": "corrugadas",
+      "a": "corrugated"
+    },
+    {
+      "de": "corrugada",
+      "a": "corrugated"
+    },
+    {
+      "de": "corrugado",
+      "a": "corrugated"
+    },
+    {
+      "de": "corrugados",
+      "a": "corrugated"
+    },
+    {
+      "de": "criolla",
+      "a": "barrel tile"
+    },
+    {
+      "de": "criollo",
+      "a": "barrel tile"
+    },
+    {
+      "de": "anime",
+      "a": "EPS"
+    },
+    {
+      "de": "bote",
+      "a": "disposal"
+    },
+    {
+      "de": "silleta",
+      "a": "swing stage"
+    },
+    {
+      "de": "refine",
+      "a": "fine grading"
+    },
+    {
+      "de": "descapote",
+      "a": "stripping"
+    },
+    {
+      "de": "caballetes",
+      "a": "ridge tiles"
+    },
+    {
+      "de": "aplique",
+      "a": "wall light"
+    },
+    {
+      "de": "celda",
+      "a": "cell"
+    },
+    {
+      "de": "mirilla",
+      "a": "door viewer"
+    },
+    {
+      "de": "dispositivo",
+      "a": "device"
+    },
+    {
+      "de": "pasarela",
+      "a": "gateway"
+    },
+    {
+      "de": "autonivelante",
+      "a": "self-leveling"
+    },
+    {
+      "de": "mezzanina",
+      "a": "mezzanine"
+    },
+    {
+      "de": "caseta",
+      "a": "site office"
+    },
+    {
+      "de": "cartel",
+      "a": "signboard"
+    },
+    {
+      "de": "torres",
+      "a": "towers"
+    },
+    {
+      "de": "periodo",
+      "a": "period"
+    },
+    {
+      "de": "mensual",
+      "a": "monthly"
+    },
+    {
+      "de": "atado",
+      "a": "tying"
+    },
+    {
+      "de": "bloqueo",
+      "a": "lockout"
+    },
+    {
+      "de": "referencia",
+      "a": "reference"
+    },
+    {
+      "de": "frenos",
+      "a": "brakes"
+    },
+    {
+      "de": "aparejo",
+      "a": "bond"
+    },
+    {
+      "de": "grafitis",
+      "a": "graffiti"
+    },
+    {
+      "de": "incoloro",
+      "a": "clear"
+    },
+    {
+      "de": "caravista",
+      "a": "face brick"
+    },
+    {
+      "de": "rehundida",
+      "a": "recessed"
+    },
+    {
+      "de": "rehundido",
+      "a": "recessed"
+    },
+    {
+      "de": "descantilladas",
+      "a": "chipped"
+    },
+    {
+      "de": "descantillados",
+      "a": "chipped"
+    },
+    {
+      "de": "trabajada",
+      "a": "worked"
+    },
+    {
+      "de": "liviano",
+      "a": "lightweight"
+    },
+    {
+      "de": "livianos",
+      "a": "lightweight"
+    },
+    {
+      "de": "cuidadoso",
+      "a": "careful"
+    },
+    {
+      "de": "imprescindible",
+      "a": "essential"
+    },
+    {
+      "de": "exigible",
+      "a": "required"
+    },
+    {
+      "de": "estabilizado",
+      "a": "stabilized"
+    },
+    {
+      "de": "estabilizada",
+      "a": "stabilized"
+    },
+    {
+      "de": "disponible",
+      "a": "available"
+    },
+    {
+      "de": "proyectado",
+      "a": "sprayed"
+    },
+    {
+      "de": "proyectada",
+      "a": "sprayed"
+    },
+    {
+      "de": "generado",
+      "a": "generated"
+    },
+    {
+      "de": "generada",
+      "a": "generated"
+    },
+    {
+      "de": "amasado",
+      "a": "mixing"
+    },
+    {
+      "de": "intemperie",
+      "a": "weather"
+    },
+    {
+      "de": "apuntalado",
+      "a": "shored"
+    },
+    {
+      "de": "apuntalada",
+      "a": "shored"
+    },
+    {
+      "de": "apeada",
+      "a": "shored"
+    },
+    {
+      "de": "lados",
+      "a": "sides"
+    },
+    {
+      "de": "centro",
+      "a": "center"
+    },
+    {
+      "de": "eficiencia",
+      "a": "efficiency"
+    },
+    {
+      "de": "seguro",
+      "a": "safe"
+    },
+    {
+      "de": "comercial",
+      "a": "commercial"
+    },
+    {
+      "de": "cuerpo",
+      "a": "body"
+    },
+    {
+      "de": "calor",
+      "a": "heat"
+    },
+    {
+      "de": "sonido",
+      "a": "sound"
+    },
+    {
+      "de": "solo",
+      "a": "only"
+    },
+    {
+      "de": "primer",
+      "a": "first"
+    },
+    {
+      "de": "cabillas corrugadas",
+      "a": "deformed rebars"
+    },
+    {
+      "de": "cartón corrugado",
+      "a": "corrugated cardboard"
+    },
+    {
+      "de": "tubería corrugada",
+      "a": "corrugated pipe"
+    },
+    {
+      "de": "metro cuadrado estabilizado",
+      "a": "stabilized square meter"
+    },
+    {
+      "de": "metro cuadrado apuntalado",
+      "a": "shored square meter"
+    },
+    {
+      "de": "panel liviano",
+      "a": "lightweight panel"
+    },
+    {
+      "de": "paneles livianos",
+      "a": "lightweight panels"
+    },
+    {
+      "de": "local comercial",
+      "a": "commercial premises"
+    },
+    {
+      "de": "solar comercial",
+      "a": "commercial lot"
+    },
+    {
+      "de": "exhibición comercial",
+      "a": "commercial display"
+    },
+    {
+      "de": "estantería comercial",
+      "a": "commercial shelving"
+    },
+    {
+      "de": "alquiler mensual",
+      "a": "monthly rental"
+    },
+    {
+      "de": "inspección mensual",
+      "a": "monthly inspection"
+    },
+    {
+      "de": "lodo generado",
+      "a": "generated sludge"
+    },
+    {
+      "de": "polvo generado",
+      "a": "generated dust"
+    },
+    {
+      "de": "hidrofugante incoloro",
+      "a": "clear water repellent"
+    },
+    {
+      "de": "yeso proyectado",
+      "a": "sprayed plaster"
+    },
+    {
+      "de": "mortero proyectado",
+      "a": "sprayed mortar"
+    },
+    {
+      "de": "mortero autonivelante",
+      "a": "self-leveling mortar"
+    },
+    {
+      "de": "capa autonivelante",
+      "a": "self-leveling layer"
+    },
+    {
+      "de": "epóxico autonivelante",
+      "a": "self-leveling epoxy"
+    },
+    {
+      "de": "epóxica autonivelante",
+      "a": "self-leveling epoxy"
+    },
+    {
+      "de": "junta trabajada",
+      "a": "worked joint"
+    },
+    {
+      "de": "piezas descantilladas",
+      "a": "chipped pieces"
+    },
+    {
+      "de": "trabajo seguro",
+      "a": "safe work"
+    },
+    {
+      "de": "circulación segura",
+      "a": "safe circulation"
+    },
+    {
+      "de": "evacuación segura",
+      "a": "safe evacuation"
+    },
+    {
+      "de": "manejo seguro",
+      "a": "safe handling"
+    },
+    {
+      "de": "taponado seguro",
+      "a": "secure capping"
+    },
+    {
+      "de": "seguridad exigible",
+      "a": "required safety"
+    },
+    {
+      "de": "retiro cuidadoso",
+      "a": "careful removal"
+    },
+    {
+      "de": "desmontaje cuidadoso",
+      "a": "careful dismantling"
+    },
+    {
+      "de": "desencofrado cuidadoso",
+      "a": "careful formwork removal"
+    },
+    {
+      "de": "levantado cuidadoso",
+      "a": "careful lifting"
+    },
+    {
+      "de": "requisito imprescindible",
+      "a": "essential requirement"
+    },
+    {
+      "de": "operación imprescindible",
+      "a": "essential operation"
+    },
+    {
+      "de": "paso imprescindible",
+      "a": "essential step"
+    },
+    {
+      "de": "presión disponible",
+      "a": "available pressure"
+    },
+    {
+      "de": "ancho disponible",
+      "a": "available width"
+    },
+    {
+      "de": "apoyo disponible",
+      "a": "available support"
+    },
+    {
+      "de": "medio disponible",
+      "a": "available means"
+    },
+    {
+      "de": "realmente apeada",
+      "a": "really shored"
+    },
+    {
+      "de": "realmente apuntalado",
+      "a": "really shored"
+    },
+    {
+      "de": "realmente apuntalada",
+      "a": "really shored"
+    },
+    {
+      "de": "debidamente apeada",
+      "a": "properly shored"
+    },
+    {
+      "de": "puesta en servicio",
+      "a": "start-up"
+    },
+    {
+      "de": "puesta",
+      "a": "start-up"
+    },
+    {
+      "de": "en marcha",
+      "a": "in operation"
+    },
+    {
+      "de": "de forma contenida",
+      "a": "in a controlled manner"
+    },
+    {
+      "de": "de forma ascendente",
+      "a": "in an ascending manner"
+    },
+    {
+      "de": "en forma de",
+      "a": "in the form of"
+    },
+    {
+      "de": "forma",
+      "a": "manner"
+    },
+    {
+      "de": "coquilla aislante",
+      "a": "pipe insulation"
+    },
+    {
+      "de": "coquilla",
+      "a": "pipe insulation"
+    },
+    {
+      "de": "pelladas de pasta",
+      "a": "dabs of adhesive"
+    },
+    {
+      "de": "pelladas",
+      "a": "dabs"
+    },
+    {
+      "de": "cortinero",
+      "a": "curtain track"
+    },
+    {
+      "de": "zapatero",
+      "a": "shoe cabinet"
+    },
+    {
+      "de": "estante",
+      "a": "shelf"
+    },
+    {
+      "de": "puerta blindada",
+      "a": "security door"
+    },
+    {
+      "de": "blindada",
+      "a": "security door"
+    },
+    {
+      "de": "sobreponer",
+      "a": "surface-mounted"
+    },
+    {
+      "de": "de sobreponer",
+      "a": "surface-mounted"
+    },
+    {
+      "de": "bandeja portacables",
+      "a": "cable tray"
+    },
+    {
+      "de": "portacables",
+      "a": "cable tray"
+    },
+    {
+      "de": "ambiental",
+      "a": "environmental"
+    },
+    {
+      "de": "etiquetado",
+      "a": "labeling"
+    },
+    {
+      "de": "sumergible",
+      "a": "submersible"
+    },
+    {
+      "de": "cambio",
+      "a": "change"
+    },
+    {
+      "de": "filtro",
+      "a": "filter"
+    },
+    {
+      "de": "caballete",
+      "a": "ridge tile"
+    },
+    {
+      "de": "caballete de techo",
+      "a": "ridge tile"
+    },
+    {
+      "de": "descansos",
+      "a": "landings"
+    },
+    {
+      "de": "maniobra",
+      "a": "operation"
+    },
+    {
+      "de": "espacio de maniobra",
+      "a": "maneuvering space"
+    },
+    {
+      "de": "ensacado",
+      "a": "bagging"
+    },
+    {
+      "de": "grama en panes",
+      "a": "sod"
+    },
+    {
+      "de": "panes",
+      "a": "sod"
+    },
+    {
+      "de": "decapante",
+      "a": "paint stripper"
+    },
+    {
+      "de": "localizada",
+      "a": "localized"
+    },
+    {
+      "de": "localizado",
+      "a": "localized"
+    },
+    {
+      "de": "blando",
+      "a": "soft"
+    },
+    {
+      "de": "pesado",
+      "a": "heavy"
+    },
+    {
+      "de": "cuyo",
+      "a": "whose"
+    },
+    {
+      "de": "cuya",
+      "a": "whose"
+    },
+    {
+      "de": "identificar",
+      "a": "identify"
+    },
+    {
+      "de": "perforar",
+      "a": "drill"
+    },
+    {
+      "de": "picar",
+      "a": "chip"
+    },
+    {
+      "de": "cortar",
+      "a": "cut"
+    },
+    {
+      "de": "trabajar",
+      "a": "work"
+    },
+    {
+      "de": "colocar",
+      "a": "install"
+    },
+    {
+      "de": "retirar",
+      "a": "remove"
+    },
+    {
+      "de": "reblandecer",
+      "a": "soften"
+    },
+    {
+      "de": "quedan",
+      "a": "remain"
+    },
+    {
+      "de": "tuviera",
+      "a": "had"
+    },
+    {
+      "de": "resulta",
+      "a": "proves to be"
+    },
+    {
+      "de": "aparecen",
+      "a": "appear"
+    },
+    {
+      "de": "aparece",
+      "a": "appears"
+    },
+    {
+      "de": "exija",
+      "a": "requires"
+    },
+    {
+      "de": "corrija",
+      "a": "corrects"
+    },
+    {
+      "de": "entra",
+      "a": "enters"
+    },
+    {
+      "de": "rinde",
+      "a": "yields"
+    },
+    {
+      "de": "rompan",
+      "a": "break"
+    },
+    {
+      "de": "poder",
+      "a": "can"
+    },
+    {
+      "de": "coquilla aislante de tubería",
+      "a": "pipe insulation"
+    },
+    {
+      "de": "desmontaje de bandeja portacables",
+      "a": "cable tray removal"
+    },
+    {
+      "de": "desmontaje de puerta blindada",
+      "a": "security door removal"
+    },
+    {
+      "de": "zapatero empotrado",
+      "a": "recessed shoe cabinet"
+    },
+    {
+      "de": "bomba sumergible",
+      "a": "submersible pump"
+    },
+    {
+      "de": "excavación localizada",
+      "a": "localized excavation"
+    },
+    {
+      "de": "cortinero empotrado",
+      "a": "recessed curtain track"
+    },
+    {
+      "de": "lavaplatos empotrado",
+      "a": "recessed dishwasher"
+    },
+    {
+      "de": "microondas empotrado",
+      "a": "recessed microwave"
+    },
+    {
+      "de": "baliza empotrada",
+      "a": "recessed beacon"
+    },
+    {
+      "de": "led empotrada",
+      "a": "recessed LED"
+    },
+    {
+      "de": "división liviana",
+      "a": "lightweight partition"
+    },
+    {
+      "de": "metálica acanalada",
+      "a": "corrugated metal"
+    },
+    {
+      "de": "metro cuadrado apeado",
+      "a": "shored square meter"
+    },
+    {
+      "de": "metro lineal apeado",
+      "a": "shored linear meter"
+    },
+    {
+      "de": "terreno blando",
+      "a": "soft ground"
+    },
+    {
+      "de": "humedad ambiental",
+      "a": "ambient humidity"
+    },
+    {
+      "de": "pétreo proyectado",
+      "a": "sprayed stone"
+    },
+    {
+      "de": "revestimiento pétreo proyectado",
+      "a": "sprayed stone coating"
     }
   ]
 }

@@ -50,6 +50,13 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "facade": "façade",
     "troweling": "trowelling",
     "louver": "louvre",
+    "stabilized": "stabilised",
+    "stabilizing": "stabilising",
+    "localized": "localised",
+    "localizing": "localising",
+    "labeling": "labelling",
+    "maneuvering": "manoeuvring",
+    "maneuver": "manoeuvre",
 }
 
 # ── Vocabulario de obra británico ────────────────────────────────────────
@@ -114,6 +121,13 @@ _VOCABULARIO_GB: dict[str, str] = {
     "truck": "lorry",                     # camión
     "curb": "kerb",                       # cordón de acera
     "bathtub": "bath",                    # bañera
+    "swing stage": "suspended cradle",    # silleta suspendida de fachada
+    "fine grading": "fine trimming",      # refine del fondo de excavación
+    "site office": "site hut",            # caseta de obra
+    "face brick": "facing brick",         # ladrillo caravista
+    "pipe insulation": "pipe lagging",    # coquilla aislante de tubería
+    "sod": "turf",                        # grama en panes
+    "shoe cabinet": "shoe cupboard",      # zapatero empotrado
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
