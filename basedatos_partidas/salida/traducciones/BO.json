@@ -1,7 +1,7 @@
 {
  "_glosario": "BO",
  "_generado": "2026-10-17",
- "_huella": "1019098ac13a3f9a",
+ "_huella": "e5f039cc4f5e971d",
  "_cadenas_origen": 6834,
  "_cadenas_traducidas": 1171,
  "_nota": "Derivado del catálogo y del glosario. Regenerar con tools/generar_traducciones.py; verificar con tools/verificar_traducciones.py.",

@@ -1,7 +1,7 @@
 {
  "_glosario": "GT",
  "_generado": "2026-10-17",
- "_huella": "3eae1050d1b57100",
+ "_huella": "af8165e7d2d87458",
  "_cadenas_origen": 6834,
  "_cadenas_traducidas": 1217,
  "_nota": "Derivado del catálogo y del glosario. Regenerar con tools/generar_traducciones.py; verificar con tools/verificar_traducciones.py.",

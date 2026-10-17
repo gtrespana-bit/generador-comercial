@@ -4,93 +4,93 @@
  "_glosarios": {
   "EN": {
    "cadenas": 6832,
-   "bytes": 1708149,
-   "huella": "3e492a9979954dee"
+   "bytes": 1707414,
+   "huella": "88e8b808bf93a873"
   },
   "AR": {
    "cadenas": 1401,
    "bytes": 564506,
-   "huella": "0717b27f4b3dd4cb"
+   "huella": "68fbdf97bc3c3f60"
   },
   "BO": {
    "cadenas": 1171,
    "bytes": 486771,
-   "huella": "1019098ac13a3f9a"
+   "huella": "e5f039cc4f5e971d"
   },
   "CL": {
    "cadenas": 1341,
    "bytes": 533183,
-   "huella": "b7c26b2715f5f8b7"
+   "huella": "4ee24c3624e0dd10"
   },
   "CO": {
    "cadenas": 1360,
    "bytes": 520547,
-   "huella": "77094ed21a0e6811"
+   "huella": "956f1d6e952d13c7"
   },
   "CR": {
    "cadenas": 864,
    "bytes": 372812,
-   "huella": "6e30c575ded8dc6d"
+   "huella": "108a441960f5872e"
   },
   "DO": {
    "cadenas": 1202,
    "bytes": 458239,
-   "huella": "6da0ca13b2ed18e8"
+   "huella": "04c4350db991c39f"
   },
   "EC": {
    "cadenas": 1447,
    "bytes": 550480,
-   "huella": "10683031a23bd927"
+   "huella": "03843ccff997e11f"
   },
   "ES": {
    "cadenas": 1633,
    "bytes": 632707,
-   "huella": "6c9a7aea5279a683"
+   "huella": "f1ba9d064a42b0e1"
   },
   "GT": {
    "cadenas": 1217,
    "bytes": 479444,
-   "huella": "3eae1050d1b57100"
+   "huella": "af8165e7d2d87458"
   },
   "HN": {
    "cadenas": 933,
    "bytes": 400226,
-   "huella": "e5aaa7b66436a48f"
+   "huella": "e79f1d408d05d193"
   },
   "MX": {
    "cadenas": 1690,
    "bytes": 620230,
-   "huella": "5a56f7aabcefb509"
+   "huella": "7527f5cee5c7cd12"
   },
   "NI": {
    "cadenas": 754,
    "bytes": 343959,
-   "huella": "046735925832277c"
+   "huella": "0ad9ecf0bdc2a11c"
   },
   "PA": {
    "cadenas": 625,
    "bytes": 295290,
-   "huella": "5777e00a7e71ac41"
+   "huella": "c8418ff65563ec49"
   },
   "PE": {
    "cadenas": 779,
    "bytes": 310770,
-   "huella": "02db0d13b84730ae"
+   "huella": "f06df8fb3b37a6e7"
   },
   "PY": {
    "cadenas": 1391,
    "bytes": 562936,
-   "huella": "d7b6ff0d431fe842"
+   "huella": "17f10071ae174459"
   },
   "SV": {
    "cadenas": 901,
    "bytes": 406384,
-   "huella": "b060f749cc5da365"
+   "huella": "af7c7a0b4ef297d6"
   },
   "UY": {
    "cadenas": 1383,
    "bytes": 560180,
-   "huella": "16e03c990da5b9d6"
+   "huella": "6f7e2117a4c3be40"
   }
  }
 }

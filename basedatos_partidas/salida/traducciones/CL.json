@@ -1,7 +1,7 @@
 {
  "_glosario": "CL",
  "_generado": "2026-10-17",
- "_huella": "b7c26b2715f5f8b7",
+ "_huella": "4ee24c3624e0dd10",
  "_cadenas_origen": 6834,
  "_cadenas_traducidas": 1341,
  "_nota": "Derivado del catálogo y del glosario. Regenerar con tools/generar_traducciones.py; verificar con tools/verificar_traducciones.py.",

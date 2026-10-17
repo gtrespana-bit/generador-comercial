@@ -184,6 +184,23 @@ _VOCABULARIO_GB: dict[str, str] = {
     "sloping fill": "screed to falls",       # pendientado
     "skylight": "rooflight",                 # claraboya, lucernario
     "roof drain": "roof outlet",             # tragante
+    "catch basin": "gully",                  # sumidero
+    "hose bibb": "garden tap",               # llave de jardín
+    "mailbox": "letter box",                 # buzón
+    "garbage disposal": "waste disposal unit",
+    "bicycle rack": "cycle rack",            # soporte de bicicletas
+    "parking lot marking": "car park marking",
+    "mud slab": "blinding",                 # concreto pobre de limpieza
+    "isolated footing": "pad foundation",   # zapata aislada
+    "strip footing": "strip foundation",    # zapata corrida
+    "elevator": "lift",                  # ascensor
+    "freight elevator": "goods lift",    # ascensor de carga
+    "elevator shaft": "lift shaft",      # hueco de ascensor
+    "elevator pit": "lift pit",          # foso de ascensor
+    "dumbwaiter": "service lift",        # montacargas de cocina
+    "test cylinder": "test cube",        # probeta de concreto
+    "grease interceptor": "grease trap", # trampa de grasa
+    "weatherstripping": "draught seal",  # burlete
 }
 
 # ── Australia ────────────────────────────────────────────────────────────

@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import unicodedata
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -48,8 +49,20 @@ CAMPOS = ("nombre", "descripcion", "categoria", "subcategoria", "apartado")
 
 def cadenas_del_catalogo() -> set[str]:
     cat = json.loads(CATALOGO.read_text(encoding="utf-8"))
-    return {p[c] for p in cat for c in CAMPOS
+    return {_nfc(p[c]) for p in cat for c in CAMPOS
             if isinstance(p.get(c), str) and p[c].strip()}
+
+
+def _nfc(texto: str) -> str:
+    """Unicode compuesto, para que una tilde no parta una cadena en dos.
+
+    «Peldaño» escrito con tilde combinante y con «ñ» se ven iguales en
+    pantalla pero son dos cadenas distintas, así que una clave así no
+    encuentra su original en el catálogo y queda como traducción
+    huérfana. Normalizar aquí y al escribir el catálogo cierra el hueco
+    por los dos lados.
+    """
+    return unicodedata.normalize("NFC", texto)
 
 
 def ruta_excepciones(codigo: str) -> Path:
@@ -69,7 +82,8 @@ def cargar_traducciones(lote: dict[str, str], mercado: str = "EN",
     en_catalogo = cadenas_del_catalogo()
 
     nuevas, chocan, huerfanas, vacias = [], [], [], []
-    for es, en in lote.items():
+    for original, en in lote.items():
+        es = _nfc(original)
         if not en or not en.strip():
             vacias.append(es)
             continue

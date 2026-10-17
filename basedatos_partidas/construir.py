@@ -21,6 +21,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+import unicodedata
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
@@ -211,6 +212,20 @@ def escribir_xlsx(filas: list[dict]) -> Path | None:
     return ruta
 
 
+def _nfc(valor) -> str:
+    """Devuelve el texto en Unicode compuesto.
+
+    Una «ñ» puede escribirse de dos maneras: como un solo carácter
+    (compuesta) o como «n» más una tilde combinante (descompuesta). En
+    pantalla se ven igual, pero no son la misma cadena, así que una
+    búsqueda por texto no encuentra la una cuando se escribió la otra.
+    Normalizar a la salida evita que el catálogo arrastre la diferencia:
+    ya ocurrió una vez con «Peldaño», que entró descompuesta desde su
+    fichero de partida.
+    """
+    return unicodedata.normalize("NFC", valor or "")
+
+
 def escribir_json(filas: list[dict]) -> Path:
     ruta = SALIDA / "catalogo_partidas.json"
     payload = []
@@ -219,20 +234,20 @@ def escribir_json(filas: list[dict]) -> Path:
             "codigo": f.get("codigo", ""),
             "codigo_legacy": f.get("codigo_legacy", ""),
             "capitulo": f.get("capitulo", ""),
-            "nombre": f.get("partida", ""),
-            "descripcion": f.get("descripcion", ""),
-            "unidad": f.get("unidad", "ud"),
+            "nombre": _nfc(f.get("partida")),
+            "descripcion": _nfc(f.get("descripcion")),
+            "unidad": _nfc(f.get("unidad")) or "ud",
             "precio_unitario": round(num(f.get("precio")), 2),
-            "categoria": f.get("categoria") or f.get("capitulo", "General"),
-            "subcategoria": f.get("subcategoria", ""),
-            "apartado": f.get("apartado", ""),
+            "categoria": _nfc(f.get("categoria")) or f.get("capitulo", "General"),
+            "subcategoria": _nfc(f.get("subcategoria")),
+            "apartado": _nfc(f.get("apartado")),
             "coste_materiales": round(num(f.get("coste_materiales")), 2),
             "coste_mano_obra": round(num(f.get("coste_mano_obra")), 2),
             "coste_complementarios": round(num(f.get("coste_complementarios")), 2),
             "coste_otros": round(num(f.get("coste_otros")), 2),
-            "rendimiento": f.get("rendimiento", ""),
+            "rendimiento": _nfc(f.get("rendimiento")),
             "desperdicio_recomendado_pct": num(f.get("desperdicio_pct")),
-            "notas_tecnicas": f.get("notas_tecnicas", ""),
+            "notas_tecnicas": _nfc(f.get("notas_tecnicas")),
         })
     ruta.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return ruta

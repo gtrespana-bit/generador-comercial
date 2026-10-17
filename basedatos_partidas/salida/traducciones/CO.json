@@ -1,7 +1,7 @@
 {
  "_glosario": "CO",
  "_generado": "2026-10-17",
- "_huella": "77094ed21a0e6811",
+ "_huella": "956f1d6e952d13c7",
  "_cadenas_origen": 6834,
  "_cadenas_traducidas": 1360,
  "_nota": "Derivado del catálogo y del glosario. Regenerar con tools/generar_traducciones.py; verificar con tools/verificar_traducciones.py.",

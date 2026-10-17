@@ -1,7 +1,7 @@
 {
  "_glosario": "NI",
  "_generado": "2026-10-17",
- "_huella": "046735925832277c",
+ "_huella": "0ad9ecf0bdc2a11c",
  "_cadenas_origen": 6834,
  "_cadenas_traducidas": 754,
  "_nota": "Derivado del catálogo y del glosario. Regenerar con tools/generar_traducciones.py; verificar con tools/verificar_traducciones.py.",

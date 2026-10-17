@@ -98,7 +98,7 @@ LOTE = {
 "Apeo de losa con torres de carga.":
     "Shoring of a slab with load towers.",
 
-"Apeo de losa con torres de carga metálicas. Incluye la colocación de las torres. Measured por metro cuadrado apeado.":
+"Apeo de losa con torres de carga metálicas. Incluye la colocación de las torres. Medido por metro cuadrado apeado.":
     "Shoring of a slab with steel load towers. Includes erecting the towers. Measured per square meter shored.",
 
 "Apuntalamiento de talud interior.":
