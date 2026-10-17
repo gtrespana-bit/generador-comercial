@@ -201,6 +201,12 @@ _VOCABULARIO_GB: dict[str, str] = {
     "test cylinder": "test cube",        # probeta de concreto
     "grease interceptor": "grease trap", # trampa de grasa
     "weatherstripping": "draught seal",  # burlete
+    "dump truck": "tipper lorry",                 # volqueta
+    "backhoe": "excavator",                       # retroexcavadora
+    "plate compactor": "vibrating plate",         # plancha vibratoria
+    "brush cutter": "strimmer",                   # desbrozadora
+    "occupancy sensor": "presence detector",      # sensor de presencia
+    "External insulation and finish system": "External thermal insulation composite system",
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
