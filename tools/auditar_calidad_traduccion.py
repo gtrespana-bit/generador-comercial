@@ -60,6 +60,8 @@ visual elevador elevado comercio lineal real especial canasta contenedor instala
 instalacion pvc ppr mdf osb led cctv split awg gas bar
 material color industrial monitor clips test graffiti similar tropical longitudinal
 residual conduit rack class canal paneles
+cables cable anti artificial compatible diagonal
+plenum terminal
 """.split())
 
 

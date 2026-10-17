@@ -90,7 +90,6 @@ def cargar(lote: dict[str, str], mercado: str = "EN",
             for c in cambios:
                 if c["de"] == de:
                     c["a"] = nuevo
-                    anadidas.append({"de": de, "a": nuevo})
 
     if seco:
         print(f"(seco) {ruta.name}: {len(anadidas)} entradas habrían entrado")

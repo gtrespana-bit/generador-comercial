@@ -9112,7 +9112,7 @@
     },
     {
       "de": "batiente",
-      "a": "leaf",
+      "a": "swinging",
       "motivo": "Batiente de puerta."
     },
     {
@@ -10972,12 +10972,12 @@
     },
     {
       "de": "prefabricadas",
-      "a": "precasts",
+      "a": "precast",
       "motivo": "Forma flexionada de «prefabricado»."
     },
     {
       "de": "prefabricados",
-      "a": "precasts",
+      "a": "precast",
       "motivo": "Forma flexionada de «prefabricado»."
     },
     {
@@ -16877,7 +16877,7 @@
     },
     {
       "de": "batiente de tubo",
-      "a": "tube leaf",
+      "a": "swinging tube",
       "motivo": "Compuesto inglés: en «N de N» el modificador precede al núcleo."
     },
     {
@@ -19752,7 +19752,7 @@
     },
     {
       "de": "batiente de dos",
-      "a": "two leaf",
+      "a": "double-leaf swinging",
       "motivo": "Compuesto inglés: en «N de N» el modificador precede al núcleo."
     },
     {
@@ -24192,7 +24192,7 @@
     },
     {
       "de": "mueble bajo",
-      "a": "low cabinet",
+      "a": "base cabinet",
       "motivo": "Orden inglés: el adjetivo precede al sustantivo."
     },
     {
@@ -24212,7 +24212,7 @@
     },
     {
       "de": "mueble alto",
-      "a": "high cabinet",
+      "a": "wall cabinet",
       "motivo": "Orden inglés: el adjetivo precede al sustantivo."
     },
     {
@@ -24632,7 +24632,7 @@
     },
     {
       "de": "batiente existente",
-      "a": "existing leaf",
+      "a": "existing swinging",
       "motivo": "Orden inglés: el adjetivo precede al sustantivo."
     },
     {
@@ -27767,6 +27767,778 @@
     {
       "de": "revestimiento pétreo proyectado",
       "a": "sprayed stone coating"
+    },
+    {
+      "de": "cielo raso desmontable",
+      "a": "demountable suspended ceiling"
+    },
+    {
+      "de": "tongadas",
+      "a": "layers"
+    },
+    {
+      "de": "camión volqueta",
+      "a": "dump truck"
+    },
+    {
+      "de": "volqueta",
+      "a": "dump truck"
+    },
+    {
+      "de": "esponjado",
+      "a": "bulking"
+    },
+    {
+      "de": "concreto pobre",
+      "a": "lean concrete"
+    },
+    {
+      "de": "pretensadas",
+      "a": "prestressed"
+    },
+    {
+      "de": "parrilla",
+      "a": "mat"
+    },
+    {
+      "de": "cortante",
+      "a": "shear"
+    },
+    {
+      "de": "enrase",
+      "a": "leveling off"
+    },
+    {
+      "de": "bicomponente",
+      "a": "two-component"
+    },
+    {
+      "de": "agujeros",
+      "a": "holes"
+    },
+    {
+      "de": "limitada",
+      "a": "limited"
+    },
+    {
+      "de": "limitado",
+      "a": "limited"
+    },
+    {
+      "de": "profunda",
+      "a": "deep"
+    },
+    {
+      "de": "profundo",
+      "a": "deep"
+    },
+    {
+      "de": "afectada",
+      "a": "affected"
+    },
+    {
+      "de": "afectado",
+      "a": "affected"
+    },
+    {
+      "de": "mantenido",
+      "a": "maintained"
+    },
+    {
+      "de": "normalizadas",
+      "a": "standardized"
+    },
+    {
+      "de": "normalizado",
+      "a": "standardized"
+    },
+    {
+      "de": "grado",
+      "a": "grade"
+    },
+    {
+      "de": "descansillo",
+      "a": "landing"
+    },
+    {
+      "de": "eflorescencias salinas",
+      "a": "salt efflorescence"
+    },
+    {
+      "de": "salinas",
+      "a": "salt"
+    },
+    {
+      "de": "contramarco",
+      "a": "subframe"
+    },
+    {
+      "de": "embebido",
+      "a": "embedded"
+    },
+    {
+      "de": "lacada",
+      "a": "lacquered"
+    },
+    {
+      "de": "proyectante",
+      "a": "awning window"
+    },
+    {
+      "de": "holgura",
+      "a": "clearance"
+    },
+    {
+      "de": "rigidez",
+      "a": "stiffness"
+    },
+    {
+      "de": "reajuste",
+      "a": "readjustment"
+    },
+    {
+      "de": "forja",
+      "a": "wrought iron"
+    },
+    {
+      "de": "reja de forja",
+      "a": "wrought iron grille"
+    },
+    {
+      "de": "pilar",
+      "a": "column"
+    },
+    {
+      "de": "falso pilar",
+      "a": "false column"
+    },
+    {
+      "de": "ciega",
+      "a": "solid"
+    },
+    {
+      "de": "mampara ciega",
+      "a": "solid partition"
+    },
+    {
+      "de": "privacidad",
+      "a": "privacy"
+    },
+    {
+      "de": "pegamento mural",
+      "a": "wallpaper adhesive"
+    },
+    {
+      "de": "pegamento",
+      "a": "adhesive"
+    },
+    {
+      "de": "piedra artificial",
+      "a": "cast stone"
+    },
+    {
+      "de": "arriba",
+      "a": "above"
+    },
+    {
+      "de": "abajo",
+      "a": "below"
+    },
+    {
+      "de": "menos",
+      "a": "less"
+    },
+    {
+      "de": "pocos",
+      "a": "few"
+    },
+    {
+      "de": "sola",
+      "a": "single"
+    },
+    {
+      "de": "viva",
+      "a": "live"
+    },
+    {
+      "de": "mapeo",
+      "a": "mapping"
+    },
+    {
+      "de": "hongos",
+      "a": "fungi"
+    },
+    {
+      "de": "aumentar",
+      "a": "increase"
+    },
+    {
+      "de": "llegada",
+      "a": "arrival"
+    },
+    {
+      "de": "recibe",
+      "a": "receives"
+    },
+    {
+      "de": "tiene",
+      "a": "has"
+    },
+    {
+      "de": "escurra",
+      "a": "run off"
+    },
+    {
+      "de": "resolverlo",
+      "a": "resolve it"
+    },
+    {
+      "de": "portón batiente",
+      "a": "swing gate"
+    },
+    {
+      "de": "portón batiente de tubo",
+      "a": "tube swing gate"
+    },
+    {
+      "de": "portón batiente de dos hojas",
+      "a": "double-leaf swing gate"
+    },
+    {
+      "de": "reja batiente",
+      "a": "swinging grille"
+    },
+    {
+      "de": "reja batiente de tubo",
+      "a": "tube swinging grille"
+    },
+    {
+      "de": "hoja batiente",
+      "a": "casement leaf"
+    },
+    {
+      "de": "ventana batiente",
+      "a": "casement window"
+    },
+    {
+      "de": "concreto de limpieza",
+      "a": "mud slab"
+    },
+    {
+      "de": "concreto pobre de limpieza",
+      "a": "lean concrete blinding"
+    },
+    {
+      "de": "capa de limpieza",
+      "a": "mud slab"
+    },
+    {
+      "de": "viguetas pretensadas",
+      "a": "prestressed joists"
+    },
+    {
+      "de": "viguetas prefabricadas pretensadas",
+      "a": "prestressed precast joists"
+    },
+    {
+      "de": "contramarco metálico",
+      "a": "metal subframe"
+    },
+    {
+      "de": "marco y contramarco metálico",
+      "a": "metal frame and subframe"
+    },
+    {
+      "de": "reja decorativa de forja",
+      "a": "decorative wrought iron grille"
+    },
+    {
+      "de": "intumescente",
+      "a": "intumescent"
+    },
+    {
+      "de": "masilla intumescente",
+      "a": "intumescent sealant"
+    },
+    {
+      "de": "portón batiente existente",
+      "a": "existing swing gate"
+    },
+    {
+      "de": "bajo fundaciones",
+      "a": "under foundations"
+    },
+    {
+      "de": "bajo la losa",
+      "a": "under the slab"
+    },
+    {
+      "de": "cielo raso registrable",
+      "a": "accessible suspended ceiling"
+    },
+    {
+      "de": "rociador",
+      "a": "shower head"
+    },
+    {
+      "de": "jabonera",
+      "a": "soap dish"
+    },
+    {
+      "de": "suministradora",
+      "a": "utility company"
+    },
+    {
+      "de": "acredita",
+      "a": "certifies"
+    },
+    {
+      "de": "directorio",
+      "a": "panel schedule"
+    },
+    {
+      "de": "rotulado",
+      "a": "labeling"
+    },
+    {
+      "de": "fase",
+      "a": "phase"
+    },
+    {
+      "de": "conexionado",
+      "a": "wiring"
+    },
+    {
+      "de": "otro",
+      "a": "other"
+    },
+    {
+      "de": "timbre",
+      "a": "doorbell"
+    },
+    {
+      "de": "punto de timbre",
+      "a": "doorbell point"
+    },
+    {
+      "de": "cine en casa",
+      "a": "home theater"
+    },
+    {
+      "de": "frecuencia",
+      "a": "frequency"
+    },
+    {
+      "de": "parrillera",
+      "a": "barbecue grill"
+    },
+    {
+      "de": "combinado",
+      "a": "combined"
+    },
+    {
+      "de": "cobertura",
+      "a": "coverage"
+    },
+    {
+      "de": "actuador",
+      "a": "actuator"
+    },
+    {
+      "de": "escena",
+      "a": "scene"
+    },
+    {
+      "de": "clase",
+      "a": "class"
+    },
+    {
+      "de": "chimenea",
+      "a": "chimney"
+    },
+    {
+      "de": "transitorias",
+      "a": "transient"
+    },
+    {
+      "de": "presurizadora",
+      "a": "booster pump"
+    },
+    {
+      "de": "bomba presurizadora",
+      "a": "booster pump"
+    },
+    {
+      "de": "efecto",
+      "a": "effect"
+    },
+    {
+      "de": "nudos",
+      "a": "nodes"
+    },
+    {
+      "de": "intercalado",
+      "a": "alternating"
+    },
+    {
+      "de": "autoadherido",
+      "a": "self-adhesive"
+    },
+    {
+      "de": "exigente",
+      "a": "demanding"
+    },
+    {
+      "de": "impermeabilizar",
+      "a": "waterproof"
+    },
+    {
+      "de": "cubierta invertida",
+      "a": "inverted roof"
+    },
+    {
+      "de": "invertida",
+      "a": "inverted"
+    },
+    {
+      "de": "maceta",
+      "a": "planter"
+    },
+    {
+      "de": "sustrato",
+      "a": "substrate"
+    },
+    {
+      "de": "limatesa",
+      "a": "hip"
+    },
+    {
+      "de": "zócalo de realce",
+      "a": "upstand"
+    },
+    {
+      "de": "realce",
+      "a": "upstand"
+    },
+    {
+      "de": "origen",
+      "a": "origin"
+    },
+    {
+      "de": "partes",
+      "a": "parts"
+    },
+    {
+      "de": "sueltas",
+      "a": "loose"
+    },
+    {
+      "de": "grietas",
+      "a": "cracks"
+    },
+    {
+      "de": "desniveles",
+      "a": "unevenness"
+    },
+    {
+      "de": "estrechas",
+      "a": "narrow"
+    },
+    {
+      "de": "enchapado en espiga",
+      "a": "herringbone tiling"
+    },
+    {
+      "de": "espiga",
+      "a": "herringbone"
+    },
+    {
+      "de": "espina de pescado",
+      "a": "herringbone"
+    },
+    {
+      "de": "veta",
+      "a": "vein"
+    },
+    {
+      "de": "decreciente",
+      "a": "decreasing"
+    },
+    {
+      "de": "antimanchas",
+      "a": "stain-resistant"
+    },
+    {
+      "de": "muestra",
+      "a": "sample"
+    },
+    {
+      "de": "corcho",
+      "a": "cork"
+    },
+    {
+      "de": "espolvoreada",
+      "a": "dusted"
+    },
+    {
+      "de": "endurecedor",
+      "a": "hardener"
+    },
+    {
+      "de": "escamas",
+      "a": "flakes"
+    },
+    {
+      "de": "satinada",
+      "a": "satin"
+    },
+    {
+      "de": "satinado",
+      "a": "satin"
+    },
+    {
+      "de": "verja",
+      "a": "railing"
+    },
+    {
+      "de": "cristalizado",
+      "a": "crystallized"
+    },
+    {
+      "de": "asistencia",
+      "a": "assistance"
+    },
+    {
+      "de": "compensada",
+      "a": "compensated"
+    },
+    {
+      "de": "parque infantil",
+      "a": "playground"
+    },
+    {
+      "de": "gimnasio",
+      "a": "gym"
+    },
+    {
+      "de": "banca",
+      "a": "bench"
+    },
+    {
+      "de": "tierra abonada",
+      "a": "enriched soil"
+    },
+    {
+      "de": "abonada",
+      "a": "enriched"
+    },
+    {
+      "de": "hoyo",
+      "a": "pit"
+    },
+    {
+      "de": "parterre",
+      "a": "flower bed"
+    },
+    {
+      "de": "aspersor",
+      "a": "sprinkler"
+    },
+    {
+      "de": "condensados",
+      "a": "condensate"
+    },
+    {
+      "de": "delimitada",
+      "a": "marked out"
+    },
+    {
+      "de": "confort",
+      "a": "comfort"
+    },
+    {
+      "de": "equipo de confort",
+      "a": "comfort unit"
+    },
+    {
+      "de": "tratamiento de humedad",
+      "a": "damp treatment"
+    },
+    {
+      "de": "hueco de escalera",
+      "a": "stairwell"
+    },
+    {
+      "de": "hueco de concreto",
+      "a": "concrete opening"
+    },
+    {
+      "de": "ganancia de calor",
+      "a": "heat gain"
+    },
+    {
+      "de": "torres de carga",
+      "a": "loading towers"
+    },
+    {
+      "de": "desmontaje de caballete",
+      "a": "ridge tile removal"
+    },
+    {
+      "de": "desmontaje de cortinero",
+      "a": "curtain track removal"
+    },
+    {
+      "de": "desmontaje de zapatero",
+      "a": "shoe cabinet removal"
+    },
+    {
+      "de": "mirilla de seguridad",
+      "a": "door viewer"
+    },
+    {
+      "de": "baranda de forja",
+      "a": "wrought iron railing"
+    },
+    {
+      "de": "luminaria de sobreponer",
+      "a": "surface-mounted luminaire"
+    },
+    {
+      "de": "detector de calor",
+      "a": "heat detector"
+    },
+    {
+      "de": "sensor de temperatura",
+      "a": "temperature sensor"
+    },
+    {
+      "de": "actuador de riego",
+      "a": "irrigation actuator"
+    },
+    {
+      "de": "pulsador de escena",
+      "a": "scene push button"
+    },
+    {
+      "de": "remate de chimenea",
+      "a": "chimney finishing"
+    },
+    {
+      "de": "descansillo de escalera",
+      "a": "stair landing"
+    },
+    {
+      "de": "espejo de cuerpo",
+      "a": "full-length mirror"
+    },
+    {
+      "de": "filtro de agua",
+      "a": "water filter"
+    },
+    {
+      "de": "directorio de planta",
+      "a": "floor panel schedule"
+    },
+    {
+      "de": "equipo de gimnasio",
+      "a": "gym equipment"
+    },
+    {
+      "de": "aplique de pared",
+      "a": "wall light"
+    },
+    {
+      "de": "prueba de puesta",
+      "a": "start-up test"
+    },
+    {
+      "de": "informe de puesta",
+      "a": "start-up report"
+    },
+    {
+      "de": "pruebas de puesta",
+      "a": "start-up tests"
+    },
+    {
+      "de": "humedad de muros",
+      "a": "wall damp"
+    },
+    {
+      "de": "espesores de aislamiento",
+      "a": "insulation thicknesses"
+    },
+    {
+      "de": "replanteo de niveles",
+      "a": "level field layout"
+    },
+    {
+      "de": "restos de pegamento",
+      "a": "adhesive residue"
+    },
+    {
+      "de": "plano de apoyo",
+      "a": "bearing surface"
+    },
+    {
+      "de": "plano de cubierta",
+      "a": "roof plan"
+    },
+    {
+      "de": "maceta de obra",
+      "a": "masonry planter"
+    },
+    {
+      "de": "anime de poliestireno",
+      "a": "EPS"
+    },
+    {
+      "de": "criolla de arcilla",
+      "a": "clay barrel tile"
+    },
+    {
+      "de": "macizo de arcilla",
+      "a": "solid clay"
+    },
+    {
+      "de": "apertura de hueco",
+      "a": "forming an opening"
+    },
+    {
+      "de": "mueble bajo de cocina",
+      "a": "kitchen base cabinet"
+    },
+    {
+      "de": "mueble alto de cocina",
+      "a": "kitchen wall cabinet"
+    },
+    {
+      "de": "hoja fija",
+      "a": "fixed leaf"
+    },
+    {
+      "de": "tabique de doble placa",
+      "a": "double-board partition"
+    },
+    {
+      "de": "bloque hueco de arcilla",
+      "a": "hollow clay block"
+    },
+    {
+      "de": "cielo raso continuo",
+      "a": "continuous suspended ceiling"
+    },
+    {
+      "de": "de alta densidad",
+      "a": "high-density"
+    },
+    {
+      "de": "de alta resistencia",
+      "a": "high-strength"
+    },
+    {
+      "de": "de altas prestaciones",
+      "a": "high-performance"
     }
   ]
 }
