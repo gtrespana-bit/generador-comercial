@@ -128,6 +128,26 @@ _VOCABULARIO_GB: dict[str, str] = {
     "pipe insulation": "pipe lagging",    # coquilla aislante de tubería
     "sod": "turf",                        # grama en panes
     "shoe cabinet": "shoe cupboard",      # zapatero empotrado
+    "light fixture": "light fitting",     # luminaria
+    "light fixtures": "light fittings",   # luminarias
+    "power outlet": "socket outlet",      # punto de fuerza
+    "power outlets": "socket outlets",    # puntos de fuerza
+    "downspout": "downpipe",              # bajante de aguas de lluvia
+    "electrical panel": "consumer unit",  # tablero eléctrico
+    "electrical distribution panel": "consumer unit",
+    "distribution panel": "consumer unit",
+    "ground-fault circuit interrupter": "residual current device",
+    "lavatory": "washbasin",              # lavamanos
+    "range hood": "cooker hood",          # campana extractora
+    "refrigerator": "fridge",             # nevera
+    "dryer": "tumble dryer",              # secadora
+    "electric range": "electric cooker",  # cocina eléctrica
+    "three-way switch": "two-way switch", # interruptor de conmutación
+    "cleanout": "inspection chamber",     # registro de aguas servidas
+    "mechanical room": "plant room",      # cuarto técnico
+    "home theater": "home cinema",        # cine en casa
+    "grounding electrode": "earth electrode",
+    "grounding": "earthing",              # puesta a tierra
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
