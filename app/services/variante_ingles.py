@@ -214,6 +214,8 @@ _VOCABULARIO_GB: dict[str, str] = {
     "edge banding": "edging tape",         # cantos aplicados
     "drawer slides": "drawer runners",     # correderas
     "shims": "packers",                    # calzos
+    "sandwich panel": "composite panel",        # panel sándwich
+    "steel shores": "steel props",              # puntales metálicos
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
