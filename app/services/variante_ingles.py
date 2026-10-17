@@ -48,6 +48,8 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "aluminum": "aluminium",
     "recognize": "recognise",
     "facade": "façade",
+    "troweling": "trowelling",
+    "louver": "louvre",
 }
 
 # ── Vocabulario de obra británico ────────────────────────────────────────
@@ -105,6 +107,13 @@ _VOCABULARIO_GB: dict[str, str] = {
     "debris container": "skip",           # bote del escombro
     "concrete placing": "concreting",     # vaciado del concreto
     "exploratory opening": "opening up",  # cata de reconocimiento
+    "gypsum board": "plasterboard",       # placa de yeso laminado
+    "hardware": "ironmongery",            # herrajes
+    "carpentry": "joinery",               # carpintería de taller
+    "formwork removal": "striking",       # desencofrado
+    "truck": "lorry",                     # camión
+    "curb": "kerb",                       # cordón de acera
+    "bathtub": "bath",                    # bañera
 }
 
 # ── Australia ────────────────────────────────────────────────────────────

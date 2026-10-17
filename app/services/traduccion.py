@@ -39,9 +39,59 @@ from ..paises import resolver_mercado
 from .variante_ingles import aplicar_variante
 from functools import lru_cache
 from pathlib import Path
+from types import MappingProxyType
+from typing import Mapping
 
 # Raíz del repo: app/services -> ../../basedatos_partidas
 BASE_GLOSARIOS = Path(__file__).resolve().parents[2] / "basedatos_partidas" / "glosarios"
+
+
+# ── Tablas precalculadas ─────────────────────────────────────────────────
+# El catálogo ronda las 7.000 cadenas distintas y hay 22 mercados, así que
+# caben más de 150.000 pares (texto, mercado): bastante más de lo que aguanta
+# la caché LRU de ``traducir``, que acababa desbordando y retraduciendo lo
+# que ya había traducido. Estas tablas resuelven el catálogo con una sola
+# lectura de diccionario; el glosario queda para lo que no esté en ellas
+# (partidas propias del cliente, recién escritas).
+#
+# Las genera ``tools/generar_traducciones.py`` y las verifica
+# ``tools/verificar_traducciones.py``. Son un derivado del catálogo y de los
+# glosarios, nunca una fuente: si el catálogo cambia, hay que regenerarlas.
+SALIDA_TRADUCCIONES = (Path(__file__).resolve().parents[2]
+                       / "basedatos_partidas" / "salida" / "traducciones")
+
+
+@lru_cache(maxsize=32)
+def _cargar_tabla(codigo: str) -> Mapping[str, str]:
+    """Tabla precalculada de un mercado; ``{}`` si no hay artefacto.
+
+    Se devuelve de solo lectura: sale de una caché compartida por todas las
+    peticiones y una mutación accidental se vería en las demás.
+    """
+    ruta = SALIDA_TRADUCCIONES / f"{codigo}.json"
+    try:
+        data = json.loads(ruta.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return MappingProxyType({})
+    return MappingProxyType(data.get("cadenas") or {})
+
+
+@lru_cache(maxsize=32)
+def _cargar_excepciones(codigo: str) -> Mapping[str, str]:
+    """Correcciones a mano que un glosario no puede expresar.
+
+    Un glosario mapea términos, no sabe que «remate» es *joint finishing* en
+    una partida y *coping* en otra, ni que en un andamio el rodapié es una
+    tabla de pie. Estas excepciones son cadenas completas, se aplican antes
+    que nada y ganan siempre, así que se pueden afinar una a una sin tocar
+    las reglas generales ni arriesgar las demás traducciones.
+    """
+    ruta = BASE_GLOSARIOS / f"{codigo}.excepciones.json"
+    try:
+        data = json.loads(ruta.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return MappingProxyType({})
+    return MappingProxyType(data.get("cadenas") or {})
 
 # Mapeo nombre de país (cfg.empresa_pais) -> código ISO
 # Formas de llamar a un país que no son su nombre oficial: «USA», «UK»,
@@ -201,6 +251,13 @@ def _pluralizar(nuevo: str, sufijo: str | None) -> str:
 # no pluraliza nunca (se dice «formwork», no «formworks», igual que se dice
 # «concrete» y no «concretes»). Incluirlos evita el plural automático cuando
 # el español sí marca el plural.
+# Preposiciones que delatan que el núcleo de un destino con espacios va
+# al principio en vez de al final (inglés y español).
+_PREPOSICIONES = frozenset({
+    "of", "in", "on", "at", "by", "with", "for", "to", "from",
+    "de", "del", "en", "a", "con", "para", "por", "sin", "sobre",
+})
+
 _INCONTABLES_EN = frozenset({
     "concrete", "formwork", "falsework", "plaster", "stucco", "render",
     "mortar", "grout", "screed", "debris", "rubble", "spoil",
@@ -225,6 +282,12 @@ def _pluralizar_en(nuevo: str, sufijo: str | None) -> str:
     if s.lower() in _INCONTABLES_EN:
         return s
     bajo = s.lower()
+    if re.search(r"(?:ed|ous|ful|less|ish)$", bajo):
+        # El inglés no pluraliza adjetivos ni participios. El glosario EN
+        # guarda la forma singular, y el patrón casa también con el plural
+        # español («tratado» casa con «tratados»), así que sin esto saldrían
+        # barbaridades como «treateds», «continuouses» o «exposeds».
+        return s
     if re.search(r"(?:s|x|z|ch|sh)$", bajo):
         return s + "es"                      # patch -> patches, box -> boxes
     if re.search(r"[^aeiou]y$", bajo):
@@ -268,29 +331,18 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
     return frases, palabras
 
 
-@lru_cache(maxsize=32768)
-def traducir(texto: str | None, pais_codigo: str | None) -> str:
-    """Traduce un texto del catálogo base (VE) al país indicado.
+def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
+    """Aplica el glosario al texto. Es la única implementación.
 
-    *Respeta mayúscula inicial y plural en -s/-es.*
-    Si el código es vacío/VE o sin glosario, devuelve el texto tal cual.
-
-    El resultado se cachea: el editor traduce las mismas categorías y
-    apartados miles de veces al armar el índice, y rehacer el glosario en
-    cada llamada era el grueso del tiempo de ``/presupuestos/nuevo``.
+    La llaman tanto el generador de tablas como el camino lento de
+    ``traducir``, así que el artefacto precalculado y el cálculo en vivo no
+    pueden divergir. No aplica la variante de inglés: eso se hace una sola
+    vez al final, en ``traducir``, para que la tabla del glosario EN sirva a
+    los cinco mercados anglófonos.
     """
-    if not texto:
-        return texto or ""
-    codigo = str(pais_codigo or "").strip().upper()
-    if not codigo or codigo == "VE":
-        return texto
-    mercado = resolver_mercado(codigo)
-    # Los cinco mercados ingleses comparten un solo glosario español->inglés:
-    # lo que los distingue no es la traducción, sino el vocabulario de obra,
-    # y de eso se encarga la variante al final. Sin esto una empresa de
-    # Estados Unidos recibía el catálogo en venezolano sin traducir, porque
-    # no existe glosarios/US.json.
-    glosario = "EN" if mercado["idioma"] == "en" else codigo
+    excepciones = _cargar_excepciones(glosario)
+    if texto in excepciones:
+        return excepciones[texto]
     # El plural del término de destino no se forma igual en inglés que en
     # español: con el glosario EN hay que usar las reglas inglesas.
     pluralizar = _pluralizar_en if glosario == "EN" else _pluralizar
@@ -313,9 +365,21 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
             sufijo_primera = m.group(2)
             sufijo_ultima = m.group(len(m.groups()))
             if " " in _a:
+                # Dónde cae el plural del núcleo depende de la estructura del
+                # destino, no de la del origen:
+                #  · Con preposición el núcleo va PRIMERO, igual que en
+                #    español: «paredes de bloque» -> «muros en bloque».
+                #  · En un compuesto inglés sin preposición el núcleo va al
+                #    FINAL: «juntas de dilatación» -> «expansion joints»
+                #    (aplicarlo al primer término daba «expansions joint»).
                 partes_a = _a.split(" ")
-                partes_a[0] = pluralizar(partes_a[0], sufijo_primera)
-                partes_a[-1] = pluralizar(partes_a[-1], sufijo_ultima)
+                if any(p.lower() in _PREPOSICIONES for p in partes_a[:-1]):
+                    partes_a[0] = pluralizar(partes_a[0], sufijo_primera)
+                    partes_a[-1] = pluralizar(partes_a[-1], sufijo_ultima)
+                else:
+                    partes_a[-1] = pluralizar(
+                        partes_a[-1], sufijo_primera or sufijo_ultima
+                    )
                 nuevo = " ".join(partes_a)
             else:
                 nuevo = pluralizar(_a, sufijo_ultima or sufijo_primera)
@@ -338,6 +402,36 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     #          para que "\x01" no pise a "\x01\x01") ----
     for token, valor in reversed(reemplazos):
         out = out.replace(token, valor)
+    return out
+
+
+@lru_cache(maxsize=32768)
+def traducir(texto: str | None, pais_codigo: str | None) -> str:
+    """Traduce un texto del catálogo base (VE) al país indicado.
+
+    Si la cadena está en el catálogo, sale de la tabla precalculada con una
+    lectura de diccionario; si no (una partida propia del cliente, recién
+    escrita), se calcula con el glosario. La variante de inglés se aplica al
+    final en los dos caminos, así que una sola tabla EN sirve a los cinco
+    mercados anglófonos y cada uno recibe su vocabulario.
+    """
+    if not texto:
+        return texto or ""
+    codigo = str(pais_codigo or "").strip().upper()
+    if not codigo or codigo == "VE":
+        return texto
+    mercado = resolver_mercado(codigo)
+    # Los cinco mercados ingleses comparten un solo glosario español->inglés:
+    # lo que los distingue no es la traducción, sino el vocabulario de obra,
+    # y de eso se encarga la variante al final. Sin esto una empresa de
+    # Estados Unidos recibía el catálogo en venezolano sin traducir, porque
+    # no existe glosarios/US.json.
+    glosario = "EN" if mercado["idioma"] == "en" else codigo
+    tabla = _cargar_tabla(glosario)
+    if texto in tabla:
+        out = tabla[texto]
+    else:
+        out = _traducir_reglas(texto, mercado, glosario)
     return aplicar_variante(out, mercado)
 
 

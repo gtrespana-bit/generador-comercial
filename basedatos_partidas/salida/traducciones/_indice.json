@@ -1,0 +1,96 @@
+{
+ "_generado": "2026-10-17",
+ "_cadenas_origen": 6834,
+ "_glosarios": {
+  "EN": {
+   "cadenas": 6831,
+   "bytes": 1726044,
+   "huella": "ed280767aad66b45"
+  },
+  "AR": {
+   "cadenas": 1401,
+   "bytes": 564506,
+   "huella": "0717b27f4b3dd4cb"
+  },
+  "BO": {
+   "cadenas": 1171,
+   "bytes": 486771,
+   "huella": "1019098ac13a3f9a"
+  },
+  "CL": {
+   "cadenas": 1341,
+   "bytes": 533183,
+   "huella": "b7c26b2715f5f8b7"
+  },
+  "CO": {
+   "cadenas": 1360,
+   "bytes": 520547,
+   "huella": "77094ed21a0e6811"
+  },
+  "CR": {
+   "cadenas": 864,
+   "bytes": 372812,
+   "huella": "6e30c575ded8dc6d"
+  },
+  "DO": {
+   "cadenas": 1202,
+   "bytes": 458239,
+   "huella": "6da0ca13b2ed18e8"
+  },
+  "EC": {
+   "cadenas": 1447,
+   "bytes": 550480,
+   "huella": "10683031a23bd927"
+  },
+  "ES": {
+   "cadenas": 1633,
+   "bytes": 632707,
+   "huella": "6c9a7aea5279a683"
+  },
+  "GT": {
+   "cadenas": 1217,
+   "bytes": 479444,
+   "huella": "3eae1050d1b57100"
+  },
+  "HN": {
+   "cadenas": 933,
+   "bytes": 400226,
+   "huella": "e5aaa7b66436a48f"
+  },
+  "MX": {
+   "cadenas": 1690,
+   "bytes": 620230,
+   "huella": "5a56f7aabcefb509"
+  },
+  "NI": {
+   "cadenas": 754,
+   "bytes": 343959,
+   "huella": "046735925832277c"
+  },
+  "PA": {
+   "cadenas": 625,
+   "bytes": 295290,
+   "huella": "5777e00a7e71ac41"
+  },
+  "PE": {
+   "cadenas": 779,
+   "bytes": 310770,
+   "huella": "02db0d13b84730ae"
+  },
+  "PY": {
+   "cadenas": 1391,
+   "bytes": 562936,
+   "huella": "d7b6ff0d431fe842"
+  },
+  "SV": {
+   "cadenas": 901,
+   "bytes": 406384,
+   "huella": "b060f749cc5da365"
+  },
+  "UY": {
+   "cadenas": 1383,
+   "bytes": 560180,
+   "huella": "16e03c990da5b9d6"
+  }
+ }
+}
