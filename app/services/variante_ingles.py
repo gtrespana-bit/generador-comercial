@@ -61,6 +61,7 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "mold": "mould",
     "molding": "moulding",     # moldura (sustantivo, no «mold» + -ing)
     "matte": "matt",
+    "plasticizing": "plasticising",
     "colored": "coloured",     # el grupo de sufijo solo cubre -s y -es
 }
 
@@ -171,6 +172,18 @@ _VOCABULARIO_GB: dict[str, str] = {
     "wood lintel": "timber lintel",       # dintel de madera
     "overhead garage door": "up-and-over garage door",
     "awning window": "top-hung casement window",
+    "wood formwork": "timber formwork",     # encofrado de madera
+    "wood purlin": "timber purlin",         # correa de madera
+    "wood truss": "timber truss",           # cercha de madera
+    "wood joist": "timber joist",           # vigueta de madera
+    "structural wood": "structural timber", # madera estructural
+    "welded wire mesh": "welded mesh fabric",
+    "radiant floor heating": "underfloor heating",
+    "fiberglass": "glass fibre",             # fibra de vidrio
+    "laundry room": "utility room",          # lavandería
+    "sloping fill": "screed to falls",       # pendientado
+    "skylight": "rooflight",                 # claraboya, lucernario
+    "roof drain": "roof outlet",             # tragante
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
