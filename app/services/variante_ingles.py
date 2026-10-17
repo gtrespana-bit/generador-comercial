@@ -217,6 +217,11 @@ _VOCABULARIO_GB: dict[str, str] = {
     "sandwich panel": "composite panel",        # panel sándwich
     "steel shores": "steel props",              # puntales metálicos
     "lumber": "timber",                   # madera aserrada
+    "mat foundation": "raft foundation",          # losa de fundación
+    "grade beam": "ground beam",                  # viga de fundación
+    "cast-in-place pile": "bored pile",           # pilote vaciado en sitio
+    "drilled shaft": "bored pile",                # pilote perforado
+    "stirrups": "links",                          # estribos
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
