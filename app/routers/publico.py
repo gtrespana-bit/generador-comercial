@@ -181,12 +181,21 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
 
 
 def _landing_con_pais(request: Request, codigo: str):
-    """Renderiza la landing para un subdirectorio /co/, /mx/ ... y fija cookie."""
+    """Renderiza la landing para un subdirectorio /co/, /us/ ... y fija cookie."""
     from ..paises import PAISES
 
     codigo = str(codigo).strip().upper()
     if codigo not in PAISES:
         return Response("Página no encontrada.", status_code=404)
+    # Un mercado de habla inglesa no tiene versión en español: /us/ a secas
+    # dejaría la interfaz en español por la cookie. Se manda a la canónica
+    # (/en-us/), salvo que ya venga de ahí, que es cuando se sirve.
+    if PAISES[codigo].get("idioma") == "en":
+        original = str(getattr(request.state, "ruta_original", "") or "")
+        if not original.lower().startswith("/en"):
+            from ..seo import ruta_mercado
+
+            return RedirectResponse(ruta_mercado(codigo), status_code=301)
     # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
     # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request, pais_forzado=codigo)
@@ -795,6 +804,56 @@ async def solicitar_demo(
     )
 
 
+@router.get("/us", include_in_schema=False)
+def landing_us(request: Request):
+    return _redirige_a_slash("US")
+
+
+@router.get("/us/", response_class=HTMLResponse, include_in_schema=False)
+def landing_us_slash(request: Request):
+    return _landing_con_pais(request, "US")
+
+
+@router.get("/gb", include_in_schema=False)
+def landing_gb(request: Request):
+    return _redirige_a_slash("GB")
+
+
+@router.get("/gb/", response_class=HTMLResponse, include_in_schema=False)
+def landing_gb_slash(request: Request):
+    return _landing_con_pais(request, "GB")
+
+
+@router.get("/au", include_in_schema=False)
+def landing_au(request: Request):
+    return _redirige_a_slash("AU")
+
+
+@router.get("/au/", response_class=HTMLResponse, include_in_schema=False)
+def landing_au_slash(request: Request):
+    return _landing_con_pais(request, "AU")
+
+
+@router.get("/ca", include_in_schema=False)
+def landing_ca(request: Request):
+    return _redirige_a_slash("CA")
+
+
+@router.get("/ca/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ca_slash(request: Request):
+    return _landing_con_pais(request, "CA")
+
+
+@router.get("/ie", include_in_schema=False)
+def landing_ie(request: Request):
+    return _redirige_a_slash("IE")
+
+
+@router.get("/ie/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ie_slash(request: Request):
+    return _landing_con_pais(request, "IE")
+
+
 # --- Piloto en inglés (locale en) ---
 @router.get("/en", include_in_schema=False)
 def landing_en(request: Request):
@@ -803,13 +862,11 @@ def landing_en(request: Request):
 
 @router.get("/en/", response_class=HTMLResponse, include_in_schema=False)
 def landing_en_slash(request: Request):
-    # El middleware reescribe /en/ a / antes de enrutar, así que este
-    # handler solo se alcanza si la ruta sobrevive; mantenemos el alias para
-    # no romper enlaces antiguos. El copy en inglés lo pone contexto_seo().
-    ctx = _contexto_landing(request)
-    resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
-    resp.set_cookie("cotizat_lang", "en", max_age=365 * 24 * 3600, path="/", samesite="lax", httponly=False)
-    return resp
+    # «en» a secas resuelve a Estados Unidos en el registro de mercados, así
+    # que /en/ y /en-us/ serían la misma página en dos sitios. Se consolida
+    # en la del mercado con un 301 para no repartir la autoridad entre las
+    # dos ni dejar una URL ambigua compitiendo con las de cada país.
+    return RedirectResponse("/en-us/", status_code=301)
 
 
 # --- Conmutador de idioma -------------------------------------------------

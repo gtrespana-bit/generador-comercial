@@ -150,8 +150,17 @@ def _es_indexable_en(p: str) -> bool:
 
 
 def hreflang_pais(codigo: str) -> str:
+    """Etiqueta BCP-47 del mercado: «es-MX», «en-GB», «en-US».
+
+    Se lee del registro porque el idioma es del mercado, no un prefijo:
+    durante un tiempo esto devolvió «es-US» y el sitio anunció una versión
+    en español de Estados Unidos que no existe.
+    """
     codigo = str(codigo or "").strip().upper()
-    return f"es-{codigo}" if codigo in PAISES else "es"
+    pais = PAISES.get(codigo)
+    if not pais:
+        return "es"
+    return str(pais.get("locale") or f"{pais.get('idioma', 'es')}-{codigo}")
 
 
 def ruta_pais(codigo: str, tema: str = "") -> str:
@@ -163,8 +172,27 @@ def ruta_pais(codigo: str, tema: str = "") -> str:
     return f"/{codigo}/"
 
 
+def ruta_mercado(codigo: str, tema: str = "") -> str:
+    """Ruta canónica de un mercado: /mx/apu o /en-gb/apu.
+
+    Los mercados de habla inglesa viven bajo su prefijo (/en-us/, /en-gb/),
+    porque su subdirectorio en español no existe: no hay una versión en
+    español de la página de Estados Unidos.
+    """
+    codigo = str(codigo or "").strip().upper()
+    pais = PAISES.get(codigo)
+    if pais and pais.get("idioma") == "en":
+        return ruta_en(codigo, tema)
+    return ruta_pais(codigo, tema)
+
+
 def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dict]:
-    """Pares hreflang para una página (home o tema) y sus equivalentes de país."""
+    """Pares hreflang para una página (home o tema) y sus equivalentes de país.
+
+    Una entrada por mercado, con su locale y su ruta. Antes se emitían dos
+    por país (es-XX y en-XX) como si todos tuvieran las dos versiones, y así
+    se anunciaban variantes inexistentes como «es-US».
+    """
     base = origen_canonico(request)
     out = [
         {"hreflang": "x-default", "href": base + ruta_pais("", tema)},
@@ -175,13 +203,7 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
         out.append(
             {
                 "hreflang": hreflang_pais(pais["codigo"]),
-                "href": base + ruta_pais(pais["codigo"], tema),
-            }
-        )
-        out.append(
-            {
-                "hreflang": f"en-{pais['codigo']}",
-                "href": base + ruta_en(pais["codigo"], tema),
+                "href": base + ruta_mercado(pais["codigo"], tema),
             }
         )
     return out

@@ -540,3 +540,95 @@ def test_el_friso_es_stucco_en_ee_uu_y_render_en_el_reino_unido():
 
     assert "stucco" in traducir("Friso de paredes", "US").lower()
     assert "render" in traducir("Friso de paredes", "GB").lower()
+
+
+# ── Rutas por mercado e hreflang ─────────────────────────────────────────
+# Cada mercado tiene su URL y se anuncia con su etiqueta BCP-47. El camino
+# va en minúsculas (/en-gb/) y la etiqueta con la región en mayúsculas
+# (en-GB), que es como la esperan Google y el estándar.
+
+@pytest.mark.parametrize(
+    "ruta,esperado",
+    [("/en-us/", "en-US"), ("/en-gb/", "en-GB"), ("/en-au/", "en-AU"),
+     ("/en-ca/", "en-CA"), ("/en-ie/", "en-IE")],
+)
+def test_cada_mercado_ingles_tiene_su_url_y_su_etiqueta(ruta, esperado):
+    import re
+
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app, base_url="https://cotizat.test") as c:
+        r = c.get(ruta, follow_redirects=True)
+    assert r.status_code == 200, ruta
+    lang = re.search(r'<html[^>]*lang="([a-zA-Z-]+)"', r.text)
+    canon = re.search(r'rel="canonical" href="([^"]+)"', r.text)
+    assert lang is not None and lang.group(1) == esperado, ruta
+    assert canon is not None and canon.group(1).endswith(ruta), ruta
+
+
+def test_las_urls_cortas_de_mercado_ingles_redirigen_a_su_canonica():
+    """/us/ no puede servir español: el mercado manda a su ruta en inglés."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    for cc in ("us", "gb", "au", "ca", "ie"):
+        with TestClient(app, base_url="https://cotizat.test") as c:
+            r = c.get(f"/{cc}/", follow_redirects=False)
+        assert r.status_code == 301, f"/{cc}/ -> {r.status_code}"
+        assert r.headers["location"] == f"/en-{cc}/"
+
+
+def test_en_consolida_en_el_mercado_al_que_resuelve():
+    """«en» a secas es Estados Unidos en el registro: /en/ va a /en-us/."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    for ruta in ("/en", "/en/"):
+        with TestClient(app, base_url="https://cotizat.test") as c:
+            r = c.get(ruta, follow_redirects=False)
+        assert r.status_code == 301, ruta
+        assert r.headers["location"] == "/en-us/"
+
+
+def test_el_hreflang_es_el_locale_de_cada_mercado():
+    """No se anuncia «es-US»: Estados Unidos no tiene versión en español."""
+    from app.seo import enlaces_hreflang, hreflang_pais
+
+    assert hreflang_pais("US") == "en-US"
+    assert hreflang_pais("GB") == "en-GB"
+    assert hreflang_pais("MX") == "es-MX"
+    assert hreflang_pais("ES") == "es-ES"
+
+    pares = enlaces_hreflang()
+    etiquetas = [p["hreflang"] for p in pares]
+    assert "es-US" not in etiquetas and "es-GB" not in etiquetas
+    for esperada in ("en-US", "en-GB", "en-AU", "en-CA", "en-IE", "es-MX"):
+        assert esperada in etiquetas, esperada
+    # Una entrada por mercado, no dos (no hay variante en los dos idiomas
+    # de cada país): x-default + es + en + los 23 mercados.
+    assert len(pares) == 26
+
+
+def test_el_hreflang_apunta_a_la_ruta_del_mercado():
+    from app.seo import ruta_mercado
+
+    assert ruta_mercado("US", "apu") == "/en-us/apu"
+    assert ruta_mercado("GB", "apu") == "/en-gb/apu"
+    assert ruta_mercado("MX", "apu") == "/mx/apu"
+
+
+def test_el_sitemap_incluye_los_mercados_ingleses():
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app, base_url="https://cotizat.test") as c:
+        texto = c.get("/sitemap.xml").text
+    for ruta in ("/en-us/", "/en-gb/", "/en-au/", "/en-ca/", "/en-ie/"):
+        assert ruta in texto, ruta
+    assert 'hreflang="en-US"' in texto
+    assert 'hreflang="es-US"' not in texto

@@ -204,6 +204,17 @@ class IdiomaMiddleware:
         lang = None
         reescribir = False
         import re as _re
+
+        # /en/ y /en-us/ serían la misma página en dos sitios: «en» a secas
+        # resuelve a Estados Unidos en el registro de mercados. Se consolida
+        # aquí porque el propio middleware reescribe /en/ a / antes de
+        # enrutar, así que un handler de /en/ nunca llegaría a ejecutarse.
+        if path in ("/en", "/en/"):
+            from starlette.responses import RedirectResponse
+
+            resp = RedirectResponse("/en-us/", status_code=301)
+            await resp(scope, receive, send)
+            return
         _m = _re.match(r"^/en(?:-([A-Za-z]{2}))?(/.*)?$", path)
         if _m:
             lang = "en"
@@ -237,6 +248,11 @@ class IdiomaMiddleware:
             lang = idioma_desde_cookie(cookie)
         state = scope.setdefault("state", {})
         state["lang"] = lang
+        # Tras reescribir, la ruta interna (/us/) ya no dice si el visitante
+        # pidió /en-us/. Se guarda la original para que las landings puedan
+        # redirigir a su canónica sin montar un bucle.
+        state["ruta_original"] = path
+        state["prefijo_idioma"] = "en" if reescribir else ""
         if reescribir:
             async def send_wrap(message):
                 if message.get("type") == "http.response.start":

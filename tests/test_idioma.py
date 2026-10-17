@@ -227,8 +227,14 @@ def test_el_conmutador_apunta_a_la_misma_pagina_en_el_otro_idioma(cliente):
 
 
 def test_el_html_lang_coincide_con_el_hreflang_del_pais(cliente):
-    """/en-mx/ y /en-mx/apu se anuncian como en-MX; /mx/ como es-MX."""
-    pares = [("/en-mx/", "en-MX"), ("/en-mx/apu", "en-MX"), ("/mx/", "es-MX"), ("/en/", "en")]
+    """/en-mx/ y /en-mx/apu se anuncian como en-MX; /mx/ como es-MX.
+
+    /en/ ya no se anuncia como «en» a secas: consolida en /en-us/ porque «en»
+    resuelve a Estados Unidos en el registro de mercados, y mantener las dos
+    URLs sería publicar la misma página en dos sitios.
+    """
+    pares = [("/en-mx/", "en-MX"), ("/en-mx/apu", "en-MX"), ("/mx/", "es-MX"),
+             ("/en/", "en-US")]
     for ruta, esperado in pares:
         with TestClient(app) as c:
             r = c.get(ruta, follow_redirects=True)
