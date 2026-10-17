@@ -57,6 +57,11 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "labeling": "labelling",
     "maneuvering": "manoeuvring",
     "maneuver": "manoeuvre",
+    "vapor": "vapour",
+    "mold": "mould",
+    "molding": "moulding",     # moldura (sustantivo, no «mold» + -ing)
+    "matte": "matt",
+    "colored": "coloured",     # el grupo de sufijo solo cubre -s y -es
 }
 
 # ── Vocabulario de obra británico ────────────────────────────────────────
@@ -69,7 +74,7 @@ _VOCABULARIO_GB: dict[str, str] = {
     "countertop": "worktop",
     "drywall": "plasterboard",
     "flat latex paint": "matt emulsion",
-    "latex paint": "emulsion",
+    "latex paint": "emulsion paint",
     "flat paint": "matt paint",
     "construction adhesive": "grab adhesive",
     "patching": "making good",
@@ -148,6 +153,12 @@ _VOCABULARIO_GB: dict[str, str] = {
     "home theater": "home cinema",        # cine en casa
     "grounding electrode": "earth electrode",
     "grounding": "earthing",              # puesta a tierra
+    "semi-gloss": "mid-sheen",            # pintura semibrillo
+    "exterior wood": "exterior timber",   # madera exterior
+    "interior wood": "interior timber",   # madera interior
+    "timber shutter": "louvred shutter",  # persiana de madera
+    "walk-in cooler": "cold room",        # cámara frigorífica
+    "wood-boring insects": "woodworm",    # carcoma
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
