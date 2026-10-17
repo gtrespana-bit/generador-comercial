@@ -97,7 +97,7 @@ LOTE = {
 "Desmontaje de techo de fibrocemento.":
     "Removal of a fiber cement roof.",
 "Desmontaje de viga de techo de madera.":
-    "Removal of a timber roof beam.",
+    "Removal of a lumber roof beam.",
 "Demolición de pendientado de cubierta.":
     "Demolition of the screed to falls of a roof.",
 "Desmontaje de claraboya o domo.":
@@ -105,7 +105,7 @@ LOTE = {
 "Desmontaje de impermeabilización de cubierta.":
     "Removal of the waterproofing from a roof deck.",
 "Desmontaje de techo de madera machihembrada.":
-    "Removal of a tongued and grooved timber roof.",
+    "Removal of a tongued and grooved lumber roof.",
 "Demolición de losa de cubierta aligerada.":
     "Demolition of a lightweight roof slab.",
 "Desmontaje de caballete de techo.":
@@ -159,7 +159,7 @@ LOTE = {
 "Picado de enchapado de piedra natural en pared.":
     "Chipping off natural stone wall cladding.",
 "Desmontaje de enchapado de madera o machihembrado en pared.":
-    "Removal of timber or tongued and grooved wall cladding.",
+    "Removal of lumber or tongued and grooved wall cladding.",
 "Desmontaje de revestimiento de láminas o paneles en pared.":
     "Removal of sheet or panel wall cladding.",
 "Picado de friso de mortero en paramento.":
@@ -179,7 +179,7 @@ LOTE = {
 "Desmontaje de cielo raso desmontable de fibra mineral.":
     "Removal of a mineral fiber suspended ceiling.",
 "Desmontaje de cielo raso de machihembrado de madera.":
-    "Removal of a tongued and grooved timber ceiling.",
+    "Removal of a tongued and grooved lumber ceiling.",
 "Desmontaje de cielo raso de láminas de PVC o aluminio.":
     "Removal of a PVC or aluminum sheet ceiling.",
 "Picado de friso en techo o cara inferior de losa.":

@@ -258,15 +258,15 @@ LOTE = {
 "Cielo raso de PVC para local comercial.":
     "PVC ceiling for commercial premises.",
 "Cielo raso de machihembrado de madera.":
-    "Tongued and grooved timber ceiling.",
+    "Tongued and grooved lumber ceiling.",
 "Cielo raso de listones de madera.":
     "Timber batten ceiling.",
 "Cielo raso de paneles acústicos de madera.":
-    "Acoustic timber panel ceiling.",
+    "Acoustic lumber panel ceiling.",
 "Cielo raso de listones de madera con junta abierta.":
     "Timber batten ceiling with open joints.",
 "Cielo raso de tablero decorativo de madera.":
-    "Decorative timber panel ceiling.",
+    "Decorative lumber panel ceiling.",
 "Moldura perimetral de remate en cielo raso.":
     "Perimeter cornice to a ceiling.",
 "Cornisa para iluminación indirecta en cielo raso.":

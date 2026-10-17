@@ -56,7 +56,7 @@ LOTE = {
     "Construction of an external reinforced concrete stair, with steps and landings. Includes formwork, reinforcement and pouring.",
 
 "Pavimento exterior de concreto estampado con moldes y desmoldeante de color, sellado. Incluye el vaciado, el estampado y el sellado.":
-    "External stamped concrete paving using mats and a coloured release agent, sealed. Includes pouring, stamping and sealing.",
+    "External stamped concrete paving using mats and a colored release agent, sealed. Includes pouring, stamping and sealing.",
 
 "Pavimento exterior de concreto alisado con allanadora mecánica, para tránsito peatonal y vehicular. Incluye el vaciado y el alisado.":
     "External concrete paving power troweled to a smooth finish, for pedestrian and vehicular traffic. Includes pouring and troweling.",
@@ -467,17 +467,17 @@ LOTE = {
     "Installation of a perimeter safety fence to a swimming pool, with a grille or mesh. Includes installation.",
 
 "Ejecución de pérgola o sombra de área de piscina, con estructura de madera o metálica. Incluye la estructura y el montaje.":
-    "Construction of a pergola or shade structure over the pool area, in timber or steel. Includes the structure and assembly.",
+    "Construction of a pergola or shade structure over the pool area, in lumber or steel. Includes the structure and assembly.",
 
 # ── Pérgolas, jardineras y mobiliario ─────────────────────────────────────
 "Fabricación y montaje de pérgola de madera tratada para exterior, con sus pilares, vigas, correas y anclajes a la base. En clima tropical el punto de fallo es siempre el encuentro del pilar con el piso: la madera en contacto directo con el concreto absorbe humedad por capilaridad y se pudre desde la base, de modo que debe apoyarse sobre herraje metálico que la separe del piso. Incluye la ejecución de los dados de anclaje, el montaje de los herrajes separadores, el corte y labra de las piezas, el montaje de la estructura con apeo provisional, la fijación con herrajes y el tratamiento preservante en todas las caras y testas. Medido en superficie realmente ejecutada.":
-    "Manufacture and assembly of an external pergola in treated timber, with its posts, beams, purlins and anchors to the base. In a tropical climate the point of failure is always where the post meets the floor: timber in direct contact with concrete takes up moisture by capillary action and rots from the bottom up, so it must stand on a metal shoe that holds it clear of the floor. Includes forming the anchorage blocks, fitting the post shoes, cutting and shaping the members, erecting the structure with temporary supports, fixing with the hardware and applying preservative to every face and every end grain. Measured by the area actually constructed.",
+    "Manufacture and assembly of an external pergola in treated lumber, with its posts, beams, purlins and anchors to the base. In a tropical climate the point of failure is always where the post meets the floor: lumber in direct contact with concrete takes up moisture by capillary action and rots from the bottom up, so it must stand on a metal shoe that holds it clear of the floor. Includes forming the anchorage blocks, fitting the post shoes, cutting and shaping the members, erecting the structure with temporary supports, fixing with the hardware and applying preservative to every face and every end grain. Measured by the area actually constructed.",
 
 "Construcción de jardinera de obra en exterior, con su fábrica, friso, impermeabilización interior, drenaje y capa filtrante. Una jardinera sin impermeabilizar y sin drenaje transmite humedad permanente al muro contiguo y encharca la tierra hasta pudrir la raíz, de modo que ambas capas son parte del elemento y no un extra. Incluye la fundación, el levantamiento de la fábrica, el friso exterior, la impermeabilización interior con refuerzo de encuentros, el pase y la tubería de drenaje, la capa de gravilla con geotextil y el remate superior. No incluye el sustrato ni la plantación. Medido en longitud de jardinera.":
     "Construction of a planter externally, with its masonry, render, internal waterproofing, drainage and filter layer. A planter without waterproofing and without drainage transmits permanent moisture to the adjoining wall and waterlogs the soil until the roots rot, so both layers are part of the element and not an extra. Includes the footing, building the masonry, the external render, the internal waterproofing with reinforcement at the junctions, the sleeve and the drainage pipe, the gravel layer with geotextile and the capping. The growing medium and the planting are not included. Measured by the length of planter.",
 
 "Ejecución de pérgola de madera para exterior, con estructura de vigas y listones tratados. Incluye el armado y el montaje.":
-    "Construction of an external timber pergola, with a structure of beams and treated battens. Includes assembly and erection.",
+    "Construction of an external lumber pergola, with a structure of beams and treated battens. Includes assembly and erection.",
 
 "Ejecución de jardinera de obra en exterior, de bloque o concreto, con drenaje. Incluye la mampostería y el drenaje.":
     "Construction of an external planter in blockwork or concrete, with drainage. Includes masonry and drainage.",
@@ -504,7 +504,7 @@ LOTE = {
     "Installation of an aluminium louver screen on a terrace, with a frame and fixing. Includes installation.",
 
 "Fabricación e instalación de mueble de exterior a medida en madera tratada. Incluye el despiece y el armado.":
-    "Manufacture and installation of external furniture to measure in treated timber. Includes cutting list and assembly.",
+    "Manufacture and installation of external furniture to measure in treated lumber. Includes cutting list and assembly.",
 
 "Reparación de pérgola o estructura exterior con sustitución de piezas y tratamiento. Incluye la reparación.":
     "Repair of a pergola or external structure with replacement of members and treatment. Includes repair.",

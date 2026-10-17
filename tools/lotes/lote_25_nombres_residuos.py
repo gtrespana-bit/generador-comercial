@@ -71,7 +71,7 @@ LOTE = {
 "Retirada de cartón y embalajes a reciclaje.":
     "Removal of cardboard and packaging for recycling.",
 "Retirada de madera y pallets a reciclaje.":
-    "Removal of timber and pallets for recycling.",
+    "Removal of lumber and pallets for recycling.",
 "Disposición de tierra de excavación.":
     "Disposal of excavated spoil.",
 

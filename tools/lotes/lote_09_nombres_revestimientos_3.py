@@ -118,7 +118,7 @@ LOTE = {
 "Pintura de closet con esmalte.":
     "Enamel painting of a closet.",
 "Pintura de persiana de madera.":
-    "Painting of a timber shutter.",
+    "Painting of a lumber shutter.",
 "Pintura de pasamanos metálico.":
     "Painting of a metal handrail.",
 "Pintura de puerta metálica.":
@@ -130,9 +130,9 @@ LOTE = {
 "Laca para carpintería interior de madera.":
     "Lacquer for interior woodwork.",
 "Aplicación de preservante fungicida sobre madera estructural.":
-    "Application of a fungicidal preservative to structural timber.",
+    "Application of a fungicidal preservative to structural lumber.",
 "Barnizado de barandas y pasamanos de madera.":
-    "Varnishing of timber guardrails and handrails.",
+    "Varnishing of lumber guardrails and handrails.",
 "Protección de madera exterior con lasur.":
     "Protection of exterior wood with a satin wood stain.",
 "Aplicación de tinte para madera.":
@@ -140,7 +140,7 @@ LOTE = {
 "Barnizado de puerta de madera.":
     "Varnishing of a wood door.",
 "Protección de madera estructural con barniz.":
-    "Protection of structural timber with varnish.",
+    "Protection of structural lumber with varnish.",
 "Lasur para pérgola o madera exterior.":
     "Satin wood stain for a pergola or exterior wood.",
 "Pintura ignífuga sobre madera.":
@@ -212,7 +212,7 @@ LOTE = {
 "Reintegración de juntas de mármol.":
     "Re-pointing of marble joints.",
 "Tratamiento de madera carcomida.":
-    "Treatment of timber damaged by wood-boring insects.",
+    "Treatment of lumber damaged by wood-boring insects.",
 "Limpieza de paramento de ladrillo visto.":
     "Cleaning of an exposed brick surface.",
 "Restauración de papel tapiz.":

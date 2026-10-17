@@ -92,7 +92,7 @@ LOTE = {
 "Excavación manual en zanja para instalaciones enterradas.":
     "Hand excavation of a trench for buried services.",
 "Entibado de zanja con madera.":
-    "Trench sheeting in timber.",
+    "Trench sheeting in lumber.",
 "Excavación de pozo para fundación.":
     "Excavation of a pit for a foundation.",
 "Excavación de zanja con entibado.":

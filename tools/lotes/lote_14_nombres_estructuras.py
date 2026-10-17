@@ -125,13 +125,13 @@ LOTE = {
 "Correas y viguetas de madera para cubierta o entrepiso.":
     "Wood purlins and joists for a roof or intermediate floor.",
 "Tratamiento preservante de madera estructural.":
-    "Preservative treatment of structural timber.",
+    "Preservative treatment of structural lumber.",
 "Herraje o conector metálico para unión de estructura de madera.":
     "Metal connector or hardware for wood structural joints.",
 "Montaje de estructura de madera en obra.":
     "Erection of a wood structure on site.",
 "Correas de madera para cubierta.": "Wood purlins for a roof.",
-"Tratamiento preservante de madera.": "Preservative treatment of timber.",
+"Tratamiento preservante de madera.": "Preservative treatment of lumber.",
 "Herraje de unión de estructura de madera.":
     "Connector hardware for a wood structure.",
 "Viga de madera estructural.": "Structural wood beam.",

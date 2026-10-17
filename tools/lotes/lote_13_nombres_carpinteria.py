@@ -250,7 +250,7 @@ LOTE = {
 "Baranda de acero con relleno de malla.":
     "Steel guardrail with a mesh infill.",
 "Baranda de escalera con zanca de madera.":
-    "Stair guardrail on a timber stringer.",
+    "Stair guardrail on a lumber stringer.",
 "Baranda de acero galvanizado con pasamanos de madera.":
     "Galvanized steel guardrail with a wood handrail.",
 

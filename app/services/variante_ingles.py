@@ -216,6 +216,7 @@ _VOCABULARIO_GB: dict[str, str] = {
     "shims": "packers",                    # calzos
     "sandwich panel": "composite panel",        # panel sándwich
     "steel shores": "steel props",              # puntales metálicos
+    "lumber": "timber",                   # madera aserrada
 }
 
 # ── Australia ────────────────────────────────────────────────────────────

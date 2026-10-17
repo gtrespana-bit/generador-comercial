@@ -34,7 +34,7 @@ LOTE = {
     "Provision of a cardboard and packaging storage area for recycling, with floor protection and signage.",
 
 "Habilitación de zona de acopio de madera y pallets para su reutilización o reciclaje, delimitada y señalizada.":
-    "Provision of a timber and pallet storage area for reuse or recycling, delimited and signposted.",
+    "Provision of a lumber and pallet storage area for reuse or recycling, delimited and signposted.",
 
 "Clasificación en origen de los residuos de demolición y desmontaje, separando los recuperables de los de vertedero, para abaratar el bote.":
     "Separation at source of demolition and strip-out waste, separating recoverable material from material for landfill, to cut the cost of disposal.",
@@ -73,7 +73,7 @@ LOTE = {
     "Hire of a container for scrap metal, including delivery and collection for handover to the waste carrier.",
 
 "Alquiler de contenedor destinado a residuos de madera, con su colocación y retirada para reciclaje.":
-    "Hire of a container for timber waste, including delivery and collection for recycling.",
+    "Hire of a container for lumber waste, including delivery and collection for recycling.",
 
 "Suministro y colocación de saco big-bag para acopio de escombro, con sus asas de izado para retirada con grúa.":
     "Supply and placing of a bulk bag for storing debris, with lifting loops for removal by crane.",
@@ -100,7 +100,7 @@ LOTE = {
     "Removal and delivery of cardboard and packaging to a recycling plant, including loading and cartage.",
 
 "Retirada y entrega de madera y pallets a planta de reciclaje o reutilización, con carga y transporte.":
-    "Removal and delivery of timber and pallets to a recycling or reuse facility, including loading and cartage.",
+    "Removal and delivery of lumber and pallets to a recycling or reuse facility, including loading and cartage.",
 
 "Disposición de tierra y material de excavación en botadero autorizado, con canon de vertido.":
     "Disposal of soil and excavated material at a licensed spoil site, including the tipping fee.",

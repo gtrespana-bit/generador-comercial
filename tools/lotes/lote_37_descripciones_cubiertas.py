@@ -93,7 +93,7 @@ LOTE = {
     "Waterproofing of a flat roof with a cold applied liquid polyurethane membrane, reinforced with mesh at the details. Includes priming and two coats of membrane.",
 
 "Impermeabilización de cubierta plana con resina acrílica elastomérica en frío, reforzada con velo de fibra en los encuentros. Incluye imprimación y dos manos.":
-    "Waterproofing of a flat roof with a cold applied elastomeric acrylic resin, reinforced with a fibre fleece at the junctions. Includes priming and two coats.",
+    "Waterproofing of a flat roof with a cold applied elastomeric acrylic resin, reinforced with a fiber fleece at the junctions. Includes priming and two coats.",
 
 "Ejecución del remonte de la membrana impermeabilizante en el paramento perimetral de la cubierta, con banda de refuerzo y sellado de la entrega. Incluye la preparación del soporte y el sellado.":
     "Forming the upstand of the waterproofing membrane at the perimeter wall of the roof, with a reinforcement strip and the top edge sealed. Includes preparing the substrate and sealing.",
@@ -142,7 +142,7 @@ LOTE = {
     "Formation of the perimeter eaves on a tiled roof, with the edge units bedded and a collection channel. Includes finishing the slope and fixing.",
 
 "Colocación de listonado de madera sobre la estructura para recibir la cubierta de teja, con separación según el solape de la pieza. Incluye el replanteo y la fijación.":
-    "Fixing timber battens over the structure to receive the roof tiling, spaced according to the lap of the unit. Includes setting out and fixing.",
+    "Fixing lumber battens over the structure to receive the roof tiling, spaced according to the lap of the unit. Includes setting out and fixing.",
 
 "Sustitución de piezas de teja rotas o desplazadas en el faldón, sin tocar la estructura. Incluye el levantado de las piezas dañadas y la recolocación con mortero en los remates.":
     "Replacement of broken or displaced tiles on the slope, without touching the structure. Includes lifting the damaged units and relaying them in mortar at the finishings.",
@@ -197,7 +197,7 @@ LOTE = {
     "Lightweight roof covering of solid polycarbonate sheet for canopies and awnings, with framing and fixing. Includes setting out and laying.",
 
 "Cubierta de lámina de fibrocemento ondulada sobre correas, atornillada con solapes. Incluye el replanteo, la fijación y los remates.":
-    "Roof covering of corrugated fibre cement sheet on purlins, screwed with laps. Includes setting out, fixing and the finishings.",
+    "Roof covering of corrugated fiber cement sheet on purlins, screwed with laps. Includes setting out, fixing and the finishings.",
 
 "Ejecución de bajante de PVC para aguas lluvias en cubierta metálica, con abrazaderas y conexión al canalón. Incluye la fijación y los accesorios.":
     "Installation of a PVC rainwater downpipe to a metal roof, with brackets and connection to the gutter. Includes fixing and the fittings.",
@@ -209,7 +209,7 @@ LOTE = {
     "Lightweight translucent roof covering of multiwall polycarbonate on framing, for natural light to galleries and terraces. Includes the support structure, laying and the finishings.",
 
 "Cubierta ligera translúcida de panel de fibra de vidrio ondulado sobre correas, para zonas de trabajo o lavado. Incluye la colocación y la fijación.":
-    "Lightweight translucent roof covering of corrugated glass fibre panels on purlins, for work or washing areas. Includes laying and fixing.",
+    "Lightweight translucent roof covering of corrugated glass fiber panels on purlins, for work or washing areas. Includes laying and fixing.",
 
 "Marquesina traslúcida de policarbonato sobre estructura metálica ligera, con pendiente y canal de recogida. Incluye la estructura, la colocación y los remates.":
     "Translucent polycarbonate canopy on a lightweight metal structure, with a fall and a collection channel. Includes the structure, laying and the finishings.",
@@ -224,7 +224,7 @@ LOTE = {
     "Lightweight curved polycarbonate roof covering for skylights and corridor rooflights. Includes the support framing and laying.",
 
 "Cubierta ligera de lámina metálica delgada para cobertizos y áreas de servicio, sobre correas de madera. Incluye la colocación y la fijación.":
-    "Lightweight thin metal sheet roof covering for sheds and service areas, on timber purlins. Includes laying and fixing.",
+    "Lightweight thin metal sheet roof covering for sheds and service areas, on lumber purlins. Includes laying and fixing.",
 
 "Estructura metálica ligera de perfiles para apoyo de cubierta translúcida, con pintura anticorrosiva y fijaciones. Incluye el armado y el montaje.":
     "Lightweight metal framing to support a translucent roof covering, with anti-corrosion paint and fixings. Includes assembly and erection.",
@@ -252,7 +252,7 @@ LOTE = {
     "Supply and erection of a metal roof structure of trusses, beams and purlins in rolled or cold formed sections, with welded or bolted connections and an anti-corrosion primer. Includes checking the bearings and the base plates, hoisting and offering up the members, temporary bracing during erection, making the final connections, the geometric check of levels and falls and touching up the anti-corrosion protection where it has been affected by welding. Measured by the weight actually erected.",
 
 "Suministro y montaje de estructura de madera de techo formada por pares, correas y tirantes, con uniones mediante herrajes metálicos, y su tratamiento preservante. Incluye la selección de las piezas verificando escuadría y ausencia de defectos, el corte y labra, el izado y montaje con apeo provisional, la fijación con herrajes, la aplicación del preservante en todas las caras y muy especialmente en las testas y zonas de apoyo, y la comprobación de niveles y pendientes. Medido en superficie realmente ejecutada.":
-    "Supply and erection of a timber roof structure of rafters, purlins and ties, with metal connector joints, and its preservative treatment. Includes selecting the members and checking the section sizes and the absence of defects, cutting and shaping, hoisting and erecting with temporary supports, fixing with the hardware, applying preservative to every face and particularly to the end grain and the bearing areas, and checking levels and falls. Measured by the area actually constructed.",
+    "Supply and erection of a lumber roof structure of rafters, purlins and ties, with metal connector joints, and its preservative treatment. Includes selecting the members and checking the section sizes and the absence of defects, cutting and shaping, hoisting and erecting with temporary supports, fixing with the hardware, applying preservative to every face and particularly to the end grain and the bearing areas, and checking levels and falls. Measured by the area actually constructed.",
 
 "Estructura metálica de cerchas y correas para cubierta a dos aguas, con perfiles de acero, soldada y pintada. Incluye el armado en taller y el montaje en obra.":
     "Metal roof structure of trusses and purlins for a gable roof, in steel sections, welded and painted. Includes shop fabrication and erection on site.",
@@ -264,13 +264,13 @@ LOTE = {
     "Fixing steel purlins over the trusses to support the roof covering, welded or bolted. Includes setting out and fixing.",
 
 "Colocación de correas de madera sobre la estructura para apoyo de la cubierta, con fijación mecánica. Incluye el replanteo y la fijación.":
-    "Fixing timber purlins over the structure to support the roof covering, mechanically fixed. Includes setting out and fixing.",
+    "Fixing lumber purlins over the structure to support the roof covering, mechanically fixed. Includes setting out and fixing.",
 
 "Montaje de cercha metálica prefabricada para cubierta, con izado y fijación a los apoyos. Incluye el replanteo de apoyo y la fijación.":
     "Erection of a prefabricated metal roof truss, hoisted and fixed to its bearings. Includes setting out the bearings and fixing.",
 
 "Colocación de viga cumbrera de madera en la parte superior de la cubierta, para apoyo de los pares. Incluye el replanteo y la fijación.":
-    "Fixing a timber ridge beam at the top of the roof, to carry the rafters. Includes setting out and fixing.",
+    "Fixing a lumber ridge beam at the top of the roof, to carry the rafters. Includes setting out and fixing.",
 
 "Refuerzo de estructura de techo con angulares de acero atornillados, para rigidizar nudos o corregir deformaciones. Incluye la fijación.":
     "Strengthening a roof structure with bolted steel angles, to stiffen joints or correct deformation. Includes fixing.",
@@ -279,7 +279,7 @@ LOTE = {
     "Application of anti-corrosion paint to a metal roof structure, with cleaning beforehand and two coats. Includes preparation of the surface.",
 
 "Aplicación de preservante fungicida e insecticida sobre estructura de madera de techo, con dos manos. Incluye la limpieza y el tratamiento.":
-    "Application of fungicidal and insecticidal preservative to a timber roof structure, in two coats. Includes cleaning and treatment.",
+    "Application of fungicidal and insecticidal preservative to a lumber roof structure, in two coats. Includes cleaning and treatment.",
 
 "Apuntalamiento provisional de estructura de techo durante la reparación, con puntales metálicos y durmientes de reparto. Incluye el montaje y el desmontaje.":
     "Temporary shoring of a roof structure during repair, with steel shores and spreader beams. Includes erection and dismantling.",

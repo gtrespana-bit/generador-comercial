@@ -191,7 +191,7 @@ LOTE = {
 "Tabique de yeso laminado con placa de alta dureza doble.":
     "Plasterboard partition with two layers of high-impact board.",
 "Tabique de yeso laminado con bastidor de madera.":
-    "Plasterboard partition on a timber frame.",
+    "Plasterboard partition on a lumber frame.",
 
 # ── Otras particiones y mamparas ──────────────────────────────────────────
 "Pared de bloque de vidrio.":
@@ -201,13 +201,13 @@ LOTE = {
 "Tabique de paneles livianos prefabricados.":
     "Partition of lightweight prefabricated panels.",
 "División liviana de machihembrado de madera.":
-    "Lightweight tongued and grooved timber divider.",
+    "Lightweight tongued and grooved lumber divider.",
 "Tabique de placa de cemento con aislamiento.":
     "Cement board partition with insulation.",
 "Tabique de panel liviano prefabricado.":
     "Partition of a lightweight prefabricated panel.",
 "División de machihembrado de madera.":
-    "Tongued and grooved timber divider.",
+    "Tongued and grooved lumber divider.",
 "División de bloques de vidrio.":
     "Glass block divider.",
 "División liviana de placa de cemento.":
@@ -311,7 +311,7 @@ LOTE = {
 "Fachada ventilada de fibrocemento.":
     "Ventilated facade of fiber cement.",
 "Fachada ventilada de listones de madera.":
-    "Ventilated facade of timber battens.",
+    "Ventilated facade of lumber battens.",
 "Sistema de aislamiento térmico exterior (SATE).":
     "Exterior insulation and finish system (EIFS).",
 "SATE con acabado acrílico.":

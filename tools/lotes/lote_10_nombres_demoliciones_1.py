@@ -65,7 +65,7 @@ LOTE = {
 "Apertura de hueco en losa de concreto armado.":
     "Formation of an opening in a reinforced concrete slab.",
 "Desmontaje de estructura de madera.":
-    "Dismantling of a timber structure.",
+    "Dismantling of a lumber structure.",
 "Corte de concreto con disco de diamante.":
     "Cutting of concrete with a diamond blade.",
 "Demolición de escalera estructural de concreto armado.":
@@ -163,7 +163,7 @@ LOTE = {
 "Demolición de tabique de bloque de arcilla.":
     "Demolition of a clay block partition.",
 "Demolición de tabique de madera.":
-    "Demolition of a timber partition.",
+    "Demolition of a lumber partition.",
 "Demolición de tabique de panel liviano.":
     "Demolition of a lightweight panel partition.",
 "Apertura de rozas en pared para instalaciones.":
@@ -207,7 +207,7 @@ LOTE = {
 "Desmontaje de ventana de aluminio.":
     "Removal of an aluminum window.",
 "Desmontaje de ventana de madera.":
-    "Removal of a timber window.",
+    "Removal of a lumber window.",
 "Desmontaje de persiana enrollable.":
     "Removal of a roller shutter.",
 "Desmontaje de mosquitero.":

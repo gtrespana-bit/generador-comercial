@@ -183,7 +183,7 @@ LOTE = {
 "Ejecución de base para bomba de agua. Incluye el vaciado y los anclajes. Medido por unidad ejecutada.":
     "Construction of a base for a water pump. Includes pouring and the anchors. Measured per unit constructed.",
 "Ejecución de bancada de madera para equipo. Incluye la estructura de madera. Medido por unidad ejecutada.":
-    "Construction of a timber plinth for equipment. Includes the timber frame. Measured per unit constructed.",
+    "Construction of a lumber plinth for equipment. Includes the lumber frame. Measured per unit constructed.",
 "Suministro y colocación de soporte de calentador. Incluye el anclaje. Medido por unidad colocado.":
     "Supply and installation of a support bracket for a water heater. Includes anchoring. Measured per unit installed.",
 "Ejecución de base para sistema hidroneumático. Incluye el vaciado y los anclajes. Medido por unidad ejecutada.":

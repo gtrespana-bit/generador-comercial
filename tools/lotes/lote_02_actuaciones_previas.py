@@ -27,7 +27,7 @@ LOTE = {
     "Dust barrier in plastic sheeting with an access opening.",
 
 "Barrera provisional de confinamiento de polvo entre la zona de obra y las áreas en uso, formada por bastidor de listón de madera y lámina de polietileno tensada y sellada en todo su perímetro contra piso, paredes y techo, con cierre tipo cremallera para el paso del personal. Es la medida que permite trabajar en un ambiente mientras el resto del inmueble sigue habitado u operativo. Incluye el replanteo, el montaje del bastidor, la colocación y sellado de la lámina, el montaje del cierre de paso, el mantenimiento de la barrera durante la obra y su desmontaje y retiro al finalizar. Medido en superficie de barrera realmente ejecutada.":
-    "Temporary dust containment barrier between the work area and the areas still in use, made up of a timber batten frame with polyethylene sheeting stretched and sealed around its whole perimeter against floor, walls and ceiling, with a zip door for access. This is what allows work to go on in one room while the rest of the building stays occupied and operating. Includes setting out, erecting the frame, fitting and sealing the sheeting, fitting the access opening, maintaining the barrier while the works last, and dismantling and removing it at the end. Measured over the area of barrier actually erected.",
+    "Temporary dust containment barrier between the work area and the areas still in use, made up of a lumber batten frame with polyethylene sheeting stretched and sealed around its whole perimeter against floor, walls and ceiling, with a zip door for access. This is what allows work to go on in one room while the rest of the building stays occupied and operating. Includes setting out, erecting the frame, fitting and sealing the sheeting, fitting the access opening, maintaining the barrier while the works last, and dismantling and removing it at the end. Measured over the area of barrier actually erected.",
 
 "Cerramiento provisional de vano con lámina de madera.":
     "Temporary closure of an opening with a wood panel.",
@@ -39,7 +39,7 @@ LOTE = {
     "Temporary perimeter hoarding with warning mesh.",
 
 "Cerramiento provisional del perímetro de la zona de obra mediante malla plástica de señalización sostenida por parales metálicos o de madera, con señalización de advertencia. Delimita el área de trabajo e impide el paso de personas ajenas, requisito básico de seguridad cuando la obra convive con zonas en uso o da a espacios comunes. Incluye el replanteo, la colocación y arriostramiento de los parales, el tensado y fijación de la malla, la colocación de las señales de advertencia, el mantenimiento durante la obra y el desmontaje y retiro al finalizar. Medido en longitud realmente cerrada.":
-    "Temporary enclosure of the perimeter of the work area using plastic warning mesh on steel or timber posts, with warning signs. It defines the work area and keeps unauthorized people out, a basic safety requirement where the works share the site with areas still in use or open onto common areas. Includes setting out, placing and bracing the posts, stretching and fixing the mesh, putting up the warning signs, maintaining it while the works last, and dismantling and removing it at the end. Measured over the length actually enclosed.",
+    "Temporary enclosure of the perimeter of the work area using plastic warning mesh on steel or lumber posts, with warning signs. It defines the work area and keeps unauthorized people out, a basic safety requirement where the works share the site with areas still in use or open onto common areas. Includes setting out, placing and bracing the posts, stretching and fixing the mesh, putting up the warning signs, maintaining it while the works last, and dismantling and removing it at the end. Measured over the length actually enclosed.",
 
 "Protección de carpintería y aparatos que permanecen en obra.":
     "Protection of doors, windows and fixtures remaining on site.",
@@ -60,10 +60,10 @@ LOTE = {
     "Shoring of a beam with steel shores. Includes placing the shores and the bracing. Measured per linear meter shored.",
 
 "Apuntalamiento de muro con madera.":
-    "Shoring of a wall with timber.",
+    "Shoring of a wall with lumber.",
 
 "Apuntalamiento de muro con madera y puntales. Incluye la colocación del apuntalamiento. Medido por metro cuadrado apuntalado.":
-    "Shoring of a wall with timber and shores. Includes installing the shoring. Measured per square meter shored.",
+    "Shoring of a wall with lumber and shores. Includes installing the shoring. Measured per square meter shored.",
 
 "Apeo de cubierta o techo.":
     "Shoring of a roof.",
