@@ -47,6 +47,90 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
         "precios": "",
         "nota": "",
     },
+    # ── Mercados de habla inglesa ────────────────────────────────────────
+    # Cada uno con su moneda, su impuesto con el nombre que tiene allí y el
+    # vocabulario de obra que usa de verdad, no una traducción del español.
+    "US": {
+        "nombre": "the United States",
+        "en": "the United States",
+        "moneda_txt": "US dollars (USD)",
+        "fiscal_txt": "EIN (Employer Identification Number)",
+        "iva_txt": "sales tax",
+        "vocabulario": (
+            "concrete, drywall, suspended ceiling, baseboard and plumbing"
+        ),
+        "autoridad": "the Internal Revenue Service (IRS)",
+        "ciudad": "Miami",
+        "precios": "",
+        "nota": (
+            "Sales tax in the United States is set by each state, county and "
+            "city, so the rate is the one you configure, not a national one."
+        ),
+    },
+    "GB": {
+        "nombre": "the United Kingdom",
+        "en": "the United Kingdom",
+        "moneda_txt": "pounds sterling (GBP)",
+        "fiscal_txt": "VAT registration number",
+        "iva_txt": "20% VAT",
+        "vocabulario": (
+            "concrete, plasterboard, suspended ceiling, skirting and plumbing"
+        ),
+        "autoridad": "HM Revenue and Customs (HMRC)",
+        "ciudad": "London",
+        "precios": "",
+        "nota": (
+            "VAT on construction in the United Kingdom depends on the work: "
+            "the standard rate, the reduced rate and the zero rate all apply "
+            "to different jobs, so you set the one that fits each estimate."
+        ),
+    },
+    "AU": {
+        "nombre": "Australia",
+        "en": "Australia",
+        "moneda_txt": "Australian dollars (AUD)",
+        "fiscal_txt": "ABN (Australian Business Number)",
+        "iva_txt": "10% GST",
+        "vocabulario": (
+            "concrete, plasterboard, suspended ceiling, skirting and plumbing"
+        ),
+        "autoridad": "the Australian Taxation Office (ATO)",
+        "ciudad": "Sydney",
+        "precios": "",
+        "nota": "",
+    },
+    "CA": {
+        "nombre": "Canada",
+        "en": "Canada",
+        "moneda_txt": "Canadian dollars (CAD)",
+        "fiscal_txt": "Business Number (BN)",
+        "iva_txt": "GST/HST",
+        "vocabulario": (
+            "concrete, drywall, suspended ceiling, baseboard and plumbing"
+        ),
+        "autoridad": "the Canada Revenue Agency (CRA)",
+        "ciudad": "Toronto",
+        "precios": "",
+        "nota": (
+            "In Canada the federal GST and the provincial sales taxes combine "
+            "into GST or HST depending on the province, so you set the rate "
+            "that applies where you work."
+        ),
+    },
+    "IE": {
+        "nombre": "Ireland",
+        "en": "Ireland",
+        "moneda_txt": "euros (EUR)",
+        "fiscal_txt": "VAT number",
+        "iva_txt": "13.5% VAT",
+        "vocabulario": (
+            "concrete, plasterboard, suspended ceiling, skirting and plumbing"
+        ),
+        "autoridad": "the Revenue Commissioners",
+        "ciudad": "Dublin",
+        "precios": "",
+        "nota": "",
+    },
     "ES": {
         "nombre": "Spain",
         "en": "Spain",

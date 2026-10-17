@@ -38,10 +38,10 @@
     <ul>
       {% for p in paises %}
       <li>
-        <a href="/{{ p.codigo | lower }}/">{{ p.bandera }} {{ p.nombre }}</a>
-        — <a href="/{{ p.codigo | lower }}/software-presupuestos">software</a>,
-        <a href="/{{ p.codigo | lower }}/apu">APU</a>,
-        <a href="/{{ p.codigo | lower }}/remodelacion">remodeling</a>
+        <a href="{{ ruta_mercado(p.codigo) }}">{{ p.bandera }} {{ p.nombre }}</a>
+        — <a href="{{ ruta_mercado(p.codigo, 'software-presupuestos') }}">software</a>,
+        <a href="{{ ruta_mercado(p.codigo, 'apu') }}">APU</a>,
+        <a href="{{ ruta_mercado(p.codigo, 'remodelacion') }}">remodeling</a>
       </li>
       {% endfor %}
     </ul>

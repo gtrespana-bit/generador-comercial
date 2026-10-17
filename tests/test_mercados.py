@@ -632,3 +632,54 @@ def test_el_sitemap_incluye_los_mercados_ingleses():
         assert ruta in texto, ruta
     assert 'hreflang="en-US"' in texto
     assert 'hreflang="es-US"' not in texto
+
+
+def test_cada_mercado_tiene_su_nombre_en_su_propia_lengua():
+    """«the United States», no «Estados Unidos», en una página en inglés."""
+    from app.paises import PAIS_GENERICO, PAISES
+
+    for codigo, pais in PAISES.items():
+        assert pais.get("nombre_en"), f"{codigo} sin nombre_en"
+        if pais["idioma"] == "en":
+            assert pais["nombre_en"] != pais["nombre"], codigo
+    assert PAIS_GENERICO["nombre_en"] == "Spain and Latin America"
+    assert PAISES["US"]["nombre_en"] == "the United States"
+    assert PAISES["GB"]["nombre_en"] == "the United Kingdom"
+
+
+def test_la_landing_inglesa_nombra_al_mercado_en_ingles():
+    """El H1 no puede decir «Estados Unidos» en una página en-US."""
+    import re
+
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    for ruta, nombre in (("/en-us/", "the United States"),
+                         ("/en-gb/", "the United Kingdom"),
+                         ("/en-ie/", "Ireland")):
+        with TestClient(app, base_url="https://cotizat.test") as c:
+            r = c.get(ruta, follow_redirects=True)
+        m = re.search(r"<h1[^>]*>(.*?)</h1>", r.text, re.S)
+        assert m is not None, ruta
+        assert nombre in re.sub(r"<[^>]+>", "", m.group(1)), ruta
+        # Ni rastro del nombre en español
+        from app.paises import PAISES
+
+        codigo = ruta[4:6].upper()
+        assert PAISES[codigo]["nombre"] not in re.sub(r"<[^>]+>", "", m.group(1))
+
+
+def test_los_enlaces_de_mercado_apuntan_a_la_canonica():
+    """El selector no puede enlazar /us/ y encadenar un 301."""
+    import re
+
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app, base_url="https://cotizat.test") as c:
+        r = c.get("/en-us/", follow_redirects=True)
+    for cc in ("us", "gb", "au", "ca", "ie"):
+        assert not re.search(rf'href="/{cc}/"', r.text), f"/{cc}/ enlazado"
+        assert f"/en-{cc}/" in r.text, f"/en-{cc}/ no enlazado"

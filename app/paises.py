@@ -24,6 +24,7 @@ PAISES: dict[str, dict] = {
     "VE": {
         "codigo": "VE",
         "nombre": "Venezuela",
+        "nombre_en": "Venezuela",
         "gentilicio": "venezolano",
         "bandera": "🇻🇪",
         "moneda": "USD",
@@ -49,6 +50,7 @@ PAISES: dict[str, dict] = {
     "CO": {
         "codigo": "CO",
         "nombre": "Colombia",
+        "nombre_en": "Colombia",
         "gentilicio": "colombiano",
         "bandera": "🇨🇴",
         "moneda": "COP",
@@ -74,6 +76,7 @@ PAISES: dict[str, dict] = {
     "MX": {
         "codigo": "MX",
         "nombre": "México",
+        "nombre_en": "Mexico",
         "gentilicio": "mexicano",
         "bandera": "🇲🇽",
         "moneda": "MXN",
@@ -99,6 +102,7 @@ PAISES: dict[str, dict] = {
     "PE": {
         "codigo": "PE",
         "nombre": "Perú",
+        "nombre_en": "Peru",
         "gentilicio": "peruano",
         "bandera": "🇵🇪",
         "moneda": "PEN",
@@ -124,6 +128,7 @@ PAISES: dict[str, dict] = {
     "CL": {
         "codigo": "CL",
         "nombre": "Chile",
+        "nombre_en": "Chile",
         "gentilicio": "chileno",
         "bandera": "🇨🇱",
         "moneda": "CLP",
@@ -149,6 +154,7 @@ PAISES: dict[str, dict] = {
     "AR": {
         "codigo": "AR",
         "nombre": "Argentina",
+        "nombre_en": "Argentina",
         "gentilicio": "argentino",
         "bandera": "🇦🇷",
         "moneda": "ARS",
@@ -174,6 +180,7 @@ PAISES: dict[str, dict] = {
     "EC": {
         "codigo": "EC",
         "nombre": "Ecuador",
+        "nombre_en": "Ecuador",
         "gentilicio": "ecuatoriano",
         "bandera": "🇪🇨",
         "moneda": "USD",
@@ -199,6 +206,7 @@ PAISES: dict[str, dict] = {
     "DO": {
         "codigo": "DO",
         "nombre": "República Dominicana",
+        "nombre_en": "the Dominican Republic",
         "gentilicio": "dominicano",
         "bandera": "🇩🇴",
         "moneda": "DOP",
@@ -224,6 +232,7 @@ PAISES: dict[str, dict] = {
     "UY": {
         "codigo": "UY",
         "nombre": "Uruguay",
+        "nombre_en": "Uruguay",
         "gentilicio": "uruguayo",
         "bandera": "🇺🇾",
         "moneda": "UYU",
@@ -249,6 +258,7 @@ PAISES: dict[str, dict] = {
     "PY": {
         "codigo": "PY",
         "nombre": "Paraguay",
+        "nombre_en": "Paraguay",
         "gentilicio": "paraguayo",
         "bandera": "🇵🇾",
         "moneda": "PYG",
@@ -274,6 +284,7 @@ PAISES: dict[str, dict] = {
     "BO": {
         "codigo": "BO",
         "nombre": "Bolivia",
+        "nombre_en": "Bolivia",
         "gentilicio": "boliviano",
         "bandera": "🇧🇴",
         "moneda": "BOB",
@@ -299,6 +310,7 @@ PAISES: dict[str, dict] = {
     "PA": {
         "codigo": "PA",
         "nombre": "Panamá",
+        "nombre_en": "Panama",
         "gentilicio": "panameño",
         "bandera": "🇵🇦",
         "moneda": "USD",
@@ -324,6 +336,7 @@ PAISES: dict[str, dict] = {
     "CR": {
         "codigo": "CR",
         "nombre": "Costa Rica",
+        "nombre_en": "Costa Rica",
         "gentilicio": "costarricense",
         "bandera": "🇨🇷",
         "moneda": "CRC",
@@ -349,6 +362,7 @@ PAISES: dict[str, dict] = {
     "GT": {
         "codigo": "GT",
         "nombre": "Guatemala",
+        "nombre_en": "Guatemala",
         "gentilicio": "guatemalteco",
         "bandera": "🇬🇹",
         "moneda": "GTQ",
@@ -374,6 +388,7 @@ PAISES: dict[str, dict] = {
     "HN": {
         "codigo": "HN",
         "nombre": "Honduras",
+        "nombre_en": "Honduras",
         "gentilicio": "hondureño",
         "bandera": "🇭🇳",
         "moneda": "HNL",
@@ -399,6 +414,7 @@ PAISES: dict[str, dict] = {
     "SV": {
         "codigo": "SV",
         "nombre": "El Salvador",
+        "nombre_en": "El Salvador",
         "gentilicio": "salvadoreño",
         "bandera": "🇸🇻",
         "moneda": "USD",
@@ -424,6 +440,7 @@ PAISES: dict[str, dict] = {
     "NI": {
         "codigo": "NI",
         "nombre": "Nicaragua",
+        "nombre_en": "Nicaragua",
         "gentilicio": "nicaragüense",
         "bandera": "🇳🇮",
         "moneda": "NIO",
@@ -453,6 +470,7 @@ PAISES: dict[str, dict] = {
     "ES": {
         "codigo": "ES",
         "nombre": "España",
+        "nombre_en": "Spain",
         "gentilicio": "español",
         "bandera": "🇪🇸",
         "moneda": "EUR",
@@ -478,6 +496,7 @@ PAISES: dict[str, dict] = {
     "US": {
         "codigo": "US",
         "nombre": "Estados Unidos",
+        "nombre_en": "the United States",
         "gentilicio": "estadounidense",
         "bandera": "🇺🇸",
         "moneda": "USD",
@@ -503,6 +522,7 @@ PAISES: dict[str, dict] = {
     "GB": {
         "codigo": "GB",
         "nombre": "Reino Unido",
+        "nombre_en": "the United Kingdom",
         "gentilicio": "británico",
         "bandera": "🇬🇧",
         "moneda": "GBP",
@@ -528,6 +548,7 @@ PAISES: dict[str, dict] = {
     "AU": {
         "codigo": "AU",
         "nombre": "Australia",
+        "nombre_en": "Australia",
         "gentilicio": "australiano",
         "bandera": "🇦🇺",
         "moneda": "AUD",
@@ -553,6 +574,7 @@ PAISES: dict[str, dict] = {
     "CA": {
         "codigo": "CA",
         "nombre": "Canadá",
+        "nombre_en": "Canada",
         "gentilicio": "canadiense",
         "bandera": "🇨🇦",
         "moneda": "CAD",
@@ -578,6 +600,7 @@ PAISES: dict[str, dict] = {
     "IE": {
         "codigo": "IE",
         "nombre": "Irlanda",
+        "nombre_en": "Ireland",
         "gentilicio": "irlandés",
         "bandera": "🇮🇪",
         "moneda": "EUR",
@@ -626,6 +649,7 @@ ORDEN_SELECTOR = [
 PAIS_GENERICO: dict = {
     "codigo": "",
     "nombre": "España y Latinoamérica",
+    "nombre_en": "Spain and Latin America",
     "gentilicio": "iberoamericano",
     "bandera": "🌎",
     "moneda": "USD",

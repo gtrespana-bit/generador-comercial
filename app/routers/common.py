@@ -300,6 +300,11 @@ try:
     from ..i18n import mensaje as _mensaje
 
     TEMPLATES.env.globals["ruta_en_idioma"] = _ruta_idioma
+    # Ruta canónica de un mercado: /mx/ o /en-us/. Las plantillas la usan
+    # para enlazar cada mercado sin encadenar un 301 por el camino corto.
+    from ..seo import ruta_mercado as _ruta_mercado
+
+    TEMPLATES.env.globals["ruta_mercado"] = _ruta_mercado
     TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
     TEMPLATES.env.globals["mensaje"] = _mensaje
     TEMPLATES.env.filters["mensaje"] = lambda texto, idioma=None: _mensaje(texto, idioma)

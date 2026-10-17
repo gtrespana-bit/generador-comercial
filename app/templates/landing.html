@@ -80,7 +80,7 @@
       <div class="hero-mercados" aria-label="Mercados disponibles">
         {% set destacados = paises[:6] %}
         {% for p in destacados %}
-        <a class="hero-mercado" href="/{{ p.codigo | lower }}/" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
+        <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
           <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · IVA {{ p.iva }}%</small>
         </a>
         {% endfor %}
@@ -245,7 +245,7 @@
       <span role="columnheader">Habla tu obra</span>
     </div>
     {% for p in paises[:6] %}
-    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="/{{ p.codigo | lower }}/">
+    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}">
       <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre }}</span>
       <span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · IVA {{ p.iva }}%</span>
       <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
@@ -973,8 +973,8 @@
     · <a href="/guia/analisis-precios-unitarios">Qué es un APU</a>
     · <a href="/guia/presupuesto-remodelacion">Presupuestar una reforma</a>
     {% if pais_codigo %}
-    · <a href="/{{ pais_codigo | lower }}/software-presupuestos">Software en {{ seo.nombre_pais }}</a>
-    · <a href="/{{ pais_codigo | lower }}/apu">APU en {{ seo.nombre_pais }}</a>
+    · <a href="{{ ruta_mercado(pais_codigo, 'software-presupuestos') }}">Software en {{ seo.nombre_pais }}</a>
+    · <a href="{{ ruta_mercado(pais_codigo, 'apu') }}">APU en {{ seo.nombre_pais }}</a>
     {% if seo.articulo %}
     · <a href="/guia/{{ seo.articulo.slug }}">{{ seo.articulo.h1 }}</a>
     {% endif %}

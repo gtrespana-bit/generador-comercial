@@ -62,19 +62,23 @@
   <div class="hero-int">
     <div class="hero-copy">
       {% if pais_actual %}
-      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Commercial system for {{ pais_actual.nombre }} · Construction and remodeling · own price catalog</span>
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Commercial system for {{ pais_actual.nombre_en }} · Construction and remodeling · own price catalog</span>
       {% else %}
       <span class="hero-kicker" id="hero-kicker">🇪🇸 Spain · 🌎 Latin America — Construction estimating and remodeling system · price catalog by country</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} free days · no credit card required</span>
       {% endif %}
+      {% if pais_actual %}
+      <h1>Construction estimating software for {{ pais_actual.nombre_en }}: <span class="hero-hl">profit, time and PDF</span>.</h1>
+      {% else %}
       <h1>Construction estimating software: <span class="hero-hl">profit, time and PDF</span>.</h1>
+      {% endif %}
       <p class="sub">Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF. No Excel, no copy and paste.</p>
       <div class="hero-mercados" aria-label="Available markets">
         {% set destacados = paises[:6] %}
         {% for p in destacados %}
-        <a class="hero-mercado" href="/{{ p.codigo | lower }}/" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
+        <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
           <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · VAT {{ p.iva }}%</small>
         </a>
         {% endfor %}
@@ -239,7 +243,7 @@
       <span role="columnheader">Speaks your trade</span>
     </div>
     {% for p in paises[:6] %}
-    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="/{{ p.codigo | lower }}/">
+    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}">
       <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre }}</span>
 <span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · VAT {{ p.iva }}%</span>
       <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
@@ -701,7 +705,7 @@
   <div class="banner-int">
     <div class="banner-texto">
       {% if pais_actual %}
-      <h2 id="banner-h2">The most complete catalog for estimating in {{ pais_actual.nombre }}.</h2>
+      <h2 id="banner-h2">The most complete catalog for estimating in {{ pais_actual.nombre_en }}.</h2>
       <p id="banner-p">{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} resource prices ({{ catalogo().materiales }} materials, {{ catalogo().mano_obra }} labor, {{ catalogo().equipo }} equipment), organized in {{ catalogo().capitulos }} sections and {{ catalogo().subcapitulos }} subsections. {{ catalogo().lineas_descomp_txt }} resource and productivity lines ready to use, contrasted with the {{ pais_actual.mercado }} market and under continuous review. You do not start from zero: you arrive with a real price base of your own.</p>
       {% else %}
       <h2 id="banner-h2">The most complete catalog for estimating in Spain and Latin America.</h2>
