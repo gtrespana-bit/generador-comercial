@@ -159,6 +159,10 @@ _VOCABULARIO_GB: dict[str, str] = {
     "timber shutter": "louvred shutter",  # persiana de madera
     "walk-in cooler": "cold room",        # cámara frigorífica
     "wood-boring insects": "woodworm",    # carcoma
+    "sidewalk": "pavement",               # acera
+    "parking lot": "car park",            # estacionamiento
+    "insect screen": "fly screen",        # mosquitero
+    "scarifying": "scabbling",            # repicado de concreto
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
@@ -175,6 +179,39 @@ _VARIANTES: dict[str, dict[str, str]] = {
     "AU": {**_VOCABULARIO_AU, **_ORTOGRAFIA_GB},
     "CA": dict(_ORTOGRAFIA_GB),   # vocabulario estadounidense, ortografía británica
 }
+
+
+# Palabras que empiezan por vocal escrita pero suenan a consonante, así que
+# piden «a» y no «an». Sin esta lista, «a unit» saldría como «an unit».
+_CONSONANTE_ESCRITA_COMO_VOCAL = frozenset({
+    "unit", "units", "user", "users", "utility", "utilities", "uniform",
+    "union", "unique", "one", "once", "euro", "euros", "european", "used",
+    "useful", "useless", "uv", "uplift",
+})
+
+
+def _fijar_articulos(texto: str) -> str:
+    """Revisa «a» y «an» después de sustituir vocabulario.
+
+    Cambiar «insect screen» por «fly screen» deja el artículo anterior
+    colgado: «removal of an fly screen». Ninguna tabla de términos puede
+    preverlo, así que se corrige al final mirando cómo empieza la palabra
+    siguiente, no cómo empezaba la que había antes.
+    """
+    def _ajustar(m) -> str:
+        articulo, hueco, palabra = m.group(1), m.group(2), m.group(3)
+        suena_a_vocal = (
+            palabra[:1].lower() in "aeiou"
+            and palabra.lower() not in _CONSONANTE_ESCRITA_COMO_VOCAL
+        )
+        correcto = "an" if suena_a_vocal else "a"
+        if articulo.isupper():
+            correcto = correcto.upper()
+        elif articulo[:1].isupper():
+            correcto = correcto.capitalize()
+        return correcto + hueco + palabra
+
+    return re.compile(r"\b(a|an|A|An|AN)(\s+)(\w+)").sub(_ajustar, texto)
 
 
 def _reemplazar(texto: str, tabla: dict[str, str]) -> str:
@@ -200,7 +237,7 @@ def _reemplazar(texto: str, tabla: dict[str, str]) -> str:
             return salida + sufijo
 
         texto = patron.sub(_sustituir, texto)
-    return texto
+    return _fijar_articulos(texto)
 
 
 def variante_de(mercado) -> str:
