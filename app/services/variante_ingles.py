@@ -222,6 +222,12 @@ _VOCABULARIO_GB: dict[str, str] = {
     "cast-in-place pile": "bored pile",           # pilote vaciado en sitio
     "drilled shaft": "bored pile",                # pilote perforado
     "stirrups": "links",                          # estribos
+    "tempered glass": "toughened glass",           # vidrio templado
+    "overhead door": "up-and-over door",           # portón levadizo de garaje
+    "strike plate": "striking plate",              # cajetín de la cerradura
+    "door casing": "architraves",                  # molduras de remate
+    "glazed transom": "fanlight",                  # dintel acristalado
+    "peephole": "door viewer",                     # mirilla
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
