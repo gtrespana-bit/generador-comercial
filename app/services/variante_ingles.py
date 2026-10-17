@@ -153,7 +153,6 @@ _VOCABULARIO_GB: dict[str, str] = {
     "mechanical room": "plant room",      # cuarto técnico
     "home theater": "home cinema",        # cine en casa
     "grounding electrode": "earth electrode",
-    "grounding": "earthing",              # puesta a tierra
     "semi-gloss": "mid-sheen",            # pintura semibrillo
     "exterior wood": "exterior timber",   # madera exterior
     "interior wood": "interior timber",   # madera interior
@@ -168,7 +167,6 @@ _VOCABULARIO_GB: dict[str, str] = {
     "exterior insulation and finish system":
         "external thermal insulation composite system",
     "bond beam block": "channel block",   # bloque canal
-    "face brick": "facing brick",         # ladrillo visto
     "wood lintel": "timber lintel",       # dintel de madera
     "overhead garage door": "up-and-over garage door",
     "awning window": "top-hung casement window",
@@ -207,6 +205,15 @@ _VOCABULARIO_GB: dict[str, str] = {
     "brush cutter": "strimmer",                   # desbrozadora
     "occupancy sensor": "presence detector",      # sensor de presencia
     "External insulation and finish system": "External thermal insulation composite system",
+    "base cabinet": "base unit",           # mueble bajo de cocina
+    "wall cabinet": "wall unit",           # mueble alto de cocina
+    "backsplash": "splashback",            # salpicadero
+    "medicine cabinet": "bathroom cabinet", # botiquín
+    "overmount": "sit-on",                 # lavamanos sobrepuesto
+    "closet": "wardrobe",                  # closet empotrado
+    "edge banding": "edging tape",         # cantos aplicados
+    "drawer slides": "drawer runners",     # correderas
+    "shims": "packers",                    # calzos
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
