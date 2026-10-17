@@ -92,7 +92,7 @@ LOTE = {
     "Bedding and fixing a kitchen countertop in mortar. Includes bedding and leveling. Measured per unit fixed.",
 "Recibido de soporte y equipo de aire acondicionado. Incluye el anclaje del soporte. Medido por unidad recibida.":
     "Fixing the support bracket and air conditioning unit. Includes anchoring the bracket. Measured per unit fixed.",
-"Recibido de barra de apoyo de accesibilidad. Incluye el anclaje de la barra. Measured per unit fixed.":
+"Recibido de barra de apoyo de accesibilidad. Incluye el anclaje de la barra. Medido por unidad recibida.":
     "Fixing an accessibility grab bar. Includes anchoring the bar. Measured per unit fixed.",
 "Recibido de espejo con fijación. Incluye la fijación del espejo. Medido por unidad recibida.":
     "Fixing a mirror. Includes fixing the mirror. Measured per unit fixed.",

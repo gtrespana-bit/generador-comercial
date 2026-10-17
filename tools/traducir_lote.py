@@ -47,6 +47,16 @@ CATALOGO = RAIZ / "basedatos_partidas" / "salida" / "catalogo_partidas.json"
 CAMPOS = ("nombre", "descripcion", "categoria", "subcategoria", "apartado")
 
 
+# Fragmentos que delatan inglés colado dentro de una cadena de origen en
+# español. Son los cierres y las fórmulas que se repiten al final de casi
+# todas las descripciones del catálogo, que es justo donde se cuela el dedazo.
+_FRAGMENTOS_INGLES = (
+    "Measured per", "Includes ", " per square meter", " per meter",
+    " per unit", " per set", " per point", " per hour", " per month",
+    "Supply and installation", "Installation of the", " by the ",
+)
+
+
 def cadenas_del_catalogo() -> set[str]:
     cat = json.loads(CATALOGO.read_text(encoding="utf-8"))
     return {_nfc(p[c]) for p in cat for c in CAMPOS
@@ -80,6 +90,25 @@ def cargar_traducciones(lote: dict[str, str], mercado: str = "EN",
     datos.setdefault("cadenas", {})
     tabla: dict[str, str] = datos["cadenas"]
     en_catalogo = cadenas_del_catalogo()
+
+    # Un descuido al teclear un lote cuela a veces un fragmento en inglés
+    # dentro de la cadena española («Medido por…» escrito ya como «Measured
+    # per…»). La cadena resultante no está en el catálogo, así que solo se
+    # detectaba después, como traducción huérfana. Se comprueba aquí, que es
+    # donde todavía se sabe de qué lote viene.
+    con_ingles = []
+    for original in lote:
+        for frag in _FRAGMENTOS_INGLES:
+            if frag in original:
+                con_ingles.append((original, frag))
+                break
+    if con_ingles:
+        print(f"AVISO: {len(con_ingles)} cadenas de origen traen inglés dentro:")
+        for texto, frag in con_ingles[:5]:
+            i = texto.find(frag)
+            print(f'   ...{texto[max(0, i - 45):i + 45]}...   («{frag}»)')
+        print("\nNo se escribe nada. Corrígelas y vuelve a cargar.")
+        return 0
 
     nuevas, chocan, huerfanas, vacias = [], [], [], []
     for original, en in lote.items():
