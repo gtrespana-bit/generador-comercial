@@ -129,7 +129,12 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
         "autoridad": "the Revenue Commissioners",
         "ciudad": "Dublin",
         "precios": "",
-        "nota": "",
+        "nota": (
+            "Construction services in Ireland are charged at the reduced 13.5% "
+            "rate, but a job where materials come to more than two thirds of "
+            "the VAT-exclusive price is standard-rated at 23% on the whole "
+            "amount, so you set the one that fits each estimate."
+        ),
     },
     "ES": {
         "nombre": "Spain",
@@ -433,17 +438,6 @@ def _faq_landing(codigo: str) -> list[dict[str, str]]:
                 ),
             }
         )
-    elif d["nota"]:
-        faq.append(
-            {
-                "q": f"Can I estimate in hard currency and show the local-currency equivalent?",
-                "a": (
-                    f"Yes. You work in {d['moneda_txt']} and every estimate locks the "
-                    f"reference exchange rate it was priced with, so a PDF you sent last "
-                    f"month does not change when the rate moves."
-                ),
-            }
-        )
     else:
         faq.append(
             {
@@ -455,6 +449,26 @@ def _faq_landing(codigo: str) -> list[dict[str, str]]:
                 ),
             }
         )
+        if d["nota"]:
+            # Mercados sin una alícuota única (Estados Unidos, Canadá) o cuya
+            # tasa de obra no es la general (Reino Unido, Irlanda). La nota
+            # explica al visitante por qué no se muestra una cifra cerrada.
+            faq.append(
+                {
+                    "q": f"Which tax rate should I apply on estimates in {nombre}?",
+                    "a": d["nota"],
+                }
+            )
+            faq.append(
+                {
+                    "q": f"Can I estimate in hard currency and show the local-currency equivalent?",
+                    "a": (
+                        f"Yes. You work in {d['moneda_txt']} and every estimate locks the "
+                        f"reference exchange rate it was priced with, so a PDF you sent last "
+                        f"month does not change when the rate moves."
+                    ),
+                }
+            )
 
     faq.append(
         {

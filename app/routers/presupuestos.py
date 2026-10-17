@@ -2348,7 +2348,8 @@ def enviar_presupuesto_email_web(
             cliente_nombre=presupuesto.cliente.nombre,
             presupuesto_numero=presupuesto.numero,
             presupuesto_titulo=presupuesto.titulo,
-            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda),
+            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda,
+                                      mercado=_mercado(request)),
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,
@@ -3430,6 +3431,17 @@ def _idioma(request) -> str:
     """
     lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
     return str(lang)
+
+
+def _mercado(request) -> dict:
+    """Mercado del documento: separadores, orden de la fecha, impuesto.
+
+    Mismo criterio que en el PDF: el país manda sobre la lengua, porque
+    México y España escriben español los dos y no separan los miles igual.
+    """
+    from ..paises import resolver_mercado
+
+    return resolver_mercado(_idioma(request))
 
 
 @router.get("/facturas/{factura_id}", response_class=HTMLResponse)

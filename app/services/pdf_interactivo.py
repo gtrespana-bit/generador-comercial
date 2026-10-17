@@ -382,6 +382,8 @@ class ContextoInteractivo:
 
     def __init__(self, presupuesto, moneda, color_texto, color_acento,
                  etiqueta_total="PRESUPUESTO TOTAL", lang="es"):
+        from ..paises import resolver_mercado
+
         self.presupuesto = presupuesto
         self.moneda = moneda
         self.simbolo = str(moneda or "USD").upper()
@@ -389,6 +391,12 @@ class ContextoInteractivo:
         self.color_acento = color_acento
         self.etiqueta_total = etiqueta_total
         self.lang = lang
+        # Separadores del mercado: el PDF interactivo recalcula importes en
+        # JavaScript, así que el JS tiene que escribirlos igual que el
+        # Python o el cliente vería cambiar el formato al hacer clic.
+        self.mercado = resolver_mercado(lang)
+        self.sep_miles = self.mercado.get("separador_miles") or ","
+        self.sep_dec = self.mercado.get("separador_decimal") or "."
 
         # partidas: id → {cantidad, base, precios[], capitulo, cuenta}
         self.partidas = {}
@@ -673,13 +681,13 @@ class ContextoInteractivo:
     # -- textos iniciales (idénticos a los que produce el JavaScript) -----
     def _monto(self, valor):
         from ..utils import fmt_num
-        return "%s %s" % (fmt_num(valor), self.simbolo)
+        return "%s %s" % (fmt_num(valor, mercado=self.mercado), self.simbolo)
 
     def txt_precio_unitario(self, partida):
         from ..utils import fmt_num
         pid = self.id_partida(partida)
         unidad = self.partidas[pid]["unidades"][self._sel(pid)]
-        return "%s %s%s" % (fmt_num(self.pu(pid)), self.simbolo,
+        return "%s %s%s" % (fmt_num(self.pu(pid), mercado=self.mercado), self.simbolo,
                             ("/" + unidad) if unidad else "")
 
     def txt_importe(self, partida):
@@ -762,6 +770,8 @@ class ContextoInteractivo:
             "parametros": self.parametros,
             "fijos": self.fijos,
             "simbolo": self.simbolo,
+            "sep_miles": self.sep_miles,
+            "sep_dec": self.sep_dec,
         }
         return _PLANTILLA_JS.replace("__DATOS__", json.dumps(datos, ensure_ascii=True))
 
@@ -825,7 +835,10 @@ function R2(x) {
   return s * Math.floor(Math.abs(x) * 100 + 0.5 + 1e-9) / 100;
 }
 
-/* 1234567.89 -> "1.234.567,89" (mismo formato que utils.fmt_num). */
+/* Formato del mercado: "1.234,56" en España, "1,234.56" en México.
+   Mismo criterio que utils.fmt_num, con los separadores inyectados. */
+function SEP_MILES() { return PRESU.sep_miles || ","; }
+function SEP_DEC()   { return PRESU.sep_dec   || "."; }
 function NUM(x) {
   x = R2(x);
   var neg = x < 0;
@@ -833,10 +846,10 @@ function NUM(x) {
   var p = s.split(".");
   var ent = p[0], out = "";
   while (ent.length > 3) {
-    out = "." + ent.substring(ent.length - 3) + out;
+    out = SEP_MILES() + ent.substring(ent.length - 3) + out;
     ent = ent.substring(0, ent.length - 3);
   }
-  return (neg ? "-" : "") + ent + out + "," + p[1];
+  return (neg ? "-" : "") + ent + out + SEP_DEC() + p[1];
 }
 
 function MONTO(x) { return NUM(x) + " " + PRESU.simbolo; }
@@ -897,9 +910,9 @@ function CAP_TXT(cid) { return MONTO(CAP(cid)); }
 /* Peso del capítulo sobre el subtotal incluido, en tanto por ciento. */
 function PESO_TXT(cid) {
   var total = TOTALES().subtotal;
-  if (!total) return "0,0 %";
+  if (!total) return "0" + SEP_DEC() + "0 %";
   var pct = CAP(cid) * 100 / total;
-  return (Math.round(pct * 10) / 10).toFixed(1).replace(".", ",") + " %";
+  return (Math.round(pct * 10) / 10).toFixed(1).replace(".", SEP_DEC()) + " %";
 }
 
 /* Totales del documento, replicando services/calculations.py. */
@@ -980,6 +993,6 @@ function DESG_TXT(clave) {
   var t = TOTALES();
   var v = (clave == "obra") ? t.obra : t.productos;
   var pct = t.base > 0 ? Math.round(v * 100 / t.base * 10) / 10 : 0;
-  return MONTO(v) + "  (" + pct.toFixed(1).replace(".", ",") + " %)";
+  return MONTO(v) + "  (" + pct.toFixed(1).replace(".", SEP_DEC()) + " %)";
 }
 """

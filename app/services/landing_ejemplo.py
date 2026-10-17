@@ -26,7 +26,7 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-from ..utils import decimales_moneda, fmt_num, simbolo_moneda
+from ..utils import decimales_moneda, fmt_num, simbolo_moneda, unir_precio_u
 from .tasa import TASAS_ACTUALIZADAS, tasa_sugerida
 from .traduccion import traducir
 from ..paises import es_ingles
@@ -249,16 +249,17 @@ def _apu_base() -> dict | None:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _fmt_cant(v: float, idioma: str = "es") -> str:
-    return str(int(v)) if float(v) == int(v) else fmt_num(v, 2, idioma)
+def _fmt_cant(v: float, mercado=None) -> str:
+    return str(int(v)) if float(v) == int(v) else fmt_num(v, 2, mercado=mercado)
 
 
-def _monto(valor: float, moneda: str, dec: int, idioma: str = "es") -> str:
-    return f"{fmt_num(valor, dec, idioma)} {simbolo_moneda(moneda)}"
+def _monto(valor: float, moneda: str, dec: int, mercado=None) -> str:
+    return f"{fmt_num(valor, dec, mercado=mercado)} {simbolo_moneda(moneda)}"
 
 
-def _precio_u(valor: float, moneda: str, unidad: str, idioma: str = "es") -> str:
-    return f"{fmt_num(valor, 2, idioma)} {simbolo_moneda(moneda)}/{unidad}"
+def _precio_u(valor: float, moneda: str, unidad: str, mercado=None) -> str:
+    simbolo = unir_precio_u(simbolo_moneda(moneda), unidad)
+    return f"{fmt_num(valor, 2, mercado=mercado)} {simbolo}"
 
 
 def _es_ingles(idioma: str | None) -> bool:
@@ -298,12 +299,22 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
     Nunca lanza: si algo falla (moneda sin tasa, catálogo ausente) degrada a
     USD genérico antes que romper la página pública.
     """
-    from ..paises import PAIS_GENERICO, PAISES
+    from ..paises import PAIS_GENERICO, PAISES, resolver_mercado
 
     en = _es_ingles(idioma)
     pais = PAISES.get(str(codigo_pais or "").strip().upper()) if codigo_pais else None
     if pais is None:
         pais = PAIS_GENERICO
+    # Contenido y formato son dos cosas distintas cuando el visitante todavía
+    # no eligió país: el contenido (moneda, IVA, catálogo, empresa) sigue
+    # siendo el genérico, pero los separadores y la fecha los fija el idioma,
+    # porque el genérico es hispano y una landing en inglés acabaría
+    # mostrando «180,00 US$». «en» resuelve a Estados Unidos: punto decimal.
+    mercado_fmt = (
+        pais
+        if pais is not PAIS_GENERICO
+        else (resolver_mercado(idioma) if en else PAIS_GENERICO)
+    )
     codigo = pais.get("codigo") or ""
 
     moneda = pais.get("moneda") or "USD"
@@ -321,10 +332,10 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         etiqueta_impuesto = pais.get("etiqueta_impuesto_en") or etiqueta_impuesto
 
     def monto(v: float) -> str:
-        return _monto(v, moneda, dec, idioma)
+        return _monto(v, moneda, dec, mercado_fmt)
 
     def precio_u(v: float, unidad: str) -> str:
-        return _precio_u(v, moneda, unidad, idioma)
+        return _precio_u(v, moneda, unidad, mercado_fmt)
 
     # ---- Capítulos y partidas -------------------------------------------------
     caps = []
@@ -343,7 +354,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
             filas.append(
                 {
                     "nombre": _rotulo(nombre, en=en, codigo=codigo),
-                    "cant": f"{_fmt_cant(cantidad, idioma)} {_unidad_rotulo(unidad, en=en)}",
+                    "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
                     "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
                     "importe": monto(importe),
                     "coste": monto(coste),
@@ -377,7 +388,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
             {
                 "nombre": _rotulo(nombre, en=en, codigo=codigo),
                 "img": img,
-                "cant": f"{_fmt_cant(cantidad, idioma)} {_unidad_rotulo(unidad, en=en)}",
+                "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
                 "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
                 "importe": monto(importe),
             }
@@ -407,7 +418,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
                     ),
                     "nombre": _rotulo(f["nombre"], en=en, codigo=codigo),
                     "rend": (
-                        f"{fmt_num(f['rendimiento'], 2, idioma)} "
+                        f"{fmt_num(f['rendimiento'], 2, mercado=mercado_fmt)} "
                         f"{_unidad_rotulo(f['unidad_rend'], en=en)}"
                     ),
                     "precio": precio_u(precio, _unidad_rotulo(f["unidad_rend"], en=en)),
@@ -437,17 +448,17 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
             "mano_obra": monto(grupos["mano_obra"]),
             "equipo": monto(grupos["maquinaria"]),
             "directo": monto(directo),
-            "comp_pct": fmt_num(base["complementarios_pct"], 0, idioma),
+            "comp_pct": fmt_num(base["complementarios_pct"], 0, mercado=mercado_fmt),
             "comp": monto(comp),
             "coste": monto(coste),
             "margen": f"+{int(round(margen_apu * 100))} %",
             "precio": precio_u(pv, base["unidad"]),
             "horas_mo": (
                 _ETIQUETAS_EN["horas_mo"].format(
-                    h=fmt_num(horas_mo, 2, idioma), unidad=base["unidad"]
+                    h=fmt_num(horas_mo, 2, mercado=mercado_fmt), unidad=base["unidad"]
                 )
                 if en
-                else f"{fmt_num(horas_mo, 2, idioma)} h-hombre/{base['unidad']}"
+                else f"{fmt_num(horas_mo, 2, mercado=mercado_fmt)} h-hombre/{base['unidad']}"
             ),
         }
 
@@ -478,7 +489,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         "decimales": dec,
         "convierte": convierte,
         "tasa": tasa,
-        "tasa_txt": fmt_num(tasa, 2, idioma),
+        "tasa_txt": fmt_num(tasa, 2, mercado=mercado_fmt),
         "tasa_fecha": fecha_tasa,
         "iva": iva,
         "iva_txt": (

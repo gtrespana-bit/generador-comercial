@@ -27,6 +27,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib import colors
 
+from ..paises import resolver_mercado
 from ..utils import fmt_fecha, fmt_monto_iso as fmt_monto
 
 
@@ -35,6 +36,9 @@ def _p(texto, estilo):
 
 
 def generar_contrato_pdf(presupuesto, config, lang: str = "es") -> io.BytesIO:
+    # Los separadores y el orden de la fecha son del mercado, no del idioma:
+    # un contrato mexicano no se fecha ni se numera como uno español.
+    mercado = resolver_mercado(lang)
     buf = io.BytesIO()
     doc = SimpleDocTemplate(
         buf,
@@ -57,7 +61,7 @@ def generar_contrato_pdf(presupuesto, config, lang: str = "es") -> io.BytesIO:
 
     story = []
     story.append(_p("CONTRACT FOR CONSTRUCTION / REMODELING SERVICES" if lang.startswith("en") else "CONTRATO DE SERVICIOS DE CONSTRUCCIÓN / REMODELACIÓN", titulo))
-    story.append(_p((f"Based on estimate No. {presupuesto.numero} · Generated on {fmt_fecha(hoy)}" if lang.startswith("en") else f"Basado en el presupuesto N.º {presupuesto.numero} · Generado el {fmt_fecha(hoy)}"), subtitulo))
+    story.append(_p((f"Based on estimate No. {presupuesto.numero} · Generated on {fmt_fecha(hoy, mercado=mercado)}" if lang.startswith("en") else f"Basado en el presupuesto N.º {presupuesto.numero} · Generado el {fmt_fecha(hoy, mercado=mercado)}"), subtitulo))
     story.append(HRFlowable(width="100%", color=colors.HexColor("#04265D"), thickness=1.2))
     story.append(Spacer(1, 10))
 
@@ -111,7 +115,7 @@ def generar_contrato_pdf(presupuesto, config, lang: str = "es") -> io.BytesIO:
         story.append(_p("2. SUMMARY OF CONTRACTED LINE ITEMS" if lang.startswith("en") else "2. RESUMEN DE PARTIDAS CONTRATADAS", h2))
         filas = ([["Chapter", "Amount"]] if lang.startswith("en") else [["Capítulo", "Importe"]])
         for cap in presupuesto.capitulos:
-            filas.append([cap.nombre or "—", fmt_monto(cap.subtotal, presupuesto.moneda)])
+            filas.append([cap.nombre or "—", fmt_monto(cap.subtotal, presupuesto.moneda, mercado=mercado)])
         tabla_cap = Table(filas, colWidths=[12.4 * cm, 4 * cm])
         tabla_cap.setStyle(
             TableStyle(
@@ -133,9 +137,9 @@ def generar_contrato_pdf(presupuesto, config, lang: str = "es") -> io.BytesIO:
     story.append(_p(f"{numero_seccion}. " + ("AMOUNT AND PAYMENT METHOD" if lang.startswith("en") else "MONTO Y FORMA DE PAGO"), h2))
     story.append(
         _p(
-            (f"The total amount of this contract is <b>{fmt_monto(presupuesto.total, presupuesto.moneda)}</b> "
+            (f"The total amount of this contract is <b>{fmt_monto(presupuesto.total, presupuesto.moneda, mercado=mercado)}</b> "
             f"({presupuesto.moneda}), VAT {'included' if presupuesto.impuesto_pct else 'not applicable'}.") if lang.startswith("en") else
-            (f"El monto total de este contrato es de <b>{fmt_monto(presupuesto.total, presupuesto.moneda)}</b> "
+            (f"El monto total de este contrato es de <b>{fmt_monto(presupuesto.total, presupuesto.moneda, mercado=mercado)}</b> "
             f"({presupuesto.moneda}), IVA {'incluido' if presupuesto.impuesto_pct else 'no aplicable'}."),
             normal,
         )
@@ -148,10 +152,10 @@ def generar_contrato_pdf(presupuesto, config, lang: str = "es") -> io.BytesIO:
     story.append(_p(f"{numero_seccion}. " + ("VALIDITY OF THE OFFER" if lang.startswith("en") else "VIGENCIA DE LA OFERTA"), h2))
     story.append(
         _p(
-            (f"This economic proposal is valid until <b>{fmt_fecha(vencimiento)}</b> "
+            (f"This economic proposal is valid until <b>{fmt_fecha(vencimiento, mercado=mercado)}</b> "
             f"({presupuesto.validez_dias or 30} days from the estimate date). "
             "After this date, prices must be reviewed again.") if lang.startswith("en") else
-            (f"Esta propuesta económica es válida hasta el <b>{fmt_fecha(vencimiento)}</b> "
+            (f"Esta propuesta económica es válida hasta el <b>{fmt_fecha(vencimiento, mercado=mercado)}</b> "
             f"({presupuesto.validez_dias or 30} días desde la fecha del presupuesto). "
             "Pasada esta fecha, los precios deberán ser revisados nuevamente."),
             normal,

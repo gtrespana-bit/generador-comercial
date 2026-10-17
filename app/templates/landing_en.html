@@ -40,7 +40,7 @@
     <select id="pais-select" aria-label="Choose your country. Each country has its own price catalog.">
       <option value="" {% if not pais_codigo %}selected{% endif %}>All countries (generic)</option>
       {% for p in paises %}
-      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
+      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre_en }}</option>
       {% endfor %}
     </select>
     <span class="pais-bar-badge">✨ prices for your market</span>
@@ -79,7 +79,7 @@
         {% set destacados = paises[:6] %}
         {% for p in destacados %}
         <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
-          <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en') }}</small>
+          <span>{{ p.bandera }}</span>{{ p.nombre_en }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en') }}</small>
         </a>
         {% endfor %}
         {% if paises|length > destacados|length %}
@@ -746,6 +746,19 @@
   </div>
 </section>
 
+{% if seo.faq %}
+<section class="seo-faq" id="preguntas-seo">
+  <span class="section-kicker">Frequently asked questions</span>
+  <h2>What contractors in {{ seo.nombre_pais }} ask before signing up.</h2>
+  {% for item in seo.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
 <section class="franja cta-final" id="pago">
   <h2>Ready to stop estimating by hand?</h2>
   <p class="intro">{{ product_name }} turns your country's catalog, your prices and your crew into estimates with your profit margin, your project time, your PDF with your logo and clear changes to resend. In Spain, in euros and with tax ID. Without Excel, without copy and paste.</p>
@@ -773,5 +786,14 @@
   "tasa_fecha": {{ ej.tasa_fecha | tojson }},
   "iva": {{ ej.iva | tojson }}
 }</script>
+{# El JSON-LD se aplaza al final del body (ver _seo_head.html): en el <head>
+   retrasaba el descubrimiento de la hoja de estilos. Sin este bloque las
+   landings en inglés no emitían ningún schema: Organization, WebPage,
+   SoftwareApplication, BreadcrumbList ni FAQPage. #}
+{% if seo is defined %}
+{% for bloque in jsonld_bloques %}
+<script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+{% endfor %}
+{% endif %}
 </body>
 </html>

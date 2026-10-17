@@ -12,6 +12,40 @@ NOTA: El catálogo mantiene sus precios en USD como referencia regional;
 la moneda_local aquí es solo informativa para el selector. España es la
 excepción con mercado propio en EUR: sus recursos tienen referencias
 nacionales en esa moneda (ver ``tools/generar_matriz_precios_espana.py``).
+
+Separadores de miles y decimales
+--------------------------------
+Se eligen por **mercado**, nunca por idioma, y siguen el uso documental
+real de cada país (lo que ve el cliente en un presupuesto o una factura),
+no la norma literaria. donde la autoridad fiscal fija un formato para la
+facturación electrónica, ese formato manda.
+
+======  =============  ====================================================
+País    Formato        Criterio
+======  =============  ====================================================
+ES, CO, ``1.234,56``   RAE y uso bancario: coma decimal.
+CL, AR,
+UY, PY,
+BO, CR,
+VE, PE
+MX, EC, ``1,234.56``   México y Centroamérica usan punto (RAE); Ecuador
+PA, DO,                 además lo fija el SRI (ficha técnica de
+GT, HN,                 comprobantes electrónicos, §8.17) y está dolarizado.
+NI, SV
+US, GB, ``1,234.56``   Formato anglosajón.
+AU, CA,
+IE
+======  =============  ====================================================
+
+Dos casos que parecen errores y no lo son:
+
+* **Venezuela usa coma** («Bs. 5.355,5058» en el BCV) aunque la RAE la
+  liste con punto: manda la práctica institucional del banco central, que
+  es la que aparece en cada factura al tipo de cambio oficial.
+* **Perú usa coma** («3,4160» en el BCRP) aunque el PDT de SUNAT configure
+  el punto internamente: el punto es el formato del XML, no el del
+  documento que ve el cliente. La Ley 23560 y el manual peruano del SI
+  declaran expresamente erróneo el punto decimal.
 """
 
 from __future__ import annotations
@@ -124,8 +158,8 @@ PAISES: dict[str, dict] = {
         "idioma": "es",
         "etiqueta_impuesto": "IGV",
         "etiqueta_impuesto_en": "IGV",
-        "separador_miles": ",",
-        "separador_decimal": ".",
+        "separador_miles": ".",
+        "separador_decimal": ",",
         "formato_fecha": "DD/MM/YYYY",
         "sistema_unidades": "metrico",
     },

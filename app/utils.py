@@ -134,8 +134,13 @@ def decimales_moneda(moneda: str | None) -> int:
         return 2
 
 
-def fmt_monto(valor, moneda="USD") -> str:
-    """Importe con símbolo inequívoco: 35.755,89 MX$ / 4.200.000 COL$"""
+def fmt_monto(valor, moneda="USD", mercado=None) -> str:
+    """Importe con símbolo inequívoco: 35.755,89 MX$ / 4.200.000 COL$
+
+    Los separadores son del **mercado**, igual que en ``fmt_monto_iso``:
+    sin mercado se hereda el convenio del idioma y México escribiría sus
+    importes como España, que es justo el error que se evita.
+    """
     # Normaliza Bs→VES para que el símbolo sea consistente
     clave = str(moneda or "USD").strip()
     # Respeta Bs si viene literal (presupuestos antiguos)
@@ -143,7 +148,8 @@ def fmt_monto(valor, moneda="USD") -> str:
         clave = "VES"
     else:
         clave = clave.upper() if clave else "USD"
-    return f"{fmt_num(valor, decimales_moneda(clave))} {simbolo_moneda(clave)}"
+    return (f"{fmt_num(valor, decimales_moneda(clave), mercado=mercado)} "
+            f"{simbolo_moneda(clave)}")
 
 
 def fmt_monto_iso(valor, moneda="USD", idioma="es", mercado=None) -> str:
@@ -167,12 +173,21 @@ def fmt_precio_u_iso(valor, moneda="USD", unidad="", idioma="es", mercado=None) 
     return f"{base}/{unidad}" if unidad else base
 
 
-def fmt_precio_u(valor, moneda="USD", unidad="") -> str:
+def unir_precio_u(simbolo: str, unidad: str) -> str:
+    """Une símbolo y unidad sin duplicar la barra: «S/» + «m²» -> «S/m²».
+
+    El sol peruano ya trae la barra en el símbolo (S/), así que añadir
+    otra dejaría «S//m²» en cada precio unitario del mercado peruano.
+    """
+    if not unidad:
+        return simbolo
+    return f"{simbolo}{'' if simbolo.rstrip().endswith('/') else '/'}{unidad}"
+
+
+def fmt_precio_u(valor, moneda="USD", unidad="", mercado=None) -> str:
     """Precio unitario histórico con símbolo: 32,50 $/m2"""
-    base = f"{fmt_num(valor, decimales_moneda(moneda))} {simbolo_moneda(moneda)}"
-    if unidad:
-        base += f"/{unidad}"
-    return base
+    simbolo = unir_precio_u(simbolo_moneda(moneda), unidad)
+    return f"{fmt_num(valor, decimales_moneda(moneda), mercado=mercado)} {simbolo}"
 
 
 def fmt_cantidad(valor, unidad="") -> str:

@@ -734,3 +734,137 @@ def test_cada_mercado_tiene_su_vocabulario_de_obra_en_ingles():
         "plasterboard, concrete, ceiling, skirting, plumber")
     # El genérico es venezolano en español: se traduce ese, no otro
     assert PAIS_GENERICO["vocab_en"].startswith("concrete, trowel plaster")
+
+
+# ---------------------------------------------------------------------------
+# Separadores de miles y decimales.
+#
+# Criterio: el convenio documental real de cada país —lo que ve el cliente en
+# un presupuesto o una factura— y, donde la autoridad fiscal fija un formato
+# para la facturación electrónica, ese formato. Nunca el idioma: México y
+# España escriben español los dos y no separan los números igual.
+#   · Coma decimal (1.234,56): ES CO CL AR UY PY BO VE PE
+#     Perú lo fija la Ley 23560 y el BCRP publica «3,4160»; Venezuela, el BCV
+#     («Bs. 5.355,5058»), aunque la RAE la liste con punto.
+#   · Punto decimal (1,234.56): MX EC PA DO GT HN NI SV y los anglosajones.
+#     Ecuador además lo fija el SRI (ficha técnica de comprobantes, §8.17).
+# ---------------------------------------------------------------------------
+
+SEPARADOR_DECIMAL = {
+    # coma decimal
+    "ES": ",", "CO": ",", "CL": ",", "AR": ",", "UY": ",",
+    "PY": ",", "BO": ",", "VE": ",", "PE": ",",
+    # punto decimal
+    "MX": ".", "EC": ".", "PA": ".", "DO": ".", "GT": ".",
+    "HN": ".", "NI": ".", "SV": ".",
+    "US": ".", "GB": ".", "AU": ".", "CA": ".", "IE": ".",
+}
+
+
+@pytest.mark.parametrize("codigo,dec", sorted(SEPARADOR_DECIMAL.items()))
+def test_el_separador_decimal_es_el_de_cada_mercado(codigo, dec):
+    from app.paises import PAISES
+
+    assert PAISES[codigo]["separador_decimal"] == dec
+    # El de miles es el otro signo: nunca pueden coincidir
+    assert PAISES[codigo]["separador_miles"] == ("." if dec == "," else ",")
+
+
+def test_los_23_mercados_tienen_separadores_coherentes():
+    from app.paises import PAIS_GENERICO, PAISES
+
+    assert len(PAISES) == 23
+    for codigo, pais in PAISES.items():
+        dec = pais["separador_decimal"]
+        miles = pais["separador_miles"]
+        assert dec in (",", "."), codigo
+        assert miles in (",", "."), codigo
+        assert dec != miles, f"{codigo}: miles y decimales no pueden ser iguales"
+    # El genérico es hispano
+    assert PAIS_GENERICO["separador_decimal"] == ","
+    assert PAIS_GENERICO["separador_miles"] == "."
+
+
+def test_peru_separa_con_coma_como_el_bcrp():
+    """«3,4160» en el BCRP, no «3.4160».
+
+    El punto que configura el PDT de SUNAT es el formato del XML, no el del
+    documento que ve el cliente; la Ley 23560 lo declara expresamente erróneo.
+    """
+    from app.paises import PAISES
+    from app.utils import fmt_num
+
+    mercado = PAISES["PE"]
+    assert fmt_num(1234567.89, mercado=mercado) == "1.234.567,89"
+    assert fmt_num(3.416, 4, mercado=mercado) == "3,4160"
+
+
+def test_mexico_y_espana_separan_distinto_escribiendo_el_mismo_idioma():
+    """La prueba de que el separador es del mercado, no del idioma."""
+    from app.paises import PAISES
+    from app.utils import fmt_num
+
+    assert fmt_num(1234.56, mercado=PAISES["ES"]) == "1.234,56"
+    assert fmt_num(1234.56, mercado=PAISES["MX"]) == "1,234.56"
+
+
+# ---------------------------------------------------------------------------
+# El ejemplo de la landing se formatea por mercado, no por idioma.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "codigo,decimal_esperado",
+    [
+        ("ES", ","), ("PE", ","), ("CO", ","), ("CL", ","), ("AR", ","), ("VE", ","),
+        ("MX", "."), ("EC", "."), ("PA", "."), ("DO", "."), ("GT", "."),
+        ("HN", "."), ("NI", "."), ("SV", "."),
+    ],
+)
+def test_el_ejemplo_de_la_landing_formatea_por_mercado(codigo, decimal_esperado):
+    """Un mexicano ve «1,234.56 MX$», no «1.234,56 MX$».
+
+    Todos estos mercados redactan en español, así que formatear mirando el
+    idioma daba a México, Ecuador, Panamá y Centroamérica el convenio europeo.
+    """
+    from app.paises import PAISES
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    pais = PAISES[codigo]
+    ej = contexto_ejemplo(codigo, pais["locale"])
+    # El precio unitario siempre lleva dos decimales (COP y CLP redondean el
+    # total a cero, así que el total no sirve para ver el separador).
+    texto = ej["caps"][0]["partidas"][0]["precio"]
+    cifra = texto.split(" ")[0]
+
+    dec = pais["separador_decimal"]
+    miles = pais["separador_miles"]
+    assert dec == decimal_esperado
+    # Detrás del separador decimal van exactamente dos cifras: «21,97»
+    assert cifra.rindex(dec) == len(cifra) - 3, f"{codigo}: {texto}"
+    # Y si la cifra pasa de mil, los miles van con el otro signo
+    if len(cifra) > 7:
+        assert miles in cifra, f"{codigo}: {texto}"
+        assert cifra.rindex(dec) > cifra.rindex(miles), f"{codigo}: {texto}"
+
+
+def test_el_ejemplo_en_ingles_sin_pais_no_hereda_la_coma_del_generico():
+    """Sin país elegido, en inglés se numera como Estados Unidos.
+
+    El genérico es hispano: si mandara él, la landing en inglés mostraría
+    «180,00 US$». El contenido (IVA, catálogo) sigue siendo el genérico.
+    """
+    from app.services.landing_ejemplo import contexto_ejemplo
+
+    ej = contexto_ejemplo(None, "en")
+    assert ej["productos"][2]["precio"] == "180.00 US$/ea"
+    assert ej["iva_txt"] == "VAT (16 %)"  # contenido genérico, intacto
+
+
+def test_el_sol_peruano_no_duplica_la_barra_en_el_precio_unitario():
+    """«21,97 S/m²», no «S//m²»: el símbolo del sol ya trae la barra."""
+    from app.utils import fmt_precio_u, unir_precio_u
+
+    assert unir_precio_u("S/", "m²") == "S/m²"
+    assert unir_precio_u("US$", "m²") == "US$/m²"
+    assert unir_precio_u("S/", "") == "S/"
+    assert fmt_precio_u(21.97, "PEN", "m²") == "21,97 S/m²"

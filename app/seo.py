@@ -1237,7 +1237,13 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
     codigo = str(codigo or "").strip().upper()
     lang = normalizar_idioma(lang)
     pais = PAISES.get(codigo) or PAIS_GENERICO
-    nombre_pais = pais.get("nombre") or "Latinoamérica"
+    # En inglés el país se nombra en inglés: «Estados Unidos» en un H2 en
+    # inglés delata que el dato venía del registro en español.
+    nombre_pais = (
+        (pais.get("nombre_en") or pais.get("nombre") or "the United States")
+        if lang == "en"
+        else (pais.get("nombre") or "Latinoamérica")
+    )
 
     if lang == "en":
         from .seo_en import landing_en as _landing_en
@@ -1510,8 +1516,11 @@ def ficha_tema(codigo: str, tema: str, lang: str = "es") -> dict | None:
     return _bloques_tema(codigo, tema)
 
 
-def jsonld_organizacion(request: Request | None = None) -> dict:
+def jsonld_organizacion(request: Request | None = None, lang: str = "es") -> dict:
     origen = origen_canonico(request)
+    # Los países se nombran en el idioma de la página: un schema en inglés
+    # que anuncia «areaServed: Estados Unidos» mezcla los dos idiomas.
+    clave_pais = "nombre_en" if lang == "en" else "nombre"
     return {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -1521,7 +1530,7 @@ def jsonld_organizacion(request: Request | None = None) -> dict:
         "logo": origen + "/static/icono.png",
         "email": "soporte@cotizat.online",
         "description": VALUE_PROPOSITION,
-        "areaServed": [{"@type": "Country", "name": PAISES[c]["nombre"]} for c in ORDEN_SELECTOR],
+        "areaServed": [{"@type": "Country", "name": PAISES[c][clave_pais]} for c in ORDEN_SELECTOR],
         "contactPoint": {
             "@type": "ContactPoint",
             "email": "soporte@cotizat.online",
@@ -1737,7 +1746,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     else:
         crumbs = [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]
     bloques = [
-        jsonld_organizacion(request),
+        jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
         jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=lang),
         jsonld_articulo(guia, request, lang=lang),
@@ -1798,7 +1807,7 @@ def contexto_seo(
     og_image = origen + OG_IMAGE
     en = lang == "en"
     bloques_ld = [
-        jsonld_organizacion(request),
+        jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
         jsonld_webpage(request, ficha["canonical_path"], ficha["h1"], ficha.get("description", ""), lang=lang),
         jsonld_software(request, codigo, lang=lang),
@@ -1973,7 +1982,7 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
         lang=lang,
     )
     bloques = [
-        jsonld_organizacion(request),
+        jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
         jsonld_webpage(request, path, ficha["h1"], ficha["description"], lang=lang),
     ]

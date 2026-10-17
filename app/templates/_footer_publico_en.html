@@ -83,7 +83,7 @@
       <nav class="footer-paises" aria-label="{{ product_name }} by country">
         <a href="/">🌎 LatAm</a>
         {% for p in paises %}
-        <a href="{{ ruta_mercado(p.codigo) }}">{{ p.bandera }} {{ p.nombre }}</a>
+        <a href="{{ ruta_mercado(p.codigo) }}">{{ p.bandera }} {{ p.nombre_en }}</a>
         {% endfor %}
       </nav>
     </div>
