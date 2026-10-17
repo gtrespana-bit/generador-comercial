@@ -868,3 +868,74 @@ def test_el_sol_peruano_no_duplica_la_barra_en_el_precio_unitario():
     assert unir_precio_u("US$", "m²") == "US$/m²"
     assert unir_precio_u("S/", "") == "S/"
     assert fmt_precio_u(21.97, "PEN", "m²") == "21,97 S/m²"
+
+
+# ---------------------------------------------------------------------------
+# Contrato con el selector de país de la landing (pais_selector.js)
+#
+# El script necesita la ruta canónica y el rótulo del impuesto ya resueltos:
+# si tuviera que deducirlos, repetiría en JavaScript la regla de que los cinco
+# mercados anglófonos viven bajo /en-xx/ y la de que en Estados Unidos y
+# Canadá no se muestra una cifra de alícuota.
+# ---------------------------------------------------------------------------
+
+def test_el_selector_recibe_la_ruta_canonica_de_cada_mercado():
+    from app.paises import lista_paises
+    from app.seo import ruta_mercado
+
+    paises = lista_paises()
+    assert len(paises) == 23
+    for p in paises:
+        assert p.get("ruta") == ruta_mercado(p["codigo"]), p["codigo"]
+    rutas = {p["codigo"]: p["ruta"] for p in paises}
+    assert rutas["US"] == "/en-us/"
+    assert rutas["GB"] == "/en-gb/"
+    assert rutas["MX"] == "/mx/"
+    assert rutas["ES"] == "/es/"
+
+
+def test_el_selector_recibe_el_impuesto_resuelto_en_los_dos_idiomas():
+    from app.paises import lista_paises
+
+    paises = {p["codigo"]: p for p in lista_paises()}
+    for codigo, p in paises.items():
+        assert p.get("impuesto_txt"), codigo
+        assert p.get("impuesto_txt_en"), codigo
+    # Donde la alícuota no es nacional, el script no puede pintar una cifra
+    for codigo in ("US", "CA"):
+        for campo in ("impuesto_txt", "impuesto_txt_en"):
+            assert not any(c.isdigit() for c in paises[codigo][campo]), (codigo, campo)
+    assert paises["GB"]["impuesto_txt_en"] == "20 % VAT"
+    assert paises["US"]["impuesto_txt_en"] == "Sales tax"
+
+
+def test_lista_paises_no_escribe_en_el_registro():
+    """Devuelve copias: el selector no puede mutar los datos de los mercados."""
+    from app.paises import PAISES, lista_paises
+
+    for p in lista_paises():
+        p["ruta"] = "/mutado/"
+    assert PAISES["US"].get("ruta") is None
+    assert "impuesto_txt" not in PAISES["US"]
+
+
+def test_el_selector_habla_ingles_y_no_construye_la_ruta_a_mano():
+    """Sin esto, cambiar de país en /en-gb/ reescribe la página en español."""
+    from pathlib import Path
+
+    js = (Path(__file__).resolve().parent.parent
+          / "app" / "static" / "js" / "pais_selector.js").read_text(encoding="utf-8")
+
+    # Detecta el idioma del documento, incluidos «en-US» y «en-GB»
+    assert "document.documentElement.lang" in js
+    # Usa el rótulo del impuesto que ya resolvió el servidor
+    assert "impuesto_txt_en" in js
+    # Navega a la ruta canónica, no a «/» + el código en minúsculas
+    assert "p.ruta" in js
+    assert '"/" + codigo.toLowerCase() + "/"' not in js
+    # Y reconoce tanto /co/ como /en-us/ al volver atrás
+    assert "(en)-" in js
+    # Textos en inglés presentes
+    for frase in ("Catalog of", "reference rate", "Built for ",
+                  "construction estimating software for "):
+        assert frase in js, frase

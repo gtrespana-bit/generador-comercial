@@ -853,7 +853,31 @@ def obtener_pais(codigo: str | None) -> dict | None:
 
 
 def lista_paises() -> list[dict]:
-    return [PAISES[c] for c in ORDEN_SELECTOR if c in PAISES]
+    """Países para el selector, con el rótulo del impuesto ya resuelto.
+
+    ``impuesto_txt`` / ``impuesto_txt_en`` vienen de :func:`texto_impuesto`,
+    que es la única que sabe cuándo una alícuota no es nacional: en Estados
+    Unidos y Canadá devuelve el nombre sin cifra. Así el JavaScript de la
+    landing no tiene que repetir esa regla ni adivinarla.
+
+    ``ruta`` es el subdirectorio canónico del mercado (``/en-us/``, ``/mx/``),
+    calculado en el servidor: el JavaScript no tiene que saber que los cinco
+    mercados anglófonos viven bajo ``/en-xx/`` y los hispanos bajo ``/xx/``.
+
+    Se devuelven copias para no escribir en el registro.
+    """
+    from .seo import ruta_mercado
+
+    return [
+        {
+            **PAISES[c],
+            "impuesto_txt": texto_impuesto(c, "es"),
+            "impuesto_txt_en": texto_impuesto(c, "en"),
+            "ruta": ruta_mercado(c),
+        }
+        for c in ORDEN_SELECTOR
+        if c in PAISES
+    ]
 
 
 def es_codigo_valido(codigo: str | None) -> bool:
