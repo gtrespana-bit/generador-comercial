@@ -17,6 +17,10 @@ Reglas de aplicación (importantes para categorías):
 2. Después se aplican las palabras sueltas.
 3. El plural se resuelve sobre la última palabra del destino, con la regla
    española de acentos: andén+es -> andenes, guarnición+es -> guarniciones.
+   El glosario EN no usa esa regla sino la inglesa (``_pluralizar_en``): con
+   las reglas del español, «partidas» salía como «line itemes».
+4. Los glosarios españoles y el inglés no se mezclan: cada texto se traduce
+   con un solo glosario, el que corresponda al idioma del mercado.
 
 Uso:
     from app.services.traduccion import traducir, traducir_partida
@@ -99,6 +103,42 @@ _NOMBRE_A_CODIGO = _construir_nombres()
 
 _SIN_ACENTO = str.maketrans("áéíóú", "aeiou")
 
+# El español pierde la tilde al pluralizar en cuanto cambia la sílaba tónica:
+# «demolición» -> «demoliciones», «hormigón» -> «hormigones», «mesón» ->
+# «mesones». Un patrón que busca «demolición» literal no encuentra nunca
+# «demoliciones», así que una familia entera de palabras de obra (todas las
+# -ción, -sión y -ón) quedaba sin traducir en plural.
+#
+# La solución no es duplicar entradas en el glosario sino compilar cada
+# palabra con una clase que acepta la vocal con y sin tilde: «hormig[oó]n»
+# encuentra las dos formas. Se construye una sola vez (el glosario se
+# pre-compila y se cachea), así que no hay coste por partida.
+# La flexibilidad va en UN SOLO SENTIDO, y ahí está todo el truco: una vocal
+# con tilde en la clave acepta su forma sin tilde, pero una vocal sin tilde
+# NO acepta la forma con tilde.
+#
+#   «hormigón»  -> hormig[oó]n   encuentra «hormigon» y «hormigón»  (bien: es
+#                                la misma palabra, el plural pierde la tilde)
+#   «closet»    -> closet        NO encuentra «clóset»             (bien: si
+#                                la encontrara, re-pluralizaría una palabra ya
+#                                traducida y saldría «clósetes»)
+#
+# La «ü» (desagüe) es un carácter distinto de la «u» acentuada: si la clase no
+# la incluye, una clave con ü deja de encontrar su propio texto y se pierden
+# las frases protectoras del glosario («Desagüe sanitario» en MX).
+_VOCAL_FLEXIBLE = {
+    "a": "a", "á": "[aá]",
+    "e": "e", "é": "[eé]",
+    "i": "i", "í": "[ií]",
+    "o": "o", "ó": "[oó]",
+    "u": "u", "ú": "[uú]", "ü": "[üu]",
+}
+
+
+def _regex_flexible(palabra: str) -> str:
+    """Expresión regular de una palabra que acepta las vocales con y sin tilde."""
+    return "".join(_VOCAL_FLEXIBLE.get(c, re.escape(c)) for c in palabra)
+
 
 def codigo_desde_pais(nombre_pais: str | None) -> str:
     if not nombre_pais:
@@ -156,6 +196,42 @@ def _pluralizar(nuevo: str, sufijo: str | None) -> str:
     return s + ("es" if s[-1:] not in "aeiou" else "s")
 
 
+# Nombres de obra que en inglés no admiten marca de plural. No es una lista
+# de «palabras raras»: son los materiales y las operaciones que un contratista
+# no pluraliza nunca (se dice «formwork», no «formworks», igual que se dice
+# «concrete» y no «concretes»). Incluirlos evita el plural automático cuando
+# el español sí marca el plural.
+_INCONTABLES_EN = frozenset({
+    "concrete", "formwork", "falsework", "plaster", "stucco", "render",
+    "mortar", "grout", "screed", "debris", "rubble", "spoil",
+    "plastering", "concreting", "waterproofing", "tiling", "plumbing",
+    "scaffolding", "shuttering", "formworking",
+    "insulation", "drainage", "productivity", "coverage", "equipment",
+})
+
+
+def _pluralizar_en(nuevo: str, sufijo: str | None) -> str:
+    """Plural **inglés** del término de destino del glosario EN.
+
+    :func:`_pluralizar` aplica las reglas del español, incluida la de
+    «consonante + -es». Con un destino en inglés eso produce barbaridades
+    («partidas» -> «line itemes», «albañiles» -> «bricklayeres»,
+    «garantías» -> «warrantyes»), así que el glosario EN necesita las reglas
+    inglesas y respetar los nombres incontables de obra.
+    """
+    if not sufijo or not nuevo:
+        return nuevo
+    s = nuevo
+    if s.lower() in _INCONTABLES_EN:
+        return s
+    bajo = s.lower()
+    if re.search(r"(?:s|x|z|ch|sh)$", bajo):
+        return s + "es"                      # patch -> patches, box -> boxes
+    if re.search(r"[^aeiou]y$", bajo):
+        return s[:-1] + "ies"                # warranty -> warranties
+    return s + "s"                           # line item -> line items
+
+
 @lru_cache(maxsize=8)
 def _compilar_glosario(codigo: str) -> tuple[list, list]:
     """Pre-compila los patrones de un glosario (frases y palabras sueltas).
@@ -179,7 +255,7 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
         key=lambda c: -len(c["de"]),
     ):
         de, a = c["de"], c["a"]
-        grupos = "".join(rf"({re.escape(w)})(es|s)? " for w in de.split(" "))
+        grupos = "".join(rf"({_regex_flexible(w)})(es|s)? " for w in de.split(" "))
         patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
         frases.append((patron, de, a))
     palabras = []
@@ -187,7 +263,7 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
         de, a = c["de"], c["a"]
         if " " in de:
             continue
-        patron = re.compile(rf"\b({re.escape(de)})(es|s)?\b", re.IGNORECASE)
+        patron = re.compile(rf"\b({_regex_flexible(de)})(es|s)?\b", re.IGNORECASE)
         palabras.append((patron, de, a))
     return frases, palabras
 
@@ -215,6 +291,9 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     # Estados Unidos recibía el catálogo en venezolano sin traducir, porque
     # no existe glosarios/US.json.
     glosario = "EN" if mercado["idioma"] == "en" else codigo
+    # El plural del término de destino no se forma igual en inglés que en
+    # español: con el glosario EN hay que usar las reglas inglesas.
+    pluralizar = _pluralizar_en if glosario == "EN" else _pluralizar
     frases, palabras = _compilar_glosario(glosario)
     if not frases and not palabras:
         return texto
@@ -235,11 +314,11 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
             sufijo_ultima = m.group(len(m.groups()))
             if " " in _a:
                 partes_a = _a.split(" ")
-                partes_a[0] = _pluralizar(partes_a[0], sufijo_primera)
-                partes_a[-1] = _pluralizar(partes_a[-1], sufijo_ultima)
+                partes_a[0] = pluralizar(partes_a[0], sufijo_primera)
+                partes_a[-1] = pluralizar(partes_a[-1], sufijo_ultima)
                 nuevo = " ".join(partes_a)
             else:
-                nuevo = _pluralizar(_a, sufijo_ultima or sufijo_primera)
+                nuevo = pluralizar(_a, sufijo_ultima or sufijo_primera)
             nuevo = _mismo_caso(m.group(1) or de, nuevo)
             token = "\x01" * (n + 1)
             reemplazos.append((token, nuevo))
@@ -251,7 +330,7 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     # ---- 2) Palabras sueltas ----
     for patron, de, a in palabras:
         def _rep_palabra(m: re.Match, _a: str = a) -> str:
-            return _pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
+            return pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
 
         out = patron.sub(_rep_palabra, out)
 

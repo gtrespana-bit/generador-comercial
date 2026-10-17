@@ -1,7 +1,7 @@
 {
   "_origen": "VE (español venezolano de obra)",
   "_destino": "EN (inglés de construcción; variante US por defecto, notas UK donde difiere)",
-  "_version": "2026-10-15",
+  "_version": "2026-10-16",
   "_nota": "Traducciones no literales: términos de obra ingleses usados por contratistas y quantity surveyors. US por defecto; UK entre paréntesis cuando difiere.",
   "_fuentes": "Terminología de construcción en inglés (US/UK), glosarios de obra y APU.",
   "cambios": [
@@ -344,6 +344,496 @@
       "de": "cuadrilla",
       "a": "crew",
       "motivo": "Equipo de obra."
+    },
+    {
+      "de": "las",
+      "a": "the",
+      "motivo": "Artículo femenino plural."
+    },
+    {
+      "de": "los",
+      "a": "the",
+      "motivo": "Artículo masculino plural."
+    },
+    {
+      "de": "la",
+      "a": "the",
+      "motivo": "Artículo femenino."
+    },
+    {
+      "de": "el",
+      "a": "the",
+      "motivo": "Artículo masculino."
+    },
+    {
+      "de": "del",
+      "a": "of the",
+      "motivo": "Contracción de + el."
+    },
+    {
+      "de": "de",
+      "a": "of",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "en",
+      "a": "in",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "con",
+      "a": "with",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "para",
+      "a": "for",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "sobre",
+      "a": "on",
+      "motivo": "Preposición: sobre el soporte -> on the substrate."
+    },
+    {
+      "de": "sin",
+      "a": "without",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "entre",
+      "a": "between",
+      "motivo": "Preposición."
+    },
+    {
+      "de": "y",
+      "a": "and",
+      "motivo": "Conjunción: sin ella los cierres quedan en español."
+    },
+    {
+      "de": "incluye",
+      "a": "includes",
+      "motivo": "Verbo de alcance de la partida."
+    },
+    {
+      "de": "medido por",
+      "a": "measured per",
+      "motivo": "Cierre de medición. Una sola frase cubre las 1.928 apariciones: «medido por metro cuadrado», «medido por unidad instalada»…"
+    },
+    {
+      "de": "metro cuadrado",
+      "a": "square meter",
+      "motivo": "Unidad de superficie. En inglés el adjetivo va delante (square meter) y en el catálogo solo aparece en singular."
+    },
+    {
+      "de": "metro lineal",
+      "a": "linear meter",
+      "motivo": "Unidad de medición lineal."
+    },
+    {
+      "de": "metro cúbico",
+      "a": "cubic meter",
+      "motivo": "Unidad de volumen."
+    },
+    {
+      "de": "metro",
+      "a": "meter",
+      "motivo": "Unidad de longitud; el Reino Unido escribe metre."
+    },
+    {
+      "de": "unidad",
+      "a": "unit",
+      "motivo": "Medición por pieza."
+    },
+    {
+      "de": "punto",
+      "a": "point",
+      "motivo": "Medición por punto de instalación."
+    },
+    {
+      "de": "kilogramo",
+      "a": "kilogram",
+      "motivo": "Unidad de peso."
+    },
+    {
+      "de": "mes",
+      "a": "month",
+      "motivo": "Medición por mes."
+    },
+    {
+      "de": "hora",
+      "a": "hour",
+      "motivo": "Medición por hora."
+    },
+    {
+      "de": "medido",
+      "a": "measured",
+      "motivo": "Participio de medir."
+    },
+    {
+      "de": "instalada",
+      "a": "installed",
+      "motivo": "Participio: unidad instalada."
+    },
+    {
+      "de": "instalado",
+      "a": "installed",
+      "motivo": "Participio: equipo instalado."
+    },
+    {
+      "de": "ejecutada",
+      "a": "completed",
+      "motivo": "Participio: obra ejecutada. «Executed» es literal y no se usa así en inglés de obra."
+    },
+    {
+      "de": "ejecutado",
+      "a": "completed",
+      "motivo": "Participio: metro cuadrado ejecutado."
+    },
+    {
+      "de": "desmontada",
+      "a": "removed",
+      "motivo": "Participio: unidad desmontada."
+    },
+    {
+      "de": "desmontado",
+      "a": "removed",
+      "motivo": "Participio."
+    },
+    {
+      "de": "colocada",
+      "a": "installed",
+      "motivo": "Participio."
+    },
+    {
+      "de": "colocado",
+      "a": "installed",
+      "motivo": "Participio."
+    },
+    {
+      "de": "terminado",
+      "a": "finished",
+      "motivo": "Participio: punto terminado."
+    },
+    {
+      "de": "suministrada",
+      "a": "supplied",
+      "motivo": "Participio."
+    },
+    {
+      "de": "suministrado",
+      "a": "supplied",
+      "motivo": "Participio."
+    },
+    {
+      "de": "pintado",
+      "a": "painted",
+      "motivo": "Participio: superficie pintada."
+    },
+    {
+      "de": "impermeabilizado",
+      "a": "waterproofed",
+      "motivo": "Participio: superficie impermeabilizada."
+    },
+    {
+      "de": "soporte",
+      "a": "substrate",
+      "motivo": "Clave y no literal: en pintura y revestimiento es la superficie que recibe el acabado. «Support» sería un apoyo estructural, otra cosa."
+    },
+    {
+      "de": "cubierta",
+      "a": "roof",
+      "motivo": "En obra es el tejado, no la tapa de algo («cover»)."
+    },
+    {
+      "de": "replanteo",
+      "a": "field layout",
+      "motivo": "Sin equivalente literal: es marcar en obra lo que dice el plano. EE. UU. dice field layout o layout; Reino Unido e Irlanda, setting out (lo ajusta la variante). Se elige «field layout» y no «layout» a secas porque «layout» aparece con otro sentido en los textos del producto y la variante británica lo convertiría mal."
+    },
+    {
+      "de": "paramento",
+      "a": "face",
+      "motivo": "Tecnicismo ibérico: la cara de un muro o elemento. «Parament» no existe."
+    },
+    {
+      "de": "vaciado",
+      "a": "concrete placing",
+      "motivo": "No es «emptying»: en estructura es el vertido y puesta en obra del concreto. El Reino Unido dice concreting. El sentido de vaciar agua se resuelve aparte con «vaciado previo del contenido»."
+    },
+    {
+      "de": "escombro",
+      "a": "debris",
+      "motivo": "Residuo de demolición. Reino Unido e Irlanda usan spoil o arisings."
+    },
+    {
+      "de": "apeo",
+      "a": "shoring",
+      "motivo": "Apuntalamiento provisional. Ojo: propping (vertical) y shoring (empuje) no son sinónimos, pero para apear una losa Norteamérica dice shoring y el Reino Unido propping."
+    },
+    {
+      "de": "puntal",
+      "a": "shore",
+      "motivo": "Puntal telescópico: shore en EE. UU., prop (Acrow prop) en Reino Unido."
+    },
+    {
+      "de": "madera",
+      "a": "lumber",
+      "motivo": "Como material: EE. UU. dice lumber; Reino Unido, Irlanda y Australia, timber."
+    },
+    {
+      "de": "cata",
+      "a": "exploratory opening",
+      "motivo": "Abertura de reconocimiento. El Reino Unido dice opening up o trial hole."
+    },
+    {
+      "de": "desmontaje",
+      "a": "removal",
+      "motivo": "Retirada de elementos. Reino Unido y Australia dicen strip out cuando es retirada no estructural (soft strip)."
+    },
+    {
+      "de": "baranda",
+      "a": "railing",
+      "motivo": "Término genérico de oficio. Guardrail es la de protección contra caídas y handrail la que se agarra; en andamio se fuerza a guardrails con frase."
+    },
+    {
+      "de": "andamio",
+      "a": "scaffold",
+      "motivo": "Andamio; el conjunto se dice scaffolding."
+    },
+    {
+      "de": "mortero",
+      "a": "mortar",
+      "motivo": "Material de agarre y revestimiento."
+    },
+    {
+      "de": "junta",
+      "a": "joint",
+      "motivo": "Junta de dilatación, de sellado, de estanqueidad."
+    },
+    {
+      "de": "sellado",
+      "a": "sealing",
+      "motivo": "Sellado de juntas y encuentros."
+    },
+    {
+      "de": "impermeabilización",
+      "a": "waterproofing",
+      "motivo": "Impermeabilización de cubiertas."
+    },
+    {
+      "de": "fachada",
+      "a": "facade",
+      "motivo": "El Reino Unido escribe façade, con cedilla."
+    },
+    {
+      "de": "techo",
+      "a": "ceiling",
+      "motivo": "Cielo raso; no confundir con roof, que es la cubierta."
+    },
+    {
+      "de": "cornisa",
+      "a": "cornice",
+      "motivo": "Remate volado de fachada."
+    },
+    {
+      "de": "acabado",
+      "a": "finish",
+      "motivo": "Acabado superficial."
+    },
+    {
+      "de": "corte",
+      "a": "cutting",
+      "motivo": "Operación de corte."
+    },
+    {
+      "de": "aplicación",
+      "a": "application",
+      "motivo": "Aplicación de productos y revestimientos."
+    },
+    {
+      "de": "superficie",
+      "a": "surface",
+      "motivo": "Superficie de aplicación."
+    },
+    {
+      "de": "estructura",
+      "a": "structure",
+      "motivo": "Genérico estructural."
+    },
+    {
+      "de": "protección",
+      "a": "protection",
+      "motivo": "Protección de elementos ejecutados."
+    },
+    {
+      "de": "preparación",
+      "a": "preparation",
+      "motivo": "Preparación de la superficie o del soporte."
+    },
+    {
+      "de": "colocación",
+      "a": "installation",
+      "motivo": "Colocación de piezas: installation, no «placing»."
+    },
+    {
+      "de": "montaje",
+      "a": "installation",
+      "motivo": "Montaje de equipos y elementos."
+    },
+    {
+      "de": "conexión",
+      "a": "connection",
+      "motivo": "Conexionado de equipos e instalaciones."
+    },
+    {
+      "de": "fijación",
+      "a": "fastening",
+      "motivo": "Reino Unido e Irlanda dicen fixing."
+    },
+    {
+      "de": "limpieza",
+      "a": "cleaning",
+      "motivo": "Limpieza de obra."
+    },
+    {
+      "de": "retirada",
+      "a": "removal",
+      "motivo": "Retirada de materiales y elementos."
+    },
+    {
+      "de": "comprobación",
+      "a": "checking",
+      "motivo": "Verificación en obra."
+    },
+    {
+      "de": "demolición",
+      "a": "demolition",
+      "motivo": "Operación de derribo."
+    },
+    {
+      "de": "acero",
+      "a": "steel",
+      "motivo": "Material."
+    },
+    {
+      "de": "bloque",
+      "a": "block",
+      "motivo": "Bloque de concreto; el Reino Unido dice blockwork."
+    },
+    {
+      "de": "teja",
+      "a": "roof tile",
+      "motivo": "Teja de cubierta."
+    },
+    {
+      "de": "lámina",
+      "a": "sheet",
+      "motivo": "Lámina metálica o de madera."
+    },
+    {
+      "de": "acanalado",
+      "a": "corrugated",
+      "motivo": "Lámina acanalada o grecada."
+    },
+    {
+      "de": "vano",
+      "a": "opening",
+      "motivo": "Hueco de puerta o ventana."
+    },
+    {
+      "de": "bastidor",
+      "a": "frame",
+      "motivo": "Bastidor de madera o metálico."
+    },
+    {
+      "de": "cerramiento",
+      "a": "enclosure",
+      "motivo": "Cerramiento provisional o definitivo."
+    },
+    {
+      "de": "plataforma",
+      "a": "platform",
+      "motivo": "Plataforma de trabajo."
+    },
+    {
+      "de": "barandas, rodapiés y escalera",
+      "a": "guardrails, toe boards and ladder",
+      "motivo": "Andamio. Aquí rodapié es la tabla de pie (toe board), no el rodapié de acabado (baseboard). Es el error más fácil y el que delata una traducción automática."
+    },
+    {
+      "de": "rodapiés y escalera",
+      "a": "toe boards and ladder",
+      "motivo": "Mismo caso del andamio."
+    },
+    {
+      "de": "vaciado previo del contenido",
+      "a": "draining of the contents",
+      "motivo": "Aquí vaciado sí es vaciar: se drena el contenido, no se vierte concreto."
+    },
+    {
+      "de": "madera contrachapada",
+      "a": "plywood",
+      "motivo": "Nunca «contrachapada» ni «cross-veneered»: el material es plywood."
+    },
+    {
+      "de": "puesta en marcha",
+      "a": "commissioning",
+      "motivo": "No es «start-up» literal: la puesta en marcha de instalaciones es commissioning."
+    },
+    {
+      "de": "puesta a disposición",
+      "a": "provision",
+      "motivo": "Puesta a disposición de medios auxiliares."
+    },
+    {
+      "de": "puesta a tierra",
+      "a": "grounding",
+      "motivo": "Instalación eléctrica; Reino Unido, Irlanda y Australia dicen earthing."
+    },
+    {
+      "de": "remate de juntas",
+      "a": "joint finishing",
+      "motivo": "Remate y tratamiento de juntas."
+    },
+    {
+      "de": "tratamiento de juntas",
+      "a": "joint treatment",
+      "motivo": "Tratamiento de juntas de placas."
+    },
+    {
+      "de": "preparación del soporte",
+      "a": "substrate preparation",
+      "motivo": "Preparación del soporte antes de aplicar."
+    },
+    {
+      "de": "armado y el vaciado",
+      "a": "reinforcement and concrete placing",
+      "motivo": "Colocación del acero y vertido del concreto."
+    },
+    {
+      "de": "bote del escombro",
+      "a": "debris container",
+      "motivo": "Contenedor de escombro; Reino Unido, Irlanda y Australia dicen skip."
+    },
+    {
+      "de": "cubierta de lámina metálica",
+      "a": "metal sheet roof",
+      "motivo": "Cubierta de chapa."
+    },
+    {
+      "de": "lámina metálica",
+      "a": "metal sheet",
+      "motivo": "En inglés el material va delante."
+    },
+    {
+      "de": "cubierta de teja",
+      "a": "tiled roof",
+      "motivo": "Cubierta de teja."
+    },
+    {
+      "de": "cubierta plana",
+      "a": "flat roof",
+      "motivo": "Cubierta plana."
     }
   ]
 }

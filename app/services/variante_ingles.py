@@ -47,6 +47,7 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "color": "colour",
     "aluminum": "aluminium",
     "recognize": "recognise",
+    "facade": "façade",
 }
 
 # ── Vocabulario de obra británico ────────────────────────────────────────
@@ -92,6 +93,18 @@ _VOCABULARIO_GB: dict[str, str] = {
     "site cleanup": "site clearance",
     "window treatments": "soft furnishings",
     "baseboard heating": "skirting heating",
+    # Replanteo, apeos y demolición: operaciones que en cada sitio se llaman
+    # distinto. «Field layout» y no «layout» a secas porque «layout» aparece
+    # con otro sentido en los textos del producto («the layout drawing») y
+    # aquí solo se quiere convertir el replanteo.
+    "field layout": "setting out",        # replanteo
+    "shoring": "propping",                # apeo de losas y vigas
+    "shore": "prop",                      # puntal (Acrow prop)
+    "lumber": "timber",                   # madera como material
+    "fastening": "fixing",                # fijación
+    "debris container": "skip",           # bote del escombro
+    "concrete placing": "concreting",     # vaciado del concreto
+    "exploratory opening": "opening up",  # cata de reconocimiento
 }
 
 # ── Australia ────────────────────────────────────────────────────────────

@@ -939,3 +939,105 @@ def test_el_selector_habla_ingles_y_no_construye_la_ruta_a_mano():
     for frase in ("Catalog of", "reference rate", "Built for ",
                   "construction estimating software for "):
         assert frase in js, frase
+
+
+# ── Terminología de obra en inglés: plural, acentos y vocabulario ─────────
+
+def test_el_plural_del_catalogo_ingles_no_usa_la_regla_del_espanol():
+    """El pluralizador español produce «line itemes» y «bricklayeres».
+
+    ``_pluralizar`` aplica «consonante + -es», que es la regla del español.
+    Con un destino en inglés hay que usar la regla inglesa y respetar los
+    nombres incontables de obra (formwork, concrete, debris).
+    """
+    from app.services.traduccion import traducir
+
+    assert traducir("partidas", "US") == "line items"
+    assert traducir("albañiles", "US") == "bricklayers"
+    assert traducir("garantías", "US") == "warranties"      # -y -> -ies
+    assert traducir("margenes", "US") == "margins"
+    assert traducir("tabiques", "US") == "partitions"
+    # Los materiales y operaciones no se pluralizan
+    assert traducir("encofrados", "US") == "formwork"
+    assert traducir("concretos", "US") == "concrete"
+    assert traducir("enchapados", "US") == "tiling"
+
+
+def test_las_claves_con_tilde_encuentran_su_plural_sin_tilde():
+    """«demolición» -> «demoliciones» pierde la tilde: la clave debe encontrarla."""
+    from app.services.traduccion import traducir
+
+    assert traducir("hormigones", "US") == "concrete"
+    assert traducir("mediciones", "US") == "measurements"
+    # Y la protección sigue funcionando: la frase gana a la palabra suelta
+    assert traducir("Desagüe sanitario", "MX") == "Drenaje sanitario"
+
+
+def test_la_flexibilidad_de_acentos_va_en_un_solo_sentido():
+    """Una clave sin tilde NO debe encontrar la forma con tilde.
+
+    Si «closet» encontrara «clóset», re-pluralizaría una palabra ya traducida
+    y la categoría saldría como «Clósetes».
+    """
+    from app.services.traduccion import traducir
+
+    assert traducir("Closets", "CO") == "Clósets"
+    assert "Clósetes" not in traducir("Closets", "CO")
+
+
+def test_el_cierre_de_medicion_sale_en_ingles():
+    """«medido por …» encabeza 1.928 partidas: sin esto acaban en español."""
+    from app.services.traduccion import traducir
+
+    assert traducir("Medido por metro cuadrado ejecutado", "US") \
+        == "Measured per square meter completed"
+    assert traducir("Medido por metro lineal", "US") == "Measured per linear meter"
+    assert traducir("Medido por unidad instalada", "US") == "Measured per unit installed"
+    # Ortografía británica en los mercados que la usan
+    assert traducir("Medido por metro cuadrado", "GB") == "Measured per square metre"
+    assert traducir("Medido por metro cuadrado", "CA") == "Measured per square metre"
+
+
+def test_el_andamio_no_confunde_el_rodapie_con_el_de_acabados():
+    """En un andamio el rodapié es la tabla de pie, no el rodapié de la pared."""
+    from app.services.traduccion import traducir
+
+    texto = ("Andamio tubular con plataformas de trabajo, barandas, "
+             "rodapiés y escalera interior")
+    salida = traducir(texto, "US")
+    assert "toe boards" in salida
+    assert "baseboards" not in salida
+    # Fuera del andamio, el rodapié sigue siendo el de acabados
+    assert traducir("rodapié", "US") == "baseboard"
+
+
+def test_vocabulario_de_obra_diverge_por_mercado_ingles():
+    """Apeo, replanteo y escombro no se llaman igual en Houston que en Londres."""
+    from app.services.traduccion import traducir
+
+    # Replanteo: field layout (US/CA) frente a setting out (GB/IE/AU)
+    assert traducir("Incluye el replanteo", "US") == "Includes the field layout"
+    assert traducir("Incluye el replanteo", "GB") == "Includes the setting out"
+    assert traducir("Incluye el replanteo", "AU") == "Includes the setting out"
+    assert traducir("Incluye el replanteo", "CA") == "Includes the field layout"
+
+    # Apeo de losas: shoring/shore frente a propping/prop
+    assert "shoring" in traducir("Apeo de losa con puntales", "US").lower()
+    assert "shores" in traducir("Apeo de losa con puntales", "US").lower()
+    gb_apeo = traducir("Apeo de losa con puntales", "GB").lower()
+    assert "propping" in gb_apeo and "props" in gb_apeo
+
+    # Contenedor de escombro: debris container frente a skip
+    assert traducir("bote del escombro", "US") == "debris container"
+    assert traducir("bote del escombro", "GB") == "skip"
+
+
+def test_canada_construye_como_eeuu_y_escribe_como_el_reino_unido():
+    """Canadá mantiene el vocabulario estadounidense con la ortografía británica."""
+    from app.services.traduccion import traducir
+
+    ca = traducir("Medido por metro cuadrado de madera", "CA")
+    assert "metre" in ca and "meter" not in ca      # escribe como el Reino Unido
+    assert "lumber" in ca                            # pero dice lumber, no timber
+    gb = traducir("Medido por metro cuadrado de madera", "GB")
+    assert "timber" in gb
