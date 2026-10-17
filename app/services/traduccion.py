@@ -185,6 +185,27 @@ _VOCAL_FLEXIBLE = {
 }
 
 
+_ACENTOS = str.maketrans("áéíóúñüÁÉÍÓÚÑÜ", "aeiounuAEIOUNU")
+
+
+_PALABRA = re.compile(r"[\wáéíóúñüÁÉÍÓÚÑÜ]+")
+
+
+def _clave_filtro(palabra: str) -> str:
+    """Primera palabra sin acentos y en minúsculas, para descartar patrones.
+
+    Sin acentos por exceso: la flexibilidad de ``_regex_flexible`` solo va en
+    un sentido (la forma acentuada admite la sin acento, no al revés), así
+    que quitarlos en la clave y en el texto ensancha el filtro y nunca lo
+    estrecha. Un filtro que deja pasar de más solo cuesta una comparación;
+    uno que deja pasar de menos perdería traducciones.
+    """
+    # Sin puntuación: hay frases como «Frisos, enlucidos» cuyo primer
+    # término lleva coma, y esa coma nunca aparece como palabra del texto,
+    # así que el filtro las descartaba y dejaba de traducirlas.
+    return "".join(_PALABRA.findall(palabra.lower().translate(_ACENTOS)))
+
+
 def _regex_flexible(palabra: str) -> str:
     """Expresión regular de una palabra que acepta las vocales con y sin tilde."""
     return "".join(_VOCAL_FLEXIBLE.get(c, re.escape(c)) for c in palabra)
@@ -307,9 +328,11 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
     en países con traducción (CO/MX/EC/PE...).
 
     Devuelve ``(frases, palabras)``: cada elemento es ``(patron_compilado,
-    de, a)``. Los patrones son inmutables y seguros de compartir entre
-    llamadas; el estado por llamada (contador de tokens y lista de
-    reemplazos) se crea dentro de :func:`traducir`.
+    de, a, clave)``, donde ``clave`` es la primera palabra sin acentos y en
+    minúsculas. Sirve para descartar de golpe los patrones que no pueden
+    casar (véase :func:`_traducir_reglas`). Los patrones son inmutables y
+    seguros de compartir entre llamadas; el estado por llamada (contador de
+    tokens y lista de reemplazos) se crea dentro de :func:`traducir`.
     """
     cambios = _cargar_glosario(codigo)
     frases = []
@@ -320,14 +343,19 @@ def _compilar_glosario(codigo: str) -> tuple[list, list]:
         de, a = c["de"], c["a"]
         grupos = "".join(rf"({_regex_flexible(w)})(es|s)? " for w in de.split(" "))
         patron = re.compile(r"\b" + grupos.rstrip() + r"\b", re.IGNORECASE)
-        frases.append((patron, de, a))
+        frases.append((patron, de, a, _clave_filtro(de.split(" ")[0])))
+    # De más larga a más corta, igual que las frases: si no, la forma
+    # singular enmascara la plural y la pluraliza con la regla inglesa.
+    # «vidrio» casaba con «vidrios» antes que la entrada «vidrios» y daba
+    # «glasses»; «metálico» daba «metals» por encima de «metálicos».
     palabras = []
-    for c in cambios:
+    for c in sorted(
+        (c for c in cambios if " " not in c["de"]),
+        key=lambda c: -len(c["de"]),
+    ):
         de, a = c["de"], c["a"]
-        if " " in de:
-            continue
         patron = re.compile(rf"\b({_regex_flexible(de)})(es|s)?\b", re.IGNORECASE)
-        palabras.append((patron, de, a))
+        palabras.append((patron, de, a, _clave_filtro(de)))
     return frases, palabras
 
 
@@ -357,9 +385,25 @@ def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
     # El plural español de una frase puede aparecer en el sustantivo
     # («paredes de bloque»), en el último término («cielos rasos») o en
     # ambos, así que cada palabra admite un sufijo -es/-s opcional.
+    # Prefiltro: un patrón solo puede casar si su primera palabra está en el
+    # texto. Calcularlo cuesta una vez por llamada (un conjunto de palabras)
+    # y evita miles de re.sub sobre cadenas cortas, que era el coste real:
+    # con ~4.500 patrones el camino lento pasaba de ~1,5 ms a ~3,7 ms.
+    # Prefijos, no palabras completas: el patrón admite un sufijo -es/-s, así
+    # que «instalación» tiene que casar con «instalaciones». Filtrar por
+    # palabra exacta fue un error que dejó sin traducir 103 cadenas.
+    presentes = set()
+    for w in _PALABRA.findall(texto):
+        w = w.lower().translate(_ACENTOS)
+        for i in range(1, len(w) + 1):
+            presentes.add(w[:i])
+
     reemplazos: list[tuple[str, str]] = []
     n = 0
-    for patron, de, a in frases:
+    for patron, de, a, clave in frases:
+        if clave not in presentes:
+            continue
+
         def _rep_frase(m: re.Match, _a: str = a) -> str:
             nonlocal n
             sufijo_primera = m.group(2)
@@ -377,9 +421,11 @@ def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
                     partes_a[0] = pluralizar(partes_a[0], sufijo_primera)
                     partes_a[-1] = pluralizar(partes_a[-1], sufijo_ultima)
                 else:
-                    partes_a[-1] = pluralizar(
-                        partes_a[-1], sufijo_primera or sufijo_ultima
-                    )
+                    # Compuesto inglés: el núcleo del origen es la PRIMERA
+                    # palabra («paredes de bloque», «sellado de juntas»), así
+                    # que solo su sufijo cuenta. Usar también el de la última
+                    # daba «joint sealings» a partir de «sellado de juntas».
+                    partes_a[-1] = pluralizar(partes_a[-1], sufijo_primera)
                 nuevo = " ".join(partes_a)
             else:
                 nuevo = pluralizar(_a, sufijo_ultima or sufijo_primera)
@@ -392,7 +438,10 @@ def _traducir_reglas(texto: str, mercado: dict, glosario: str) -> str:
         out = patron.sub(_rep_frase, out)
 
     # ---- 2) Palabras sueltas ----
-    for patron, de, a in palabras:
+    for patron, de, a, clave in palabras:
+        if clave not in presentes:
+            continue
+
         def _rep_palabra(m: re.Match, _a: str = a) -> str:
             return pluralizar(_mismo_caso(m.group(1), _a), m.group(2))
 
