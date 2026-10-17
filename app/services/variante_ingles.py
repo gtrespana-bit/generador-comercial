@@ -169,6 +169,8 @@ _VOCABULARIO_GB: dict[str, str] = {
     "bond beam block": "channel block",   # bloque canal
     "face brick": "facing brick",         # ladrillo visto
     "wood lintel": "timber lintel",       # dintel de madera
+    "overhead garage door": "up-and-over garage door",
+    "awning window": "top-hung casement window",
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
