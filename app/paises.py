@@ -33,6 +33,7 @@ PAISES: dict[str, dict] = {
         "iva": 16,
         "id_fiscal": "RIF",
         "vocab": "concreto, friso, cielo raso, rodapié, plomero",
+        "vocab_en": "concrete, trowel plaster, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "J-12345678-9",
         "telefono_ejemplo": "+58 412 000 0000",
         "razon_social_ejemplo": "C.A.",
@@ -59,6 +60,7 @@ PAISES: dict[str, dict] = {
         "iva": 19,
         "id_fiscal": "NIT",
         "vocab": "concreto, pañete, cielo raso, guardaescoba, plomero",
+        "vocab_en": "concrete, skim coat, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "900.123.456-7",
         "telefono_ejemplo": "+57 300 000 0000",
         "razon_social_ejemplo": "S.A.S.",
@@ -85,6 +87,7 @@ PAISES: dict[str, dict] = {
         "iva": 16,
         "id_fiscal": "RFC",
         "vocab": "concreto, aplanado, plafón, zoclo, plomero",
+        "vocab_en": "concrete, skim coat, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "AAA010101AAA",
         "telefono_ejemplo": "+52 55 0000 0000",
         "razon_social_ejemplo": "S.A. de C.V.",
@@ -111,6 +114,7 @@ PAISES: dict[str, dict] = {
         "iva": 18,
         "id_fiscal": "RUC",
         "vocab": "concreto, tarrajeo, cielo raso, zócalo, gasfitero",
+        "vocab_en": "concrete, plastering, suspended ceiling, baseboard, gas fitter",
         "id_fiscal_placeholder": "20123456789",
         "telefono_ejemplo": "+51 900 000 000",
         "razon_social_ejemplo": "S.A.C.",
@@ -137,6 +141,7 @@ PAISES: dict[str, dict] = {
         "iva": 19,
         "id_fiscal": "RUT",
         "vocab": "hormigón, estuco, cielo falso, guardapolvo, gasfíter",
+        "vocab_en": "concrete, plaster, suspended ceiling, baseboard, gas fitter",
         "id_fiscal_placeholder": "76.123.456-K",
         "telefono_ejemplo": "+56 9 0000 0000",
         "razon_social_ejemplo": "SpA",
@@ -163,6 +168,7 @@ PAISES: dict[str, dict] = {
         "iva": 21,
         "id_fiscal": "CUIT",
         "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
+        "vocab_en": "concrete, rendering, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "20-12345678-9",
         "telefono_ejemplo": "+54 11 0000 0000",
         "razon_social_ejemplo": "S.R.L.",
@@ -189,6 +195,7 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RUC",
         "vocab": "hormigón, enlucido, tumbado, barredera, gasfitero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, gas fitter",
         "id_fiscal_placeholder": "0991234567001",
         "telefono_ejemplo": "+593 99 000 0000",
         "razon_social_ejemplo": "S.A.",
@@ -215,6 +222,7 @@ PAISES: dict[str, dict] = {
         "iva": 18,
         "id_fiscal": "RNC",
         "vocab": "hormigón, pañete, plafón, zócalo, plomero",
+        "vocab_en": "concrete, skim coat, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "130-12345-6",
         "telefono_ejemplo": "+1 809 000 0000",
         "razon_social_ejemplo": "S.R.L.",
@@ -241,6 +249,7 @@ PAISES: dict[str, dict] = {
         "iva": 22,
         "id_fiscal": "RUT",
         "vocab": "hormigón, revoque, cielorraso, zócalo, sanitario",
+        "vocab_en": "concrete, rendering, suspended ceiling, baseboard, sanitary fitter",
         "id_fiscal_placeholder": "211234567812",
         "telefono_ejemplo": "+598 99 000 000",
         "razon_social_ejemplo": "S.A.",
@@ -267,6 +276,7 @@ PAISES: dict[str, dict] = {
         "iva": 10,
         "id_fiscal": "RUC",
         "vocab": "hormigón, revoque, cielorraso, zócalo, plomero",
+        "vocab_en": "concrete, rendering, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "80012345-6",
         "telefono_ejemplo": "+595 21 000 000",
         "razon_social_ejemplo": "S.A.",
@@ -293,6 +303,7 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NIT",
         "vocab": "hormigón, revoque, cielo falso, zócalo, plomero",
+        "vocab_en": "concrete, rendering, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "1020304050",
         "telefono_ejemplo": "+591 2 000 0000",
         "razon_social_ejemplo": "S.R.L.",
@@ -319,6 +330,7 @@ PAISES: dict[str, dict] = {
         "iva": 7,
         "id_fiscal": "RUC",
         "vocab": "concreto, repello, cielo raso, zócalo, plomero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "1234567-1-123456",
         "telefono_ejemplo": "+507 6000 0000",
         "razon_social_ejemplo": "S.A.",
@@ -345,6 +357,7 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NITE",
         "vocab": "concreto, repello, cielo raso, rodapié, fontanero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "3-101-123456",
         "telefono_ejemplo": "+506 8888 0000",
         "razon_social_ejemplo": "S.A.",
@@ -371,6 +384,7 @@ PAISES: dict[str, dict] = {
         "iva": 12,
         "id_fiscal": "NIT",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "1234567-8",
         "telefono_ejemplo": "+502 5555 0000",
         "razon_social_ejemplo": "S.A.",
@@ -397,6 +411,7 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RTN",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "08011999123456",
         "telefono_ejemplo": "+504 9999 0000",
         "razon_social_ejemplo": "S.A.",
@@ -423,6 +438,7 @@ PAISES: dict[str, dict] = {
         "iva": 13,
         "id_fiscal": "NIT",
         "vocab": "concreto, repello, cielo falso, zócalo, fontanero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "0614-123456-789-0",
         "telefono_ejemplo": "+503 7000 0000",
         "razon_social_ejemplo": "S.A. de C.V.",
@@ -449,6 +465,7 @@ PAISES: dict[str, dict] = {
         "iva": 15,
         "id_fiscal": "RUC",
         "vocab": "concreto, repello, cielo raso, zócalo, fontanero",
+        "vocab_en": "concrete, render, suspended ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "J0310000001234",
         "telefono_ejemplo": "+505 8888 0000",
         "razon_social_ejemplo": "S.A.",
@@ -479,6 +496,7 @@ PAISES: dict[str, dict] = {
         "iva": 21,
         "id_fiscal": "NIF",
         "vocab": "hormigón, pladur, falso techo, alicatado, fontanero",
+        "vocab_en": "concrete, plasterboard, suspended ceiling, wall tiling, plumber",
         "id_fiscal_placeholder": "B12345678",
         "telefono_ejemplo": "+34 600 000 000",
         "razon_social_ejemplo": "S.L.",
@@ -505,6 +523,7 @@ PAISES: dict[str, dict] = {
         "iva": 7.0,
         "id_fiscal": "EIN",
         "vocab": "drywall, concrete, ceiling, baseboard, plumber",
+        "vocab_en": "drywall, concrete, ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "12-3456789",
         "telefono_ejemplo": "+1 202 555 0000",
         "razon_social_ejemplo": "LLC",
@@ -531,6 +550,7 @@ PAISES: dict[str, dict] = {
         "iva": 20,
         "id_fiscal": "VAT registration number",
         "vocab": "plasterboard, concrete, ceiling, skirting, plumber",
+        "vocab_en": "plasterboard, concrete, ceiling, skirting, plumber",
         "id_fiscal_placeholder": "GB123456789",
         "telefono_ejemplo": "+44 20 7946 0000",
         "razon_social_ejemplo": "Ltd",
@@ -557,6 +577,7 @@ PAISES: dict[str, dict] = {
         "iva": 10,
         "id_fiscal": "ABN",
         "vocab": "plasterboard, concrete, ceiling, skirting, plumber",
+        "vocab_en": "plasterboard, concrete, ceiling, skirting, plumber",
         "id_fiscal_placeholder": "12 345 678 901",
         "telefono_ejemplo": "+61 2 5550 0000",
         "razon_social_ejemplo": "Pty Ltd",
@@ -583,6 +604,7 @@ PAISES: dict[str, dict] = {
         "iva": 5,
         "id_fiscal": "BN",
         "vocab": "drywall, concrete, ceiling, baseboard, plumber",
+        "vocab_en": "drywall, concrete, ceiling, baseboard, plumber",
         "id_fiscal_placeholder": "123456789 RT 0001",
         "telefono_ejemplo": "+1 416 555 0000",
         "razon_social_ejemplo": "Inc.",
@@ -609,6 +631,7 @@ PAISES: dict[str, dict] = {
         "iva": 13.5,
         "id_fiscal": "VAT number",
         "vocab": "plasterboard, concrete, ceiling, skirting, plumber",
+        "vocab_en": "plasterboard, concrete, ceiling, skirting, plumber",
         "id_fiscal_placeholder": "IE1234567FA",
         "telefono_ejemplo": "+353 1 555 0000",
         "razon_social_ejemplo": "Ltd",
@@ -658,6 +681,9 @@ PAIS_GENERICO: dict = {
     "iva": 16,
     "id_fiscal": "ID fiscal",
     "vocab": "concreto, friso, cielo raso, rodapié, plomero",
+    # El bloque genérico es venezolano en español, así que en inglés se
+    # traduce ese mismo vocabulario, no el de otro mercado.
+    "vocab_en": "concrete, trowel plaster, suspended ceiling, baseboard, plumber",
     "mercado": "iberoamericano",
     "id_fiscal_placeholder": "RIF, NIT, RUC, RFC…",
     "telefono_ejemplo": "+00 000 000 0000",
@@ -699,6 +725,40 @@ def normalizar_clave(texto: str) -> str:
 
     descompuesto = unicodedata.normalize("NFD", str(texto or "").strip().lower())
     return "".join(c for c in descompuesto if not unicodedata.combining(c))
+
+
+# Mercados donde la alícuota no la fija un único organismo central: en
+# Estados Unidos la fijan el estado, el condado y la ciudad; en Canadá, la
+# provincia (GST federal más el tramo provincial, que da lugar al HST).
+# Mostrar una cifra única en estos casos sería inventar un dato que el
+# visitante tomará por oficial.
+IMPUESTO_REGIONAL = frozenset({"US", "CA"})
+
+
+def impuesto_es_regional(codigo: str | None) -> bool:
+    """¿La alícuota de este mercado depende de la región y no es nacional?"""
+    return str(codigo or "").strip().upper() in IMPUESTO_REGIONAL
+
+
+def texto_impuesto(codigo: str | None, idioma: str = "es") -> str:
+    """Cómo se presenta el impuesto de un mercado en un listado.
+
+    «21% IVA», «20% VAT», «10% GST», «GST/HST», «Sales tax»: el nombre que
+    tiene en cada sitio y, cuando la alícuota es nacional, su valor. Donde
+    depende de la región no se muestra ninguna cifra.
+    """
+    pais = PAISES.get(str(codigo or "").strip().upper()) or PAIS_GENERICO
+    # El idioma es el de la página que lo muestra, no el del mercado: una
+    # landing en inglés que lista México dice «16% VAT», no «16% I.V.A.».
+    en = str(idioma or "es").strip().lower().startswith("en")
+    etiqueta = pais["etiqueta_impuesto_en"] if en else pais["etiqueta_impuesto"]
+    if impuesto_es_regional(codigo):
+        return etiqueta
+    iva = pais.get("iva")
+    if iva is None:
+        return etiqueta
+    iva = f"{iva:g}" if isinstance(iva, float) else str(iva)
+    return f"{iva} % {etiqueta}"
 
 
 @lru_cache(maxsize=128)

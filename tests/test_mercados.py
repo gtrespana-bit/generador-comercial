@@ -685,3 +685,52 @@ def test_los_enlaces_de_mercado_apuntan_a_la_canonica():
     for cc in ("us", "gb", "au", "ca", "ie"):
         assert not re.search(rf'href="/{cc}/"', r.text), f"/{cc}/ enlazado"
         assert f"/en-{cc}/" in r.text, f"/en-{cc}/ no enlazado"
+
+
+@pytest.mark.parametrize(
+    "codigo,espanol,ingles",
+    [
+        ("ES", "21 % I.V.A.", "21 % VAT"),
+        ("MX", "16 % I.V.A.", "16 % VAT"),
+        ("PE", "18 % IGV", "18 % IGV"),      # el IGV no se traduce
+        ("AU", "10 % GST", "10 % GST"),
+        ("GB", "20 % VAT", "20 % VAT"),
+    ],
+)
+def test_el_impuesto_se_nombra_como_en_cada_mercado(codigo, espanol, ingles):
+    from app.paises import texto_impuesto
+
+    assert texto_impuesto(codigo, "es") == espanol
+    assert texto_impuesto(codigo, "en") == ingles
+
+
+def test_donde_la_alicuota_no_es_nacional_no_se_inventa_una_cifra():
+    """En EE. UU. la fijan el estado y la ciudad; en Canadá, la provincia."""
+    from app.paises import impuesto_es_regional, texto_impuesto
+
+    for codigo in ("US", "CA"):
+        assert impuesto_es_regional(codigo), codigo
+        assert texto_impuesto(codigo, "es") == texto_impuesto(codigo, "en")
+        assert not any(c.isdigit() for c in texto_impuesto(codigo, "en")), codigo
+    assert texto_impuesto("US", "en") == "Sales tax"
+    assert texto_impuesto("CA", "en") == "GST/HST"
+    # El resto sí tiene alícuota nacional
+    for codigo in ("ES", "MX", "GB", "AU", "IE"):
+        assert not impuesto_es_regional(codigo), codigo
+        assert any(c.isdigit() for c in texto_impuesto(codigo, "es")), codigo
+
+
+def test_cada_mercado_tiene_su_vocabulario_de_obra_en_ingles():
+    """La landing en inglés no puede listar «hormigón, pladur, fontanero»."""
+    from app.paises import PAIS_GENERICO, PAISES
+
+    for codigo, pais in PAISES.items():
+        assert pais.get("vocab_en"), f"{codigo} sin vocab_en"
+    assert PAISES["ES"]["vocab_en"] == (
+        "concrete, plasterboard, suspended ceiling, wall tiling, plumber")
+    assert PAISES["US"]["vocab_en"] == (
+        "drywall, concrete, ceiling, baseboard, plumber")
+    assert PAISES["GB"]["vocab_en"] == (
+        "plasterboard, concrete, ceiling, skirting, plumber")
+    # El genérico es venezolano en español: se traduce ese, no otro
+    assert PAIS_GENERICO["vocab_en"].startswith("concrete, trowel plaster")

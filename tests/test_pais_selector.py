@@ -82,8 +82,10 @@ def test_es_subdirectorio_ya_no_dice_latinoamrica():
         f"El hero kiker no personaliza a España: {m.group(1) if m else 'no encontrado'}"
     )
     m = re.search(r'pais-bar-hint[^>]*>([^<]+)</span>', body)
-    assert m and "España" in m.group(1) and "NIF" in m.group(1) and "21%" in m.group(1), (
-        f"El hint de /es/ debería mencionar España, NIF y 21%. Visto: {m.group(1) if m else 'no encontrado'}"
+    # La alícuota se escribe con la convención del producto («21 %», con
+    # espacio, como en el PDF), así que no se ata la prueba al espaciado.
+    assert m and "España" in m.group(1) and "NIF" in m.group(1) and "21" in m.group(1), (
+        f"El hint de /es/ debería mencionar España, NIF y el 21%. Visto: {m.group(1) if m else 'no encontrado'}"
     )
     m = re.search(r'<h2 id="banner-h2"[^>]*>(.*?)</h2>', body, re.S)
     assert m and "España" in re.sub(r'<[^>]+>', ' ', m.group(1)), (
