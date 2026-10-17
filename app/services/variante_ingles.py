@@ -163,6 +163,12 @@ _VOCABULARIO_GB: dict[str, str] = {
     "parking lot": "car park",            # estacionamiento
     "insect screen": "fly screen",        # mosquitero
     "scarifying": "scabbling",            # repicado de concreto
+    "EIFS": "ETICS",                      # SATE: sigla de cada mercado
+    "exterior insulation and finish system":
+        "external thermal insulation composite system",
+    "bond beam block": "channel block",   # bloque canal
+    "face brick": "facing brick",         # ladrillo visto
+    "wood lintel": "timber lintel",       # dintel de madera
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
