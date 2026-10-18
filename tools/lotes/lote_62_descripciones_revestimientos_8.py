@@ -30,7 +30,7 @@ Vocabulario aplicado:
 
 LOTE = {
     "Ejecución de mural decorativo pintado a mano sobre paramento, según diseño. Incluye el replanteo del diseño, la pintura y el acabado protector. Medido por metro cuadrado de mural.":
-        "Execution of a decorative mural painted by hand on a substrate, to the design. Includes setting out the design, the painting and the protective finish. Measured per square meter of mural.",
+        "Decorative mural painted by hand on a substrate, to the design. Includes setting out the design, the painting and the protective finish. Measured per square meter of mural.",
 
     "Aplicación de microcemento decorativo en techo, con malla y acabado sellado. Incluye la preparación del soporte y la aplicación del microcemento. Medido por metro cuadrado aplicado.":
         "Application of decorative microcement to a ceiling, with mesh and a sealed finish. Includes preparing the substrate and applying the microcement. Measured per square meter applied.",

@@ -25,10 +25,10 @@ Vocabulario aplicado:
 
 LOTE = {
     "Ejecución de piso de terrazo pulido en obra, con mortero, árido y pulido mecánico. Incluye el vaciado, el nivelado y el pulido y abrillantado. Medido por metro cuadrado ejecutado.":
-        "Execution of a terrazzo floor ground on site, with mortar, aggregate and mechanical grinding. Includes the pouring, the leveling and the grinding and buffing. Measured per square meter completed.",
+        "Construction of a terrazzo floor polished on site, with mortar, aggregate and mechanical grinding. Includes the pouring, the leveling and the grinding and buffing. Measured per square meter completed.",
 
     "Ejecución de piso de concreto coloreado con pigmento integral y acabado alisado. Incluye el vaciado, el coloreado y el alisado. Medido por metro cuadrado ejecutado.":
-        "Execution of a colored concrete floor with an integral pigment and a power troweled finish. Includes the pouring, the coloring and the power troweling. Measured per square meter completed.",
+        "Construction of a colored concrete floor with an integral pigment and a power troweled finish. Includes the pouring, the coloring and the power troweling. Measured per square meter completed.",
 
     "Colocación de rodapié de pieza cerámica o de porcelanato, a juego con el pavimento, recibido con adhesivo cementoso mejorado C2 TE sobre paramento previamente regularizado. Incluye replanteo, cortes a inglete en esquinas y encuentros, ajuste a los marcos de carpintería, rejuntado con mortero CG2 y sellado de la junta inferior con el pavimento. La pieza la elige el cliente y se presupuesta aparte. Medido en longitud realmente ejecutada, descontando los huecos de paso.":
         "Fixing of a ceramic or porcelain baseboard to match the flooring, bedded in an improved cementitious adhesive C2 TE over a substrate previously made level. Includes setting out, mitre cuts at corners and junctions, fitting to the joinery frames, grouting with a CG2 mortar and sealing the bottom joint with the flooring. The tile is selected by the client and priced separately. Measured by the length actually completed, deducting the doorways.",
