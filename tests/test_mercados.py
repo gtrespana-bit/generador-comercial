@@ -231,11 +231,43 @@ def test_irlanda_puede_tener_una_tasa_no_entera():
 
 def test_cada_mercado_tiene_su_identificador_fiscal():
     assert PAISES["US"]["id_fiscal"] == "EIN"
-    assert PAISES["GB"]["id_fiscal"] == "VAT registration number"
+    assert PAISES["GB"]["id_fiscal"] == "VAT number"
     assert PAISES["AU"]["id_fiscal"] == "ABN"
     assert PAISES["CA"]["id_fiscal"] == "BN"
     assert PAISES["ES"]["id_fiscal"] == "NIF"
     assert PAISES["MX"]["id_fiscal"] == "RFC"
+
+
+def test_etiqueta_fiscal_cabe_en_la_columna():
+    """La etiqueta se guarda tal cual en ``configuracion.etiqueta_id_fiscal``.
+
+    Esa columna es VARCHAR(20). Un rótulo más largo hace que PostgreSQL aborte
+    el INSERT con «value too long for type character varying(20)» y el alta de
+    la empresa responda 500. Le pasó a Reino Unido con «VAT registration
+    number» (23 caracteres): el mercado existía en el selector, pero crear la
+    empresa allí era imposible. Esta prueba impide que vuelva a colarse un
+    rótulo que no quepa.
+    """
+    from app.models import Configuracion
+
+    ancho = Configuracion.__table__.c.etiqueta_id_fiscal.type.length
+    for codigo, pais in PAISES.items():
+        etiqueta = pais["id_fiscal"]
+        assert len(etiqueta) <= ancho, (
+            f"{codigo}.id_fiscal mide {len(etiqueta)} caracteres y la columna "
+            f"admite {ancho}: «{etiqueta}»"
+        )
+
+
+def test_etiqueta_fiscal_segura_recorta_al_ancho_de_la_columna():
+    """Red de seguridad: un rótulo futuro demasiado largo no tumba el alta."""
+    from app.models import Configuracion
+    from app.paises import etiqueta_fiscal_segura
+
+    ancho = Configuracion.__table__.c.etiqueta_id_fiscal.type.length
+    assert etiqueta_fiscal_segura({"id_fiscal": "X" * (ancho + 10)}) == "X" * ancho
+    assert etiqueta_fiscal_segura({"id_fiscal": "NIF"}) == "NIF"
+    assert etiqueta_fiscal_segura(None) == "ID fiscal"
 
 
 # ---------------------------------------------------------------------------

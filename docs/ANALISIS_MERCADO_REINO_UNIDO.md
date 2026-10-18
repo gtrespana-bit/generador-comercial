@@ -35,7 +35,7 @@ Lo que **ya está hecho y verificado**:
 | Plantillas | ✅ todas con variante `_en` (raíz y 15 subcarpetas) | `app/templates/` |
 | Landing y SEO de cabecera | ✅ ruta `/gb/` y bloque GB propio | `app/routers/publico.py`, `app/seo_en.py` |
 
-Datos del mercado británico ya correctos en `PAISES["GB"]`: GBP, símbolo £, IVA 20 %, «VAT registration number» (placeholder `GB123456789`), formato `DD/MM/YYYY`, separador de miles coma y decimal punto, locale `en-GB`, ejemplo «London» / «Ltd» / `+44 20 7946 0000`.
+Datos del mercado británico ya correctos en `PAISES["GB"]`: GBP, símbolo £, IVA 20 %, «VAT number» (el rótulo largo, «VAT registration number», no cabe en `configuracion.etiqueta_id_fiscal`, VARCHAR(20), y hacía fallar el alta de la empresa con un 500; placeholder `GB123456789`), formato `DD/MM/YYYY`, separador de miles coma y decimal punto, locale `en-GB`, ejemplo «London» / «Ltd» / `+44 20 7946 0000`.
 
 Lo que **falta** y condiciona la entrada:
 
