@@ -52,7 +52,7 @@ LOTE = {
 "Pintura sobre concreto visto o superficie mineral.":
     "Paint on exposed concrete or a mineral surface.",
 "Pintura de caucho exterior sobre friso nuevo, tres manos.":
-    "Exterior latex paint on new render, three coats.",
+    "Exterior latex paint on new stucco, three coats.",
 "Repintado de fachada sobre pintura existente.":
     "Repainting of a facade over existing paint.",
 "Pintura de fachada con acabado satinado, dos manos.":
@@ -192,7 +192,7 @@ LOTE = {
 "Recubrimiento conductor antiestático de piso.":
     "Anti-static conductive floor coating.",
 "Recubrimiento de fachada con mortero acrílico.":
-    "Acrylic render coating on a facade.",
+    "Acrylic stucco coating on a facade.",
 "Recubrimiento reflectivo de cubierta.":
     "Reflective roof coating.",
 "Recubrimiento decorativo texturado de pared.":

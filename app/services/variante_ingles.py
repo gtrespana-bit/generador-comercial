@@ -228,6 +228,9 @@ _VOCABULARIO_GB: dict[str, str] = {
     "door casing": "architraves",                  # molduras de remate
     "glazed transom": "fanlight",                  # dintel acristalado
     "peephole": "door viewer",                     # mirilla
+    "stuccoing": "rendering",               # frisado (gerundio)
+    "stuccoed": "rendered",                 # frisado (participio)
+    "dabs of adhesive": "dot and dab",      # trasdosado con pelladas
 }
 
 # ── Australia ────────────────────────────────────────────────────────────

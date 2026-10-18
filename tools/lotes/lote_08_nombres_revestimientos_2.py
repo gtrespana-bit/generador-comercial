@@ -3,7 +3,7 @@
 
 Criterios de este lote:
   · «Cielo raso continuo» es continuous ceiling cuando va de placa de yeso
-    (plasterboard en Reino Unido, drywall en Estados Unidos) y suspended
+    (gypsum board en Reino Unido, drywall en Estados Unidos) y suspended
     ceiling cuando va en retícula desmontable: en inglés son dos oficios
     distintos y se nombran distinto.
   · «Trasdosado autoportante» es independent wall lining.
@@ -122,9 +122,9 @@ LOTE = {
 
 # ── Trasdosados ───────────────────────────────────────────────────────────
 "Trasdosado autoportante de placa de yeso laminado estándar.":
-    "Standard independent plasterboard wall lining.",
+    "Standard independent gypsum board wall lining.",
 "Trasdosado autoportante de placa de yeso con aislamiento termoacústico.":
-    "Independent plasterboard wall lining with thermal and acoustic insulation.",
+    "Independent gypsum board wall lining with thermal and acoustic insulation.",
 "Trasdosado autoportante con placa resistente a la humedad.":
     "Independent wall lining with moisture-resistant board.",
 "Trasdosado autoportante con doble placa para mayor masa acústica.":
@@ -138,17 +138,17 @@ LOTE = {
 "Trasdosado con barrera de vapor.":
     "Wall lining with a vapor barrier.",
 "Trasdosado curvo de placa de yeso.":
-    "Curved plasterboard wall lining.",
+    "Curved gypsum board wall lining.",
 "Trasdosado con placa perforada acústica.":
     "Wall lining with acoustic perforated board.",
 "Formación de cajón para instalaciones en trasdosado.":
     "Formation of a service void in a wall lining.",
 "Trasdosado directo de placa de yeso adherida al paramento.":
-    "Direct plasterboard lining bonded to the substrate.",
+    "Direct gypsum board lining bonded to the substrate.",
 "Forro de placa de yeso sobre rastreles para cámara de instalaciones.":
     "Plasterboard lining on battens, forming a service void.",
 "Regularización de muro con placa de yeso para ocultar instalaciones.":
-    "Evening up a wall with plasterboard to conceal services.",
+    "Evening up a wall with gypsum board to conceal services.",
 "Trasdosado autoportante con placa de alta dureza.":
     "Independent wall lining with high-impact board.",
 "Tratamiento de juntas y remates de trasdosado.":
@@ -164,9 +164,9 @@ LOTE = {
 "Forro de placa de cemento como soporte de enchapado en zona de ducha.":
     "Cement board lining as a tiling substrate in a shower area.",
 "Forro ignífugo de placa de yeso para protección de instalaciones.":
-    "Fire-rated plasterboard enclosure to protect services.",
+    "Fire-rated gypsum board enclosure to protect services.",
 "Reparación puntual de trasdosado de placa de yeso.":
-    "Localized repair of a plasterboard wall lining.",
+    "Localized repair of a gypsum board wall lining.",
 "Forro ignífugo de conducto de instalaciones.":
     "Fire-rated enclosure of a service duct.",
 "Forro de placa de cemento en fachada.":
@@ -178,33 +178,33 @@ LOTE = {
 
 # ── Cielos rasos de placa ─────────────────────────────────────────────────
 "Cielo raso continuo de placa de yeso laminado, estructura oculta suspendida.":
-    "Continuous plasterboard ceiling on a concealed suspension system.",
+    "Continuous gypsum board ceiling on a concealed suspension system.",
 "Cielo raso de yeso laminado con placa resistente a la humedad.":
     "Plasterboard ceiling with moisture-resistant board.",
 "Cielo raso de yeso laminado con doble placa, acústico.":
-    "Acoustic plasterboard ceiling with two layers of board.",
+    "Acoustic gypsum board ceiling with two layers of board.",
 "Foso o cajón de cortina en cielo raso de yeso laminado.":
-    "Curtain recess in a plasterboard ceiling.",
+    "Curtain recess in a gypsum board ceiling.",
 "Registro practicable en cielo raso.":
     "Access panel in a ceiling.",
 "Cielo raso de yeso laminado a doble nivel.":
     "Plasterboard ceiling at two levels.",
 "Cielo raso continuo de yeso con aislamiento acústico.":
-    "Continuous plasterboard ceiling with acoustic insulation.",
+    "Continuous gypsum board ceiling with acoustic insulation.",
 "Cielo raso continuo de yeso con placa de alta dureza.":
-    "Continuous plasterboard ceiling with high-impact board.",
+    "Continuous gypsum board ceiling with high-impact board.",
 "Cielo raso continuo de yeso con placa ignífuga.":
-    "Continuous plasterboard ceiling with fire-rated board.",
+    "Continuous gypsum board ceiling with fire-rated board.",
 "Cielo raso continuo curvo de yeso.":
-    "Continuous curved plasterboard ceiling.",
+    "Continuous curved gypsum board ceiling.",
 "Cenefa integrada de iluminación en cielo raso.":
     "Integrated lighting cove in a ceiling.",
 "Cielo raso continuo a una pendiente.":
-    "Continuous sloped plasterboard ceiling.",
+    "Continuous sloped gypsum board ceiling.",
 "Cielo raso de placa de cemento en área húmeda.":
     "Cement board ceiling in a wet area.",
 "Reparación de cielo raso de yeso.":
-    "Repair of a plasterboard ceiling.",
+    "Repair of a gypsum board ceiling.",
 "Cielo raso continuo con doble placa y aislamiento.":
     "Continuous ceiling with two layers of board and insulation.",
 "Cielo raso continuo con placa perforada acústica.":
@@ -222,7 +222,7 @@ LOTE = {
 "Cielo raso continuo con junta de dilatación.":
     "Continuous ceiling with an expansion joint.",
 "Cielo raso continuo de placa de yeso en baño.":
-    "Continuous plasterboard ceiling in a bathroom.",
+    "Continuous gypsum board ceiling in a bathroom.",
 "Cielo raso de placa de yeso con lucernario.":
     "Plasterboard ceiling with a skylight.",
 "Cielo raso continuo con tapa de registro.":

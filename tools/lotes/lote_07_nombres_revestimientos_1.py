@@ -6,7 +6,7 @@ Criterios de este lote:
     «Preparación de paramento» es substrate preparation.
   · «Friso» y «repello» son los venezolanismos de los revestimientos de
     mortero. El friso es la capa de acabado (plaster en Estados Unidos,
-    render en Reino Unido) y el repello es la capa base (base coat).
+    stucco en Reino Unido) y el repello es la capa base (base coat).
   · «Enchapado» es tiling: es alicatado, no chapeado ni revestimiento.
   · «Capa fina» es thin-set y «capa gruesa» es thick-bed, que es como se
     llaman los dos sistemas de colocación en inglés de obra.
@@ -79,7 +79,7 @@ LOTE = {
 "Friso de mortero con hidrófugo en paramento exterior.":
     "Water-repellent cement plaster on exterior surfaces.",
 "Friso rústico texturado en fachada.":
-    "Textured rustic render on the facade.",
+    "Textured rustic stucco on the facade.",
 "Mortero impermeabilizante en área húmeda, base para enchapado.":
     "Waterproofing mortar in wet areas, as a base for tiling.",
 "Regularización y repello de paramento existente.":
@@ -103,7 +103,7 @@ LOTE = {
 "Friso de nivelación en columnas y vigas.":
     "Leveling plaster on columns and beams.",
 "Friso impermeabilizante en muro de contención.":
-    "Waterproofing render on a retaining wall.",
+    "Waterproofing stucco on a retaining wall.",
 "Friso de mortero coloreado en paramento.":
     "Colored cement plaster on a surface.",
 "Friso de mortero en zonas estrechas y mochetas.":
@@ -137,7 +137,7 @@ LOTE = {
 "Enlucido de yeso con acabado espatulado.":
     "Gypsum skim coat with a troweled finish.",
 "Reparación de junta de yeso en techo.":
-    "Repair of a plasterboard joint in a ceiling.",
+    "Repair of a gypsum board joint in a ceiling.",
 
 # ── Enchapados cerámicos y pétreos ────────────────────────────────────────
 "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina.":

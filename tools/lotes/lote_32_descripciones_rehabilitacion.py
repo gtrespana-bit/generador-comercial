@@ -49,7 +49,7 @@ LOTE = {
 "Colocación de panel de lana de roca sobre fachada, fijado y con capa de protección.":
     "Installation of rock wool boards on a facade, fixed and with a protective coating.",
 "Sistema de aislamiento térmico exterior (SATE) de fachada con poliestireno expandido, malla y mortero.":
-    "External insulation and finish system (EIFS) to a facade, with expanded polystyrene, mesh and render.",
+    "External insulation and finish system (EIFS) to a facade, with expanded polystyrene, mesh and stucco.",
 "Ejecución de fachada ventilada con subestructura metálica y aislamiento térmico, con cámara de aire.":
     "Construction of a ventilated facade with a metal support frame and thermal insulation, with an air cavity.",
 "Colocación de panel composite sobre fachada, con fijación mecánica, para mejorar el aislamiento y la estética.":
@@ -65,7 +65,7 @@ LOTE = {
 "Tratamiento de los puentes térmicos de fachada con piezas de aislamiento en los puntos singulares.":
     "Treatment of the thermal bridges of the facade with insulation pieces at the details.",
 "Acabado de fachada aislada con mortero de protección y malla, listo para el revestimiento final.":
-    "Finishing of an insulated facade with a protective render and mesh, ready for the final coating.",
+    "Finishing of an insulated facade with a protective stucco and mesh, ready for the final coating.",
 
 # ── Cubierta y techo ──────────────────────────────────────────────────────
 "Colocación de panel de poliestireno extruido sobre el techo, para reducir las pérdidas térmicas.":

@@ -163,7 +163,7 @@ LOTE = {
 "Desmontaje de revestimiento de láminas o paneles en pared.":
     "Removal of sheet or panel wall cladding.",
 "Picado de friso de mortero en paramento.":
-    "Chipping off cement render from a surface.",
+    "Chipping off cement stucco from a surface.",
 "Picado de friso de yeso o pasta en paramento.":
     "Chipping off gypsum plaster or compound from a surface.",
 "Picado de estuco o pasta decorativa en paramento.":
@@ -173,7 +173,7 @@ LOTE = {
 "Eliminación de pintura en paramento mediante raspado y decapado.":
     "Removal of paint from a surface by scraping and stripping.",
 "Demolición de cielo raso de yeso laminado y su estructura.":
-    "Demolition of a plasterboard ceiling and its framing.",
+    "Demolition of a gypsum board ceiling and its framing.",
 "Demolición de cielo raso de yeso vaciado o pasta.":
     "Demolition of a plaster or skim ceiling.",
 "Desmontaje de cielo raso desmontable de fibra mineral.":
@@ -183,9 +183,9 @@ LOTE = {
 "Desmontaje de cielo raso de láminas de PVC o aluminio.":
     "Removal of a PVC or aluminum sheet ceiling.",
 "Picado de friso en techo o cara inferior de losa.":
-    "Chipping off render from a soffit or the underside of a slab.",
+    "Chipping off stucco from a soffit or the underside of a slab.",
 "Demolición de trasdosado de yeso laminado y su estructura.":
-    "Demolition of a plasterboard wall lining and its framing.",
+    "Demolition of a gypsum board wall lining and its framing.",
 "Demolición de trasdosado de bloque o ladrillo adosado a muro.":
     "Demolition of a blockwork or brick lining against a wall.",
 "Desmontaje de trasdosado directo de placa pegada al muro.":

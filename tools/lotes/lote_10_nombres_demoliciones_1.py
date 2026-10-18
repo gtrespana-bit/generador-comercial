@@ -107,9 +107,9 @@ LOTE = {
 "Desmontaje de cerramiento ligero de láminas metálicas.":
     "Removal of lightweight metal sheet cladding.",
 "Picado de salpicado o graniplast en fachada.":
-    "Chipping off a textured render from a facade.",
+    "Chipping off a textured stucco from a facade.",
 "Picado de mortero monocapa en fachada.":
-    "Chipping off a single-coat render from a facade.",
+    "Chipping off a single-coat stucco from a facade.",
 "Desmontaje de muro cortina de vidrio.":
     "Removal of a glass curtain wall.",
 "Desmontaje de revestimiento de fachada ventilada.":
@@ -137,7 +137,7 @@ LOTE = {
 "Desmontaje de persiana de fachada.":
     "Removal of a facade shutter.",
 "Picado de friso de fachada.":
-    "Chipping off render from a facade.",
+    "Chipping off stucco from a facade.",
 "Desmontaje de publicidad o letrero de fachada.":
     "Removal of an advertising sign from a facade.",
 
@@ -145,7 +145,7 @@ LOTE = {
 "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.":
     "Demolition of a blockwork or brick partition, including its finishes.",
 "Demolición de tabique de yeso laminado y su estructura.":
-    "Demolition of a plasterboard partition and its framing.",
+    "Demolition of a gypsum board partition and its framing.",
 "Demolición de muro de concreto no estructural.":
     "Demolition of a non-structural concrete wall.",
 "Apertura de vano en pared de bloque o ladrillo.":
@@ -171,7 +171,7 @@ LOTE = {
 "Demolición de muro de bloque de concreto.":
     "Demolition of a concrete block wall.",
 "Demolición de tabique de doble placa de yeso.":
-    "Demolition of a double plasterboard partition.",
+    "Demolition of a double gypsum board partition.",
 "Apertura de vano en muro de concreto.":
     "Formation of an opening in a concrete wall.",
 "Demolición de tabique de bloque de vidrio existente.":

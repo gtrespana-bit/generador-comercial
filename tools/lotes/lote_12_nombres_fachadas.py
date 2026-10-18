@@ -25,7 +25,7 @@ LOTE = {
 "Fachada de bloque de concreto de 20 cm.":
     "20 cm concrete blockwork facade.",
 "Fachada de bloque de concreto con friso.":
-    "Concrete blockwork facade with render.",
+    "Concrete blockwork facade with stucco.",
 "Fachada de bloque de concreto con acabado a la vista.":
     "Concrete blockwork facade with an exposed finish.",
 "Fachada de bloque de concreto con refuerzo.":
@@ -37,7 +37,7 @@ LOTE = {
 "Fachada de ladrillo macizo de arcilla.":
     "Solid clay brick facade.",
 "Fachada de bloque de arcilla con friso.":
-    "Clay blockwork facade with render.",
+    "Clay blockwork facade with stucco.",
 "Fachada de ladrillo visto.":
     "Face brick facade.",
 "Fachada de ladrillo visto con juntas coloreadas.":
@@ -87,9 +87,9 @@ LOTE = {
 "Pared de bloque de concreto de 12 cm.":
     "12 cm concrete block wall.",
 "Tabique de bloque de concreto con friso.":
-    "Concrete block partition with render.",
+    "Concrete block partition with stucco.",
 "Tabique de bloque de concreto de 15 cm con friso.":
-    "15 cm concrete block partition with render.",
+    "15 cm concrete block partition with stucco.",
 "Tabique de bloque de concreto con refuerzo.":
     "Reinforced concrete block partition.",
 "Tabique de bloque de concreto a media altura.":
@@ -111,7 +111,7 @@ LOTE = {
 "Pared de ladrillo de arcilla a la vista.":
     "Exposed clay brick wall.",
 "Tabique de bloque de arcilla con friso.":
-    "Clay block partition with render.",
+    "Clay block partition with stucco.",
 "Tabique de ladrillo macizo.":
     "Solid brick partition.",
 "Tabique de bloque de arcilla a media altura.":
@@ -143,17 +143,17 @@ LOTE = {
 
 # ── Tabiques de placa de yeso ─────────────────────────────────────────────
 "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.":
-    "Self-supporting plasterboard partition, 15+70+15, two layers of board on each face.",
+    "Self-supporting gypsum board partition, 15+70+15, two layers of board on each face.",
 "Tabique autoportante de yeso laminado 12,5+70+12,5, placa simple.":
-    "Self-supporting plasterboard partition, 12.5+70+12.5, single layer of board.",
+    "Self-supporting gypsum board partition, 12.5+70+12.5, single layer of board.",
 "Tabique de yeso laminado con placa resistente a la humedad.":
     "Plasterboard partition with moisture-resistant board.",
 "Trasdosado autoportante de yeso laminado.":
-    "Independent plasterboard wall lining.",
+    "Independent gypsum board wall lining.",
 "Trasdosado directo de placa de yeso laminado pegada al muro.":
-    "Direct plasterboard lining bonded to a wall.",
+    "Direct gypsum board lining bonded to a wall.",
 "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.":
-    "Internal reinforcement for fixing loads in a plasterboard partition.",
+    "Internal reinforcement for fixing loads in a gypsum board partition.",
 "Tabique de yeso laminado con aislamiento acústico.":
     "Plasterboard partition with acoustic insulation.",
 "Tabique de yeso laminado con placa de alta dureza.":
@@ -163,19 +163,19 @@ LOTE = {
 "Tabique de yeso laminado en zona húmeda.":
     "Plasterboard partition in a wet area.",
 "Tabique de yeso laminado de gran altura.":
-    "Full-height plasterboard partition.",
+    "Full-height gypsum board partition.",
 "Tabique de yeso laminado con banda perimetral.":
     "Plasterboard partition with a perimeter sealing tape.",
 "Trasdosado autoportante con lana.":
     "Independent wall lining with mineral wool.",
 "Trasdosado directo de placa de yeso.":
-    "Direct plasterboard lining.",
+    "Direct gypsum board lining.",
 "Tabique de yeso laminado con doble placa.":
     "Plasterboard partition with two layers of board.",
 "Tabique de yeso laminado con refuerzo de cargas.":
     "Plasterboard partition with load fixing reinforcement.",
 "Tabique de yeso laminado curvo.":
-    "Curved plasterboard partition.",
+    "Curved gypsum board partition.",
 "Tabique de yeso laminado con cajón de instalaciones.":
     "Plasterboard partition with a service void.",
 "Tabique de yeso laminado con junta de dilatación.":
@@ -377,7 +377,7 @@ LOTE = {
 "Reparación de fisuras en fachada.":
     "Repair of cracks in a facade.",
 "Restauración de friso de fachada.":
-    "Restoration of facade render.",
+    "Restoration of facade stucco.",
 "Restauración de revestimiento de fachada.":
     "Restoration of facade cladding.",
 "Aplicación de hidrofugante en fachada.":

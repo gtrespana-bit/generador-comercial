@@ -99,7 +99,7 @@ LOTE = {
 "Reparación de cerca perimetral.": "Repair of a perimeter fence.",
 "Pintura de cerramiento metálico.": "Painting of a metal fence.",
 "Muro de cerramiento con acabado de friso.":
-    "Boundary wall with a rendered finish.",
+    "Boundary wall with a stuccoed finish.",
 "Columna de cerramiento de concreto.": "Concrete boundary pier.",
 "Base de muro de cerramiento.": "Base of a boundary wall.",
 "Cerca viva o seto perimetral.": "Perimeter hedge.",
