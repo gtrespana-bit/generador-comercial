@@ -137,7 +137,7 @@ LOTE = {
 "Enlucido de yeso con acabado espatulado.":
     "Gypsum skim coat with a troweled finish.",
 "Reparación de junta de yeso en techo.":
-    "Repair of a gypsum board joint in a ceiling.",
+    "Repair of a drywall joint in a ceiling.",
 
 # ── Enchapados cerámicos y pétreos ────────────────────────────────────────
 "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina.":

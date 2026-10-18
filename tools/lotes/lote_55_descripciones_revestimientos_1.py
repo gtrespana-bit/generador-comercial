@@ -104,11 +104,11 @@ LOTE = {
     'Cielo raso continuo de placa de cemento reforzada con fibra para baños y áreas húmedas. Incluye la estructura suspendida, la placa y el sellado de juntas. Medido por metro cuadrado ejecutado.':
         'Continuous ceiling of fiber cement board for bathrooms and wet areas. Includes the suspended framework, the board and sealing the joints. Measured per square meter completed.',
     'Cielo raso continuo de placa de yeso a doble altura, con estructura y placa en dos niveles. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.':
-        'Continuous gypsum board ceiling at double height, with the framework and the board on two levels. Includes the framework, the board and the joint treatment. Measured per square meter completed.',
+        'Continuous drywall ceiling at double height, with the framework and the board on two levels. Includes the framework, the board and the joint treatment. Measured per square meter completed.',
     'Cielo raso continuo de placa de yeso laminado de alta dureza, para zonas de tránsito y áreas comunes. Incluye la estructura suspendida, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.':
-        'Continuous ceiling of high hardness gypsum board, for circulation areas and common areas. Includes the suspended framework, the board and the joint treatment. Measured per square meter completed.',
+        'Continuous ceiling of high hardness drywall, for circulation areas and common areas. Includes the suspended framework, the board and the joint treatment. Measured per square meter completed.',
     'Cielo raso continuo de placa de yeso laminado en foso de escalera, con estructura y placa. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.':
-        'Continuous gypsum board ceiling in a stairwell, with the framework and the board. Includes the framework, the board and the joint treatment. Measured per square meter completed.',
+        'Continuous drywall ceiling in a stairwell, with the framework and the board. Includes the framework, the board and the joint treatment. Measured per square meter completed.',
     'Cielo raso de láminas de PVC para local comercial o área de servicio, con perfilería. Incluye la estructura, la colocación de las láminas y el remate. Medido por metro cuadrado ejecutado.':
         'PVC sheet ceiling for commercial premises or service areas, with the grid system. Includes the framework, fixing the sheets and the finishing. Measured per square meter completed.',
     'Cielo raso de paneles acústicos de madera, con estructura de fijación y remate. Incluye la estructura, la colocación de los paneles y el remate perimetral. Medido por metro cuadrado ejecutado.':
@@ -176,7 +176,7 @@ LOTE = {
     'Forro de placa de cemento reforzada con fibra sobre estructura, para paramentos exteriores o expuestos. Incluye la estructura, la placa y el sellado de juntas. Medido por metro cuadrado de forro terminado.':
         'Lining of fiber cement board on a framework, for exterior or exposed substrates. Includes the framework, the board and sealing the joints. Measured per square meter of lining completed.',
     'Forro de placa de yeso laminado sobre estructura metálica para medianería, sin contacto directo con el muro vecino. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado de forro terminado.':
-        'Lining of gypsum board on a metal framework for a party wall, without direct contact with the adjoining wall. Includes the framework, the board and the joint treatment. Measured per square meter of lining completed.',
+        'Lining of drywall on a metal framework for a party wall, without direct contact with the adjoining wall. Includes the framework, the board and the joint treatment. Measured per square meter of lining completed.',
     'Friso de nivelación de columnas y vigas de concreto para regularizar su superficie previo al acabado. Incluye la aplicación del mortero y el afinado de las aristas. Medido por metro lineal regularizado.':
         'Leveling stucco on concrete columns and beams to make their surface even prior to the finish. Includes applying the mortar and finishing the arrises. Measured per meter made level.',
     'Limpieza de paramento de ladrillo visto, con cepillado y lavado para eliminar suciedad y eflorescencias. Incluye la limpieza por franjas. Medido por metro cuadrado limpiado.':
@@ -202,7 +202,7 @@ LOTE = {
     'Regularización de paramento interior con mortero de nivelación para corregir desniveles previo al acabado. Incluye el replanteo, la aplicación y el afinado. Medido por metro cuadrado regularizado.':
         'Leveling of an interior substrate with leveling mortar to correct unevenness prior to the finish. Includes the field layout, the application and the finishing. Measured per square meter made level.',
     'Reparación de cielo raso de yeso laminado dañado, con sustitución de la zona afectada y tratamiento de juntas. Incluye el corte de la zona, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.':
-        'Repair of a damaged gypsum board ceiling, replacing the affected area and treating the joints. Includes cutting out the area, replacing the board and the finish. Measured per square meter repaired.',
+        'Repair of a damaged drywall ceiling, replacing the affected area and treating the joints. Includes cutting out the area, replacing the board and the finish. Measured per square meter repaired.',
     'Reparación puntual de forro de placa de cemento dañado, con sustitución de la zona y sellado de juntas. Incluye el corte de la zona, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.':
         'Localized repair of a damaged cement board lining, replacing the area and sealing the joints. Includes cutting out the area, replacing the board and the finish. Measured per square meter repaired.',
     'Repello de paramento exterior con mortero y acabado liso, listo para pintar. Incluye las maestras, la aplicación del mortero y el afinado. Medido por metro cuadrado repellado.':
@@ -246,7 +246,7 @@ LOTE = {
     'Sellado de piso de concreto con sellador acrílico o de poliuretano, para protección y realce. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado sellado.':
         'Sealing of a concrete floor with an acrylic or polyurethane sealer, for protection and enhancement. Includes the cleaning and applying the sealer. Measured per square meter sealed.',
     'Suministro y montaje de trasdosado autoportante de placa de yeso laminado de alta dureza de 12,5 mm, para paramentos sometidos a impacto y zonas de tránsito como pasillos y áreas comunes. Incluye la estructura separada del muro, el atornillado de la placa y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.':
-        'Supply and installation of a self-supporting lining of 12.5 mm high hardness gypsum board, for substrates subject to impact and circulation areas such as corridors and common areas. Includes the framework held off the wall, screwing the board and the joint treatment. Measured per square meter of lining completed.',
+        'Supply and installation of a self-supporting lining of 12.5 mm high hardness drywall, for substrates subject to impact and circulation areas such as corridors and common areas. Includes the framework held off the wall, screwing the board and the joint treatment. Measured per square meter of lining completed.',
     'Tratamiento antihumedad de paramento previo a la pintura, con aplicación de producto bloqueador de humedad. Incluye la limpieza y la aplicación del tratamiento. Medido por metro cuadrado tratado.':
         'Damp proofing treatment of a substrate prior to painting, with the application of a damp blocking product. Includes the cleaning and applying the treatment. Measured per square meter treated.',
     'Tratamiento de madera carcomida con consolidante e insecticida, previo a la restauración. Incluye la limpieza de la zona y la aplicación del tratamiento. Medido por metro cuadrado tratado.':

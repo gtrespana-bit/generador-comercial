@@ -143,55 +143,55 @@ LOTE = {
 
 # ── Tabiques de placa de yeso ─────────────────────────────────────────────
 "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.":
-    "Self-supporting gypsum board partition, 15+70+15, two layers of board on each face.",
+    "Self-supporting drywall partition, 15+70+15, two layers of board on each face.",
 "Tabique autoportante de yeso laminado 12,5+70+12,5, placa simple.":
-    "Self-supporting gypsum board partition, 12.5+70+12.5, single layer of board.",
+    "Self-supporting drywall partition, 12.5+70+12.5, single layer of board.",
 "Tabique de yeso laminado con placa resistente a la humedad.":
-    "Plasterboard partition with moisture-resistant board.",
+    "Drywall partition with moisture-resistant board.",
 "Trasdosado autoportante de yeso laminado.":
-    "Independent gypsum board wall lining.",
+    "Independent drywall wall lining.",
 "Trasdosado directo de placa de yeso laminado pegada al muro.":
-    "Direct gypsum board lining bonded to a wall.",
+    "Direct drywall lining bonded to a wall.",
 "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.":
-    "Internal reinforcement for fixing loads in a gypsum board partition.",
+    "Internal reinforcement for fixing loads in a drywall partition.",
 "Tabique de yeso laminado con aislamiento acústico.":
-    "Plasterboard partition with acoustic insulation.",
+    "Drywall partition with acoustic insulation.",
 "Tabique de yeso laminado con placa de alta dureza.":
-    "Plasterboard partition with high-impact board.",
+    "Drywall partition with high-impact board.",
 "Tabique de yeso laminado con placa ignífuga.":
-    "Plasterboard partition with fire-rated board.",
+    "Drywall partition with fire-rated board.",
 "Tabique de yeso laminado en zona húmeda.":
-    "Plasterboard partition in a wet area.",
+    "Drywall partition in a wet area.",
 "Tabique de yeso laminado de gran altura.":
-    "Full-height gypsum board partition.",
+    "Full-height drywall partition.",
 "Tabique de yeso laminado con banda perimetral.":
-    "Plasterboard partition with a perimeter sealing tape.",
+    "Drywall partition with a perimeter sealing tape.",
 "Trasdosado autoportante con lana.":
     "Independent wall lining with mineral wool.",
 "Trasdosado directo de placa de yeso.":
-    "Direct gypsum board lining.",
+    "Direct drywall lining.",
 "Tabique de yeso laminado con doble placa.":
-    "Plasterboard partition with two layers of board.",
+    "Drywall partition with two layers of board.",
 "Tabique de yeso laminado con refuerzo de cargas.":
-    "Plasterboard partition with load fixing reinforcement.",
+    "Drywall partition with load fixing reinforcement.",
 "Tabique de yeso laminado curvo.":
-    "Curved gypsum board partition.",
+    "Curved drywall partition.",
 "Tabique de yeso laminado con cajón de instalaciones.":
-    "Plasterboard partition with a service void.",
+    "Drywall partition with a service void.",
 "Tabique de yeso laminado con junta de dilatación.":
-    "Plasterboard partition with an expansion joint.",
+    "Drywall partition with an expansion joint.",
 "Tabique de yeso laminado con placa perforada.":
-    "Plasterboard partition with perforated board.",
+    "Drywall partition with perforated board.",
 "Tabique de yeso laminado en áticos.":
-    "Plasterboard partition in an attic.",
+    "Drywall partition in an attic.",
 "Tabique de yeso laminado con cámara para instalaciones.":
-    "Plasterboard partition with a service void.",
+    "Drywall partition with a service void.",
 "Tabique de yeso laminado de una sola placa.":
-    "Plasterboard partition with a single layer of board.",
+    "Drywall partition with a single layer of board.",
 "Tabique de yeso laminado con placa de alta dureza doble.":
-    "Plasterboard partition with two layers of high-impact board.",
+    "Drywall partition with two layers of high-impact board.",
 "Tabique de yeso laminado con bastidor de madera.":
-    "Plasterboard partition on a lumber frame.",
+    "Drywall partition on a lumber frame.",
 
 # ── Otras particiones y mamparas ──────────────────────────────────────────
 "Pared de bloque de vidrio.":

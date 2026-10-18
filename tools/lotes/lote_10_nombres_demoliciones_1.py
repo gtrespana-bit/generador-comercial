@@ -145,7 +145,7 @@ LOTE = {
 "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.":
     "Demolition of a blockwork or brick partition, including its finishes.",
 "Demolición de tabique de yeso laminado y su estructura.":
-    "Demolition of a gypsum board partition and its framing.",
+    "Demolition of a drywall partition and its framing.",
 "Demolición de muro de concreto no estructural.":
     "Demolition of a non-structural concrete wall.",
 "Apertura de vano en pared de bloque o ladrillo.":
@@ -171,7 +171,7 @@ LOTE = {
 "Demolición de muro de bloque de concreto.":
     "Demolition of a concrete block wall.",
 "Demolición de tabique de doble placa de yeso.":
-    "Demolition of a double gypsum board partition.",
+    "Demolition of a double drywall partition.",
 "Apertura de vano en muro de concreto.":
     "Formation of an opening in a concrete wall.",
 "Demolición de tabique de bloque de vidrio existente.":

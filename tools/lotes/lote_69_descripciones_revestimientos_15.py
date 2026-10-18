@@ -23,16 +23,16 @@ LOTE = {
         "Installation of a decorative perimeter trim to a ceiling, with a profile or molding. Includes fixing the trim and the finish. Measured per meter of trim.",
 
     "Cielo raso continuo de placa de yeso con junta de dilatación perimetral o intermedia. Incluye la estructura, la placa, la junta y el tratamiento de juntas. Medido por metro cuadrado ejecutado.":
-        "Continuous gypsum board ceiling with a perimeter or intermediate movement joint. Includes the framework, the board, the joint and the joint treatment. Measured per square meter completed.",
+        "Continuous drywall ceiling with a perimeter or intermediate movement joint. Includes the framework, the board, the joint and the joint treatment. Measured per square meter completed.",
 
     "Cielo raso continuo de placa de yeso resistente a la humedad en baño, con estructura y placa. Incluye la estructura, la placa antihumedad y el tratamiento de juntas. Medido por metro cuadrado ejecutado.":
-        "Continuous ceiling of moisture resistant gypsum board in a bathroom, with framework and board. Includes the framework, the moisture resistant board and the joint treatment. Measured per square meter completed.",
+        "Continuous ceiling of moisture resistant drywall in a bathroom, with framework and board. Includes the framework, the moisture resistant board and the joint treatment. Measured per square meter completed.",
 
     "Cielo raso continuo de placa de yeso con marco y remate para lucernario o claraboya. Incluye la estructura, la placa, el marco del lucernario y el tratamiento de juntas. Medido por metro cuadrado ejecutado.":
-        "Continuous gypsum board ceiling with a frame and trim for a rooflight or skylight. Includes the framework, the board, the frame of the rooflight and the joint treatment. Measured per square meter completed.",
+        "Continuous drywall ceiling with a frame and trim for a rooflight or skylight. Includes the framework, the board, the frame of the rooflight and the joint treatment. Measured per square meter completed.",
 
     "Cielo raso continuo de placa de yeso con tapa de registro practicable para inspección. Incluye la estructura, la placa, el registro y el tratamiento de juntas. Medido por metro cuadrado ejecutado.":
-        "Continuous gypsum board ceiling with an access panel for inspection. Includes the framework, the board, the access panel and the joint treatment. Measured per square meter completed.",
+        "Continuous drywall ceiling with an access panel for inspection. Includes the framework, the board, the access panel and the joint treatment. Measured per square meter completed.",
 
     "Reparación de cielo raso continuo con sustitución de la placa dañada y tratamiento de juntas. Incluye el corte, la reposición de la placa y el acabado. Medido por metro cuadrado reparado.":
         "Repair of a continuous ceiling with replacement of the damaged board and joint treatment. Includes the cutting, the replacement of the board and the finish. Measured per square meter repaired.",
@@ -59,7 +59,7 @@ LOTE = {
         "Ceiling of interlocking PVC sheets on battens or sections, with perimeter trim profiles. It is the most widely used economical and moisture resistant solution in service areas, porches and bathrooms, with the advantage that it washes with water and does not stain. Includes setting out and leveling, installing the battens, fitting the perimeter profiles, laying the sheets by pushing them together, the fitting cuts around light fittings and the final trim. Measured by the area actually completed, deducting openings larger than 1 m².",
 
     "Cielo raso en alero, porche o área exterior cubierta, con lámina de PVC o placa de cemento sobre estructura resistente a la humedad. El material y la estructura deben ser aptos para exterior: una placa de yeso laminado, aunque sea resistente a la humedad, no soporta la humedad ambiental permanente de un alero y termina descolgándose. Incluye el replanteo y nivelación, la estructura de perfilería galvanizada, la colocación del material con sus juntas de dilatación, la ventilación de la cámara y el remate perimetral. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².":
-        "Ceiling on a soffit, porch or covered external area, with PVC sheet or cement board on a moisture resistant framework. The material and the framework must be suitable for external use: a gypsum board, even a moisture resistant one, will not stand the permanent ambient humidity of an overhang and ends up sagging. Includes setting out and leveling, the framework of galvanized sections, laying the material with its movement joints, the ventilation of the cavity and the perimeter trim. Measured by the area actually completed, deducting openings larger than 1 m².",
+        "Ceiling on a soffit, porch or covered external area, with PVC sheet or cement board on a moisture resistant framework. The material and the framework must be suitable for external use: a drywall, even a moisture resistant one, will not stand the permanent ambient humidity of an overhang and ends up sagging. Includes setting out and leveling, the framework of galvanized sections, laying the material with its movement joints, the ventilation of the cavity and the perimeter trim. Measured by the area actually completed, deducting openings larger than 1 m².",
 
     "Cielo raso de láminas de PVC para baño, cocina o local húmedo, con su perfilería. Incluye la estructura de fijación, la colocación de las láminas y el remate. Medido por metro cuadrado ejecutado.":
         "Ceiling of PVC sheets for a bathroom, kitchen or wet room, with its sections. Includes the fixing framework, laying the sheets and the trim. Measured per square meter completed.",

@@ -137,10 +137,10 @@ LOTE = {
 
 # ── Forrados y cajones ────────────────────────────────────────────────────
 "Forrado de tubería con placa de yeso.":
-    "Boxing in of pipework with gypsum board.",
+    "Boxing in of pipework with drywall.",
 "Cajón para instalaciones.": "Service duct.",
-"Falso pilar de placa de yeso.": "False column in gypsum board.",
-"Forrado de viga con placa de yeso.": "Boxing in of a beam with gypsum board.",
+"Falso pilar de placa de yeso.": "False column in drywall.",
+"Forrado de viga con placa de yeso.": "Boxing in of a beam with drywall.",
 "Forrado de conducto de climatización.": "Enclosure of an HVAC duct.",
 "Cajón de persiana interior.": "Interior roller shutter box.",
 "Forrado de montante de instalación.":

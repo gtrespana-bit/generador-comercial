@@ -193,15 +193,15 @@ LOTE = {
 
 # ── Forrados y cajones ────────────────────────────────────────────────────
 "Forrado de tubería o bajante con placa de yeso. Incluye la estructura y la placa. Medido por metro lineal forrado.":
-    "Boxing in a pipe or downpipe with gypsum board. Includes the framing and the board. Measured per meter boxed in.",
+    "Boxing in a pipe or downpipe with drywall. Includes the framing and the board. Measured per meter boxed in.",
 "Formación de cajón para ocultar instalaciones. Incluye la estructura y la placa. Medido por metro lineal ejecutado.":
     "Formation of a service duct to conceal services. Includes the framing and the board. Measured per meter constructed.",
 "Formación de falso pilar de placa de yeso. Incluye la estructura y la placa. Medido por metro lineal ejecutado.":
-    "Formation of a false column in gypsum board. Includes the framing and the board. Measured per meter constructed.",
+    "Formation of a false column in drywall. Includes the framing and the board. Measured per meter constructed.",
 "Forrado de viga con placa de yeso. Incluye la estructura y la placa. Medido por metro cuadrado forrado.":
-    "Boxing in a beam with gypsum board. Includes the framing and the board. Measured per square meter boxed in.",
+    "Boxing in a beam with drywall. Includes the framing and the board. Measured per square meter boxed in.",
 "Forrado de conducto de climatización con placa de yeso. Incluye la estructura y la placa. Medido por metro lineal forrado.":
-    "Boxing in an HVAC duct with gypsum board. Includes the framing and the board. Measured per meter boxed in.",
+    "Boxing in an HVAC duct with drywall. Includes the framing and the board. Measured per meter boxed in.",
 "Formación de cajón de persiana interior. Incluye la estructura y la placa. Medido por metro lineal ejecutado.":
     "Formation of an internal roller shutter box. Includes the framing and the board. Measured per meter constructed.",
 "Forrado de montante de instalaciones con placa. Incluye la estructura y la placa. Medido por metro lineal forrado.":
