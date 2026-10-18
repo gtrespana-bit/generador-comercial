@@ -909,14 +909,22 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     ancho_valor = 135
     tot = totales if totales is not None else _LecturaTotales(presupuesto)
 
+    # La capa interactiva recalcula los totales en JavaScript, y ese motor no
+    # modela ni el CIS ni la inversión del sujeto pasivo: si el cliente cambiara
+    # de producto, las filas nuevas se quedarían congeladas y el total diría
+    # una cosa distinta que las líneas de encima. En esos documentos el bloque
+    # se imprime cerrado.
+    fiscalidad = _fiscalidad_gb(presupuesto, tot, mercado)
+    ctx_efectivo = None if fiscalidad is not None else ctx
+
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
-        if ctx is None:
+        if ctx_efectivo is None:
             return Paragraph(prefijo + fmt_monto(importe, moneda, mercado=mercado), st[estilo])
         alturas = {"tot_lab_s": 14, "tot_lab": 16, "tot_lab_g": 18}
         tamanos = {"tot_lab_s": 10.5, "tot_lab": 12, "tot_lab_g": 13.5}
-        return ctx.campo(
-            "tot_" + clave, ctx.txt_total(clave), ctx.js_total(clave), ancho_valor,
+        return ctx_efectivo.campo(
+            "tot_" + clave, ctx_efectivo.txt_total(clave), ctx_efectivo.js_total(clave), ancho_valor,
             alto=alturas.get(estilo, 14), alineacion="right", tam=tamanos.get(estilo, 10.5),
         )
 
@@ -942,13 +950,47 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
     _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
                 else mercado["etiqueta_impuesto"])
-    filas.append([
-        Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
-        valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
-    ])
+    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+        # El impuesto no se cobra: lo declara el cliente. La fila se imprime
+        # igualmente, con el tipo y a cero, porque es la que le dice al cliente
+        # cuánto tiene que ingresar él.
+        _iva_lbl += " — " + _rot(
+            'inversión del sujeto pasivo (no se cobra)',
+            'reverse charge (not charged)', lang,
+        )
+        filas.append([
+            Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
+            valor("impuesto", 0, "tot_lab_s"), "",
+        ])
+    else:
+        filas.append([
+            Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
+            valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
+        ])
+
+    # ── Retención del CIS ──────────────────────────────────────────────────
+    # Va sobre el elemento de mano de obra, no sobre la factura, así que se
+    # muestra la base sobre la que se calcula: sin esa fila el cliente no
+    # puede comprobar de dónde sale la cifra.
+    if fiscalidad is not None and fiscalidad.cis_aplica:
+        filas.append([
+            Paragraph(_rot('ELEMENTO DE MANO DE OBRA SUJETO A RETENCIÓN',
+                           'LABOUR ELEMENT SUBJECT TO DEDUCTION', lang), st["tot_lab_s"]),
+            valor("base_cis", fiscalidad.base_cis, "tot_lab_s"), "",
+        ])
+        filas.append([
+            Paragraph(
+                f"{_rot('RETENCIÓN CIS', 'CIS DEDUCTION', lang)} "
+                f"({fmt_pct(fiscalidad.cis_tipo)} %)", st["tot_lab_s"]),
+            valor("retencion_cis", fiscalidad.retencion_cis, "tot_lab_s", prefijo="- "), "",
+        ])
+        etiqueta_total = _rot('TOTAL A COBRAR (tras retención CIS)',
+                              'TOTAL PAYABLE (after CIS deduction)', lang)
+
+    _total_final = fiscalidad.total_a_cobrar if fiscalidad is not None else tot.total
     filas.append([
         Paragraph(etiqueta_total, st["tot_lab_g"]),
-        valor("total", tot.total, "tot_lab_g"), "",
+        valor("total", _total_final, "tot_lab_g"), "",
     ])
 
     n = len(filas)
@@ -969,15 +1011,49 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     for i in range(n - 1):
         estilos.append(("LINEBELOW", (0, i), (1, i), 0.75, LINEA_TOT))
     t.setStyle(TableStyle(estilos))
-    if not filas_desglose:
-        return t
-    return [
-        t,
-        Paragraph(
+    notas = []
+    if filas_desglose:
+        notas.append(Paragraph(
             _rot('El desglose reparte la base imponible entre los productos y materiales elegidos y el resto de la obra (mano de obra, recursos y ejecución de los trabajos). Los porcentajes se calculan sobre esa misma base imponible.', 'The breakdown distributes the taxable base among the chosen products and materials and the rest of the work (labor, resources and execution of the works). Percentages are calculated on that same taxable base.', lang),
             st["desg_nota"],
-        ),
-    ]
+        ))
+    # Leyenda obligatoria de Hacienda: la factura tiene que decir «reverse
+    # charge». Sin esa expresión el documento no es válido y el cliente no
+    # puede saber que el impuesto lo declara él.
+    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+        notas.append(Paragraph(_esc(fiscalidad.leyenda_iva), st["desg_nota"]))
+    if not notas:
+        return t
+    return [t] + notas
+
+
+def _fiscalidad_gb(presupuesto, tot, mercado):
+    """Fiscalidad británica del documento, o ``None`` si no le afecta.
+
+    Devuelve ``None`` en tres casos: el documento no es británico, es británico
+    pero no lleva ni CIS ni inversión del sujeto pasivo, o es un documento de
+    cobro que no expone esos campos. Así quien llama puede preguntar siempre y
+    solo actuar cuando hay algo que mostrar.
+    """
+    from .fiscalidad_reino_unido import calcular_fiscalidad_gb
+
+    f = calcular_fiscalidad_gb(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        # ``_LecturaTotales`` delega en el documento; si este no tiene el campo
+        # (una factura) levanta AttributeError y aquí vale 0: sin coste de
+        # materiales la retención se calcula sobre el importe íntegro, que es
+        # el supuesto conservador.
+        coste_materiales=getattr(tot, "coste_materiales", 0) or 0,
+        iva_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        cis_tipo=getattr(presupuesto, "cis_tipo", None),
+    )
+    if not f.aplica:
+        return None
+    if not (f.con_inversion_sujeto_pasivo or f.cis_aplica):
+        return None
+    return f
 
 
 def _pct_una_decimal(importe, base) -> str:
@@ -1761,6 +1837,15 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
                               etiqueta_total=_rot('PRESUPUESTO TOTAL', 'ESTIMATE TOTAL', lang),
                               lang=lang)
     if not ctx.preparar():
+        ctx = None
+    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni la
+    # inversión del sujeto pasivo: recalcula los totales como «base + IVA» y
+    # dejaría el bloque fiscal diciendo una cosa y el resumen otra. En esos
+    # documentos el presupuesto sale cerrado.
+    if ctx is not None and (
+        getattr(presupuesto, "cis_tipo", None) is not None
+        or (getattr(presupuesto, "iva_tratamiento", "") or "") == "inversion_sujeto_pasivo"
+    ):
         ctx = None
 
     buf = io.BytesIO()

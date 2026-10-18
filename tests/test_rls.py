@@ -16,6 +16,7 @@ from migrations.versions import (
     d6e2f9c4b8a1_catalog_visibility as catalog_visibility_migration,
     e1a4b7c9d2f0_harden_alembic_version_visibility as alembic_migration,
     j5b8e1c4a9f2_alembic_version_con_rls as alembic_rls_migration,
+    k6c9f2d5b8a3_fiscalidad_reino_unido as fiscalidad_migration,
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
     a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
@@ -186,7 +187,10 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert desglose_migration.down_revision == chats_migration.revision
     assert soporte_migration.down_revision == desglose_migration.revision
     assert alembic_rls_migration.down_revision == soporte_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == alembic_rls_migration.revision
+    # La fiscalidad británica (CIS + inversión del sujeto pasivo) es la cabeza
+    # y cuelga del endurecimiento de `alembic_version`.
+    assert fiscalidad_migration.down_revision == alembic_rls_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == fiscalidad_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

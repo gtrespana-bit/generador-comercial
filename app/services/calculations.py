@@ -62,6 +62,11 @@ class Totales:
     # base_productos`` para que las dos filas del desglose sumen exactamente la
     # base imponible del documento (el céntimo de redondeo lo absorbe la obra).
     base_productos: Decimal = Decimal("0")
+    # Coste de los materiales de obra, separado del resto del coste interno.
+    # Solo lo necesita el Reino Unido: la retención del CIS se calcula sobre el
+    # elemento de mano de obra, así que hay que poder restar los materiales.
+    # En cualquier otro mercado se queda a cero y no se usa.
+    coste_materiales: Decimal = Decimal("0")
 
     @property
     def coste_productos_incompleto(self) -> bool:
@@ -300,6 +305,73 @@ def coste_obra_partida(partida) -> Decimal:
     return money(cantidad * subtotal_campos * (Decimal("1") + desperdicio / Decimal("100")))
 
 
+def costes_obra_partida(partida) -> dict[str, Decimal]:
+    """Reparto del coste de obra de una partida por categoría CYPE.
+
+    Es ``coste_obra_partida`` sin sumar: devuelve el mismo importe total, pero
+    separado en ``materiales``, ``mano_obra``, ``complementarios`` y ``otros``.
+    Existe porque la retención británica del CIS no se calcula sobre la factura,
+    sino sobre el elemento de mano de obra: sin este reparto habría que aplicar
+    la retención sobre el importe íntegro y se retendría de más al
+    subcontratista, que es exactamente el error que Hacienda persigue.
+
+    Sigue las mismas reglas que ``coste_obra_partida`` (filas autoritativas,
+    desperdicio solo en partidas no CYPE) para que la suma de las cuatro
+    categorías coincida con el coste que ya se mostraba.
+
+    Cuando una partida no trae desglose —CYPE antigua sin filas y sin campos
+    de coste, o una partida simple— el coste conocido se imputa a ``otros``,
+    nunca a ``materiales``. Imputarlo a materiales lo excluiría de la retención
+    y dejaría al contratista con una retención insuficiente, que es la que
+    Hacienda le reclama a él.
+    """
+    cantidad = D(getattr(partida, "cantidad_total", 0))
+    descompuesto = getattr(partida, "descomposicion_cype", None)
+    desperdicio = pct(getattr(partida, "desperdicio_pct", 0))
+    factor = Decimal("1") + desperdicio / Decimal("100")
+    # Import diferido: ``importer`` depende de este módulo y la importación en
+    # cabecera cerraría un ciclo.
+    from .importer import COSTES_CYPE
+
+    vacio = {categoria: Decimal("0") for categoria in COSTES_CYPE}
+
+    def _desde_campos(con_factor: bool) -> dict[str, Decimal]:
+        salida = dict(vacio)
+        for categoria in COSTES_CYPE:
+            unitario = D(getattr(partida, f"coste_{categoria}", 0))
+            salida[categoria] = money(cantidad * unitario * (factor if con_factor else Decimal("1")))
+        return salida
+
+    if descompuesto is not None:
+        origen = getattr(descompuesto, "origen", "") or ""
+        es_cype = origen != "manual" and (
+            getattr(descompuesto, "coste_directo_unitario", None) is not None
+            or getattr(descompuesto, "archivo_origen", "")
+        )
+        filas = getattr(descompuesto, "filas", None)
+
+        if filas:
+            resultado = recalcular_descompuesto_cacheado(filas)
+            costes = resultado.get("costes") or {}
+            return {
+                categoria: money(cantidad * D(costes.get(categoria, 0)) * (Decimal("1") if es_cype else factor))
+                for categoria in COSTES_CYPE
+            }
+
+        if es_cype:
+            if _costes_unitarios_campos(partida) > 0:
+                return _desde_campos(con_factor=False)
+            directo = getattr(descompuesto, "coste_directo_unitario", None)
+            if directo is not None:
+                salida = dict(vacio)
+                salida["otros"] = money(cantidad * D(directo))
+                return salida
+
+    if _costes_unitarios_campos(partida) > 0:
+        return _desde_campos(con_factor=True)
+    return dict(vacio)
+
+
 def coste_partida(partida) -> Decimal:
     """Coste interno de la partida: obra y recursos + producto (si consta)."""
     return money(coste_obra_partida(partida) + coste_producto_partida(partida))
@@ -343,7 +415,14 @@ def _pct_sobre_base(beneficio: Decimal, base: Decimal) -> Decimal:
     return (beneficio / base * Decimal("100")).quantize(_CENT, rounding=ROUND_HALF_UP)
 
 
-def calcular_totales(presupuesto) -> Totales:
+def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales:
+    """Totales del presupuesto.
+
+    ``con_costes_categoria`` añade el reparto del coste por categoría CYPE,
+    que hoy solo necesita el Reino Unido para la retención del CIS. Se deja
+    apagado por defecto porque recorre las descomposiciones por segunda vez y
+    el PDF ya es el camino más pesado de la aplicación.
+    """
     incluido = Decimal("0")
     opcional = Decimal("0")
     alternativas = Decimal("0")
@@ -354,6 +433,7 @@ def calcular_totales(presupuesto) -> Totales:
     productos_sin_coste = 0
     subtotal_obra = Decimal("0")
     coste_obra = Decimal("0")
+    coste_materiales = Decimal("0")
 
     avanzadas = bool(getattr(presupuesto, "usar_funciones_avanzadas", False))
     for partida in presupuesto.todas_partidas:
@@ -388,6 +468,8 @@ def calcular_totales(presupuesto) -> Totales:
             importe_obra = money(importe - importe_producto)
             coste_obra_partida_total = coste_obra_partida(partida)
 
+            if con_costes_categoria:
+                coste_materiales += costes_obra_partida(partida)["materiales"]
             coste_interno += money(coste_obra_partida_total + coste_producto)
             total_productos += importe_producto
             coste_productos += coste_producto
@@ -405,6 +487,7 @@ def calcular_totales(presupuesto) -> Totales:
     coste_productos = money(coste_productos)
     subtotal_obra = money(subtotal_obra)
     coste_obra = money(coste_obra)
+    coste_materiales = money(coste_materiales)
 
     transporte = money(getattr(presupuesto, "transporte_monto", 0))
     otros = money(getattr(presupuesto, "otros_cargos_monto", 0))
@@ -478,4 +561,5 @@ def calcular_totales(presupuesto) -> Totales:
         margen_obra=margen_obra,
         margen_obra_pct=_pct_sobre_base(margen_obra, base_obra),
         base_productos=base_productos,
+        coste_materiales=coste_materiales,
     )

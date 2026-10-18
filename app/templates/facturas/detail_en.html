@@ -81,8 +81,10 @@
     {% if f.descuento_pct %}
     <tr><td class="right">DISCOUNT ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money_iso(f.moneda) }}</td></tr>
     {% endif %}
-    <tr><td class="right">VAT ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>
-    <tr class="row-total"><td class="right"><strong>TOTAL DUE</strong></td><td class="right"><strong>{{ f.total | money_iso(f.moneda) }}</strong></td></tr>
+    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right">VAT ({{ f.impuesto_pct | round(2) }} %) — reverse charge (not charged)</td><td class="right">{{ 0 | money_iso(f.moneda) }}</td></tr>{% else %}<tr><td class="right">VAT ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>{% endif %}
+    {% if fiscalidad_gb and fiscalidad_gb.cis_aplica %}<tr><td class="right">LABOUR ELEMENT SUBJECT TO DEDUCTION</td><td class="right">{{ fiscalidad_gb.base_cis | money_iso(f.moneda) }}</td></tr><tr><td class="right">CIS DEDUCTION ({{ fiscalidad_gb.cis_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_gb.retencion_cis | money_iso(f.moneda) }}</td></tr>{% endif %}
+    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_gb %}TOTAL PAYABLE{% if fiscalidad_gb.cis_aplica %} (after CIS deduction){% endif %}{% else %}TOTAL DUE{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else f.total) | money_iso(f.moneda) }}</strong></td></tr>
+    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_gb.leyenda_iva }}</td></tr>{% endif %}
   </table>
 </div>
 
