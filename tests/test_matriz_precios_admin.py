@@ -188,6 +188,38 @@ def test_modo_nacional_escribe_la_referencia_para_todos(entorno):
         assert fila.precio == 24.48
 
 
+def test_catalogo_invisible_explica_la_causa_una_sola_vez(entorno):
+    """Si la sesión no ve NINGÚN recurso, el informe debe explicar la causa.
+
+    Es lo que pasó en producción con la matriz británica: la sesión de
+    operador no activa ninguna organización y el RLS de tenant sobre
+    `recursos` devolvía cero filas, así que las 388 filas cayeron como
+    «recurso no encontrado» sin decir que el problema era la visibilidad
+    del catálogo (lo arregla la migración l7d0e3f6a9c4). El diagnóstico va
+    primero y los contadores siguen siendo exactos.
+    """
+    Session, ids, _ = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        # El fixture siembra un recurso (MO001); se retira para reproducir el
+        # catálogo invisible: cero filas legibles, como hacía el RLS con la
+        # sesión de operador antes de l7d0e3f6a9c4.
+        db.query(Recurso).delete()
+        db.commit()
+        resultado = importar_matriz_csv(
+            db,
+            _matriz([_fila("MT-GB"), _fila("MT-OTRO")]).encode("utf-8"),
+            aplicar=False,
+            nacional=True,
+        )
+        assert resultado["errores"][0].startswith("Esta sesión no ve ningún recurso")
+        assert resultado["no_encontrados"] == 2
+        # El error por fila se conserva: los contadores no cambian de sentido.
+        assert sum("recurso no encontrado" in e for e in resultado["errores"]) == 2
+        assert resultado["creadas"] == 0
+        assert resultado["aplicables"] == 0
+
+
 # ---------------------------------------------------------------------------
 # Vista previa
 # ---------------------------------------------------------------------------
