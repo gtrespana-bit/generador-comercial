@@ -654,7 +654,7 @@ async def crear_organizacion_web(
     # dejando la organización sin configuración.
     # País -> defaults (moneda/IVA/ID fiscal/tasa) para que nazca configurada
     pais_org = str(form.get("pais") or "").strip().upper()
-    from ..paises import PAISES, PAIS_GENERICO
+    from ..paises import PAISES, PAIS_GENERICO, etiqueta_fiscal_segura
     from ..services.tasa import tasa_sugerida
     if pais_org not in PAISES:
         pais_org = str(request.cookies.get("cotizat_pais", "") or "").strip().upper()
@@ -666,7 +666,7 @@ async def crear_organizacion_web(
         empresa_pais=_pais_data["nombre"],
         moneda_default=_pais_data["moneda"],
         iva_default=float(_pais_data["iva"]),
-        etiqueta_id_fiscal=_pais_data["id_fiscal"],
+        etiqueta_id_fiscal=etiqueta_fiscal_segura(_pais_data),
         tasa_cambio=tasa_sugerida(_pais_data["moneda"]) if _pais_data["moneda"] not in ("USD", "PAB") else 1.0,
         fecha_tasa=date.today() if _pais_data["moneda"] not in ("USD", "PAB") else None,
     )

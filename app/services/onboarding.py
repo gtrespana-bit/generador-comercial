@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from ..models import Cliente, Configuracion, Partida, Presupuesto, asegurar_config
+from ..paises import MAX_LONGITUD_ETIQUETA_FISCAL
 from ..seeds import sembrar_catalogo, sembrar_demo, sembrar_productos, sembrar_recetas
 
 MODO_DEMO = "demo"
@@ -89,7 +90,12 @@ def completar_onboarding(
     if not 0 <= iva <= 100:
         raise ErrorOnboarding("El IVA debe estar entre 0 y 100 %.")
     # Etiqueta ID fiscal y tasa (LatAm)
-    etiqueta = str(datos.get("etiqueta_id_fiscal") or "RIF").strip()[:20] or "RIF"
+    etiqueta = (
+        str(datos.get("etiqueta_id_fiscal") or "RIF").strip()[
+            :MAX_LONGITUD_ETIQUETA_FISCAL
+        ]
+        or "RIF"
+    )
     tasa_raw = datos.get("tasa_cambio")
     try:
         tasa = float(str(tasa_raw).replace(",", ".")) if str(tasa_raw or "").strip() else None

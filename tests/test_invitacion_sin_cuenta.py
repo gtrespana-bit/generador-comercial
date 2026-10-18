@@ -40,7 +40,13 @@ from app.auth import (
 )
 from app.database import Base, get_authenticated_db
 from app.main import app
-from app.models import InvitacionOrganizacion, Membresia, Organizacion, Usuario
+from app.models import (
+    Configuracion,
+    InvitacionOrganizacion,
+    Membresia,
+    Organizacion,
+    Usuario,
+)
 from app.services.invitations import crear_invitacion
 
 AUTH_ID = "3f8b1c22-9a4d-4a71-8f0e-2d5b7c9e1a03"
@@ -217,6 +223,63 @@ def test_sin_invitaciones_se_puede_crear_organizacion_con_normalidad(
 
     assert respuesta.status_code == 200
     assert "Crea el espacio de tu empresa" in respuesta.text
+
+
+def test_crear_empresa_britanica_guarda_los_defaults_del_mercado(
+    invitado_recien_registrado,
+):
+    """Alta real en Reino Unido, con el país llegando hasta la configuración.
+
+    Regresión del 500 al crear una empresa en UK: la etiqueta «VAT registration
+    number» (23 caracteres) no cabía en ``configuracion.etiqueta_id_fiscal``,
+    que es VARCHAR(20), así que PostgreSQL abortaba el INSERT y la respuesta
+    era «Internal Server Error». La prueba recorre la ruta completa y comprueba
+    los valores que se guardan; ``test_mercados`` vigila además la longitud de
+    todas las etiquetas contra el ancho real de la columna.
+    """
+    Session, datos = invitado_recien_registrado
+    with Session() as db:
+        db.query(InvitacionOrganizacion).delete()
+        db.commit()
+
+    with _cliente() as client:
+        respuesta = client.post(
+            "/organizaciones/nueva",
+            data={"nombre": "Acme Builders Ltd", "pais": "GB"},
+            follow_redirects=False,
+        )
+
+    assert respuesta.status_code == 303, respuesta.text
+    destino = respuesta.headers["location"]
+    assert destino.startswith(("/bienvenida", "/pago")), destino
+
+    with Session() as db:
+        organizacion = (
+            db.query(Organizacion)
+            .filter(Organizacion.nombre == "Acme Builders Ltd")
+            .one()
+        )
+        cfg = (
+            db.query(Configuracion)
+            .filter(Configuracion.organizacion_id == organizacion.id)
+            .one()
+        )
+        assert cfg.empresa_pais == "Reino Unido"
+        assert cfg.moneda_default == "GBP"
+        assert cfg.iva_default == 20
+        assert cfg.etiqueta_id_fiscal == "VAT number"
+        assert len(cfg.etiqueta_id_fiscal) <= 20
+        # La membresía de propietario se crea en la misma transacción.
+        assert (
+            db.query(Membresia)
+            .filter(
+                Membresia.organizacion_id == organizacion.id,
+                Membresia.usuario_id == datos["usuario_id"],
+                Membresia.rol == "propietario",
+            )
+            .count()
+            == 1
+        )
 
 
 def test_el_panel_de_organizaciones_no_se_cachea(invitado_recien_registrado):

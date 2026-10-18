@@ -582,7 +582,11 @@ PAISES: dict[str, dict] = {
         "moneda_local": "GBP",
         "simbolo_local": "£",
         "iva": 20,
-        "id_fiscal": "VAT registration number",
+        # «VAT number» y no «VAT registration number»: la etiqueta viaja tal
+        # cual a ``configuracion.etiqueta_id_fiscal``, que es VARCHAR(20), y el
+        # rótulo largo (23 caracteres) hacía fallar el INSERT del alta con un
+        # 500 en PostgreSQL. Ver MAX_LONGITUD_ETIQUETA_FISCAL más abajo.
+        "id_fiscal": "VAT number",
         "vocab": "plasterboard, concrete, ceiling, skirting, plumber",
         "vocab_en": "plasterboard, concrete, ceiling, skirting, plumber",
         "id_fiscal_placeholder": "GB123456789",
@@ -733,6 +737,26 @@ PAIS_GENERICO: dict = {
     "sistema_unidades": "metrico",
 
 }
+
+# Ancho real de ``configuracion.etiqueta_id_fiscal`` (VARCHAR(20)). La etiqueta
+# de ``PAISES`` se guarda sin recortar al crear la empresa, así que un rótulo
+# más largo tumba el alta entera con «value too long for type character
+# varying(20)»: PostgreSQL aborta el INSERT de la configuración y la respuesta
+# es un 500 que no dice nada. Pasó con «VAT registration number» (23) en Reino
+# Unido. Cualquier mercado nuevo debe caber aquí; el test
+# ``test_etiqueta_fiscal_cabe_en_la_columna`` lo comprueba.
+MAX_LONGITUD_ETIQUETA_FISCAL = 20
+
+
+def etiqueta_fiscal_segura(pais: dict | None, defecto: str = "ID fiscal") -> str:
+    """Etiqueta fiscal de un mercado, recortada al ancho de la columna.
+
+    El recorte es la última red: aunque un rótulo nuevo se pase de largo, la
+    empresa se crea (con la etiqueta abreviada) en vez de devolver un 500.
+    """
+    valor = str((pais or {}).get("id_fiscal") or defecto).strip()
+    return valor[:MAX_LONGITUD_ETIQUETA_FISCAL] or defecto
+
 
 # ---------------------------------------------------------------------------
 # Resolución de mercados

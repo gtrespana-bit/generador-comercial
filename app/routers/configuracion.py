@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..paises import MAX_LONGITUD_ETIQUETA_FISCAL
 from ..services import auditoria
 
 router = APIRouter()
@@ -114,7 +115,12 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.empresa_email = str(form.get("empresa_email", "")).strip()
     cfg.empresa_web = str(form.get("empresa_web", "")).strip()
     # Etiqueta ID fiscal por país (RIF/NIT/RUT/CUIT/RUC/RFC)
-    cfg.etiqueta_id_fiscal = str(form.get("etiqueta_id_fiscal", "") or "RIF").strip()[:20] or "RIF"
+    cfg.etiqueta_id_fiscal = (
+        str(form.get("etiqueta_id_fiscal", "") or "RIF").strip()[
+            :MAX_LONGITUD_ETIQUETA_FISCAL
+        ]
+        or "RIF"
+    )
     cfg.iva_default = max(0.0, min(_f(form.get("iva_default"), 16.0), 100.0))
     # Moneda contractual visible: solo códigos ISO admitidos. VES/Bs se
     # conserva para compatibilidad histórica, pero no se ofrece como moneda
