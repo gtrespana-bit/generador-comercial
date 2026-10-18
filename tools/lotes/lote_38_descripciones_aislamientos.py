@@ -60,7 +60,7 @@ LOTE = {
     "Supply and installation of rock wool to a party wall, with a support frame. Includes laying the wool and the finish. Measured per square meter insulated.",
 
 "Suministro y colocación de aislamiento térmico de muro por el interior, con panel y placa de yeso. Incluye la estructura, el panel y la placa. Medido por metro cuadrado aislado.":
-    "Supply and installation of internal wall insulation, with boards and drywall. Includes the framing, the boards and the board lining. Measured per square meter insulated.",
+    "Supply and installation of internal wall insulation, with boards and drywall. Includes the framing, the boards and the drywall. Measured per square meter insulated.",
 
 "Suministro y colocación de aislamiento térmico bajo techo inclinado, con panel de lana o reflectivo. Incluye la colocación del panel y el remate. Medido por metro cuadrado aislado.":
     "Supply and installation of insulation beneath a pitched roof, with wool boards or reflective foil. Includes laying the boards and the finish. Measured per square meter insulated.",
@@ -97,7 +97,7 @@ LOTE = {
 
 # ── Aislamiento acústico ──────────────────────────────────────────────────
 "Suministro y colocación de lana mineral en tabique o trasdosado, para aislamiento acústico. Incluye la colocación de la lana en la cámara. Medido por metro cuadrado aislado.":
-    "Supply and installation of mineral wool in a partition or lining, for acoustic insulation. Includes placing the wool in the cavity. Measured per square meter insulated.",
+    "Supply and installation of mineral wool in a partition or furred-out wall, for acoustic insulation. Includes placing the wool in the cavity. Measured per square meter insulated.",
 
 "Suministro y colocación de aislamiento acústico en pared medianera. Incluye la estructura y la colocación de la lana. Medido por metro cuadrado aislado.":
     "Supply and installation of acoustic insulation to a party wall. Includes the framing and placing the wool. Measured per square meter insulated.",

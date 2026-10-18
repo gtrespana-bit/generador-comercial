@@ -41,7 +41,9 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "organize": "organise",
     "organized": "organised",
     "organization": "organisation",
+    "canceled": "cancelled",
     "fiber": "fibre",
+    "paneling": "panelling",
     "liter": "litre",
     "per square meter": "per square metre",
     "per cubic meter": "per cubic metre",
@@ -83,6 +85,10 @@ _VOCABULARIO_GB: dict[str, str] = {
     "drywall": "plasterboard",
     "flat latex paint": "matt emulsion",
     "latex paint": "emulsion paint",
+    # Documento comercial: en el Reino Unido lo que un constructor entrega
+    # es una «quote», no un «estimate». El participio «estimated» queda a
+    # salvo: la clave no lo alcanza porque la palabra no acaba ahí.
+    "estimate": "quote",
     "flat paint": "matt paint",
     "construction adhesive": "grab adhesive",
     "patching": "making good",
@@ -123,6 +129,19 @@ _VOCABULARIO_GB: dict[str, str] = {
     "shoring": "propping",                # apeo de losas y vigas
     "shore": "prop",                      # puntal (Acrow prop)
     "lumber": "timber",                   # madera como material
+    # El trasdosado no tiene una sola palabra en Estados Unidos: si va
+    # pegado al muro es «direct-applied» y si lleva estructura propia,
+    # «furred-out». En el Reino Unido las dos cosas se dicen «lining».
+    "furred-out drywall wall": "independent drywall wall lining",
+    "furred-out party wall": "party wall lining",
+    "furred-out wall": "wall lining",
+    "furring strips": "battens",
+    "furring": "lining",
+    "direct-applied drywall": "direct drywall lining",
+    "direct-applied board": "direct board lining",
+    "direct-applied high hardness drywall": "direct lining of high hardness drywall",
+    "direct-applied 12.5 mm drywall": "direct lining of 12.5 mm drywall",
+    "backup wall": "inner leaf",
     "fasteners": "fixings",               # herrajes de fijación
     "fastening": "fixing",                # fijación
     "fastened": "fixed",                  # fijado (participio)

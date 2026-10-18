@@ -185,11 +185,11 @@ LOTE = {
 "Picado de friso en techo o cara inferior de losa.":
     "Chipping off stucco from a soffit or the underside of a slab.",
 "Demolición de trasdosado de yeso laminado y su estructura.":
-    "Demolition of a drywall wall lining and its framing.",
+    "Demolition of a furred-out drywall wall and its framing.",
 "Demolición de trasdosado de bloque o ladrillo adosado a muro.":
-    "Demolition of a concrete masonry or brick lining against a wall.",
+    "Demolition of a concrete masonry or brick wall built against an existing wall.",
 "Desmontaje de trasdosado directo de placa pegada al muro.":
-    "Removal of a direct board lining bonded to a wall.",
+    "Removal of direct-applied board bonded to a wall.",
 "Retiro de papel tapiz en paramento.":
     "Removal of wallpaper from a surface.",
 "Desmontaje de moldura decorativa de yeso o poliestireno.":

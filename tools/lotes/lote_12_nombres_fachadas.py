@@ -149,9 +149,9 @@ LOTE = {
 "Tabique de yeso laminado con placa resistente a la humedad.":
     "Drywall partition with moisture-resistant board.",
 "Trasdosado autoportante de yeso laminado.":
-    "Independent drywall wall lining.",
+    "Furred-out drywall wall.",
 "Trasdosado directo de placa de yeso laminado pegada al muro.":
-    "Direct drywall lining bonded to a wall.",
+    "Direct-applied drywall bonded to a wall.",
 "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.":
     "Internal reinforcement for fastening loads in a drywall partition.",
 "Tabique de yeso laminado con aislamiento acústico.":
@@ -167,9 +167,9 @@ LOTE = {
 "Tabique de yeso laminado con banda perimetral.":
     "Drywall partition with a perimeter sealing tape.",
 "Trasdosado autoportante con lana.":
-    "Independent wall lining with mineral wool.",
+    "Furred-out wall with mineral wool.",
 "Trasdosado directo de placa de yeso.":
-    "Direct drywall lining.",
+    "Direct-applied drywall.",
 "Tabique de yeso laminado con doble placa.":
     "Drywall partition with two layers of board.",
 "Tabique de yeso laminado con refuerzo de cargas.":

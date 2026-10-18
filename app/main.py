@@ -236,6 +236,15 @@ class IdiomaMiddleware:
                         nuevo = "/"
             scope["path"] = nuevo
             scope["raw_path"] = nuevo.encode("latin-1")
+            # El mercado viaja en la ruta reescrita (/us/, /gb/…). Se guarda
+            # para que los avisos que el código lanza en español salgan con
+            # el vocabulario del mercado, igual que las partidas.
+            _mk = _re.match(r"^/([a-zA-Z]{2})(?:/|$)", nuevo)
+            if _mk:
+                from .paises import obtener_pais
+
+                state = scope.setdefault("state", {})
+                state["mercado"] = obtener_pais(_mk.group(1).lower())
             # El conmutador de idioma escribe su propia cookie: si la ruta es
             # /idioma/... manda esa, no la que implicaba el prefijo.
             if nuevo == "/idioma" or nuevo.startswith("/idioma/"):

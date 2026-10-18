@@ -122,57 +122,57 @@ LOTE = {
 
 # ── Trasdosados ───────────────────────────────────────────────────────────
 "Trasdosado autoportante de placa de yeso laminado estándar.":
-    "Standard independent drywall wall lining.",
+    "Standard furred-out drywall wall.",
 "Trasdosado autoportante de placa de yeso con aislamiento termoacústico.":
-    "Independent drywall wall lining with thermal and acoustic insulation.",
+    "Furred-out drywall wall with thermal and acoustic insulation.",
 "Trasdosado autoportante con placa resistente a la humedad.":
-    "Independent wall lining with moisture-resistant board.",
+    "Furred-out wall with moisture-resistant board.",
 "Trasdosado autoportante con doble placa para mayor masa acústica.":
-    "Independent wall lining with two layers of board for greater acoustic mass.",
+    "Furred-out wall with two layers of board for greater acoustic mass.",
 "Trasdosado de medianería con aislamiento y placa.":
-    "Party wall lining with insulation and board.",
+    "Furred-out party wall with insulation and board.",
 "Trasdosado autoportante con refuerzo interior para anclaje de cargas.":
-    "Independent wall lining with internal reinforcement for fastening loads.",
+    "Furred-out wall with internal reinforcement for fastening loads.",
 "Trasdosado con doble placa y aislamiento.":
-    "Wall lining with two layers of board and insulation.",
+    "Furred-out wall with two layers of board and insulation.",
 "Trasdosado con barrera de vapor.":
-    "Wall lining with a vapor barrier.",
+    "Furred-out wall with a vapor barrier.",
 "Trasdosado curvo de placa de yeso.":
-    "Curved drywall wall lining.",
+    "Curved furred-out drywall wall.",
 "Trasdosado con placa perforada acústica.":
-    "Wall lining with acoustic perforated board.",
+    "Furred-out wall with acoustic perforated board.",
 "Formación de cajón para instalaciones en trasdosado.":
-    "Formation of a service void in a wall lining.",
+    "Formation of a service void in a furred-out wall.",
 "Trasdosado directo de placa de yeso adherida al paramento.":
-    "Direct drywall lining bonded to the substrate.",
+    "Direct-applied drywall bonded to the substrate.",
 "Forro de placa de yeso sobre rastreles para cámara de instalaciones.":
-    "Drywall lining on battens, forming a service void.",
+    "Drywall on furring strips, forming a service void.",
 "Regularización de muro con placa de yeso para ocultar instalaciones.":
     "Evening up a wall with drywall to conceal services.",
 "Trasdosado autoportante con placa de alta dureza.":
-    "Independent wall lining with high-impact board.",
+    "Furred-out wall with high-impact board.",
 "Tratamiento de juntas y remates de trasdosado.":
-    "Treatment of the joints and finishes of a wall lining.",
+    "Treatment of the joints and finishes of a furred-out wall.",
 "Trasdosado directo con placa de alta dureza.":
-    "Direct lining with high-impact board.",
+    "Direct-applied drywall with high-impact board.",
 "Forro de placa de yeso sobre estructura para medianería.":
-    "Drywall lining on a frame at a party wall.",
+    "Furred-out drywall wall on a frame at a party wall.",
 "Forro de placa de cemento exterior.":
     "Exterior cement board sheathing.",
 "Forro de placa de cemento sobre estructura para área húmeda.":
-    "Cement board lining on a frame in a wet area.",
+    "Cement backer board on a frame in a wet area.",
 "Forro de placa de cemento como soporte de enchapado en zona de ducha.":
-    "Cement board lining as a tiling substrate in a shower area.",
+    "Cement backer board as a tiling substrate in a shower area.",
 "Forro ignífugo de placa de yeso para protección de instalaciones.":
     "Fire-rated drywall enclosure to protect services.",
 "Reparación puntual de trasdosado de placa de yeso.":
-    "Localized repair of a drywall wall lining.",
+    "Localized repair of a furred-out drywall wall.",
 "Forro ignífugo de conducto de instalaciones.":
     "Fire-rated enclosure of a service duct.",
 "Forro de placa de cemento en fachada.":
     "Cement board sheathing on a facade.",
 "Forro de placa de yeso con registro de acceso.":
-    "Drywall lining with an access panel.",
+    "Furred-out drywall wall with an access panel.",
 "Reparación de forro de placa de cemento.":
     "Repair of cement board sheathing.",
 

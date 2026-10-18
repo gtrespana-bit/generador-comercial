@@ -211,7 +211,7 @@ LOTE = {
 "Revestimiento de paramento con paneles decorativos.":
     "Wall surfacing with decorative panels.",
 "Forro de pared con machihembrado de madera.":
-    "Wall lining with tongued and grooved boarding.",
+    "Wall paneling with tongue and groove boarding.",
 "Revestimiento continuo de microcemento en paramento vertical.":
     "Seamless microcement coating on a vertical surface.",
 "Revestimiento de pared de baño con paneles de PVC.":

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="{{ lang or 'es' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -21,7 +21,7 @@
                     {% block marca %}{{ product_name }}{% endblock %}
                   </div>
                   <div style="margin-top:6px;font-size:12px;font-weight:600;letter-spacing:1.5px;color:#bfe6d2;text-transform:uppercase;">
-                    {% block subtitulo %}Presupuestos de obra{% endblock %}
+                    {% block subtitulo %}{% if lang == 'en' %}Construction estimates{% else %}Presupuestos de obra{% endif %}{% endblock %}
                   </div>
                 </td>
                 <td align="right" valign="top">
@@ -42,7 +42,7 @@
         <tr>
           <td style="background:#f7faf8;border-top:1px solid #e3ece7;padding:20px 36px;">
             <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:#8ba096;text-align:center;">
-              {% block copyright %}© {{ anio }} {{ product_name }} · Presupuestos{% endblock %}
+              {% block copyright %}© {{ anio }} {{ product_name }} · {% if lang == 'en' %}Estimates{% else %}Presupuestos{% endif %}{% endblock %}
             </p>
             <p style="margin:0;font-size:11px;line-height:1.6;color:#a9b8b1;text-align:center;">
               {% block pie %}{% endblock %}

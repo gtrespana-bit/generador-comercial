@@ -216,8 +216,15 @@ def _patrones_mensajes(idioma: str) -> tuple[tuple[re.Pattern[str], str], ...]:
     return tuple(patrones)
 
 
-def mensaje(texto: object, idioma: str | None = None) -> str:
-    """Traduce un mensaje escrito en español; si no está, lo devuelve igual."""
+def mensaje(texto: object, idioma: str | None = None,
+            mercado: dict | None = None) -> str:
+    """Traduce un mensaje escrito en español; si no está, lo devuelve igual.
+
+    El catálogo está escrito en inglés de Estados Unidos, como la base del
+    glosario de partidas, y ``mercado`` lo ajusta al vocabulario del país:
+    un aviso que dice «estimate» en Estados Unidos dice «quote» en el Reino
+    Unido, sin necesidad de un segundo catálogo por mercado.
+    """
     if texto is None:
         return ""
     s = str(texto)
@@ -227,17 +234,22 @@ def mensaje(texto: object, idioma: str | None = None) -> str:
     catalogo = _cargar_mensajes(lang)
     if not catalogo:
         return s
+    from app.services.variante_ingles import aplicar_variante
+
+    def _variar(t: str) -> str:
+        return aplicar_variante(t, mercado) if mercado else t
+
     directo = catalogo.get(s) or catalogo.get(s.strip())
     if directo is not None:
-        return directo
+        return _variar(directo)
     for patron, plantilla in _patrones_mensajes(lang):
         m = patron.match(s) or patron.match(s.strip())
         if not m:
             continue
         try:
-            return plantilla.format(*m.groups())
+            return _variar(plantilla.format(*m.groups()))
         except (IndexError, KeyError):
-            return plantilla
+            return _variar(plantilla)
     return s
 
 
@@ -248,8 +260,11 @@ def mensaje_request(request: object, texto: object) -> str:
     español el texto sale tal cual, así que no cambia nada respecto a antes.
     """
     lang = IDIOMA_POR_DEFECTO
+    mercado = None
     try:
-        lang = getattr(getattr(request, "state", None), "lang", "") or IDIOMA_POR_DEFECTO
+        estado = getattr(request, "state", None)
+        lang = getattr(estado, "lang", "") or IDIOMA_POR_DEFECTO
+        mercado = getattr(estado, "mercado", None)
     except Exception:  # pragma: no cover - request sin state
         lang = IDIOMA_POR_DEFECTO
-    return mensaje(texto, lang)
+    return mensaje(texto, lang, mercado)
