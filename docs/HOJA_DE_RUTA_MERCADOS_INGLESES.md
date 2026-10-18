@@ -189,8 +189,25 @@ El head de Alembic pasa a ser **`l7d0e3f6a9c4`**.
 La matriz se carga **desde el panel de producción**, así que primero hay que
 llevar el código a `main` y desplegar.
 
+**Incidente del 2026-10-18 (resuelto en operativo, no en código).** El merge
+de la PR #124 se desplegó con la base remota **en `j5b8e1c4a9f2`**, y el
+código fusionado exige `k6c9f2d5b8a3` (columnas `iva_tratamiento`/`cis_tipo`
+en `presupuestos` y `facturas`, `coste_materiales` en `facturas`). Resultado:
+`GET /inicio` respondía **500** (el panel hidrata `Presupuesto` completo y el
+ORM hacía SELECT de columnas inexistentes) y `/readyz` cantaba el diagnóstico:
+«Esquema en j5b8e1c4a9f2; se espera k6c9f2d5b8a3». La reparación es pegar
+`docs/staging_upgrade_k6c9f2d5b8a3.sql` en el SQL Editor de Supabase (rol
+administrativo); el script aborta solo si la versión no es `j5b8e1c4a9f2`.
+**Lección:** Vercel no mira `/readyz` al desplegar — hay que aplicar el SQL
+de la migración **antes o en el mismo momento** del merge, y comprobar
+`/readyz` después. Si `/readyz` está en rojo, la app ya está rota aunque el
+despliegue diga «Listo».
+
 Orden:
 
+0. **Comprobar `https://www.cotizat.online/readyz`** y dejar la base en el
+   head que exige el código desplegado (si dice `j5b8e1c4a9f2`, aplicar
+   `staging_upgrade_k6c9f2d5b8a3.sql` primero).
 1. Abrir la PR de esta rama → `main`.
 2. Hacer merge.
 3. Desplegar.
