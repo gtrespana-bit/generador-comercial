@@ -1094,7 +1094,7 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
     # El orden refleja la familiaridad del usuario hispanohablante: primero
     # USD/EUR (referencia global), luego el resto de LatAm y al final VES.
     _monedas_orden = [
-        "USD", "EUR", "COP", "MXN", "PEN", "CLP", "ARS",
+        "USD", "EUR", "GBP", "AUD", "CAD", "COP", "MXN", "PEN", "CLP", "ARS",
         "UYU", "PYG", "BOB", "DOP", "PAB", "CRC", "GTQ",
         "HNL", "NIO", "BRL", "VES",
     ]

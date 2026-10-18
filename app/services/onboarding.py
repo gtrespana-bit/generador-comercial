@@ -133,6 +133,11 @@ def completar_onboarding(
         # Las funciones son idempotentes: si el proceso se interrumpe puede
         # repetirse sin duplicar catálogos ni el documento de ejemplo.
         sembrar_catalogo(db)
+        if not cfg.semilla_catalogo_aplicada:
+            raise ErrorOnboarding(
+                "No se ha podido cargar el catálogo de CotizaT. "
+                "Reintenta en unos minutos; tu configuración está guardada."
+            )
         sembrar_productos(db, idioma)
         sembrar_recetas(db)
         sembrar_demo(db, idioma)

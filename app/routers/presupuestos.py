@@ -3384,13 +3384,16 @@ def exportar_presupuesto(presupuesto_id: int, request: Request, formato: str = "
         from ..services.bc3 import exportar_presupuesto_bc3
         try:
             contenido = exportar_presupuesto_bc3(p, _config(db))
+            # El número puede incluir Unicode, comillas o separadores. Nunca
+            # interpolarlo en una cabecera HTTP sin codificarlo.
+            nombre_bc3 = quote(f"presupuesto_{p.numero}.bc3", safe="")
             return Response(
                 content=contenido,
                 media_type="text/plain; charset=windows-1252",
-                headers={"Content-Disposition": f'attachment; filename="presupuesto_{p.numero}.bc3"'},
+                headers={"Content-Disposition": f"attachment; filename=presupuesto.bc3; filename*=UTF-8''{nombre_bc3}"},
             )
         except Exception as exc:
-            log.error("Error exportando BC3 %s: %s", p.numero, exc)
+            log.exception("Error exportando BC3 %s: %s", p.numero, exc)
             return _redirect(f"/presupuestos/{p.id}", error="No se pudo generar el BC3. Revisa capítulos y partidas.")
 
     # CSV por defecto

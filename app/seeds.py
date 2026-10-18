@@ -470,9 +470,9 @@ def sembrar_catalogo(db: Session):
     if disponible():
         sembrar_catalogo_propio(db)
     else:
-        # Empaquetado sin basedatos_partidas: no se inventa un catálogo de
-        # prueba. El usuario importará el suyo o creará partidas a mano.
-        pass
+        # Una carga no realizada no puede darse por aplicada. Permite
+        # reintentar tras corregir el empaquetado del catálogo.
+        return
     # Marcar semilla como aplicada
     cfg = db.query(Configuracion).first()
     if cfg is not None:

@@ -27,6 +27,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request as UrlRequest, urlopen
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ..branding import PRODUCT_NAME
@@ -56,6 +57,33 @@ class StripeError(RuntimeError):
 
 class StripeWebhookError(RuntimeError):
     """La firma del webhook no es válida o el evento no se puede cumplir."""
+
+
+class StripeFulfillmentPending(RuntimeError):
+    """Cobro de CotizaT aún no asociado: Stripe debe volver a entregarlo."""
+
+
+def _subscription_details(objeto: dict) -> dict:
+    # API 2025+ (incluida 2026-07-29.dahlia) movió estos datos a parent.
+    return (objeto.get("parent") or {}).get("subscription_details") or {}
+
+
+def _metadata_pago(objeto: dict) -> dict:
+    return {**(_subscription_details(objeto).get("metadata") or {}),
+            **(objeto.get("metadata") or {})}
+
+
+def _bloquear_cobro(db: Session, objeto: dict) -> None:
+    """Serializa eventos simultáneos de una suscripción en PostgreSQL.
+
+    El lock dura hasta commit/rollback y sirve a todos los workers. Una
+    factura y Checkout de la misma suscripción usan exactamente la misma clave.
+    SQLite es únicamente el modo local/de pruebas, sin esta primitiva.
+    """
+    clave = _ids_stripe(objeto)["subscription"] or str(objeto.get("id") or "")
+    if clave and db.get_bind().dialect.name == "postgresql":
+        db.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:clave, 0))"),
+                   {"clave": f"cotizat-stripe:{clave}"})
 
 
 def _env(nombre: str) -> str:
@@ -297,16 +325,17 @@ def _ids_stripe(objeto: dict) -> dict[str, str]:
             return str(valor.get("id") or "")
         return str(valor or "")
 
-    invoice = objeto.get("invoice")
+    invoice = (objeto.get("id") if str(objeto.get("id") or "").startswith("in_")
+               else objeto.get("invoice"))
     payment_intent = objeto.get("payment_intent")
     if isinstance(invoice, dict):
         payment_intent = payment_intent or invoice.get("payment_intent")
     return {
         "session": _id(objeto.get("id") if str(objeto.get("id") or "").startswith("cs_") else ""),
-        "subscription": _id(objeto.get("subscription")),
+        "subscription": _id(objeto.get("subscription") or _subscription_details(objeto).get("subscription")),
         "customer": _id(objeto.get("customer")),
         "payment_intent": _id(payment_intent),
-        "invoice": _id(invoice) if not str(objeto.get("id") or "").startswith("cs_") else _id(invoice),
+        "invoice": _id(invoice),
     }
 
 
@@ -327,6 +356,7 @@ def _anotar_ids(compra: CompraPlan, objeto: dict) -> None:
 def _activar_compra_stripe(db: Session, compra: CompraPlan, objeto: dict) -> CompraPlan:
     from .compras import activar_compra
 
+    compra._stripe_recien_activada = False
     _anotar_ids(compra, objeto)
     if compra.estado == "activa":
         db.flush()
@@ -348,7 +378,7 @@ def _compra_por_sesion(db: Session, session_id: str) -> CompraPlan | None:
     return (
         db.query(CompraPlan)
         .filter(CompraPlan.stripe_checkout_session_id == session_id)
-        .first()
+        .populate_existing().first()
     )
 
 
@@ -359,19 +389,19 @@ def _compra_por_factura(db: Session, invoice_id: str) -> CompraPlan | None:
     return (
         db.query(CompraPlan)
         .filter(CompraPlan.stripe_invoice_id == invoice_id)
-        .first()
+        .populate_existing().first()
     )
 
 
-def _compra_por_suscripcion(db: Session, subscription_id: str) -> CompraPlan | None:
+def _compra_por_suscripcion(db: Session, subscription_id: str, *, primera: bool = False) -> CompraPlan | None:
     subscription_id = str(subscription_id or "").strip()
     if not subscription_id:
         return None
     return (
         db.query(CompraPlan)
         .filter(CompraPlan.stripe_subscription_id == subscription_id)
-        .order_by(CompraPlan.id.desc())
-        .first()
+        .order_by(CompraPlan.id.asc() if primera else CompraPlan.id.desc())
+        .populate_existing().first()
     )
 
 
@@ -383,8 +413,9 @@ def cumplir_sesion_checkout(db: Session, sesion: dict) -> CompraPlan | None:
     if not isinstance(sesion, dict):
         return None
     if str(sesion.get("payment_status") or "") not in {"paid", "no_payment_required"}:
-        if str(sesion.get("status") or "") != "complete":
-            return None
+        # complete NO implica cobrado: existen métodos asíncronos.
+        return None
+    _bloquear_cobro(db, sesion)
     session_id = str(sesion.get("id") or "")
     compra = _compra_por_sesion(db, session_id)
     if compra is None:
@@ -395,8 +426,13 @@ def cumplir_sesion_checkout(db: Session, sesion: dict) -> CompraPlan | None:
             compra_id = 0
         if compra_id:
             compra = db.get(CompraPlan, compra_id)
-    if compra is None or compra.metodo_pago != METODO_STRIPE:
+    if compra is None:
+        metadata = _metadata_pago(sesion)
+        if metadata.get("organizacion_id") or metadata.get("compra_id"):
+            raise StripeFulfillmentPending("Checkout pagado aún sin compra asociada.")
         return None
+    if compra.metodo_pago != METODO_STRIPE:
+        raise StripeFulfillmentPending("Checkout no asociado a una compra de tarjeta.")
     return _activar_compra_stripe(db, compra, sesion)
 
 
@@ -413,22 +449,32 @@ def cumplir_factura(db: Session, factura: dict) -> CompraPlan | None:
     if not factura.get("paid") and str(factura.get("status") or "") != "paid":
         return None
     invoice_id = str(factura.get("id") or "")
+    if not invoice_id:
+        raise StripeWebhookError("La factura pagada no tiene id.")
+    _bloquear_cobro(db, factura)
     existente = _compra_por_factura(db, invoice_id)
     if existente is not None:
         return _activar_compra_stripe(db, existente, factura)
 
-    subscription_id = str(factura.get("subscription") or "")
-    origen = _compra_por_suscripcion(db, subscription_id)
+    subscription_id = _ids_stripe(factura)["subscription"]
+    motivo = str(factura.get("billing_reason") or "")
+    origen = _compra_por_suscripcion(db, subscription_id, primera=motivo == "subscription_create")
+    metadata = _metadata_pago(factura)
     if origen is None:
-        metadata = factura.get("metadata") or {}
         try:
             compra_id = int(metadata.get("compra_id") or 0)
         except (TypeError, ValueError):
             compra_id = 0
         if compra_id:
             origen = db.get(CompraPlan, compra_id)
-    if origen is None or origen.metodo_pago != METODO_STRIPE:
-        return None
+    if origen is None:
+        if metadata.get("organizacion_id") or metadata.get("compra_id"):
+            # Puede llegar ANTES de checkout.session.completed. Un 200 aquí
+            # perdería silenciosamente la activación/renovación.
+            raise StripeFulfillmentPending("Factura pagada aún sin compra asociada.")
+        return None  # factura ajena a CotizaT
+    if origen.metodo_pago != METODO_STRIPE:
+        raise StripeFulfillmentPending("Factura no asociada a una compra de tarjeta.")
 
     if origen.estado == "pendiente":
         return _activar_compra_stripe(db, origen, factura)
@@ -436,7 +482,6 @@ def cumplir_factura(db: Session, factura: dict) -> CompraPlan | None:
     # La primera factura de la suscripción (`subscription_create`) es el
     # mismo cobro que `checkout.session.completed`. Si ya está activa, solo
     # anotamos ids: crear otra compra duplicaría el período pagado.
-    motivo = str(factura.get("billing_reason") or "")
     if motivo in {"subscription_create", "subscription_update"}:
         return _activar_compra_stripe(db, origen, factura)
 
@@ -464,7 +509,7 @@ def procesar_evento_webhook(db: Session, evento: dict) -> CompraPlan | None:
     """Cumple el evento de Stripe. Devuelve la compra afectada, o None."""
     tipo = str(evento.get("type") or "")
     objeto = (evento.get("data") or {}).get("object") or {}
-    if tipo == "checkout.session.completed":
+    if tipo in {"checkout.session.completed", "checkout.session.async_payment_succeeded"}:
         return cumplir_sesion_checkout(db, objeto)
     if tipo == "invoice.paid":
         return cumplir_factura(db, objeto)

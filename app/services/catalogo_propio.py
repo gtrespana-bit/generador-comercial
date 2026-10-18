@@ -924,6 +924,22 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
             return actualizar_taxonomia_catalogo_propio(db)
 
         total = db.query(Partida).count()
+        # Recuperar únicamente una inicialización interrumpida del modo con
+        # catálogo. La versión > 0 demuestra una siembra anterior: aunque el
+        # usuario haya borrado todo, nunca se debe reponer por sorpresa.
+        if total == 0 and version == 0:
+            cfg = db.query(Configuracion).first()
+            if (
+                cfg is not None
+                and cfg.onboarding_completado
+                and cfg.onboarding_modo == "demo"
+                and db.query(Recurso).count() == 0
+            ):
+                resultado = sembrar_catalogo_propio(db)
+                if resultado.get("ok"):
+                    cfg.semilla_catalogo_aplicada = True
+                    db.commit()
+                return resultado
         # Limpio o con partidas solo del usuario: no inyectar el catálogo.
         if total == 0 or not _parece_catalogo_prueba(db):
             return None

@@ -40,8 +40,9 @@ pagado.
    entidad española (autónomo / sociedad). País de la cuenta: **España**.
 2. Developers → API keys: copia `sk_test_…` (pruebas) y luego `sk_live_…`.
 3. Developers → Webhooks → Add endpoint:
-   - URL: `https://cotizat.online/pago/stripe/webhook`
+   - URL: `https://www.cotizat.online/pago/stripe/webhook`
    - Eventos: `checkout.session.completed`, `invoice.paid`,
+     `checkout.session.async_payment_succeeded`,
      `invoice.payment_failed`, `customer.subscription.deleted`
    - Copia el `whsec_…`
 4. Settings → Payment methods: deja **Cards** activas. Apple Pay y Google Pay
@@ -78,3 +79,73 @@ Tarjetas de test de Stripe: `4242 4242 4242 4242`, cualquier fecha futura,
 cualquier CVC. En modo test la clave es `sk_test_…` y el webhook se prueba con
 `stripe listen --forward-to localhost:8000/pago/stripe/webhook` o con la
 suite (`tests/test_stripe.py`).
+
+
+## Incidente 18/10/2026: 308 y eventos pendientes
+
+### Diagnóstico confirmado por los registros aportados
+
+Stripe enviaba a `https://cotizat.online/pago/stripe/webhook` y recibía **308**
+a `https://www.cotizat.online/pago/stripe/webhook`. El evento no quedaba
+entregado. Cobrar en Stripe y activar la licencia en CotizaT son pasos distintos.
+Esta redirección no se arregla devolviendo 200 desde el código si la petición
+no llega a la aplicación. No añadir un 200 ficticio ni desactivar la firma.
+
+Además se corrigieron en el servicio:
+
+- Lectura del formato moderno `invoice.parent.subscription_details` (API del
+  ejemplo: `2026-07-29.dahlia`), manteniendo el formato anterior.
+- Conservación de `invoice.id` para deduplicar facturas reenviadas.
+- Respuesta 503 reintentable para cobros identificados como CotizaT que aún no
+  tienen compra asociada; no se busca una empresa por email ni se concede una
+  licencia solo por `organizacion_id` de metadata.
+- Exclusión de Checkout `complete` pero `unpaid`; soporte al evento asíncrono
+  de pago confirmado si se habilita ese método en el futuro.
+- Serialización transaccional PostgreSQL por suscripción mediante advisory lock.
+  Una factura y una sesión de la misma suscripción comparten el bloqueo.
+
+### Recuperación operativa (requiere acceso a Stripe/Vercel y producción)
+
+1. En Stripe, **modo activo**, editar el destino existente para usar exactamente
+   `https://www.cotizat.online/pago/stripe/webhook` (sin barra final). No crear
+   un segundo destino ni eliminar el actual mientras existan entregas pendientes.
+2. Confirmar que ese host apunta al despliegue correcto y no tiene protección
+   de acceso, reglas WAF o redirecciones sobre el POST del webhook. Un GET en
+   el navegador no comprueba la entrega: la ruta solo admite POST.
+3. Confirmar en Vercel Production que `STRIPE_SECRET_KEY` pertenece a la cuenta
+   activa correcta y `STRIPE_WEBHOOK_SECRET` al **destino editado**. Revisarlos
+   únicamente en los paneles seguros, nunca copiarlos al chat, logs o repositorio.
+   Si se cambia un secreto/variable, redesplegar. No rotar claves sin necesidad.
+4. Desplegar las correcciones del servicio antes de reenviar las facturas de
+   formato moderno. Cambiar la URL por sí solo no corrige su procesamiento.
+5. Para cada suscripción afectada, reenviar primero `checkout.session.completed`
+   pagado y después `invoice.paid` inicial. Continuar con las facturas de
+   renovación en orden cronológico. Si la factura llega primero, el nuevo 503
+   pide reintento hasta que se pueda asociar a la compra.
+6. Revisar la nueva entrega: debe devolver **200**, sin 3xx. Un 400 de firma
+   requiere comprobar el secreto del destino; un 503 pide revisar configuración
+   o asociación; un 500 requiere logs del despliegue. No insistir a ciegas.
+7. Verificar en CotizaT que la compra, organización, plan y licencia son los
+   correctos, y contrastar vencimientos y número de períodos con las facturas
+   realmente pagadas. Un 200 por sí solo no demuestra la activación.
+8. Reenviar otra vez el mismo evento y comprobar que no aumenta el número de
+   compras/licencias ni el vencimiento. **Reenviar un evento no crea otro cobro**;
+   no crear nuevas sesiones de Checkout para recuperar pagos ya realizados.
+9. Revisar **todos** los eventos fallidos del destino, no solo los dos ejemplos.
+   El correo aportado indica fin de reintentos el **24/10/2026 a las 15:48:28 UTC**.
+   No esperar a ese plazo para recuperar las entregas y confirmar el acceso.
+
+Los dos eventos del ejemplo corresponden a una misma suscripción y a la misma
+factura inicial: **no son dos pagos distintos**. Hay que identificar también el
+segundo cobro mencionado por el titular. Si el servicio antiguo llegó a duplicar
+licencias, la corrección evita nuevas duplicaciones pero no borra automáticamente
+licencias históricas: su conciliación requiere revisar cobros y acceso real.
+
+### Alcance de la verificación
+
+Las pruebas automatizadas cubren payloads sintéticos de formato antiguo y
+moderno, firmas inválidas, factura antes de Checkout, reintentos de renovaciones,
+Checkout impagado y respuesta HTTP reintentable. El bloqueo PostgreSQL se prueba
+por la clave SQL compartida; la concurrencia real debe validarse en staging con
+PostgreSQL. La suite local no verifica DNS, dominio canónico, Vercel, secretos ni
+licencias reales de producción.

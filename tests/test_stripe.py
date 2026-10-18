@@ -553,3 +553,150 @@ def test_el_webhook_avisa_al_titular_de_la_venta(entorno, monkeypatch):
     assert aviso["reply_to"] == "duena@example.com"
     assert "mensual" in aviso["html"].lower()
     assert "/admin/ingresos?tab=ventas" in aviso["text"]
+
+
+# Payloads sintéticos con la estructura de la API 2026; sin datos de clientes.
+def _compra_webhook(db, ids):
+    compra = crear_compra(
+        db, organizacion_id=ids[0], plan="mensual", metodo_pago=METODO_STRIPE,
+        datos_verificacion={}, comprobante_reference="", comprobante_nombre="",
+        comprobante_mime="", creada_por_usuario_id=ids[1],
+        creada_por_email="test@example.test", exigir_comprobante=False,
+        stripe_checkout_session_id="cs_test_2026",
+    )
+    db.flush()
+    return compra
+
+
+def _checkout_2026():
+    return {"id": "cs_test_2026", "status": "complete", "payment_status": "paid",
+            "subscription": "sub_test_2026", "invoice": "in_test_alta2026",
+            "metadata": {"plan": "mensual", "organizacion_id": "999"}}
+
+
+def _factura_2026(invoice_id="in_test_alta2026", motivo="subscription_create"):
+    return {"id": invoice_id, "object": "invoice", "status": "paid",
+            "billing_reason": motivo, "metadata": {},
+            "parent": {"type": "subscription_details", "subscription_details": {
+                "subscription": "sub_test_2026",
+                "metadata": {"plan": "mensual", "organizacion_id": "999"},
+            }}}
+
+
+def test_factura_2026_renovacion_y_reintentos_no_duplican(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = _compra_webhook(db, ids)
+        cumplir_sesion_checkout(db, _checkout_2026())
+        procesar_evento_webhook(db, {"type": "invoice.paid", "data": {"object": _factura_2026()}})
+        renovacion_evento = {"type": "invoice.paid", "data": {
+            "object": _factura_2026("in_test_ren2026", "subscription_cycle")}}
+        renovacion = procesar_evento_webhook(db, renovacion_evento)
+        assert renovacion.id != compra.id
+        assert renovacion.stripe_invoice_id == "in_test_ren2026"
+        assert renovacion.stripe_subscription_id == "sub_test_2026"
+        db.commit()
+        repetida = procesar_evento_webhook(db, renovacion_evento)
+        assert repetida.id == renovacion.id
+        assert not repetida._stripe_recien_activada
+        assert db.query(Licencia).filter_by(origen="pago").count() == 2
+
+
+def test_factura_antes_de_checkout_es_reintentable_y_no_se_pierde(entorno):
+    from app.services.stripe import StripeFulfillmentPending
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = _compra_webhook(db, ids)
+        db.commit()
+        with pytest.raises(StripeFulfillmentPending):
+            procesar_evento_webhook(db, {"type": "invoice.paid", "data": {"object": _factura_2026()}})
+        db.rollback()
+        cumplir_sesion_checkout(db, _checkout_2026())
+        factura = procesar_evento_webhook(db, {"type": "invoice.paid", "data": {"object": _factura_2026()}})
+        assert factura.id == compra.id
+        assert db.query(Licencia).filter_by(origen="pago").count() == 1
+
+
+def test_checkout_completo_sin_pago_no_activa(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        compra = _compra_webhook(db, ids)
+        sesion = {**_checkout_2026(), "payment_status": "unpaid"}
+        assert cumplir_sesion_checkout(db, sesion) is None
+        assert compra.estado == "pendiente"
+        assert db.query(Licencia).filter_by(origen="pago").count() == 0
+
+
+def test_factura_reintentada_tras_otras_renovaciones_no_anade_periodos(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        _compra_webhook(db, ids)
+        cumplir_sesion_checkout(db, _checkout_2026())
+        for invoice_id in ("in_test_ren1", "in_test_ren2", "in_test_ren1", "in_test_alta2026"):
+            factura = _factura_2026(invoice_id, "subscription_create" if invoice_id == "in_test_alta2026" else "subscription_cycle")
+            procesar_evento_webhook(db, {"type": "invoice.paid", "data": {"object": factura}})
+            db.commit()
+        assert db.query(Licencia).filter_by(origen="pago").count() == 3
+        assert db.query(CompraPlan).filter(CompraPlan.stripe_invoice_id.like("in_test_%")).count() == 3
+
+
+def test_webhook_factura_sin_asociar_responde_503_no_200(entorno, monkeypatch):
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_1234567890abcdefghijklmn")
+    monkeypatch.setenv("STRIPE_WEBHOOK_SECRET", WEBHOOK_SECRET)
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        _compra_webhook(db, ids)
+        db.commit()
+        evento = {"id": "evt_test_2026", "api_version": "2026-07-29.dahlia",
+                  "type": "invoice.paid", "data": {"object": _factura_2026()}}
+        payload = json.dumps(evento).encode()
+        _instalar_override(db, ids)
+        try:
+            with _cliente() as client:
+                respuesta = client.post("/pago/stripe/webhook", content=payload,
+                                        headers={"stripe-signature": _firmar(payload)},
+                                        follow_redirects=False)
+        finally:
+            _retirar_override()
+        assert respuesta.status_code == 503
+        assert respuesta.headers["retry-after"] == "60"
+        assert db.query(Licencia).filter_by(origen="pago").count() == 0
+
+
+def test_lock_postgres_usa_misma_suscripcion_para_checkout_y_factura():
+    from types import SimpleNamespace
+    from app.services.stripe import _bloquear_cobro
+    llamadas = []
+    db = SimpleNamespace(get_bind=lambda: SimpleNamespace(dialect=SimpleNamespace(name="postgresql")),
+                         execute=lambda statement, params: llamadas.append((str(statement), params)))
+    _bloquear_cobro(db, _checkout_2026())
+    _bloquear_cobro(db, _factura_2026())
+    assert llamadas[0] == llamadas[1]
+    assert "pg_advisory_xact_lock" in llamadas[0][0]
+
+
+@pytest.mark.parametrize("host", ["https://cotizat.online", "https://www.cotizat.online"])
+def test_aplicacion_recibe_post_webhook_sin_redirigir_host(entorno, monkeypatch, host):
+    """No reproduce reglas de dominios del proxy/Vercel, que son externas."""
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_1234567890abcdefghijklmn")
+    monkeypatch.setenv("STRIPE_WEBHOOK_SECRET", WEBHOOK_SECRET)
+    Session, ids, _rol = entorno
+    with Session() as db:
+        _instalar_override(db, ids)
+        try:
+            with TestClient(app, base_url=host) as client:
+                payload = json.dumps({"type": "invoice.created", "data": {"object": {}}}).encode()
+                resp = client.post("/pago/stripe/webhook", content=payload,
+                                   headers={"stripe-signature": _firmar(payload)}, follow_redirects=False)
+                assert resp.status_code == 200
+                assert "location" not in resp.headers
+                invalida = client.post("/pago/stripe/webhook", content=payload,
+                                       headers={"stripe-signature": "incorrecta"}, follow_redirects=False)
+                assert invalida.status_code == 400
+        finally:
+            _retirar_override()
