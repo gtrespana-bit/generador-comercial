@@ -96,6 +96,12 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   `tools/generar_sql_precios_pais.py GB` e idempotente (solo referencias nacionales GB).
 - Validado: 0 errores al pasar la matriz por el importador real
   (`tools/verificar_matriz_importable.py GB`).
+- Carga en producción (2026-10-18): el primer intento desde el panel de operador
+  rechazó las 388 filas como «recurso no encontrado» — el RLS de tenant ocultaba
+  `recursos` a la sesión de operador, que no lleva organización activa. Arreglado
+  con la migración `l7d0e3f6a9c4` (pendiente de desplegar). Vía inmediata: pegar
+  el SQL de carga de arriba en el SQL Editor de Supabase, igual que se cargaron
+  España y LatAm. Detalle en `docs/HOJA_DE_RUTA_MERCADOS_INGLESES.md` §2.5.
 
 **Pendiente para que GB sea LISTO (fases siguientes):**
 1. **Fase 1 — cumplimiento:** CIS (retenciones 0/20/30 % sobre mano de obra, declaración mensual

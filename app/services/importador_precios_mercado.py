@@ -220,6 +220,19 @@ def importar_matriz_csv(
         "errores": [],
     }
     recursos = resolver_recursos(db, nacional=nacional)
+    if not recursos:
+        # Sin catálogo visible no hay ninguna fila resoluble. En vez de
+        # repetir «recurso no encontrado» cientos de veces sin explicar la
+        # causa, se dice primero lo que pasa: o la sesión no puede leer
+        # `recursos` (en el despliegue web, RLS sin organización activa ni
+        # política de operador —véase la migración l7d0e3f6a9c4—), o ninguna
+        # organización ha sembrado todavía el catálogo.
+        resultado["errores"].append(
+            "Esta sesión no ve ningún recurso del catálogo: ninguna fila puede "
+            "resolverse. En el despliegue web significa que la base de datos "
+            "no está dejando leer `recursos` (RLS) o que ninguna organización "
+            "ha sembrado todavía el catálogo."
+        )
     vistos: set[tuple[str, str]] = set()
     planes: list[tuple[Recurso, dict]] = []
 

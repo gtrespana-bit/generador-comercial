@@ -14,7 +14,7 @@ alcance, y genera documentos PDF profesionales.
 > externo. Supabase Auth, Storage privado, RLS/CSP y el entorno de staging ya
 > están implantados. Antes de un despliegue público debe seguirse el control
 > operativo y de pilotos de `docs/APROVISIONAMIENTO_STAGING.md`. El head de
-> Alembic que exige el código de esta rama es `h1c4b7e9a3d2`; el estado de la
+> Alembic que exige el código de esta rama es `l7d0e3f6a9c4`; el estado de la
 > base remota no se puede inferir desde el repositorio y debe comprobarse con
 > `alembic current` o `SELECT version_num FROM public.alembic_version` antes de
 > migrar o desplegar.
