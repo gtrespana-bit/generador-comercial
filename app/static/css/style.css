@@ -8370,3 +8370,42 @@ body { -webkit-tap-highlight-color: transparent; }
   }
   .soporte-flotante span { display: none; }
 }
+
+/* Vigencia de los precios de referencia por mercado.
+   El estado lo calcula app/services/vigencia_precios.py: aquí solo se le da
+   color, para que de un vistazo se distinga lo que sirve de lo que no. */
+.pill-vigencia {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-vigencia small { font-weight: 400; opacity: 0.7; }
+.pill-vigente {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid rgba(5, 150, 105, 0.15);
+}
+.pill-por_revisar {
+  background: var(--amber-soft);
+  color: var(--amber);
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+.pill-obsoleta {
+  background: var(--rose-soft);
+  color: var(--rose);
+  border: 1px solid rgba(225, 29, 72, 0.15);
+}
+/* Vencido por su propia fecha de vigencia: el proveedor dejó de sostenerlo. */
+.pill-caducada {
+  background: var(--rose);
+  color: #fff;
+  border: 1px solid var(--rose);
+}
+.pill-sin_fecha {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}

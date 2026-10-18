@@ -1,7 +1,8 @@
 {% extends "base_en.html" %}{% block title %}Prices by market{% endblock %}{% block content %}
 <div class="page-head"><div><h1>Prices by market</h1><p class="subtitle">National references and custom prices. The value can vary by supplier, brand, availability, VAT and volume.</p></div><a class="btn" href="/recursos">Resources</a></div>
+{% if total %}{% if pendientes %}<div class="alert alert-warn"><strong>{{ pendientes }} of {{ total }}</strong> references need review{% if caducadas %} · <strong>{{ caducadas }}</strong> have already expired on their own validity date{% endif %}. A reference is reviewed at 180 days and treated as out of date at one year; one saved as provisional, at 90 and 180.</div>{% else %}<div class="alert alert-ok">All {{ total }} references in this filter are up to date. They are reviewed at 180 days and treated as out of date at one year.</div>{% endif %}{% endif %}
 <div class="card"><form method="get" class="form-grid"><div class="field"><label>Country ISO</label><input name="pais" value="{{ pais }}" placeholder="CO, PE, MX, EC"></div><div class="field"><label>Category</label><select name="categoria"><option value="">All</option>{% for c in categorias %}<option value="{{ c }}" {% if categoria==c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div><button class="btn">Filter</button></form></div>
-<div class="card table-wrap"><table class="table"><thead><tr><th>Resource</th><th>Country</th><th>Reference</th><th>Observed range</th><th>Company</th><th>Confidence</th><th>Date</th><th>VAT</th><th>Freight</th><th>Source and notes</th></tr></thead><tbody>{% for precio, recurso in filas %}<tr>
+<div class="card table-wrap"><table class="table"><thead><tr><th>Resource</th><th>Country</th><th>Reference</th><th>Observed range</th><th>Company</th><th>Confidence</th><th>Date</th><th>Status</th><th>VAT</th><th>Freight</th><th>Source and notes</th></tr></thead><tbody>{% for precio, recurso, vigencia in filas %}<tr>
 <td>{{ recurso.codigo }} · {{ recurso.descripcion }}<br><small>{{ precio.unidad_referencia or recurso.unidad }}</small></td>
 <td>{{ precio.pais_codigo }}</td>
 <td>{{ precio.precio }} {{ precio.moneda }}</td>
@@ -9,8 +10,9 @@
 <td>{{ 'Yes' if precio.organizacion_id else 'National' }}</td>
 <td>{{ precio.confianza }}</td>
 <td>{{ precio.fecha_consulta or precio.fecha_vigencia or '—' }}</td>
+<td><span class="pill-vigencia pill-{{ vigencia.estado }}">{{ vigencia.etiqueta('en') }}{% if vigencia.dias is not none %} <small>({{ vigencia.dias }} d)</small>{% endif %}</span></td>
 <td>{{ precio.incluye_iva or 'to be confirmed' }}</td>
 <td>{{ precio.incluye_transporte or 'to be confirmed' }}</td>
 <td>{{ precio.fuente or '—' }}{% if precio.observaciones %}<br><small>{{ precio.observaciones }}</small>{% endif %}</td>
-</tr>{% else %}<tr><td colspan="10">No prices for this filter.</td></tr>{% endfor %}</tbody></table></div>
+</tr>{% else %}<tr><td colspan="11">No prices for this filter.</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

@@ -15,8 +15,14 @@ from sqlalchemy.orm import Session
 
 from ..models import Recurso
 from .precios_mercado import guardar_precio
+from .unidades_precio import convertir_precio_unidad, sistema_unidades_pais
 
-MONEDA_PAIS = {"CO": "COP", "PE": "PEN", "MX": "MXN", "EC": "USD", "PA": "USD", "SV": "USD", "CL": "CLP", "AR": "ARS", "DO": "DOP", "UY": "UYU", "PY": "PYG", "BO": "BOB", "CR": "CRC", "GT": "GTQ", "HN": "HNL", "NI": "NIO", "VE": "USD", "ES": "EUR", "GB": "GBP"}
+# Moneda de referencia de cada mercado. Debe cubrir LOS 23 de ``app.paises``:
+# el que falte aquí es un mercado al que no se le puede cargar una matriz de
+# precios, porque la validación de abajo rechaza el país. Australia, Canadá,
+# Irlanda y Estados Unidos estuvieron fuera mucho tiempo sin que nada lo
+# delatara (tests/test_latam.py::test_monedas_cubiertas lo vigila desde ahora).
+MONEDA_PAIS = {"CO": "COP", "PE": "PEN", "MX": "MXN", "EC": "USD", "PA": "USD", "SV": "USD", "CL": "CLP", "AR": "ARS", "DO": "DOP", "UY": "UYU", "PY": "PYG", "BO": "BOB", "CR": "CRC", "GT": "GTQ", "HN": "HNL", "NI": "NIO", "VE": "USD", "ES": "EUR", "GB": "GBP", "IE": "EUR", "AU": "AUD", "CA": "CAD", "US": "USD"}
 CONFIANZAS = {"confirmado", "referencia", "derivado", "provisional"}
 IVA_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}
 TRANSPORTE_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}
@@ -51,10 +57,14 @@ def _fecha(row: dict, clave: str, *, obligatoria: bool = False) -> date | None:
 
 
 def _unidad(valor: str) -> str:
-    return {
-        "h": "hora", "hr": "hora", "m²": "m2", "m³": "m3",
-        "u": "ud", "und": "ud",
-    }.get(str(valor or "").strip(), str(valor or "").strip())
+    """Forma canónica de una unidad.
+
+    Delegamos en ``unidades_precio.normalizar_unidad`` para que los alias
+    (incluidos los imperiales) vivan en un solo sitio.
+    """
+    from .unidades_precio import normalizar_unidad
+
+    return normalizar_unidad(valor)
 
 
 def importar_matriz_csv(
@@ -132,14 +142,36 @@ def importar_matriz_csv(
                     raise ValueError(
                         f"moneda {moneda or 'vacía'}; se esperaba {MONEDA_PAIS[pais]}"
                     )
-                if _unidad(_texto(row, "unidad_fuente")) != _unidad(recurso.unidad):
-                    raise ValueError(
-                        f"unidad {_texto(row, 'unidad_fuente') or 'vacía'}; "
-                        f"el recurso usa {recurso.unidad}"
+                unidad_fila = _unidad(_texto(row, "unidad_fuente"))
+                unidad_recurso = _unidad(recurso.unidad)
+                factor_precio = 1.0
+                if unidad_fila != unidad_recurso:
+                    # Un mercado imperial (hoy solo Estados Unidos) cotiza en
+                    # libras, galones, pies y yardas mientras el recurso cuenta
+                    # en kilos, litros y metros. Se convierte el PRECIO, no la
+                    # cantidad. Sin conversión posible la fila se rechaza:
+                    # guardar el número tal cual daría un precio correcto en
+                    # apariencia y desproporcionado en la realidad.
+                    convertido = convertir_precio_unidad(
+                        1.0, unidad_fila, unidad_recurso
                     )
-                precio = _numero(row, "precio_referencia", obligatorio=True)
+                    if convertido is None or sistema_unidades_pais(pais) != "imperial":
+                        raise ValueError(
+                            f"unidad {_texto(row, 'unidad_fuente') or 'vacía'}; "
+                            f"el recurso usa {recurso.unidad}"
+                        )
+                    factor_precio = convertido
+                precio = _numero(row, "precio_referencia", obligatorio=True) * factor_precio
+                # El rango se convierte con el mismo factor que el precio: si
+                # no, la referencia diría «134,55 $/m² (10–15)» con el rango
+                # todavía en pies cuadrados.
                 minimo = _numero(row, "precio_min")
                 maximo = _numero(row, "precio_max")
+                if factor_precio != 1.0:
+                    if minimo is not None:
+                        minimo = minimo * factor_precio
+                    if maximo is not None:
+                        maximo = maximo * factor_precio
                 if origen == "nacional" and (minimo is None or maximo is None):
                     raise ValueError("la referencia nacional debe conservar precio_min y precio_max")
                 if minimo is not None and maximo is not None and maximo < minimo:

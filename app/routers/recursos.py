@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
 from ..services.tasa import tasa_convertir_precio
+from ..services.vigencia_precios import CADUCADA, evaluar_vigencia
 
 router = APIRouter()
 
@@ -683,7 +684,21 @@ def panel_precios_mercado(request: Request, pais: str = "", categoria: str = "",
     if pais.strip(): query = query.filter(PrecioRecursoMercado.pais_codigo == pais.strip().upper())
     if categoria in CATEGORIAS_RECURSO: query = query.filter(Recurso.categoria == categoria)
     filas = query.order_by(PrecioRecursoMercado.pais_codigo, Recurso.categoria, Recurso.descripcion).all()
-    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {"filas": filas, "pais": pais, "categoria": categoria, "categorias": CATEGORIAS_RECURSO, "es_operador": bool(db.info.get("es_operador"))})
+    # La fecha impresa no le dice a nadie qué hacer. Se evalúa la vigencia de
+    # cada referencia para poder contar cuántas hay que volver a mirar y
+    # señalarlas en la tabla.
+    vigencias = [
+        evaluar_vigencia(precio.fecha_consulta, precio.fecha_vigencia, precio.confianza)
+        for precio, _recurso in filas
+    ]
+    pendientes = sum(1 for v in vigencias if v.requiere_revision)
+    caducadas = sum(1 for v in vigencias if v.estado == CADUCADA)
+    filas_vigencia = [(precio, recurso, v) for (precio, recurso), v in zip(filas, vigencias)]
+    return TEMPLATES.TemplateResponse(request, "recursos/mercado.html", {
+        "filas": filas_vigencia, "pais": pais, "categoria": categoria,
+        "categorias": CATEGORIAS_RECURSO, "es_operador": bool(db.info.get("es_operador")),
+        "pendientes": pendientes, "caducadas": caducadas, "total": len(filas_vigencia),
+    })
 
 @router.post("/recursos/mercado")
 def guardar_precio_mercado(

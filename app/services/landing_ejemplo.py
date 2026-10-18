@@ -27,7 +27,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from ..utils import decimales_moneda, fmt_num, simbolo_moneda, unir_precio_u
-from .tasa import TASAS_ACTUALIZADAS, tasa_sugerida
+from .tasa import tasa_fecha_verificacion, tasa_sugerida
 from .traduccion import traducir
 from ..paises import es_ingles
 
@@ -476,10 +476,12 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
     else:
         residencia = _RESIDENCIA + (f" \u00b7 {ciudad}" if ciudad else "")
 
-    fecha_tasa = str(TASAS_ACTUALIZADAS)
+    # La fecha de la moneda que se está mostrando, no la de la última
+    # revisión general: junto a una tasa de octubre no puede decir «agosto».
+    fecha_tasa = str(tasa_fecha_verificacion(moneda))
     try:
-        a, m, d = fecha_tasa.split("-")
-        fecha_tasa = f"{d}/{m}/{a}"
+        anho, mes, dia = fecha_tasa.split("-")
+        fecha_tasa = f"{dia}/{mes}/{anho}"
     except Exception:
         pass
 

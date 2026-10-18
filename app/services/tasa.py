@@ -62,6 +62,27 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     # GBP/USD 1,3330 (mid-market 16/10/2026; Banco de Inglaterra 14/10: 1,3160)
     # -> 1 USD = 0,7502 GBP. Misma tasa de corte que la matriz de precios GB.
     "GBP": 0.7502,
+    # AUD/USD 0,6947 (Banco de la Reserva de Australia, cierre 16/10/2026;
+    # XE 18/10: 1 USD = 1,43957 AUD; MTFX 16/10: 1,4398) -> 1 USD = 1,4395 AUD
+    "AUD": 1.4395,
+    # USD/CAD 1,4154 (Banco de Canadá, cierre 16/10/2026; Bloomberg 16/10:
+    # CAD/USD 0,7072 -> 1,4141; MTFX 16/10: 1,41387) -> 1 USD = 1,4154 CAD
+    "CAD": 1.4154,
+}
+
+# Fecha en que se verificó CADA tasa, no la de la última hornada.
+#
+# Durante un tiempo bastó una sola fecha para toda la tabla, pero en cuanto se
+# verifica una moneda en un día distinto esa fecha única deja de ser cierta y
+# la interfaz le dice al usuario «tasas a 25/08/2026» junto a un número
+# comprobado en octubre. Cada moneda lleva la suya.
+#
+# Si una moneda no aparece aquí se usa ``TASAS_ACTUALIZADAS``, que es la fecha
+# de la revisión general de la tabla.
+TASAS_FECHA: dict[str, str] = {
+    "GBP": "2026-10-16",
+    "AUD": "2026-10-16",
+    "CAD": "2026-10-16",
 }
 # El resto de monedas del selector (BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.
@@ -132,6 +153,24 @@ def tasa_sugerida(moneda: str) -> float | None:
     if moneda == "BS":
         moneda = "VES"
     return TASAS_SUGERIDAS.get(moneda)
+
+
+def tasa_fecha_verificacion(moneda: str) -> str:
+    """Fecha en que se comprobó la tasa de esa moneda.
+
+    Es la fecha de la moneda concreta cuando consta y, si no, la de la
+    revisión general de la tabla. Nunca devuelve una fecha que no corresponda
+    al número que se está mostrando al lado.
+
+    Sin tasa verificada devuelve cadena vacía: ponerle una fecha a un número
+    que no existe haría parecer comprobado lo que no se ha comprobado nunca.
+    """
+    moneda = str(moneda or "USD").strip().upper()
+    if moneda == "BS":
+        moneda = "VES"
+    if TASAS_SUGERIDAS.get(moneda) is None:
+        return ""
+    return TASAS_FECHA.get(moneda, TASAS_ACTUALIZADAS)
 
 
 def factor_conversion_local(moneda: str | None, tasa: float | None) -> float:
