@@ -59,6 +59,9 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "HNL": 26.82,
     # NIO/USD 13-24/08/2026 (currency.me.uk 36.7, pluang 36.6243, Xe 36.759) → 36.70 adoptado
     "NIO": 36.70,
+    # GBP/USD 1,3330 (mid-market 16/10/2026; Banco de Inglaterra 14/10: 1,3160)
+    # -> 1 USD = 0,7502 GBP. Misma tasa de corte que la matriz de precios GB.
+    "GBP": 0.7502,
 }
 # El resto de monedas del selector (BRL…) no se pre-rellenan: sin tasa verificada a la fecha de
 # TASAS_ACTUALIZADAS. El usuario consulta «Tasa de hoy» o escribe la oficial.

@@ -75,3 +75,34 @@
 - Auditoría: 3006 partidas, 6062 líneas mano obra, 388 recursos físicos, 0 errores estructurales, `--strict` 0
 
 🎉 **Proyecto países 100% adaptado — análisis, partidas y recursos para España y toda Latinoamérica.**
+
+---
+
+## 🌍 MERCADOS DE HABLA INGLESA (expansión)
+
+No entran en el recuento de los 18 mercados hispanos: comparten **un único catálogo base en inglés**
+y aplican su terminología propia por variante (`app/services/variante_ingles.py`), en lugar de un
+glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases.
+
+| País | Código | Moneda | IVA | ID Fiscal | Terminología | Recursos nacionales | Tasa verificada | SEO | Estado |
+|---|---|---|---|---|---|---|---|---|---|
+| Reino Unido | GB | GBP | 20% | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %) | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/gb/` ruta activa | **FASE 0 CIERRE** |
+
+**Reino Unido — detalle de la Fase 0 (2026-10-18).**
+- Matriz de precios: 388 recursos en GBP, base coste empresa, sin IVA (`precios_recursos_reino_unido.csv`).
+- Cobertura de anclas: mano de obra 17/17 y maquinaria 44/44 (100 %), materiales 106/327 (32 %).
+  Frente al 17 % de España y el 3 % de LatAm.
+- SQL de carga: `docs/cargar_precios_referencia_reino_unido_2026-10-18.sql`, generado por
+  `tools/generar_sql_precios_pais.py GB` e idempotente (solo referencias nacionales GB).
+- Validado: 0 errores al pasar la matriz por el importador real
+  (`tools/verificar_matriz_importable.py GB`).
+
+**Pendiente para que GB sea LISTO (fases siguientes):**
+1. **Fase 1 — cumplimiento:** CIS (retenciones 0/20/30 % sobre mano de obra, declaración mensual
+   antes del día 19) e inversión del sujeto pasivo en el IVA nacional (VATA 1994 s.55A).
+2. **Fase 2 — precios y divisa:** vigencia de la matriz, recargo y moneda en el presupuesto.
+3. **Fase 3 — SEO cola larga:** contenido propio para `/gb/` en `seo_articulos.py` y
+   `seo_contenido.py` (hoy 0 entradas GB).
+
+**Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
+requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.
