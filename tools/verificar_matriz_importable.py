@@ -25,28 +25,47 @@ sys.path.insert(0, str(ROOT))
 class _Recurso:
     """Solo los atributos que el importador consulta."""
 
-    def __init__(self, codigo: str, unidad: str, indice: int) -> None:
+    def __init__(self, codigo: str, unidad: str, indice: int, descripcion: str = "") -> None:
         self.codigo = codigo
         self.unidad = unidad
         self.id = indice
+        self.descripcion = descripcion
 
 
 class _Query:
-    def __init__(self, recursos: list[_Recurso]) -> None:
-        self._recursos = recursos
+    """Consulta simulada encadenable.
 
-    def all(self) -> list[_Recurso]:
-        return list(self._recursos)
+    Solo se distinguen dos casos: ``Recurso`` devuelve el catálogo y cualquier
+    otra tabla devuelve vacío. El importador consulta también las referencias
+    ya guardadas para clasificar la vista previa; aquí no hay ninguna, que es
+    justo la situación que se quiere comprobar (una carga de cero).
+    """
+
+    def __init__(self, filas: list) -> None:
+        self._filas = filas
+
+    def filter(self, *_args, **_kwargs):
+        return self
+
+    def execution_options(self, **_opciones):
+        return self
+
+    def all(self) -> list:
+        return list(self._filas)
+
+    def first(self):
+        return self._filas[0] if self._filas else None
 
 
 class _Sesion:
-    """Stub de SQLAlchemy Session: el importador solo usa ``db.query(Recurso)``."""
+    """Stub de SQLAlchemy Session: sin base de datos detrás."""
 
     def __init__(self, recursos: list[_Recurso]) -> None:
         self._recursos = recursos
 
-    def query(self, _modelo):
-        return _Query(self._recursos)
+    def query(self, modelo):
+        es_recurso = getattr(modelo, "__name__", "") == "Recurso"
+        return _Query(list(self._recursos) if es_recurso else [])
 
 
 def _cargar_recursos() -> list[_Recurso]:
@@ -71,6 +90,7 @@ def _cargar_recursos() -> list[_Recurso]:
                 str(codigo).strip(),
                 str(item.get("unidad") or "").strip(),
                 indice,
+                str(item.get("descripcion") or "").strip(),
             ))
     return recursos
 
