@@ -35,7 +35,7 @@ LOTE = {
     "Continuous cement mortar bed over the roof slope to receive tiling or sheeting, with reinforcing mesh at the junctions. Includes spreading, screeding and finishing.",
 
 "Colocación de lámina de polietileno como barrera de vapor bajo el aislamiento de cubierta, con solapes sellados y remontes en los paramentos. Incluye la limpieza del soporte y el sellado de los encuentros.":
-    "Laying a polyethylene sheet as a vapour control layer beneath the roof insulation, with sealed laps and upstands at the walls. Includes cleaning the substrate and sealing the junctions.",
+    "Laying a polyethylene sheet as a vapor control layer beneath the roof insulation, with sealed laps and upstands at the walls. Includes cleaning the substrate and sealing the junctions.",
 
 "Colocación de paneles rígidos de poliestireno expandido sobre cubierta plana, a matajuntas, para aislamiento térmico previo a la impermeabilización. Incluye el replanteo, el corte y la colocación a junta cerrada.":
     "Laying rigid expanded polystyrene boards on a flat roof, tightly butted, for thermal insulation before the waterproofing. Includes setting out, cutting and laying with closed joints.",
@@ -158,7 +158,7 @@ LOTE = {
 
 # ── Cubierta metálica y ligera ────────────────────────────────────────────
 "Cubierta con lámina metálica acanalada galvanizada o prepintada, fijada a las correas con tornillos autoperforantes con arandela de neopreno. El tornillo debe apretarse hasta comprimir la arandela sin deformar la lámina: apretado de más, la arandela se degrada y filtra; de menos, no sella. Incluye el replanteo del solape lateral y longitudinal en el sentido contrario a los vientos dominantes, la colocación y alineación de las láminas, la fijación en cresta de onda, el sellado de los solapes y los remates de alero, cumbrera y borde. Medido en superficie realmente ejecutada.":
-    "Roof covering of galvanised or prefinished corrugated metal sheet, fixed to the purlins with self-drilling screws and neoprene washers. The screw must be tightened until the washer is compressed without deforming the sheet: overtightened, the washer degrades and leaks; undertightened, it does not seal. Includes setting out the side and end laps against the prevailing wind, placing and aligning the sheets, fixing on the crown of the corrugation, sealing the laps and the eaves, ridge and edge finishings. Measured by the area actually constructed.",
+    "Roof covering of galvanized or prefinished corrugated metal sheet, fixed to the purlins with self-drilling screws and neoprene washers. The screw must be tightened until the washer is compressed without deforming the sheet: overtightened, the washer degrades and leaks; undertightened, it does not seal. Includes setting out the side and end laps against the prevailing wind, placing and aligning the sheets, fixing on the crown of the corrugation, sealing the laps and the eaves, ridge and edge finishings. Measured by the area actually constructed.",
 
 "Cubierta con panel sándwich de doble chapa metálica y núcleo aislante de poliuretano, fijado a las correas con tornillería específica y juntas machihembradas selladas. Resuelve en una sola operación la cubrición, el aislamiento térmico y el acabado interior, lo que compensa su mayor costo de material frente a la lámina simple con aislamiento aparte. Incluye el replanteo, el izado y colocación de los paneles con encaje entre ellos, el sellado de las juntas, la fijación y los remates de cumbrera, alero y borde con piezas específicas. Medido en superficie realmente ejecutada.":
     "Roof covering of sandwich panels with two metal faces and a polyurethane insulating core, fixed to the purlins with purpose-made fasteners and sealed tongue and groove joints. It resolves the covering, the thermal insulation and the internal finish in a single operation, which offsets its higher material cost against plain sheeting with separate insulation. Includes setting out, hoisting and placing the panels with the joints engaged, sealing the joints, fixing and the ridge, eaves and edge finishings with purpose-made units. Measured by the area actually constructed.",
@@ -167,10 +167,10 @@ LOTE = {
     "Roof covering or rooflight of multiwall polycarbonate sheet on a structure, with joint profiles and the cells sealed. The cells must be sealed with micro-perforated tape at the bottom and airtight tape at the top, and run in the direction of the fall: if they are closed badly they fill with condensation and dust and the sheet turns opaque within months. Includes setting out, cutting, placing with the face protected against ultraviolet radiation to the outside, sealing the cells, fitting the joint profiles and the finishings. Measured by the area actually constructed.",
 
 "Instalación de domo o claraboya en cubierta, con su zócalo de realce, sellado e integración en la impermeabilización. El zócalo de realce no es opcional: un domo instalado a ras del plano de cubierta acaba filtrando en cuanto el agua remansa, de modo que debe elevarse por encima del nivel máximo de agua previsible. Incluye la apertura del hueco con refuerzo del borde, la ejecución del zócalo de realce, la integración de la impermeabilización remontando por el zócalo, la colocación del domo con su sellado perimetral y la prueba de estanqueidad. Medido por unidad instalada.":
-    "Installation of a dome or skylight in a roof, with its upstand kerb, sealed and integrated into the waterproofing. The upstand kerb is not optional: a dome set flush with the plane of the roof ends up leaking as soon as water ponds, so it must be raised above the maximum foreseeable water level. Includes forming the opening with the edge reinforced, building the upstand kerb, integrating the waterproofing turned up the kerb, placing the dome with its perimeter seal and the watertightness test. Measured per unit installed.",
+    "Installation of a dome or skylight in a roof, with its upstand curb, sealed and integrated into the waterproofing. The upstand curb is not optional: a dome set flush with the plane of the roof ends up leaking as soon as water ponds, so it must be raised above the maximum foreseeable water level. Includes forming the opening with the edge reinforced, building the upstand curb, integrating the waterproofing turned up the curb, placing the dome with its perimeter seal and the watertightness test. Measured per unit installed.",
 
 "Cubierta de lámina metálica acanalada galvanizada sobre correas, atornillada con solapes laterales y de cabecera. Incluye el replanteo, la fijación y los remates.":
-    "Roof covering of galvanised corrugated metal sheet on purlins, screwed with side and end laps. Includes setting out, fixing and the finishings.",
+    "Roof covering of galvanized corrugated metal sheet on purlins, screwed with side and end laps. Includes setting out, fixing and the finishings.",
 
 "Cubierta de lámina metálica acanalada prepintada sobre correas, atornillada con solapes y remates laterales. Incluye el replanteo y la fijación.":
     "Roof covering of prefinished corrugated metal sheet on purlins, screwed with laps and side finishings. Includes setting out and fixing.",
@@ -203,7 +203,7 @@ LOTE = {
     "Installation of a PVC rainwater downpipe to a metal roof, with brackets and connection to the gutter. Includes fixing and the fittings.",
 
 "Ejecución de canalón de PVC o lámina galvanizada en el alero de cubierta metálica, con soportes y pendiente a bajante. Incluye la fijación y los remates.":
-    "Installation of a PVC or galvanised sheet gutter at the eaves of a metal roof, with brackets and a fall to the downpipe. Includes fixing and the finishings.",
+    "Installation of a PVC or galvanized sheet gutter at the eaves of a metal roof, with brackets and a fall to the downpipe. Includes fixing and the finishings.",
 
 "Cubierta ligera translúcida de policarbonato alveolar sobre perfilería, para iluminación natural de galerías y terrazas. Incluye la estructura de apoyo, la colocación y los remates.":
     "Lightweight translucent roof covering of multiwall polycarbonate on framing, for natural light to galleries and terraces. Includes the support structure, laying and the finishings.",
@@ -341,7 +341,7 @@ LOTE = {
     "Formation of the eaves and the edge trim of the roof, with the closing unit, drip edge and sealant. The drip edge is what breaks the water away from the wall: without it the water runs round the edge by capillary action and down the facade, leaving the characteristic staining below badly detailed eaves. Includes setting out, placing the trim with its projection, forming the drip, sealing the junction with the roof and with the wall and fixing. Measured by the length actually constructed.",
 
 "Colocación de canal de PVC o lámina galvanizada en el alero, con soportes y pendiente a bajante. Incluye el replanteo, la fijación y los remates.":
-    "Installation of a PVC or galvanised sheet gutter at the eaves, with brackets and a fall to the downpipe. Includes setting out, fixing and the finishings.",
+    "Installation of a PVC or galvanized sheet gutter at the eaves, with brackets and a fall to the downpipe. Includes setting out, fixing and the finishings.",
 
 "Ejecución de bajante de PVC para aguas lluvias, con abrazaderas y conexión al canalón. Incluye la fijación y los accesorios.":
     "Installation of a PVC rainwater downpipe, with brackets and connection to the gutter. Includes fixing and the fittings.",

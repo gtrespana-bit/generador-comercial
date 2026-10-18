@@ -10,7 +10,7 @@ Criterios de este lote:
     los remontes y los desagües, que es donde falla la impermeabilización.
   · «Impulsión y retorno» en climatización son supply y return.
   · «Puesta en marcha» es commissioning y «puesta en servicio» es
-    setting to work, que es el momento en que se arranca.
+    commissioning, que es el momento en que se arranca.
   · «Par de apriete» es torque, no tightening moment.
 """
 

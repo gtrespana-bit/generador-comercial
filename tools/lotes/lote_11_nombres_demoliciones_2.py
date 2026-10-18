@@ -13,7 +13,7 @@ Criterios de este lote:
     operación de picar el concreto para que agarre la capa nueva.
   · «Mesón» es countertop en Estados Unidos y worktop en Reino Unido,
     «acera» es sidewalk y «estacionamiento» es parking lot, siempre en la
-    base americana; la capa de variantes pone pavement, kerb y car park.
+    base americana; la capa de variantes pone pavement, curb y car park.
   · «Acerolit» es el nombre comercial venezolano de la lámina de
     fibrocemento, y en inglés solo existe como fiber cement sheet.
 """

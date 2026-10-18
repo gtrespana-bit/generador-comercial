@@ -79,7 +79,7 @@ LOTE = {
 "Suministro y colocación de puerta interior con bisagras ocultas, con marco y herrajes. Incluye el montaje del marco, la colocación de la hoja y el ajuste de bisagras. Medido por unidad instalada.":
     "Supply and installation of an internal door with concealed hinges, with frame and hardware. Includes erecting the frame, hanging the leaf and adjusting the hinges. Measured per unit installed.",
 "Suministro y colocación de puerta interior de acero galvanizado, con marco metálico y herrajes. Incluye el montaje del marco y la colocación de la hoja. Medido por unidad instalada.":
-    "Supply and installation of a galvanised steel internal door, with a metal frame and hardware. Includes erecting the frame and hanging the leaf. Measured per unit installed.",
+    "Supply and installation of a galvanized steel internal door, with a metal frame and hardware. Includes erecting the frame and hanging the leaf. Measured per unit installed.",
 
 # ── Puertas exteriores y de seguridad ─────────────────────────────────────
 "Instalación de puerta metálica exterior o de seguridad con su marco, anclajes y cerradura. Por su peso requiere dos operarios y anclaje mecánico al muro, no espuma. Incluye la comprobación del vano, el presentado y aplomado del marco con cuñas, el taladrado y anclaje mecánico en los puntos previstos, el macizado del perímetro con mortero, el colgado y ajuste de la hoja, el montaje de la cerradura de seguridad y la comprobación del cierre en los tres puntos. La puerta la elige el cliente y se presupuesta aparte. Medido por unidad instalada.":
@@ -244,7 +244,7 @@ LOTE = {
 "Suministro y colocación de baranda de acero inoxidable con paño de vidrio templado. Incluye la fijación de la baranda y el acristalamiento. Medido por metro lineal instalado.":
     "Supply and installation of a stainless steel guardrail with tempered glass infill panels. Includes fixing the guardrail and the glazing. Measured per meter installed.",
 "Suministro y colocación de baranda de tubo de acero galvanizado, con montantes y pasamanos. Incluye la fabricación, el montaje y el anclaje. Medido por metro lineal instalado.":
-    "Supply and installation of a galvanised steel tube guardrail, with posts and handrail. Includes fabrication, installation and anchoring. Measured per meter installed.",
+    "Supply and installation of a galvanized steel tube guardrail, with posts and handrail. Includes fabrication, installation and anchoring. Measured per meter installed.",
 "Suministro y colocación de baranda de acero inoxidable para balcón, con montantes y pasamanos. Incluye la fabricación, el montaje y el anclaje. Medido por metro lineal instalado.":
     "Supply and installation of a stainless steel balcony guardrail, with posts and handrail. Includes fabrication, installation and anchoring. Measured per meter installed.",
 "Suministro y colocación de baranda de forja decorativa, con montantes y pasamanos. Incluye la fabricación, el montaje y el anclaje. Medido por metro lineal instalado.":
@@ -274,7 +274,7 @@ LOTE = {
 "Suministro y colocación de baranda de escalera con zanca de madera y pasamanos. Incluye la fijación de la baranda y el acabado. Medido por metro lineal instalado.":
     "Supply and installation of a stair guardrail with a wood stringer and handrail. Includes fixing the guardrail and the finish. Measured per meter installed.",
 "Suministro y colocación de baranda de acero galvanizado con pasamanos de madera. Incluye la fabricación, el montaje y la fijación del pasamanos. Medido por metro lineal instalado.":
-    "Supply and installation of a galvanised steel guardrail with a wood handrail. Includes fabrication, installation and fixing the handrail. Measured per meter installed.",
+    "Supply and installation of a galvanized steel guardrail with a wood handrail. Includes fabrication, installation and fixing the handrail. Measured per meter installed.",
 
 # ── Vidrios y espejos ─────────────────────────────────────────────────────
 "Suministro y colocación de vidrio en carpintería existente o nueva, con sus calzos, junquillos y sellado. Incluye la toma de medidas del galce con la holgura de dilatación necesaria, ya que un vidrio colocado a presión sin holgura se rompe con la dilatación térmica, la limpieza del galce, la colocación de los calzos de apoyo y laterales en la posición correcta según el tipo de hoja, el acuñado del vidrio, la colocación de junquillos y el sellado perimetral. Medido en superficie realmente ejecutada.":

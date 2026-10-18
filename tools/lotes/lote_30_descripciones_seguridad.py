@@ -56,7 +56,7 @@ LOTE = {
     "Provision of eye protection (goggles) and hearing protection (ear plugs) for work involving risk.",
 
 "Dotación de mascarilla y protección respiratoria para trabajos con polvo o vapores.":
-    "Provision of masks and respiratory protection for work with dust or vapours.",
+    "Provision of masks and respiratory protection for work with dust or vapors.",
 
 "Dotación de chaleco reflectivo para el personal, para su visibilidad en la obra.":
     "Provision of high-visibility vests for personnel, so that they can be seen on site.",

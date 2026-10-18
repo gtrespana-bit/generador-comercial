@@ -28,7 +28,7 @@ LOTE = {
         "Installation of a manual or automatic transfer switch between the mains supply and the backup system. The transfer must guarantee that both sources are never connected at the same time, a condition that protects both the backup equipment and the supply company personnel who may be working on the line. Includes mounting the board, connecting the three lines of mains, backup and load, verifying the mechanical or electrical interlock, programming the timings on automatic units and the full transfer and retransfer test. Measured per board installed and tested.",
 
     "Instalación de ascensor unifamiliar, con estructura, cabina y control. Incluye el montaje de la estructura, la cabina y la puesta en marcha. Medido por unidad instalada.":
-        "Installation of a home elevator, with the structure, the car and the controller. Includes the assembly of the structure, the car and setting to work. Measured per unit installed.",
+        "Installation of a home elevator, with the structure, the car and the controller. Includes the assembly of the structure, the car and commissioning. Measured per unit installed.",
 
     "Adecuación de hueco para ascensor. Incluye la preparación del hueco. Medido por unidad adecuada.":
         "Preparation of the hoistway for an elevator. Includes preparing the hoistway. Measured per hoistway prepared.",

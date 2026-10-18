@@ -66,6 +66,10 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "matte": "matt",
     "plasticizing": "plasticising",
     "colored": "coloured",     # el grupo de sufijo solo cubre -s y -es
+    "galvanized": "galvanised",
+    "neighboring": "neighbouring",
+    "neighbor": "neighbour",
+    "catalog": "catalogue",
 }
 
 # ── Vocabulario de obra británico ────────────────────────────────────────

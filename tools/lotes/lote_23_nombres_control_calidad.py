@@ -136,7 +136,7 @@ LOTE = {
 "Prueba de drenaje de condensados.":
     "Test of the condensate drain.",
 "Puesta en servicio de climatización con ajuste.":
-    "Commissioning of the HVAC system, including setting to work.",
+    "Commissioning of the HVAC system, including commissioning.",
 "Informe de puesta en marcha de climatización.":
     "HVAC commissioning report.",
 

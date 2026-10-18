@@ -79,7 +79,7 @@ LOTE = {
 "Colocación de aislamiento entre las viguetas del techo, para eliminar puentes térmicos.":
     "Installation of insulation between the ceiling joists, to eliminate thermal bridges.",
 "Colocación de barrera de vapor bajo el aislamiento de cubierta, para evitar condensaciones.":
-    "Installation of a vapour control layer beneath the roof insulation, to prevent condensation.",
+    "Installation of a vapor control layer beneath the roof insulation, to prevent condensation.",
 "Insulfado de celulosa aislante en el espacio bajo cubierta, para mejora térmica y acústica.":
     "Blowing of insulating cellulose into the space beneath the roof, to improve thermal and acoustic performance.",
 "Colocación de refuerzo de aislamiento en la cumbrera de la cubierta, para eliminar el puente térmico.":

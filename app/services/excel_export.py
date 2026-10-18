@@ -20,6 +20,7 @@ from openpyxl.styles import (
 )
 from openpyxl.utils import get_column_letter
 from ..paises import es_ingles, resolver_mercado
+from .variante_ingles import aplicar_variante
 
 # ---------------------------------------------------------------------------
 # Estilos compartidos
@@ -221,9 +222,17 @@ def _es_ingles(idioma) -> bool:
     return es_ingles(idioma)
 
 
-def _t(texto: str, en: bool = False) -> str:
-    """Traduce una etiqueta del libro al inglés; en español la deja igual."""
-    return _XLSX_EN.get(texto, texto) if en else texto
+def _t(texto: str, idioma: str = "es") -> str:
+    """Traduce una etiqueta del libro y la ajusta al mercado de destino.
+
+    El Excel lo abre el cliente, y es el cliente del mismo mercado que el
+    presupuesto: en el Reino Unido la hoja del catálogo se llama
+    «catalogue», no «catalog». Las etiquetas siguen el mismo camino que las
+    partidas, así que no hay que mantener un diccionario por mercado.
+    """
+    if not _es_ingles(idioma):
+        return texto
+    return aplicar_variante(_XLSX_EN.get(texto, texto), resolver_mercado(idioma))
 
 
 def _etiqueta_impuesto(idioma) -> str:
@@ -244,8 +253,7 @@ def cabeceras(etiquetas, idioma: str = "es") -> list[str]:
     Los routers que escriben CSV a mano (en lugar de llamar a este módulo)
     comparten así el mismo vocabulario que el Excel.
     """
-    en = _es_ingles(idioma)
-    return [_t(e, en) for e in etiquetas]
+    return [_t(e, idioma) for e in etiquetas]
 
 
 def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
@@ -256,19 +264,18 @@ def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
       2. Detalle — capítulos y partidas con totales
       3. Costes — desglose de costes internos (si existen)
     """
-    en = _es_ingles(idioma)
-    hoja_costes = _t("Costes Internos", en)
+    hoja_costes = _t("Costes Internos", idioma)
     wb = Workbook()
 
     # --- Hoja 1: Resumen ---
     ws_resumen = wb.active
-    ws_resumen.title = _t("Resumen", en)
+    ws_resumen.title = _t("Resumen", idioma)
     ws_resumen.sheet_view.showGridLines = False
 
     _write_resumen_sheet(ws_resumen, presupuesto, cfg, idioma)
 
     # --- Hoja 2: Detalle ---
-    ws_detalle = wb.create_sheet(_t("Detalle", en))
+    ws_detalle = wb.create_sheet(_t("Detalle", idioma))
     ws_detalle.sheet_view.showGridLines = False
     _write_detalle_sheet(ws_detalle, presupuesto, idioma)
 
@@ -298,11 +305,10 @@ def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
 
 def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
     """Hoja de resumen del presupuesto."""
-    en = _es_ingles(idioma)
-    ws["A1"] = _t("RESUMEN DEL PRESUPUESTO", en)
+    ws["A1"] = _t("RESUMEN DEL PRESUPUESTO", idioma)
     ws["A1"].font = _TITLE_FONT
 
-    ws["A3"] = _t("Datos del documento", en)
+    ws["A3"] = _t("Datos del documento", idioma)
     ws["A3"].font = _SUBTITLE_FONT
 
     datos = [
@@ -329,7 +335,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
 
     row = 4
     for etiqueta, valor in datos:
-        label = _t(etiqueta, en)
+        label = _t(etiqueta, idioma)
         ws.cell(row=row, column=1, value=label).font = Font(bold=True, size=10)
         ws.cell(row=row, column=1).fill = PatternFill("solid", fgColor="F1F5F9")
         ws.cell(row=row, column=1).border = _BORDER
@@ -341,7 +347,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
 
     # Totales
     row += 1
-    ws.cell(row=row, column=1, value=_t("TOTALES", en)).font = _SUBTITLE_FONT
+    ws.cell(row=row, column=1, value=_t("TOTALES", idioma)).font = _SUBTITLE_FONT
     row += 1
 
     totales = [
@@ -363,7 +369,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
     ])
 
     for etiqueta, valor in totales:
-        ws.cell(row=row, column=1, value=_t(etiqueta, en)).border = _BORDER
+        ws.cell(row=row, column=1, value=_t(etiqueta, idioma)).border = _BORDER
         c = ws.cell(row=row, column=2, value=valor)
         c.number_format = _CURRENCY_FMT
         c.border = _BORDER
@@ -389,7 +395,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
             ("Margen total (%)", _money(getattr(presupuesto, "margen_pct", 0)), '0.00"%"'),
         ])
         for etiqueta, valor, fmt in filas_margen:
-            ws.cell(row=row, column=1, value=_t(etiqueta, en)).border = _BORDER
+            ws.cell(row=row, column=1, value=_t(etiqueta, idioma)).border = _BORDER
             c = ws.cell(row=row, column=2, value=valor)
             c.number_format = fmt
             c.border = _BORDER
@@ -398,7 +404,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
     # Notas y condiciones
     if presupuesto.notas:
         row += 2
-        ws.cell(row=row, column=1, value=_t("Información adicional", en)).font = _SUBTITLE_FONT
+        ws.cell(row=row, column=1, value=_t("Información adicional", idioma)).font = _SUBTITLE_FONT
         row += 1
         ws.cell(row=row, column=1, value=presupuesto.notas)
         ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=4)
@@ -407,7 +413,7 @@ def _write_resumen_sheet(ws, presupuesto, cfg, idioma: str = "es"):
 
     if presupuesto.condiciones:
         row += 2
-        ws.cell(row=row, column=1, value=_t("Condiciones comerciales", en)).font = _SUBTITLE_FONT
+        ws.cell(row=row, column=1, value=_t("Condiciones comerciales", idioma)).font = _SUBTITLE_FONT
         row += 1
         ws.cell(row=row, column=1, value=presupuesto.condiciones)
         ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=4)
@@ -450,11 +456,10 @@ def _coste_partida_excel(p):
 
 def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
     """Hoja de detalle con capítulos y partidas."""
-    en = _es_ingles(idioma)
-    ws["A1"] = f"{_t('Detalle del Presupuesto', en)} {getattr(presupuesto, 'numero', '')}"
+    ws["A1"] = f"{_t('Detalle del Presupuesto', idioma)} {getattr(presupuesto, 'numero', '')}"
     ws["A1"].font = _TITLE_FONT
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Capítulo", "Partida", "Descripción", "Unidad", "Cantidad",
         "Precio unit.", "Importe", "Coste interno", "Beneficio",
     )]
@@ -473,7 +478,7 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
     total_coste = 0
 
     for cap in getattr(presupuesto, "capitulos", []):
-        cap_nombre = cap.nombre or _t("Sin capítulo", en)
+        cap_nombre = cap.nombre or _t("Sin capítulo", idioma)
         cap_subtotal = 0
         cap_coste = 0
 
@@ -541,7 +546,7 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
             row += 1
 
         # Subtotal capítulo (redondeado, coincide con el PDF)
-        ws.cell(row=row, column=1, value=f"{_t('Subtotal', en)} {cap_nombre}")
+        ws.cell(row=row, column=1, value=f"{_t('Subtotal', idioma)} {cap_nombre}")
         ws.cell(row=row, column=7, value=_money_round(cap_subtotal))
         ws.cell(row=row, column=7).number_format = _CURRENCY_FMT
         ws.cell(row=row, column=7).alignment = Alignment(horizontal="right")
@@ -552,7 +557,7 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
         row += 1
 
     # Total general (redondeado, coincide con el resumen y el PDF)
-    ws.cell(row=row, column=1, value=_t("TOTAL INCLUIDO", en))
+    ws.cell(row=row, column=1, value=_t("TOTAL INCLUIDO", idioma))
     ws.cell(row=row, column=7, value=_money_round(total_gral))
     ws.cell(row=row, column=7).number_format = _CURRENCY_FMT
     ws.cell(row=row, column=7).alignment = Alignment(horizontal="right")
@@ -567,14 +572,13 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
 
 def _write_costes_sheet(ws, presupuesto, idioma: str = "es"):
     """Hoja de desglose de costes internos por partida."""
-    en = _es_ingles(idioma)
     ws["A1"] = (
-        f"{_t('Costes Internos — Presupuesto', en)} "
+        f"{_t('Costes Internos — Presupuesto', idioma)} "
         f"{getattr(presupuesto, 'numero', '')}"
     )
     ws["A1"].font = _TITLE_FONT
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Capítulo", "Partida", "Coste materiales", "Coste mano obra",
         "Complementarios", "Otros costes", "Desperdicio %", "Coste total",
     )]
@@ -640,7 +644,7 @@ def _write_costes_sheet(ws, presupuesto, idioma: str = "es"):
                 row += 1
 
     # Totales
-    ws.cell(row=row, column=1, value=_t("TOTALES", en))
+    ws.cell(row=row, column=1, value=_t("TOTALES", idioma))
     ws.cell(row=row, column=3, value=total_materiales)
     ws.cell(row=row, column=4, value=total_mano_obra)
     ws.cell(row=row, column=5, value=total_complementarios)
@@ -658,20 +662,19 @@ def _write_costes_sheet(ws, presupuesto, idioma: str = "es"):
 
 def exportar_historial_excel(presupuestos, cfg=None, idioma: str = "es"):
     """Exporta historic de presupuestos a Excel con formato profesional."""
-    en = _es_ingles(idioma)
     wb = Workbook()
     ws = wb.active
-    ws.title = _t("Presupuestos", en)
+    ws.title = _t("Presupuestos", idioma)
     ws.sheet_view.showGridLines = False
 
-    ws["A1"] = _t("Historial de Presupuestos", en)
+    ws["A1"] = _t("Historial de Presupuestos", idioma)
     ws["A1"].font = _TITLE_FONT
 
     if cfg:
-        ws["A2"] = f"{_t('Empresa', en)}: {cfg.empresa_nombre or ''}"
+        ws["A2"] = f"{_t('Empresa', idioma)}: {cfg.empresa_nombre or ''}"
         ws["A2"].font = Font(italic=True, color="64748B")
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Nº", "Fecha", "Cliente", "Título", "Estado", "Moneda",
         "Base imponible", _etiqueta_impuesto(idioma), "Descuento", "TOTAL",
     )]
@@ -716,7 +719,7 @@ def exportar_historial_excel(presupuestos, cfg=None, idioma: str = "es"):
         row += 1
 
     # Totales
-    ws.cell(row=row, column=1, value=_t("TOTALES", en))
+    ws.cell(row=row, column=1, value=_t("TOTALES", idioma))
     ws.cell(row=row, column=7, value=sum(_money(getattr(p, "base", 0)) for p in presupuestos))
     ws.cell(row=row, column=8, value=sum(_money(getattr(p, "impuesto_monto", 0)) for p in presupuestos))
     ws.cell(row=row, column=9, value=sum(_money(getattr(p, "descuento_monto", 0)) for p in presupuestos))
@@ -742,19 +745,18 @@ def exportar_historial_excel(presupuestos, cfg=None, idioma: str = "es"):
 
 def exportar_catalogo_partidas_excel(partidas, idioma: str = "es"):
     """Exporta el catálogo de partidas a Excel profesional."""
-    en = _es_ingles(idioma)
     wb = Workbook()
     ws = wb.active
-    ws.title = _t("Partidas", en)
+    ws.title = _t("Partidas", idioma)
     ws.sheet_view.showGridLines = False
 
-    ws["A1"] = _t("Catálogo de Partidas", en)
+    ws["A1"] = _t("Catálogo de Partidas", idioma)
     ws["A1"].font = _TITLE_FONT
 
-    ws["A2"] = f"{_t('Total', en)}: {len(partidas)} {_t('partidas', en)}"
+    ws["A2"] = f"{_t('Total', idioma)}: {len(partidas)} {_t('partidas', idioma)}"
     ws["A2"].font = _SUBTITLE_FONT
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Código", "Código anterior", "Nombre", "Descripción", "Unidad",
         "Precio unit.", "Capítulo", "Subcapítulo", "Apartado",
         "Coste materiales", "Coste mano obra", "Complementarios", "Otros",
@@ -824,18 +826,17 @@ def exportar_catalogo_partidas_excel(partidas, idioma: str = "es"):
 
 def exportar_catalogo_productos_excel(productos, idioma: str = "es"):
     """Exporta el catálogo de productos a Excel profesional."""
-    en = _es_ingles(idioma)
     wb = Workbook()
     ws = wb.active
-    ws.title = _t("Productos", en)
+    ws.title = _t("Productos", idioma)
     ws.sheet_view.showGridLines = False
 
-    ws["A1"] = _t("Catálogo de Productos", en)
+    ws["A1"] = _t("Catálogo de Productos", idioma)
     ws["A1"].font = _TITLE_FONT
-    ws["A2"] = f"{_t('Total', en)}: {len(productos)} {_t('productos', en)}"
+    ws["A2"] = f"{_t('Total', idioma)}: {len(productos)} {_t('productos', idioma)}"
     ws["A2"].font = _SUBTITLE_FONT
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Nombre", "Marca", "Modelo", "SKU", "Descripción", "Unidad",
         "Precio compra", "Precio venta", "Categoría", "Proveedor",
         "Color", "Acabado", "Formato", "Entrega (días)", "Variantes",
@@ -911,23 +912,22 @@ def exportar_catalogo_recursos_excel(recursos, etiquetas=None, moneda="USD", fac
     """
     from ..services.tasa import tasa_convertir_precio
 
-    en = _es_ingles(idioma)
     etiquetas = etiquetas or {}
     wb = Workbook()
     ws = wb.active
-    ws.title = _t("Recursos", en)
+    ws.title = _t("Recursos", idioma)
     ws.sheet_view.showGridLines = False
 
-    ws["A1"] = _t("Catálogo de Recursos (Precios Unitarios)", en)
+    ws["A1"] = _t("Catálogo de Recursos (Precios Unitarios)", idioma)
     ws["A1"].font = _TITLE_FONT
-    ws["A2"] = f"{_t('Total', en)}: {len(recursos)} {_t('recursos', en)}"
+    ws["A2"] = f"{_t('Total', idioma)}: {len(recursos)} {_t('recursos', idioma)}"
     ws["A2"].font = _SUBTITLE_FONT
 
-    headers = [_t(h, en) for h in (
+    headers = [_t(h, idioma) for h in (
         "Código", "Descripción", "Unidad", "Categoría", "Grupo", "Precio",
         "Usos", "Proveedor", "Última actualización",
     )]
-    headers[5] = f"{_t('Precio', en)} ({moneda})"
+    headers[5] = f"{_t('Precio', idioma)} ({moneda})"
 
     row = 4
     for col, h in enumerate(headers, 1):

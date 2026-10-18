@@ -3,7 +3,7 @@
 
 Criterios de este lote:
   · «Acera» es sidewalk en Estados Unidos y pavement en el Reino Unido, y
-    el «bordillo» o «brocal» es curb y kerb. Son de las pocas palabras del
+    el «bordillo» o «brocal» es curb y curb. Son de las pocas palabras del
     catálogo que el cliente lee todos los días.
   · «Adoquín» es paver en Estados Unidos y block paving en el Reino Unido.
     El «confinamiento perimetral» es edge restraint, y es lo que mantiene
@@ -29,7 +29,7 @@ LOTE = {
     "External concrete slab 10 cm thick on a compacted base, with shrinkage reinforcement, control joints and a non-slip broom finish. The brooming is carried out across the direction of travel and at just the right point of set, because done too soon the texture closes up and too late it leaves no mark. Includes checking the base, placing the mesh on chairs, pouring and vibrating, screeding to the drainage falls, brooming, saw cutting the joints and curing. Measured by the area actually constructed.",
 
 "Pavimento exterior de adoquín de concreto sobre cama de arena y base compactada, con confinamiento perimetral y sellado de juntas con arena. El confinamiento perimetral es lo que mantiene el pavimento trabado: sin un bordillo o brocal que lo contenga, los adoquines del borde se desplazan y el paño entero pierde la trabazón. Incluye el extendido y reglado de la cama de arena, la colocación de los adoquines según el aparejo, el corte de las piezas de ajuste, la compactación con plancha y el barrido y vibrado de arena en las juntas. Medido en superficie realmente ejecutada.":
-    "External paving of concrete pavers on a sand bed and compacted base, with edge restraint and the joints filled with sand. The edge restraint is what keeps the paving interlocked: without a kerb to contain it the pavers at the edge move out and the whole area loses its interlock. Includes spreading and screeding the laying course, laying the pavers to the bond, cutting the closing units, compacting with a plate and brushing and vibrating sand into the joints. Measured by the area actually constructed.",
+    "External paving of concrete pavers on a sand bed and compacted base, with edge restraint and the joints filled with sand. The edge restraint is what keeps the paving interlocked: without a curb to contain it the pavers at the edge move out and the whole area loses its interlock. Includes spreading and screeding the laying course, laying the pavers to the bond, cutting the closing units, compacting with a plate and brushing and vibrating sand into the joints. Measured by the area actually constructed.",
 
 "Pavimento exterior de gravilla o piedra decorativa sobre geotextil y base compactada, con confinamiento perimetral. El geotextil separador es lo que impide que la gravilla se hunda en el terreno y que crezca vegetación a través de ella, que son las dos razones por las que este pavimento se degrada. Incluye la nivelación y compactación de la base, la colocación del geotextil con solapes, el extendido de la gravilla con el espesor uniforme de proyecto y el rastrillado final. Medido en superficie realmente ejecutada.":
     "External gravel or decorative stone surface on a geotextile and compacted base, with edge restraint. The separating geotextile is what stops the gravel sinking into the ground and vegetation growing up through it, the two reasons this surface breaks down. Includes leveling and compacting the base, laying the geotextile with laps, spreading the gravel to the uniform thickness specified and the final raking. Measured by the area actually constructed.",
@@ -75,13 +75,13 @@ LOTE = {
 
 # ── Brocales y aceras ─────────────────────────────────────────────────────
 "Ejecución de brocal o bordillo de concreto, prefabricado o vaciado en sitio, sobre su dado de apoyo, con juntas selladas. Incluye el replanteo de la línea y de la rasante con cuerda, la excavación y vaciado del dado de apoyo, la colocación de las piezas a nivel y alineación, el macizado lateral que impide su vuelco bajo el empuje del pavimento, el rejuntado y el curado. Medido en longitud realmente ejecutada.":
-    "Construction of a concrete kerb, precast or cast in place, on its bed, with the joints sealed. Includes setting out the line and level with a string line, excavating and pouring the kerb bed, laying the units level and to line, the haunching that stops them overturning under the thrust of the paving, pointing and curing. Measured by the length actually constructed.",
+    "Construction of a concrete curb, precast or cast in place, on its bed, with the joints sealed. Includes setting out the line and level with a string line, excavating and pouring the curb bed, laying the units level and to line, the haunching that stops them overturning under the thrust of the paving, pointing and curing. Measured by the length actually constructed.",
 
 "Acera de concreto de 8 cm sobre base compactada, con juntas de control y acabado antideslizante, con la pendiente transversal de evacuación. Incluye el replanteo de rasantes y pendientes, el encofrado perimetral, la colocación de la malla, el vaciado y reglado, el acabado, el aserrado o formación de juntas de control a la separación indicada y el curado. Medido en superficie realmente ejecutada.":
     "Concrete sidewalk 8 cm thick on a compacted base, with control joints and a non-slip finish, with the cross fall for drainage. Includes setting out levels and falls, the perimeter formwork, placing the mesh, pouring and screeding, the finish, saw cutting or forming the control joints at the spacing indicated and curing. Measured by the area actually constructed.",
 
 "Ejecución de brocal o bordillo de concreto para confinamiento de pavimento, con encofrado y curado. Incluye el vaciado y el acabado.":
-    "Construction of a concrete kerb to restrain paving, with formwork and curing. Includes pouring and finishing.",
+    "Construction of a concrete curb to restrain paving, with formwork and curing. Includes pouring and finishing.",
 
 "Ejecución de acera de concreto con acabado escobillado y juntas de retracción. Incluye la base, el vaciado y las juntas.":
     "Construction of a concrete sidewalk with a broom finish and shrinkage joints. Includes the base, pouring and the joints.",
@@ -96,7 +96,7 @@ LOTE = {
     "Construction of an external concrete stair with provision for a handrail. Includes formwork, reinforcement and pouring.",
 
 "Colocación de bordillo prefabricado de concreto sobre base de mortero. Incluye la colocación y el rejuntado.":
-    "Installation of a precast concrete kerb on a mortar bed. Includes laying and pointing.",
+    "Installation of a precast concrete curb on a mortar bed. Includes laying and pointing.",
 
 "Ejecución de cuneta de concreto para conducción de aguas superficiales, con encofrado y acabado. Incluye el vaciado y el acabado.":
     "Construction of a concrete channel to carry surface water, with formwork and finish. Includes pouring and finishing.",
@@ -114,7 +114,7 @@ LOTE = {
     "Construction of an access ramp with a guardrail, in concrete and steel. Includes pouring and the guardrail.",
 
 "Reparación de acera o brocal con resane de concreto y sustitución de tramos dañados. Incluye la demolición parcial y el resane.":
-    "Repair of a sidewalk or kerb with concrete patching and replacement of damaged sections. Includes partial demolition and patching.",
+    "Repair of a sidewalk or curb with concrete patching and replacement of damaged sections. Includes partial demolition and patching.",
 
 # ── Drenaje exterior ──────────────────────────────────────────────────────
 "Suministro e instalación de canal de drenaje lineal prefabricado con su rejilla, sobre dado de concreto, con conexión a la red de drenaje. Incluye el replanteo de la línea y de la pendiente hacia el punto de descarga, la excavación, el vaciado del dado de apoyo, la colocación del canal a la cota exacta que debe quedar un par de milímetros por debajo del pavimento terminado para que el agua entre y no lo salte, el macizado lateral, la conexión de salida y la colocación de la rejilla. Medido en longitud realmente instalada.":
@@ -222,7 +222,7 @@ LOTE = {
     "Manufacture and installation of a metal pedestrian gate, with a frame and a lock. Includes assembly and painting. The gate is selected by the client.",
 
 "Instalación de motor y automatismo de portón existente, con programación y puesta en marcha. Incluye la instalación. El motor lo elige el cliente.":
-    "Installation of a motor and automation to an existing gate, with programming and setting to work. Includes installation. The motor is selected by the client.",
+    "Installation of a motor and automation to an existing gate, with programming and commissioning. Includes installation. The motor is selected by the client.",
 
 "Instalación de portero eléctrico o videoportero de acceso, con cableado y conexión. Incluye la instalación. El equipo lo elige el cliente.":
     "Installation of a door entry system or video door entry system at the access, with cabling and connection. Includes installation. The unit is selected by the client.",
@@ -274,7 +274,7 @@ LOTE = {
     "Planting of ornamental plants in a planted area, with preparation of the soil and watering. Includes planting. The plants are selected by the client.",
 
 "Ejecución de borde de jardín con brocal o bordillo de concreto. Incluye la colocación y el rejuntado.":
-    "Formation of a garden edge with a concrete kerb. Includes laying and pointing.",
+    "Formation of a garden edge with a concrete curb. Includes laying and pointing.",
 
 "Poda y mantenimiento de áreas verdes con retirada de restos vegetales. Incluye la poda y la limpieza.":
     "Pruning and maintenance of planted areas with removal of green waste. Includes pruning and clearing.",
@@ -338,7 +338,7 @@ LOTE = {
     "Installation of drainage and flushing to the irrigation system, with a flush valve. Includes installation and connection.",
 
 "Programación y puesta en marcha de sistema de riego, con ajuste de tiempos y revisión de emisores. Incluye la programación.":
-    "Programming and setting to work of the irrigation system, with adjustment of the run times and checking of the emitters. Includes programming.",
+    "Programming and commissioning of the irrigation system, with adjustment of the run times and checking of the emitters. Includes programming.",
 
 # ── Servicios exteriores ──────────────────────────────────────────────────
 "Punto de agua exterior con su derivación, llave de jardín y remate. Incluye la derivación desde la red con su llave de corte accesible, la canalización enterrada o empotrada, el montaje de la llave de jardín con su rosca para manguera, el anclaje del conjunto para que no gire al maniobrar, que es lo que termina rompiendo la conexión, y la prueba de estanqueidad. Medido por punto terminado y probado.":
@@ -458,7 +458,7 @@ LOTE = {
     "Installation of underwater pool lighting, with cabling and connection. Includes installation. The fixture is selected by the client.",
 
 "Limpieza y puesta en marcha de piscina, con llenado, ajuste químico y puesta en marcha del filtrado. Incluye el llenado y el ajuste.":
-    "Cleaning and setting to work of a swimming pool, with filling, chemical balancing and starting up the filtration. Includes filling and balancing.",
+    "Cleaning and commissioning of a swimming pool, with filling, chemical balancing and starting up the filtration. Includes filling and balancing.",
 
 "Reparación de vaso de piscina con resane de fisuras y reimpermeabilización puntual. Incluye la reparación.":
     "Repair of a pool shell by filling cracks and local rewaterproofing. Includes repair.",

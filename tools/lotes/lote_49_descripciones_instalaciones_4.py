@@ -166,71 +166,71 @@ LOTE = {
     'Instalación de antena., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an antenna, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de ascensor de 3 paradas., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a three-stop elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a three-stop elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de 4 paradas., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a four-stop elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a four-stop elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de 5 paradas., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a five-stop elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a five-stop elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de 6 paradas., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a six-stop elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a six-stop elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de alta velocidad., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a high-speed elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a high-speed elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de carga pesada., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a heavy-duty freight elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a heavy-duty freight elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor de carga. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a freight elevator. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a freight elevator. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de ascensor de dos paradas, con estructura y cabina. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a two-stop elevator, with the structure and the car. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a two-stop elevator, with the structure and the car. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de ascensor de tracción con cuarto de máquinas. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a traction elevator with a machine room. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a traction elevator with a machine room. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de ascensor existente., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of an existing elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of an existing elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor panorámico con estructura de vidrio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a panoramic elevator with a glass structure. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a panoramic elevator with a glass structure. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de ascensor para discapacitados., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of an accessible elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of an accessible elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de ascensor sin cuarto de máquinas. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a machine-room-less elevator. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a machine-room-less elevator. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de banco de baterías., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a battery bank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a battery bank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de batería de 200ah., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a 200 Ah battery, with the connection. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a 200 Ah battery, with the connection. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de batería de litio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a lithium battery, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a lithium battery, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de batería de plomo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a lead-acid battery, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a lead-acid battery, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de batería., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a battery, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a battery, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba centrífuga., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a centrifugal pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a centrifugal pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba contra incendios., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a fire pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a fire pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de achique., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a sump pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a sump pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de agua potable., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a potable water pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a potable water pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de agua residual., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a sewage pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a sewage pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de agua., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a water pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a water pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de piscina., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a pool pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a pool pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de pozo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a well pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a well pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de recirculación., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a recirculation pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a recirculation pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de riego., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an irrigation pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an irrigation pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba de superficie., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a surface pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a surface pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba presurizadora., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a booster pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a booster pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba presurizadora., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a booster pump, with the connection. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a booster pump, with the connection. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de bomba sumergible., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a submersible pump, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a submersible pump, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de cableado solar., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a solar cabling, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a solar cabling, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de campana extractora., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
         'Installation of a range hood, with the connection. Includes the connection and fixing. Measured per unit installed.',
     'Instalación de central de incendios., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
@@ -292,59 +292,59 @@ LOTE = {
     'Instalación de ducto rígido., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
         'Installation of a rigid duct, with the connection. Includes the connection and fixing. Measured per unit installed.',
     'Instalación de elevador de fachada para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a facade platform lift for accessibility. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a facade platform lift for accessibility. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de elevador de plataforma para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a platform lift for accessibility. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a platform lift for accessibility. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de elevador de silla., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a chair lift, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a chair lift, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de equipo cassette., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a cassette air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a cassette air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo de climatización, con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo de confort., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a comfort air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a comfort air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo de piso-techo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a floor and ceiling air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a floor and ceiling air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo de piso., con conexión y puesta en marcha. Incluye la conexión. Medido por unidad instalada.':
-        'Installation of a floor mounted air conditioning unit, with the connection and setting to work. Includes the connection. Measured per unit installed.',
+        'Installation of a floor mounted air conditioning unit, with the connection and commissioning. Includes the connection. Measured per unit installed.',
     'Instalación de equipo de precisión., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a precision air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a precision air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo de techo., con conexión y puesta en marcha. Incluye la conexión. Medido por unidad instalada.':
-        'Installation of a ceiling mounted air conditioning unit, with the connection and setting to work. Includes the connection. Measured per unit installed.',
+        'Installation of a ceiling mounted air conditioning unit, with the connection and commissioning. Includes the connection. Measured per unit installed.',
     'Instalación de equipo de ventana., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a window air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a window air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo multisplit., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a multi-split air conditioning system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a multi-split air conditioning system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para comercio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for commercial premises, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for commercial premises, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para consultorio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a surgery, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a surgery, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para depósito., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a store, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a store, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para dormitorio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a bedroom, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a bedroom, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para estudio., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a study, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a study, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para garaje., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a garage, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a garage, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para habitación., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a room, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a room, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para local., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for premises, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for premises, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para oficina., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for an office, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for an office, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para restaurante., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a restaurant, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a restaurant, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para sala., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a living room, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a living room, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo para terraza., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an air conditioning unit for a terrace, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an air conditioning unit for a terrace, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de equipo split de pared., con conexión y puesta en marcha. Incluye la conexión. Medido por unidad instalada.':
-        'Installation of a wall mounted split air conditioning unit, with the connection and setting to work. Includes the connection. Measured per unit installed.',
+        'Installation of a wall mounted split air conditioning unit, with the connection and commissioning. Includes the connection. Measured per unit installed.',
     'Instalación de equipo split inverter., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an inverter split air conditioning unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an inverter split air conditioning unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de estructura de paneles., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a panel support structure, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a panel support structure, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de extintor de co2., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
         'Installation of a CO2 fire extinguisher, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
     'Instalación de extintor de espuma., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
@@ -386,15 +386,15 @@ LOTE = {
     'Instalación de intercomunicador., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an intercom, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de inversor aislado., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an off-grid inverter, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an off-grid inverter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de inversor de 3kw., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a 3 kW inverter, with the connection. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a 3 kW inverter, with the connection. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de inversor de red., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a grid-tie inverter, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a grid-tie inverter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de inversor híbrido., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a hybrid inverter, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a hybrid inverter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de inversor., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an inverter, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an inverter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de lector de tarjetas., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a card reader, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de luminaria de emergencia con señalización. Incluye la conexión y la fijación. Medido por unidad instalada.':
@@ -402,15 +402,15 @@ LOTE = {
     'Instalación de luz de emergencia., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
         'Installation of an emergency light, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
     'Instalación de medidor bidireccional., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a bidirectional energy meter, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a bidirectional energy meter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de monitor de vigilancia., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a surveillance monitor, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de montacargas de carga., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a freight elevator, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a freight elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de montacargas de cocina o servicio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a service lift for a kitchen or for service. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a service lift for a kitchen or for service. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de montacargas de obra o de servicio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a construction or service hoist. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a construction or service hoist. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de módulo de control de bomba., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a pump control module, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de panel de alarma., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -420,39 +420,39 @@ LOTE = {
     'Instalación de panel de control., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a control panel, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de panel solar comercial., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a commercial solar panel, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a commercial solar panel, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar de 400w., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a 400 W solar panel, with the connection. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a 400 W solar panel, with the connection. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar doméstico., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a domestic solar panel, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a domestic solar panel, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar en jardín., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a solar panel in a garden, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a solar panel in a garden, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar en techo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a roof mounted solar panel, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a roof mounted solar panel, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar en terraza., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a solar panel on a terrace, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a solar panel on a terrace, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de panel solar., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a solar panel, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a solar panel, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de pantalla de proyección., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a projection screen, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de planta de respaldo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a backup generator, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a backup generator, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de planta eléctrica a gas., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a gas fired generator, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a gas fired generator, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de planta eléctrica diésel., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a diesel generator, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a diesel generator, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de planta eléctrica., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a generator, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a generator, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de plataforma elevadora vertical para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a vertical platform lift for accessibility. Includes the assembly and setting to work. Measured per unit installed.',
+        'Installation of a vertical platform lift for accessibility. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de plataforma salvaescaleras., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a platform stairlift, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a platform stairlift, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de portero con video., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a video door entry system, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de portero eléctrico., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an electric door release, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de protecciones solares., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of solar system protective devices, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of solar system protective devices, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de proyector., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a projector, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de pulsador de alarma., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
@@ -460,23 +460,23 @@ LOTE = {
     'Instalación de pulsador de escena inalámbrico., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a wireless scene controller, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de rampa mecánica., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
-        'Installation of a moving ramp, with assembly and setting to work. Includes the assembly. Measured per unit installed.',
+        'Installation of a moving ramp, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de receptor de tv., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a television receiver, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de receptor satelital., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a satellite receiver, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de refrigerante., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of refrigerant, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of refrigerant, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de regulador de carga., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a charge controller, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a charge controller, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de extracción., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
         'Installation of an extract grille, with the connection. Includes the connection and fixing. Measured per unit installed.',
     'Instalación de rejilla de retorno., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a return air grille, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a return air grille, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de retorno., con conexión. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a return air grille, with the connection. Includes the connection. Measured per unit installed.',
     'Instalación de rejilla de suministro., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a supply air grille, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a supply air grille, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de ventilación., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
         'Installation of a ventilation grille, with the connection. Includes the connection and fixing. Measured per unit installed.',
     'Instalación de repetidor de señal cableada., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -524,27 +524,27 @@ LOTE = {
     'Instalación de sistema de audio., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an audio system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sistema de bombeo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a pumping system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a pumping system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema de cine., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a home cinema system, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de sistema de conductos., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a ducted air conditioning system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a ducted air conditioning system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema de intercomunicación., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an intercom system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sistema de música., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a music system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sistema de respaldo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a backup power system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a backup power system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema de video., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a video system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sistema de video., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a video system, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de sistema fotovoltaico., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a photovoltaic system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a photovoltaic system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema hidroneumático., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a hydropneumatic system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a hydropneumatic system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema solar., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a solar system, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a solar system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sonido ambiente., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an ambient sound system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sonido de ambiente., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
@@ -558,45 +558,45 @@ LOTE = {
     'Instalación de sonido de terraza., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a terrace sound system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de tablero de transferencia., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a transfer switch, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a transfer switch, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque cisterna., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a cistern, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a cistern, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de agua caliente., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a hot water tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a hot water tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de agua elevado., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an elevated water tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an elevated water tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de agua enterrado., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a buried water tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a buried water tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de agua potable., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a potable water tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a potable water tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de presión hidroneumático., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a hydropneumatic pressure tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a hydropneumatic pressure tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de presión., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a pressure tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a pressure tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de reserva., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a reserve tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a reserve tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de reserva., con conexión. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a reserve tank, with the connection. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a reserve tank, with the connection. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque de tormenta., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a stormwater tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a stormwater tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque elevado., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an elevated tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an elevated tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque enterrado., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a buried tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a buried tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de tanque séptico., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a septic tank, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a septic tank, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de teatro en casa., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
-        'Installation of a home theatre system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
+        'Installation of a home theater system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de teclado de acceso., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an access keypad, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de termostato inalámbrico., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a wireless thermostat, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de termostato., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a thermostat, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a thermostat, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de unidad condensadora., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a condensing unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a condensing unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de unidad interior., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of an indoor unit, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of an indoor unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de ventilación de baño., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
         'Installation of a bathroom ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
     'Instalación de ventilación de closet., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
@@ -644,5 +644,5 @@ LOTE = {
     'Instalación de videoportero inalámbrico., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a wireless video door entry system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de válvula de flotante., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a float valve, with the connection and setting to work. Includes the connection and setting to work. Measured per unit installed.',
+        'Installation of a float valve, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
 }
