@@ -143,6 +143,9 @@
             <option value="NIO" {{ 'selected' if (presupuesto and presupuesto.moneda == 'NIO') or (not presupuesto and cfg.moneda_default == 'NIO') else '' }}>NIO — córdoba</option>
             <option value="BRL" {{ 'selected' if (presupuesto and presupuesto.moneda == 'BRL') or (not presupuesto and cfg.moneda_default == 'BRL') else '' }}>BRL — real</option>
             <option value="EUR" {{ 'selected' if (presupuesto and presupuesto.moneda == 'EUR') or (not presupuesto and cfg.moneda_default == 'EUR') else '' }}>EUR — euro</option>
+            <option value="GBP" {{ 'selected' if (presupuesto and presupuesto.moneda == 'GBP') or (not presupuesto and cfg.moneda_default == 'GBP') else '' }}>GBP — Libra esterlina</option>
+            <option value="AUD" {{ 'selected' if (presupuesto and presupuesto.moneda == 'AUD') or (not presupuesto and cfg.moneda_default == 'AUD') else '' }}>AUD — Dólar australiano</option>
+            <option value="CAD" {{ 'selected' if (presupuesto and presupuesto.moneda == 'CAD') or (not presupuesto and cfg.moneda_default == 'CAD') else '' }}>CAD — Dólar canadiense</option>
           </select>
           <p class="hint" id="moneda-contexto-resumen">Moneda contractual del presupuesto.</p>
         </div>

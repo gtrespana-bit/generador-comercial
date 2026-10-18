@@ -82,7 +82,7 @@ def test_bienvenida_lista_las_monedas_completas(entorno, cliente_web):
     valores = [v for v, _l in opts]
     # Monedas mínimas: USD (referencia), EUR (España), y las LatAm con
     # mercado en la lista de países.
-    for m in ("USD", "EUR", "COP", "MXN", "PEN", "CLP", "ARS", "VES"):
+    for m in ("USD", "EUR", "GBP", "AUD", "CAD", "COP", "MXN", "PEN", "CLP", "ARS", "VES"):
         assert m in valores, f"Falta la moneda {m} en /bienvenida. Vistas: {valores}"
 
 

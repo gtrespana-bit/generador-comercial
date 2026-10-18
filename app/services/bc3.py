@@ -300,39 +300,42 @@ def parse_bc3(contenido: bytes) -> dict:
                 sub = _split_subcampos(hijo_field)
                 if not sub:
                     continue
-                hijo_codigo_raw = sub[0].strip()
-                if not hijo_codigo_raw:
-                    continue
-                # Detectar porcentaje: código contiene % o &
-                es_porcentaje = "%" in hijo_codigo_raw or "&" in hijo_codigo_raw
-                hijo_codigo_limpio = _codigo_limpio(hijo_codigo_raw) if not es_porcentaje else hijo_codigo_raw
-                factor = 1.0
-                rendimiento = 1.0
-                if len(sub) > 1:
-                    f = numero_local(sub[1])
-                    if f is not None:
-                        factor = f
-                if len(sub) > 2:
-                    r = numero_local(sub[2])
-                    if r is not None:
-                        rendimiento = r
-                # Caso especial: porcentaje como OP%N0001 \ \ 0.03 \ -> factor vacío, rendimiento es %
-                if es_porcentaje and len(sub) > 1:
-                    # El rendimiento puede estar en sub[1] si factor vacío
-                    # Intentar buscar último numérico
-                    for s in reversed(sub[1:]):
-                        v = numero_local(s)
-                        if v is not None:
-                            rendimiento = v
-                            break
+                # Repeticiones HIJO/FACTOR/RENDIMIENTO dentro del mismo campo.
+                for offset in range(0, len(sub), 3):
+                    grupo = sub[offset:offset + 3]
+                    hijo_codigo_raw = grupo[0].strip()
+                    if not hijo_codigo_raw:
+                        continue
+                    # Detectar porcentaje: código contiene % o &
+                    es_porcentaje = "%" in hijo_codigo_raw or "&" in hijo_codigo_raw
+                    hijo_codigo_limpio = _codigo_limpio(hijo_codigo_raw) if not es_porcentaje else hijo_codigo_raw
+                    factor = 1.0
+                    rendimiento = 1.0
+                    if len(grupo) > 1:
+                        f = numero_local(grupo[1])
+                        if f is not None:
+                            factor = f
+                    if len(grupo) > 2:
+                        r = numero_local(grupo[2])
+                        if r is not None:
+                            rendimiento = r
+                    # Caso especial: porcentaje como OP%N0001 \ \ 0.03 \ -> factor vacío, rendimiento es %
+                    if es_porcentaje and len(grupo) > 1:
+                        # El rendimiento puede estar en grupo[1] si factor vacío
+                        # Intentar buscar último numérico
+                        for s in reversed(grupo[1:]):
+                            v = numero_local(s)
+                            if v is not None:
+                                rendimiento = v
+                                break
 
-                hijos.append({
-                    "codigo_raw": hijo_codigo_raw,
-                    "codigo": hijo_codigo_limpio,
-                    "factor": factor,
-                    "rendimiento": rendimiento,
-                    "es_porcentaje": es_porcentaje,
-                })
+                    hijos.append({
+                        "codigo_raw": hijo_codigo_raw,
+                        "codigo": hijo_codigo_limpio,
+                        "factor": factor,
+                        "rendimiento": rendimiento,
+                        "es_porcentaje": es_porcentaje,
+                    })
             if hijos:
                 descomposiciones_raw.setdefault(padre_limpio, []).extend(hijos)
                 # También guardar en concepto si existe
@@ -367,24 +370,28 @@ def parse_bc3(contenido: bytes) -> dict:
                 sub = _split_subcampos(linea_field)
                 if not sub:
                     continue
-                # Formato: TIPO\COMENTARIO\UDS\LONG\LAT\ALT  o  TIPO\COMENT\UDS\LONG\LAT\ALT\ETIQUETA?
-                # Tolerante
-                tipo_m = sub[0] if len(sub) > 0 else ""
-                comentario = sub[1] if len(sub) > 1 else ""
-                uds = numero_local(sub[2]) if len(sub) > 2 else None
-                longi = numero_local(sub[3]) if len(sub) > 3 else None
-                lat = numero_local(sub[4]) if len(sub) > 4 else None
-                alt = numero_local(sub[5]) if len(sub) > 5 else None
-                etiqueta = sub[6] if len(sub) > 6 else ""
-                lineas.append({
-                    "tipo": tipo_m,
-                    "comentario": comentario,
-                    "uds": uds,
-                    "long": longi,
-                    "lat": lat,
-                    "alt": alt,
-                    "etiqueta": etiqueta,
-                })
+                # Seis subcampos por medición, repetidos sin separadores |.
+                for offset in range(0, len(sub), 6):
+                    grupo = sub[offset:offset + 6]
+                    if not any(grupo):
+                        continue
+                    # Formato: TIPO\COMENTARIO\UDS\LONG\LAT\ALT
+                    tipo_m = grupo[0] if len(grupo) > 0 else ""
+                    comentario = grupo[1] if len(grupo) > 1 else ""
+                    uds = numero_local(grupo[2]) if len(grupo) > 2 else None
+                    longi = numero_local(grupo[3]) if len(grupo) > 3 else None
+                    lat = numero_local(grupo[4]) if len(grupo) > 4 else None
+                    alt = numero_local(grupo[5]) if len(grupo) > 5 else None
+                    etiqueta = ""
+                    lineas.append({
+                        "tipo": tipo_m,
+                        "comentario": comentario,
+                        "uds": uds,
+                        "long": longi,
+                        "lat": lat,
+                        "alt": alt,
+                        "etiqueta": etiqueta,
+                    })
 
             mediciones.append(MedicionBC3(
                 codigo_padre=padre_limpio,
@@ -806,138 +813,153 @@ def _sanear_texto_bc3(texto: str, max_len: int = 5000) -> str:
 
 
 def exportar_presupuesto_bc3(presupuesto, cfg=None) -> bytes:
-    """
-    Exporta un presupuesto CotizaT a BC3 (FIEBDC-3) básico.
+    """Exporta conceptos, árbol y mediciones FIEBDC-3/2020 en ANSI.
 
-    Genera:
-    - ~V cabecera
-    - ~K coeficientes (decimales por defecto)
-    - ~C conceptos: capítulos (#) y partidas
-    - ~D descomposición capítulos -> partidas y partidas -> recursos (si tiene descompuesto)
-    - ~T textos largos
-    - ~M mediciones
-
-    No incluye certificaciones, residuos ~R ni BIM GUID. Es un BC3 de presupuesto
-    simple compatible con Presto, Arquímedes y visores online.
+    Cada padre tiene un único registro ~D; cada línea ~M ocupa seis
+    subcampos. Los códigos son únicos incluso tras sanearlos/truncarlos.
+    Los precios contractuales se conservan al recalcular el descompuesto
+    mediante un ajuste explícito al precio de venta (no un recurso ficticio).
     """
-    # Cabecera
-    empresa = getattr(cfg, "empresa_nombre", "") if cfg else "CotizaT"
+    from decimal import Decimal
+    from .calculations import partida_activa, money
+
+    usados = set()
+
+    def codigo(raw, fallback, sufijo=""):
+        base = _sanear_codigo(raw, fallback).replace("#", "").replace("%", "_").replace("&", "_") or fallback
+        limite = 20 - len(sufijo)
+        candidato = base[:limite]
+        n = 1
+        while candidato in usados:
+            cola = f"_{n}"
+            candidato = base[:limite - len(cola)] + cola
+            n += 1
+        usados.add(candidato)
+        return candidato + sufijo
+
+    def num(valor):
+        # No perder cantidades pequeñas ni precios con más de dos decimales.
+        return format(Decimal(str(valor or 0)), "f")
+
+    empresa = _sanear_texto_bc3(getattr(cfg, "empresa_nombre", "") or "CotizaT", 200)
     titulo = getattr(presupuesto, "titulo", "") or f"Presupuesto {getattr(presupuesto, 'numero', '')}"
-    version = "FIEBDC-3/2020"
-    programa = "CotizaT"
-    # Rotulos de precios: solo uno
-    cabecera_rotulo = "Precio"
-    juego = "ANSI"
     comentario = _sanear_texto_bc3(f"{empresa} - {titulo}", 200)
-    tipo_info = "2"  # presupuesto
+    moneda = _sanear_texto_bc3(getattr(presupuesto, "moneda", "") or "USD", 3).upper()
+    iva = num(getattr(presupuesto, "impuesto_pct", 0))
+    descuento = num(getattr(presupuesto, "descuento_pct", 0))
+    lineas = [
+        f"~V|{empresa}|FIEBDC-3/2020|CotizaT|Precio|ANSI|{comentario}|2||",
+        f"~K|2\\2\\2\\3\\2\\2\\2\\2\\{moneda}\\|0\\0\\0\\{descuento}\\{iva}|",
+    ]
 
-    lineas = []
-    lineas.append(f"~V|{empresa}|{version}|{programa}|{cabecera_rotulo}|{juego}|{comentario}|{tipo_info}||")
+    def concepto(cod, unidad, resumen, precio, tipo=0):
+        lineas.append(
+            f"~C|{cod}|{_sanear_texto_bc3(unidad, 20)}|"
+            f"{_sanear_texto_bc3(resumen, 64)}|{num(precio)}||{tipo}|"
+        )
 
-    # Coeficientes por defecto: DN\DD\DS\DR\DI\DP\DC\DM\DIVISA | CI\GG\BI\BAJA\IVA
-    moneda = getattr(presupuesto, "moneda", "EUR") or "EUR"
-    # Mapear moneda CotizaT a divisa BCE: EUR, USD, etc.
-    divisa = "EUR" if moneda == "EUR" else "USD" if moneda == "USD" else moneda[:3].upper()
-    lineas.append(f"~K|2\\2\\2\\3\\2\\2\\2\\2\\{divisa}\\|0\\0\\0\\0\\{getattr(presupuesto, 'impuesto_pct', 0) or 0}|")
+    def descomposicion(padre, hijos):
+        if hijos:
+            detalle = "".join(f"{hijo}\\1\\{num(cantidad)}\\" for hijo, cantidad in hijos)
+            lineas.append(f"~D|{padre}|{detalle}|")
 
-    # Recolectar capítulos y partidas
-    # Código raíz
-    root_code = f"{getattr(presupuesto, 'numero', 'PRES')}##"
-    root_code = _sanear_codigo(root_code, "PRESUPUESTO##")
-    # Si root no termina en ##, añadir
-    if not root_code.endswith("##"):
-        root_code = root_code.rstrip("#") + "##"
-    root_resumen = _sanear_texto_bc3(titulo, 64)
-    lineas.append(f"~C|{root_code}|{root_resumen}|0|")
-
-    # Capítulos
-    capitulos = getattr(presupuesto, "capitulos", []) or []
-    conceptos_generados = set()
-    conceptos_generados.add(_codigo_limpio(root_code))
-
-    for idx_cap, cap in enumerate(capitulos, start=1):
-        cap_codigo_raw = _sanear_codigo(f"{idx_cap:02d}", f"{idx_cap:02d}") + "#"
-        cap_codigo_limpio = _codigo_limpio(cap_codigo_raw)
-        cap_nombre = getattr(cap, "nombre", "") or f"CAPITULO {idx_cap}"
-        cap_resumen = _sanear_texto_bc3(cap_nombre, 64)
-        # Subtotal capítulo
-        cap_subtotal = getattr(cap, "subtotal", 0) or 0
-        lineas.append(f"~C|{cap_codigo_raw}|{cap_resumen}|{cap_subtotal:.2f}|")
-        conceptos_generados.add(cap_codigo_limpio)
-        # D raíz -> capítulo
-        lineas.append(f"~D|{root_code}|{cap_codigo_raw}\\1\\1\\")
-
-        partidas = getattr(cap, "partidas", []) or []
-        for idx_part, part in enumerate(partidas, start=1):
-            # Código partida: usar codigo_externo si existe, si no generar
-            raw_code = getattr(part, "codigo_externo", "") or getattr(part, "codigo", "") or f"{idx_cap:02d}.{idx_part:02d}"
-            part_codigo_limpio = _sanear_codigo(raw_code, f"{idx_cap:02d}.{idx_part:02d}")
-            # Evitar colisión con capítulos
-            if part_codigo_limpio in conceptos_generados:
-                part_codigo_limpio = _sanear_codigo(f"{part_codigo_limpio}_{idx_part}", f"{idx_cap:02d}.{idx_part:02d}")
-            part_codigo_raw = part_codigo_limpio  # partidas sin #
-            conceptos_generados.add(part_codigo_limpio)
-
-            part_resumen = _sanear_texto_bc3(getattr(part, "nombre", "") or part_codigo_limpio, 64)
-            part_unidad = getattr(part, "unidad", "ud") or "ud"
-            part_precio = getattr(part, "precio_unitario", 0) or 0
-            lineas.append(f"~C|{part_codigo_raw}|{part_unidad}|{part_resumen}|{part_precio:.2f}|")
-
-            # Texto largo
-            desc_larga = getattr(part, "descripcion", "") or ""
-            if desc_larga:
-                desc_saneada = _sanear_texto_bc3(desc_larga, 2000)
-                if desc_saneada and desc_saneada != part_resumen:
-                    lineas.append(f"~T|{part_codigo_raw}|{desc_saneada}|")
-
-            # D capítulo -> partida
-            # rendimiento es cantidad? En BC3 presupuesto, el rendimiento en D de capítulo es la medición total? 
-            # Simplificamos: factor 1, rendimiento = cantidad_total
+    raiz = codigo(getattr(presupuesto, "numero", ""), "PRESUPUESTO", "##")
+    # Se reserva el código de todos los capítulos antes de generar partidas.
+    capitulos = list(getattr(presupuesto, "capitulos", []) or [])
+    codigos_cap = [codigo(f"{i:02d}", f"CAP{i}", "#") for i in range(1, len(capitulos) + 1)]
+    # Los recargos de CotizaT no son costes internos: forman parte de la
+    # oferta y deben viajar también en el árbol económico del presupuesto.
+    subtotal = money(getattr(presupuesto, "subtotal", 0))
+    recargos = [
+        ("Transporte", money(getattr(presupuesto, "transporte_monto", 0))),
+        ("Otros cargos", money(getattr(presupuesto, "otros_cargos_monto", 0))),
+        ("Gastos indirectos", money(subtotal * Decimal(str(getattr(presupuesto, "gastos_indirectos_pct", 0) or 0)) / 100)),
+        ("Imprevistos", money(subtotal * Decimal(str(getattr(presupuesto, "imprevistos_pct", 0) or 0)) / 100)),
+    ]
+    concepto(raiz, "", titulo, subtotal + sum(importe for _, importe in recargos))
+    hijos_raiz = []
+    recursos = {}
+    avanzadas = bool(getattr(presupuesto, "usar_funciones_avanzadas", False))
+    for i, (cap, cod_cap) in enumerate(zip(capitulos, codigos_cap), 1):
+        concepto(cod_cap, "", getattr(cap, "nombre", "") or f"CAPITULO {i}", getattr(cap, "subtotal", 0))
+        hijos_raiz.append((cod_cap, 1))
+        hijos_cap = []
+        for j, part in enumerate(getattr(cap, "partidas", []) or [], 1):
+            if avanzadas and not partida_activa(part):
+                continue
+            descom = getattr(part, "descomposicion_cype", None)
+            raw = (getattr(part, "codigo_externo", "") or getattr(part, "codigo", "")
+                   or getattr(descom, "codigo", ""))
+            cod_part = codigo(raw, f"{i:02d}.{j:02d}")
+            precio = getattr(part, "precio_unitario", 0) or 0
+            concepto(cod_part, getattr(part, "unidad", "") or "ud", getattr(part, "nombre", "") or cod_part, precio)
+            texto = _sanear_texto_bc3(getattr(part, "descripcion", ""), 5000)
+            if texto:
+                lineas.append(f"~T|{cod_part}|{texto}|")
             cantidad = getattr(part, "cantidad_total", None)
             if cantidad is None:
-                cantidad = getattr(part, "cantidad", 1.0) or 1.0
-            lineas.append(f"~D|{cap_codigo_raw}|{part_codigo_raw}\\{cantidad:.2f}\\1\\")
+                cantidad = getattr(part, "cantidad", 0) or 0
+            hijos_cap.append((cod_part, cantidad))
 
-            # Si partida tiene descomposición CYPE/manual, exportar recursos como conceptos simples
-            descom = getattr(part, "descomposicion_cype", None)
-            if descom:
-                filas = getattr(descom, "filas", []) or []
-                for f in filas:
-                    if getattr(f, "tipo", "") != "recurso":
-                        continue
-                    cod_recurso = getattr(f, "codigo", "") or f"R{getattr(f, 'id', '')}"
-                    cod_recurso_limpio = _sanear_codigo(cod_recurso, f"R{idx_part}")
-                    if cod_recurso_limpio in conceptos_generados:
-                        continue
-                    unidad_recurso = getattr(f, "unidad", "ud") or "ud"
-                    resumen_recurso = _sanear_texto_bc3(getattr(f, "descripcion", "") or cod_recurso_limpio, 64)
-                    precio_recurso = getattr(f, "precio_unitario", 0) or 0
-                    lineas.append(f"~C|{cod_recurso_limpio}|{unidad_recurso}|{resumen_recurso}|{precio_recurso:.4f}|")
-                    conceptos_generados.add(cod_recurso_limpio)
-                    # D partida -> recurso
-                    rend = getattr(f, "rendimiento", 1.0) or 1.0
-                    lineas.append(f"~D|{part_codigo_raw}|{cod_recurso_limpio}\\{rend:.4f}\\1\\")
+            hijos_part = []
+            coste = Decimal("0")
+            filas = [f for f in (getattr(descom, "filas", []) or [])
+                     if getattr(f, "tipo", "") == "recurso"]
+            tasa = getattr(presupuesto, "tipo_cambio", None)
+            # Validar todas las monedas antes de emitir conceptos, evitando
+            # recursos huérfanos cuando solo una fila no puede convertirse.
+            if any(
+                (getattr(f, "moneda", None) or moneda) != moneda
+                and not (getattr(f, "moneda", None) == "USD" and tasa and tasa > 0)
+                for f in filas
+            ):
+                filas = []
+            for fila in filas:
+                precio_rec = Decimal(str(getattr(fila, "precio_unitario", 0) or 0))
+                moneda_rec = getattr(fila, "moneda", None) or moneda
+                if moneda_rec != moneda:
+                    precio_rec *= Decimal(str(tasa))
+                rendimiento = getattr(fila, "rendimiento", None)
+                if rendimiento is None:
+                    rendimiento = 1
+                unidad = _sanear_texto_bc3(getattr(fila, "unidad", "") or "ud", 20)
+                resumen = _sanear_texto_bc3(getattr(fila, "descripcion", ""), 64)
+                tipo = {"mano_obra": 1, "otros": 2, "materiales": 3}.get(getattr(fila, "categoria", ""), 0)
+                clave = (getattr(fila, "codigo", ""), unidad, resumen, precio_rec, tipo)
+                cod_rec = recursos.get(clave)
+                if cod_rec is None:
+                    cod_rec = codigo(clave[0], f"R{len(recursos) + 1}")
+                    recursos[clave] = cod_rec
+                    concepto(cod_rec, unidad, resumen or cod_rec, precio_rec, tipo)
+                hijos_part.append((cod_rec, rendimiento))
+                coste += precio_rec * Decimal(str(rendimiento))
+            if hijos_part:
+                ajuste = Decimal(str(precio)) - coste
+                if ajuste:
+                    cod_ajuste = codigo(f"{cod_part}_AJ", "AJUSTE")
+                    concepto(cod_ajuste, "ud", "Ajuste al precio de venta", ajuste)
+                    hijos_part.append((cod_ajuste, 1))
+                descomposicion(cod_part, hijos_part)
 
-            # Mediciones ~M
-            meds = getattr(part, "mediciones", []) or []
-            if meds:
-                # Total ya calculado como cantidad, pero exportamos desglose
-                total_med = sum(getattr(m, "cantidad", 0) or 0 for m in meds)
-                # Primera línea con total
-                lineas_med = []
-                for pos, m in enumerate(meds, start=1):
-                    concepto_med = _sanear_texto_bc3(getattr(m, "concepto", "") or f"Med {pos}", 64)
-                    cant_med = getattr(m, "cantidad", 0) or 0
-                    # Formato simple: TIPO\COMENT\UDS\LONG\LAT\ALT
-                    # Usamos uds = cant_med, resto vacío
-                    lineas_med.append(f"0\\{concepto_med}\\{cant_med:.2f}\\")
-                if lineas_med:
-                    lineas.append(f"~M|{cap_codigo_raw}\\{part_codigo_raw}|{len(meds)}|{total_med:.2f}|{'|'.join(lineas_med)}|")
-            else:
-                # Medición mínima requerida por spec (aunque sea sin desglose)
-                lineas.append(f"~M|{cap_codigo_raw}\\{part_codigo_raw}||{cantidad:.2f}||")
-
-    # Unir con \r\n y añadir fin de archivo ASCII 26 opcional
-    contenido = "\r\n".join(lineas) + "\r\n"
-    return contenido.encode("windows-1252", errors="replace")
-
+            mediciones = getattr(part, "mediciones", []) or []
+            detalle = "".join(
+                "0\\" + _sanear_texto_bc3(getattr(m, "concepto", ""), 64)
+                + "\\" + num(getattr(m, "cantidad", 0)) + "\\1\\1\\1\\"
+                for m in mediciones
+            )
+            # POS es la posición del hijo en su padre, no el número de líneas.
+            lineas.append(f"~M|{cod_cap}\\{cod_part}|{len(hijos_cap)}|{num(cantidad)}|{detalle}|")
+        descomposicion(cod_cap, hijos_cap)
+    recargos = [(nombre, importe) for nombre, importe in recargos if importe]
+    if recargos:
+        cod_cap = codigo("CARGOS", "CARGOS", "#")
+        concepto(cod_cap, "", "Cargos adicionales", sum(importe for _, importe in recargos))
+        hijos_raiz.append((cod_cap, 1))
+        hijos = []
+        for i, (nombre, importe) in enumerate(recargos, 1):
+            cod = codigo(f"CARGO{i}", f"CARGO{i}")
+            concepto(cod, "ud", nombre, importe)
+            hijos.append((cod, 1))
+        descomposicion(cod_cap, hijos)
+    descomposicion(raiz, hijos_raiz)
+    return ("\r\n".join(lineas) + "\r\n").encode("windows-1252", errors="replace")

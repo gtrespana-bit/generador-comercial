@@ -28,7 +28,7 @@ Estado al escribir esta guía:
 | 9 | **`CRON_SECRET` + cron de recordatorios de vencimiento** | ✅ **completado** (18–19/08/2026): PR #40 fusionado (`c24c2cc`) y desplegado en producción; `CRON_SECRET` (Production) configurado; job verificado por el titular en Vercel (Settings → Cron Jobs: `/api/cron/recordatorios-vencimiento`, `0 13 * * *`); `/readyz` en vivo con `"cron_secret": "configurado"` y `"...:registrada"`. Primera ejecución automática: 19/08, 13:00 UTC (±59 min en Hobby). Detalle en §9 |
 | 10 | **Emails de Supabase Auth (alta y recuperación) con el diseño de CotizaT** | ✅ **completado** (18–19/08/2026): plantillas pegadas en Supabase (Authentication → Email Templates): **Confirm signup**, **Reset password** y **Password changed**. Referencia: `docs/SUPABASE_EMAIL_TEMPLATES.md` y `docs/supabase_templates/` (ver §10) |
 | 11 | **Operación automática (E4-021/E4-023) — parte de panel** | **código ✅** (19/08/2026: cron `/api/cron/mantenimiento`). **Falta en paneles:** `application/zip` en los MIME del bucket `cotizat-private`, vigilante externo de disponibilidad (p. ej. UptimeRobot sobre `/healthz`) y backups automáticos de Supabase Pro (ver §11) |
-| 14 | **Stripe Checkout (tarjeta)** | **código ✅** (20/08/2026). **Falta en paneles:** cuenta Stripe ES, `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` en Vercel, endpoint `https://cotizat.online/pago/stripe/webhook`, migración `c3e9a1b7d4f2` en Supabase. Guía: `docs/STRIPE.md` |
+| 14 | **Stripe Checkout (tarjeta)** | **código ✅** (20/08/2026). **Falta en paneles:** cuenta Stripe ES, `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` en Vercel, endpoint `https://www.cotizat.online/pago/stripe/webhook`, migración `c3e9a1b7d4f2` en Supabase. Guía: `docs/STRIPE.md` |
 
 ---
 

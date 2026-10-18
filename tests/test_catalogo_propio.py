@@ -410,3 +410,69 @@ def test_modo_demo_carga_catalogo_propio():
     finally:
         db.close()
         engine.dispose()
+
+
+@pytest.mark.parametrize("pais,moneda", [
+    ("Reino Unido", "GBP"), ("Australia", "AUD"), ("Canadá", "CAD"),
+])
+def test_catalogo_mercados_ingleses_y_moneda(pais, moneda):
+    from app.services.onboarding import completar_onboarding
+
+    engine, db = _session()
+    try:
+        cfg = completar_onboarding(db, {
+            "empresa_nombre": "Construction test",
+            "empresa_pais": pais,
+            "moneda_default": moneda,
+        }, "demo", "en")
+        assert cfg.moneda_default == moneda
+        assert db.query(Partida).count() == N_PARTIDAS
+        assert db.query(Recurso).count() >= 300
+    finally:
+        db.close()
+        engine.dispose()
+
+
+@pytest.mark.parametrize("modo,version,recuperar", [
+    ("demo", 0, True),
+    ("limpio", 0, False),
+    ("demo", CATALOGO_VERSION, False),
+    ("existente", 0, False),
+])
+def test_recuperar_solo_catalogo_demo_nunca_inicializado(modo, version, recuperar):
+    engine, db = _session()
+    try:
+        cfg = db.query(Configuracion).one()
+        cfg.empresa_pais = "Reino Unido"
+        cfg.moneda_default = "GBP"
+        cfg.onboarding_completado = True
+        cfg.onboarding_modo = modo
+        cfg.version_catalogo = version
+        cfg.semilla_catalogo_aplicada = True
+        db.commit()
+        asegurar_catalogo_propio(db)
+        assert db.query(Partida).count() == (N_PARTIDAS if recuperar else 0)
+        assert (db.query(Recurso).count() > 0) == recuperar
+        assert cfg.moneda_default == "GBP"
+        assert asegurar_catalogo_propio(db) is None
+    finally:
+        db.close()
+        engine.dispose()
+
+
+def test_catalogo_no_disponible_no_se_marca_ni_finaliza(monkeypatch):
+    import app.services.catalogo_propio as catalogo
+    from app.services.onboarding import completar_onboarding, ErrorOnboarding
+
+    engine, db = _session()
+    try:
+        monkeypatch.setattr(catalogo, "disponible", lambda: False)
+        with pytest.raises(ErrorOnboarding, match="No se ha podido cargar"):
+            completar_onboarding(db, {"empresa_nombre": "UK test", "moneda_default": "GBP"}, "demo")
+        cfg = db.query(Configuracion).one()
+        assert not cfg.semilla_catalogo_aplicada
+        assert not cfg.onboarding_completado
+        assert cfg.moneda_default == "GBP"
+    finally:
+        db.close()
+        engine.dispose()

@@ -667,6 +667,7 @@ async def stripe_webhook(
     """Recibe eventos de Stripe. Autenticado por firma, no por sesión."""
     from ..services.stripe import (
         StripeNotConfigured,
+        StripeFulfillmentPending,
         StripeWebhookError,
         procesar_evento_webhook,
         verificar_firma_webhook,
@@ -709,6 +710,17 @@ async def stripe_webhook(
                     )
         else:
             db.rollback()
+    except StripeFulfillmentPending as exc:
+        db.rollback()
+        log.warning(
+            "Stripe pendiente de conciliación evento=%s tipo=%s: %s",
+            evento.get("id", ""), evento.get("type", ""), exc,
+        )
+        return JSONResponse(
+            {"ok": False, "error": "Pago pendiente de conciliación. Reintentar."},
+            status_code=503,
+            headers={"Cache-Control": "no-store", "Retry-After": "60"},
+        )
     except StripeNotConfigured as exc:
         db.rollback()
         return JSONResponse(
