@@ -95,6 +95,20 @@ def _liberar_transaccion(db: Session) -> None:
         pass
 
 
+#: Multiplicador mínimo para que una tasa pueda explicar un precio inflado.
+#
+# Una tasa de 1,44 (el dólar australiano) no demuestra nada: que una partida
+# cueste 4,89 y su gemela oficial 3,40 es una diferencia de precio, no una
+# conversión de divisa. Con tolerancias amplias, cualquier tasa pequeña
+# «explica» cualquier parecido y el detector empieza a reparar precios que
+# estaban bien.
+#
+# La divisa más barata de la tabla ronda 3,4 unidades por dólar, así que por
+# debajo de 3 no hay conversión real que valga: es ruido disfrazado de
+# evidencia.
+FACTOR_MINIMO_CREIBLE = 3.0
+
+
 def _tasas_candidatas(db: Session) -> list[float]:
     """Factores con los que se pudo haber inflado un precio.
 
@@ -111,7 +125,7 @@ def _tasas_candidatas(db: Session) -> list[float]:
             tasa = float(valor or 0)
         except (TypeError, ValueError):
             return
-        if tasa > 1.0 and all(abs(tasa - x) > 1e-6 for x in candidatas):
+        if tasa >= FACTOR_MINIMO_CREIBLE and all(abs(tasa - x) > 1e-6 for x in candidatas):
             candidatas.append(tasa)
 
     try:
@@ -211,6 +225,10 @@ def _factor_por_referencia(precio: float, referencia: float, tasas: list[float])
     for tasa in tasas:
         for exponente in (1, 2, 3):
             factor = tasa ** exponente
+            # El filtro se aplica aquí y no solo al construir la lista: esta
+            # función es el punto de juicio y recibe tasas de fuera.
+            if factor < FACTOR_MINIMO_CREIBLE:
+                continue
             proporcion = precio / (referencia * factor)
             if 0.5 <= proporcion <= 2.0:
                 return factor

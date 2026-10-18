@@ -101,7 +101,7 @@ def test_reintento_demo_recupera_un_fallo_parcial_sin_duplicar(monkeypatch):
 
         sembrar_productos_real = servicio.sembrar_productos
 
-        def fallar_una_vez(_db):
+        def fallar_una_vez(_db, _idioma="es"):
             raise RuntimeError("fallo simulado tras sembrar catálogo")
 
         monkeypatch.setattr(servicio, "sembrar_productos", fallar_una_vez)

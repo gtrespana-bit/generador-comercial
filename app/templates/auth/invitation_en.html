@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Invitation · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="auth-stage">
+  <div class="auth-idioma">{% include "_idioma_switch.html" %}</div>
+  <main class="auth-card">
+    <a class="brand" href="/acceso">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ product_name }}
+    </a>
+
+    <h1>You were invited to an organization</h1>
+    <p>Sign in or create your account with the same email that received the invitation. For security, the email must be confirmed and the link can only be used once.</p>
+    {% if not autenticado %}
+    <p class="small text-soft"><strong>Don't have an account yet?</strong> Create one with that same email and confirm it from the Supabase email. When you sign in you will find the invitation waiting to be accepted with one click: you do not need to come back to this link.</p>
+    {% endif %}
+
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+
+    {% if autenticado and token %}
+    <form id="aceptar-invitacion" action="/invitaciones/{{ token }}/aceptar" method="post">
+      <button class="btn btn-primary btn-block" type="submit" id="aceptar-boton">Accept invitation</button>
+    </form>
+    <p class="spinner text-soft mt-2" id="aceptando" data-visible="false">Accepting invitation…</p>
+    {% if auto_aceptar %}
+    <script nonce="{{ request.state.csp_nonce }}">
+      (function () {
+        var form = document.getElementById("aceptar-invitacion");
+        var boton = document.getElementById("aceptar-boton");
+        var estado = document.getElementById("aceptando");
+        if (!form) { return; }
+        boton.disabled = true;
+        estado.setAttribute("data-visible", "true");
+        form.submit();
+      })();
+    </script>
+    {% endif %}
+    {% else %}
+    <div class="actions mt-2">
+      <a class="btn btn-primary btn-block" href="/acceso?next=/invitaciones/{{ token }}/aceptar">Sign in or register</a>
+    </div>
+    {% endif %}
+  </main>
+</div>
+</body>
+</html>

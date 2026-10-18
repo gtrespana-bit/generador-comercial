@@ -1,0 +1,9 @@
+{{ product_name }} — Your access expires in {{ dias_restantes }} {{ 'day' if dias_restantes == 1 else 'days' }}
+
+The access of {{ organizacion_nombre }} to {{ product_name }} expires on {{ vence.strftime('%d/%m/%Y') }} (inclusive). After that date the account is suspended on its own until renewed.
+
+Your data (estimates, clients, catalogs and files) is not deleted: as soon as you renew, everything is available again exactly as you left it.
+
+To renew, write to us at {{ soporte_email }} and we will arrange payment with you.
+
+You receive this notice because you administer the organization {{ organizacion_nombre }} in {{ product_name }}. This message is sent automatically when the license is about to expire; do not reply to this address.

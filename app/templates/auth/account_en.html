@@ -1,0 +1,137 @@
+{% extends "base_en.html" %}
+{% block title %}My account{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>My account</h1>
+    <p class="subtitle">Your personal details, password and session</p>
+  </div>
+  <form action="/salir" method="post" class="inline">
+    <button class="btn" type="submit">Sign out</button>
+  </form>
+</div>
+
+{% if msg %}<div class="alert alert-ok">{{ msg | mensaje(_idioma) }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+
+<div class="card">
+  <h2>Personal details</h2>
+  <p class="subtitle">This name identifies your actions within the team.</p>
+  <form method="post" action="/cuenta/perfil">
+    <div class="form-grid">
+      <div class="field">
+        <label for="cuenta-nombre">Display name *</label>
+        <input id="cuenta-nombre" name="nombre" value="{{ usuario.nombre }}" minlength="2" maxlength="200" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="cuenta-email">Access email</label>
+        <input id="cuenta-email" value="{{ usuario.email }}" disabled>
+        <p class="hint">
+          {% if email_verificado %}Verified.{% else %}Not verified yet.{% endif %}
+          The email identifies your account in Supabase and your invitations, so it cannot be changed here.
+        </p>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Save changes</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Change password</h2>
+  <p class="subtitle">We ask for the current password so no one can change it from an open session that is not yours.</p>
+  <form method="post" action="/cuenta/clave">
+    <div class="form-grid">
+      <div class="field">
+        <label for="clave-actual">Current password *</label>
+        <input id="clave-actual" name="password_actual" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="field">
+        <label for="clave-nueva">New password *</label>
+        <input id="clave-nueva" name="password" type="password" minlength="8" autocomplete="new-password" required>
+        <p class="hint">Minimum 8 characters.</p>
+      </div>
+      <div class="field">
+        <label for="clave-confirmacion">Repeat new password *</label>
+        <input id="clave-confirmacion" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required>
+      </div>
+    </div>
+    <p class="hint">Changing it will sign you out and you will need to sign in again with the new password.</p>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Update password</button>
+      <a class="btn" href="/recuperar-acceso">I don't remember the current one</a>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Your organizations</h2>
+  <p class="subtitle">Companies you belong to and the role you have in each.</p>
+  {% if membresias %}
+  <table class="table">
+    <thead>
+      <tr><th>Company</th><th>Role</th><th class="right">Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for membresia in membresias %}
+      <tr>
+        <td>
+          <strong>{{ membresia.organizacion.nombre }}</strong>
+          {% if organizacion_activa_id == membresia.organizacion_id %}
+          <span class="badge badge-aprobado">Active</span>
+          {% endif %}
+        </td>
+        <td><span class="badge">{{ membresia.rol }}</span></td>
+        <td class="right">
+          {% if organizacion_activa_id == membresia.organizacion_id %}
+          <a class="btn btn-sm" href="/configuracion">Configure company</a>
+          {% else %}
+          <form method="post" action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" class="inline">
+            <button class="btn btn-sm" type="submit">Enter</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="hint">You do not belong to any organization yet.</p>
+  {% endif %}
+  <div class="form-actions">
+    <a class="btn" href="/organizaciones">Switch organization</a>
+    <a class="btn" href="/organizaciones/nueva">Create another company</a>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Session</h2>
+  <p class="subtitle">Signing out clears the cookies in this browser and revokes the session in Supabase.</p>
+  <form action="/salir" method="post">
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">Sign out</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Terms and privacy</h2>
+  <p class="subtitle">Your acceptance is recorded with the version of the document in force, as the terms themselves promise (E4-038).</p>
+  {% if consentimiento_version %}
+  <p>
+    You accepted version <strong>{{ consentimiento_version }}</strong> of the
+    <a href="/legal/terminos" target="_blank" rel="noopener">terms of service</a>
+    and the <a href="/legal/privacidad" target="_blank" rel="noopener">privacy policy</a>
+    on {{ consentimiento_at.strftime("%d/%m/%Y at %H:%M UTC") if consentimiento_at else "the day you signed up" }}.
+  </p>
+  {% else %}
+  <p class="hint">Your acceptance is not yet on record: your account was created before we started recording it.</p>
+  <form method="post" action="/cuenta/consentimiento">
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Accept the terms and privacy policy</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

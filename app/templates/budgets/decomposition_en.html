@@ -1,0 +1,210 @@
+{% extends "base_en.html" %}
+{% block title %}Breakdown {{ d.codigo }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Estimates</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Breakdown</p>
+    <h1>{% if d.codigo %}{{ d.codigo }} · {% endif %}{{ part.nombre }}</h1>
+    <p class="subtitle">{% if d.origen == 'manual' %}Cost breakdown of the line item, row by row.{% else %}Breakdown matrix kept row by row and column by column.{% endif %}</p>
+  </div>
+  <div class="actions">
+    {% if d.archivo_origen %}<a class="btn btn-primary" href="{{ d.archivo_origen | archivo_url(true) }}" download>⬇ Download original Excel</a>{% endif %}
+    <a class="btn" href="/presupuestos/{{ p.id }}">← Back to the estimate</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="form-grid">
+    <div><h2>Line item data</h2><p><strong>Code:</strong> {{ d.codigo or '—' }}</p><p><strong>Unit:</strong> {{ d.unidad or part.unidad }}</p>{% if d.nombre_hoja %}<p><strong>Sheet:</strong> {{ d.nombre_hoja }}</p>{% endif %}</div>
+    <div><h2>{% if d.origen == 'manual' %}Direct cost{% else %}Direct cost of the breakdown{% endif %}</h2><p class="csp-s-66804cc396" id="cype-coste-directo">{{ d.coste_directo_unitario | money_iso(p.moneda) }} / {{ d.unidad or part.unidad }}</p><div class="cype-costs"><span>Materials: <strong id="cype-costo-materiales">{{ part.coste_materiales | money_iso(p.moneda) }}</strong></span><span>Labor: <strong id="cype-costo-mano-obra">{{ part.coste_mano_obra | money_iso(p.moneda) }}</strong></span><span>Complementary direct costs: <strong id="cype-costo-complementarios">{{ part.coste_complementarios | money_iso(p.moneda) }}</strong></span><span>Other: <strong id="cype-costo-otros">{{ part.coste_otros | money_iso(p.moneda) }}</strong></span></div><p class="hint">This is the unit internal cost used in the line item calculations.</p></div>
+    <div><h2>{% if d.origen == 'manual' %}Detail{% else %}Source preservation{% endif %}</h2>{% if d.rango_original %}<p><strong>Range:</strong> {{ d.rango_original }}</p>{% endif %}<p><strong>{{ d.filas | length }}</strong> physical rows{% if d.columnas %} · <strong>{{ d.columnas | length }}</strong> columns{% endif %}</p><p class="hint">{% if d.origen == 'manual' %}Breakdown created or edited inside the estimate builder.{% else %}The values shown, formulas, merged ranges and the original .xlsx are kept.{% endif %}</p></div>
+    <div>
+      <h2>⏱ Time per unit</h2>
+      {% if tiempos_descompuesto and tiempos_descompuesto.total > 0 %}
+      <p class="csp-s-66804cc396">{{ "%.4f"|format(tiempos_descompuesto.total) }} h / {{ d.unidad or part.unidad }} <small class="hint csp-s-946cbebb5f">· {{ "%.4f"|format(tiempos_descompuesto.duracion) }} critical h</small></p>
+      <div class="cype-costs">
+        <span>Labor: <strong>{{ "%.4f"|format(tiempos_descompuesto.mano_obra) }} h</strong></span>
+        <span>👷 Journeyman: <strong>{{ "%.4f"|format(tiempos_descompuesto.oficial) }} h</strong></span>
+        <span>🧑 Helper: <strong>{{ "%.4f"|format(tiempos_descompuesto.ayudante) }} h</strong></span>
+        {% if tiempos_descompuesto.capataz %}<span>👨‍💼 Foreman: <strong>{{ "%.4f"|format(tiempos_descompuesto.capataz) }} h</strong></span>{% endif %}
+        <span>🛠 Equipment: <strong>{{ "%.4f"|format(tiempos_descompuesto.equipos) }} h</strong></span>
+      </div>
+      {% if tiempos_descompuesto.otros_mo %}<p class="hint">Other labor: {{ "%.4f"|format(tiempos_descompuesto.otros_mo) }} h</p>{% endif %}
+      <p class="hint">For every {{ d.unidad or part.unidad }} of the line item. With {{ part.cantidad_total | cant(d.unidad or part.unidad) }} measured:<br>
+        <strong>{{ "%.1f"|format(tiempos_descompuesto.total * part.cantidad_total) }} man-hours</strong> ({{ "%.1f"|format(tiempos_descompuesto.oficial * part.cantidad_total) }} h journeyman + {{ "%.1f"|format(tiempos_descompuesto.ayudante * part.cantidad_total) }} h helper) · <strong>{{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total) }} critical h</strong> ≈ {{ "%.1f"|format(tiempos_descompuesto.duracion * part.cantidad_total / (horas_jornada or 8)) }} critical days ({{ "%.0f"|format(horas_jornada or 8) }} h workday, 1 crew in parallel).</p>
+      {% else %}
+      <p class="csp-s-3ea0609665">This breakdown has no rows with a time unit (h, day…), so it contributes no hours to the estimate.</p>
+      <p class="hint">Material rows (kg, m³…) do not count time; only labor, machinery and equipment rows with an h or day unit do. You can assign hours by hand from <a class="link" href="/presupuestos/{{ p.id }}/tiempos">Work time</a>.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% if part.descripcion %}<p class="prewrap csp-s-442b023e55">{{ part.descripcion }}</p>{% endif %}
+</div>
+
+<form method="post" id="form-recalcular">
+<div class="card">
+  <h2>Costs per resource</h2>
+  <p class="hint">
+    Each resource costs <strong>Productivity × Unit price</strong> per {{ d.unidad or part.unidad }} of the line item
+    (e.g. 0.537 h/m² × 24.41 $/h = 13.11 $/m²). Edit the productivity or the price and you will see the cascade
+    update live (subtotals, complementary costs and direct cost, with the same rules as the Excel).
+    Then press <strong>Save and recalculate</strong> to fix the changes.
+  </p>
+  <div class="table-wrap">
+    <table class="table" id="tabla-recursos">
+      <thead><tr><th>Row</th><th>Group</th><th>Code</th><th>Unit</th><th>Description</th><th class="right">Productivity</th><th class="right">Unit price</th><th class="right">Amount</th></tr></thead>
+      <tbody>
+        {% for fila in d.filas if fila.tipo in ['recurso', 'subtotal', 'total'] %}
+        {% if fila.tipo == 'recurso' %}
+        {% set es_pct = (fila.unidad or '') | trim == '%' %}
+        <tr class="cype-row-recurso" data-fila-id="{{ fila.id }}" data-grupo="{{ fila.grupo }}" data-categoria="{{ categorias.get(fila.id, 'otros') }}" data-pct="{{ '1' if es_pct else '0' }}">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td>
+          <td class="right"><input type="number" step="any" min="0" name="rend_{{ fila.id }}" value="{{ fila.rendimiento if fila.rendimiento is not none else '' }}" data-campo="rendimiento" title="Quantity of this resource ({{ fila.unidad or 'ud' }}) per {{ d.unidad or part.unidad }} of the line item"></td>
+          <td class="right">
+            {% if es_pct %}
+            <input type="number" step="any" value="{{ fila.precio_unitario | round(2) if fila.precio_unitario is not none else 0 }}" data-campo="precio" readonly title="Derived: sum of the other subtotals. It refreshes on recalculation." class="input-derivado">
+            {% else %}
+            <input type="number" step="any" min="0" name="precio_{{ fila.id }}" value="{{ fila.precio_unitario if fila.precio_unitario is not none else '' }}" data-campo="precio" title="Price per {{ fila.unidad or 'ud' }} of this resource">
+            {% endif %}
+          </td>
+          <td class="right"><span data-campo="importe">{{ fila.importe | num if fila.importe is not none else '—' }}</span></td>
+        </tr>
+        {% elif fila.tipo == 'subtotal' %}
+        <tr class="cype-row-subtotal" data-grupo="{{ fila.grupo }}" data-categoria="{{ grupos_categoria.get(fila.grupo or '', 'otros') }}">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td><td></td><td></td>
+          <td class="right"><span data-campo="importe">{{ fila.importe | num if fila.importe is not none else '—' }}</span></td>
+        </tr>
+        {% else %}
+        <tr class="cype-row-total">
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td><td></td><td></td>
+          <td class="right"><strong><span data-campo="importe-total">{{ fila.importe | num if fila.importe is not none else '—' }}</span></strong></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="csp-s-c0585e01b8">
+    <button type="submit" class="btn btn-primary">💾 Save and recalculate</button>
+    <label class="check-line csp-s-38965f9b18"><input type="checkbox" name="ajustar_precio_venta" value="1"> Also update the selling price of the line item to the new direct cost</label>
+    <span class="hint" id="aviso-recalculo">Changes are applied on save.</span>
+  </div>
+</div>
+</form>
+
+{% if d.columnas %}
+<div class="card">
+  <h2>Full original matrix</h2>
+  <p class="hint">The <span class="cype-fx">fx</span> badge means the cell also keeps its original formula (visible on hover). Merged ranges: {{ d.rangos_combinados | join(', ') if d.rangos_combinados else 'none' }}.</p>
+  <div class="table-wrap import-preview-wrap csp-s-17a4d03ec1">
+    <table class="table cype-table">
+      <thead><tr><th>Row</th>{% for columna in d.columnas %}<th>{{ columna }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for fila in d.filas %}
+        <tr class="cype-row-{{ fila.tipo }}"><th scope="row">{{ fila.numero_fila_excel }}</th>{% for celda in fila.celdas %}<td{% set formula = fila.formulas.get(d.columnas[loop.index0], '') %}{% if formula %} title="{{ formula }}"{% endif %}>{{ celda }}{% if formula %}<small class="cype-fx">fx</small>{% endif %}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  var UNIDAD_PARTIDA = {{ (d.unidad or part.unidad) | tojson }};
+  var SIMBOLO = {{ simbolo_moneda | tojson }};
+  var GRUPOS_CATEGORIA = {{ grupos_categoria | tojson }};
+  var tabla = document.getElementById('tabla-recursos');
+  if (!tabla) return;
+
+  function numero(input) {
+    var crudo = (input.value || '').replace(',', '.');
+    var valor = parseFloat(crudo);
+    return isNaN(valor) ? 0 : valor;
+  }
+  function redondear2(valor) {
+    return Math.round((valor + Number.EPSILON) * 100) / 100;
+  }
+  function formato(valor) {
+    return valor.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function filasRecurso() { return Array.prototype.slice.call(tabla.querySelectorAll('tr.cype-row-recurso')); }
+  function filasSubtotal() { return Array.prototype.slice.call(tabla.querySelectorAll('tr.cype-row-subtotal')); }
+
+  function recalcular() {
+    var subGrupo = {};
+    var costes = { materiales: 0, mano_obra: 0, complementarios: 0, otros: 0 };
+
+    // 1) Normal resources: amount = productivity × unit price.
+    filasRecurso().forEach(function (tr) {
+      if (tr.dataset.pct === '1') return;
+      var rend = numero(tr.querySelector('[data-campo="rendimiento"]'));
+      var precio = numero(tr.querySelector('[data-campo="precio"]'));
+      var importe = redondear2(rend * precio);
+      tr._importe = importe;
+      tr.querySelector('[data-campo="importe"]').textContent = formato(importe);
+      var grupo = tr.dataset.grupo || '';
+      subGrupo[grupo] = redondear2((subGrupo[grupo] || 0) + importe);
+      var categoria = tr.dataset.categoria || 'otros';
+      costes[categoria] = redondear2((costes[categoria] || 0) + importe);
+    });
+
+    // 2) Subtotals by group and base of the complementary costs.
+    var subtotales = filasSubtotal();
+    var base = 0;
+    if (subtotales.length) {
+      subtotales.forEach(function (tr) {
+        var grupo = tr.dataset.grupo || '';
+        var valor = subGrupo[grupo] || 0;
+        tr.querySelector('[data-campo="importe"]').textContent = formato(valor);
+        if ((tr.dataset.categoria || GRUPOS_CATEGORIA[grupo] || 'otros') !== 'complementarios') base = redondear2(base + valor);
+      });
+    } else {
+      Object.keys(subGrupo).forEach(function (grupo) {
+        if ((GRUPOS_CATEGORIA[grupo] || 'otros') !== 'complementarios') base = redondear2(base + subGrupo[grupo]);
+      });
+    }
+
+    // 3) Percentage rows: % × base / 100.
+    filasRecurso().forEach(function (tr) {
+      if (tr.dataset.pct !== '1') return;
+      var porcentaje = numero(tr.querySelector('[data-campo="rendimiento"]'));
+      var precioBase = tr.querySelector('[data-campo="precio"]');
+      if (precioBase) precioBase.value = base;
+      var importe = redondear2(porcentaje * base / 100);
+      tr._importe = importe;
+      tr.querySelector('[data-campo="importe"]').textContent = formato(importe);
+      costes.complementarios = redondear2(costes.complementarios + importe);
+    });
+
+    // 4) Direct cost = sum of all the resource amounts.
+    var costeDirecto = redondear2(filasRecurso().reduce(function (acc, tr) { return acc + (tr._importe || 0); }, 0));
+    var totalCelda = tabla.querySelector('[data-campo="importe-total"]');
+    if (totalCelda) totalCelda.textContent = formato(costeDirecto);
+
+    // 5) Mirror it in the page header.
+    function actualizar(id, valor) {
+      var nodo = document.getElementById(id);
+      if (nodo) nodo.textContent = formato(valor) + ' ' + SIMBOLO;
+    }
+    actualizar('cype-costo-materiales', costes.materiales);
+    actualizar('cype-costo-mano-obra', costes.mano_obra);
+    actualizar('cype-costo-complementarios', costes.complementarios);
+    actualizar('cype-costo-otros', costes.otros);
+    var directo = document.getElementById('cype-coste-directo');
+    if (directo) directo.textContent = formato(costeDirecto) + ' ' + SIMBOLO + ' / ' + UNIDAD_PARTIDA;
+
+    var aviso = document.getElementById('aviso-recalculo');
+    if (aviso) aviso.textContent = 'Preview updated. Press «Save and recalculate» to fix the changes.';
+  }
+
+  tabla.addEventListener('input', function (evento) {
+    if (evento.target.matches('[data-campo="rendimiento"], [data-campo="precio"]:not([readonly])')) recalcular();
+  });
+  document.getElementById('form-recalcular').addEventListener('submit', function () {
+    // Syncs the derived price of the % row before submitting (informational).
+    recalcular();
+  });
+})();
+</script>
+{% endblock %}

@@ -1,5 +1,7 @@
 """Panel de operador: licencias y diagnóstico operativo (excepción multi-tenant)."""  # E4-001 — router por dominio
 
+import binascii
+import base64
 import hmac
 
 from fastapi import APIRouter, Form
@@ -1536,3 +1538,169 @@ def api_keys_revocar(api_key_id: int, request: Request, db: Session = Depends(ge
         db.rollback()
         return _redirect(VOLVER_ACCESOS, error=str(exc))
     return _redirect(VOLVER_ACCESOS, msg="Clave revocada.")
+
+
+# ---------------------------------------------------------------------------
+# Matriz nacional de precios por país
+# ---------------------------------------------------------------------------
+# Las referencias nacionales (`organizacion_id` nulo) solo puede escribirlas un
+# operador: lo dice la política RLS de `precios_recursos_mercado`. Cargarlas a
+# mano con SQL funciona, pero obliga a pegar un fichero enorme en el editor y
+# no deja rastro en la auditoría, así que la carga vive aquí.
+#
+# El flujo es de dos pasos a propósito: «validar» no escribe nada y enseña
+# exactamente qué pasaría; «cargar» escribe solo si la validación salió limpia.
+
+
+VOLVER_PRECIOS = "/admin/sistema?tab=precios"
+
+#: Cabeceras de la matriz que el operador tiene que respetar. Se publican tal
+#: cual en la pantalla para que el fichero se prepare a la primera.
+MATRIZ_EJEMPLO = (
+    "codigo_recurso;descripcion;categoria;unidad_fuente;pais_codigo;moneda;"
+    "precio_referencia;precio_min;precio_max;fuente;fecha_consulta;confianza;"
+    "incluye_iva;incluye_transporte;origen;observaciones"
+)
+
+
+def _exigir_superadmin_para(db, accion: str) -> None:
+    """Cierra el paso a quien no es superadmin.
+
+    Cargar una matriz cambia lo que pagan **todos** los clientes de un país,
+    no solo la organización que sube el fichero. El mensaje nombra la acción
+    porque el genérico («gestionar el equipo») no describe este riesgo.
+    """
+    if str(db.info.get("operador_rol") or "").strip().lower() != "superadmin":
+        raise GestionEquipoError(f"Solo un superadmin puede {accion}.")
+
+
+async def _leer_csv_matriz(form) -> bytes:
+    """Lee el fichero subido y lo deja listo para el importador."""
+    from ..routers.admin_paginas import MATRIZ_MAXIMO_MB
+
+    archivo = form.get("archivo")
+    nombre = str(getattr(archivo, "filename", "") or "")
+    if not nombre:
+        raise ValueError("Selecciona un fichero CSV.")
+    if not nombre.lower().endswith(".csv"):
+        raise ValueError("El fichero debe ser un CSV con extensión .csv.")
+    contenido = await archivo.read()
+    if not contenido or not contenido.strip():
+        raise ValueError("El fichero está vacío.")
+    if len(contenido) > MATRIZ_MAXIMO_MB * 1024 * 1024:
+        raise ValueError(f"El fichero supera los {MATRIZ_MAXIMO_MB} MB permitidos.")
+    return contenido
+
+
+def _csv_reenviable(contenido: bytes) -> str:
+    """Codifica el CSV para que sobreviva a la confirmación sin tocar disco.
+
+    Entre «validar» y «cargar» hay dos peticiones distintas. Guardar el
+    fichero en un temporal no sirve en un despliegue sin estado y una tabla de
+    almacenamiento provisional sería una migración para esto; el CSV viaja
+    codificado en el propio formulario, que es exactamente donde hace falta.
+    """
+    return base64.b64encode(contenido).decode("ascii")
+
+
+def _csv_recuperado(valor: str) -> bytes:
+    try:
+        contenido = base64.b64decode(str(valor or ""), validate=True)
+    except (ValueError, TypeError, binascii.Error):
+        raise ValueError("El fichero de la validación no es válido. Vuelve a subirlo.")
+    if not contenido:
+        raise ValueError("El fichero de la validación llegó vacío. Vuelve a subirlo.")
+    return contenido
+
+
+@router.post("/admin/matriz-precios/validar", include_in_schema=False)
+async def matriz_precios_validar(request: Request, db: Session = Depends(get_operator_db)):
+    """Valida la matriz **sin escribir nada** y enseña qué pasaría."""
+    from ..services.importador_precios_mercado import importar_matriz_csv
+
+    form = await request.form()
+    try:
+        _exigir_superadmin_para(db, "validar una matriz de precios")
+        contenido = await _leer_csv_matriz(form)
+        reemplazar = str(form.get("reemplazar") or "") in {"1", "on", "true"}
+        # `nacional` resuelve los recursos por código en todas las
+        # organizaciones: la referencia vale para todos los inquilinos, no
+        # solo para la copia del recurso que tenga quien la sube.
+        resultado = importar_matriz_csv(
+            db, contenido, aplicar=False, nacional=True, reemplazar=reemplazar
+        )
+    except (GestionEquipoError, ValueError) as exc:
+        return _redirect(VOLVER_PRECIOS, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("No se pudo validar la matriz:\n%s", traceback.format_exc())
+        return _redirect(VOLVER_PRECIOS, error="No se pudo leer el fichero. Revisa el formato.")
+
+    return _respuesta_panel(
+        request,
+        "sistema.html",
+        contexto_sistema(
+            request, db, pestana="precios",
+            extra={
+                "resultado": resultado,
+                "contenido_csv": _csv_reenviable(contenido),
+                "reemplazar": reemplazar,
+                "nombre_fichero": str(getattr(form.get("archivo"), "filename", "") or ""),
+            },
+        ),
+    )
+
+
+@router.post("/admin/matriz-precios/cargar", include_in_schema=False)
+async def matriz_precios_cargar(request: Request, db: Session = Depends(get_operator_db)):
+    """Escribe la matriz validada. Solo escribe si la validación sale limpia."""
+    from ..services.importador_precios_mercado import importar_matriz_csv
+
+    form = await request.form()
+    try:
+        _exigir_superadmin_para(db, "cargar una matriz de precios")
+        contenido = _csv_recuperado(str(form.get("contenido_csv") or ""))
+        reemplazar = str(form.get("reemplazar") or "") in {"1", "on", "true"}
+        resultado = importar_matriz_csv(
+            db, contenido, aplicar=True, nacional=True, reemplazar=reemplazar
+        )
+        if resultado["errores"]:
+            db.rollback()
+            return _redirect(
+                VOLVER_PRECIOS,
+                error="La matriz tiene errores y no se cargó nada: "
+                + " · ".join(resultado["errores"][:3]),
+            )
+    except (GestionEquipoError, ValueError) as exc:
+        db.rollback()
+        return _redirect(VOLVER_PRECIOS, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("No se pudo cargar la matriz:\n%s", traceback.format_exc())
+        return _redirect(VOLVER_PRECIOS, error="No se pudo cargar la matriz. No se escribió nada.")
+
+    _auditar_admin(
+        db, request,
+        accion="matriz_precios.cargada",
+        entidad="precios_recursos_mercado",
+        detalle={
+            "paises": resultado["paises"],
+            "filas": resultado["filas"],
+            "creadas": resultado["creadas"],
+            "actualizadas": resultado["actualizadas"],
+            "sin_cambios": resultado["sin_cambios"],
+            "desactivadas": resultado["eliminadas"],
+            "reemplazar": reemplazar,
+        },
+    )
+    db.commit()
+    paises = ", ".join(resultado["paises"]) or "sin país"
+    return _redirect(
+        VOLVER_PRECIOS,
+        msg=(
+            f"Matriz cargada en {paises}: {resultado['creadas']} nuevas, "
+            f"{resultado['actualizadas']} actualizadas, {resultado['sin_cambios']} igual."
+            + (f" Se desactivaron {resultado['eliminadas']} referencias que el fichero no traía."
+               if resultado["eliminadas"] else "")
+        ),
+    )

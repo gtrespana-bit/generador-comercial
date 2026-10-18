@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if activada %}Payment confirmed{% else %}Confirming payment{% endif %} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-page">
+{% set nav_modo = "cuenta" %}
+{% include "_nav_en.html" %}
+
+<main class="compra-confirmacion-main">
+  <div class="confirmacion-caja">
+    {% if activada %}
+    <div class="confirmacion-icono" aria-hidden="true">✓</div>
+    <h1>Payment confirmed</h1>
+    <p>Your {{ plan_nombre|lower }} is now active. You can keep working with your catalog and estimates.</p>
+    {% else %}
+    <div class="confirmacion-icono" aria-hidden="true">…</div>
+    <h1>We are confirming your payment</h1>
+    <p>Stripe has already received your payment. The plan activates in a few seconds; if it does not, reload this page or write to us.</p>
+    {% endif %}
+    <div class="confirmacion-datos">
+      <div class="kv"><span>Plan</span><strong>{{ plan_nombre }}</strong></div>
+      <div class="kv"><span>Amount</span><strong>{{ importe_texto }}</strong></div>
+      <div class="kv"><span>Method</span><strong>{{ metodo_nombre }}</strong></div>
+      <div class="kv"><span>Purchase</span><strong>#{{ compra.id }}</strong></div>
+      {% if compra.licencia_vence %}
+      <div class="kv"><span>Access until</span><strong>{{ compra.licencia_vence.strftime("%d/%m/%Y") }}</strong></div>
+      {% endif %}
+    </div>
+    <div class="compra-acciones">
+      <a class="btn btn-primary" href="/inicio">Go to my company</a>
+      {% if activada and compra.id %}
+      <a class="btn btn-secondary" href="/pago/recibo/{{ compra.id }}.pdf">Download receipt</a>
+      {% endif %}
+    </div>
+  </div>
+</main>
+</body>
+</html>

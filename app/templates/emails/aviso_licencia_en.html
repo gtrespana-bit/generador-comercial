@@ -1,0 +1,44 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Your access expires soon · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ vence.strftime('%d/%m/%Y') }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Your access expires in {{ dias_restantes }} {{ 'day' if dias_restantes == 1 else 'days' }}
+</h1>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;">
+  The access of <strong style="color:#17211d;">{{ organizacion_nombre }}</strong> to
+  {{ product_name }} expires on
+  <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong> (inclusive).
+  After that date the account is suspended on its own until renewed.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
+  <tr>
+    <td style="border-radius:12px;background:#fdf6e7;border:1px solid #ecd9a8;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#7a5410;">
+      Your data (estimates, clients, catalogs and files)
+      <strong>is not deleted</strong>: as soon as you renew, everything is available
+      again exactly as you left it.
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 28px;font-size:14px;line-height:1.65;color:#475a51;">
+  To renew, write to us at
+  <a href="mailto:{{ soporte_email }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ soporte_email }}</a>
+  and we will arrange payment with you.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+You receive this notice because you administer the organization {{ organizacion_nombre }} in {{ product_name }}. This message is sent automatically when the license is about to expire; do not reply to this address.
+{% endblock %}

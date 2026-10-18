@@ -183,3 +183,252 @@ def test_activar_garantias_en_configuracion_actualiza_presupuestos_existentes():
     assert resp_detail.status_code == 200
     assert "Garantías de la obra" in resp_detail.text
 
+
+
+def _presupuesto_en(*capitulos):
+    """Presupuesto redactado en inglés (rutas /en/ y presupuestos bilingües)."""
+    return _presupuesto(*capitulos)
+
+
+def test_todas_las_familias_tienen_traduccion():
+    """Ninguna familia se queda en castellano por olvido en la tabla EN."""
+    from app.services.garantias import FAMILIAS_EN, FAMILIAS_GARANTIA
+
+    for fam in FAMILIAS_GARANTIA:
+        ext = FAMILIAS_EN.get(fam["clave"])
+        assert ext, f"falta FAMILIAS_EN[{fam['clave']}]"
+        for campo in ("grupo", "plazo", "alcance"):
+            assert ext.get(campo), f"{fam['clave']}.{campo} sin traducir"
+            assert ext[campo] != fam[campo], f"{fam['clave']}.{campo} repetido"
+    assert FAMILIAS_EN.get("general"), "falta la familia general en inglés"
+
+
+def test_plazos_identicos_en_ambos_idiomas():
+    """El plazo no cambia con el idioma: es el compromiso contractual."""
+    from app.services.garantias import FAMILIAS_EN, FAMILIAS_GARANTIA
+
+    for fam in FAMILIAS_GARANTIA:
+        en = FAMILIAS_EN[fam["plazo"] and fam["clave"]]["plazo"]
+        assert en == fam["plazo"].replace("años", "years").replace("año", "year"), (
+            f"{fam['clave']}: {fam['plazo']} != {en}"
+        )
+    assert FAMILIAS_EN["general"]["plazo"] == "2 years"
+
+
+def test_detecta_familias_en_presupuesto_en_ingles():
+    p = _presupuesto_en(
+        ("01 · Demolition and strip-out", [
+            ("Hacking off wall tiling and its setting bed", "Removal of debris"),
+        ]),
+        ("02 · Plumbing", [("Waste pipework and tap replacement", "PPR pipework")]),
+        ("03 · Electrical", [("New consumer unit and downlights", "")]),
+        ("04 · Painting", [("Emulsion paint, two coats", "")]),
+        ("05 · Drywall", [("Plasterboard on stud partition", "")]),
+    )
+    claves = [f["clave"] for f in clasificar_familias(p, "en")]
+    # La demolición y el retiro de escombros nunca se garantizan.
+    assert "impermeabilizacion" not in claves
+    assert "fontaneria" in claves and "electricidad" in claves
+    assert "pintura" in claves and "yeso" in claves
+    for f in clasificar_familias(p, "en"):
+        assert "año" not in f["plazo"], f"{f['clave']} sin traducir: {f['plazo']}"
+        assert f["grupo"] != "Estructuras, tabiques y albañilería"
+
+
+def test_mismas_familias_que_en_castellano_para_obra_equivalente():
+    """El idioma no cambia qué se garantiza, solo cómo se escribe."""
+    es = _presupuesto(
+        ("PISOS", [("Solado de porcelanato", "Adhesivo y junta")]),
+        ("FONTANERÍA", [("Puntos de agua y desagüe", "Tubería")]),
+    )
+    en = _presupuesto_en(
+        ("FLOORING", [("Porcelain tile flooring", "Adhesive and grout")]),
+        ("PLUMBING", [("Water outlets and wastes", "Pipework")]),
+    )
+    claves_es = [f["clave"] for f in clasificar_familias(es)]
+    claves_en = [f["clave"] for f in clasificar_familias(en, "en")]
+    assert claves_es and claves_es == claves_en
+
+
+def test_demolicion_en_ingles_tampoco_genera_tabla():
+    p = _presupuesto_en(("DEMOLITION", [("Hacking off floors and debris removal", "")]))
+    assert clasificar_familias(p, "en") == []
+    filas = familias_para_pdf(p, "en")
+    assert filas[0]["clave"] == "general"
+    assert filas[0]["grupo"] == "Remodelling work included"
+
+
+def test_nota_legal_y_tabla_minima_en_ingles():
+    from app.services.garantias import NOTA_LEGAL, NOTA_LEGAL_EN, nota_legal
+
+    assert nota_legal() == NOTA_LEGAL
+    assert nota_legal("es") == NOTA_LEGAL
+    assert nota_legal("en") == NOTA_LEGAL_EN
+    assert nota_legal("en-mx") == NOTA_LEGAL_EN
+    assert NOTA_LEGAL_EN != NOTA_LEGAL
+    vacio = familias_para_pdf(_presupuesto_en(("GENERAL", [("Item X", "")])), "en")
+    assert vacio[0]["plazo"] == "2 years"
+
+
+def test_castellano_no_cambia_al_añadir_ingles():
+    """Las rutas en castellano siguen recibiendo exactamente lo de antes."""
+    p = _presupuesto(
+        ("PISOS", [("Solado de porcelanato", "")]),
+        ("CARPINTERÍA", [("Closet lacado a medida", "")]),
+    )
+    claves = [f["clave"] for f in clasificar_familias(p)]
+    assert claves == ["pisos", "carpinteria_madera"]
+    assert claves == [f["clave"] for f in clasificar_familias(p, "es")]
+    # Un presupuesto en castellano se lee igual en modo bilingüe.
+    assert claves == [f["clave"] for f in clasificar_familias(p, "en")]
+
+
+def test_modelo_expone_variante_inglesa():
+    from app.models import Presupuesto, Capitulo, PresupuestoItem
+    from app.services.garantias import NOTA_LEGAL_EN
+
+    p = Presupuesto(numero="P-TEST-002", year=2026, mostrar_garantias=True)
+    c = Capitulo(nombre="FONTANERÍA Y GRIFERÍA", orden=1)
+    c.partidas.append(PresupuestoItem(
+        nombre="Punto de agua", descripcion="Instalación de tubería",
+    ))
+    p.capitulos.append(c)
+
+    assert [f["clave"] for f in p.garantias_familias_en] == ["fontaneria"]
+    assert p.garantias_familias_en[0]["plazo"] == "5 years"
+    assert p.garantias_nota_legal_en == NOTA_LEGAL_EN
+    # La versión en castellano sigue disponible para el PDF en castellano.
+    assert [f["clave"] for f in p.garantias_familias] == ["fontaneria"]
+    assert p.garantias_familias[0]["plazo"] == "5 años"
+
+    # Un presupuesto redactado en inglés solo se clasifica en modo inglés:
+    # por eso la variante en inglés se guarda aparte en la instantánea.
+    c.nombre = "PLUMBING AND SANITARY"
+    c.partidas[0].nombre = "Pipework and water outlets"
+    c.partidas[0].descripcion = "Waste installation"
+    assert [f["clave"] for f in p.garantias_familias] == ["general"]
+    assert [f["clave"] for f in p.garantias_familias_en] == ["fontaneria"]
+
+
+def test_version_guarda_las_dos_variantes():
+    from app.services.versions import serializar_presupuesto
+    from app.models import Presupuesto, Capitulo, PresupuestoItem, Cliente
+
+    p = Presupuesto(numero="P-TEST-003", year=2026, mostrar_garantias=True,
+                    titulo="T", moneda="USD")
+    c = Capitulo(nombre="PISOS", orden=1)
+    c.partidas.append(PresupuestoItem(
+        nombre="Solado de porcelanato", descripcion="",
+        cantidad=1.0, precio_unitario=10.0,
+    ))
+    p.capitulos.append(c)
+    p.cliente = Cliente(nombre="ACME", rif="J-1")
+
+    snap = serializar_presupuesto(p)
+    assert snap["garantias_familias"] == p.garantias_familias
+    assert snap["garantias_familias_en"] == p.garantias_familias_en
+    assert "años" not in snap["garantias_familias_en"][0]["plazo"]
+    assert snap["garantias_nota_legal_en"].startswith("The warranty covers")
+    # Sin garantías activadas no se guarda nada.
+    p.mostrar_garantias = False
+    snap2 = serializar_presupuesto(p)
+    assert snap2["garantias_familias_en"] == [] and snap2["garantias_nota_legal_en"] == ""
+
+
+def test_pdf_en_ingles_incluye_la_tabla_de_garantias_traducida():
+    """El PDF que se envía desde /en/ no puede llevar la tabla en castellano."""
+    import io
+    from datetime import date
+
+    from pypdf import PdfReader
+
+    from app.models import (Capitulo, Cliente, Configuracion, Presupuesto,
+                            PresupuestoItem)
+    from app.services.pdf import generar_pdf
+
+    cfg = Configuracion(empresa_nombre="ACME")
+    p = Presupuesto(numero="P-EN-001", year=2026, moneda="USD",
+                    fecha=date(2026, 10, 16), validez_dias=30,
+                    impuesto_pct=0.0, descuento_pct=0.0, tipo_cambio=1.0,
+                    mostrar_garantias=True, titulo="Bathroom refurbishment")
+    p.cliente = Cliente(nombre="John Doe", rif="J-1")
+    c = Capitulo(nombre="PLUMBING AND SANITARY", orden=1)
+    c.partidas.append(PresupuestoItem(
+        nombre="Pipework and water outlets", descripcion="Waste installation",
+        cantidad=2.0, precio_unitario=100.0, unidad="ud",
+    ))
+    p.capitulos.append(c)
+
+    datos = generar_pdf(p, cfg, lang="en").getvalue()
+    texto = "\n".join(
+        (pag.extract_text() or "") for pag in PdfReader(io.BytesIO(datos)).pages
+    )
+    assert "PROJECT WARRANTIES" in texto
+    assert "PLUMBING AND SANITARY INSTALLATIONS" in texto.upper()
+    assert "5 years" in texto
+    assert "The warranty covers defects in the execution" in texto
+    assert "GARANT" not in texto.upper().replace("WARRANT", "")
+    assert "años" not in texto
+
+
+def test_documento_de_cobro_en_ingles_no_deja_nada_en_castellano():
+    """El PDF de cobro comparte maquetación con el presupuesto: hay que
+    pasarle el idioma o hereda las etiquetas en castellano."""
+    import io
+    from datetime import date
+
+    from pypdf import PdfReader
+
+    from app.models import (Cliente, Configuracion, Factura, FacturaCapitulo,
+                            FacturaItem)
+    from app.services.pdf import generar_factura_pdf
+
+    def _factura():
+        cfg = Configuracion(empresa_nombre="ACME")
+        f = Factura(numero="F-EN-001", moneda="USD", fecha=date(2026, 10, 16),
+                    impuesto_pct=0.0, descuento_pct=0.0,
+                    titulo="Bathroom refurbishment",
+                    notas="Second instalment", condiciones="30 days")
+        f.cliente = Cliente(nombre="John Doe", rif="J-1")
+        c = FacturaCapitulo(nombre="PLUMBING", orden=1)
+        c.partidas.append(FacturaItem(
+            nombre="Pipework and water outlets", descripcion="",
+            cantidad=2.0, precio_unitario=100.0, unidad="ud",
+        ))
+        f.capitulos.append(c)
+        return f, cfg
+
+    def _texto(datos):
+        return "\n".join(
+            (p.extract_text() or "") for p in PdfReader(io.BytesIO(datos)).pages
+        )
+
+    en = _texto(generar_factura_pdf(*_factura(), lang="en").getvalue())
+    assert "PAYMENT DOCUMENT" in en
+    assert "Document No." in en
+    assert "TOTAL PAYABLE" in en
+    assert "Scope of this document" in en
+    assert "Additional information" in en
+    assert "Payment terms" in en
+    assert "does not replace a tax invoice" in en
+    for resto in ("DOCUMENTO DE COBRO", "TOTAL A PAGAR", "Alcance del documento",
+                  "Condiciones de pago", "Información adicional", "Nº"):
+        assert resto not in en, f"queda {resto!r} en el PDF en inglés"
+
+    es = _texto(generar_factura_pdf(*_factura()).getvalue())
+    assert "DOCUMENTO DE COBRO" in es and "TOTAL A PAGAR" in es
+    assert "Condiciones de pago" in es
+
+
+def test_etiquetas_del_pdf_aceptan_variantes_regionales():
+    """``/en-mx/`` no es ``en`` a secas: lo que decide es la lengua."""
+    from app.services.pdf import _pdf_t
+
+    assert _pdf_t("en", "fecha") == "Date"
+    assert _pdf_t("en-MX", "fecha") == "Date"
+    assert _pdf_t("en-CO", "cobro_total") == "TOTAL PAYABLE"
+    assert _pdf_t("es", "fecha") == "Fecha"
+    assert _pdf_t("es-MX", "fecha") == "Fecha"
+    assert _pdf_t("mx", "fecha") == "Fecha"
+    assert _pdf_t(None, "fecha") == "Fecha"
+    assert _pdf_t("de", "fecha") == "Fecha"

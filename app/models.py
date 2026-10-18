@@ -645,6 +645,23 @@ class Presupuesto(TenantMixin, Base):
     fecha_tipo_cambio = Column(Date, nullable=True)
     retencion_pct = Column(Float, default=0.0)
     operacion_exenta = Column(Boolean, default=False)
+    # ── Fiscalidad británica (CIS + inversión del sujeto pasivo) ────────────
+    # No se reutiliza ``retencion_pct`` a propósito: aquel es un porcentaje
+    # genérico sobre el total que solo se rotula en el PDF, mientras que el CIS
+    # es una retención legal sobre el ELEMENTO DE MANO DE OBRA que se descuenta
+    # del importe a cobrar y se declara en el CIS300. Mezclarlos haría que un
+    # porcentaje comercial se declarara como retención de Hacienda.
+    #
+    # ``iva_tratamiento``: "" = regla normal del país (IVA al cliente),
+    # "estandar" = IVA confirmado, "inversion_sujeto_pasivo" = el cliente
+    # declara el IVA (VATA 1994 s. 55A). Vacío por defecto para que ningún
+    # documento ya emitido cambie al desplegar.
+    iva_tratamiento = Column(String(30), default="")
+    # ``cis_tipo``: 0, 20 o 30 según el estado que Hacienda haya asignado al
+    # subcontratista verificándolo. NULL = el documento no está bajo el CIS
+    # (cliente particular, o servicio fuera del ámbito del CIS). Nunca se
+    # deduce: lo fija Hacienda, no lo elige el contratista.
+    cis_tipo = Column(Float, nullable=True)
     clausula_cambiaria = Column(Text, default="")
     # Total comercial congelado al guardar (misma cifra que el PDF). El panel
     # y el listado lo leen sin hidratar capítulos/partidas.
@@ -690,7 +707,11 @@ class Presupuesto(TenantMixin, Base):
     @property
     def _totales(self):
         from .services.calculations import calcular_totales
-        return calcular_totales(self)
+        # El reparto del coste por categoría solo hace falta para la retención
+        # británica del CIS, así que se pide únicamente cuando el documento
+        # está bajo el CIS: el resto de los mercados no paga la segunda pasada
+        # por las descomposiciones.
+        return calcular_totales(self, con_costes_categoria=self.cis_tipo is not None)
 
     @property
     def subtotal(self):
@@ -815,6 +836,16 @@ class Presupuesto(TenantMixin, Base):
     def garantias_nota_legal(self):
         from .services.garantias import NOTA_LEGAL
         return NOTA_LEGAL
+
+    @property
+    def garantias_familias_en(self):
+        from .services.garantias import familias_para_pdf
+        return familias_para_pdf(self, "en")
+
+    @property
+    def garantias_nota_legal_en(self):
+        from .services.garantias import nota_legal
+        return nota_legal("en")
 
 
 class PresupuestoVersion(TenantMixin, Base):
@@ -1841,6 +1872,17 @@ class Factura(TenantMixin, Base):
     fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
+    # ── Fiscalidad británica: mismos campos que en el presupuesto ──────────
+    # La factura es el documento que se declara en el CIS300, así que la
+    # retención tiene que constar en ella. Se copian del presupuesto al
+    # convertirlo, no se recalculan.
+    iva_tratamiento = Column(String(30), default="")
+    cis_tipo = Column(Float, nullable=True)
+    # Instantánea del coste de materiales en el momento de emitir. El CIS
+    # descuenta ese coste de la base de retención, y ``FacturaItem`` no guarda
+    # costes: recalcularlo aquí rompería la regla de que la factura es una
+    # copia congelada que no cambia aunque cambie el presupuesto.
+    coste_materiales = Column(Float, default=0.0)
     estado = Column(String(20), default="emitida")     # emitida / anulada
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")

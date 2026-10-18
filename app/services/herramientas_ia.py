@@ -16,20 +16,43 @@ from urllib.parse import quote_plus, urlencode
 from sqlalchemy.orm import Session
 
 from .busqueda_catalogo import normalizar
+from ..paises import es_ingles
 
 log = logging.getLogger("cotizat")
 
 _BUSCAR_RE = re.compile(
-    r"\b(?:busca|buscar|buscame|encuentra|encontrar|localiza|muestra|dame|cual|cuales|que)\w*\b",
+    r"\b(?:busca|buscar|buscame|encuentra|encontrar|localiza|muestra|dame|cual|cuales|que)\w*\b"
+    # Inglés.
+    r"|\b(?:find|search|look\s+up|locate|show|list|which|what)\w*\b",
     re.IGNORECASE,
 )
 
 _TIPOS_ENTIDAD = {
-    "cliente": ("cliente", "clientes"),
-    "presupuesto": ("presupuesto", "presupuestos", "cotizacion", "cotizaciones"),
-    "producto": ("producto", "productos", "material", "materiales"),
-    "recurso": ("recurso", "recursos", "insumo", "insumos"),
+    "cliente": ("cliente", "clientes", "client", "clients", "customer", "customers"),
+    "presupuesto": ("presupuesto", "presupuestos", "cotizacion", "cotizaciones",
+                    "estimate", "estimates", "quote", "quotes", "proposal", "proposals"),
+    "producto": ("producto", "productos", "material", "materiales",
+                 "product", "products"),
+    "recurso": ("recurso", "recursos", "insumo", "insumos",
+                "resource", "resources"),
 }
+
+# Cómo se nombra cada tipo en pantalla, por idioma.
+_ETIQUETAS_ENTIDAD = {
+    "es": {"cliente": "clientes", "presupuesto": "presupuestos",
+           "producto": "productos", "recurso": "recursos"},
+    "en": {"cliente": "clients", "presupuesto": "estimates",
+           "producto": "products", "recurso": "resources"},
+}
+
+
+def _es_ingles(idioma) -> bool:
+    """Las variantes regionales (/en-mx/) comparten vocabulario."""
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
 
 _STOP_BUSQUEDA = frozenset({
     "a", "al", "algo", "cual", "cuales", "como", "con", "de", "del", "dame",
@@ -40,6 +63,14 @@ _STOP_BUSQUEDA = frozenset({
     "cliente", "clientes", "presupuesto", "presupuestos", "cotizacion",
     "cotizaciones", "producto", "productos", "material", "materiales",
     "recurso", "recursos", "insumo", "insumos",
+    # Inglés: las mismas palabras vacías al pedir una búsqueda.
+    "a", "an", "the", "which", "what", "for", "of", "to", "need", "want",
+    "find", "search", "look", "up", "locate", "show", "give", "please",
+    "could", "would", "there", "any", "my", "is", "are", "and", "or", "with",
+    "it", "this", "that", "do", "does", "can", "tell", "list",
+    "client", "clients", "customer", "customers", "estimate", "estimates",
+    "quote", "quotes", "proposal", "proposals", "product", "products",
+    "resource", "resources",
 })
 
 
@@ -221,15 +252,18 @@ def _buscar_entidad(db: Session, tipo: str, termino: str) -> list[dict[str, Any]
     } for r in seleccion]
 
 
-def responder_busqueda_entidad(db: Session, consulta: str, tipo: str) -> str:
+def responder_busqueda_entidad(
+    db: Session, consulta: str, tipo: str, idioma: str = "es",
+) -> str:
+    en = _es_ingles(idioma)
     termino = _termino_entidad(consulta)
-    etiqueta = {
-        "cliente": "clientes",
-        "presupuesto": "presupuestos",
-        "producto": "productos",
-        "recurso": "recursos",
-    }[tipo]
+    etiqueta = _ETIQUETAS_ENTIDAD["en" if en else "es"][tipo]
     if not termino:
+        if en:
+            return (
+                f"Tell me which {etiqueta} to look for, by name, code or "
+                "reference."
+            )
         return f"Indícame qué {etiqueta} debo buscar, por nombre, código o referencia."
     resultados = _buscar_entidad(db, tipo, termino)
     if not resultados:
@@ -242,6 +276,13 @@ def responder_busqueda_entidad(db: Session, consulta: str, tipo: str) -> str:
                 "consulta": termino[:120],
             },
         )
+        if en:
+            return (
+                f"### 🔎 {etiqueta.capitalize()} search\n\n"
+                f"I looked for **{_seguro(termino)}** across your company data "
+                "and found no matches. I am not going to invent results.\n\n"
+                f"[Open the global search](/buscar?q={quote_plus(termino)})"
+            )
         return (
             f"### 🔎 Búsqueda de {etiqueta}\n\n"
             f"He buscado **{_seguro(termino)}** en los datos de tu empresa y no encontré coincidencias. "
@@ -249,27 +290,41 @@ def responder_busqueda_entidad(db: Session, consulta: str, tipo: str) -> str:
             f"[Abrir la búsqueda global](/buscar?q={quote_plus(termino)})"
         )
 
-    lineas = [
-        f"### 🔎 {etiqueta.capitalize()} encontrados",
-        "",
-        f"Resultados reales para **{_seguro(termino)}**:",
-        "",
-    ]
+    if en:
+        lineas = [
+            f"### 🔎 {etiqueta.capitalize()} found",
+            "",
+            f"Real results for **{_seguro(termino)}**:",
+            "",
+        ]
+    else:
+        lineas = [
+            f"### 🔎 {etiqueta.capitalize()} encontrados",
+            "",
+            f"Resultados reales para **{_seguro(termino)}**:",
+            "",
+        ]
     for indice, resultado in enumerate(resultados, start=1):
         lineas.extend((
             f"{indice}. **{_seguro(resultado['titulo'])}**",
             f"   - {_seguro(resultado['detalle'])}",
-            f"   - [Abrir]({resultado['url']})",
+            f"   - [{'Open' if en else 'Abrir'}]({resultado['url']})",
         ))
         if resultado.get("editar_url"):
-            lineas.append(f"   - [Editar]({resultado['editar_url']})")
-    lineas.extend(("", f"[Ver búsqueda global](/buscar?q={quote_plus(termino)})"))
+            lineas.append(
+                f"   - [{'Edit' if en else 'Editar'}]({resultado['editar_url']})"
+            )
+    pie = "See all results in the global search" if en else "Ver búsqueda global"
+    lineas.extend(("", f"[{pie}](/buscar?q={quote_plus(termino)})"))
     return "\n".join(lineas)
 
 
 _REVISION_RE = re.compile(
     r"\b(?:revisa|revisar|audita|auditar|analiza|analizar)\w*\b.*\b(?:presupuesto|cotizacion|propuesta)\b"
-    r"|\b(?:presupuesto|cotizacion|propuesta)\b.*\b(?:listo|lista|enviar|errores|problemas|revisar)\b",
+    r"|\b(?:presupuesto|cotizacion|propuesta)\b.*\b(?:listo|lista|enviar|errores|problemas|revisar)\b"
+    # Inglés: «review this estimate», «is the quote ready to send?»…
+    r"|\b(?:review|audit|check|analyse|analyze)\w*\b.*\b(?:estimate|quote|proposal)\b"
+    r"|\b(?:estimate|quote|proposal)\b.*\b(?:ready|send|errors?|issues?|problems?|review)\b",
     re.IGNORECASE,
 )
 
@@ -288,18 +343,32 @@ def _resolver_presupuesto(db: Session, consulta: str, contexto: dict[str, Any] |
     return None
 
 
-def responder_revision_borrador_vivo(capitulos: list[dict[str, Any]]) -> str:
+def responder_revision_borrador_vivo(
+    capitulos: list[dict[str, Any]], idioma: str = "es",
+) -> str:
     from .copiloto_presupuesto import revisar_borrador_vivo
 
-    revision = revisar_borrador_vivo(capitulos)
+    en = _es_ingles(idioma)
+    revision = revisar_borrador_vivo(capitulos, idioma)
     icono = {"listo": "✅", "revisar": "🟠", "riesgo": "🔴"}.get(revision["estado"], "📋")
-    lineas = [
-        f"### {icono} Revisión del borrador visible",
-        "",
-        f"**Puntuación estructural: {revision['score']}/100.** Revisé "
-        f"{revision['total_capitulos']} capítulo(s) y {revision['total_partidas']} partida(s) "
-        "tal como aparecen ahora en el editor.",
-    ]
+    if en:
+        lineas = [
+            f"### {icono} Review of the draft on screen",
+            "",
+            f"**Structural score: {revision['score']}/100.** I reviewed "
+            f"{revision['total_capitulos']} section(s) and "
+            f"{revision['total_partidas']} line item(s) exactly as the editor "
+            "is showing them now.",
+        ]
+    else:
+        lineas = [
+            f"### {icono} Revisión del borrador visible",
+            "",
+            f"**Puntuación estructural: {revision['score']}/100.** Revisé "
+            f"{revision['total_capitulos']} capítulo(s) y {revision['total_partidas']} partida(s) "
+            "tal como aparecen ahora en el editor.",
+        ]
+    ir_al_campo = "Go to the field" if en else "Ir al campo"
 
     def agregar_items(titulo: str, items: list[dict[str, Any]], max_items: int = 8):
         if not items:
@@ -313,15 +382,21 @@ def responder_revision_borrador_vivo(capitulos: list[dict[str, Any]]) -> str:
                 params = {"capitulo": item["capitulo_indice"]}
                 if "partida_indice" in item:
                     params["partida"] = item["partida_indice"]
-                texto += f" · [Ir al campo](/api/ia/accion/enfocar-borrador?{urlencode(params)})"
+                texto += f" · [{ir_al_campo}](/api/ia/accion/enfocar-borrador?{urlencode(params)})"
             lineas.append(texto)
 
-    agregar_items("**Puntos críticos:**", revision["criticos"])
-    agregar_items("**Avisos:**", revision["avisos"])
+    agregar_items("**Critical points:**" if en else "**Puntos críticos:**", revision["criticos"])
+    agregar_items("**Warnings:**" if en else "**Avisos:**", revision["avisos"])
     if not revision["criticos"] and not revision["avisos"]:
-        lineas.extend(("", "No se detectaron problemas estructurales en el borrador actual."))
+        lineas.extend((
+            "",
+            "No structural problems found in the current draft." if en else
+            "No se detectaron problemas estructurales en el borrador actual.",
+        ))
     lineas.extend((
         "",
+        "This review has saved and changed nothing. Definitive totals keep being worked out on the server when you save."
+        if en else
         "Esta revisión no ha guardado ni modificado nada. Los totales definitivos continúan calculándose en el servidor al guardar.",
     ))
     return "\n".join(lineas)
@@ -331,17 +406,25 @@ def responder_revision_presupuesto(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None,
+    idioma: str = "es",
 ) -> str:
     from ..models import Configuracion
     from .revision_presupuesto import revisar_presupuesto_antes_de_enviar
     from .tiempos import calcular_tiempos_presupuesto
 
+    en = _es_ingles(idioma)
     borrador = (contexto or {}).get("borrador")
     if isinstance(borrador, list):
-        return responder_revision_borrador_vivo(borrador)
+        return responder_revision_borrador_vivo(borrador, idioma)
 
     presupuesto = _resolver_presupuesto(db, consulta, contexto)
     if presupuesto is None:
+        if en:
+            return (
+                "### ✅ Estimate review\n\n"
+                "Open the estimate you want to review, or give me its number, "
+                "for example `P-2026-001`.\n\n[See estimates](/presupuestos)"
+            )
         return (
             "### ✅ Revisión de presupuesto\n\n"
             "Abre el presupuesto que quieres revisar o indícame su número, por ejemplo "
@@ -359,49 +442,65 @@ def responder_revision_presupuesto(
         )
     except Exception:
         log.debug("No se pudieron calcular tiempos en la revisión IA", exc_info=True)
-    revision = revisar_presupuesto_antes_de_enviar(presupuesto, cfg=cfg, tiempos=tiempos)
+    revision = revisar_presupuesto_antes_de_enviar(
+        presupuesto, cfg=cfg, tiempos=tiempos, idioma=idioma,
+    )
 
     estado_icono = {"listo": "✅", "revisar": "🟠", "riesgo": "🔴"}.get(revision["estado"], "📋")
     lineas = [
         f"### {estado_icono} {presupuesto.numero}: {revision['titulo']}",
         "",
-        f"**Puntuación: {revision['score']}/100.** {revision['resumen']}",
+        f"**{'Score' if en else 'Puntuación'}: {revision['score']}/100.** {revision['resumen']}",
     ]
     if str((contexto or {}).get("pagina") or "").endswith("/editar"):
         lineas.extend((
             "",
+            "The review uses the last saved version. Save first if you have just changed quantities, prices or line items."
+            if en else
             "La revisión usa la última versión guardada. Guarda primero si acabas de cambiar cantidades, precios o partidas.",
         ))
     if revision["criticos"]:
-        lineas.extend(("", "**Puntos críticos:**"))
+        lineas.extend(("", "**Critical points:**" if en else "**Puntos críticos:**"))
         for item in revision["criticos"][:6]:
             texto = f"- **{_seguro(item['titulo'])}**"
             if item.get("detalle"):
                 texto += f": {_seguro(item['detalle'])}"
             if item.get("url"):
-                texto += f" · [Corregir]({item['url']})"
+                texto += f" · [{'Fix' if en else 'Corregir'}]({item['url']})"
             lineas.append(texto)
     if revision["recomendaciones"]:
-        lineas.extend(("", "**Recomendaciones:**"))
+        lineas.extend(("", "**Recommendations:**" if en else "**Recomendaciones:**"))
         for item in revision["recomendaciones"][:6]:
             texto = f"- **{_seguro(item['titulo'])}**"
             if item.get("detalle"):
                 texto += f": {_seguro(item['detalle'])}"
             if item.get("url"):
-                texto += f" · [Revisar]({item['url']})"
+                texto += f" · [{'Review' if en else 'Revisar'}]({item['url']})"
             lineas.append(texto)
-    lineas.extend((
-        "",
-        f"[Abrir presupuesto](/presupuestos/{presupuesto.id}) · "
-        f"[Editar](/presupuestos/{presupuesto.id}/editar)",
-    ))
+    if en:
+        lineas.extend((
+            "",
+            f"[Open estimate](/presupuestos/{presupuesto.id}) · "
+            f"[Edit](/presupuestos/{presupuesto.id}/editar)",
+        ))
+    else:
+        lineas.extend((
+            "",
+            f"[Abrir presupuesto](/presupuestos/{presupuesto.id}) · "
+            f"[Editar](/presupuestos/{presupuesto.id}/editar)",
+        ))
     return "\n".join(lineas)
 
 
 _PLAN_RE = re.compile(
     r"\bcapitulos?\s+y\s+partidas?\b"
     r"|\b(?:planifica|planificar|estructura|estructurar)\w*\b.*\b(?:obra|reforma|remodelacion|presupuesto)\b"
-    r"|\bpresupuesto\s+para\s+(?:reformar|remodelar)\b",
+    r"|\bpresupuesto\s+para\s+(?:reformar|remodelar)\b"
+    # Inglés: «sections and line items», «plan a bathroom refurbishment»…
+    r"|\b(?:line\s+)?items?\s+and\s+sections?\b"
+    r"|\bsections?\s+and\s+(?:line\s+)?items?\b"
+    r"|\b(?:plan|structure|organise|organize)\w*\b.*\b(?:works?|refurbishment|renovation|estimate)\b"
+    r"|\bestimate\s+for\s+(?:refurbish|renovat)\w*\b",
     re.IGNORECASE,
 )
 
@@ -409,6 +508,10 @@ _STOP_PLAN = _STOP_BUSQUEDA.union({
     "capitulo", "capitulos", "partida", "partidas", "debo", "incluir", "incluye",
     "obra", "reforma", "reformar", "remodelacion", "remodelar", "presupuestar",
     "planifica", "planificar", "estructura", "estructurar",
+    # Inglés.
+    "section", "sections", "item", "items", "line", "works", "refurbishment",
+    "refurbish", "renovation", "renovate", "plan", "structure", "should",
+    "include", "includes", "need", "want", "bathroom", "kitchen",
 })
 
 
@@ -424,8 +527,11 @@ def responder_plan_catalogo(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None,
+    idioma: str = "es",
 ) -> str | None:
     from ..models import RecetaEstancia
+
+    en = _es_ingles(idioma)
 
     terminos = _terminos_plan(consulta)
     if not terminos:
@@ -441,12 +547,20 @@ def responder_plan_catalogo(
         return None
     puntuadas.sort(key=lambda fila: (-fila[0], (fila[1].nombre or "").lower()))
     editor_abierto = _editor_abierto(contexto)
-    lineas = [
-        "### 🧩 Estructuras disponibles en tus Packs",
-        "",
-        "En lugar de inventar una lista genérica, encontré estas estructuras guardadas en tu empresa:",
-        "",
-    ]
+    if en:
+        lineas = [
+            "### 🧩 Structures available in your packs",
+            "",
+            "Rather than invent a generic list, I found these structures already saved in your company:",
+            "",
+        ]
+    else:
+        lineas = [
+            "### 🧩 Estructuras disponibles en tus Packs",
+            "",
+            "En lugar de inventar una lista genérica, encontré estas estructuras guardadas en tu empresa:",
+            "",
+        ]
     for indice, (_, receta) in enumerate(puntuadas[:4], start=1):
         try:
             items = json.loads(receta.datos or "[]")
@@ -460,22 +574,38 @@ def responder_plan_catalogo(
         ]
         muestra = ", ".join(nombres[:4])
         if len(nombres) > 4:
-            muestra += f" y {len(nombres) - 4} más"
-        lineas.extend((
-            f"{indice}. **{_seguro(receta.nombre)}** · {len(items)} partida(s)",
-            f"   - Base: {float(receta.cantidad_base_default or 0):g} {_seguro(receta.unidad_base)}"
-            + (f" · {muestra}" if muestra else ""),
-            f"   - [Ver o editar Pack](/recetas/{receta.id}/editar)",
-        ))
+            muestra += f" and {len(nombres) - 4} more" if en else f" y {len(nombres) - 4} más"
+        if en:
+            lineas.extend((
+                f"{indice}. **{_seguro(receta.nombre)}** · {len(items)} line item(s)",
+                f"   - Base: {float(receta.cantidad_base_default or 0):g} {_seguro(receta.unidad_base)}"
+                + (f" · {muestra}" if muestra else ""),
+                f"   - [View or edit pack](/recetas/{receta.id}/editar)",
+            ))
+        else:
+            lineas.extend((
+                f"{indice}. **{_seguro(receta.nombre)}** · {len(items)} partida(s)",
+                f"   - Base: {float(receta.cantidad_base_default or 0):g} {_seguro(receta.unidad_base)}"
+                + (f" · {muestra}" if muestra else ""),
+                f"   - [Ver o editar Pack](/recetas/{receta.id}/editar)",
+            ))
         if editor_abierto:
             lineas.append(
-                f"   - [Abrir este Pack en el presupuesto](/api/ia/accion/abrir-pack?receta_id={receta.id})"
+                f"   - [{'Open this pack in the estimate' if en else 'Abrir este Pack en el presupuesto'}]"
+                f"(/api/ia/accion/abrir-pack?receta_id={receta.id})"
             )
-    lineas.extend((
-        "",
-        "El Pack calcula cantidades según la medida que indiques y te muestra una vista previa antes de insertarlo.",
-        "[Ver todos los Packs](/recetas)",
-    ))
+    if en:
+        lineas.extend((
+            "",
+            "The pack works out quantities from the measurement you give it and shows a preview before inserting anything.",
+            "[See all packs](/recetas)",
+        ))
+    else:
+        lineas.extend((
+            "",
+            "El Pack calcula cantidades según la medida que indiques y te muestra una vista previa antes de insertarlo.",
+            "[Ver todos los Packs](/recetas)",
+        ))
     return "\n".join(lineas)
 
 
@@ -483,20 +613,32 @@ _MEDICION_RE = re.compile(
     r"\d+(?:[.,]\d+)?\s*(?:m)?\s*[x×]\s*\d+(?:[.,]\d+)?"
     r".*\b(?:mide|medida|medicion|mediciones|altura|piso|pared|bano|baño|habitacion)\b"
     r"|\b(?:mide|medida|medicion|mediciones|calcula)\w*\b"
+    r".*\d+(?:[.,]\d+)?\s*(?:m)?\s*[x×]\s*\d+(?:[.,]\d+)?"
+    # Inglés: «3 × 2 m bathroom», «measure a 4 x 5 room»…
+    r"|\d+(?:[.,]\d+)?\s*(?:m)?\s*[x×]\s*\d+(?:[.,]\d+)?"
+    r".*\b(?:measure|measurement|measurements|height|floor|wall|bathroom|room|ceiling)\b"
+    r"|\b(?:measure|measurement|measurements|calculate)\w*\b"
     r".*\d+(?:[.,]\d+)?\s*(?:m)?\s*[x×]\s*\d+(?:[.,]\d+)?",
     re.IGNORECASE,
 )
 
 _LOTE_RE = re.compile(
     r"\b(?:anade|añade|agrega|prepara|propone|sugiere)\w*\b.*\b(?:partidas|alcance)\b"
-    r"|\bpartidas\s+necesarias\b",
+    r"|\bpartidas\s+necesarias\b"
+    # Inglés: «add the line items», «prepare a batch for this scope»…
+    r"|\b(?:add|prepare|propose|suggest)\w*\b.*\b(?:(?:line\s+)?items|scope)\b"
+    r"|\b(?:line\s+)?items\s+needed\b",
     re.IGNORECASE,
 )
 
 _FALTANTES_RE = re.compile(
     r"\b(?:que\s+)?(?:falta|faltan|faltante|faltantes)\b"
     r"|\b(?:revisa|analiza)\w*\b.*\balcance\b"
-    r"|\b(?:alcance|presupuesto)\b.*\b(?:incompleto|olvidado|faltante)\b",
+    r"|\b(?:alcance|presupuesto)\b.*\b(?:incompleto|olvidado|faltante)\b"
+    # Inglés: «what is missing?», «anything missing from the scope?»…
+    r"|\b(?:what\s+is\s+|what\s+)?(?:missing|missed|forgotten)\b"
+    r"|\b(?:review|check|analyse|analyze)\w*\b.*\bscope\b"
+    r"|\b(?:scope|estimate)\b.*\b(?:incomplete|missing|forgotten)\b",
     re.IGNORECASE,
 )
 
@@ -504,19 +646,31 @@ _FALTANTES_RE = re.compile(
 def responder_mediciones(
     consulta: str,
     contexto: dict[str, Any] | None,
+    idioma: str = "es",
 ) -> str:
     from .copiloto_presupuesto import calcular_mediciones_texto
 
-    calculo = calcular_mediciones_texto(consulta)
+    en = _es_ingles(idioma)
+    calculo = calcular_mediciones_texto(consulta, idioma)
     if not calculo.get("ok"):
-        return f"### 📐 Asistente de mediciones\n\n{_seguro(calculo.get('error'))}"
-    lineas = [
-        "### 📐 Mediciones calculadas en el servidor",
-        "",
-        f"Dimensiones principales: **{calculo['largo']:g} × {calculo['ancho']:g} m**"
-        + (f" · altura **{calculo['altura']:g} m**" if calculo.get("altura") else ""),
-        "",
-    ]
+        titulo = "Measurements assistant" if en else "Asistente de mediciones"
+        return f"### 📐 {titulo}\n\n{_seguro(calculo.get('error'))}"
+    if en:
+        lineas = [
+            "### 📐 Measurements worked out on the server",
+            "",
+            f"Main dimensions: **{calculo['largo']:g} × {calculo['ancho']:g} m**"
+            + (f" · height **{calculo['altura']:g} m**" if calculo.get("altura") else ""),
+            "",
+        ]
+    else:
+        lineas = [
+            "### 📐 Mediciones calculadas en el servidor",
+            "",
+            f"Dimensiones principales: **{calculo['largo']:g} × {calculo['ancho']:g} m**"
+            + (f" · altura **{calculo['altura']:g} m**" if calculo.get("altura") else ""),
+            "",
+        ]
     for fila in calculo["filas"]:
         lineas.append(
             f"- **{_seguro(fila['concepto'])}: {fila['cantidad']:g} {fila['unidad']}** · `{_seguro(fila['formula'])}`"
@@ -528,14 +682,21 @@ def responder_mediciones(
                 "concepto": fila["concepto"],
                 "unidad": fila["unidad"],
             })
-            lineas.append(f"  [Aplicar como medición](/api/ia/accion/aplicar-medicion?{params})")
+            lineas.append(
+                f"  [{'Apply as a measurement' if en else 'Aplicar como medición'}]"
+                f"(/api/ia/accion/aplicar-medicion?{params})"
+            )
     if calculo.get("aberturas"):
         lineas.extend((
             "",
+            f"I deducted **{calculo['descuento_aberturas']:g} m2** for doors, "
+            "windows or openings identified." if en else
             f"Desconté **{calculo['descuento_aberturas']:g} m2** por puertas, ventanas o huecos identificados.",
         ))
     lineas.extend((
         "",
+        "The estimate has not been modified. Check the figures and press an "
+        "action to choose the destination line item." if en else
         "No se ha modificado el presupuesto. Revisa los datos y pulsa una acción para elegir la partida de destino.",
     ))
     return "\n".join(lineas)
@@ -545,42 +706,77 @@ def responder_preparacion_lote(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None,
+    idioma: str = "es",
 ) -> str:
     from .copiloto_presupuesto import preparar_lote_catalogo
 
+    en = _es_ingles(idioma)
     borrador = (contexto or {}).get("borrador")
-    lote = preparar_lote_catalogo(db, consulta, borrador)
+    lote = preparar_lote_catalogo(db, consulta, borrador, idioma)
     candidatos = lote["candidatos"]
     if not candidatos:
+        if en:
+            return (
+                "### 🧰 Preparing line items\n\n"
+                "I found no new line items reliable enough in the active "
+                "catalogue. They may already be in the draft, or the catalogue "
+                "may need another term.\n\n"
+                f"[Search manually](/partidas?q={quote_plus(consulta[:120])})"
+            )
         return (
             "### 🧰 Preparación de partidas\n\n"
             "No encontré partidas nuevas suficientemente fiables en el catálogo activo. "
             "Puede que ya estén en el borrador o que el catálogo necesite otro término.\n\n"
             f"[Buscar manualmente](/partidas?q={quote_plus(consulta[:120])})"
         )
-    lineas = [
-        "### 🧰 Lote preparado desde tu catálogo",
-        "",
-        "Estas son partidas reales; todavía no se ha añadido ninguna:",
-        "",
-    ]
+    if en:
+        lineas = [
+            "### 🧰 Batch prepared from your catalogue",
+            "",
+            "These are real line items; none has been added yet:",
+            "",
+        ]
+    else:
+        lineas = [
+            "### 🧰 Lote preparado desde tu catálogo",
+            "",
+            "Estas son partidas reales; todavía no se ha añadido ninguna:",
+            "",
+        ]
     ids = []
     for indice, partida in enumerate(candidatos, start=1):
         ids.append(str(partida["id"]))
-        lineas.extend((
-            f"{indice}. **{_seguro(partida['codigo'])} · {_seguro(partida['nombre'])}**",
-            f"   - Capítulo sugerido: {_seguro(partida['capitulo_sugerido'])} · "
-            f"{float(partida['precio'] or 0):,.2f} {partida['moneda']}/{_seguro(partida['unidad'])}",
-            f"   - [Ver ficha](/partidas/{partida['id']}/editar)",
-        ))
+        if en:
+            lineas.extend((
+                f"{indice}. **{_seguro(partida['codigo'])} · {_seguro(partida['nombre'])}**",
+                f"   - Suggested section: {_seguro(partida['capitulo_sugerido'])} · "
+                f"{float(partida['precio'] or 0):,.2f} {partida['moneda']}/{_seguro(partida['unidad'])}",
+                f"   - [Open record](/partidas/{partida['id']}/editar)",
+            ))
+        else:
+            lineas.extend((
+                f"{indice}. **{_seguro(partida['codigo'])} · {_seguro(partida['nombre'])}**",
+                f"   - Capítulo sugerido: {_seguro(partida['capitulo_sugerido'])} · "
+                f"{float(partida['precio'] or 0):,.2f} {partida['moneda']}/{_seguro(partida['unidad'])}",
+                f"   - [Ver ficha](/partidas/{partida['id']}/editar)",
+            ))
     if _editor_abierto(contexto):
         lineas.extend((
             "",
-            f"[Revisar selección y añadir al presupuesto](/api/ia/accion/agregar-lote?ids={','.join(ids)})",
+            f"[{'Review the selection and add to the estimate' if en else 'Revisar selección y añadir al presupuesto'}]"
+            f"(/api/ia/accion/agregar-lote?ids={','.join(ids)})",
         ))
     else:
-        lineas.extend(("", "Abre el editor de un presupuesto para seleccionar e insertar el lote."))
-    lineas.append("La selección permite desmarcar partidas y elegir el capítulo antes de confirmar.")
+        lineas.extend((
+            "",
+            "Open an estimate editor to select and insert the batch." if en else
+            "Abre el editor de un presupuesto para seleccionar e insertar el lote.",
+        ))
+    lineas.append(
+        "The selection lets you untick line items and choose the section before confirming."
+        if en else
+        "La selección permite desmarcar partidas y elegir el capítulo antes de confirmar."
+    )
     return "\n".join(lineas)
 
 
@@ -588,28 +784,51 @@ def responder_faltantes_alcance(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None,
+    idioma: str = "es",
 ) -> str:
     from .copiloto_presupuesto import detectar_faltantes_alcance
 
+    en = _es_ingles(idioma)
     borrador = (contexto or {}).get("borrador")
     if not isinstance(borrador, list):
+        if en:
+            return (
+                "### 🧭 Scope review\n\n"
+                "Open the estimate editor so I can compare the visible line "
+                "items against the technical rules."
+            )
         return (
             "### 🧭 Revisión de alcance\n\n"
             "Abre el editor del presupuesto para que pueda comparar las partidas visibles con las reglas técnicas."
         )
-    resultado = detectar_faltantes_alcance(db, borrador, consulta)
+    resultado = detectar_faltantes_alcance(db, borrador, consulta, idioma)
     if not resultado["sugerencias"]:
+        if en:
+            return (
+                "### ✅ Scope reviewed\n\n"
+                f"I reviewed **{resultado['analizadas']} line item(s)** and found "
+                "no obvious additions with the rules available. This does not "
+                "replace a technical review specific to the works."
+            )
         return (
             "### ✅ Alcance revisado\n\n"
             f"Analicé **{resultado['analizadas']} partida(s)** y no detecté complementos evidentes con las reglas disponibles. "
             "Esto no sustituye la revisión técnica específica de la obra."
         )
-    lineas = [
-        "### 🧭 Posibles faltantes de alcance",
-        "",
-        "Son advertencias técnicas, no partidas obligatorias. Revisa si ya están incluidas dentro de otra descripción:",
-        "",
-    ]
+    if en:
+        lineas = [
+            "### 🧭 Possible gaps in scope",
+            "",
+            "These are technical warnings, not compulsory line items. Check whether they are already included inside another description:",
+            "",
+        ]
+    else:
+        lineas = [
+            "### 🧭 Posibles faltantes de alcance",
+            "",
+            "Son advertencias técnicas, no partidas obligatorias. Revisa si ya están incluidas dentro de otra descripción:",
+            "",
+        ]
     for indice, sugerencia in enumerate(resultado["sugerencias"], start=1):
         lineas.append(f"{indice}. **{_seguro(sugerencia['titulo'])}**: {_seguro(sugerencia['motivo'])}")
         for partida in sugerencia["partidas"][:2]:
@@ -620,10 +839,14 @@ def responder_faltantes_alcance(
         ids = ",".join(str(i) for i in resultado["ids_recomendados"])
         lineas.extend((
             "",
-            f"[Revisar sugerencias y añadir seleccionadas](/api/ia/accion/agregar-lote?ids={ids})",
+            f"[{'Review the suggestions and add the selected ones' if en else 'Revisar sugerencias y añadir seleccionadas'}]"
+            f"(/api/ia/accion/agregar-lote?ids={ids})",
         ))
     lineas.extend((
         "",
+        "Nothing is added automatically. Confirm the contractual scope and "
+        "whether each item is included, excluded or should be budgeted "
+        "separately." if en else
         "Nada se añade automáticamente. Confirma el alcance contractual y si cada concepto está incluido, excluido o debe presupuestarse aparte.",
     ))
     return "\n".join(lineas)
@@ -633,20 +856,21 @@ def resolver_herramienta_ia(
     db: Session,
     consulta: str,
     contexto: dict[str, Any] | None = None,
+    idioma: str = "es",
 ) -> str | None:
     """Resuelve búsquedas, revisiones y planes sin llamar a un LLM."""
     texto = normalizar(consulta)
     if _MEDICION_RE.search(consulta):
-        return responder_mediciones(consulta, contexto)
+        return responder_mediciones(consulta, contexto, idioma)
     if _FALTANTES_RE.search(texto):
-        return responder_faltantes_alcance(db, consulta, contexto)
+        return responder_faltantes_alcance(db, consulta, contexto, idioma)
     if _LOTE_RE.search(texto):
-        return responder_preparacion_lote(db, consulta, contexto)
+        return responder_preparacion_lote(db, consulta, contexto, idioma)
     if _REVISION_RE.search(texto):
-        return responder_revision_presupuesto(db, consulta, contexto)
+        return responder_revision_presupuesto(db, consulta, contexto, idioma)
     if _PLAN_RE.search(texto):
-        return responder_plan_catalogo(db, consulta, contexto)
+        return responder_plan_catalogo(db, consulta, contexto, idioma)
     tipo = _detectar_tipo_entidad(consulta)
     if tipo:
-        return responder_busqueda_entidad(db, consulta, tipo)
+        return responder_busqueda_entidad(db, consulta, tipo, idioma)
     return None

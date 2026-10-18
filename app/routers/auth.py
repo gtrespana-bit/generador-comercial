@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..analytics import encolar_evento_ga
 from ..services import auditoria, telemetria
 from ..services.avisos_negocio import avisar_registro
@@ -93,7 +94,7 @@ async def restablecer_clave(request: Request):
         return TEMPLATES.TemplateResponse(
             request,
             "auth/reset_password.html",
-            {"error": "Las contraseñas no coinciden.", "recovery_token": token},
+            {"error": mensaje_request(request, "Las contraseñas no coinciden."), "recovery_token": token},
             status_code=400,
         )
     try:
@@ -107,7 +108,7 @@ async def restablecer_clave(request: Request):
             request,
             "auth/reset_password.html",
             {
-                "error": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+                "error": mensaje_request(request, "El enlace no es válido o ha caducado. Solicita uno nuevo."),
                 "recovery_token": "",
             },
             status_code=400,
@@ -829,6 +830,7 @@ async def crear_invitacion_web(request: Request, db: Session = Depends(get_db)):
             invitador_email=invitador.email if invitador else "",
             rol=invitacion.rol,
             caduca_el=invitacion.expires_at,
+            lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
         )
         email_enviado = True
     except (EmailNotConfigured, EmailSendError) as exc:
@@ -1126,6 +1128,14 @@ def bienvenida(request: Request, db: Session = Depends(get_db)):
     )
 
 
+def _idioma(request) -> str:
+    """Idioma resuelto por el middleware; decide el idioma de la demo."""
+    try:
+        return getattr(getattr(request, "state", None), "lang", "") or "es"
+    except Exception:
+        return "es"
+
+
 @router.post("/bienvenida")
 async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
@@ -1151,7 +1161,9 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
         "fecha_tasa": form.get("fecha_tasa", ""),
     }
     try:
-        cfg = completar_onboarding(db, datos, str(form.get("modo_inicio", "")))
+        cfg = completar_onboarding(
+            db, datos, str(form.get("modo_inicio", "")), _idioma(request)
+        )
     except ErrorOnboarding as exc:
         return _redirect("/bienvenida", error=str(exc))
 

@@ -186,7 +186,7 @@ def plan_provisional(anexos: list[Anexo]) -> list[Anexo]:
 # Texto del índice que ve el cliente
 # ---------------------------------------------------------------------------
 
-def texto(anexos: list[Anexo]) -> str:
+def texto(anexos: list[Anexo], lang: str = "es") -> str:
     """Índice de anexos que explica **cómo** se entrega cada documento."""
     if not anexos:
         return ""
@@ -194,45 +194,76 @@ def texto(anexos: list[Anexo]) -> str:
     aparte = [a for a in anexos if not a.incorporado]
 
     lineas: list[str] = []
-    if incorporados and not aparte:
-        lineas.append(
-            "Los anexos que se relacionan a continuación forman parte de este "
-            "presupuesto y se entregan dentro de este mismo archivo: están "
-            "añadidos como páginas adicionales al final del documento, en el "
-            "orden indicado y conservando su formato y su numeración originales."
-        )
-    elif incorporados:
-        lineas.append(
-            "Los anexos que se relacionan a continuación forman parte de este "
-            "presupuesto. Los marcados con la página de inicio están añadidos "
-            "al final de este mismo archivo, tras la última página del "
-            "presupuesto; el resto se entrega como archivo independiente."
-        )
+    if lang.startswith("en"):
+        if incorporados and not aparte:
+            lineas.append(
+                "The annexes listed below are part of this estimate and are delivered "
+                "within this same file: they are added as additional pages at the end "
+                "of the document, in the indicated order, preserving their original "
+                "format and numbering."
+            )
+        elif incorporados:
+            lineas.append(
+                "The annexes listed below are part of this estimate. Those marked with "
+                "a starting page are added at the end of this same file, after the "
+                "last page of the estimate; the rest are delivered as separate files."
+            )
+        else:
+            lineas.append(
+                "The annexes listed below are part of this estimate and are delivered "
+                "as separate files alongside this document."
+            )
     else:
-        lineas.append(
-            "Los anexos que se relacionan a continuación forman parte de este "
-            "presupuesto y se entregan como archivos independientes, junto a "
-            "este documento."
-        )
+        if incorporados and not aparte:
+            lineas.append(
+                "Los anexos que se relacionan a continuación forman parte de este "
+                "presupuesto y se entregan dentro de este mismo archivo: están "
+                "añadidos como páginas adicionales al final del documento, en el "
+                "orden indicado y conservando su formato y su numeración originales."
+            )
+        elif incorporados:
+            lineas.append(
+                "Los anexos que se relacionan a continuación forman parte de este "
+                "presupuesto. Los marcados con la página de inicio están añadidos "
+                "al final de este mismo archivo, tras la última página del "
+                "presupuesto; el resto se entrega como archivo independiente."
+            )
+        else:
+            lineas.append(
+                "Los anexos que se relacionan a continuación forman parte de este "
+                "presupuesto y se entregan como archivos independientes, junto a "
+                "este documento."
+            )
     lineas.append("")
     for numero, anexo in enumerate(anexos, 1):
-        lineas.append(f"• Anexo {numero} · {anexo.nombre} — {_detalle(anexo)}")
+        lineas.append(f"• {'Annex' if lang.startswith('en') else 'Anexo'} {numero} · {anexo.nombre} — {_detalle(anexo, lang)}")
     return "\n".join(lineas)
 
 
-def _detalle(anexo: Anexo) -> str:
+def _detalle(anexo: Anexo, lang: str = "es") -> str:
     if anexo.incorporado:
+        if lang.startswith("en"):
+            plural = "page" if anexo.paginas == 1 else "pages"
+            return (
+                f"{anexo.paginas} {plural}, starting on page {anexo.pagina_inicio} "
+                "of this file."
+            )
         plural = "página" if anexo.paginas == 1 else "páginas"
         return (
             f"{anexo.paginas} {plural}, desde la página {anexo.pagina_inicio} "
             "de este archivo."
         )
     if anexo.motivo == MOTIVO_TAMANO:
+        if lang.startswith("en"):
+            return (
+                "delivered as a separate file so as not to exceed the maximum "
+                "size of this PDF."
+            )
         return (
             "se entrega como archivo independiente para no superar el tamaño "
             "máximo de este PDF."
         )
-    return "se entrega como archivo independiente."
+    return ("delivered as a separate file." if lang.startswith("en") else "se entrega como archivo independiente.")
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,83 @@
+{% extends "base_en.html" %}
+{% block title %}Quick guide{% endblock %}
+{% block content %}
+<div class="page-head guide-head">
+  <div>
+    <p class="crumb">🏁 Home › Quick guide</p>
+    <h1>Quick guide: use {{ product_name }} in 15 minutes</h1>
+    <p class="subtitle">A practical flow to work as in real construction: prepare an estimate, review margin, send the PDF and resend changes if the client asks for them.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/inicio">← Back to dashboard</a>
+    <a class="btn btn-primary" href="/presupuestos/nuevo">Create estimate</a>
+  </div>
+</div>
+
+<section class="card guide-flow-card">
+  <div class="guide-flow-head">
+    <span class="section-kicker">Recommended flow</span>
+    <h2>The essentials, without complicating it</h2>
+    <p class="hint">CotizaT does not aim to replace your relationship with the client. It helps you prepare a clear PDF, protect your margin and respond quickly when they ask for changes.</p>
+  </div>
+  <div class="guide-steps">
+    <article><span>1</span><h3>Set up your company</h3><p>Logo, tax details, currency, VAT, terms and texts that will appear in the PDF.</p><a class="btn btn-sm" href="/configuracion">Go to settings</a></article>
+    <article><span>2</span><h3>Review the catalog</h3><p>Check catalog health: prices, costs, times and low margins before quoting.</p><a class="btn btn-sm" href="/partidas">View catalog</a></article>
+    <article><span>3</span><h3>Create client and estimate</h3><p>Build sections and line items from catalog, pack, Excel, BC3 (FIEBDC-3) or manually. If you have a plan, upload it and measure on top.</p><a class="btn btn-sm" href="/clientes/nuevo">New client</a></article>
+    <article><span>4</span><h3>Review before sending</h3><p>Use estimate health to detect zero price, zero quantity, missing cost or low margin.</p><a class="btn btn-sm" href="/presupuestos">View estimates</a></article>
+    <article><span>5</span><h3>Download and send PDF</h3><p>Send the PDF by WhatsApp or email as you normally work. The client reviews and contacts you.</p><a class="btn btn-sm" href="/presupuestos">Open estimates</a></article>
+    <article><span>6</span><h3>If they ask for changes, modify and resend</h3><p>When you change a versioned estimate, CotizaT shows what changed and generates a summary to copy.</p><a class="btn btn-sm" href="/presupuestos">Resend changes</a></article>
+  </div>
+</section>
+
+<div class="guide-grid">
+  <section class="card guide-checklist">
+    <h2>Checklist before the first real estimate</h2>
+    <ul>
+      <li><span>✓</span> Company and logo configured.</li>
+      <li><span>✓</span> Currency, VAT and rate reviewed.</li>
+      <li><span>✓</span> Catalog without critical alerts.</li>
+      <li><span>✓</span> Client with phone or email.</li>
+      <li><span>✓</span> Estimate with complete quantities and prices.</li>
+      <li><span>✓</span> Margin reviewed before sending.</li>
+      <li><span>✓</span> PDF opened once before sharing.</li>
+    </ul>
+  </section>
+
+  <section class="card guide-do-dont">
+    <h2>What to look at and what not to complicate</h2>
+    <div class="guide-two-cols">
+      <div>
+        <h3>Use it for</h3>
+        <ul>
+          <li>Quoting fast.</li>
+          <li>Knowing if you make money.</li>
+          <li>Preparing a professional PDF.</li>
+          <li>Resending clear changes.</li>
+          <li>Keeping prices and costs healthy.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>No need</h3>
+        <ul>
+          <li>Putting the client into a complex system.</li>
+          <li>Showing them costs or margin.</li>
+          <li>Turning every call into an online procedure.</li>
+          <li>Using every feature on day one.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="card guide-actions-card">
+  <h2>Quick access</h2>
+  <div class="guide-actions">
+    <a href="/configuracion">Settings</a>
+    <a href="/partidas">Catalog health</a>
+    <a href="/recursos">Resources and prices</a>
+    <a href="/clientes/nuevo">New client</a>
+    <a href="/presupuestos/nuevo">New estimate</a>
+    <a href="/presupuestos">Estimate history</a>
+  </div>
+</section>
+{% endblock %}

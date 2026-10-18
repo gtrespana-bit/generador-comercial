@@ -50,6 +50,8 @@ from reportlab.platypus import (
     PageBreak,
 )
 
+from ..paises import resolver_mercado
+from ..services.variante_ingles import aplicar_variante
 from ..utils import (
     fmt_cantidad,
     fmt_fecha,
@@ -271,13 +273,15 @@ def _static_path(rel: str) -> Path:
 # ---------------------------------------------------------------------------
 
 def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
-              etiqueta_num="Presupuesto Nº", titulo_por_defecto="Presupuesto de remodelación"):
+              etiqueta_num="Presupuesto Nº", titulo_por_defecto="Presupuesto de remodelación",
+              lang="es"):
     """Caja de empresa + logo, título y bloque proyecto / cliente.
 
     También se usa para el documento de cobro (título no fiscal).
     """
     # -- Caja de empresa ---------------------------------------------------
     # Etiquetas cortas: la caja de empresa ahora es estrecha
+    mercado = _mercado(lang)
     filas_empresa = [Paragraph(_esc(config.empresa_nombre), st["empresa"])]
     if config.empresa_rif:
         _etiq = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
@@ -285,12 +289,12 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
     if config.empresa_email:
         filas_empresa.append(Paragraph(f"<b>Email:</b> {_esc(config.empresa_email)}", st["empresa_linea"]))
     if config.empresa_telefono:
-        filas_empresa.append(Paragraph(f"<b>Teléfono:</b> {_esc(config.empresa_telefono)}", st["empresa_linea"]))
+        filas_empresa.append(Paragraph(f"<b>{'Phone' if lang.startswith('en') else 'Teléfono'}:</b> {_esc(config.empresa_telefono)}", st["empresa_linea"]))
     if config.empresa_web:
         web = _esc(config.empresa_web)
         filas_empresa.append(Paragraph(f"<b>Web:</b> <font color='#CC0066'>{web}</font>", st["empresa_linea"]))
     if config.empresa_direccion:
-        filas_empresa.append(Paragraph(f"<b>Dirección:</b> {_esc(config.empresa_direccion)}", st["empresa_linea"]))
+        filas_empresa.append(Paragraph(f"<b>{'Address' if lang.startswith('en') else 'Dirección'}:</b> {_esc(config.empresa_direccion)}", st["empresa_linea"]))
     if config.empresa_legal:
         filas_empresa.append(Spacer(1, 2))
         filas_empresa.append(Paragraph(_esc(config.empresa_legal), st["legal"]))
@@ -333,34 +337,35 @@ def _cabecera(presupuesto, config, st, azul_color, titulo_doc="PRESUPUESTO",
 
     izq = encabezado(presupuesto.titulo or titulo_por_defecto)
     if presupuesto.direccion_obra:
-        izq.append(Paragraph(f"<b>Dirección de la obra:</b> {_esc(presupuesto.direccion_obra)}", st["campo"]))
+        izq.append(Paragraph(f"<b>{_pdf_t(lang, 'direccion_obra')}:</b> {_esc(presupuesto.direccion_obra)}", st["campo"]))
     if presupuesto.codigo_postal:
-        izq.append(Paragraph(f"<b>Código postal:</b> {_esc(presupuesto.codigo_postal)}", st["campo"]))
-    izq.append(Paragraph(f"<b>Fecha:</b> {fmt_fecha(presupuesto.fecha)}", st["campo"]))
+        izq.append(Paragraph(f"<b>{_pdf_t(lang, 'codigo_postal')}:</b> {_esc(presupuesto.codigo_postal)}", st["campo"]))
+    izq.append(Paragraph(f"<b>{_pdf_t(lang, 'fecha')}:</b> {fmt_fecha(presupuesto.fecha, mercado=mercado)}", st["campo"]))
 
     c = presupuesto.cliente
-    der = encabezado("Cliente")
-    nombre_linea = f"<b>Nombre:</b> {_esc(c.nombre)}"
+    der = encabezado(_pdf_t(lang, "cliente"))
+    nombre_linea = f"<b>{'Name' if lang.startswith('en') else 'Nombre'}:</b> {_esc(c.nombre)}"
     if c.rif:
         _etiq_cli = getattr(config, "etiqueta_id_fiscal", "") or "RIF"
         nombre_linea += f"&nbsp;&nbsp;&nbsp;<b>{_esc(_etiq_cli)}:</b> {_esc(c.rif)}"
     der.append(Paragraph(nombre_linea, st["campo"]))
     if c.pais:
-        der.append(Paragraph(f"<b>País:</b> {_esc(c.pais)}", st["campo"]))
+        der.append(Paragraph(f"<b>{'Country' if lang.startswith('en') else 'País'}:</b> {_esc(c.pais)}", st["campo"]))
     if presupuesto.validez_dias:
-        der.append(Paragraph(f"<b>Validez de la oferta:</b> {presupuesto.validez_dias} días", st["campo"]))
+        _dias_txt = _pdf_t(lang, "dias")
+        der.append(Paragraph(f"<b>{_pdf_t(lang, 'validez')}:</b> {presupuesto.validez_dias} {_dias_txt}", st["campo"]))
     # Moneda del documento, siempre visible y con su código ISO: los símbolos
     # «$» de la región no distinguen pesos mexicanos, colombianos ni dólares.
     from ..services.monedas import codigo_iso as _iso_doc, simbolo as _simbolo_doc
 
     _iso_presupuesto = _iso_doc(presupuesto.moneda)
     der.append(Paragraph(
-        f"<b>Moneda:</b> {_esc(_iso_presupuesto)} ({_esc(_simbolo_doc(_iso_presupuesto))})",
+        f"<b>{_pdf_t(lang, 'moneda')}:</b> {_esc(_iso_presupuesto)} ({_esc(_simbolo_doc(_iso_presupuesto))})",
         st["campo"],
     ))
     if presupuesto.tipo_cambio and presupuesto.moneda != "USD":
         _fuente = getattr(presupuesto, "fuente_tipo_cambio", "") or "referencia"
-        der.append(Paragraph(f"<b>Tasa ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_esc(presupuesto.moneda)}", st["campo"]))
+        der.append(Paragraph(f"<b>{_pdf_t(lang, 'tasa')} ({_esc(_fuente)}):</b> 1 USD = {fmt_num(presupuesto.tipo_cambio, mercado=mercado)} {_esc(presupuesto.moneda)}", st["campo"]))
     der.append(Paragraph(f"{etiqueta_num} <font color='#CC0066'>{_esc(presupuesto.numero)}</font>", st["ref"]))
 
     bloque = Table([[izq, der]], colWidths=[_ANCHO / 2, _ANCHO / 2])
@@ -399,9 +404,10 @@ def _banda(azul_color):
     return t
 
 
-def _fila_capitulo(cap, st, moneda, azul_color, ctx=None):
+def _fila_capitulo(cap, st, moneda, azul_color, ctx=None, lang="es"):
     # Con productos a elegir el subtotal del capítulo depende de la opción
     # marcada, así que se emite como campo calculado del formulario.
+    mercado = _mercado(lang)
     if ctx is not None and any(ctx.es_interactiva(p) for p in cap.partidas):
         celda_subtotal = ctx.campo(
             "cap_" + ctx.id_capitulo(cap),
@@ -413,7 +419,7 @@ def _fila_capitulo(cap, st, moneda, azul_color, ctx=None):
             tam=13.5,
         )
     else:
-        celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["cap_d"])
+        celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda, mercado=mercado), st["cap_d"])
     cap_nombre_trad = traducir(cap.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else cap.nombre
     t = Table(
         [[Paragraph(_esc(cap_nombre_trad.upper()), st["cap"]), "", "", celda_subtotal]],
@@ -432,12 +438,12 @@ def _fila_capitulo(cap, st, moneda, azul_color, ctx=None):
     return t
 
 
-def _fila_columnas(st):
+def _fila_columnas(st, lang="es"):
     t = Table(
-        [[Paragraph("Partida", st["head"]),
-          Paragraph("Cantidad", st["head_c"]),
-          Paragraph("Precio", st["head_c"]),
-          Paragraph("Importe", st["head_c"])]],
+        [[Paragraph(_pdf_t(lang, "partida"), st["head"]),
+          Paragraph(_pdf_t(lang, "cantidad"), st["head_c"]),
+          Paragraph(_pdf_t(lang, "precio"), st["head_c"]),
+          Paragraph(_pdf_t(lang, "importe"), st["head_c"])]],
         colWidths=COLS,
     )
     t.setStyle(TableStyle([
@@ -525,7 +531,7 @@ def _datos_opcion(op, partida):
 
 
 def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
-                      ctx, interactiva, pid):
+                      ctx, interactiva, pid, lang="es"):
     """Filas del bloque «producto(s)» de una partida.
 
     Con una sola opción se conserva el formato clásico («Producto
@@ -533,6 +539,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     elegantes tarjetas de opción con su foto, specs y precio. Si el PDF es
     interactivo, lleva un radio button AcroForm sin superponer imágenes.
     """
+    mercado = _mercado(lang)
     opciones = list(getattr(partida, "productos_multiples", None) or [partida])
     elegido = int(getattr(partida, "indice_producto_elegido", 0) or 0)
     if elegido >= len(opciones):
@@ -568,10 +575,10 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     # ---- Un solo producto: formato clásico ------------------------------
     if len(opciones) == 1:
         datos = _datos_opcion(opciones[0], partida)
-        fila_ancho_completo(Paragraph("Producto presupuestado:", st["prod_lab"]), arriba=6, abajo=1)
+        fila_ancho_completo(Paragraph(_rot('Producto presupuestado:', 'Quoted product:', lang), st["prod_lab"]), arriba=6, abajo=1)
         linea = ""
         if datos["precio"] is not None:
-            linea = f"<b>{fmt_num(datos['precio'])} {mon_simb} / {_esc(datos['unidad'])}</b>&nbsp;&nbsp;&nbsp;&nbsp;"
+            linea = f"<b>{fmt_num(datos['precio'], mercado=mercado)} {mon_simb} / {_esc(datos['unidad'])}</b>&nbsp;&nbsp;&nbsp;&nbsp;"
         linea += f"<i>{_esc(datos['nombre'])}</i>"
         if datos["detalle"]:
             linea += f"<br/><font size='8' color='#64748B'>{_esc(datos['detalle'])}</font>"
@@ -587,9 +594,9 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
 
     # ---- Varios productos a elegir --------------------------------------
     if interactiva:
-        titulo = "OPCIONES DE PRODUCTO A ELEGIR (selecciona una opción para recalcular el presupuesto):"
+        titulo = _rot('OPCIONES DE PRODUCTO A ELEGIR (selecciona una opción para recalcular el presupuesto):', 'PRODUCT OPTIONS TO CHOOSE (select an option to recalculate the estimate):', lang)
     else:
-        titulo = "OPCIONES DE PRODUCTO DISPONIBLES:"
+        titulo = _rot('OPCIONES DE PRODUCTO DISPONIBLES:', 'AVAILABLE PRODUCT OPTIONS:', lang)
     fila_ancho_completo(Paragraph(titulo, st["prod_lab"]), arriba=8, abajo=4)
 
     ancho_foto = 100
@@ -602,13 +609,13 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
         # Cabecera de la tarjeta con badge de Opción
         num_op = i + 1
         if marcado:
-            badge_txt = f"<font color='#0F4C81'><b>✓ OPCIÓN {num_op} — SELECCIONADA</b></font>"
+            badge_txt = f"<font color='#0F4C81'><b>✓ OPTION {num_op} — SELECTED</b></font>" if _en(lang) else f"<font color='#0F4C81'><b>✓ OPCIÓN {num_op} — SELECCIONADA</b></font>"
         else:
-            badge_txt = f"<font color='#64748B'><b>OPCIÓN {num_op}</b></font>"
+            badge_txt = f"<font color='#64748B'><b>OPTION {num_op}</b></font>" if _en(lang) else f"<font color='#64748B'><b>OPCIÓN {num_op}</b></font>"
 
         precio_txt = ""
         if datos["precio"] is not None:
-            precio_txt = f"<font color='#0F4C81'><b>{fmt_num(datos['precio'])} {mon_simb} / {_esc(datos['unidad'])}</b></font>"
+            precio_txt = f"<font color='#0F4C81'><b>{fmt_num(datos['precio'], mercado=mercado)} {mon_simb} / {_esc(datos['unidad'])}</b></font>"
 
         nombre_txt = _esc(datos["nombre"]) or "—"
 
@@ -667,9 +674,9 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
                     ("RIGHTPADDING", (0, 0), (-1, -1), 4),
                 ]))
             else:
-                foto_box = Paragraph("<font size='8' color='#94A3B8'>Sin imagen</font>", st["mini"])
+                foto_box = Paragraph("<font size='8' color='#94A3B8'>" + _rot('Sin imagen', 'No image', lang) + "</font>", st["mini"])
         else:
-            foto_box = Paragraph("<font size='8' color='#94A3B8'>Sin imagen</font>", st["mini"])
+            foto_box = Paragraph("<font size='8' color='#94A3B8'>" + _rot('Sin imagen', 'No image', lang) + "</font>", st["mini"])
 
         # Ensamblar la tarjeta completa
         tarjeta = Table(
@@ -698,16 +705,13 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
         fila_ancho_completo(tarjeta, arriba=4, abajo=4)
 
     if interactiva:
-        nota = ("Este presupuesto es interactivo: pulsa en cualquier parte de la tarjeta "
-                "(foto, nombre o texto) para elegir esa opción. Se recalculan el precio "
-                "unitario, el importe de la partida y los totales del documento. "
-                "Requiere un visor de PDF con soporte para formularios (p. ej. Adobe Acrobat Reader o Foxit).")
+        nota = _rot('Este presupuesto es interactivo: pulsa en cualquier parte de la tarjeta (foto, nombre o texto) para elegir esa opción. Se recalculan el precio unitario, el importe de la partida y los totales del documento. Requiere un visor de PDF con soporte para formularios (p. ej. Adobe Acrobat Reader o Foxit).', 'This estimate is interactive: click anywhere on the card (photo, name or text) to choose that option. The unit price, line item amount and document totals are recalculated. Requires a PDF viewer with form support (e.g. Adobe Acrobat Reader or Foxit).', lang)
         fila_ancho_completo(Paragraph(nota, st["prod_nota"]), arriba=3, abajo=2)
 
     return filas, estilos
 
 
-def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None):
+def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None, lang="es"):
     """Una partida: fila principal + mediciones + producto presupuestado.
 
     Si `num` (p. ej. "1.2") no es None, se antepone al nombre de la partida
@@ -717,19 +721,29 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     productos a elegir, el precio unitario y los importes se emiten como
     campos de formulario recalculables y cada producto lleva su casilla.
     """
+    mercado = _mercado(lang)
     mon_simb = moneda or "USD"
     filas = []
     interactiva = ctx is not None and ctx.es_interactiva(partida)
     pid = ctx.id_partida(partida) if interactiva else ""
 
     tipo = (getattr(partida, "tipo_partida", "included") or "included").lower()
-    etiquetas = {
-        "optional": "OPCIONAL",
-        "alternative": "ALTERNATIVA",
-        "excluded": "NO INCLUIDA",
-        "provisional": "PROVISIONAL",
-        "measurement": "SUJETA A MEDICIÓN",
-    }
+    if _en(lang):
+        etiquetas = {
+            "optional": "OPTIONAL",
+            "alternative": "ALTERNATIVE",
+            "excluded": "NOT INCLUDED",
+            "provisional": "PROVISIONAL",
+            "measurement": "SUBJECT TO MEASUREMENT",
+        }
+    else:
+        etiquetas = {
+            "optional": "OPCIONAL",
+            "alternative": "ALTERNATIVA",
+            "excluded": "NO INCLUIDA",
+            "provisional": "PROVISIONAL",
+            "measurement": "SUJETA A MEDICIÓN",
+        }
     etiqueta = etiquetas.get(tipo, "")
     # Traducción VE->país para nombre/descripción (catálogo guarda VE)
     nombre_trad = traducir(partida.nombre, _CODIGO_PAIS_ACTUAL) if _CODIGO_PAIS_ACTUAL else partida.nombre
@@ -760,8 +774,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
             COLS[3],
         )
     else:
-        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud")), st["tot_c"])
-        celda_importe = Paragraph(fmt_monto(partida.importe, moneda), st["tot_c"])
+        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["tot_c"])
+        celda_importe = Paragraph(fmt_monto(partida.importe, moneda, mercado=mercado), st["tot_c"])
 
     filas.append([
         celda_texto,
@@ -789,8 +803,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
                 COLS[3], alto=10, tam=8.25, fuente="Helvetica",
             )
         else:
-            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud")), st["med_c"])
-            celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda), st["med_c"])
+            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["med_c"])
+            celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda, mercado=mercado), st["med_c"])
         filas.append([
             Paragraph(_esc(m.concepto.strip()) or "-", st["med_d"]),
             Paragraph(fmt_cantidad(m.cantidad, _esc(partida.unidad or "ud")), st["med_c"]),
@@ -814,7 +828,7 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     # -- Productos presupuestados -----------------------------------------
     if partida.tiene_producto:
         filas, estilos = _bloque_productos(
-            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid
+            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid, lang=lang
         )
 
     idx_ultima = len(filas) - 1
@@ -827,13 +841,13 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     return t
 
 
-def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None):
+def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None, lang="es"):
     banda = _banda(azul_color)
-    titulo = _fila_capitulo(cap, st, moneda, azul_color, ctx=ctx)
-    columnas = _fila_columnas(st)
+    titulo = _fila_capitulo(cap, st, moneda, azul_color, ctx=ctx, lang=lang)
+    columnas = _fila_columnas(st, lang=lang)
     partidas = [
         _tabla_partida(p, st, moneda, i == len(cap.partidas) - 1, azul_color,
-                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx)
+                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx, lang=lang)
         for i, p in enumerate(cap.partidas)
     ]
     flujo = []
@@ -889,45 +903,94 @@ class _LecturaTotales:
 
 
 def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TOTAL", ctx=None,
-             totales=None):
+             totales=None, lang="es"):
+    mercado = _mercado(lang)
     filas = []
     ancho_valor = 135
     tot = totales if totales is not None else _LecturaTotales(presupuesto)
 
+    # La capa interactiva recalcula los totales en JavaScript, y ese motor no
+    # modela ni el CIS ni la inversión del sujeto pasivo: si el cliente cambiara
+    # de producto, las filas nuevas se quedarían congeladas y el total diría
+    # una cosa distinta que las líneas de encima. En esos documentos el bloque
+    # se imprime cerrado.
+    fiscalidad = _fiscalidad_gb(presupuesto, tot, mercado)
+    ctx_efectivo = None if fiscalidad is not None else ctx
+
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
-        if ctx is None:
-            return Paragraph(prefijo + fmt_monto(importe, moneda), st[estilo])
+        if ctx_efectivo is None:
+            return Paragraph(prefijo + fmt_monto(importe, moneda, mercado=mercado), st[estilo])
         alturas = {"tot_lab_s": 14, "tot_lab": 16, "tot_lab_g": 18}
         tamanos = {"tot_lab_s": 10.5, "tot_lab": 12, "tot_lab_g": 13.5}
-        return ctx.campo(
-            "tot_" + clave, ctx.txt_total(clave), ctx.js_total(clave), ancho_valor,
+        return ctx_efectivo.campo(
+            "tot_" + clave, ctx_efectivo.txt_total(clave), ctx_efectivo.js_total(clave), ancho_valor,
             alto=alturas.get(estilo, 14), alineacion="right", tam=tamanos.get(estilo, 10.5),
         )
 
     if getattr(presupuesto, "usar_funciones_avanzadas", False):
-        filas.append([Paragraph("SUBTOTAL INCLUIDO", st["tot_lab_s"]), valor("subtotal", tot.subtotal, "tot_lab_s"), ""])
+        filas.append([Paragraph(_pdf_t(lang, "subtotal") + " INCLUIDO", st["tot_lab_s"]), valor("subtotal", tot.subtotal, "tot_lab_s"), ""])
         if tot.subtotal_opcional:
-            filas.append([Paragraph("OPCIONALES DISPONIBLES", st["tot_lab_s"]), valor("opcional", tot.subtotal_opcional, "tot_lab_s"), ""])
+            filas.append([Paragraph(_rot('OPCIONALES DISPONIBLES', 'AVAILABLE OPTIONS', lang), st["tot_lab_s"]), valor("opcional", tot.subtotal_opcional, "tot_lab_s"), ""])
         if tot.subtotal_alternativas:
-            filas.append([Paragraph("ALTERNATIVAS DISPONIBLES", st["tot_lab_s"]), valor("alternativas", tot.subtotal_alternativas, "tot_lab_s"), ""])
+            filas.append([Paragraph(_rot('ALTERNATIVAS DISPONIBLES', 'AVAILABLE ALTERNATIVES', lang), st["tot_lab_s"]), valor("alternativas", tot.subtotal_alternativas, "tot_lab_s"), ""])
         if tot.costes_adicionales:
-            filas.append([Paragraph("COSTES ADICIONALES", st["tot_lab_s"]), valor("adicionales", tot.costes_adicionales, "tot_lab_s"), ""])
-    filas.append([Paragraph("BASE IMPONIBLE", st["tot_lab"]), valor("base", tot.base, "tot_lab"), ""])
+            filas.append([Paragraph(_rot('COSTES ADICIONALES', 'ADDITIONAL COSTS', lang), st["tot_lab_s"]), valor("adicionales", tot.costes_adicionales, "tot_lab_s"), ""])
+    filas.append([Paragraph(_rot('BASE IMPONIBLE', 'TAXABLE BASE', lang), st["tot_lab"]), valor("base", tot.base, "tot_lab"), ""])
     if presupuesto.descuento_pct:
+        _desc_lbl = _rot('DESCUENTO', 'DISCOUNT', lang)
         filas.append([
-            Paragraph(f"DESCUENTO ({fmt_pct(presupuesto.descuento_pct)} %)", st["tot_lab_s"]),
+            Paragraph(f"{_desc_lbl} ({fmt_pct(presupuesto.descuento_pct)} %)", st["tot_lab_s"]),
             valor("descuento", tot.descuento_monto, "tot_lab_s", prefijo="- "), "",
         ])
-    filas_desglose = _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot)
+    filas_desglose = _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot, lang=lang)
     filas += filas_desglose
-    filas.append([
-        Paragraph(f"I.V.A. ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
-        valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
-    ])
+    # El impuesto se llama como se llama en cada mercado, no como se llame en
+    # inglés: Sales tax en Estados Unidos, VAT en Reino Unido, GST en
+    # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
+    _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
+                else mercado["etiqueta_impuesto"])
+    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+        # El impuesto no se cobra: lo declara el cliente. La fila se imprime
+        # igualmente, con el tipo y a cero, porque es la que le dice al cliente
+        # cuánto tiene que ingresar él.
+        _iva_lbl += " — " + _rot(
+            'inversión del sujeto pasivo (no se cobra)',
+            'reverse charge (not charged)', lang,
+        )
+        filas.append([
+            Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
+            valor("impuesto", 0, "tot_lab_s"), "",
+        ])
+    else:
+        filas.append([
+            Paragraph(f"{_iva_lbl} ({fmt_pct(presupuesto.impuesto_pct)} %)", st["tot_lab_s"]),
+            valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
+        ])
+
+    # ── Retención del CIS ──────────────────────────────────────────────────
+    # Va sobre el elemento de mano de obra, no sobre la factura, así que se
+    # muestra la base sobre la que se calcula: sin esa fila el cliente no
+    # puede comprobar de dónde sale la cifra.
+    if fiscalidad is not None and fiscalidad.cis_aplica:
+        filas.append([
+            Paragraph(_rot('ELEMENTO DE MANO DE OBRA SUJETO A RETENCIÓN',
+                           'LABOUR ELEMENT SUBJECT TO DEDUCTION', lang), st["tot_lab_s"]),
+            valor("base_cis", fiscalidad.base_cis, "tot_lab_s"), "",
+        ])
+        filas.append([
+            Paragraph(
+                f"{_rot('RETENCIÓN CIS', 'CIS DEDUCTION', lang)} "
+                f"({fmt_pct(fiscalidad.cis_tipo)} %)", st["tot_lab_s"]),
+            valor("retencion_cis", fiscalidad.retencion_cis, "tot_lab_s", prefijo="- "), "",
+        ])
+        etiqueta_total = _rot('TOTAL A COBRAR (tras retención CIS)',
+                              'TOTAL PAYABLE (after CIS deduction)', lang)
+
+    _total_final = fiscalidad.total_a_cobrar if fiscalidad is not None else tot.total
     filas.append([
         Paragraph(etiqueta_total, st["tot_lab_g"]),
-        valor("total", tot.total, "tot_lab_g"), "",
+        valor("total", _total_final, "tot_lab_g"), "",
     ])
 
     n = len(filas)
@@ -948,17 +1011,49 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     for i in range(n - 1):
         estilos.append(("LINEBELOW", (0, i), (1, i), 0.75, LINEA_TOT))
     t.setStyle(TableStyle(estilos))
-    if not filas_desglose:
-        return t
-    return [
-        t,
-        Paragraph(
-            "El desglose reparte la base imponible entre los productos y materiales "
-            "elegidos y el resto de la obra (mano de obra, recursos y ejecución de los "
-            "trabajos). Los porcentajes se calculan sobre esa misma base imponible.",
+    notas = []
+    if filas_desglose:
+        notas.append(Paragraph(
+            _rot('El desglose reparte la base imponible entre los productos y materiales elegidos y el resto de la obra (mano de obra, recursos y ejecución de los trabajos). Los porcentajes se calculan sobre esa misma base imponible.', 'The breakdown distributes the taxable base among the chosen products and materials and the rest of the work (labor, resources and execution of the works). Percentages are calculated on that same taxable base.', lang),
             st["desg_nota"],
-        ),
-    ]
+        ))
+    # Leyenda obligatoria de Hacienda: la factura tiene que decir «reverse
+    # charge». Sin esa expresión el documento no es válido y el cliente no
+    # puede saber que el impuesto lo declara él.
+    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+        notas.append(Paragraph(_esc(fiscalidad.leyenda_iva), st["desg_nota"]))
+    if not notas:
+        return t
+    return [t] + notas
+
+
+def _fiscalidad_gb(presupuesto, tot, mercado):
+    """Fiscalidad británica del documento, o ``None`` si no le afecta.
+
+    Devuelve ``None`` en tres casos: el documento no es británico, es británico
+    pero no lleva ni CIS ni inversión del sujeto pasivo, o es un documento de
+    cobro que no expone esos campos. Así quien llama puede preguntar siempre y
+    solo actuar cuando hay algo que mostrar.
+    """
+    from .fiscalidad_reino_unido import calcular_fiscalidad_gb
+
+    f = calcular_fiscalidad_gb(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        # ``_LecturaTotales`` delega en el documento; si este no tiene el campo
+        # (una factura) levanta AttributeError y aquí vale 0: sin coste de
+        # materiales la retención se calcula sobre el importe íntegro, que es
+        # el supuesto conservador.
+        coste_materiales=getattr(tot, "coste_materiales", 0) or 0,
+        iva_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        cis_tipo=getattr(presupuesto, "cis_tipo", None),
+    )
+    if not f.aplica:
+        return None
+    if not (f.con_inversion_sujeto_pasivo or f.cis_aplica):
+        return None
+    return f
 
 
 def _pct_una_decimal(importe, base) -> str:
@@ -979,7 +1074,7 @@ def _pct_una_decimal(importe, base) -> str:
     return f"{valor:.1f}".replace(".", ",")
 
 
-def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot):
+def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot, lang="es"):
     """Desglose comercial del precio: productos elegidos / mano de obra y trabajos.
 
     Solo se emite cuando el presupuesto lo tiene activado. Las dos cifras
@@ -988,6 +1083,7 @@ def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot):
     obra se calcula como ``base − productos``, de modo que el cliente no tenga
     que hacer ninguna suma ni pueda encontrar un céntimo suelto.
     """
+    mercado = _mercado(lang)
     if not getattr(presupuesto, "mostrar_desglose_precio", False):
         return []
     reparto = getattr(presupuesto, "desglose_precio", None)
@@ -999,7 +1095,7 @@ def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot):
         return []
 
     def texto(importe):
-        return f"{fmt_monto(importe, moneda)}  ({_pct_una_decimal(importe, base)} %)"
+        return f"{fmt_monto(importe, moneda, mercado=mercado)}  ({_pct_una_decimal(importe, base)} %)"
 
     def celda(clave, importe):
         if ctx is not None and hasattr(ctx, "txt_desglose"):
@@ -1011,19 +1107,19 @@ def _filas_desglose(presupuesto, st, moneda, ctx, ancho_valor, tot):
 
     return [
         [
-            Paragraph("&#8226;&nbsp; Productos y materiales seleccionados", st["desg_lab"]),
+            Paragraph("&#8226;&nbsp; " + _rot('Productos y materiales seleccionados', 'Selected products and materials', lang), st["desg_lab"]),
             celda("productos", productos),
             "",
         ],
         [
-            Paragraph("&#8226;&nbsp; Mano de obra, recursos y ejecución de los trabajos", st["desg_lab"]),
+            Paragraph("&#8226;&nbsp; " + _rot('Mano de obra, recursos y ejecución de los trabajos', 'Labor, resources and execution of the works', lang), st["desg_lab"]),
             celda("obra", obra),
             "",
         ],
     ]
 
 
-def _seccion(titulo, contenido, st, azul_color):
+def _seccion(titulo, contenido, st, azul_color, lang="es"):
     return KeepTogether([
         Paragraph(_esc(titulo), st["t13"]),
         _hr(azul_color, 1, spaceBefore=4, spaceAfter=7),
@@ -1048,10 +1144,11 @@ class _CanvasNumerado(canvas.Canvas):
         "vencido": "VENCIDO",
     }
 
-    def __init__(self, *args, estado="", ctx=None, paginas_extra=0, **kwargs):
+    def __init__(self, *args, estado="", ctx=None, paginas_extra=0, idioma="es", **kwargs):
         super().__init__(*args, **kwargs)
         self._paginas = []
         self._estado = estado
+        self._idioma = idioma
         self._ctx = ctx
         # Páginas que se añadirán después (anexos fusionados): el total del
         # pie «n/N» debe contarlas para que coincida con el archivo que
@@ -1067,7 +1164,10 @@ class _CanvasNumerado(canvas.Canvas):
         for state in self._paginas:
             self.__dict__.update(state)
             # Marca de agua diagonal (sobre el contenido, con transparencia)
-            marca = self._MARCAS.get(self._estado)
+            marcas = {"borrador": ("DRAFT" if _en(self._idioma) else "BORRADOR"),
+                      "rechazado": ("REJECTED" if _en(self._idioma) else "RECHAZADO"),
+                      "vencido": ("EXPIRED" if _en(self._idioma) else "VENCIDO")}
+            marca = marcas.get(self._estado)
             if marca:
                 self.saveState()
                 self.setFont("Lato-Bold", 62)
@@ -1092,13 +1192,14 @@ class _CanvasNumerado(canvas.Canvas):
 # Opciones Premium: Portada, Resumen Ejecutivo y Firmas
 # ---------------------------------------------------------------------------
 
-def _portada_presentacion(presupuesto, config, st, azul_color):
+def _portada_presentacion(presupuesto, config, st, azul_color, lang="es"):
     """Genera una portada de nivel editorial claramente diferenciada.
 
     Estructura: banda superior de marca (azul, con logo o nombre), título
     grande del proyecto, foto destacada (o un recuadro decorativo si no la
     hay), ficha del cliente y banda inferior de cierre, en página completa.
     """
+    mercado = _mercado(lang)
     res = []
     ancho = _ANCHO
 
@@ -1141,14 +1242,14 @@ def _portada_presentacion(presupuesto, config, st, azul_color):
         "port_lab", fontName="Lato-Bold", fontSize=10.5, leading=13,
         alignment=TA_CENTER, textColor=GRIS, textTransform="uppercase",
     )
-    res.append(Paragraph("Propuesta comercial de proyecto y presupuesto", st_lab))
+    res.append(Paragraph(_rot('Propuesta comercial de proyecto y presupuesto', 'Commercial project proposal and estimate', lang), st_lab))
     res.append(Spacer(1, 10))
 
     st_tit = ParagraphStyle(
         "port_tit", fontName="Lato-Bold", fontSize=25, leading=30,
         alignment=TA_CENTER, textColor=azul_color,
     )
-    res.append(Paragraph(_esc(presupuesto.titulo or "Remodelación de vivienda de lujo"), st_tit))
+    res.append(Paragraph(_esc(presupuesto.titulo or _rot('Remodelación de vivienda de lujo', 'Luxury home remodel', lang)), st_tit))
     res.append(_hr(azul_color, 2, 170, hAlign="CENTER", spaceBefore=16, spaceAfter=26))
 
     # ------------------------------------------------------------------
@@ -1192,8 +1293,7 @@ def _portada_presentacion(presupuesto, config, st, azul_color):
             alignment=TA_CENTER, textColor=GRIS,
         )
         res.append(Paragraph(
-            "Sube una foto destacada del proyecto (render o estado actual) en "
-            "«Opciones premium» para mostrarla en esta portada.",
+            _rot('Sube una foto destacada del proyecto (render o estado actual) en «Opciones premium» para mostrarla en esta portada.', "Upload a featured project photo (render or current state) in 'Premium options' to display it on this cover.", lang),
             st_hint,
         ))
         res.append(Spacer(1, 26))
@@ -1205,14 +1305,16 @@ def _portada_presentacion(presupuesto, config, st, azul_color):
     st_meta_val = ParagraphStyle("port_mv", fontName="Lato", fontSize=10, leading=12.5, textColor=TEXTO)
 
     meta_filas = [
-        [Paragraph("CLIENTE", st_meta_lbl), Paragraph(_esc(presupuesto.cliente.nombre), st_meta_val)],
-        [Paragraph("PRESUPUESTO Nº", st_meta_lbl), Paragraph(_esc(presupuesto.numero), st_meta_val)],
-        [Paragraph("FECHA DE EMISIÓN", st_meta_lbl), Paragraph(fmt_fecha(presupuesto.fecha), st_meta_val)],
+        [Paragraph(_rot('CLIENTE', 'CLIENT', lang), st_meta_lbl), Paragraph(_esc(presupuesto.cliente.nombre), st_meta_val)],
+        [Paragraph(_rot('PRESUPUESTO Nº', 'ESTIMATE No.', lang), st_meta_lbl), Paragraph(_esc(presupuesto.numero), st_meta_val)],
+        [Paragraph(_rot('FECHA DE EMISIÓN', 'ISSUE DATE', lang), st_meta_lbl), Paragraph(fmt_fecha(presupuesto.fecha, mercado=mercado), st_meta_val)],
     ]
     if presupuesto.direccion_obra:
-        meta_filas.append([Paragraph("OBRA / DIRECCIÓN", st_meta_lbl), Paragraph(_esc(presupuesto.direccion_obra), st_meta_val)])
+        meta_filas.append([Paragraph(_rot('OBRA / DIRECCIÓN', 'PROJECT / ADDRESS', lang), st_meta_lbl), Paragraph(_esc(presupuesto.direccion_obra), st_meta_val)])
     if presupuesto.validez_dias:
-        meta_filas.append([Paragraph("VALIDEZ DE LA OFERTA", st_meta_lbl), Paragraph(f"{presupuesto.validez_dias} días", st_meta_val)])
+        _dias_txt2 = _pdf_t(lang, "dias")
+        _validez_lbl = _rot('VALIDEZ DE LA OFERTA', 'OFFER VALIDITY', lang)
+        meta_filas.append([Paragraph(_validez_lbl, st_meta_lbl), Paragraph(f"{presupuesto.validez_dias} {_dias_txt2}", st_meta_val)])
 
     t_meta = Table(meta_filas, colWidths=[150, _ANCHO - 150 - 120])
     t_meta.setStyle(TableStyle([
@@ -1249,11 +1351,11 @@ def _portada_presentacion(presupuesto, config, st, azul_color):
     return res
 
 
-def _tabla_garantias(presupuesto, st, azul_color):
+def _tabla_garantias(presupuesto, st, azul_color, lang="es"):
     """Bloque de garantías al tono del resto del PDF (no una parrilla Excel)."""
-    from .garantias import NOTA_LEGAL, familias_para_pdf
+    from .garantias import familias_para_pdf, nota_legal
 
-    familias = familias_para_pdf(presupuesto)
+    familias = familias_para_pdf(presupuesto, lang)
     st_grupo = ParagraphStyle(
         "gar_grupo", fontName="Lato-Bold", fontSize=9.4, leading=12, textColor=TEXTO,
     )
@@ -1274,13 +1376,10 @@ def _tabla_garantias(presupuesto, st, azul_color):
     flujo = [
         _banda(azul_color),
         Spacer(1, 8),
-        Paragraph("GARANTÍAS DE LA OBRA", st["cap"]),
+        Paragraph(_rot('GARANTÍAS DE LA OBRA', 'PROJECT WARRANTIES', lang), st["cap"]),
         _hr(azul_color, 2, spaceBefore=2, spaceAfter=8),
         Paragraph(
-            "Plazos sobre la <b>ejecución e instalación</b> de los trabajos "
-            "incluidos en este presupuesto, agrupados por tipo de obra. "
-            "Los materiales, luminarias, grifería y equipos conservan la "
-            "garantía de su fabricante.",
+            _rot('Plazos sobre la <b>ejecución e instalación</b> de los trabajos incluidos en este presupuesto, agrupados por tipo de obra. Los materiales, luminarias, grifería y equipos conservan la garantía de su fabricante.', "Warranty periods on the <b>execution and installation</b> of the works included in this estimate, grouped by type of work. Materials, lighting, fixtures and equipment retain their manufacturer's warranty.", lang),
             st_intro,
         ),
         Spacer(1, 12),
@@ -1323,7 +1422,7 @@ def _tabla_garantias(presupuesto, st, azul_color):
         flujo.append(KeepTogether(bloque))
 
     nota = Table(
-        [[Paragraph(_esc(NOTA_LEGAL), st_nota)]],
+        [[Paragraph(_esc(nota_legal(lang)), st_nota)]],
         colWidths=[_ANCHO],
     )
     nota.setStyle(TableStyle([
@@ -1338,12 +1437,13 @@ def _tabla_garantias(presupuesto, st, azul_color):
     return flujo
 
 
-def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=None):
+def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=None, lang="es"):
     """Resumen comercial corto y visible para el cliente.
 
     No muestra costes internos, beneficio ni tiempos. Solo lo que el cliente
     necesita identificar rápido al abrir el PDF: total, validez, fecha y moneda.
     """
+    mercado = _mercado(lang)
     title_style = ParagraphStyle(
         "resumen_comercial_titulo",
         fontName="Lato-Bold",
@@ -1380,16 +1480,17 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=No
 
     def total_cell():
         if ctx is None:
-            return Paragraph(fmt_monto(tot.total, moneda), total_style)
+            return Paragraph(fmt_monto(tot.total, moneda, mercado=mercado), total_style)
         return ctx.campo(
             "resumen_total", ctx.txt_total("total"), ctx.js_total("total"),
             126, alto=18, alineacion="center", tam=12.5,
         )
 
-    validez = f"{presupuesto.validez_dias} días" if presupuesto.validez_dias else "—"
+    _dias_txt3 = _pdf_t(lang, "dias")
+    validez = f"{presupuesto.validez_dias} {_dias_txt3}" if presupuesto.validez_dias else "—"
     filas = [
-        [Paragraph("TOTAL", label_style), Paragraph("VALIDEZ", label_style), Paragraph("FECHA", label_style), Paragraph("MONEDA", label_style)],
-        [total_cell(), Paragraph(validez, value_style), Paragraph(fmt_fecha(presupuesto.fecha), value_style), Paragraph(_esc(moneda), value_style)],
+        [Paragraph("TOTAL", label_style), Paragraph(_pdf_t(lang, "validez").upper(), label_style), Paragraph(_pdf_t(lang, "fecha").upper(), label_style), Paragraph(_pdf_t(lang, "moneda").upper(), label_style)],
+        [total_cell(), Paragraph(validez, value_style), Paragraph(fmt_fecha(presupuesto.fecha, mercado=mercado), value_style), Paragraph(_esc(moneda), value_style)],
     ]
     tabla = Table(filas, colWidths=[_ANCHO * 0.34, _ANCHO * 0.22, _ANCHO * 0.22, _ANCHO * 0.22])
     tabla.setStyle(TableStyle([
@@ -1404,31 +1505,32 @@ def _resumen_comercial(presupuesto, st, moneda, azul_color, ctx=None, totales=No
         ("RIGHTPADDING", (0, 0), (-1, -1), 5),
     ]))
     return KeepTogether([
-        Paragraph("RESUMEN DE LA PROPUESTA", title_style),
+        Paragraph("PROPOSAL SUMMARY", title_style) if _en(lang) else Paragraph("RESUMEN DE LA PROPUESTA", title_style),
         _hr(azul_color, 1.2, spaceBefore=4, spaceAfter=8),
         tabla,
         Spacer(1, 16),
     ])
 
 
-def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=None):
+def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=None, lang="es"):
     """Genera una elegante tabla con el resumen de subtotales por capítulo.
 
     Si `ctx` está presente (PDF interactivo) el subtotal y el peso de cada
     capítulo se emiten como campos de formulario, para que sigan cuadrando
     con el resto del documento al cambiar de producto.
     """
+    mercado = _mercado(lang)
     elementos = []
     
     title_style = ParagraphStyle("res_title", fontName="Lato-Bold", fontSize=11, leading=13, textColor=TEXTO)
-    elementos.append(Paragraph("RESUMEN EJECUTIVO DE LA PROPUESTA (DESGLOSE POR CAPÍTULOS)", title_style))
+    elementos.append(Paragraph(_rot('RESUMEN EJECUTIVO DE LA PROPUESTA (DESGLOSE POR CAPÍTULOS)', 'EXECUTIVE SUMMARY OF THE PROPOSAL (BREAKDOWN BY CHAPTERS)', lang), title_style))
     elementos.append(_hr(azul_color, 1.2, spaceBefore=4, spaceAfter=8))
     
     filas = [
         [
-            Paragraph("<b>Capítulo del Proyecto</b>", st["head"]),
+            Paragraph(_rot('<b>Capítulo del Proyecto</b>', '<b>Project Chapter</b>', lang), st["head"]),
             Paragraph("<b>Subtotal</b>", st["head_c"]),
-            Paragraph("<b>Peso (%)</b>", st["head_c"])
+            Paragraph(_rot('<b>Peso (%)</b>', '<b>Weight (%)</b>', lang), st["head_c"])
         ]
     ]
     
@@ -1437,7 +1539,7 @@ def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=No
     for cap in presupuesto.capitulos:
         porcentaje = (cap.subtotal / subtotal_general) * 100.0
         if ctx is None:
-            celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda), st["tot_c"])
+            celda_subtotal = Paragraph(fmt_monto(cap.subtotal, moneda, mercado=mercado), st["tot_c"])
             celda_peso = Paragraph(f"{porcentaje:.1f} %", st["tot_c"])
         else:
             cid = ctx.id_capitulo(cap)
@@ -1475,7 +1577,7 @@ def _resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=None, totales=No
     return KeepTogether(elementos)
 
 
-def _bloque_firmas(presupuesto, config, st, azul_color):
+def _bloque_firmas(presupuesto, config, st, azul_color, lang="es"):
     """Genera un área de firma bilateral estructurada al final.
 
     Si el presupuesto tiene una firma digital del cliente (dibujada en la
@@ -1484,7 +1586,7 @@ def _bloque_firmas(presupuesto, config, st, azul_color):
     col_w = _ANCHO / 2 - 10
     
     empresa_p = [
-        Paragraph("<b>POR LA EMPRESA CONSTRUCTORA</b>", st["tot_c"]),
+        Paragraph(_rot('<b>POR LA EMPRESA CONSTRUCTORA</b>', '<b>BY THE CONSTRUCTION COMPANY</b>', lang), st["tot_c"]),
         Spacer(1, 45),
         _hr(colors.HexColor("#A0AEC0"), 0.8, 180, hAlign="CENTER"),
         Spacer(1, 4),
@@ -1501,7 +1603,7 @@ def _bloque_firmas(presupuesto, config, st, azul_color):
             firma_flow = _fit_image(p_f, 175, 62, halign="CENTER")
 
     cliente_p = [
-        Paragraph("<b>ACEPTADO POR EL CLIENTE</b>", st["tot_c"]),
+        Paragraph(_rot('<b>ACEPTADO POR EL CLIENTE</b>', '<b>ACCEPTED BY THE CLIENT</b>', lang), st["tot_c"]),
         Spacer(1, 10),
     ]
     if firma_flow:
@@ -1511,7 +1613,7 @@ def _bloque_firmas(presupuesto, config, st, azul_color):
         _hr(colors.HexColor("#A0AEC0"), 0.8, 180, hAlign="CENTER"),
         Spacer(1, 4),
         Paragraph(_esc(presupuesto.cliente.nombre), st["tot_c"]),
-        Paragraph("Firma de Conformidad / Fecha", st["head_c"]),
+        Paragraph(_rot('Firma de Conformidad / Fecha', 'Signature of Conformity / Date', lang), st["head_c"]),
     ]
     
     t_firmas = Table([[empresa_p, "", cliente_p]], colWidths=[col_w, 20, col_w])
@@ -1533,7 +1635,126 @@ def _bloque_firmas(presupuesto, config, st, azul_color):
 # Documento completo
 # ---------------------------------------------------------------------------
 
-def generar_pdf(presupuesto, config):
+_PDF_LABELS = {
+    "es": {
+        "presupuesto": "PRESUPUESTO",
+        "presupuesto_num": "Presupuesto Nº",
+        "presupuesto_default": "Presupuesto de remodelación",
+        "cliente": "Cliente",
+        "direccion_obra": "Dirección de la obra",
+        "codigo_postal": "Código postal",
+        "fecha": "Fecha",
+        "validez": "Validez de la oferta",
+        "moneda": "Moneda",
+        "tasa": "Tasa",
+        "partida": "Partida",
+        "cantidad": "Cantidad",
+        "precio": "Precio",
+        "importe": "Importe",
+        "subtotal": "Subtotal",
+        "total": "TOTAL",
+        "observaciones": "Observaciones",
+        "condiciones": "Condiciones",
+        "firma": "Firma",
+        "aceptacion": "Aceptación",
+        "dias": "días",
+        # Documento de cobro (expresamente no fiscal).
+        "cobro_titulo": "DOCUMENTO DE COBRO",
+        "cobro_num": "Documento Nº",
+        "cobro_default": "Documento de cobro",
+        "cobro_asunto": "Documento comercial de cobro no fiscal",
+        "cobro_alcance": "Alcance del documento",
+        # Una sola línea: tests/test_branding.py comprueba que esta frase
+        # exacta sigue declarando que el documento no es fiscal.
+        "cobro_alcance_txt": "Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable.",
+        "cobro_total": "TOTAL A PAGAR",
+        "info_adicional": "Información adicional",
+        "condiciones_pago": "Condiciones de pago",
+    },
+    "en": {
+        "presupuesto": "ESTIMATE",
+        "presupuesto_num": "Estimate No.",
+        "presupuesto_default": "Remodel estimate",
+        "cliente": "Client",
+        "direccion_obra": "Project address",
+        "codigo_postal": "Postal code",
+        "fecha": "Date",
+        "validez": "Offer validity",
+        "moneda": "Currency",
+        "tasa": "Rate",
+        "partida": "Line item",
+        "cantidad": "Quantity",
+        "precio": "Price",
+        "importe": "Amount",
+        "subtotal": "Subtotal",
+        "total": "TOTAL",
+        "observaciones": "Notes",
+        "condiciones": "Terms",
+        "firma": "Signature",
+        "aceptacion": "Acceptance",
+        "dias": "days",
+        # Payment document (expressly non-fiscal).
+        "cobro_titulo": "PAYMENT DOCUMENT",
+        "cobro_num": "Document No.",
+        "cobro_default": "Payment document",
+        "cobro_asunto": "Non-fiscal commercial payment document",
+        "cobro_alcance": "Scope of this document",
+        "cobro_alcance_txt": (
+            "Non-fiscal commercial document. It does not replace a tax "
+            "invoice issued under the applicable regulations."
+        ),
+        "cobro_total": "TOTAL PAYABLE",
+        "info_adicional": "Additional information",
+        "condiciones_pago": "Payment terms",
+    },
+}
+
+
+def _mercado(lang) -> dict:
+    """Mercado completo del documento: separadores, fecha, impuesto, unidades.
+
+    Centraliza la resolución para que ninguna función del PDF tenga que
+    adivinar el país mirando la cadena de idioma.
+    """
+    return resolver_mercado(lang)
+
+
+def _rot(es: str, en: str, lang, mercado=None) -> str:
+    """Rótulo del PDF en el idioma y el vocabulario del mercado.
+
+    El texto en inglés se escribe una sola vez, con el vocabulario de
+    Estados Unidos, y la capa de variantes lo ajusta al país del documento:
+    «ESTIMATE» en Estados Unidos es «QUOTE» en el Reino Unido. Resolver el
+    mercado cuando no llega evita que cada función tenga que tenerlo a mano.
+    """
+    if not _en(lang):
+        return es
+    return aplicar_variante(en, mercado or _mercado(lang))
+
+
+def _en(lang) -> bool:
+    """¿Este mercado redacta en inglés?
+
+    Sustituye a los `_en(lang)` que había repartidos por el
+    módulo. La pregunta no es si la cadena empieza por «en», sino de qué
+    mercado se trata: «en» resuelve a Estados Unidos y «en-GB» al Reino
+    Unido, y los dos redactan en inglés con datos distintos.
+    """
+    return _mercado(lang)["idioma"] == "en"
+
+
+def _pdf_t(lang: str, key: str) -> str:
+    """Etiqueta del PDF en el idioma pedido.
+
+    Acepta variantes regionales (``en-MX``, ``es-CO``…): lo que decide es
+    la lengua, no el país, porque el documento se manda a un solo cliente.
+    """
+    lang = (lang or "es").strip().lower()
+    lang = _rot('es', 'en', lang)
+    return _PDF_LABELS[lang].get(key, _PDF_LABELS["es"].get(key, key))
+
+
+def generar_pdf(presupuesto, config, lang: str = "es"):
     """Devuelve un BytesIO con el PDF del presupuesto.
 
     Si alguna partida ofrece varios productos a elegir, el documento se
@@ -1556,11 +1777,11 @@ def generar_pdf(presupuesto, config):
         # Anexo generado en memoria: plano + mediciones dibujadas + tabla.
         # Si no hay planos con mediciones (o algo falla) devuelve None y el
         # documento sale exactamente igual que antes.
-        anexo_planos = pdf_planos.generar_anexo(presupuesto)
+        anexo_planos = pdf_planos.generar_anexo(presupuesto, lang)
         if anexo_planos is not None:
             anexos.append(anexo_planos)
     if not anexos:
-        return _documento_presupuesto(presupuesto, config)
+        return _documento_presupuesto(presupuesto, config, lang=lang)
 
     # El índice cita la página en la que empieza cada anexo, pero esa página
     # depende de cuántas ocupe el presupuesto, que solo se sabe tras generar.
@@ -1568,14 +1789,14 @@ def generar_pdf(presupuesto, config):
     # y se vuelve a generar con las páginas reales; si el texto definitivo
     # cambiase la paginación, se repite una vez más.
     buf = _documento_presupuesto(
-        presupuesto, config, pdf_anexos.texto(pdf_anexos.plan_provisional(anexos))
+        presupuesto, config, pdf_anexos.texto(pdf_anexos.plan_provisional(anexos), lang), lang=lang
     )
     for _ in range(2):
         tam, paginas = pdf_anexos.medir(buf)
         pdf_anexos.planificar(anexos, tam, paginas)
         buf = _documento_presupuesto(
-            presupuesto, config, pdf_anexos.texto(anexos),
-            paginas_extra=pdf_anexos.paginas_incorporadas(anexos),
+            presupuesto, config, pdf_anexos.texto(anexos, lang),
+            paginas_extra=pdf_anexos.paginas_incorporadas(anexos), lang=lang,
         )
         if pdf_anexos.medir(buf)[1] == paginas:
             break
@@ -1586,16 +1807,17 @@ def generar_pdf(presupuesto, config):
     # Red de seguridad: si aun así el archivo se pasa del tope, se entrega el
     # presupuesto sin fusionar antes que una descarga que el servidor rechace.
     return _documento_presupuesto(
-        presupuesto, config, pdf_anexos.texto(pdf_anexos.descartar_todos(anexos))
+        presupuesto, config, pdf_anexos.texto(pdf_anexos.descartar_todos(anexos), lang), lang=lang
     )
 
 
-def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0):
+def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0, lang="es"):
     """Construye el PDF del presupuesto (sin fusionar los anexos).
 
     ``paginas_extra`` son las páginas de anexos que se añadirán después: el
     pie «n/N» las cuenta para que el total sea el del archivo entregado.
     """
+    mercado = _mercado(lang)
     _inicio = time.perf_counter()
     _registrar_fuentes()
     st = _estilos()
@@ -1611,8 +1833,19 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     # Capa interactiva. `preparar()` decide si hay algo que hacer: sin
     # partidas de varios productos devuelve False y el PDF sale exactamente
     # igual que antes, sin formulario ni JavaScript.
-    ctx = ContextoInteractivo(presupuesto, moneda, TEXTO, azul_color)
+    ctx = ContextoInteractivo(presupuesto, moneda, TEXTO, azul_color,
+                              etiqueta_total=_rot('PRESUPUESTO TOTAL', 'ESTIMATE TOTAL', lang),
+                              lang=lang)
     if not ctx.preparar():
+        ctx = None
+    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni la
+    # inversión del sujeto pasivo: recalcula los totales como «base + IVA» y
+    # dejaría el bloque fiscal diciendo una cosa y el resumen otra. En esos
+    # documentos el presupuesto sale cerrado.
+    if ctx is not None and (
+        getattr(presupuesto, "cis_tipo", None) is not None
+        or (getattr(presupuesto, "iva_tratamiento", "") or "") == "inversion_sujeto_pasivo"
+    ):
         ctx = None
 
     buf = io.BytesIO()
@@ -1623,46 +1856,50 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         rightMargin=34,
         topMargin=30,
         bottomMargin=34,
-        title=f"Presupuesto {presupuesto.numero} — {presupuesto.titulo or config.empresa_nombre}",
+        title=(f"Estimate {presupuesto.numero} — {presupuesto.titulo or config.empresa_nombre}" if _en(lang) else f"Presupuesto {presupuesto.numero} — {presupuesto.titulo or config.empresa_nombre}"),
         author=config.empresa_nombre,
-        subject="Presupuesto de remodelación",
+        subject=_rot('Presupuesto de remodelación', 'Remodel estimate', lang),
     )
 
     story = []
     
     # Portada de presentación (Opcional)
     if presupuesto.con_portada:
-        story += _portada_presentacion(presupuesto, config, st, azul_color)
+        story += _portada_presentacion(presupuesto, config, st, azul_color, lang=lang)
         
     # Una sola pasada del motor de cálculo para todo el documento (el
     # resumen, el bloque de totales y el cierre leen las mismas cifras).
     totales = _LecturaTotales(presupuesto)
 
-    story += _cabecera(presupuesto, config, st, azul_color)
-    story.append(_resumen_comercial(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales))
+    story += _cabecera(presupuesto, config, st, azul_color,
+                      titulo_doc=_rot('PRESUPUESTO', 'ESTIMATE', lang),
+                      etiqueta_num=_rot('Presupuesto Nº', 'Estimate No.', lang),
+                      titulo_por_defecto=_rot('Presupuesto de remodelación', 'Remodel estimate', lang),
+                      lang=lang)
+    story.append(_resumen_comercial(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales, lang=lang))
     
     # Resumen Ejecutivo de Capítulos (Opcional)
     if presupuesto.mostrar_resumen_capitulos:
-        story.append(_resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales))
+        story.append(_resumen_ejecutivo(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales, lang=lang))
 
     for i, cap in enumerate(presupuesto.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx, lang=lang)
 
     # Totales (en página nueva si no caben las ~160 pt)
     story.append(Spacer(1, 22))
-    story.append(KeepTogether(_totales(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales)))
+    story.append(KeepTogether(_totales(presupuesto, st, moneda, azul_color, ctx=ctx, totales=totales, etiqueta_total=_rot('PRESUPUESTO TOTAL', 'ESTIMATE TOTAL', lang), lang=lang)))
 
     if presupuesto.notas:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Alcance e información adicional", presupuesto.notas, st, azul_color))
+        story.append(_seccion(_rot('Alcance e información adicional', 'Scope and additional information', lang), presupuesto.notas, st, azul_color, lang=lang))
     if presupuesto.condiciones:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Condiciones comerciales", presupuesto.condiciones, st, azul_color))
+        story.append(_seccion(_rot('Condiciones comerciales', 'Commercial terms', lang), presupuesto.condiciones, st, azul_color, lang=lang))
     # Datos venezolanos, siempre guardados en el documento para preservar su histórico.
     regional = []
-    if getattr(config, "mostrar_numero_control", False) and getattr(presupuesto, "numero_control", ""): regional.append(f"Número de control: {presupuesto.numero_control}")
+    if getattr(config, "mostrar_numero_control", False) and getattr(presupuesto, "numero_control", ""): regional.append(_rot('Número de control: ', 'Control number: ', lang) + f"{presupuesto.numero_control}")
     if getattr(config, "mostrar_tasa_cambio", False) and presupuesto.tipo_cambio:
         # Tasa genérica LatAm: 1 USD = X en la otra moneda (no solo Bs)
         _mon_tasa = getattr(config, "moneda_default", "") or "USD"
@@ -1671,7 +1908,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         _mon_destino_tasa = presupuesto.moneda if presupuesto.moneda not in ("USD", "", "PAB") else _mon_tasa
         if _mon_destino_tasa in ("USD", "", "PAB"):
             _mon_destino_tasa = "VES"
-        regional.append(f"Tasa de referencia: 1 USD = {fmt_num(presupuesto.tipo_cambio)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
+        regional.append(_rot('Tasa de referencia: ', 'Reference rate: ', lang) + f"1 USD = {fmt_num(presupuesto.tipo_cambio, mercado=mercado)} {_mon_destino_tasa}" + (f" ({fmt_fecha(presupuesto.fecha_tipo_cambio, mercado=mercado)})" if getattr(presupuesto, "fecha_tipo_cambio", None) else ""))
     if getattr(config, "mostrar_total_bs", False) and presupuesto.tipo_cambio:
         # Equivalente genérico: si presupuesto es USD -> muestra en moneda local, si es local -> muestra en USD
         try:
@@ -1679,41 +1916,44 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
             if _mon_cfg == "BS":
                 _mon_cfg = "VES"
             if presupuesto.moneda == "USD" and _mon_cfg not in ("USD", "", "PAB"):
-                regional.append(f"Equivalente referencial: {fmt_monto(totales.total * presupuesto.tipo_cambio, _mon_cfg)}")
+                regional.append(_rot('Equivalente referencial: ', 'Referential equivalent: ', lang) + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, _mon_cfg, mercado=mercado)}")
             elif presupuesto.moneda not in ("USD", "", "PAB") and presupuesto.moneda != _mon_cfg:
                 # Presupuesto en local, muestra equivalente en USD
                 if presupuesto.tipo_cambio and presupuesto.tipo_cambio != 0:
-                    regional.append(f"Equivalente referencial: {fmt_monto(totales.total / presupuesto.tipo_cambio, 'USD')}")
+                    regional.append(_rot('Equivalente referencial: ', 'Referential equivalent: ', lang) + f"{fmt_monto(totales.total / presupuesto.tipo_cambio, 'USD', mercado=mercado)}")
             elif presupuesto.moneda == "USD":
                 # Fallback genérico si no hay moneda local configurada
-                regional.append(f"Equivalente referencial: {fmt_monto(totales.total * presupuesto.tipo_cambio, 'VES')}")
+                regional.append(_rot('Equivalente referencial: ', 'Referential equivalent: ', lang) + f"{fmt_monto(totales.total * presupuesto.tipo_cambio, 'VES', mercado=mercado)}")
         except Exception:
             pass
-    if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append("Operación exenta" if presupuesto.operacion_exenta else f"Retención aplicable: {fmt_num(presupuesto.retencion_pct)} %")
-    if getattr(config, "datos_bancarios", ""): regional.append("Datos de pago:\n" + config.datos_bancarios)
-    if regional: story.append(Spacer(1, 16)); story.append(_seccion("Datos fiscales y pago", "\n".join(regional), st, azul_color))
-    if getattr(config, "mostrar_clausula_cambiaria", False) and getattr(presupuesto, "clausula_cambiaria", ""): story.append(Spacer(1, 12)); story.append(_seccion("Cláusula de ajuste cambiario", presupuesto.clausula_cambiaria, st, azul_color))
+    if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append(_rot('Operación exenta', 'Tax-exempt operation', lang) if presupuesto.operacion_exenta else (_rot('Retención aplicable: ', 'Applicable withholding: ', lang) + f"{fmt_num(presupuesto.retencion_pct, mercado=mercado)} %"))
+    if getattr(config, "datos_bancarios", ""): regional.append(_rot('Datos de pago:\n', 'Payment data:\n', lang) + config.datos_bancarios)
+    if regional: story.append(Spacer(1, 16)); story.append(_seccion(_rot('Datos fiscales y pago', 'Tax and payment data', lang), "\n".join(regional), st, azul_color, lang=lang))
+    if getattr(config, "mostrar_clausula_cambiaria", False) and getattr(presupuesto, "clausula_cambiaria", ""): story.append(Spacer(1, 12)); story.append(_seccion(_rot('Cláusula de ajuste cambiario', 'Exchange rate adjustment clause', lang), presupuesto.clausula_cambiaria, st, azul_color, lang=lang))
 
     # Ahorro comercial visible solo cuando se solicita explícitamente.
     if getattr(presupuesto, "mostrar_ahorro", False) and presupuesto.descuento_pct:
         original = totales.base / max(0.0001, 1 - presupuesto.descuento_pct / 100)
         ahorro = original - totales.base
-        texto_ahorro = f"Precio original: {fmt_monto(original, moneda)}\nDescuento comercial: {fmt_monto(ahorro, moneda)}\nPrecio final antes de IVA: {fmt_monto(totales.base, moneda)}"
-        story.append(Spacer(1, 16)); story.append(_seccion("Ahorro obtenido", texto_ahorro, st, azul_color))
+        if _en(lang):
+            texto_ahorro = f"Original price: {fmt_monto(original, moneda, mercado=mercado)}\nCommercial discount: {fmt_monto(ahorro, moneda, mercado=mercado)}\nFinal price before VAT: {fmt_monto(totales.base, moneda, mercado=mercado)}"
+        else:
+            texto_ahorro = f"Precio original: {fmt_monto(original, moneda, mercado=mercado)}\nDescuento comercial: {fmt_monto(ahorro, moneda, mercado=mercado)}\nPrecio final antes de IVA: {fmt_monto(totales.base, moneda, mercado=mercado)}"
+        story.append(Spacer(1, 16)); story.append(_seccion(_rot('Ahorro obtenido', 'Savings achieved', lang), texto_ahorro, st, azul_color, lang=lang))
     if texto_anexos:
         story.append(Spacer(1, 16))
-        story.append(_seccion("Anexos incluidos", texto_anexos, st, azul_color))
+        story.append(_seccion(_rot('Anexos incluidos', 'Included annexes', lang), texto_anexos, st, azul_color, lang=lang))
 
     # Bloque formal de firmas de aceptación (Opcional)
     if getattr(presupuesto, "mostrar_garantias", False):
         story.append(Spacer(1, 18))
-        story += _tabla_garantias(presupuesto, st, azul_color)
+        story += _tabla_garantias(presupuesto, st, azul_color, lang=lang)
 
     if presupuesto.mostrar_firmas:
-        story.append(_bloque_firmas(presupuesto, config, st, azul_color))
+        story.append(_bloque_firmas(presupuesto, config, st, azul_color, lang=lang))
 
     doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(
-        *a, estado=presupuesto.estado, ctx=ctx, paginas_extra=paginas_extra, **k))
+        *a, estado=presupuesto.estado, ctx=ctx, paginas_extra=paginas_extra, mercado=mercado, **k))
     buf.seek(0)
     # Traza de rendimiento: en producción, con la base por red, es la cifra
     # que permite ver si una descarga lenta es CPU, consultas o almacenamiento.
@@ -1726,8 +1966,10 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     return buf
 
 
-def generar_factura_pdf(factura, config):
+def generar_factura_pdf(factura, config, lang: str = "es"):
     """Devuelve un PDF comercial de cobro, expresamente no fiscal."""
+    en = _en(lang)
+    t = lambda clave: _pdf_t("en" if en else "es", clave)  # noqa: E731
     _precargar_recursos(factura, config)
     _registrar_fuentes()
     st = _estilos()
@@ -1742,37 +1984,37 @@ def generar_factura_pdf(factura, config):
         rightMargin=34,
         topMargin=30,
         bottomMargin=34,
-        title=f"Documento de cobro {factura.numero} — {factura.titulo or config.empresa_nombre}",
+        title=f"{t('cobro_default')} {factura.numero} — {factura.titulo or config.empresa_nombre}",
         author=config.empresa_nombre,
-        subject="Documento comercial de cobro no fiscal",
+        subject=t("cobro_asunto"),
     )
 
     story = []
     story += _cabecera(
         factura, config, st, azul_color,
-        titulo_doc="DOCUMENTO DE COBRO", etiqueta_num="Documento Nº", titulo_por_defecto="Documento de cobro",
+        titulo_doc=t("cobro_titulo"), etiqueta_num=t("cobro_num"),
+        titulo_por_defecto=t("cobro_default"), lang=lang,
     )
     story.append(_seccion(
-        "Alcance del documento",
-        "Documento comercial no fiscal. No sustituye una factura fiscal emitida conforme a la normativa aplicable.",
-        st,
-        azul_color,
+        t("cobro_alcance"), t("cobro_alcance_txt"), st, azul_color, lang=lang,
     ))
     story.append(Spacer(1, 14))
     for i, cap in enumerate(factura.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang)
 
     story.append(Spacer(1, 22))
-    story.append(KeepTogether(_totales(factura, st, moneda, azul_color, etiqueta_total="TOTAL A PAGAR")))
+    story.append(KeepTogether(_totales(
+        factura, st, moneda, azul_color, etiqueta_total=t("cobro_total"), lang=lang,
+    )))
 
     if factura.notas:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Información adicional", factura.notas, st, azul_color))
+        story.append(_seccion(t("info_adicional"), factura.notas, st, azul_color, lang=lang))
     if factura.condiciones:
         story.append(Spacer(1, 19))
-        story.append(_seccion("Condiciones de pago", factura.condiciones, st, azul_color))
+        story.append(_seccion(t("condiciones_pago"), factura.condiciones, st, azul_color, lang=lang))
 
     doc.build(story, canvasmaker=lambda *a, **k: _CanvasNumerado(*a, estado="", **k))
     buf.seek(0)

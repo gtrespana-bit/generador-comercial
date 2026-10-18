@@ -2,10 +2,11 @@
 
 import re
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from sqlalchemy import func
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..services import auditoria
 from ..services.tasa import factor_conversion_local, tasa_convertir_precio
 from ..services.traduccion import codigo_desde_pais, traducir
@@ -639,7 +640,7 @@ async def registrar_busqueda_catalogo_sin_resultados(
 
 @router.get("/partidas/{partida_id}/ficha")
 def ficha_partida_catalogo(
-    partida_id: int,
+    request: Request, partida_id: int,
     moneda: str = "",
     tasa: str = "",
     db: Session = Depends(get_db),
@@ -655,7 +656,7 @@ def ficha_partida_catalogo(
     if partida is None:
         return JSONResponse(
             status_code=404,
-            content={"ok": False, "error": "Partida no encontrada."},
+            content={"ok": False, "error": mensaje_request(request, "Partida no encontrada.")},
         )
     try:
         _cfg_f = _config(db)
@@ -699,7 +700,7 @@ def ficha_partida_catalogo(
 
 @router.get("/partidas/{partida_id}/descomposicion")
 def descomposicion_partida(
-    partida_id: int,
+    request: Request, partida_id: int,
     moneda: str = "",
     tasa: str = "",
     db: Session = Depends(get_db),
@@ -712,7 +713,7 @@ def descomposicion_partida(
     """
     partida = db.get(Partida, partida_id)
     if partida is None:
-        return {"ok": False, "error": "Partida no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no encontrada.")}
     try:
         valor = json.loads(partida.descomposicion_json or "[]")
     except (TypeError, ValueError):
@@ -746,12 +747,30 @@ def descomposicion_partida(
     return {"ok": True, "filas": filas, "moneda": _mon_d}
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Las variantes regionales (``/en-mx/``) comparten vocabulario: lo que
+    decide la lengua del libro exportado es la lengua, no el país.
+    """
+    return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
 @router.get("/partidas/exportar")
 def exportar_partidas(
+    request: Request,
     formato: str = "csv",
     incluir_ocultas: bool = False,
     db: Session = Depends(get_db),
 ):
+    idioma = _idioma(request)
     """Exporta las partidas visibles; las ocultas son opt-in."""
     query = db.query(Partida)
     if not incluir_ocultas:
@@ -787,18 +806,18 @@ def exportar_partidas(
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_partidas_excel
-        buf = exportar_catalogo_partidas_excel(partidas)
+        buf = exportar_catalogo_partidas_excel(partidas, idioma=idioma)
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=partidas.xlsx"},
         )
 
-    filas = [[
+    filas = [_cabeceras_csv([
         "Código", "Código anterior", "Nombre", "Descripción", "Unidad", "Precio unitario",
         "Capítulo", "Subcapítulo", "Apartado", "Coste materiales", "Coste mano de obra", "Coste complementarios", "Otros costes", "Tiempo estimado (h)", "Proveedor",
         "Rendimiento", "Desperdicio recomendado (%)", "Notas técnicas", "Última actualización de precio", "Usos",
-    ]]
+    ], idioma)]
     for p in partidas:
         filas.append([
             p.codigo_interno, p.codigo_legacy, p.nombre, p.descripcion, p.unidad,
@@ -955,14 +974,14 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
     """
     partida = db.get(Partida, partida_id)
     if partida is None:
-        return {"ok": False, "error": "Partida del catálogo no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida del catálogo no encontrada.")}
     try:
         payload = await request.json()
     except (TypeError, ValueError):
         payload = {}
     nuevo_precio = _f(payload.get("precio"), 0)
     if nuevo_precio < 0:
-        return {"ok": False, "error": "El precio no puede ser negativo."}
+        return {"ok": False, "error": mensaje_request(request, "El precio no puede ser negativo.")}
     # El editor muestra (y envía) el precio en la moneda del presupuesto; el
     # catálogo se guarda en la moneda base. Sin este paso, «actualizar el
     # catálogo» desde un presupuesto en MXN escribía el importe en pesos como
@@ -1004,7 +1023,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     partida = db.get(Partida, partida_id) if partida_id else None
     nombre = str(form.get("nombre", "")).strip()
     if not nombre:
-        return {"ok": False, "error": "El nombre de la partida es obligatorio."}
+        return {"ok": False, "error": mensaje_request(request, "El nombre de la partida es obligatorio.")}
     # Una línea importada o antigua puede no conservar el id del catálogo;
     # su nombre único permite recuperar la misma ficha en vez de duplicarla.
     if partida is None:
@@ -1013,7 +1032,7 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     if partida is not None:
         repetida = repetida.filter(Partida.id != partida.id)
     if repetida.first():
-        return {"ok": False, "error": "Ya existe otra partida con ese nombre."}
+        return {"ok": False, "error": mensaje_request(request, "Ya existe otra partida con ese nombre.")}
 
     datos = _datos_partida_catalogo(form)
     filas_catalogo, costes_calculados = _descomposicion_catalogo(form)

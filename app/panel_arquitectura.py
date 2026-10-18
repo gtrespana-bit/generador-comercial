@@ -220,7 +220,7 @@ SECCIONES: tuple[Seccion, ...] = (
         id="sistema",
         nombre="Sistema",
         ruta="/admin/sistema",
-        descripcion="Operación, automatizaciones, datos, equipo, accesos y auditoría del panel.",
+        descripcion="Operación, automatizaciones, datos, matrices de precios, equipo, accesos y auditoría del panel.",
         icono="sistema",
         atajo="s",
         pestanas=(
@@ -239,6 +239,11 @@ SECCIONES: tuple[Seccion, ...] = (
                 "datos",
                 "Salud de datos",
                 "Catálogo y configuración: huecos, precios anómalos y estado del despliegue de datos.",
+            ),
+            Pestana(
+                "precios",
+                "Matrices de precios",
+                "Carga de la matriz nacional de precios por país, con validación previa.",
             ),
             Pestana(
                 "equipo",

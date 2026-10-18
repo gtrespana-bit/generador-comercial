@@ -26,9 +26,10 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-from ..utils import decimales_moneda, fmt_num, simbolo_moneda
-from .tasa import TASAS_ACTUALIZADAS, tasa_sugerida
+from ..utils import decimales_moneda, fmt_num, simbolo_moneda, unir_precio_u
+from .tasa import tasa_fecha_verificacion, tasa_sugerida
 from .traduccion import traducir
+from ..paises import es_ingles
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Presupuesto de ejemplo (remodelación de baño) — base USD del catálogo
@@ -99,12 +100,97 @@ _OBRA = "Remodelación de baño"
 _RESIDENCIA = "Res. Los Naranjos"
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Versión en inglés del ejemplo
+#
+# Las cifras (cantidades, precios, costes, tiempos) viven UNA sola vez, en
+# _CAPITULOS y _PRODUCTOS: traducirlas aquí sería una fuente segura de
+# desajustes. Lo que se traduce es sólo el rótulo, con vocabulario de obra
+# estadounidense real (quantity surveying), no traducción literal:
+# «friso» -> render, «enchapado» -> tiling, «oficial» -> journeyman,
+# «ayudante» -> helper, «aparato sanitario» -> sanitary fixture.
+# ─────────────────────────────────────────────────────────────────────────────
+
+_NOMBRES_EN: dict[str, str] = {
+    # --- Capítulos -----------------------------------------------------------
+    "Demoliciones y desmontajes": "Demolition and strip-out",
+    "Instalaciones (plomería del baño)": "Rough-in (bathroom plumbing)",
+    "Aislamientos e impermeabilizaciones": "Waterproofing and tanking",
+    "Revestimientos y acabados": "Finishes and tiling",
+    # --- Partidas: demolición --------------------------------------------------
+    "Picado de enchapado cerámico en pared y su capa de pega": "Hacking off wall tiling and its setting bed",
+    "Demolición de piso cerámico y su capa de pega": "Removal of floor tiling and its setting bed",
+    "Desmontaje de aparato sanitario y su grifería": "Removal of sanitary fixtures and taps",
+    # --- Partidas: instalaciones ------------------------------------------------
+    "Tubería de agua de PPR de 20 mm, empotrada, incluso roza y resane": "20 mm PPR water pipe, chased in, incl. chasing and making good",
+    "Punto de agua fría y caliente para aparato sanitario": "Hot and cold water point for sanitary fixture",
+    "Llave de escuadra para aparato": "Angle stop valve for fixture",
+    "Punto de desagüe para inodoro": "Soil connection for WC",
+    "Instalación de inodoro con su conexión de agua y desagüe": "Installation of WC with supply and waste connections",
+    "Instalación de lavamanos con su grifería y desagüe": "Installation of washbasin with tap and waste",
+    "Instalación de ducha o regadera con su grifería": "Installation of shower with mixer valve",
+    # --- Partidas: impermeabilización --------------------------------------------
+    "Impermeabilización de piso de baño o ducha bajo enchapado": "Tanking of bathroom or shower floor under tiling",
+    "Mortero impermeabilizante en área húmeda, base para enchapado": "Waterproofing mortar in wet area, base for tiling",
+    # --- Partidas: revestimientos -------------------------------------------------
+    "Friso de mortero maestreado sobre paramento interior, 1,5 cm": "Cement render, floated, on internal walls, 15 mm",
+    "Enchapado de porcelanato de gran formato en pared": "Large-format porcelain wall tiling",
+    "Enchapado de zona de ducha sobre impermeabilización": "Tiling of shower area over tanking",
+    "Colocación de piso de porcelanato de gran formato, en capa fina": "Large-format porcelain floor tiling, thin-set",
+    "Piso cerámico en área húmeda con pendiente a desagüe": "Ceramic floor tiling in wet area, sloped to drain",
+    # --- Productos ---------------------------------------------------------------
+    "Porcelanato de gran formato 60×120 cm (pared)": "Large-format porcelain tile 60×120 cm (wall)",
+    "Porcelanato 60×60 cm (piso)": "Porcelain tile 60×60 cm (floor)",
+    "Columna de ducha termostática": "Thermostatic shower column",
+    "Mueble de baño con lavamanos, 60 cm": "Vanity unit with basin, 60 cm",
+    "Inodoro de tanque, una pieza": "One-piece close-coupled WC",
+    # --- APU real del catálogo -----------------------------------------------------
+    "Muro de cerramiento de parcela de bloque": "Concrete block boundary wall",
+    "Bloque de concreto hueco de 15x20x40 cm": "Hollow concrete block 15×20×40 cm",
+    "Mortero de pega para mampostería": "Masonry mortar, setting bed",
+    "Acero de refuerzo en cabillas corrugadas": "Deformed steel reinforcing bar",
+    "Concreto premezclado de resistencia 210 kg/cm²": "Ready-mix concrete, 210 kg/cm²",
+    "Mezcladora de concreto y mortero de 1 saco": "One-bag concrete and mortar mixer",
+    "Oficial de 1ª albañil": "Journeyman bricklayer, 1st class",
+    "Ayudante": "Helper",
+}
+
+# Unidades: «ud» (unidad) se dice «ea» (each) en un APU en inglés.
+_UNIDADES_EN = {"ud": "ea"}
+
+# Rótulos sueltos del ejemplo en inglés.
+_ETIQUETAS_EN = {
+    "iva": "VAT ({pct} %)",
+    "margen_s_coste": "+{pct} % on cost",
+    "horas": "{n} man-hours",
+    "horas_split": "👷 49 h journeyman · 🧑 49 h helper",
+    "duracion": "≈ 6 days",
+    "cuadrilla": "crew of 2 · 1 journeyman + 1 helper",
+    "productos_cliente": "Products chosen by the client",
+    "horas_mo": "{h} man-hours/{unidad}",
+    "empresa": "Alfa Construction",
+    "obra": "Bathroom remodel",
+    "residencia": "Los Naranjos Res.",
+    "term_pared": "render",
+    "term_enchapado": "tiling",
+}
+
+# Descripción larga del APU: viene del catálogo y no es traducible término a
+# término, así que se rotula aparte por código de partida.
+_DESCRIPCION_APU_EN = {
+    "14.04.01.060": (
+        "Construction of a concrete block boundary wall with tie beams. "
+        "Includes the masonry and the beams."
+    ),
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # APU de ejemplo — partida real del catálogo (muro de cerramiento de bloque)
 # ─────────────────────────────────────────────────────────────────────────────
 
 _APU_CODIGO = "14.04.01.060"
 _BASE_DATOS = Path(__file__).resolve().parents[2] / "basedatos_partidas"
 _GRUPO_ETIQUETA = {"materiales": "Material", "mano_obra": "Mano de obra", "maquinaria": "Equipo"}
+_GRUPO_ETIQUETA_EN = {"materiales": "Material", "mano_obra": "Labor", "maquinaria": "Equipment"}
 # Unidades del cuadro de recursos → glifos con superíndice para la web
 _UNIDADES_WEB = {"m2": "m²", "m3": "m³", "cm2": "cm²", "kg/cm2": "kg/cm²"}
 
@@ -163,30 +249,72 @@ def _apu_base() -> dict | None:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _fmt_cant(v: float) -> str:
-    return str(int(v)) if float(v) == int(v) else fmt_num(v, 2)
+def _fmt_cant(v: float, mercado=None) -> str:
+    return str(int(v)) if float(v) == int(v) else fmt_num(v, 2, mercado=mercado)
 
 
-def _monto(valor: float, moneda: str, dec: int) -> str:
-    return f"{fmt_num(valor, dec)} {simbolo_moneda(moneda)}"
+def _monto(valor: float, moneda: str, dec: int, mercado=None) -> str:
+    return f"{fmt_num(valor, dec, mercado=mercado)} {simbolo_moneda(moneda)}"
 
 
-def _precio_u(valor: float, moneda: str, unidad: str) -> str:
-    return f"{fmt_num(valor, 2)} {simbolo_moneda(moneda)}/{unidad}"
+def _precio_u(valor: float, moneda: str, unidad: str, mercado=None) -> str:
+    simbolo = unir_precio_u(simbolo_moneda(moneda), unidad)
+    return f"{fmt_num(valor, 2, mercado=mercado)} {simbolo}"
 
 
-@lru_cache(maxsize=32)
-def contexto_ejemplo(codigo_pais: str | None) -> dict:
+def _es_ingles(idioma: str | None) -> bool:
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
+
+
+def _rotulo(texto: str, *, en: bool, codigo: str) -> str:
+    """Rótulo del ejemplo en el idioma y la habla del país.
+
+    En español se usa el glosario VE→país (friso → pañete/aplanado…). En
+    inglés manda la tabla curada ``_NOMBRES_EN``, que es vocabulario de obra
+    real; lo que no esté cae al glosario VE→EN y, si tampoco, al original.
+    """
+    if not texto:
+        return texto
+    if en:
+        return _NOMBRES_EN.get(texto) or traducir(texto, "EN")
+    return traducir(texto, codigo)
+
+
+def _unidad_rotulo(unidad: str, *, en: bool) -> str:
+    return _UNIDADES_EN.get(unidad, unidad) if en else unidad
+
+
+@lru_cache(maxsize=64)
+def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
     """Todo lo que la landing muestra del ejemplo, ya formateado por país.
+
+    ``idioma`` traduce los rótulos (partidas, capítulos, etiquetas) y el
+    formato de los números: en inglés «2,914.52 US$», en español
+    «2.914,52 US$». El país sigue mandando en la moneda, la tasa y el IVA.
 
     Nunca lanza: si algo falla (moneda sin tasa, catálogo ausente) degrada a
     USD genérico antes que romper la página pública.
     """
-    from ..paises import PAIS_GENERICO, PAISES
+    from ..paises import PAIS_GENERICO, PAISES, resolver_mercado
 
+    en = _es_ingles(idioma)
     pais = PAISES.get(str(codigo_pais or "").strip().upper()) if codigo_pais else None
     if pais is None:
         pais = PAIS_GENERICO
+    # Contenido y formato son dos cosas distintas cuando el visitante todavía
+    # no eligió país: el contenido (moneda, IVA, catálogo, empresa) sigue
+    # siendo el genérico, pero los separadores y la fecha los fija el idioma,
+    # porque el genérico es hispano y una landing en inglés acabaría
+    # mostrando «180,00 US$». «en» resuelve a Estados Unidos: punto decimal.
+    mercado_fmt = (
+        pais
+        if pais is not PAIS_GENERICO
+        else (resolver_mercado(idioma) if en else PAIS_GENERICO)
+    )
     codigo = pais.get("codigo") or ""
 
     moneda = pais.get("moneda") or "USD"
@@ -196,13 +324,18 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
         moneda = "USD"
     dec = decimales_moneda(moneda)
     convierte = moneda != "USD"
-    iva = int(pais.get("iva") or 16)
+    iva = float(pais.get("iva") or 16)
+    # El impuesto tiene nombre legal propio (IGV, ITBMS, ITBIS, ISV), que
+    # no se traduce; el IVA genérico sí se dice VAT en inglés.
+    etiqueta_impuesto = pais.get("etiqueta_impuesto") or "I.V.A."
+    if en:
+        etiqueta_impuesto = pais.get("etiqueta_impuesto_en") or etiqueta_impuesto
 
     def monto(v: float) -> str:
-        return _monto(v, moneda, dec)
+        return _monto(v, moneda, dec, mercado_fmt)
 
     def precio_u(v: float, unidad: str) -> str:
-        return _precio_u(v, moneda, unidad)
+        return _precio_u(v, moneda, unidad, mercado_fmt)
 
     # ---- Capítulos y partidas -------------------------------------------------
     caps = []
@@ -220,9 +353,9 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
             sub_ben += ben
             filas.append(
                 {
-                    "nombre": traducir(nombre, codigo),
-                    "cant": f"{_fmt_cant(cantidad)} {unidad}",
-                    "precio": precio_u(precio, unidad),
+                    "nombre": _rotulo(nombre, en=en, codigo=codigo),
+                    "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
+                    "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
                     "importe": monto(importe),
                     "coste": monto(coste),
                     "beneficio": monto(ben),
@@ -235,7 +368,7 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
         ben_obra = round(ben_obra + sub_ben, dec)
         caps.append(
             {
-                "titulo": f"{idx:02d} · {traducir(titulo, codigo)}",
+                "titulo": f"{idx:02d} · {_rotulo(titulo, en=en, codigo=codigo)}",
                 "importe": monto(sub),
                 "beneficio": f"+ {monto(sub_ben)}",
                 "partidas": filas,
@@ -253,10 +386,10 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
         coste_prod = round(coste_prod + coste, dec)
         productos.append(
             {
-                "nombre": traducir(nombre, codigo),
+                "nombre": _rotulo(nombre, en=en, codigo=codigo),
                 "img": img,
-                "cant": f"{_fmt_cant(cantidad)} {unidad}",
-                "precio": precio_u(precio, unidad),
+                "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
+                "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
                 "importe": monto(importe),
             }
         )
@@ -280,10 +413,15 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
             grupos[f["grupo"]] = round(grupos[f["grupo"]] + importe, dec)
             filas.append(
                 {
-                    "grupo": _GRUPO_ETIQUETA.get(f["grupo"], "Equipo"),
-                    "nombre": f["nombre"],
-                    "rend": f"{fmt_num(f['rendimiento'], 2)} {f['unidad_rend']}",
-                    "precio": precio_u(precio, f["unidad_rend"]),
+                    "grupo": (_GRUPO_ETIQUETA_EN if en else _GRUPO_ETIQUETA).get(
+                        f["grupo"], "Equipment" if en else "Equipo"
+                    ),
+                    "nombre": _rotulo(f["nombre"], en=en, codigo=codigo),
+                    "rend": (
+                        f"{fmt_num(f['rendimiento'], 2, mercado=mercado_fmt)} "
+                        f"{_unidad_rotulo(f['unidad_rend'], en=en)}"
+                    ),
+                    "precio": precio_u(precio, _unidad_rotulo(f["unidad_rend"], en=en)),
                     "importe": monto(importe),
                 }
             )
@@ -298,34 +436,52 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
         apu = {
             "disponible": True,
             "codigo": base["codigo"],
-            "titulo": traducir(base["titulo"], codigo),
+            "titulo": _rotulo(base["titulo"], en=en, codigo=codigo),
             "unidad": base["unidad"],
-            "descripcion": base["descripcion"],
+            "descripcion": (
+                _DESCRIPCION_APU_EN.get(base["codigo"]) or base["descripcion"]
+            )
+            if en
+            else base["descripcion"],
             "filas": filas,
             "materiales": monto(grupos["materiales"]),
             "mano_obra": monto(grupos["mano_obra"]),
             "equipo": monto(grupos["maquinaria"]),
             "directo": monto(directo),
-            "comp_pct": fmt_num(base["complementarios_pct"], 0),
+            "comp_pct": fmt_num(base["complementarios_pct"], 0, mercado=mercado_fmt),
             "comp": monto(comp),
             "coste": monto(coste),
             "margen": f"+{int(round(margen_apu * 100))} %",
             "precio": precio_u(pv, base["unidad"]),
-            "horas_mo": f"{fmt_num(horas_mo, 2)} h-hombre/{base['unidad']}",
+            "horas_mo": (
+                _ETIQUETAS_EN["horas_mo"].format(
+                    h=fmt_num(horas_mo, 2, mercado=mercado_fmt), unidad=base["unidad"]
+                )
+                if en
+                else f"{fmt_num(horas_mo, 2, mercado=mercado_fmt)} h-hombre/{base['unidad']}"
+            ),
         }
 
     # ---- Identidad del ejemplo por país -------------------------------------------
-    empresa = _EMPRESA
+    if en:
+        empresa = _ETIQUETAS_EN["empresa"]
+    else:
+        empresa = _EMPRESA
     razon = str(pais.get("razon_social_ejemplo") or "").strip()
     if razon:
         empresa = f"{empresa}, {razon}"
     ciudad = str(pais.get("ciudad_ejemplo") or "").strip()
-    residencia = _RESIDENCIA + (f" · {ciudad}" if ciudad else "")
+    if en:
+        residencia = _ETIQUETAS_EN["residencia"] + (f" \u00b7 {ciudad}" if ciudad else "")
+    else:
+        residencia = _RESIDENCIA + (f" \u00b7 {ciudad}" if ciudad else "")
 
-    fecha_tasa = str(TASAS_ACTUALIZADAS)
+    # La fecha de la moneda que se está mostrando, no la de la última
+    # revisión general: junto a una tasa de octubre no puede decir «agosto».
+    fecha_tasa = str(tasa_fecha_verificacion(moneda))
     try:
-        a, m, d = fecha_tasa.split("-")
-        fecha_tasa = f"{d}/{m}/{a}"
+        anho, mes, dia = fecha_tasa.split("-")
+        fecha_tasa = f"{dia}/{mes}/{anho}"
     except Exception:
         pass
 
@@ -335,26 +491,37 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
         "decimales": dec,
         "convierte": convierte,
         "tasa": tasa,
-        "tasa_txt": fmt_num(tasa, 2),
+        "tasa_txt": fmt_num(tasa, 2, mercado=mercado_fmt),
         "tasa_fecha": fecha_tasa,
         "iva": iva,
-        "iva_txt": f"I.V.A. ({iva} %)",
+        "iva_txt": (
+            f"{etiqueta_impuesto} ({iva:g} %)"
+        ),
         "margen_txt": f"+{margen_pct} %",
-        "empresa": empresa,
+        "empresa": _ETIQUETAS_EN["empresa"] if en else empresa,
         "ciudad": ciudad,
-        "obra": _OBRA,
+        "obra": _ETIQUETAS_EN["obra"] if en else _OBRA,
         "residencia": residencia,
         "moneda_local": pais.get("moneda_local") or "USD",
         # Vocabulario local para el texto de la landing (friso → pañete/aplanado…)
-        "term_pared": traducir("Friso", codigo),
-        "term_enchapado": traducir("enchapado", codigo),
+        "term_pared": _ETIQUETAS_EN["term_pared"] if en else traducir("Friso", codigo),
+        "term_enchapado": (
+            _ETIQUETAS_EN["term_enchapado"] if en else traducir("enchapado", codigo)
+        ),
         # Hero (documento resumido)
         "hero": {
             "caps": [
                 {"nombre": c["titulo"].split("· ", 1)[-1], "importe": c["importe"]}
                 for c in caps
             ]
-            + [{"nombre": "Productos a elección del cliente", "importe": monto(total_prod)}],
+            + [
+                {
+                    "nombre": _ETIQUETAS_EN["productos_cliente"]
+                    if en
+                    else "Productos a elección del cliente",
+                    "importe": monto(total_prod),
+                }
+            ],
             "total": monto(total),
         },
         # Constructor
@@ -366,17 +533,33 @@ def contexto_ejemplo(codigo_pais: str | None) -> dict:
             "subtotal": monto(subtotal),
             "coste": monto(coste_interno),
             "beneficio": monto(beneficio),
-            "margen": f"+{margen_pct} % s/coste",
+            "margen": (
+                _ETIQUETAS_EN["margen_s_coste"].format(pct=margen_pct)
+                if en
+                else f"+{margen_pct} % s/coste"
+            ),
             "iva": monto(iva_monto),
             "total": monto(total),
         },
         "resumen": {
             "margen": f"+{margen_pct} %",
             "beneficio": monto(beneficio),
-            "horas": f"{_HORAS_TOTALES} h-hombre",
-            "horas_split": "👷 49 h oficial · 🧑 49 h ayudante",
-            "duracion": _DURACION_TXT,
-            "cuadrilla": "cuadrilla de 2 · 1 oficial + 1 ayudante",
+            "horas": (
+                _ETIQUETAS_EN["horas"].format(n=_HORAS_TOTALES)
+                if en
+                else f"{_HORAS_TOTALES} h-hombre"
+            ),
+            "horas_split": (
+                _ETIQUETAS_EN["horas_split"]
+                if en
+                else "👷 49 h oficial · 🧑 49 h ayudante"
+            ),
+            "duracion": _ETIQUETAS_EN["duracion"] if en else _DURACION_TXT,
+            "cuadrilla": (
+                _ETIQUETAS_EN["cuadrilla"]
+                if en
+                else "cuadrilla de 2 · 1 oficial + 1 ayudante"
+            ),
         },
         # Tour
         "tour": {

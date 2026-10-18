@@ -144,7 +144,7 @@ def test_crear_enlace_congela_pdf_muestra_secreto_una_vez_y_cambia_estado(
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\npropuesta publica"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\npropuesta publica"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
@@ -173,7 +173,7 @@ def test_pagina_publica_y_pdf_solo_exponen_la_propuesta(entorno_enlaces, monkeyp
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\ncontenido exacto"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\ncontenido exacto"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
@@ -202,7 +202,7 @@ def test_token_falso_revocado_y_caducado_responden_igual(entorno_enlaces, monkey
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\nrevocable"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\nrevocable"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
@@ -290,7 +290,7 @@ def test_aceptacion_publica_registra_identidad_version_y_una_sola_respuesta(
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\naceptacion"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\\naceptacion"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     avisos = []
@@ -360,7 +360,7 @@ def test_respuesta_exige_declaracion_y_datos_validos(entorno_enlaces, monkeypatc
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\nvalidacion"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\\nvalidacion"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     with cliente_web() as client:
@@ -445,7 +445,7 @@ def test_fallo_de_aviso_no_pierde_respuesta_y_admite_reintento(
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\\nreintento"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\\nreintento"),
     )
     monkeypatch.setattr(common, "DATABASE_IS_SQLITE", True)
     monkeypatch.setattr(

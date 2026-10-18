@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_ga.html" %}
+  <title>Access · {{ product_name }}</title>
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+  <script src="/static/js/recovery_redirect.js"></script>
+</head>
+<body>
+<div class="auth-stage">
+  <div class="auth-idioma">{% include "_idioma_switch.html" %}</div>
+  <main class="auth-split">
+    <aside class="auth-split-panel">
+      <a class="brand" href="/">
+        <span class="mark mark-lg">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        {{ product_name }}
+      </a>
+      <div>
+        <h1>Your commercial operation, in a private workspace.</h1>
+        <p>Estimates, line items and prices organized by company. Each organization is an isolated workspace, with team roles and immutable versions of every document.</p>
+        <ul>
+          <li><span class="check">✓</span> Clear estimates ready to present as PDF</li>
+          <li><span class="check">✓</span> Reusable catalog of line items and prices</li>
+          <li><span class="check">✓</span> Your team, with roles and approval control</li>
+        </ul>
+      </div>
+      <small class="panel-foot">Construction and remodeling for Spain and Latin America</small>
+    </aside>
+
+    <section class="auth-split-forms">
+      {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+      {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
+
+      <h2>Sign in</h2>
+      <form method="post" action="/acceso">
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Sign in to {{ product_name }}</button>
+        <p class="small text-muted mt-2"><a href="/recuperar-acceso">Forgot your password?</a></p>
+      </form>
+
+      <form method="post" action="/registro">
+        <h2>Create account</h2>
+        {% if hay_prueba_gratuita() %}
+        <p class="auth-prueba">✨ Includes <strong>{{ dias_de_prueba() }} free days</strong> with full access. No card required.</p>
+        {% endif %}
+        <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
+        <div class="field">
+          <label for="signup-name">Name</label>
+          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-pais">Country <span class="hint">(configures currency, VAT and tax ID)</span></label>
+          <select id="signup-pais" name="pais" required {% if not auth_configured %}disabled{% endif %}>
+            {% for p in paises %}
+            <option value="{{ p.codigo }}" {% if pais_preseleccionado == p.codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }} — {{ p.id_fiscal }} {{ p.iva }}% {{ p.moneda }}{% if p.moneda != 'USD' %} ({{ p.simbolo_local }}){% endif %}</option>
+            {% endfor %}
+          </select>
+          <p class="hint">Choose your country so your workspace is configured from the start. You can change it later in Settings.</p>
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" name="email" type="email" autocomplete="email" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-password">Password</label>
+          <input id="signup-password" name="password" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label for="signup-confirmation">Repeat password</label>
+          <input id="signup-confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required {% if not auth_configured %}disabled{% endif %}>
+        </div>
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" name="acepto_terminos" value="1" required {% if not auth_configured %}disabled{% endif %}>
+            I have read and accept the <a href="/legal/terminos" target="_blank" rel="noopener">terms of service</a> and the <a href="/legal/privacidad" target="_blank" rel="noopener">privacy policy</a>.
+          </label>
+          <p class="hint">Acceptance is recorded with the version of the terms in force on the day of signup (E4-038).</p>
+        </div>
+        <button class="btn btn-secondary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Create my workspace</button>
+      </form>
+
+      <p class="small text-muted mt-3">Passwords are sent directly to Supabase Auth and are not stored in the {{ product_name }} database.</p>
+    </section>
+  </main>
+</div>
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var sel=document.getElementById('signup-pais');
+  if(!sel) return;
+  try{
+    var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
+    var code=m?decodeURIComponent(m[1]).toUpperCase():'';
+    if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
+    else if (code) {
+      try { document.cookie = "cotizat_pais=; path=/; max-age=0; samesite=lax"; } catch(e){}
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -350,8 +350,14 @@ ORDEN_ARTICULOS = (
 )
 
 
-def ficha_articulo(slug: str) -> dict | None:
-    return ARTICULOS.get(str(slug or "").strip())
+ARTICULOS_EN: dict[str, dict] = {}
+
+
+def ficha_articulo(slug: str, lang: str = "es") -> dict | None:
+    slug = str(slug or "").strip()
+    if lang == "en" and slug in ARTICULOS_EN:
+        return ARTICULOS_EN[slug]
+    return ARTICULOS.get(slug)
 
 
 def lista_articulos() -> list[dict]:
@@ -364,3 +370,280 @@ def articulo_de_pais(codigo: str) -> dict | None:
         if item["pais"] == codigo:
             return item
     return None
+# This file is appended to seo_articulos.py
+ARTICULOS_EN.update({
+    "apu-panete-colombia": {
+        "slug": "apu-panete-colombia",
+        "pais": "CO",
+        "pais_nombre": "Colombia",
+        "pais_path": "/co/",
+        "kicker": "Colombia · APU",
+        "title": "CotizaT: how to build a render (panete) APU in Colombia without Excel",
+        "h1": "How to build a render (panete) APU in Colombia (without the spreadsheet breaking)",
+        "description": (
+            "Method for a unit price analysis of render in Colombia: resources, "
+            "productivity, COP and 19% VAT. No public-works AIU."
+        ),
+        "lead": (
+            "In Colombia a serious estimate stands on the APU. Render is the example "
+            "every remodeler knows: materials, foreman and helper, productivity per m2. "
+            "This guide describes the method; CotizaT is the software that runs it in COP, "
+            "with NIT and 19% VAT."
+        ),
+        "secciones": [
+            (
+                "What a render APU is (and what it is not)",
+                [
+                    "A unit price analysis breaks a line item's price into resources: kilos or bags of cement, sand, water, foreman hours, helper hours, sometimes scaffolding or mixer. Each line is productivity times price. The sum is the direct cost per m2. The selling price is a different figure: you apply profit.",
+                    "That is not public-works AIU nor a tender document. CotizaT does not calculate administration, contingencies or profit for public contracts. If you estimate private remodels or work for an individual or an SAS, the render APU is exactly this flow.",
+                ],
+            ),
+            (
+                "Why the render spreadsheet breaks in Bogota or Medellin",
+                [
+                    "The sheet starts fine: one tab for resources, another for line items, a productivity formula. The problem arrives on Tuesday, when cement or the foreman's hourly rate goes up. You have to find every line item that uses that resource. If you miss one, the Chapinero bathroom comes out at 8% margin and you thought it was 28%.",
+                    "The second problem is versioning. You send the PDF, the client asks for another render, you rewrite the sheet and no longer know which file was approved. A connected APU changes the resource once and recalculates the line items in edit. Estimates already sent are not touched.",
+                ],
+            ),
+            (
+                "The three blocks of the breakdown",
+                [
+                    "Materials: what is spent per m2 (with waste if you use it). Labor: productivity in foreman and helper hours. Equipment: only if it applies (mixer, scaffolding). On top of that base you can add complementary direct costs as a percentage. The client does not see that breakdown in the PDF; they see the line item, quantity, price and total.",
+                    "Crew hours come from the labor rows. They exist so you do not promise an 80 m2 render by Friday if productivity says otherwise. They are not printed to the client.",
+                ],
+            ),
+            (
+                "COP, NIT and 19% VAT",
+                [
+                    "At signup you choose Colombia and the workspace is born in COP, with NIT and 19% VAT. You can also quote in USD; each estimate freezes its rate. The document's VAT is configured by you: it is not tax advice.",
+                    "CotizaT does not issue DIAN electronic invoicing. The estimate is a commercial document. Render is called panete, not friso.",
+                ],
+            ),
+            (
+                "From Excel to CotizaT",
+                [
+                    "If you already export breakdown matrices in Excel (.xlsx), import the file and materials, labor and complementary costs are classified without losing rows. You can also paste TSV from Excel or import .bc3 (FIEBDC-3).",
+                    "Launch plan: 89 US$ per year (usual 109) or 9.99 US$ per month the first year. 7 free days, no card.",
+                ],
+            ),
+        ],
+        "faq": [
+            {"q": "Does CotizaT calculate Colombian AIU?", "a": "No. It is for private remodels and work, not public contracts."},
+            {"q": "Does the render come out with Colombian terminology?", "a": "Yes. panete, guardaescoba, andamio, plomero. Not friso or zocalo."},
+        ],
+    },
+    "cotizar-remodelacion-mexico": {
+        "slug": "cotizar-remodelacion-mexico",
+        "pais": "MX",
+        "pais_nombre": "Mexico",
+        "pais_path": "/mx/",
+        "kicker": "Mexico · quote",
+        "title": "CotizaT: from the site visit to a remodel quote in MXN",
+        "h1": "From the site visit to a quote in Mexico (in pesos, with your margin)",
+        "description": (
+            "How to go from a site visit to a remodel quote in Mexico: plaster, "
+            "ceiling, product options, MXN and 16% VAT. No CFDI."
+        ),
+        "lead": (
+            "In Mexico the client asks for a quote as much as an estimate. The visit, "
+            "the measurements, the plaster, the ceiling and the PDF you resend when "
+            "the floor changes. This guide is that trade. CotizaT is born in MXN "
+            "with RFC and 16% VAT."
+        ),
+        "secciones": [
+            (
+                "The visit is not the document",
+                [
+                    "You measure the bathroom, note the plaster, the baseboard, the bench if any. In the truck there is still no quote: there are quantities. The document is built afterwards, by sections, with prices and margin.",
+                    "If you build that in Word, every change of porcelain is a new file with a worse name. CotizaT seals versions: previous total, new total, what changed.",
+                ],
+            ),
+            (
+                "Plaster, ceiling and baseboard: the catalog must speak Mexican",
+                [
+                    "A contractor in Mexico City or Guadalajara does not search for friso or cielo raso. They search for aplanado, plafon, zoclo, plomeria. CotizaT's catalog is shown in that vocabulary.",
+                    "Room packs insert a bathroom or kitchen scaled to the real square meters. Fixed pieces (toilet, vanity) are not multiplied.",
+                ],
+            ),
+            (
+                "Margin in pesos, not blind",
+                [
+                    "Each line item can carry an APU: materials, labor, equipment. You see internal cost and profit in MXN before sending. That is the difference between quoting at 12% and thinking it was 28%.",
+                    "The workspace is born in MXN with 16% VAT. If you also quote in dollars, each document freezes its rate. A sent PDF does not change.",
+                ],
+            ),
+            (
+                "No CFDI, on purpose",
+                [
+                    "CotizaT does not issue CFDI. The quote is a commercial document. You keep generating CFDI with your PAC or your accountant. Mixing the two would be promising something the software does not do.",
+                    "The client does not register. They receive the PDF by WhatsApp or email. The private link with signature is optional.",
+                ],
+            ),
+            (
+                "What the software costs (not the bathroom)",
+                [
+                    "Launch plan: 89 US$ per year (usual 109) or 9.99 US$ per month the first year. 7 full free days, no card.",
+                ],
+            ),
+        ],
+        "faq": [
+            {"q": "Is it a quoting program or just a PDF generator?", "a": "It quotes: catalog, sections, quantities, prices, VAT and PDF. The PDF is the output, not the product."},
+            {"q": "Can I quote in Mexican pesos?", "a": "Yes. MXN with 16% VAT, or USD with a frozen rate per document."},
+        ],
+    },
+    "metrados-peru": {
+        "slug": "metrados-peru",
+        "pais": "PE",
+        "pais_nombre": "Peru",
+        "pais_path": "/pe/",
+        "kicker": "Peru · measurements",
+        "title": "CotizaT: measurements and APU in soles for Peru",
+        "h1": "Measurements and APU in Peru (in soles, with IGV separate from the receipt)",
+        "description": (
+            "How to build measurements and APU for a remodel in Peru: quantities by zone, "
+            "plaster, soles, RUC and 18% IGV. Not an S10 file."
+        ),
+        "lead": (
+            "In Peru a construction estimate starts with the measurement: how many m2, "
+            "ml or units each line item takes. The APU says where the price comes from. "
+            "CotizaT sums measurements by zone and closes in soles or USD, with RUC and 18% IGV."
+        ),
+        "secciones": [
+            (
+                "Measurement first, price afterwards",
+                [
+                    "Kitchen 8 m2 of plaster, bathroom 4 m2, hallway 6 m2. The line item quantity is the sum. The amount is quantity times price. The margin is calculated before sending, not after.",
+                    "That is not an S10 file from the Ministry of Housing. CotizaT is meant for private residential and commercial remodels: the client is an individual or a company, not a public tender.",
+                ],
+            ),
+            (
+                "Plaster, ceiling, baseboard, plumber",
+                [
+                    "The catalog is shown in Peruvian terminology. Sidewalk, not curb. Plumber, not the Venezuelan term. Lima, Arequipa or Trujillo: the vocabulary is the same.",
+                    "The PDF goes by WhatsApp. The client does not enter a platform. If they ask for another floor, you resend a version with the new measurement.",
+                ],
+            ),
+            (
+                "18% IGV in the document, SUNAT in your system",
+                [
+                    "You configure 18% (or whatever you apply) and the estimate calculates it. It is not tax advice. The payment receipt is issued by your electronic invoicing system, not by CotizaT.",
+                    "You can close in soles or in USD. Each estimate freezes its rate. A sent PDF does not change if the exchange rate moves tomorrow.",
+                ],
+            ),
+            (
+                "Editable APU, not a flat list",
+                [
+                    "Materials, labor and equipment, with productivity. Change cement or the foreman's hourly rate once; the line items in edit recalculate. The estimates already sent do not change.",
+                    "More than 3,000 decomposed line items in the own catalog. Import from Excel (.xlsx) or BC3 if you already bring decomposed breakdowns.",
+                ],
+            ),
+        ],
+        "faq": [
+            {"q": "Does it include measurements?", "a": "Yes. By zone, with sum to the line item quantity. It is not an S10 file."},
+            {"q": "Is it for an S10 file?", "a": "No. It is for private remodels. Public works require another flow."},
+        ],
+    },
+    "presupuesto-usd-bs-venezuela": {
+        "slug": "presupuesto-usd-bs-venezuela",
+        "pais": "VE",
+        "pais_nombre": "Venezuela",
+        "pais_path": "/ve/",
+        "kicker": "Venezuela · USD/Bs",
+        "title": "CotizaT: construction estimate in USD with bolivar equivalent",
+        "h1": "Estimate in USD and bolivars: the rate freezes, the PDF does not move",
+        "description": (
+            "How to estimate a remodel in Venezuela in USD or Bs, with a frozen rate, "
+            "RIF and 16% VAT. The March PDF does not change in April."
+        ),
+        "lead": (
+            "In Venezuela you discuss in dollars and sometimes collect in bolivars. "
+            "The classic mistake is a spreadsheet that updates an estimate already sent. "
+            "CotizaT freezes currency and rate in each document. RIF and 16% VAT."
+        ),
+        "secciones": [
+            (
+                "Two currencies, one sealed document",
+                [
+                    "You can quote in USD or in bolivars. The reference rate is stored in that estimate. A PDF sent in March does not change in April.",
+                    "If you later make a new version (the client asked for another ceiling), that version has its own rate. History is not overwritten.",
+                ],
+            ),
+            (
+                "Render, concrete, ceiling, plumber",
+                [
+                    "The catalog speaks Venezuelan: Caracas, Valencia, Maracaibo. It is not a translated Spanish software. The RIF appears in the document.",
+                    "When materials go up, adjust the catalog by percentage, all or by section, without touching the estimates already sent.",
+                ],
+            ),
+            (
+                "WhatsApp is the closing, not another platform",
+                [
+                    "The client does not register. They receive the PDF. If they ask to remove the porcelain, you edit, a version is created and you copy: previous total, new total, line items added or removed.",
+                    "Crew hours and margin stay in the app. The PDF does not carry 5 hours of render: it avoids the impossible claim.",
+                ],
+            ),
+            (
+                "Paying the license from Venezuela",
+                [
+                    "Launch plan: 89 US$ per year. You can pay with Pago movil, Binance, Kontigo, USDT or card. Card activates on confirmation; manual methods are reviewed within 48 business hours.",
+                    "We do not publish the price of a cement bag this week. You set that in Resources, where it belongs.",
+                ],
+            ),
+        ],
+        "faq": [
+            {"q": "Can I estimate in dollars and collect in bolivars?", "a": "Yes. Each document freezes its currency and rate."},
+            {"q": "Does it replace the Venezuelan tax invoice?", "a": "No. The estimate is a commercial document. The fiscal invoice is issued through your own means."},
+        ],
+    },
+    "apu-dolares-ecuador": {
+        "slug": "apu-dolares-ecuador",
+        "pais": "EC",
+        "pais_nombre": "Ecuador",
+        "pais_path": "/ec/",
+        "kicker": "Ecuador · APU",
+        "title": "CotizaT: APU in Ecuador, in dollars, with RUC",
+        "h1": "APU in Ecuador: native dollars, RUC and 15% VAT",
+        "description": (
+            "Unit price analysis for contractors in Ecuador: concrete, plaster, "
+            "ceiling, USD, RUC and 15% VAT. No SRI invoice."
+        ),
+        "lead": (
+            "Ecuador already quotes in USD. No need to convert afterwards. "
+            "CotizaT is born in dollars, with RUC and 15% VAT, and the catalog "
+            "speaks concrete, plaster, ceiling, broom and plumber."
+        ),
+        "secciones": [
+            (
+                "Native dollars, not an improvised conversion",
+                [
+                    "The workspace is not born in another currency to then apply a rate. Ecuador uses USD. RUC and 15% VAT are configured at signup.",
+                    "Documents are commercial. They do not replace the electronic invoice your SRI may require.",
+                ],
+            ),
+            (
+                "What the APU brings on day one",
+                [
+                    "Each line item arrives decomposed into materials, labor and equipment, with productivity and price. You edit one input and the line items in edit recalculate.",
+                    "Concrete, not Venezuelan concrete. Plaster and ceiling, not render and drop ceiling. The vocabulary is that of Quito or Guayaquil.",
+                ],
+            ),
+            (
+                "The remodel flow, not the SRI's",
+                [
+                    "You build the estimate, review margin and crew hours, send the PDF by WhatsApp. If there are changes, you resend previous total, new total and what changed.",
+                    "Internal hours do not go to the PDF. Neither does margin. The SRI does not enter CotizaT: your electronic invoicing stays where it is.",
+                ],
+            ),
+            (
+                "Software price",
+                [
+                    "89 US$ per year at launch (usual 109) or 9.99 US$ per month the first year. 7 free days, no card. No lock-in.",
+                ],
+            ),
+        ],
+        "faq": [
+            {"q": "Is it born in dollars or converted from another currency?", "a": "Born in dollars. Ecuador uses USD natively."},
+            {"q": "Does it issue an SRI invoice?", "a": "No. The estimate is a commercial document."},
+        ],
+    },
+})

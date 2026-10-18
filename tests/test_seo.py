@@ -1,6 +1,9 @@
 """SEO público: canónicas, hreflang, robots, sitemap y copy por país."""
 from __future__ import annotations
 
+import re
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -252,3 +255,132 @@ def test_titulo_empieza_por_marca_y_describe_el_oficio():
             hub = ficha_tema(codigo, tema)
             assert hub["title"].startswith("CotizaT:")
             assert "software" in hub["title"].lower()
+
+
+# ---------------------------------------------------------------------------
+# Las landings en inglés llevan el mismo equipaje SEO que las de español.
+#
+# La landing difiere el JSON-LD al final del body (en el <head> retrasaba el
+# descubrimiento de la hoja de estilos). La plantilla en español lo imprime
+# allí; la inglesa no lo hacía, así que las cinco landings en inglés salían
+# sin schema: sin Organization, sin WebPage, sin FAQPage.
+# ---------------------------------------------------------------------------
+
+BLOQUES_ESPERADOS = {
+    "Organization",
+    "WebSite",
+    "WebPage",
+    "SoftwareApplication",
+    "FAQPage",
+    "BreadcrumbList",
+}
+
+
+def _tipos_jsonld(html: str) -> set[str]:
+    import json
+    import re
+
+    tipos = set()
+    for bloque in re.findall(
+        r'<script type="application/ld\+json"[^>]*>(.*?)</script>', html, re.S
+    ):
+        try:
+            tipos.add(json.loads(bloque).get("@type"))
+        except Exception:
+            tipos.add("<<no válido>>")
+    return tipos
+
+
+@pytest.mark.parametrize(
+    "ruta", ["/en-us/", "/en-gb/", "/en-au/", "/en-ca/", "/en-ie/", "/es/"]
+)
+def test_la_landing_emite_todo_el_jsonld(ruta):
+    """Una landing sin Organization ni FAQPage no compite en Google."""
+    with _cliente() as client:
+        html = client.get(ruta).text
+    assert _tipos_jsonld(html) == BLOQUES_ESPERADOS, ruta
+
+
+def test_el_jsonld_es_json_valido_no_una_cadena_escapada():
+    """Si el bloque no parsea, Google lo descarta entero."""
+    with _cliente() as client:
+        html = client.get("/en-us/").text
+    assert "<<no válido>>" not in _tipos_jsonld(html)
+
+
+def test_la_faq_esta_visible_si_el_schema_la_anuncia():
+    """FAQPage exige que las preguntas se lean en la página.
+
+    El esquema se emitía en inglés sin que existiera la sección, que es
+    justo lo que las directrices de Google consideran contenido oculto.
+    """
+    with _cliente() as client:
+        html = client.get("/en-us/").text
+    assert 'id="preguntas-seo"' in html
+    assert "<details>" in html
+    assert "Does it include unit price analysis?" in html
+
+
+# ---------------------------------------------------------------------------
+# Donde no hay una alícuota única, la landing lo dice.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "ruta,frase",
+    [
+        ("/en-us/", "Sales tax in the United States is set by each state, county and city"),
+        ("/en-ca/", "the federal GST and the provincial sales taxes combine"),
+        ("/en-gb/", "VAT on construction in the United Kingdom depends on the work"),
+        ("/en-ie/", "Construction services in Ireland are charged at the reduced 13.5%"),
+    ],
+)
+def test_la_nota_fiscal_explica_por_que_no_hay_una_cifra_cerrada(ruta, frase):
+    """Estados Unidos y Canadá no tienen IVA nacional; Irlanda no cobra a obra
+    lo mismo que al material. La nota estaba escrita pero nunca se mostraba:
+    solo servía de interruptor para cambiar de pregunta en la FAQ."""
+    with _cliente() as client:
+        html = client.get(ruta).text
+    assert frase in html, ruta
+    assert "Which tax rate should I apply on estimates in" in html
+
+
+def test_sin_nota_no_se_pregunta_por_la_tasa():
+    """Australia sí tiene una alícuota única (10 % GST): no hay nada que explicar."""
+    with _cliente() as client:
+        html = client.get("/en-au/").text
+    assert "Which tax rate should I apply on estimates in" not in html
+    assert "Is CotizaT built for contractors in Australia?" in html
+
+
+def test_el_pais_se_nombra_en_ingles_en_la_landing_inglesa():
+    """«🇺🇸 Estados Unidos» en el desplegable de una landing en inglés, no.
+
+    El blob JSON que alimenta al selector lleva los dos nombres a propósito
+    (``nombre`` y ``nombre_en``); lo que no puede pasar es que el nombre en
+    español se pinte en el desplegable, en el hero o en el pie.
+    """
+    with _cliente() as client:
+        html = client.get("/en-us/").text
+    from app.paises import PAISES
+
+    # Fuera de los bloques de datos (alimentan al JS y llevan los dos
+    # nombres a propósito), no debe quedar rastro del nombre en español.
+    visible = re.sub(r"<script\b.*?</script>", "", html, flags=re.S)
+
+    # Solo los países que se escriben distinto: Venezuela, Australia,
+    # Colombia y otros once se deletrean igual en los dos idiomas.
+    distintos = {
+        c: (p["nombre"], p["nombre_en"])
+        for c, p in PAISES.items()
+        if p["nombre"] != p["nombre_en"]
+    }
+    assert ("US", ("Estados Unidos", "the United States")) in distintos.items()
+
+    for codigo, (espanol, ingles) in distintos.items():
+        assert espanol not in visible, f"{codigo}: {espanol} en una página en inglés"
+        if codigo in ("US", "GB", "CA", "IE", "AU", "ES", "MX", "PE"):
+            assert ingles in visible, f"{codigo}: falta {ingles}"
+
+    assert "🇺🇸 the United States" in visible
+    # Y el schema declara los países servidos en inglés
+    assert '"@type": "Country", "name": "the United States"' in html

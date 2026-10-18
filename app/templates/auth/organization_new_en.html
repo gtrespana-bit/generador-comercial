@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New organization · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="auth-stage">
+  <div class="auth-idioma">{% include "_idioma_switch.html" %}</div>
+  <main class="auth-card">
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ product_name }}
+    </a>
+
+    <h1>Create your company workspace</h1>
+    <p>The account {{ usuario.email }} will be the owner. Afterwards you can complete the commercial details and choose between a demo or a clean workspace.</p>
+
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+
+    <form action="/organizaciones/nueva" method="post">
+      <div class="field">
+        <label for="pais">Organization country</label>
+        <select id="pais" name="pais" required>
+          {% for p in paises %}
+          <option value="{{ p.codigo }}" {% if pais_preseleccionado == p.codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre }} — {{ p.id_fiscal }} {{ p.iva }}% {{ p.moneda }}{% if p.moneda != 'USD' %} ({{ p.simbolo_local }}){% endif %}</option>
+          {% endfor %}
+        </select>
+        <p class="hint">Defines default currency, VAT and tax ID. You can adjust it in Settings and per estimate.</p>
+      </div>
+      <div class="field">
+        <label for="nombre">Trade name or legal name</label>
+        <input id="nombre" name="nombre" maxlength="200" autocomplete="organization" required autofocus>
+      </div>
+      <div class="actions mt-2">
+        <button class="btn btn-primary" type="submit">Create organization</button>
+        <a class="btn" href="/organizaciones">Back</a>
+      </div>
+    </form>
+  </main>
+</div>
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var sel=document.getElementById('pais');
+  if(!sel) return;
+  try{
+    var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
+    var code=m?decodeURIComponent(m[1]).toUpperCase():'';
+    if(code && sel.querySelector('option[value="'+code+'"]')) sel.value=code;
+    else if (code) {
+      try { document.cookie = "cotizat_pais=; path=/; max-age=0; samesite=lax"; } catch(e){}
+    }
+    var q=new URLSearchParams(window.location.search).get('pais');
+    if(q){ q=q.toUpperCase(); if(sel.querySelector('option[value="'+q+'"]')) sel.value=q; }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

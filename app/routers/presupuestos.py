@@ -1,9 +1,10 @@
 """Presupuestos, proyectos, propuestas, documentos de cobro e importación."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 from ..services import auditoria, telemetria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
@@ -75,6 +76,7 @@ def listar_presupuestos(
 
 @router.get("/presupuestos/exportar")
 def exportar_presupuestos(
+    request: Request,
     formato: str = "csv",
     estado: str = "",
     q: str = "",
@@ -104,7 +106,7 @@ def exportar_presupuestos(
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_historial_excel
-        buf = exportar_historial_excel(presupuestos, _config(db))
+        buf = exportar_historial_excel(presupuestos, _config(db), idioma=_idioma(request))
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -115,7 +117,10 @@ def exportar_presupuestos(
     def num(v):
         return f"{v:.2f}".replace(".", ",")
 
-    filas = [["Número", "Fecha", "Cliente", "Título", "Estado", "Moneda", "Base", "IVA", "Descuento", "Total"]]
+    filas = [_cabeceras_csv(
+        ["Número", "Fecha", "Cliente", "Título", "Estado", "Moneda", "Base",
+         "IVA", "Descuento", "Total"], _idioma(request),
+    )]
     for p in presupuestos:
         filas.append([
             p.numero, p.fecha.isoformat(), p.cliente.nombre, p.titulo, p.estado, p.moneda,
@@ -1078,9 +1083,9 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     except (ValueError, TypeError, ErrorImportacion) as exc:
         return {"ok": False, "error": str(exc)}
     if resultado["errores"]:
-        return {"ok": False, "error": "Corrige los errores de validación antes de importar.", "errores": resultado["errores"]}
+        return {"ok": False, "error": mensaje_request(request, "Corrige los errores de validación antes de importar."), "errores": resultado["errores"]}
     if not resultado["filas"]:
-        return {"ok": False, "error": "No hay filas válidas para importar."}
+        return {"ok": False, "error": mensaje_request(request, "No hay filas válidas para importar.")}
 
     modo = str(payload.get("modo", "")).strip().lower()
     formato = str(payload.get("formato", ""))
@@ -1140,7 +1145,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     if destino is None:
         cliente = db.get(Cliente, int(_f(payload.get("client_id"), 0)))
         if cliente is None:
-            return {"ok": False, "error": "Selecciona un cliente para crear el nuevo presupuesto."}
+            return {"ok": False, "error": mensaje_request(request, "Selecciona un cliente para crear el nuevo presupuesto.")}
         cfg = _config(db)
         hoy = date.today()
         destino = Presupuesto(
@@ -1363,6 +1368,11 @@ def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
         "catalogo_diferido": True,
         "url_datos_editor": _url_datos_editor(moneda, tasa),
         "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, moneda, tasa),
+        # Código ISO del mercado de la empresa. El editor lo usa para abrir
+        # bloques que solo existen en un país —hoy, el CIS y la inversión del
+        # sujeto pasivo británicos— sin enseñar a un constructor de Perth una
+        # casilla que no le concierne.
+        "codigo_pais": _codigo_pais_descompuesto(db, cfg),
     }
 
 
@@ -2058,6 +2068,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         mostrar_ahorro=bool(form.get("mostrar_ahorro")), incluir_anexos=bool(form.get("incluir_anexos")),
         mostrar_desglose_precio=bool(form.get("mostrar_desglose_precio")),
         numero_control=str(form.get("numero_control", "")).strip(), fecha_tipo_cambio=fecha_tipo_cambio, retencion_pct=_f(form.get("retencion_pct")), operacion_exenta=bool(form.get("operacion_exenta")), clausula_cambiaria=str(form.get("clausula_cambiaria", "")).strip(),
+        iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0],
         client_id=cliente.id,
     )
     # Imágenes de producto subidas
@@ -2323,7 +2334,7 @@ def enviar_presupuesto_email_web(
     estado_anterior = presupuesto.estado
     presupuesto.estado = _estado_despues_de_enviar(estado_anterior)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el PDF para enviar del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response):
@@ -2343,10 +2354,12 @@ def enviar_presupuesto_email_web(
             cliente_nombre=presupuesto.cliente.nombre,
             presupuesto_numero=presupuesto.numero,
             presupuesto_titulo=presupuesto.titulo,
-            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda),
+            total_texto=fmt_monto_iso(presupuesto.total, presupuesto.moneda,
+                                      mercado=_mercado(request)),
             pdf=pdf_bytes,
             nombre_pdf=nombre_pdf,
             responder_a=cfg.empresa_email,
+            lang=_idioma(request),
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         db.rollback()
@@ -2467,6 +2480,7 @@ def _notificar_respuesta_propuesta(
                     enlace_interno=_url_interna_presupuesto(
                         request, enlace.presupuesto_id
                     ),
+                    lang=_idioma(request),
                 )
                 enviados.append(destinatario)
             except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
@@ -2514,7 +2528,9 @@ def _pagina_enlaces_propuesta(
         tarifa_hora_media=_tarifa_hora_en_moneda(db, cfg, presupuesto.moneda, presupuesto.tipo_cambio),
         usar_estimacion_coste=bool(cfg.estimar_tiempo_por_coste),
     )
-    revision_envio = revisar_presupuesto_antes_de_enviar(presupuesto, cfg=cfg, tiempos=tiempos)
+    revision_envio = revisar_presupuesto_antes_de_enviar(
+        presupuesto, cfg=cfg, tiempos=tiempos, idioma=_idioma(request),
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/public_link.html",
@@ -2577,7 +2593,7 @@ def crear_enlace_publico_web(
     cfg = _config(db)
     presupuesto.estado = _estado_despues_de_enviar(presupuesto.estado)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el PDF público del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response):
@@ -2887,6 +2903,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
         presupuesto,
         cfg=cfg,
         tiempos=tiempos,
+        idioma=_idioma(request),
     )
     ultima_version = (presupuesto.versiones or [None])[0]
     cambios_reenvio = comparar_version_con_presupuesto(ultima_version, presupuesto) if ultima_version is not None else None
@@ -2904,6 +2921,8 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "tiempos_por_partida": tiempos_por_partida,
             "revision_envio": revision_envio,
             "cambios_reenvio": cambios_reenvio,
+            # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF.
+            "fiscalidad_gb": _fiscalidad_gb_documento(presupuesto, cfg),
         },
     )
 
@@ -2943,7 +2962,7 @@ async def guardar_tiempo_manual(presupuesto_id: int, request: Request, db: Sessi
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     # Soporta JSON y form-urlencoded
     data = {}
     ctype = request.headers.get("content-type", "")
@@ -2964,10 +2983,10 @@ async def guardar_tiempo_manual(presupuesto_id: int, request: Request, db: Sessi
     try:
         partida_id = int(str(data.get("partida_id") or data.get("partida") or 0))
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Partida no válida."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no válida.")}
     partida = db.get(PresupuestoItem, partida_id)
     if partida is None or partida.capitulo is None or partida.capitulo.presupuesto_id != presupuesto.id:
-        return {"ok": False, "error": "Partida no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Partida no encontrada.")}
 
     def _parse_horas(key):
         raw = data.get(key)
@@ -3046,14 +3065,14 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
     """Asignación masiva rápida para partidas sin datos."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     try:
         payload = await request.json()
     except Exception:
-        return {"ok": False, "error": "JSON no válido."}
+        return {"ok": False, "error": mensaje_request(request, "JSON no válido.")}
     items = payload.get("items") if isinstance(payload, dict) else payload
     if not isinstance(items, list):
-        return {"ok": False, "error": "Formato no válido."}
+        return {"ok": False, "error": mensaje_request(request, "Formato no válido.")}
     h_of_default = _f(payload.get("horas_oficial"), None) if isinstance(payload, dict) else None
     h_ay_default = _f(payload.get("horas_ayudante"), None) if isinstance(payload, dict) else None
     h_eq_default = _f(payload.get("horas_equipo"), None) if isinstance(payload, dict) else None
@@ -3095,6 +3114,93 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
 
 
 @router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
+def _fiscalidad_gb_desde_form(form) -> tuple[float | None, str]:
+    """Lee del formulario el tipo de CIS y el tratamiento del IVA.
+
+    El tipo de CIS se guarda como ``None`` cuando el documento no está bajo el
+    CIS (campo vacío del desplegable) y como 0 cuando sí lo está pero el
+    subcontratista tiene Gross Payment Status. Son dos situaciones distintas y
+    el ``NULL`` es el que deja el documento como estaba antes de existir esta
+    función.
+
+    Cualquier valor que no sea 0, 20 o 30 se descarta en lugar de guardarse:
+    un tipo inventado haría que el PDF retuviera una cifra que Hacienda no
+    admite y que el CIS300 no aceptaría.
+    """
+    from ..services.fiscalidad_reino_unido import TIPOS_CIS, TRATAMIENTOS_IVA
+
+    crudo = str(form.get("cis_tipo", "") or "").strip()
+    cis = None
+    if crudo:
+        try:
+            valor = float(crudo)
+        except (TypeError, ValueError):
+            valor = None
+        if valor is not None and any(valor == float(t) for t in TIPOS_CIS):
+            cis = valor
+
+    tratamiento = str(form.get("iva_tratamiento", "") or "").strip()
+    if tratamiento not in TRATAMIENTOS_IVA:
+        tratamiento = ""
+    return cis, tratamiento
+
+
+def _aplicar_fiscalidad_gb(presupuesto, form) -> None:
+    presupuesto.cis_tipo, presupuesto.iva_tratamiento = _fiscalidad_gb_desde_form(form)
+
+
+def _fiscalidad_gb_documento(presupuesto, cfg):
+    """Fiscalidad británica del documento, o ``None`` si no le afecta.
+
+    Sirve igual para un presupuesto que para un documento de cobro: el mercado
+    sale de la configuración de la empresa, porque ninguno de los dos guarda su
+    país y la pregunta «¿está bajo el CIS?» solo se responde sabiendo a quién
+    factura la empresa.
+
+    La diferencia entre ambos está en el coste de materiales: el presupuesto lo
+    recalcula partida a partida y la factura lo trae congelado de la emisión.
+    """
+    from ..services.fiscalidad_reino_unido import calcular_fiscalidad_gb
+
+    try:
+        from ..services.traduccion import codigo_desde_pais
+
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+    except Exception:
+        pais = ""
+    totales = getattr(presupuesto, "_totales", None)
+    if totales is not None:
+        base, coste_materiales = totales.base, totales.coste_materiales
+    else:
+        base = getattr(presupuesto, "base", 0) or 0
+        coste_materiales = getattr(presupuesto, "coste_materiales", 0) or 0
+    f = calcular_fiscalidad_gb(
+        pais_codigo=pais,
+        base_imponible=base,
+        coste_materiales=coste_materiales,
+        iva_pct=presupuesto.impuesto_pct,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        cis_tipo=getattr(presupuesto, "cis_tipo", None),
+    )
+    if not (f.aplica and (f.con_inversion_sujeto_pasivo or f.cis_aplica)):
+        return None
+    return f
+
+
+def _codigo_pais_descompuesto(db, cfg) -> str:
+    """Mercado de la empresa, para traducir los textos del descompuesto.
+
+    Devuelve «VE» (el idioma base del catálogo) si no se puede resolver: con
+    ese código ``traducir`` no toca el texto, así que el descompuesto se ve
+    igual que siempre en lugar de romperse.
+    """
+    try:
+        from ..services.traduccion import codigo_desde_pais
+        return codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+    except Exception:
+        return "VE"
+
+
 def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Request, db: Session = Depends(get_db)):
     """Muestra la matriz CYPE guardada sin volver a transformar el Excel."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -3133,6 +3239,10 @@ def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Re
         # Símbolo inequívoco (MX$, COL$, US$…): la matriz de descomposición se
         # lee junto al total del presupuesto y no puede sugerir otra moneda.
         "simbolo_moneda": _simbolo_moneda(presupuesto.moneda),
+        # Código del mercado, para que la plantilla traduzca las descripciones
+        # de los recursos. Sin él, la matriz CYPE se mostraba en español
+        # aunque el resto de la pantalla estuviera en inglés.
+        "mercado_codigo": _codigo_pais_descompuesto(db, cfg),
     })
 
 
@@ -3255,7 +3365,7 @@ def ver_version(presupuesto_id: int, version_id: int, request: Request, db: Sess
 
 
 @router.get("/presupuestos/{presupuesto_id}/exportar")
-def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session = Depends(get_db)):
+def exportar_presupuesto(presupuesto_id: int, request: Request, formato: str = "csv", db: Session = Depends(get_db)):
     """Exportar presupuesto a CSV, Excel o BC3 (FIEBDC-3)."""
     p = db.get(Presupuesto, presupuesto_id)
     if p is None:
@@ -3263,7 +3373,7 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
 
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_presupuesto_excel
-        buf = exportar_presupuesto_excel(p, _config(db))
+        buf = exportar_presupuesto_excel(p, _config(db), idioma=_idioma(request))
         return Response(
             content=buf.getvalue(),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -3287,7 +3397,10 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
     def num(v):
         return f"{v:.2f}".replace(".", ",")
 
-    filas = [["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad", "Precio unitario", "Importe"]]
+    filas = [_cabeceras_csv(
+        ["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad",
+         "Precio unitario", "Importe"], _idioma(request),
+    )]
     for cap in p.capitulos:
         for part in cap.partidas:
             filas.append([
@@ -3295,11 +3408,20 @@ def exportar_presupuesto(presupuesto_id: int, formato: str = "csv", db: Session 
                 num(part.cantidad_total), num(part.precio_unitario), num(part.importe),
             ])
     filas.append([])
-    filas.append(["BASE IMPONIBLE", "", "", "", "", "", num(p.base)])
+    # Al final, las mismas etiquetas que el resto del documento.
+    def _etiqueta(texto):
+        return _cabeceras_csv([texto], _idioma(request))[0]
+
+    def _fila_total(texto, valor):
+        return [_etiqueta(texto), "", "", "", "", "", valor]
+
+    filas.append(_fila_total("BASE IMPONIBLE", num(p.base)))
     if p.descuento_pct:
-        filas.append(["DESCUENTO (" + f"{p.descuento_pct:.1f}".replace(".", ",") + " %)", "", "", "", "", "", "- " + num(p.descuento_monto)])
-    filas.append([f"I.V.A. ({p.impuesto_pct:.1f} %)", "", "", "", "", "", num(p.impuesto_monto)])
-    filas.append(["TOTAL", "", "", "", "", "", num(p.total)])
+        _pct = f"{p.descuento_pct:.1f}".replace(".", ",")
+        filas.append(_fila_total(f"{_etiqueta('DESCUENTO')} ({_pct} %)",
+                                 "- " + num(p.descuento_monto)))
+    filas.append(_fila_total(f"I.V.A. ({p.impuesto_pct:.1f} %)", num(p.impuesto_monto)))
+    filas.append(_fila_total("TOTAL", num(p.total)))
     return _csv_response(filas, f"presupuesto_{p.numero}.csv")
 
 
@@ -3353,6 +3475,13 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         fuente_tipo_cambio=getattr(presupuesto, "fuente_tipo_cambio", "") or "",
         impuesto_pct=presupuesto.impuesto_pct,
         descuento_pct=presupuesto.descuento_pct,
+        # Fiscalidad británica: la factura es la que se declara, así que la
+        # retención se hereda del presupuesto aprobado. El coste de materiales
+        # se congela aquí porque ``FacturaItem`` no guarda costes y la factura
+        # no debe recalcularse si el presupuesto cambia después.
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        cis_tipo=getattr(presupuesto, "cis_tipo", None),
+        coste_materiales=float(presupuesto._totales.coste_materiales),
         notas=presupuesto.notas,
         condiciones=presupuesto.condiciones,
         presupuesto_id=presupuesto.id,
@@ -3393,21 +3522,57 @@ def listar_facturas(request: Request, db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "facturas/list.html", {"facturas": facturas})
 
 
+def _cabeceras_csv(etiquetas, idioma) -> list[str]:
+    """Mismo vocabulario que el Excel (app/services/excel_export.py)."""
+    from ..services.excel_export import cabeceras
+
+    return cabeceras(etiquetas, idioma)
+
+
+def _idioma(request) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``).
+
+    Los prefijos regionales (``/en-mx/``) se quedan en la lengua: el
+    documento se manda a un solo cliente y el país solo cambia la moneda.
+    """
+    lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+    return str(lang)
+
+
+def _mercado(request) -> dict:
+    """Mercado del documento: separadores, orden de la fecha, impuesto.
+
+    Mismo criterio que en el PDF: el país manda sobre la lengua, porque
+    México y España escriben español los dos y no separan los miles igual.
+    """
+    from ..paises import resolver_mercado
+
+    return resolver_mercado(_idioma(request))
+
+
 @router.get("/facturas/{factura_id}", response_class=HTMLResponse)
 def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)):
     factura = db.get(Factura, factura_id)
     if factura is None:
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
-    return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {"f": factura})
+    return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {
+        "f": factura,
+        # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF, que
+        # es el documento que se declara en el CIS300.
+        "fiscalidad_gb": _fiscalidad_gb_documento(factura, _config(db)),
+    })
 
 
 @router.get("/facturas/{factura_id}/pdf")
-def descargar_pdf_factura(factura_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_pdf_factura(factura_id: int, request: Request, inline: int = 0, db: Session = Depends(get_db)):
     factura = _factura_para_pdf(db, factura_id)
     if factura is None:
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
+    # El idioma del panel manda: es quien descarga quien decide la lengua.
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_factura_pdf(factura, _config(db)),
+        lambda: common.pdf_service.generar_factura_pdf(
+            factura, _config(db), lang=_idioma(request),
+        ),
         f"el PDF del documento de cobro {factura.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
@@ -3457,11 +3622,11 @@ async def guardar_borrador_presupuesto(presupuesto_id: int, request: Request, db
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return {"ok": False, "error": "Presupuesto no encontrado."}
+        return {"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}
     try:
         payload = await request.json()
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Datos inválidos."}
+        return {"ok": False, "error": mensaje_request(request, "Datos inválidos.")}
     capitulos = payload.get("capitulos")
     if capitulos is None:
         # Borrado explícito del borrador (botón «Descartar»).
@@ -3469,13 +3634,13 @@ async def guardar_borrador_presupuesto(presupuesto_id: int, request: Request, db
         db.commit()
         return {"ok": True, "ts": None}
     if not isinstance(capitulos, list) or len(capitulos) > MAX_FILAS:
-        return {"ok": False, "error": "Estructura no válida."}
+        return {"ok": False, "error": mensaje_request(request, "Estructura no válida.")}
     try:
         datos_json = json.dumps({"capitulos": capitulos, "ts": int(payload.get("ts") or 0)}, ensure_ascii=False)
     except (TypeError, ValueError):
-        return {"ok": False, "error": "Datos no serializables."}
+        return {"ok": False, "error": mensaje_request(request, "Datos no serializables.")}
     if len(datos_json) > 5 * 1024 * 1024:  # 5 MB máx. de borrador
-        return {"ok": False, "error": "El borrador es demasiado grande."}
+        return {"ok": False, "error": mensaje_request(request, "El borrador es demasiado grande.")}
     borrador = db.query(BorradorPresupuesto).filter(BorradorPresupuesto.presupuesto_id == presupuesto_id).first()
     if borrador is None:
         borrador = BorradorPresupuesto(presupuesto_id=presupuesto_id, datos=datos_json)
@@ -3626,6 +3791,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.incluir_anexos = bool(form.get("incluir_anexos"))
     presupuesto.mostrar_desglose_precio = bool(form.get("mostrar_desglose_precio"))
     presupuesto.numero_control = str(form.get("numero_control", "")).strip(); presupuesto.retencion_pct = _f(form.get("retencion_pct")); presupuesto.operacion_exenta = bool(form.get("operacion_exenta")); presupuesto.clausula_cambiaria = str(form.get("clausula_cambiaria", "")).strip()
+    _aplicar_fiscalidad_gb(presupuesto, form)
     try: presupuesto.fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError: presupuesto.fecha_tipo_cambio = None
 
@@ -3791,6 +3957,10 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         numero_control=original.numero_control, fecha_tipo_cambio=original.fecha_tipo_cambio,
         retencion_pct=original.retencion_pct, operacion_exenta=original.operacion_exenta,
         clausula_cambiaria=original.clausula_cambiaria,
+        # La fiscalidad británica se hereda al duplicar: copiar un presupuesto
+        # bajo el CIS y que la copia saliera sin retención es un error que se
+        # paga en la declaración mensual.
+        iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo,
         client_id=original.client_id,
     )
 
@@ -3974,10 +4144,10 @@ def eliminar_anexo(presupuesto_id: int, anexo_id: int, db: Session = Depends(get
 
 
 @router.post("/presupuestos/{presupuesto_id}/pdf-descargado")
-def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db)):
+def registrar_pdf_descargado(request: Request, presupuesto_id: int, db: Session = Depends(get_db)):
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
-        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}, status_code=404)
     if es_lectura(db) or presupuesto.es_demo:
         return {"ok": True, "registrado": False}
     cfg = _config(db)
@@ -3989,13 +4159,13 @@ def registrar_pdf_descargado(presupuesto_id: int, db: Session = Depends(get_db))
 
 
 @router.get("/presupuestos/{presupuesto_id}/pdf")
-def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_pdf(presupuesto_id: int, inline: int = 0, request: Request = None, db: Session = Depends(get_db)):
     presupuesto = _presupuesto_para_pdf(db, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     cfg = _config(db)
     resultado = _generar_pdf_seguro(
-        lambda: common.pdf_service.generar_pdf(presupuesto, cfg),
+        lambda: common.pdf_service.generar_pdf(presupuesto, cfg, getattr(getattr(request, "state", None), "lang", "es") or "es" if request else "es"),
         f"el PDF del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
@@ -4007,7 +4177,7 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, db: Session = Depends(ge
 
 
 @router.get("/presupuestos/{presupuesto_id}/contrato")
-def descargar_contrato(presupuesto_id: int, inline: int = 0, db: Session = Depends(get_db)):
+def descargar_contrato(presupuesto_id: int, inline: int = 0, request: Request = None, db: Session = Depends(get_db)):
     """Genera un contrato de servicios real en PDF a partir del presupuesto.
 
     Reemplaza a los antiguos botones "Generar Contrato (IA)" / "Generar
@@ -4017,7 +4187,7 @@ def descargar_contrato(presupuesto_id: int, inline: int = 0, db: Session = Depen
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     resultado = _generar_pdf_seguro(
-        lambda: generar_contrato_pdf(presupuesto, _config(db)),
+        lambda: generar_contrato_pdf(presupuesto, _config(db), getattr(getattr(request, "state", None), "lang", "es") or "es"),
         f"el contrato del presupuesto {presupuesto.numero}",
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:

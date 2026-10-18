@@ -1,6 +1,7 @@
 """Pruebas del Asistente de Inteligencia Artificial de CotizaT (Copilot)."""
 
 import json
+import re
 from unittest.mock import MagicMock, patch
 import urllib.error
 
@@ -615,3 +616,182 @@ def test_api_endpoints_ia(tmp_path):
     assert res_chat_vacio.status_code == 400
 
     app.dependency_overrides.clear()
+
+
+# ---------------------------------------------------------------------------
+# Idioma del asistente
+# ---------------------------------------------------------------------------
+
+def test_es_ingles_reconoce_las_variantes_regionales():
+    assert asistente_ia._es_ingles("en")
+    assert asistente_ia._es_ingles("EN")
+    assert asistente_ia._es_ingles("en-mx") and asistente_ia._es_ingles("en-CO")
+    assert not asistente_ia._es_ingles("es")
+    assert not asistente_ia._es_ingles("mx")
+    assert not asistente_ia._es_ingles(None) and not asistente_ia._es_ingles("")
+
+
+def test_el_prompt_del_sistema_se_entrega_en_ingles():
+    db = MagicMock()
+    db.info = {}
+    db.query.return_value.filter.return_value.all.return_value = []
+    db.query.return_value.order_by.return_value.limit.return_value.all.return_value = []
+
+    es = asistente_ia.construir_system_prompt(db, "hola", None)
+    en = asistente_ia.construir_system_prompt(db, "hola", None, idioma="en")
+    en_mx = asistente_ia.construir_system_prompt(db, "hola", None, idioma="en-mx")
+
+    assert "Eres el Asistente Inteligente de CotizaT" in es
+    assert "You are the CotizaT Intelligent Assistant" in en
+    assert "=== COTIZAT MANUAL AND CAPABILITIES ===" in en
+    assert "=== MANUAL Y CAPACIDADES DE COTIZAT ===" not in en
+    assert en == en_mx, "una variante regional no puede caer al castellano"
+    # Las rutas son las mismas: el manual no inventa caminos que no existen.
+    assert "/presupuestos/nuevo" in en and "/configuracion" in en
+
+
+def test_las_respuestas_frecuentes_tienen_su_version_en_ingles():
+    """Ninguna de las FAQ locales se queda en castellano por olvido."""
+    for item in asistente_ia.PREGUNTAS_FRECUENTES_LOCALES:
+        assert item.get("respuesta_en"), f"falta respuesta_en en {item['patrones']}"
+        assert item["respuesta_en"] != item["respuesta"]
+
+    consultas = ("atajos de teclado", "importar un descompuesto de excel",
+                 "cambiar la tasa y la moneda", "remodelar un baño",
+                 "generar un documento de cobro", "personalizar el pdf")
+    for consulta in consultas:
+        es = asistente_ia.buscar_respuesta_local(consulta)
+        en = asistente_ia.buscar_respuesta_local(consulta, idioma="en")
+        assert es and en, f"sin respuesta para {consulta!r}"
+        assert en != es, f"{consulta!r} no se traduce"
+        # Las rutas (/presupuestos/...) son las mismas: solo se comprueba
+        # que la prosa no se quede en castellano.
+        assert not re.search(r"[áéíóúñ]", en), f"acentos en {consulta!r}"
+        assert "Partidas" not in en and "Catálogo" not in en
+
+
+def _sse_a_texto(eventos):
+    salida = []
+    for evento in eventos:
+        for linea in evento.splitlines():
+            if linea.startswith("data: "):
+                datos = json.loads(linea[len("data: "):])
+                salida.append(datos.get("texto") or "")
+    return "".join(salida)
+
+
+def test_la_guia_sin_clave_se_muestra_en_ingles():
+    """Sin GROQ_API_KEY el asistente sigue hablando: también en inglés."""
+    db = MagicMock()
+    db.info = {}
+    with patch.object(asistente_ia, "obtener_clave_ia", return_value=None), \
+         patch.object(asistente_ia, "resolver_accion_funcional", return_value=None):
+        es = _sse_a_texto(asistente_ia.consultar_asistente_stream(
+            db, [{"role": "user", "content": "xxxxx"}],
+        ))
+        en = _sse_a_texto(asistente_ia.consultar_asistente_stream(
+            db, [{"role": "user", "content": "xxxxx"}], idioma="en",
+        ))
+    assert "Herramientas locales activas" in es
+    assert "local tools active" in en
+    # El enlace de la clave es el mismo en los dos idiomas.
+    assert "console.groq.com/keys" in en
+
+    # En síncrono, el aviso de activación también se traduce.
+    with patch.object(asistente_ia, "obtener_clave_ia", return_value=None), \
+         patch.object(asistente_ia, "resolver_accion_funcional", return_value=None):
+        assert "add your free Groq key" in asistente_ia.consultar_asistente_sync(
+            db, [{"role": "user", "content": "xxxxx"}], idioma="en",
+        )
+
+
+def test_redaccion_tecnica_sin_clave_tambien_en_ingles():
+    en = asistente_ia._redaccion_tecnica_fallback(
+        "Porcelain tile flooring", "m2", "en",
+    )
+    assert "Supply and installation" in en
+    assert "Measured per m2" in en
+    assert "Suministro" not in en
+
+    en2 = asistente_ia._redaccion_tecnica_fallback(
+        "Hacking off wall tiling", "m2", "en",
+    )
+    # «tiling» aparece en el título, pero manda «hacking off»: es derribo.
+    assert "licensed tip" in en2
+
+    # En castellano no cambia nada.
+    es = asistente_ia._redaccion_tecnica_fallback("Porcelanato", "m2")
+    assert "Suministro e instalación" in es
+
+
+def test_la_consulta_de_partidas_se_reconoce_tambien_en_ingles():
+    for consulta in ("which line item is for porcelain tile",
+                     "find me a line item for painting",
+                     "I need an item for waterproofing"):
+        assert asistente_ia.es_consulta_busqueda_partidas(consulta), consulta
+    # «Qué capítulos y partidas incluyo…» sigue siendo planificación, no búsqueda.
+    assert not asistente_ia.es_consulta_busqueda_partidas(
+        "which sections and line items do I need for a bathroom",
+    )
+    assert not asistente_ia.es_consulta_busqueda_partidas("hola")
+
+
+def test_el_termino_de_busqueda_se_limpia_de_palabras_vacias_en_ingles():
+    """«which line item is for…» no puede acabar buscando «which line»."""
+    limpio = asistente_ia.extraer_consulta_partidas(
+        "which line item is for waterproofing",
+    )
+    assert "waterproofing" in limpio
+    for vacia in ("which", "line", "item", "for", "is"):
+        assert vacia not in limpio.split()
+
+
+def test_el_endpoint_de_chat_contesta_en_el_idioma_del_panel(tmp_path):
+    """Recorrido HTTP completo: la cookie decide la lengua de la respuesta."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+
+    from app.database import Base, get_authenticated_db, get_db
+    from app.main import app
+    from app.models import Configuracion, Organizacion
+
+    engine = create_engine(f"sqlite:///{tmp_path}/test_ia_idioma.db")
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    db = Session()
+    db.add(Organizacion(id=1, nombre="Empresa Demo", slug="empresa-demo"))
+    db.add(Configuracion(organizacion_id=1, empresa_nombre="Empresa Demo"))
+    db.commit()
+
+    def override_get_db():
+        yield db
+
+    app.dependency_overrides[get_authenticated_db] = override_get_db
+    app.dependency_overrides[get_db] = override_get_db
+    try:
+        client = TestClient(app, base_url="https://cotizat.test")
+        pregunta = {"messages": [
+            {"role": "user", "content": "what are the keyboard shortcuts?"},
+        ], "stream": False}
+
+        client.cookies.set("cotizat_lang", "en")
+        en = client.post("/api/ia/chat", json=pregunta).json()
+        assert en["ok"] is True
+        assert "Keyboard shortcuts" in en["respuesta"]
+        assert "Atajos de teclado" not in en["respuesta"]
+
+        client.cookies.set("cotizat_lang", "es")
+        es = client.post("/api/ia/chat", json=pregunta).json()
+        assert es["ok"] is True
+        assert "Atajos de teclado" in es["respuesta"]
+
+        # La redacción técnica sigue el mismo idioma.
+        client.cookies.set("cotizat_lang", "en")
+        ficha = client.post(
+            "/api/ia/redactar-descripcion",
+            json={"titulo": "Porcelain tile flooring", "unidad": "m2"},
+        ).json()
+        assert ficha["ok"] is True
+        assert "Supply and installation" in ficha["descripcion"]
+    finally:
+        app.dependency_overrides.clear()

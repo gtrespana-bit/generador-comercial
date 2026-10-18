@@ -1,0 +1,11 @@
+{{ product_name }} — Proposal {{ decision }}
+
+The proposal {{ presupuesto_numero }}{% if presupuesto_titulo %} · {{ presupuesto_titulo }}{% endif %}, version V{{ version_numero }}, was {{ decision }}.
+
+Client: {{ cliente_nombre or '—' }}
+Responded by: {{ respondido_por_nombre }} · {{ respondido_por_email }}
+{% if comentario %}Comment: {{ comentario }}
+{% endif %}
+Open the estimate in CotizaT: {{ enlace_interno }}
+
+The identity shown is the one declared by the person who responded to the link. CotizaT keeps the exact version, the decision and the date/time; it does not certify a qualified electronic signature.

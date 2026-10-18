@@ -189,7 +189,100 @@ class FormulariosUTF8Middleware:
         await self.app(scope, receive, send)
 
 
+
+class IdiomaMiddleware:
+    """Resuelve el idioma desde /en/... o la cookie y reescribe la ruta."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            await self.app(scope, receive, send)
+            return
+        path = scope.get("path", "") or ""
+        lang = None
+        reescribir = False
+        import re as _re
+
+        # /en/ y /en-us/ serían la misma página en dos sitios: «en» a secas
+        # resuelve a Estados Unidos en el registro de mercados. Se consolida
+        # aquí porque el propio middleware reescribe /en/ a / antes de
+        # enrutar, así que un handler de /en/ nunca llegaría a ejecutarse.
+        if path in ("/en", "/en/"):
+            from starlette.responses import RedirectResponse
+
+            resp = RedirectResponse("/en-us/", status_code=301)
+            await resp(scope, receive, send)
+            return
+        _m = _re.match(r"^/en(?:-([A-Za-z]{2}))?(/.*)?$", path)
+        if _m:
+            lang = "en"
+            reescribir = True
+            _pais = _m.group(1)
+            _resto = _m.group(2) or ""
+            if _pais:
+                # /en-es/... -> /es/... (datos del país, interfaz en inglés)
+                base = "/" + _pais.lower()
+                nuevo = base + (_resto if _resto else "/")
+                if nuevo.endswith("//"):
+                    nuevo = nuevo[:-1]
+            else:
+                if path == "/en":
+                    nuevo = "/"
+                else:
+                    nuevo = path[3:]
+                    if not nuevo:
+                        nuevo = "/"
+            scope["path"] = nuevo
+            scope["raw_path"] = nuevo.encode("latin-1")
+            # El mercado viaja en la ruta reescrita (/us/, /gb/…). Se guarda
+            # para que los avisos que el código lanza en español salgan con
+            # el vocabulario del mercado, igual que las partidas.
+            _mk = _re.match(r"^/([a-zA-Z]{2})(?:/|$)", nuevo)
+            if _mk:
+                from .paises import obtener_pais
+
+                state = scope.setdefault("state", {})
+                state["mercado"] = obtener_pais(_mk.group(1).lower())
+            # El conmutador de idioma escribe su propia cookie: si la ruta es
+            # /idioma/... manda esa, no la que implicaba el prefijo.
+            if nuevo == "/idioma" or nuevo.startswith("/idioma/"):
+                reescribir = False
+        # cookie
+        if lang is None:
+            headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
+            cookie = headers.get("cookie", "")
+            from .i18n import idioma_desde_cookie
+            lang = idioma_desde_cookie(cookie)
+        state = scope.setdefault("state", {})
+        state["lang"] = lang
+        # Tras reescribir, la ruta interna (/us/) ya no dice si el visitante
+        # pidió /en-us/. Se guarda la original para que las landings puedan
+        # redirigir a su canónica sin montar un bucle.
+        state["ruta_original"] = path
+        state["prefijo_idioma"] = "en" if reescribir else ""
+        if reescribir:
+            async def send_wrap(message):
+                if message.get("type") == "http.response.start":
+                    hs = list(message.get("headers", []))
+                    from .i18n import COOKIE_IDIOMA, COOKIE_IDIOMA_MAX_AGE
+
+                    hs.append(
+                        (
+                            b"set-cookie",
+                            f"{COOKIE_IDIOMA}={lang}; Path=/; Max-Age={COOKIE_IDIOMA_MAX_AGE}; SameSite=Lax".encode(),
+                        )
+                    )
+                    message["headers"] = hs
+                await send(message)
+            await self.app(scope, receive, send_wrap)
+        else:
+            await self.app(scope, receive, send)
+
+
 app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
+app.add_middleware(IdiomaMiddleware)
 app.add_middleware(FormulariosUTF8Middleware)
 app.add_middleware(RefreshedAuthCookieMiddleware)
 app.add_middleware(

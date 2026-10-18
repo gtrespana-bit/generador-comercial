@@ -39,10 +39,27 @@ def test_cifras_catalogo_cuentan_partidas_y_recursos():
 # Formato por moneda
 # ---------------------------------------------------------------------------
 
-def _a_numero(texto: str) -> float:
-    """'547.451 COL$' -> 547451.0 · '2.224,62 MX$' -> 2224.62"""
-    limpio = re.sub(r"\s?(COL\$|MX\$|US\$|S/)", "", texto).strip()
-    return float(limpio.replace(".", "").replace(",", "."))
+def _a_numero(texto: str, mercado: dict | None = None) -> float:
+    """Invierte el formato del mercado, no un convenio fijo.
+
+    Antes daba por hecho la coma decimal en todas partes, y eso era cierto
+    solo mientras México se formateaba como España. Hoy México y Ecuador
+    escriben «2,224.62» y España «2.224,62», así que hay que saber de qué
+    mercado viene la cifra.
+    """
+    limpio = re.sub(r"[^\d,.\-]", "", texto)
+    if mercado is None:
+        return float(limpio.replace(".", "").replace(",", "."))
+    return float(
+        limpio.replace(mercado["separador_miles"], "")
+        .replace(mercado["separador_decimal"], ".")
+    )
+
+
+def _mercado_de(codigo: str) -> dict:
+    from app.paises import PAIS_GENERICO, PAISES
+
+    return PAISES.get(str(codigo or "").strip().upper()) or PAIS_GENERICO
 
 
 def test_ejemplo_colombia_usa_cop_con_iva_19_y_bogota():
@@ -107,29 +124,37 @@ def test_ejemplo_moneda_sin_tasa_verificada_degrada_a_usd(monkeypatch):
 # Invariantes aritméticas en cualquier moneda
 # ---------------------------------------------------------------------------
 
-def _invariantes(ej: dict) -> None:
+def _invariantes(ej: dict, mercado: dict | None = None) -> None:
+    def n(texto: str) -> float:
+        return _a_numero(texto, mercado)
+
     for cap in ej["caps"]:
-        filas = sum(_a_numero(p["importe"]) for p in cap["partidas"])
-        assert abs(_a_numero(cap["importe"]) - filas) < 1.01
-        ben = sum(_a_numero(p["beneficio"]) for p in cap["partidas"])
-        assert abs(_a_numero(cap["beneficio"].replace("+ ", "")) - ben) < 1.01 * len(cap["partidas"])
+        filas = sum(n(p["importe"]) for p in cap["partidas"])
+        assert abs(n(cap["importe"]) - filas) < 1.01
+        ben = sum(n(p["beneficio"]) for p in cap["partidas"])
+        assert abs(n(cap["beneficio"].replace("+ ", "")) - ben) < 1.01 * len(cap["partidas"])
     tot = ej["tot"]
     assert abs(
-        _a_numero(tot["subtotal"])
-        - _a_numero(tot["obra"])
-        - _a_numero(tot["productos"])
+        n(tot["subtotal"])
+        - n(tot["obra"])
+        - n(tot["productos"])
     ) < 1.01
     assert abs(
-        _a_numero(tot["total"]) - _a_numero(tot["subtotal"]) - _a_numero(tot["iva"])
+        n(tot["total"]) - n(tot["subtotal"]) - n(tot["iva"])
     ) < 1.01
     assert abs(
-        _a_numero(tot["subtotal"]) - _a_numero(tot["coste"]) - _a_numero(tot["beneficio"])
+        n(tot["subtotal"]) - n(tot["coste"]) - n(tot["beneficio"])
     ) < 1.01 * 20  # redondeo por fila
 
 
 def test_ejemplo_suma_exacta_en_todas_las_monedas():
+    """Se comprueba leyendo cada cifra en su mercado.
+
+    México y Ecuador separan como Estados Unidos: leídos con el convenio
+    europeo, «2,224.62» valdría 2.22 y las sumas no cuadrarían.
+    """
     for codigo in ("", "VE", "CO", "MX", "PE", "EC"):
-        _invariantes(contexto_ejemplo(codigo))
+        _invariantes(contexto_ejemplo(codigo), _mercado_de(codigo))
 
 
 def test_ejemplo_apu_real_del_catalogo():
@@ -141,14 +166,15 @@ def test_ejemplo_apu_real_del_catalogo():
     grupos = {f["grupo"] for f in apu["filas"]}
     assert grupos == {"Material", "Mano de obra", "Equipo"}
     # Coste directo = suma de las filas visibles (+ complementarios)
-    filas = sum(_a_numero(f["importe"]) for f in apu["filas"])
-    assert abs(_a_numero(apu["directo"]) - filas) < 1.01 * len(apu["filas"])
+    col = _mercado_de("CO")
+    filas = sum(_a_numero(f["importe"], col) for f in apu["filas"])
+    assert abs(_a_numero(apu["directo"], col) - filas) < 1.01 * len(apu["filas"])
     assert abs(
-        _a_numero(apu["coste"]) - _a_numero(apu["directo"]) - _a_numero(apu["comp"])
+        _a_numero(apu["coste"], col) - _a_numero(apu["directo"], col) - _a_numero(apu["comp"], col)
     ) < 1.01
     # Precio de venta = coste × (1 + margen 35 %, defecto del catálogo desde 2026-08-25)
-    pv = _a_numero(apu["precio"].split(" COL$/")[0] + " COL$")
-    assert abs(pv - _a_numero(apu["coste"]) * 1.35) < max(2.0, pv * 0.002)
+    pv = _a_numero(apu["precio"].split(" COL$/")[0] + " COL$", col)
+    assert abs(pv - _a_numero(apu["coste"], col) * 1.35) < max(2.0, pv * 0.002)
     assert apu["margen"] == "+35 %"
 
 

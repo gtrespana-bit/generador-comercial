@@ -1,0 +1,225 @@
+{% extends "base_en.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
+{% block content %}
+
+{% if compra_pendiente_ficha %}
+<div class="retomar-compra" role="status">
+  <div class="retomar-compra-copy">
+    <strong>Resume your purchase of {{ compra_pendiente_ficha.nombre }}</strong>
+    <span>{{ "%.2f"|format(compra_pendiente_ficha.importe) }} US${% if compra_pendiente == 'anual' %} / year{% else %} / month{% endif %} · manual payment: we review and activate your plan.</span>
+  </div>
+  <div class="retomar-compra-acciones">
+    <a class="btn btn-primary btn-sm" href="/pago/comprar?plan={{ compra_pendiente }}">Continue purchase</a>
+    <form method="post" action="/pago/descartar">
+      <button type="submit" class="btn btn-sm">Not now</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<header class="dash-hero">
+  <div class="dash-hero-copy">
+    <span class="page-eyebrow">Summary</span>
+    <h1>Hello{% if request.state.usuario is defined and request.state.usuario.nombre %}, {{ request.state.usuario.nombre.split()[0] }}{% endif %}</h1>
+    <p class="subtitle">{{ value_proposition }}</p>
+  </div>
+  <div class="dash-hero-actions">
+    <a class="btn" href="/presupuestos/nuevo?autogenerar=1" title="Draft from your catalog">
+      <svg width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M9 1l2 5h5l-4 3.5 1.5 5L9 12l-4.5 2.5L6 9.5 2 6h5z"/></svg>
+      Suggest from catalog
+    </a>
+    <a class="btn btn-primary" href="/presupuestos/nuevo">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 1v10M1 6h10"/></svg>
+      New estimate
+    </a>
+  </div>
+</header>
+
+{% if por_vencer or importe_aprobado or total_presupuestos %}
+<section class="dash-kpis" aria-label="Key indicators">
+  <a class="dash-kpi {% if por_vencer %}dash-kpi-alert{% endif %}" href="/presupuestos?estado=enviado">
+    <span class="dash-kpi-label">Expiring (7 days)</span>
+    <strong class="dash-kpi-value">{{ por_vencer }}</strong>
+    <span class="dash-kpi-hint">{% if por_vencer %}Require follow-up{% else %}None pending{% endif %}</span>
+  </a>
+  <div class="dash-kpi">
+    <span class="dash-kpi-label">Approved volume</span>
+    <strong class="dash-kpi-value dash-kpi-money">{{ importe_aprobado | money_iso(moneda_vista) }}</strong>
+    <span class="dash-kpi-hint">{{ por_estado['aprobado'] }} project{{ 's' if por_estado['aprobado'] != 1 else '' }} approved</span>
+  </div>
+  <div class="dash-kpi">
+    <span class="dash-kpi-label">Approval rate</span>
+    <strong class="dash-kpi-value">{{ tasa_aprobacion | int }}<small>%</small></strong>
+    <span class="dash-kpi-hint">History of sent → approved</span>
+  </div>
+  <div class="dash-kpi">
+    <span class="dash-kpi-label">Active projects</span>
+    <strong class="dash-kpi-value">{{ proyectos_activos }}</strong>
+    <span class="dash-kpi-hint">{{ total_presupuestos }} estimate{{ 's' if total_presupuestos != 1 else '' }} · {{ total_facturas }} payment{{ 's' if total_facturas != 1 else '' }}</span>
+  </div>
+</section>
+{% endif %}
+
+{% if recorrido_inicial and not recorrido_inicial.completo %}
+<section class="first-run-card" aria-labelledby="first-run-title">
+  <div class="first-run-head">
+    <div>
+      <span class="section-kicker">Getting started · {{ recorrido_inicial.completados }}/{{ recorrido_inicial.total }}</span>
+      <h2 id="first-run-title">Reach your first PDF in five steps</h2>
+      <p>Progress with real data. Demo content does not complete client, estimate or PDF.</p>
+    </div>
+    <div class="first-run-side">
+      <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% complete">
+        <strong>{{ recorrido_inicial.porcentaje }}%</strong><span>done</span>
+      </div>
+      <form method="post" action="/recorrido/omitir" class="first-run-dismiss">
+        <button type="submit" class="btn btn-sm btn-ghost" title="Hide the getting-started guide from this panel">Skip guide</button>
+      </form>
+    </div>
+  </div>
+  <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
+  {% if recorrido_inicial.presupuesto_demo %}
+  <div class="demo-shortcut">
+    <span><strong>Example:</strong> explore the demo estimate without mixing it with your work.</span>
+    <a class="btn btn-sm" href="/presupuestos/{{ recorrido_inicial.presupuesto_demo.id }}">View example</a>
+  </div>
+  {% endif %}
+  <div class="first-run-steps">
+    {% for paso in recorrido_inicial.pasos %}
+    <article class="first-run-step {{ 'done' if paso.completo else '' }}">
+      <span class="step-state">{{ '✓' if paso.completo else loop.index }}</span>
+      <div><h3>{{ paso.titulo }}</h3><p>{{ paso.detalle }}</p></div>
+      {% if paso.metodo | default('get') == 'post' %}
+      <form method="post" action="{{ paso.url }}"><button type="submit" class="btn btn-sm">{{ 'Review' if paso.completo else paso.accion }}</button></form>
+      {% else %}
+      <a href="{{ paso.url }}" class="btn btn-sm">{{ 'Review' if paso.completo else paso.accion }}</a>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+
+{% if salud_catalogo and salud_catalogo.requiere_atencion %}
+<section class="card dashboard-catalog-health" aria-labelledby="catalog-health-title">
+  <div class="catalog-health-main">
+    <div class="catalog-health-score"><strong>{{ salud_catalogo.score }}%</strong><span>catalog</span></div>
+    <div>
+      <h2 id="catalog-health-title">Catalog: {{ salud_catalogo.titulo|lower }}</h2>
+      <p class="hint">
+        {% for problema in salud_catalogo.problemas_visibles[:3] %}
+          {{ problema.count }} {{ problema.label|lower }}{{ ' · ' if not loop.last }}
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+  <a class="btn btn-sm" href="/partidas">Review catalog</a>
+</section>
+{% endif %}
+
+<section class="card quick-guide-strip">
+  <div>
+    <strong>First time?</strong>
+    <span class="hint">Follow the recommended flow: catalog → estimate → review → PDF → changes.</span>
+  </div>
+  <a class="btn btn-sm" href="/guia-rapida">View quick guide</a>
+</section>
+
+<div class="dash-grid">
+  <section class="card dash-panel">
+    <div class="card-head">
+      <h2>Recent activity</h2>
+      <a class="link" href="/presupuestos">View all</a>
+    </div>
+    {% if recientes %}
+    <div class="table-wrap">
+      <table class="table table-mobile-cards">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th class="right">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in recientes %}
+          <tr>
+            <td data-label="No."><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
+            <td data-label="Date" class="muted">{{ p.fecha | fecha }}</td>
+            <td data-label="Client">{{ p.cliente.nombre }}</td>
+            <td data-label="Status"><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
+            <td class="right" data-label="Total"><strong>{{ p.total_listado | money_iso(p.moneda) }}</strong></td>
+            <td class="actions-cell">
+              <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/pdf" download="estimate_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">PDF</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty dash-empty">
+      <p>No estimates yet.</p>
+      <a class="btn btn-primary btn-sm" href="/presupuestos/nuevo">Create the first one</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <aside class="dash-side">
+    <section class="card dash-panel">
+      <div class="card-head">
+        <h2>Catalog</h2>
+        <a class="link" href="/presupuestos/optimizar-precios">Analysis</a>
+      </div>
+      {% if analisis_precios.alertas %}
+      <p class="dash-side-lead">
+        <strong>{{ analisis_precios.alertas | length }}</strong> line item{{ 's' if analisis_precios.alertas|length != 1 else '' }} with low margin or unreviewed price{% if analisis_precios.categoria_mas_afectada %}, mainly in <strong>{{ analisis_precios.categoria_mas_afectada }}</strong>{% endif %}.
+      </p>
+      <a class="btn btn-sm" href="/presupuestos/optimizar-precios">Review prices</a>
+      {% elif analisis_precios.evaluadas %}
+      <p class="dash-side-lead">No margin alerts for now{% if analisis_precios.margen_promedio is not none %}. Average catalog margin: <strong>{{ analisis_precios.margen_promedio }}%</strong>{% endif %}.</p>
+      <a class="btn btn-sm btn-ghost" href="/partidas">Open line items</a>
+      {% else %}
+      <p class="dash-side-lead">Enter internal costs in line items to calculate margins automatically.</p>
+      <a class="btn btn-sm" href="/partidas">Complete catalog</a>
+      {% endif %}
+    </section>
+
+    <section class="card dash-panel dash-shortcuts">
+      <div class="card-head"><h2>Shortcuts</h2></div>
+      <div class="dash-shortcut-list">
+        <a href="/presupuestos/nuevo">New estimate</a>
+        <a href="/partidas">Line item catalog</a>
+        <a href="/recursos">Price table</a>
+        <a href="/clientes/nuevo">New client</a>
+        <a href="/reportes">Reports</a>
+      </div>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var form = document.querySelector('.first-run-dismiss');
+    if (!form) return;
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var card = document.querySelector('.first-run-card');
+      var accion = form.getAttribute('action') || '/recorrido/omitir';
+      fetch(accion, { method: 'POST', headers: { 'Accept': 'application/json' } })
+        .then(function () {
+          if (card) card.remove();
+        })
+        .catch(function () {
+          event.target.submit();
+        });
+    });
+  })();
+</script>
+{% endblock %}

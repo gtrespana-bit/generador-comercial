@@ -36,6 +36,7 @@ from .common import (
     StorageError,
     log,
 )
+from ..i18n import mensaje_request
 from ..services.planos import (
     ErrorPlano,
     crear_plano,
@@ -219,7 +220,7 @@ def listar_planos_presupuesto(
 
 
 @router.get("/presupuestos/{presupuesto_id}/planos/mediciones-selector")
-def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
+def mediciones_selector_presupuesto(request: Request, presupuesto_id: int, db: Session = Depends(get_db)):
     """Medidas listas para insertar como desglose en una partida.
 
     La respuesta presenta una estancia como varias magnitudes útiles: suelo,
@@ -240,7 +241,7 @@ def mediciones_selector_presupuesto(presupuesto_id: int, db: Session = Depends(g
         return JSONResponse(
             {
                 "ok": False,
-                "error": "Presupuesto no encontrado.",
+                "error": mensaje_request(request, "Presupuesto no encontrado."),
                 "razon": "presupuesto_inexistente",
                 "presupuesto_id": presupuesto_id,
             },
@@ -406,10 +407,10 @@ def _datos_elemento_plano(elemento: PlanoElemento) -> dict:
 
 
 @router.get("/planos/{plano_id}/datos")
-def datos_plano(plano_id: int, db: Session = Depends(get_db)):
+def datos_plano(request: Request, plano_id: int, db: Session = Depends(get_db)):
     plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
 
     return {
         "ok": True,
@@ -439,7 +440,7 @@ def datos_plano(plano_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/planos/{plano_id}/detectar")
-def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Depends(get_db)):
+def detectar_mediciones_plano(request: Request, plano_id: int, limite: int = 30, db: Session = Depends(get_db)):
     """Analiza una imagen localmente y guarda sus estancias cerradas como áreas.
 
     Para planos ``subido``/``mixto`` corre el detector raster sobre la
@@ -451,7 +452,7 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
     esquema = detectar_esquema_planos(db)
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     limite = max(1, min(int(limite), 30))
 
     if plano.origen == "dibujado" and not esquema.editor_vectorial_disponible:
@@ -473,7 +474,7 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
 
     if not plano.archivo:
         return JSONResponse(
-            {"ok": False, "error": "Este plano no tiene imagen para analizar."},
+            {"ok": False, "error": mensaje_request(request, "Este plano no tiene imagen para analizar.")},
             status_code=400,
         )
     try:
@@ -491,7 +492,7 @@ def detectar_mediciones_plano(plano_id: int, limite: int = 30, db: Session = Dep
     except Exception:
         log.exception("Error analizando automáticamente el plano %s", plano_id)
         return JSONResponse(
-            {"ok": False, "error": "No se pudo analizar automáticamente el plano."},
+            {"ok": False, "error": mensaje_request(request, "No se pudo analizar automáticamente el plano.")},
             status_code=500,
         )
     return {
@@ -531,7 +532,7 @@ async def subir_plano(
 ):
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
-        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}, status_code=404)
     # El INSERT ORM incluye las cuatro columnas nuevas aun para un plano
     # raster. Si falta cualquiera, responde de forma explícita en vez de dejar
     # que PostgreSQL genere UndefinedColumn y un 500.
@@ -540,7 +541,7 @@ async def subir_plano(
         return _respuesta_migracion_planos_pendiente()
 
     if not archivo or not archivo.filename:
-        return JSONResponse({"ok": False, "error": "Selecciona un archivo de plano."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Selecciona un archivo de plano.")}, status_code=400)
 
     contenido = await archivo.read()
     try:
@@ -558,7 +559,7 @@ async def subir_plano(
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
     except Exception as e:
         log.exception("Error subiendo plano")
-        return JSONResponse({"ok": False, "error": "No se pudo guardar el plano."}, status_code=500)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "No se pudo guardar el plano.")}, status_code=500)
 
 
 @router.post("/planos/{plano_id}/calibrar")
@@ -570,12 +571,12 @@ async def calibrar_plano_endpoint(
     esquema = detectar_esquema_planos(db)
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
 
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
 
     try:
         dist_px = float(payload.get("distancia_px", 0))
@@ -586,7 +587,7 @@ async def calibrar_plano_endpoint(
         grosor_raw = payload.get("grosor_tabique_cm")
         grosor_cm = float(grosor_raw) if grosor_raw not in (None, "") else None
     except (TypeError, ValueError):
-        return JSONResponse({"ok": False, "error": "Distancias no válidas."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Distancias no válidas.")}, status_code=400)
 
     try:
         # Calibrar (funcionalidad histórica) sigue disponible durante la
@@ -615,12 +616,12 @@ async def crear_medicion_endpoint(
 ):
     plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
 
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
 
     tipo = str(payload.get("tipo", "lineal"))
     etiqueta = str(payload.get("etiqueta", ""))
@@ -650,11 +651,11 @@ async def actualizar_medicion_endpoint(
     plano = _obtener_plano_compatible(db, plano_id)
     med = db.get(PlanoMedicion, medicion_id)
     if not plano or not med or med.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Medición no encontrada.")}, status_code=404)
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
     try:
         med = actualizar_medicion(
             db,
@@ -679,13 +680,13 @@ async def aplicar_medicion_endpoint(
 ):
     med = db.get(PlanoMedicion, medicion_id)
     if not med or med.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Medición no encontrada.")}, status_code=404)
 
     try:
         payload = await request.json()
         partida_id = int(payload.get("partida_id", 0))
     except Exception:
-        return JSONResponse({"ok": False, "error": "Partida no válida."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Partida no válida.")}, status_code=400)
     # El visor envía la magnitud elegida por el usuario (perímetro, suelo o
     # paredes para una estancia). Sin ella se aplicaba siempre el valor
     # crudo guardado y el usuario no controlaba qué número llegaba.
@@ -706,12 +707,12 @@ async def actualizar_altura_endpoint(
 ):
     plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     try:
         payload = await request.json()
         altura = float(payload.get("altura_libre_m", 0))
     except Exception:
-        return JSONResponse({"ok": False, "error": "Altura no válida."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Altura no válida.")}, status_code=400)
     try:
         actualizar_altura_plano(db, plano, altura)
         return {
@@ -724,29 +725,29 @@ async def actualizar_altura_endpoint(
 
 
 @router.delete("/planos/{plano_id}")
-def borrar_plano_endpoint(plano_id: int, db: Session = Depends(get_db)):
+def borrar_plano_endpoint(request: Request, plano_id: int, db: Session = Depends(get_db)):
     plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     presupuesto_id = plano.presupuesto_id
     eliminar_plano(db, plano)
     return {"ok": True, "presupuesto_id": presupuesto_id}
 
 
 @router.delete("/planos/{plano_id}/mediciones/{medicion_id}")
-def borrar_medicion_endpoint(plano_id: int, medicion_id: int, db: Session = Depends(get_db)):
+def borrar_medicion_endpoint(request: Request, plano_id: int, medicion_id: int, db: Session = Depends(get_db)):
     med = db.get(PlanoMedicion, medicion_id)
     if not med or med.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Medición no encontrada.")}, status_code=404)
     eliminar_medicion(db, med)
     return {"ok": True}
 
 
 @router.post("/planos/{plano_id}/mediciones/{medicion_id}/eliminar")
-def borrar_medicion_post(plano_id: int, medicion_id: int, db: Session = Depends(get_db)):
+def borrar_medicion_post(request: Request, plano_id: int, medicion_id: int, db: Session = Depends(get_db)):
     med = db.get(PlanoMedicion, medicion_id)
     if not med or med.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Medición no encontrada.")}, status_code=404)
     eliminar_medicion(db, med)
     return {"ok": True}
 
@@ -760,11 +761,11 @@ async def renombrar_medicion_endpoint(
 ):
     med = db.get(PlanoMedicion, medicion_id)
     if not med or med.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Medición no encontrada."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Medición no encontrada.")}, status_code=404)
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
     try:
         med = renombrar_medicion(db, med, str(payload.get("etiqueta", "")))
         return {"ok": True, "etiqueta": med.etiqueta}
@@ -806,16 +807,16 @@ def exportar_mediciones_presupuesto(
 
 @router.get("/planos/{plano_id}/exportar")
 def exportar_plano_endpoint(
-    plano_id: int,
+    request: Request, plano_id: int,
     formato: str = "dxf",
     db: Session = Depends(get_db),
 ):
     """DXF con las mediciones del plano para AutoCAD/LibreCAD/BricsCAD."""
     plano = _obtener_plano_compatible(db, plano_id)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     if (formato or "dxf").lower() != "dxf":
-        return JSONResponse({"ok": False, "error": "Formato no soportado."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Formato no soportado.")}, status_code=400)
     try:
         dxf = exportar_plano_dxf(plano)
     except ErrorPlano as e:
@@ -849,7 +850,7 @@ async def crear_plano_blanco(
     """
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if not presupuesto:
-        return JSONResponse({"ok": False, "error": "Presupuesto no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}, status_code=404)
     esquema = detectar_esquema_planos(db)
     if not esquema.editor_vectorial_disponible:
         return _respuesta_migracion_planos_pendiente()
@@ -893,7 +894,7 @@ async def actualizar_lienzo_endpoint(
         return _respuesta_migracion_planos_pendiente()
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     try:
         payload = await request.json()
     except Exception:
@@ -926,12 +927,12 @@ async def actualizar_grosor_endpoint(
         return _respuesta_migracion_planos_pendiente()
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     try:
         payload = await request.json()
         grosor = float(payload.get("grosor_tabique_cm", 0))
     except Exception:
-        return JSONResponse({"ok": False, "error": "Grosor no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Grosor no válido.")}, status_code=400)
     try:
         actualizar_grosor_tabique(db, plano, grosor)
     except ErrorPlano as e:
@@ -956,11 +957,11 @@ async def crear_elemento_endpoint(
         return _respuesta_migracion_planos_pendiente()
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     if not plano:
-        return JSONResponse({"ok": False, "error": "Plano no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Plano no encontrado.")}, status_code=404)
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
     try:
         elem = guardar_elemento(
             db,
@@ -989,11 +990,11 @@ async def actualizar_elemento_endpoint(
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     elem = db.get(PlanoElemento, elemento_id)
     if not plano or not elem or elem.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Elemento no encontrado.")}, status_code=404)
     try:
         payload = await request.json()
     except Exception:
-        return JSONResponse({"ok": False, "error": "JSON no válido."}, status_code=400)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "JSON no válido.")}, status_code=400)
     try:
         elem = actualizar_elemento(
             db,
@@ -1010,7 +1011,7 @@ async def actualizar_elemento_endpoint(
 
 @router.delete("/planos/{plano_id}/elementos/{elemento_id}")
 def eliminar_elemento_endpoint(
-    plano_id: int,
+    request: Request, plano_id: int,
     elemento_id: int,
     db: Session = Depends(get_db),
 ):
@@ -1020,6 +1021,6 @@ def eliminar_elemento_endpoint(
     plano = _obtener_plano_compatible(db, plano_id, esquema=esquema)
     elem = db.get(PlanoElemento, elemento_id)
     if not plano or not elem or elem.plano_id != plano_id:
-        return JSONResponse({"ok": False, "error": "Elemento no encontrado."}, status_code=404)
+        return JSONResponse({"ok": False, "error": mensaje_request(request, "Elemento no encontrado.")}, status_code=404)
     eliminar_elemento(db, plano, elem)
     return {"ok": True}

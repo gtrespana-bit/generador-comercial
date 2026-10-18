@@ -1,8 +1,9 @@
 """Recetas / packs de estancia."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 
 router = APIRouter()
 
@@ -219,10 +220,10 @@ def api_listar_recetas(moneda: str = "", tasa: str = "", db: Session = Depends(g
 
 
 @router.get("/recetas/api/{receta_id}")
-def api_detalle_receta(receta_id: int, moneda: str = "", tasa: str = "", db: Session = Depends(get_db)):
+def api_detalle_receta(request: Request, receta_id: int, moneda: str = "", tasa: str = "", db: Session = Depends(get_db)):
     r = db.get(RecetaEstancia, receta_id)
     if not r:
-        return {"ok": False, "error": "No encontrado"}
+        return {"ok": False, "error": mensaje_request(request, "No encontrado")}
     try:
         items = json.loads(r.datos or "[]")
     except Exception:
@@ -249,7 +250,7 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
     try:
         payload = await request.json()
     except Exception:
-        return {"ok": False, "error": "Carga JSON inválida."}
+        return {"ok": False, "error": mensaje_request(request, "Carga JSON inválida.")}
     nombre = str(payload.get("nombre", "")).strip()
     categoria = str(payload.get("categoria", "")).strip() or "Otros"
     unidad_base = str(payload.get("unidad_base", "")).strip() or "m²"
@@ -260,7 +261,7 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
     calcular_coeficientes = bool(payload.get("calcular_coeficientes", True))
     items_in = payload.get("items", [])
     if not items_in:
-        return {"ok": False, "error": "El capítulo no tiene partidas."}
+        return {"ok": False, "error": mensaje_request(request, "El capítulo no tiene partidas.")}
     # El capítulo llega en la moneda del presupuesto: se normaliza a la moneda
     # base antes de guardar el pack, que es reutilizable en cualquier moneda.
     _mon_g, _factor_g = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))

@@ -26,6 +26,186 @@ from .models import (
     PresupuestoItem,
     proximo_numero,
 )
+from .paises import es_ingles
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Demostración en inglés
+#
+# Las cifras (precios, cantidades, coeficientes) viven una sola vez en el
+# cuerpo de cada función: traducirlas sería una fuente segura de desajustes.
+# Lo que se traduce es el rótulo, con vocabulario de obra estadounidense real
+# (strip-out, tanking, thin-set, skirting, worktop…), no traducción literal.
+# Lo que no esté en la tabla se deja como está.
+# ─────────────────────────────────────────────────────────────────────────────
+
+_EN: dict[str, str] = {
+    # --- Identidad del documento -------------------------------------------------
+    "Cliente de demostración": "Demo client",
+    "Remodelación residencial de demostración": "Residential remodel \u2014 demo",
+    (
+        "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
+        "especializada, materiales de primera calidad y gestión integral del proyecto. "
+        "No incluye enseres, decoración ni equipos de climatización."
+    ): (
+        "Estimate prepared from measurements taken on site. Includes skilled labour, "
+        "premium materials and full project management. Does not include furniture, "
+        "decoration or air-conditioning units."
+    ),
+    (
+        "Forma de pago: 40% de anticipo, 35% al 50% de avance certificado y 25% "
+        "contra entrega.\nPlazo estimado de ejecución: 12 semanas desde la firma.\n"
+        "Garantía de 12 meses en instalaciones y acabados."
+    ): (
+        "Payment terms: 40% deposit to start, 35% at 50% certified progress and 25% "
+        "on handover.\nEstimated completion period: 12 weeks from signature.\n"
+        "12-month warranty on installations and finishes."
+    ),
+    # --- Capítulos ----------------------------------------------------------------
+    "MUROS Y PARTICIONES": "WALLS AND PARTITIONS",
+    "PISOS": "FLOORING",
+    "REMODELACIÓN COCINA": "KITCHEN REMODEL",
+    # --- 1 · Muros y particiones ----------------------------------------------------
+    "Demolición de partición interior de bloque revestida":
+        "Demolition of rendered internal block partition",
+    (
+        "Demolición de partición interior de fábrica revestida, formada por bloque de "
+        "concreto de hasta 20 cm de espesor, con medios manuales, sin afectar a la "
+        "estabilidad de los elementos constructivos contiguos, y carga manual sobre "
+        "camión o contenedor. El precio incluye el retiro de escombros a vertedero "
+        "autorizado y la protección de áreas adyacentes."
+    ): (
+        "Demolition of a rendered internal masonry partition, built of concrete block "
+        "up to 20 cm thick, by hand, without affecting the stability of adjoining "
+        "structural elements, including hand loading into a lorry or skip. The price "
+        "includes removal of debris to a licensed tip and protection of adjacent areas."
+    ),
+    "Cocina Aprox (4,00 x 2,50)": "Kitchen approx (4.00 x 2.50)",
+    "Tabique Sala": "Living-room partition",
+    "Apertura de hueco para puerta o ventana": "Opening formed for door or window",
+    (
+        "Apertura de hueco en fachada para ventana o puerta mediante medios manuales. "
+        "Retirada de escombros hasta planta baja por medios manuales y posterior "
+        "retirada a vertedero o punto limpio más cercano por medios mecánicos."
+    ): (
+        "Formation of an opening in the facade for a window or door by hand. Debris "
+        "removed to ground level by hand and then taken to the nearest licensed tip "
+        "or recycling point by mechanical means."
+    ),
+    "Puerta Cocina": "Kitchen door",
+    "Ventana Salón": "Living-room window",
+    "Hoja de partición interior de bloque de concreto para revestir":
+        "Internal concrete block partition leaf, for rendering",
+    (
+        "Hoja de partición interior, de hasta 20 cm de espesor, de fábrica de bloque "
+        "hueco de concreto vibrado sencillo, con juntas horizontales y verticales de "
+        "10 mm, recibida con mortero de cemento. Incluye replanteo, plomos y andamiaje ligero."
+    ): (
+        "Internal partition leaf, up to 20 cm thick, of plain vibrated hollow concrete "
+        "blockwork with 10 mm horizontal and vertical joints, laid in cement mortar. "
+        "Includes setting out, line and level, and light scaffolding."
+    ),
+    "Muro Habitación Principal": "Master bedroom wall",
+    "Muro Baño Zona Grifería": "Bathroom wall, tap area",
+    "Pañete / Repello de paredes": "Wall rendering / plastering",
+    (
+        "Repello en mortero de cemento sobre paramentos verticales de hasta 10 mm de "
+        "espesor, reglado, sacado de rincones y aristas, medido a cinta corrida, para "
+        "nivelar paredes y rematado a buena vista para su posterior pintura."
+    ): (
+        "Cement mortar rendering to vertical surfaces up to 10 mm thick, ruled, with "
+        "angles and arises formed, measured overall, to level the walls and finished "
+        "to a fair face ready for painting."
+    ),
+    # --- 2 · Pisos --------------------------------------------------------------------
+    "Solado de porcelanato rectificado gran formato":
+        "Large-format rectified porcelain floor tiling",
+    (
+        "Suministro y colocación de porcelanato rectificado formato 90x90 cm, "
+        "recibido con adhesivo cementoso mejorado C2 TE, doble encolado, juntado "
+        "con fragüe epóxico color gris perla, juntas de 2 mm. Incluye nivelación "
+        "de soporte, corte a hilo de agua en aristas y protección final del piso."
+    ): (
+        "Supply and laying of rectified porcelain tiles, 90x90 cm format, bedded in "
+        "improved cementitious adhesive C2 TE with double buttering, pointed with "
+        "epoxy grout in pearl grey, 2 mm joints. Includes levelling of the substrate, "
+        "wet cutting at arrises and final protection of the floor."
+    ),
+    "Total + Extra Cortes": "Total + cutting waste",
+    "Porcelanato Venetian Grey 90x90 cm rectificado":
+        "Venetian Grey rectified porcelain tile 90x90 cm",
+    "Zoclo lacado en blanco": "White lacquered skirting",
+    (
+        "Retirada de zoclos existentes, suministro y montaje de zoclo en madera "
+        "MDF lacada blanco mate de 10 cm, fijado con adhesivo de montaje y sellado "
+        "perimetral con silicona acrílica."
+    ): (
+        "Removal of existing skirting, supply and fixing of 10 cm matt white lacquered "
+        "MDF skirting, fixed with grab adhesive and sealed around the perimeter with "
+        "acrylic silicone."
+    ),
+    "Total + Extras": "Total + extras",
+    # --- 3 · Cocina --------------------------------------------------------------------
+    "Revestimiento interior con porcelanato gran formato":
+        "Internal large-format porcelain wall tiling",
+    (
+        "Revestimiento interior con piezas de gran formato. SOPORTE: paramento de "
+        "mortero de cemento, vertical, de hasta 3 m de altura. COLOCACIÓN: en capa "
+        "fina y mediante doble encolado con adhesivo cementoso mejorado C2 TE S1. "
+        "JUNTADO: con fragüe epóxica de altas prestaciones, color blanco, en "
+        "juntas de 3 mm. El precio no incluye piezas especiales."
+    ): (
+        "Internal wall tiling with large-format tiles. BACKGROUND: vertical cement "
+        "mortar rendering, up to 3 m high. BEDDING: thin-set, with double buttering "
+        "using improved cementitious adhesive C2 TE S1. POINTING: high-performance "
+        "epoxy grout, white, 3 mm joints. The price does not include special pieces."
+    ),
+    "Tramo entre mueble bajo y alto": "Splashback between base and wall units",
+    "Porcelanato estilo Calacatta 60x120 cm pulido":
+        "Calacatta-style polished porcelain tile 60x120 cm",
+    "Instalación de plomería cocina": "Kitchen plumbing installation",
+    (
+        "Retiro de conexiones antiguas. Instalación de nuevos puntos de agua fría y "
+        "caliente en tubería PPR con piezas de conexión y material incluido para "
+        "fregadero, lavaplatos y lavadora. Sustitución de llaves de corte y de "
+        "desagües antiguos por nuevos desagües en PVC sanitario."
+    ): (
+        "Removal of existing connections. Installation of new hot and cold water "
+        "points in PPR pipe with fittings and materials included for sink, dishwasher "
+        "and washing machine. Replacement of isolating valves and existing wastes "
+        "with new sanitary PVC wastes."
+    ),
+    "Completo": "Complete",
+    "Suministro e instalación de mesón en cuarzo":
+        "Supply and installation of quartz worktop",
+    (
+        "Suministro e instalación de mesón en cuarzo compacto de 2 cm de espesor, "
+        "canto recto pulido, con copete de 10 cm y perforaciones para grifería y "
+        "fregadero. Incluye plantillas, fabricación en taller y sellado final."
+    ): (
+        "Supply and installation of a 20 mm compact quartz worktop with polished "
+        "square edge, 100 mm upstand and cut-outs for tap and sink. Includes "
+        "templating, workshop fabrication and final sealing."
+    ),
+    "Mesón principal": "Main worktop",
+    "Cuarzo Blanco Norte veta sutil": "Blanco Norte quartz, subtle veining",
+    # --- Catálogo de productos de la demo ------------------------------------------------
+    "Pisos": "Flooring",
+    "Cocina": "Kitchen",
+}
+
+
+def _es_ingles(idioma: str | None) -> bool:
+    """Delegado en el registro de mercados, que es la única fuente.
+    Así «en-GB» y «en-US» se resuelven como inglés sin duplicar la
+    regla en ocho módulos.
+    """
+    return es_ingles(idioma)
+
+
+def _t(texto: str, en: bool = False) -> str:
+    """Rótulo de la demostración en inglés; si no está catalogado, igual."""
+    return _EN.get(texto, texto) if en and texto else texto
 
 
 def _partida(nombre, descripcion, unidad, precio, mediciones=None, cantidad=0.0, orden=0,
@@ -46,13 +226,21 @@ def _partida(nombre, descripcion, unidad, precio, mediciones=None, cantidad=0.0,
     return p
 
 
-def sembrar_demo(db: Session):
-    """Crea cliente, catálogo y un presupuesto de ejemplo si no hay datos."""
+def sembrar_demo(db: Session, idioma: str = "es"):
+    """Crea cliente, catálogo y un presupuesto de ejemplo si no hay datos.
+
+    ``idioma`` decide el rótulo de la demostración: capítulos, partidas,
+    descripciones, conceptos de medición, notas y condiciones. Las cifras
+    (precios, cantidades, unidades) son exactamente las mismas en los dos
+    idiomas, porque son el contenido que la persona va a inspeccionar y
+    sólo pueden vivir en un sitio.
+    """
+    en = _es_ingles(idioma)
     if db.query(Presupuesto).count() > 0:
         return
 
     cliente = Cliente(
-        nombre="Cliente de demostración",
+        nombre=_t("Cliente de demostración", en),
         rif="",
         pais="",
         telefono="",
@@ -68,7 +256,7 @@ def sembrar_demo(db: Session):
         numero=proximo_numero(db, hoy.year),
         year=hoy.year,
         fecha=hoy,
-        titulo="Remodelación residencial de demostración",
+        titulo=_t("Remodelación residencial de demostración", en),
         direccion_obra="Valencia, Carabobo",
         codigo_postal="",
         validez_dias=30,
@@ -78,50 +266,68 @@ def sembrar_demo(db: Session):
         estado="borrador",
         es_demo=True,
         client_id=cliente.id,
-        notas=("Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
-               "especializada, materiales de primera calidad y gestión integral del proyecto. "
-               "No incluye enseres, decoración ni equipos de climatización."),
-        condiciones=("Forma de pago: 40% de anticipo, 35% al 50% de avance certificado y 25% "
-                     "contra entrega.\nPlazo estimado de ejecución: 12 semanas desde la firma.\n"
-                     "Garantía de 12 meses en instalaciones y acabados."),
+        notas=_t(
+            "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
+            "especializada, materiales de primera calidad y gestión integral del proyecto. "
+            "No incluye enseres, decoración ni equipos de climatización.",
+            en,
+        ),
+        condiciones=_t(
+            "Forma de pago: 40% de anticipo, 35% al 50% de avance certificado y 25% "
+            "contra entrega.\nPlazo estimado de ejecución: 12 semanas desde la firma.\n"
+            "Garantía de 12 meses en instalaciones y acabados.",
+            en,
+        ),
     )
 
     # ---- Capítulo 1: Muros y Particiones ------------------------------
-    cap1 = Capitulo(nombre="MUROS Y PARTICIONES", orden=1)
+    cap1 = Capitulo(nombre=_t("MUROS Y PARTICIONES", en), orden=1)
     cap1.partidas.append(_partida(
-        "Demolición de partición interior de bloque revestida",
-        "Demolición de partición interior de fábrica revestida, formada por bloque de "
-        "concreto de hasta 20 cm de espesor, con medios manuales, sin afectar a la "
-        "estabilidad de los elementos constructivos contiguos, y carga manual sobre "
-        "camión o contenedor. El precio incluye el retiro de escombros a vertedero "
-        "autorizado y la protección de áreas adyacentes.",
+        _t("Demolición de partición interior de bloque revestida", en),
+        _t(
+            "Demolición de partición interior de fábrica revestida, formada por bloque de "
+            "concreto de hasta 20 cm de espesor, con medios manuales, sin afectar a la "
+            "estabilidad de los elementos constructivos contiguos, y carga manual sobre "
+            "camión o contenedor. El precio incluye el retiro de escombros a vertedero "
+            "autorizado y la protección de áreas adyacentes.",
+            en,
+        ),
         "m2", 28.50,
-        mediciones=[("Cocina Aprox (4,00 x 2,50)", 10.00), ("Tabique Sala", 4.50)],
+        mediciones=[(_t("Cocina Aprox (4,00 x 2,50)", en), 10.00), (_t("Tabique Sala", en), 4.50)],
         orden=1,
     ))
     cap1.partidas.append(_partida(
-        "Apertura de hueco para puerta o ventana",
-        "Apertura de hueco en fachada para ventana o puerta mediante medios manuales. "
-        "Retirada de escombros hasta planta baja por medios manuales y posterior "
-        "retirada a vertedero o punto limpio más cercano por medios mecánicos.",
+        _t("Apertura de hueco para puerta o ventana", en),
+        _t(
+            "Apertura de hueco en fachada para ventana o puerta mediante medios manuales. "
+            "Retirada de escombros hasta planta baja por medios manuales y posterior "
+            "retirada a vertedero o punto limpio más cercano por medios mecánicos.",
+            en,
+        ),
         "ud", 155.00,
-        mediciones=[("Puerta Cocina", 1.00), ("Ventana Salón", 1.00)],
+        mediciones=[(_t("Puerta Cocina", en), 1.00), (_t("Ventana Salón", en), 1.00)],
         orden=2,
     ))
     cap1.partidas.append(_partida(
-        "Hoja de partición interior de bloque de concreto para revestir",
-        "Hoja de partición interior, de hasta 20 cm de espesor, de fábrica de bloque "
-        "hueco de concreto vibrado sencillo, con juntas horizontales y verticales de "
-        "10 mm, recibida con mortero de cemento. Incluye replanteo, plomos y andamiaje ligero.",
+        _t("Hoja de partición interior de bloque de concreto para revestir", en),
+        _t(
+            "Hoja de partición interior, de hasta 20 cm de espesor, de fábrica de bloque "
+            "hueco de concreto vibrado sencillo, con juntas horizontales y verticales de "
+            "10 mm, recibida con mortero de cemento. Incluye replanteo, plomos y andamiaje ligero.",
+            en,
+        ),
         "m2", 46.00,
-        mediciones=[("Muro Habitación Principal", 22.40), ("Muro Baño Zona Grifería", 2.50)],
+        mediciones=[(_t("Muro Habitación Principal", en), 22.40), (_t("Muro Baño Zona Grifería", en), 2.50)],
         orden=3,
     ))
     cap1.partidas.append(_partida(
-        "Pañete / Repello de paredes",
-        "Repello en mortero de cemento sobre paramentos verticales de hasta 10 mm de "
-        "espesor, reglado, sacado de rincones y aristas, medido a cinta corrida, para "
-        "nivelar paredes y rematado a buena vista para su posterior pintura.",
+        _t("Pañete / Repello de paredes", en),
+        _t(
+            "Repello en mortero de cemento sobre paramentos verticales de hasta 10 mm de "
+            "espesor, reglado, sacado de rincones y aristas, medido a cinta corrida, para "
+            "nivelar paredes y rematado a buena vista para su posterior pintura.",
+            en,
+        ),
         "m2", 17.50,
         mediciones=[("Total", 49.88)],
         orden=4,
@@ -129,64 +335,79 @@ def sembrar_demo(db: Session):
     presupuesto.capitulos.append(cap1)
 
     # ---- Capítulo 2: Pisos ---------------------------------------------
-    cap2 = Capitulo(nombre="PISOS", orden=2)
+    cap2 = Capitulo(nombre=_t("PISOS", en), orden=2)
     cap2.partidas.append(_partida(
-        "Solado de porcelanato rectificado gran formato",
-        "Suministro y colocación de porcelanato rectificado formato 90x90 cm, "
-        "recibido con adhesivo cementoso mejorado C2 TE, doble encolado, juntado "
-        "con fragüe epóxico color gris perla, juntas de 2 mm. Incluye nivelación "
-        "de soporte, corte a hilo de agua en aristas y protección final del piso.",
+        _t("Solado de porcelanato rectificado gran formato", en),
+        _t(
+            "Suministro y colocación de porcelanato rectificado formato 90x90 cm, "
+            "recibido con adhesivo cementoso mejorado C2 TE, doble encolado, juntado "
+            "con fragüe epóxico color gris perla, juntas de 2 mm. Incluye nivelación "
+            "de soporte, corte a hilo de agua en aristas y protección final del piso.",
+            en,
+        ),
         "m2", 68.00,
-        mediciones=[("Total + Extra Cortes", 84.60)],
+        mediciones=[(_t("Total + Extra Cortes", en), 84.60)],
         orden=1,
-        prod_nombre="Porcelanato Venetian Grey 90x90 cm rectificado",
+        prod_nombre=_t("Porcelanato Venetian Grey 90x90 cm rectificado", en),
         prod_precio=26.50, prod_unidad="m2",
     ))
     cap2.partidas.append(_partida(
-        "Zoclo lacado en blanco",
-        "Retirada de zoclos existentes, suministro y montaje de zoclo en madera "
-        "MDF lacada blanco mate de 10 cm, fijado con adhesivo de montaje y sellado "
-        "perimetral con silicona acrílica.",
+        _t("Zoclo lacado en blanco", en),
+        _t(
+            "Retirada de zoclos existentes, suministro y montaje de zoclo en madera "
+            "MDF lacada blanco mate de 10 cm, fijado con adhesivo de montaje y sellado "
+            "perimetral con silicona acrílica.",
+            en,
+        ),
         "m", 9.80,
-        mediciones=[("Total + Extras", 72.00)],
+        mediciones=[(_t("Total + Extras", en), 72.00)],
         orden=2,
     ))
     presupuesto.capitulos.append(cap2)
 
     # ---- Capítulo 3: Cocina --------------------------------------------
-    cap3 = Capitulo(nombre="REMODELACIÓN COCINA", orden=3)
+    cap3 = Capitulo(nombre=_t("REMODELACIÓN COCINA", en), orden=3)
     cap3.partidas.append(_partida(
-        "Revestimiento interior con porcelanato gran formato",
-        "Revestimiento interior con piezas de gran formato. SOPORTE: paramento de "
-        "mortero de cemento, vertical, de hasta 3 m de altura. COLOCACIÓN: en capa "
-        "fina y mediante doble encolado con adhesivo cementoso mejorado C2 TE S1. "
-        "JUNTADO: con fragüe epóxica de altas prestaciones, color blanco, en "
-        "juntas de 3 mm. El precio no incluye piezas especiales.",
+        _t("Revestimiento interior con porcelanato gran formato", en),
+        _t(
+            "Revestimiento interior con piezas de gran formato. SOPORTE: paramento de "
+            "mortero de cemento, vertical, de hasta 3 m de altura. COLOCACIÓN: en capa "
+            "fina y mediante doble encolado con adhesivo cementoso mejorado C2 TE S1. "
+            "JUNTADO: con fragüe epóxica de altas prestaciones, color blanco, en "
+            "juntas de 3 mm. El precio no incluye piezas especiales.",
+            en,
+        ),
         "m2", 58.00,
-        mediciones=[("Tramo entre mueble bajo y alto", 14.20)],
+        mediciones=[(_t("Tramo entre mueble bajo y alto", en), 14.20)],
         orden=1,
-        prod_nombre="Porcelanato estilo Calacatta 60x120 cm pulido",
+        prod_nombre=_t("Porcelanato estilo Calacatta 60x120 cm pulido", en),
         prod_precio=24.00, prod_unidad="m2",
     ))
     cap3.partidas.append(_partida(
-        "Instalación de plomería cocina",
-        "Retiro de conexiones antiguas. Instalación de nuevos puntos de agua fría y "
-        "caliente en tubería PPR con piezas de conexión y material incluido para "
-        "fregadero, lavaplatos y lavadora. Sustitución de llaves de corte y de "
-        "desagües antiguos por nuevos desagües en PVC sanitario.",
+        _t("Instalación de plomería cocina", en),
+        _t(
+            "Retiro de conexiones antiguas. Instalación de nuevos puntos de agua fría y "
+            "caliente en tubería PPR con piezas de conexión y material incluido para "
+            "fregadero, lavaplatos y lavadora. Sustitución de llaves de corte y de "
+            "desagües antiguos por nuevos desagües en PVC sanitario.",
+            en,
+        ),
         "ud", 640.00,
-        mediciones=[("Completo", 1.00)],
+        mediciones=[(_t("Completo", en), 1.00)],
         orden=2,
     ))
     cap3.partidas.append(_partida(
-        "Suministro e instalación de mesón en cuarzo",
-        "Suministro e instalación de mesón en cuarzo compacto de 2 cm de espesor, "
-        "canto recto pulido, con copete de 10 cm y perforaciones para grifería y "
-        "fregadero. Incluye plantillas, fabricación en taller y sellado final.",
+        _t("Suministro e instalación de mesón en cuarzo", en),
+        _t(
+            "Suministro e instalación de mesón en cuarzo compacto de 2 cm de espesor, "
+            "canto recto pulido, con copete de 10 cm y perforaciones para grifería y "
+            "fregadero. Incluye plantillas, fabricación en taller y sellado final.",
+            en,
+        ),
         "ml", 389.00,
-        mediciones=[("Mesón principal", 3.10)],
+        mediciones=[(_t("Mesón principal", en), 3.10)],
         orden=3,
-        prod_nombre="Cuarzo Blanco Norte veta sutil",
+        prod_nombre=_t("Cuarzo Blanco Norte veta sutil", en),
         prod_precio=295.00, prod_unidad="ml",
     ))
     presupuesto.capitulos.append(cap3)
@@ -265,8 +486,9 @@ def sembrar_catalogo(db: Session):
     db.commit()
 
 
-def sembrar_productos(db: Session):
+def sembrar_productos(db: Session, idioma: str = "es"):
     """Catálogo inicial de productos (solo una vez, respeta borrados)."""
+    en = _es_ingles(idioma)
     from .models import Configuracion
     cfg = db.query(Configuracion).first()
     if cfg and getattr(cfg, "semilla_productos_aplicada", False):
@@ -281,6 +503,8 @@ def sembrar_productos(db: Session):
         db.commit()
         return
     for nombre, desc, precio, unidad, categoria in PRODUCTOS_DEMO:
+        nombre = _t(nombre, en)
+        categoria = _t(categoria, en)
         if not db.query(Producto).filter(Producto.nombre == nombre).first():
             db.add(Producto(
                 nombre=nombre,

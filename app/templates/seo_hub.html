@@ -29,7 +29,7 @@
       <a href="/">Inicio</a>
       {% if pais_codigo %}
       <span aria-hidden="true">/</span>
-      <a href="/{{ pais_codigo | lower }}/">{{ ficha.nombre_pais }}</a>
+      <a href="{{ ruta_mercado(pais_codigo) }}">{{ ficha.nombre_pais }}</a>
       {% endif %}
       <span aria-hidden="true">/</span>
       <span>{{ ficha.h1 }}</span>
@@ -42,7 +42,7 @@
       {% else %}
       <a class="btn btn-primary" href="/pago">Ver planes</a>
       {% endif %}
-      <a class="btn btn-secondary" href="{% if pais_codigo %}/{{ pais_codigo | lower }}/{% else %}/{% endif %}">Ver el producto</a>
+      <a class="btn btn-secondary" href="{{ ruta_mercado(pais_codigo or '') }}">Ver el producto</a>
     </div>
   </div>
 </header>
@@ -77,7 +77,7 @@
   <ul class="hub-paises-lista">
     <li><a href="/{{ ficha.tema }}">Latinoamérica</a></li>
     {% for p in paises %}
-    <li><a href="/{{ p.codigo | lower }}/{{ ficha.tema }}">{{ p.bandera }} {{ p.nombre }}</a></li>
+    <li><a href="{{ ruta_mercado(p.codigo, ficha.tema) }}">{{ p.bandera }} {{ p.nombre }}</a></li>
     {% endfor %}
   </ul>
 </section>

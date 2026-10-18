@@ -1,0 +1,51 @@
+{% extends "base_en.html" %}
+{% block title %}Templates{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Estimate templates</h1>
+    <p class="subtitle">Reuse the structure of an estimate (sections, line items and quantity takeoffs) to create new ones.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Saved templates</h2>
+  </div>
+  {% if plantillas %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th class="csp-s-9b75d38881">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in plantillas %}
+      <tr>
+        <td><strong>{{ t.nombre }}</strong></td>
+        <td class="muted">{{ t.created_at.strftime('%d/%m/%Y') if t.created_at else '' }}</td>
+        <td class="csp-s-9b75d38881">
+          <form method="post" action="/plantillas/{{ t.id }}/eliminar" class="inline" data-confirm="Delete the template «{{ t.nombre }}»?">
+            <button class="btn btn-sm btn-danger" type="submit">🗑 Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No templates yet. Inside an estimate use «Save as template» to create one.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>How does it work?</h2>
+  <ol class="muted csp-s-0ac9ea6b62">
+    <li>Open an estimate (new or existing) and build its structure.</li>
+    <li>Press <strong>«💾 Save as template»</strong> and give it a name.</li>
+    <li>When you create a <strong>new estimate</strong>, pick the template from the dropdown to preload its structure.</li>
+  </ol>
+</div>
+{% endblock %}

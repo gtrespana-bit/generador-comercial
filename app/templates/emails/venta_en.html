@@ -1,0 +1,76 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}{{ "Renewal" if renovacion else "Sale" }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ "Renewal" if renovacion else "Sale" }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  {% if renovacion %}A plan has been renewed{% else %}A plan has been sold{% endif %}
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  {% if renovacion %}
+  A client has renewed their plan and access was extended automatically. This
+  notice needs no action from you.
+  {% else %}
+  The charge is confirmed and the client's access is already active. There is
+  nothing you need to do: the licence was granted when the payment cleared.
+  {% endif %}
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">Plan</td>
+    <td style="padding:16px 20px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ plan_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Amount</td>
+    <td style="padding:0 20px 16px;font-size:14px;font-weight:700;text-align:right;color:#17211d;">{{ importe_texto }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Payment method</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ metodo_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Client</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ organizacion_nombre }}</td>
+  </tr>
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Buyer</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ comprador_email }}</td>
+  </tr>
+  {% if periodo_texto %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Period paid</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">{{ periodo_texto }}</td>
+  </tr>
+  {% endif %}
+  {% if compra_id %}
+  <tr>
+    <td style="padding:0 20px 16px;font-size:13px;color:#8ba096;">Purchase</td>
+    <td style="padding:0 20px 16px;font-size:14px;text-align:right;color:#17211d;">#{{ compra_id }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.6;color:#28503f;">
+      <strong>Full detail in the dashboard:</strong> the sales ledger keeps this
+      transaction with its date, plan and payment method.
+      {% if panel_url %}<br><a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">Open the sales ledger →</a>{% endif %}
+    </td>
+  </tr>
+</table>
+
+{% endblock %}
+
+{% block pie %}
+Automatic billing notice from {{ product_name }}. Reply to this email to write to the buyer.
+{% endblock %}

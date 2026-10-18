@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  {# GA4 tag goes here, before critical CSS: Google's detector looks for gtag.js in the first KB. #}
+  {% include "_ga.html" %}
+  {# The ~7 s Speed Index was not the network: the filmstrip stayed blank until public.css (107 KB) was parsed and ~1,200 nodes laid out (Style & Layout ~1.9 s). Deferring the whole sheet without first-viewport CSS caused an even worse late global repaint. Here the hero (H1 = LCP) paints with critical inline CSS; public.css arrives in parallel without blocking and does not repaint above-the-fold. #}
+  <style nonce="{{ request.state.csp_nonce }}">{% include "_landing_critical.css" %}</style>
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {% set seo_skip_ga = true %}
+  {% include "_seo_head.html" %}
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
+  <style nonce="{{ request.state.csp_nonce }}">
+    .aviso-web { display:flex; gap:12px; align-items:flex-start; max-width:1180px; margin:14px auto 0; padding:12px 16px; border-radius:12px; font-size:0.92rem; line-height:1.45; }
+    .aviso-info { background:#e8effb; color:#234b7c; border:1px solid #c6d9f2; }
+    .aviso-warning { background:#fbf0dc; color:#8a5b10; border:1px solid #ecd9a8; }
+    .aviso-danger { background:#fbe7e8; color:#99373e; border:1px solid #f2c6c9; }
+    .aviso-web strong { font-weight:800; }
+  </style>
+</head>
+<body class="landing">
+{# Country bar — each country has its own price catalog #}
+<div class="pais-bar" id="pais-bar">
+  <div class="pais-bar-int">
+    <span class="pais-bar-label" aria-hidden="true">🌍</span>
+    <span class="pais-bar-strong">Your country, your price catalog</span>
+    <select id="pais-select" aria-label="Choose your country. Each country has its own price catalog.">
+      <option value="" {% if not pais_codigo %}selected{% endif %}>All countries (generic)</option>
+      {% for p in paises %}
+      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ p.nombre_en }}</option>
+      {% endfor %}
+    </select>
+    <span class="pais-bar-badge">✨ prices for your market</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catalog of {{ pais_actual.nombre_en }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo, 'en') }}{% else %}Choose your country to see its price catalog (Spain · Latin America){% endif %}</span>
+  </div>
+</div>
+{% include "_nav_en.html" %}
+
+{% if web is defined and web.avisos and web.avisos[0] %}
+{% set aviso = web.avisos[0] %}
+<div class="aviso-web aviso-{{ aviso.nivel }}" role="status">
+  <span aria-hidden="true">📢</span>
+  <div><strong>{{ aviso.titulo }}</strong>{% if aviso.mensaje %} — {{ aviso.mensaje }}{% endif %}</div>
+</div>
+{% endif %}
+
+<main>
+<header class="hero">
+  <div class="hero-int">
+    <div class="hero-copy">
+      {% if pais_actual %}
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Commercial system for {{ pais_actual.nombre_en }} · Construction and remodeling · own price catalog</span>
+      {% else %}
+      <span class="hero-kicker" id="hero-kicker">🇪🇸 Spain · 🌎 Latin America — Construction estimating and remodeling system · price catalog by country</span>
+      {% endif %}
+      {% if hay_prueba_gratuita() %}
+      <span class="hero-prueba">✨ {{ dias_de_prueba() }} free days · no credit card required</span>
+      {% endif %}
+      {% if pais_actual %}
+      <h1>Construction estimating software for {{ pais_actual.nombre_en }}: <span class="hero-hl">profit, time and PDF</span>.</h1>
+      {% else %}
+      <h1>Construction estimating software: <span class="hero-hl">profit, time and PDF</span>.</h1>
+      {% endif %}
+      <p class="sub">Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF. No Excel, no copy and paste.</p>
+      <div class="hero-mercados" aria-label="Available markets">
+        {% set destacados = paises[:6] %}
+        {% for p in destacados %}
+        <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
+          <span>{{ p.bandera }}</span>{{ p.nombre_en }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en') }}</small>
+        </a>
+        {% endfor %}
+        {% if paises|length > destacados|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - destacados|length }} markets</span>
+        {% endif %}
+      </div>
+      <div class="acciones">
+        {% if hay_prueba_gratuita() %}
+        <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>
+        {% else %}
+        <a class="btn btn-primary" href="/pago">See plans</a>
+        {% endif %}
+        <a class="btn btn-secondary" href="/static/pdf/presupuesto-ejemplo-en.pdf" target="_blank" rel="noopener">View a sample estimate (PDF)</a>
+      </div>
+      {% if hay_prueba_gratuita() %}
+      <p class="hero-letra-pequena">Full access for {{ dias_de_prueba() }} days. No card required and nothing is charged automatically.</p>
+      {% endif %}
+      <div class="hero-outcomes" aria-label="The 4 features that make the difference in {{ product_name }}">
+        <div class="hero-outcome"><span>💰</span><strong>Real profit, not a sum of lines</strong><small>APU → internal cost → live margin</small></div>
+        <div class="hero-outcome"><span>📚</span><strong>Price base ready</strong><small>{{ catalogo().lineas_precio_txt }} price lines and APU</small></div>
+        <div class="hero-outcome"><span>⏱️</span><strong>Schedule you can meet</strong><small>hours by role + crew duration</small></div>
+        <div class="hero-outcome"><span>📄</span><strong>PDF that closes the sale</strong><small>logo, signatures, versions and WhatsApp</small></div>
+      </div>
+      <ul class="hero-points">
+        <li><span class="check">✓</span> If cement or the crew's hourly rate goes up, <strong>every</strong> line item that uses them recalculates automatically.</li>
+        <li><span class="check">✓</span> Import breakdowns from Excel (.xlsx) or .bc3 (FIEBDC-3), and measure on the plan.</li>
+        <li><span class="check">✓</span> {{ catalogo().lineas_precio_txt }} price lines: {{ catalogo().partidas_txt }} line items + {{ catalogo().recursos_txt }} resources{% if ej.convierte %} · in {{ ej.moneda }}{% endif %}.</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-command">
+        <div class="hc-head">
+          <div>
+            <span class="hc-eyebrow">Commercial control panel</span>
+            <strong>Bathroom remodel</strong>
+            <small>Maple St. · PR-2026-014</small>
+          </div>
+          <span class="hc-status">ready to send</span>
+        </div>
+        <div class="hc-total">
+          <span>Total estimate</span>
+          <strong>{{ ej.hero.total }}</strong>
+          <em>with cost, margin and schedule calculated</em>
+        </div>
+        <div class="hc-grid">
+          <div class="hc-metric hc-profit"><span>Profit</span><strong>{{ ej.resumen.beneficio }}</strong><small>{{ ej.resumen.margen }}</small></div>
+          <div class="hc-metric"><span>Labor</span><strong>{{ ej.resumen.horas }}</strong><small>{{ ej.resumen.horas_split }}</small></div>
+          <div class="hc-metric"><span>Duration</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+          <div class="hc-metric"><span>Catalog</span><strong>{{ catalogo().partidas_txt }}</strong><small>line items + {{ catalogo().recursos_txt }} resources</small></div>
+        </div>
+        <div class="hc-flow">
+          <span>Catalog</span><i></i><span>Costs</span><i></i><span>Margin</span><i></i><span>Time</span><i></i><span>Signature and billing</span>
+        </div>
+        <div class="hc-lines">
+          {% for c in ej.hero.caps %}
+          <div class="hc-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="hero-badge badge-margen">💰 <strong>{{ ej.margen_txt }}</strong>&nbsp;automatic margin</div>
+      <div class="hero-badge badge-tiempo">⏱️ <strong>98 h</strong>&nbsp;of crew · ≈ 6 days</div>
+      <div class="hero-badge badge-cierre">📄 PDF + clear changes</div>
+    </div>
+  </div>
+
+  <div class="hero-stats" role="list" aria-label="What {{ product_name }} solves from the first estimate">
+    <div class="stat stat-text" role="listitem">
+      <strong>Costs</strong>
+      <span>materials, labor, equipment, complementary costs and resources connected</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Profit</strong>
+      <span>margin per line item, section, products and total project</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Schedule</strong>
+      <span>man-hours, crew and estimated duration before promising dates</span>
+    </div>
+    <div class="stat stat-text" role="listitem">
+      <strong>Closing</strong>
+      <span>PDF with logo, versions, WhatsApp, email and change summary</span>
+    </div>
+  </div>
+</header>
+
+<section class="flagship" id="superpoderes" aria-label="The best features of {{ product_name }}">
+  <div class="flagship-intro">
+    <span class="section-kicker">Our best features</span>
+    <h2>What {{ product_name }} does that a template or a basic generator cannot.</h2>
+    <p class="intro">It is not about adding lines. It is about starting from a catalog with the prices of <strong>your country</strong>, seeing how much you earn and how long it takes, and delivering a professional PDF the client understands and signs.</p>
+  </div>
+  <div class="flagship-grid">
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">💰</div>
+      <div class="fl-body">
+        <h3>You know your real profit</h3>
+        <p>Internal cost of each line item compared with your selling price: profit and margin live, per line item, section and total.</p>
+      </div>
+      <span class="fl-proof">Real margin per line item ⚡</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📚</div>
+      <div class="fl-body">
+        <h3>You arrive with the price base ready</h3>
+        <p>{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} priced resources. In Spain in EUR, in each country with its own market.</p>
+      </div>
+      <span class="fl-proof">{{ catalogo().lineas_descomp_txt }} breakdown lines · catalog by country</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">⏱️</div>
+      <div class="fl-body">
+        <h3>Promise deadlines you can meet</h3>
+        <p>Man-hours by role, estimated duration and crew planning. Before sending, you know how many days you need.</p>
+      </div>
+      <span class="fl-proof">98 h → ~6 days in the example</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📥</div>
+      <div class="fl-body">
+        <h3>Import Excel, BC3 and your plans</h3>
+        <p>Import breakdowns from Excel (.xlsx) and .bc3 (FIEBDC-3) without losing rows, and measure on the plan: lines, areas and counts that go to the line item.</p>
+      </div>
+      <span class="fl-proof">Excel + BC3 + measurement on canvas</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">🧱</div>
+      <div class="fl-body">
+        <h3>Sell with options, not with renunciations</h3>
+        <p>Products included, optional or alternative with photo, and room packs that insert the whole section scaled to the real square meters.</p>
+      </div>
+      <span class="fl-proof">{% if catalogo().packs %}Series packs{% else %}Packs and options{% endif %} + yours</span>
+    </article>
+    <article class="fl-card">
+      <div class="fl-ico" aria-hidden="true">📄</div>
+      <div class="fl-body">
+        <h3>The PDF that closes the sale</h3>
+        <p>With your logo, signature, versions and change summary. If the client calls and asks for changes, you resend without losing the thread.</p>
+      </div>
+      <span class="fl-proof">PDF + sealed versions + WhatsApp</span>
+    </article>
+  </div>
+  <div class="flagship-cta">
+    <a class="btn btn-primary" href="#producto">View a real estimate ↓</a>
+    <a class="btn btn-secondary" href="#comparativa">Compare with Excel and generators</a>
+  </div>
+</section>
+
+<section class="mercados" id="catalogo-paises" aria-label="Price catalog by country">
+  <div class="mercados-intro">
+    <span class="section-kicker">Catalog by country, not generic</span>
+    <h2>Spain does not quote like Mexico. Each country has its own catalog.</h2>
+    <p class="intro">{{ product_name }} is not a single price list with a flag on top. Each market carries its reference prices, currency, VAT, tax ID and construction terminology. That is why the country is chosen <strong>on entry</strong>: so you see the prices of your project, not someone else's.</p>
+  </div>
+
+  <div class="mercado-grid" role="table" aria-label="Example catalogs by country">
+    <div class="mercado-cab" role="row">
+      <span role="columnheader">Market</span>
+      <span role="columnheader">Currency</span>
+      <span role="columnheader">Tax</span>
+      <span role="columnheader">Speaks your trade</span>
+    </div>
+    {% for p in paises[:6] %}
+    <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}">
+      <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre_en }}</span>
+<span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · {{ texto_impuesto(p.codigo, 'en') }}</span>
+      <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
+      <span role="cell" class="mercado-vocab">{{ p.vocab_en }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% if paises|length > 6 %}
+  <p class="mercados-mas">+ {{ paises|length - 6 }} countries with their own catalog, currency, VAT and terminology. Choose yours at the top of the page.</p>
+  {% endif %}
+</section>
+
+<section class="flujo-real" id="flujo-real">
+  <div class="flujo-real-intro">
+    <span class="section-kicker">Real construction workflow</span>
+    <h2>Work the way you already work: PDF, WhatsApp, phone call and clear changes.</h2>
+    <p class="intro">{{ product_name }} does not force your client to learn a platform. You prepare the estimate, review margin and time, download a professional PDF and send it by WhatsApp or email. If the client asks for changes, you edit and resend a clear version.</p>
+  </div>
+  <div class="flujo-real-grid">
+    <article><span>1</span><h3>Build the estimate</h3><p>Use the catalog, packs, Excel, BC3 (FIEBDC-3) or manual line items. Everything stays editable.</p></article>
+    <article><span>2</span><h3>Measure on plans</h3><p>Upload the plan PNG/JPG/PDF, calibrate the scale and measure lines, areas and counts. The quantity goes straight to the line item.</p></article>
+    <article><span>3</span><h3>Send a professional PDF</h3><p>Share the document by WhatsApp or email as you normally do. Export to basic BC3 as well.</p></article>
+    <article><span>4</span><h3>Resend clear changes</h3><p>If the client calls and asks for adjustments, {{ product_name }} summarizes what changed and the new total.</p></article>
+  </div>
+</section>
+
+<section class="showcase" id="producto">
+  <div class="showcase-intro">
+    <span class="section-kicker">This is how it looks</span>
+    <h2>This is how a real estimate looks, line by line.</h2>
+    <p class="intro">This is a bathroom remodel estimate built with the real line items and prices of the catalog: demolition, full plumbing, waterproofing, {{ ej.term_pared|lower }} and large-format {{ ej.term_enchapado }}. Each line shows its cost, profit and your crew's hours{% if ej.convierte %}, already converted to {{ ej.moneda }} with the reference rate{% endif %}.</p>
+  </div>
+
+  <div class="showcase-stage">
+    <div class="showcase-glow" aria-hidden="true"></div>
+    <div class="window" role="img" aria-label="Real estimate in {{ product_name }}, showing cost, profit and hours per line item, and total margin at closing">
+      <div class="window-bar">
+        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="window-url">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
+          cotizat&nbsp;&nbsp;/&nbsp;&nbsp;estimates&nbsp;&nbsp;/&nbsp;&nbsp;PR-2026-014
+        </span>
+        <span class="window-ghost" aria-hidden="true"></span>
+      </div>
+
+      <div class="app">
+        <aside class="app-side">
+          <div class="app-brand">
+            <span class="mark">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            {{ product_name }}
+          </div>
+          <nav class="app-nav" aria-hidden="true">
+            <span class="app-nav-item">Dashboard</span>
+            <span class="app-nav-item active">Estimates</span>
+            <span class="app-nav-item">Line items</span>
+            <span class="app-nav-item">Resources</span>
+            <span class="app-nav-item">Clients</span>
+          </nav>
+          <div class="app-user" aria-hidden="true">
+            <span class="app-avatar">To</span>
+            <span class="app-user-meta"><strong>{{ ej.empresa }}</strong><small>Tona Martinez</small></span>
+          </div>
+        </aside>
+
+        <div class="app-main">
+          <header class="app-bar">
+            <div class="app-bar-id">
+              <span class="app-eyebrow">Estimate PR-2026-014</span>
+              <strong class="app-title">{{ ej.obra }} · {{ ej.residencia }}</strong>
+              <span class="app-status"><i aria-hidden="true"></i>Draft</span>
+            </div>
+            <div class="app-bar-actions">
+              <span class="app-total"><small>Total</small><strong>{{ ej.tot.total }}</strong></span>
+              <span class="app-ghostbtn" aria-hidden="true">Edit</span>
+              <span class="app-save">PDF</span>
+            </div>
+          </header>
+
+          <div class="app-summary" role="img" aria-label="Summary: profit {{ ej.margen_txt }}, 98 man-hours and about 6 days duration">
+            <div class="sum">
+              <span class="sum-k">Profit margin</span>
+              <strong class="sum-v pos">{{ ej.resumen.margen }} <small>{{ ej.resumen.beneficio }}</small></strong>
+              <span class="sum-h">total profit of the estimate</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Labor</span>
+              <strong class="sum-v">{{ ej.resumen.horas }}</strong>
+              <span class="sum-h">{{ ej.resumen.horas_split }}</span>
+            </div>
+            <div class="sum">
+              <span class="sum-k">Estimated duration</span>
+              <strong class="sum-v">{{ ej.resumen.duracion }}</strong>
+              <span class="sum-h">{{ ej.resumen.cuadrilla }}</span>
+            </div>
+          </div>
+
+          <div class="app-doc">
+            <div class="doc-head">Sections and line items</div>
+            {% for c in ej.caps %}
+            <div class="doc-capitulo"><span>{{ c.titulo }}</span><span class="cap-meta"><strong>{{ c.importe }}</strong><em class="cap-ben">{{ c.beneficio }}</em></span></div>
+              {% for p in c.partidas %}
+            <div class="doc-partida">
+              <div class="dp-main">
+                <span class="dp-nombre">{{ p.nombre }}</span>
+                <span class="dp-cant">{{ p.cant }}</span>
+                <span class="dp-precio">{{ p.precio }}</span>
+                <span class="dp-importe">{{ p.importe }}</span>
+                <span class="dp-tiempo">{{ p.tiempo }}</span>
+              </div>
+              <div class="dp-ben"><span class="dp-coste">Cost: {{ p.coste }}</span><span class="dp-beneficio">Profit: {{ p.beneficio }}</span><span class="dp-margen">{{ p.margen }}</span></div>
+            </div>
+              {% endfor %}
+            {% endfor %}
+            <div class="doc-capitulo doc-productos"><span>Products at the client's choice</span><strong>{{ ej.tot.productos }}</strong></div>
+            {% for pr in ej.productos %}
+            <div class="doc-partida dp-prod">
+              <div class="dp-main">
+                <span class="dp-nombre"><img class="dp-img" src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="46" height="34" loading="lazy" decoding="async">{{ pr.nombre }}</span>
+                <span class="dp-cant">{{ pr.cant }}</span>
+                <span class="dp-precio">{{ pr.precio }}</span>
+                <span class="dp-importe">{{ pr.importe }}</span>
+                <span class="dp-tag">📦 product</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="app-totales">
+            <div class="tt-row"><span>TOTAL WORK / LINE ITEMS</span><strong>{{ ej.tot.obra }}</strong></div>
+            <div class="tt-row"><span>TOTAL PRODUCTS</span><strong>{{ ej.tot.productos }}</strong></div>
+            <div class="tt-row tt-sub"><span>SUBTOTAL INCLUDED</span><strong>{{ ej.tot.subtotal }}</strong></div>
+            <div class="tt-row"><span>INTERNAL COST</span><strong>{{ ej.tot.coste }}</strong></div>
+            <div class="tt-row tt-pos"><span>ESTIMATED TOTAL PROFIT</span><strong>{{ ej.tot.beneficio }}</strong></div>
+            <div class="tt-row tt-pos"><span>MARGIN</span><strong>{{ ej.tot.margen }}</strong></div>
+            <div class="tt-row"><span>{{ ej.iva_txt }}</span><strong>{{ ej.tot.iva }}</strong></div>
+            <div class="tt-row tt-total"><span>TOTAL ESTIMATE</span><strong>{{ ej.tot.total }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float-chip chip-a" aria-hidden="true">
+      <span class="chip-dot"></span>
+      <span><strong>{{ catalogo().lineas_precio_txt }}</strong> price lines ready</span>
+    </div>
+    <div class="float-chip chip-b" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>
+      </span>
+      <span>Autosaved: nothing is lost</span>
+    </div>
+    <div class="float-chip chip-c" aria-hidden="true">
+      <span class="chip-ico">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 1.5h5L13 5.5V12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2z"/><path d="M9 1.5V6h4"/><path d="M5 9.5h6M5 12h4"/></svg>
+      </span>
+      <span>PDF with your logo, versions and signatures</span>
+    </div>
+    {% if ej.convierte %}
+    <div class="float-chip chip-moneda" id="chip-moneda">
+      <span class="chip-ico" aria-hidden="true">💱</span>
+      <span>Example in {{ ej.moneda }} · reference rate {{ ej.tasa_txt }} {{ ej.moneda }}/US$ ({{ ej.tasa_fecha }})</span>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if ej.apu.disponible %}
+<section class="apu-seccion" id="apu">
+  <div class="apu-intro">
+    <span class="section-kicker">The price base, in detail</span>
+    <h2>Behind every line item there is a real unit price analysis.</h2>
+    <p class="intro">It is not a flat price list. Each catalog line item arrives decomposed into resources with productivity and price — like professional price databases — and you can edit every line. This is a sample line item of the catalog, exactly as it is:</p>
+  </div>
+
+  <div class="apu-stage">
+    <div class="apu-card">
+      <header class="apu-head">
+        <div>
+          <span class="apu-eyebrow">Line item {{ ej.apu.codigo }} · own catalog</span>
+          <strong class="apu-titulo">{{ ej.apu.titulo }}</strong>
+          <span class="apu-unidad">unit: {{ ej.apu.unidad }}</span>
+        </div>
+        <div class="apu-resultado">
+          <span>Selling price</span>
+          <strong>{{ ej.apu.precio }}</strong>
+          <em>profit {{ ej.apu.margen }} on cost · {{ ej.apu.horas_mo }}</em>
+        </div>
+      </header>
+      <div class="apu-tabla" role="table" aria-label="Breakdown of the line item into resources">
+        <div class="apu-fila apu-cab" role="row">
+          <span role="columnheader">Resource</span>
+          <span role="columnheader">Productivity</span>
+          <span role="columnheader">Price</span>
+          <span role="columnheader">Amount</span>
+        </div>
+        {% for f in ej.apu.filas %}
+        <div class="apu-fila" role="row">
+          <span class="apu-rec" role="cell"><i class="apu-grupo apu-g-{{ f.grupo | lower | replace(' ', '_') }}"></i>{{ f.nombre }}</span>
+          <span class="apu-rend" role="cell">{{ f.rend }}</span>
+          <span class="apu-precio" role="cell">{{ f.precio }}</span>
+          <span class="apu-importe" role="cell">{{ f.importe }}</span>
+        </div>
+        {% endfor %}
+        <div class="apu-fila apu-sub" role="row"><span role="cell">Materials</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.materiales }}</span></div>
+        <div class="apu-fila apu-sub" role="row"><span role="cell">Labor</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.mano_obra }}</span></div>
+        <div class="apu-fila apu-sub" role="row"><span role="cell">Equipment and machinery</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.equipo }}</span></div>
+        <div class="apu-fila apu-sub apu-sub-comp" role="row"><span role="cell">Complementary direct costs</span><span role="cell">{{ ej.apu.comp_pct }} %</span><span role="cell"></span><span role="cell">{{ ej.apu.comp }}</span></div>
+        <div class="apu-fila apu-total" role="row"><span role="cell">DIRECT COST</span><span role="cell"></span><span role="cell"></span><span role="cell">{{ ej.apu.coste }}</span></div>
+        <div class="apu-fila apu-venta" role="row"><span role="cell">SELLING PRICE WITH PROFIT</span><span role="cell">{{ ej.apu.margen }}</span><span role="cell"></span><span role="cell">{{ ej.apu.precio }}</span></div>
+      </div>
+      <p class="apu-nota">Change the productivity, the price of a resource or the margin and everything recalculates instantly: the line item, the sections and the whole estimate.</p>
+    </div>
+
+    <div class="apu-laterales">
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🔗</div>
+        <h3>Cascading connected prices</h3>
+        <p>Change cement or the crew's hourly rate once in the resource table and <strong>every line item that uses it</strong> recalculates automatically. No spreadsheet does this without breaking.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">📥</div>
+        <h3>Import your breakdowns from Excel</h3>
+        <p>Have your breakdown matrix in Excel (.xlsx)? Import it and it classifies itself: materials, labor, equipment and direct costs, without losing a single row.</p>
+      </article>
+      <article class="apu-lateral">
+        <div class="ventaja-icon" aria-hidden="true">🧮</div>
+        <h3>Your costs, your rules</h3>
+        <p>Complementary direct costs in %, profit per line item or global, and low-margin alerts. You decide how much to earn on each line item.</p>
+      </article>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="ventajas">
+  <div class="ventajas-intro">
+    <span class="section-kicker">The plus that makes the difference</span>
+    <h2>Not just estimating: you know how much you earn, how long it takes and what your client chose.</h2>
+    <p class="intro">Most tools add quantities and stop there. {{ product_name }} goes down to the real cost of each line item, to your crew's hours and to the PDF you send the client, so every estimate is a business decision and not a blind calculation.</p>
+  </div>
+  <div class="ventajas-grid">
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">💰</div>
+      <h3>Profit margin and real gain</h3>
+      <p>Each line item keeps its internal cost: materials, labor, equipment and complementary costs. {{ product_name }} compares that cost with your selling price and tells you, live, how much you really earn.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Profit of the project and of products, calculated separately.</li>
+        <li><span class="check">✓</span> Total margin in % and in {{ ej.moneda }}, per line item, per section and for the whole estimate.</li>
+        <li><span class="check">✓</span> Alerts when a line item has low margin or unreviewed price.</li>
+        <li><span class="check">✓</span> Adjust a cost and watch profit recalculate instantly.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">⏱️</div>
+      <h3>Schedule calculated automatically, with your crew</h3>
+      <p>From the labor productivity of each line item, {{ product_name }} estimates your people's hours and the real duration of the work, so you promise deadlines you can actually meet.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Hours broken down by role: foreman, helper, supervisor and equipment.</li>
+        <li><span class="check">✓</span> Critical duration: real days, not meaningless loose hours.</li>
+        <li><span class="check">✓</span> Automatic conversion to working days and weeks.</li>
+        <li><span class="check">✓</span> Assign hours by hand on any line item when needed.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🧱</div>
+      <h3>Sell with options and room packs</h3>
+      <p>The client chooses, does not give up. Offer products included, optional and alternative with photo, and build a whole room with one click: the pack inserts the complete section scaled to the real square meters.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> Products at choice: included, optional or alternative, with image and price.</li>
+        <li><span class="check">✓</span> Room packs: bathroom, kitchen, bedroom… whole section in one click.</li>
+        <li><span class="check">✓</span> The estimate marks what was approved with and without options.</li>
+        <li><span class="check">✓</span> {{ catalogo().packs }} series packs to start today.</li>
+      </ul>
+    </article>
+    <article class="ventaja">
+      <div class="ventaja-icon" aria-hidden="true">🖋️</div>
+      <h3>Professional PDF, optional link and clear changes</h3>
+      <p>Send the PDF by WhatsApp or email as always. If you need it, you can also share a private link for review and signature. And if the client asks for changes, {{ product_name }} helps you resend the updated version without confusion.</p>
+      <ul class="ventaja-lista">
+        <li><span class="check">✓</span> PDF with logo, conditions, warranties and clear totals for the client.</li>
+        <li><span class="check">✓</span> Optional private link with expiry, revocation and on-screen signature.</li>
+        <li><span class="check">✓</span> Immutable versions: you always know what was sent before.</li>
+        <li><span class="check">✓</span> Change summary to copy when resending an updated PDF.</li>
+      </ul>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">✅</div>
+      <h3>Review before sending</h3>
+      <p>Before sharing the PDF, {{ product_name }} checks client, contact, logo, prices, quantities, costs, time and validity. If something critical is missing, it warns you without blocking.</p>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">📚</div>
+      <h3>Healthy catalog before estimating</h3>
+      <p>Detects line items without price, without cost, without time or with low margin. You do not estimate with an outdated base without realizing it.</p>
+    </article>
+    <article class="ventaja ventaja-compacta">
+      <div class="ventaja-icon" aria-hidden="true">🔁</div>
+      <h3>Clear changes when the client calls</h3>
+      <p>Edit the estimate, download the updated PDF and copy a simple summary: previous total, new total and main changes.</p>
+    </article>
+  </div>
+</section>
+
+<section class="comparativa" id="comparativa">
+  <div class="comparativa-intro">
+    <span class="section-kicker">Why {{ product_name }}</span>
+    <h2>What almost no estimating tool gives you.</h2>
+    <p class="intro">Templates and generators add lines. None goes down to the resource, to your crew's hour or to the PDF you send the client. This is the difference, no fine print:</p>
+  </div>
+  <div class="comp-wrap">
+    <table class="comp-tabla">
+      <thead>
+        <tr>
+          <th scope="col">Capability</th>
+          <th scope="col">Excel / templates</th>
+          <th scope="col">Typical generators</th>
+          <th scope="col" class="comp-cta-col">{{ product_name }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Country price base included and editable</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span> You start from zero</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-mitad">◦</span> Offer line items</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_precio_txt }} lines: {{ catalogo().partidas_txt }} line items + {{ catalogo().recursos_txt }} resources</td>
+        </tr>
+        <tr>
+          <th scope="row">Unit price analysis (resources and productivity)</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-mitad">◦</span> By hand, sheet by sheet</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span> Only text and price</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().lineas_descomp_txt }} editable breakdown lines</td>
+        </tr>
+        <tr>
+          <th scope="row">Change a resource price and everything recalculates</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span> Find and replace</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span> Recalculate by hand</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> In cascade: resource → line items → estimate</td>
+        </tr>
+        <tr>
+          <th scope="row">Man-hours by role and project duration</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Per line item and total, with your crew</td>
+        </tr>
+        <tr>
+          <th scope="row">Live profit and margin per line item, section and total</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-mitad">◦</span> Fragile formulas</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-mitad">◦</span> Only the total</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> With low-margin alerts</td>
+        </tr>
+        <tr>
+          <th scope="row">Import BC3 (FIEBDC-3) + measure on plans</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> .bc3 with sections and measurements + canvas with calibration</td>
+        </tr>
+        <tr>
+          <th scope="row">Import breakdowns from Excel (.xlsx)</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Without losing rows or formulas</td>
+        </tr>
+        <tr>
+          <th scope="row">Room packs (whole section scaled to m²)</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span> Copy and paste</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> {{ catalogo().packs }} series packs + yours</td>
+        </tr>
+        <tr>
+          <th scope="row">Products at the client's choice with photo</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-mitad">◦</span> Loose attachments</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Included / optional / alternative</td>
+        </tr>
+        <tr>
+          <th scope="row">Professional PDF, versions and optional link</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-mitad">◦</span> Separate signature tools</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> PDF, change summary and optional private link</td>
+        </tr>
+        <tr>
+          <th scope="row">Immutable versions of the sent PDF</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-mitad">◦</span> Email folder</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Every send is sealed</td>
+        </tr>
+        <tr>
+          <th scope="row">Local currency + USD with frozen rate per estimate</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-mitad">◦</span> Single currency</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> 20 currencies, VAT and tax by country</td>
+        </tr>
+        <tr>
+          <th scope="row">From estimate to billing (payments and balances)</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Billing documents and balance control</td>
+        </tr>
+        <tr>
+          <th scope="row">Raise all prices at once by % (inflation)</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-mitad">◦</span> Risky</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span></td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Whole catalog or by section</td>
+        </tr>
+        <tr>
+          <th scope="row">Your data without hostages</th>
+          <td><span class="comp-who">Excel / templates</span><span class="comp-si">✓</span> The file is yours</td>
+          <td><span class="comp-who">Typical generators</span><span class="comp-no">✗</span> Limited export</td>
+          <td><span class="comp-who">{{ product_name }}</span><span class="comp-si">✓</span> Excel, PDF and full backup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="tour" id="recorrido">
+  <div class="tour-intro">
+    <span class="section-kicker">How it works</span>
+    <h2>A tour of the product, step by step.</h2>
+    <p class="intro">From your catalog to a professional estimate with profit, internal time and PDF ready to send through your usual channels. The full guide, feature by feature, is at <a href="/como-funciona">How it works</a>.</p>
+  </div>
+  <div class="tour-stage" id="tour-stage">
+    <div class="tour-slides">
+      <div class="tour-slide active">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span class="t-eyebrow">Summary</span><strong>Hello, Tona</strong></div><span class="t-pill t-pill-primary">+ New estimate</span></div>
+              <div class="t-kpis">
+                <div class="t-kpi"><span>Approved volume</span><strong>{{ ej.tour.volumen }}</strong><small>12 projects</small></div>
+                <div class="t-kpi"><span>Approval</span><strong>68 %</strong><small>sent → approved</small></div>
+                <div class="t-kpi"><span>Active projects</span><strong>7</strong><small>3 pending collections</small></div>
+              </div>
+              <div class="t-list-head">Recent activity</div>
+              <div class="t-row"><span>PR-2026-014 · Res. The Oranges</span><span class="t-badge">Draft</span></div>
+              <div class="t-row"><span>PR-2026-013 · Commercial fit-out</span><span class="t-badge t-badge-ok">Approved</span></div>
+              <div class="t-row"><span>PR-2026-012 · Apartment</span><span class="t-badge t-badge-ok">Approved</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption">
+          <span class="tour-step">Step 1</span>
+          <h3>Your day to day, on one screen</h3>
+          <p>Sales, approvals and projects at a glance. One click to create the next estimate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-catalogo">
+  <div class="banner-int">
+    <div class="banner-texto">
+      {% if pais_actual %}
+      <h2 id="banner-h2">The most complete catalog for estimating in {{ pais_actual.nombre_en }}.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} resource prices ({{ catalogo().materiales }} materials, {{ catalogo().mano_obra }} labor, {{ catalogo().equipo }} equipment), organized in {{ catalogo().capitulos }} sections and {{ catalogo().subcapitulos }} subsections. {{ catalogo().lineas_descomp_txt }} resource and productivity lines ready to use, contrasted with the {{ pais_actual.mercado }} market and under continuous review. You do not start from zero: you arrive with a real price base of your own.</p>
+      {% else %}
+      <h2 id="banner-h2">The most complete catalog for estimating in Spain and Latin America.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} resource prices ({{ catalogo().materiales }} materials, {{ catalogo().mano_obra }} labor, {{ catalogo().equipo }} equipment), organized in {{ catalogo().capitulos }} sections and {{ catalogo().subcapitulos }} subsections. {{ catalogo().lineas_descomp_txt }} resource and productivity lines ready to use, with reference prices by country: Spain in EUR and each Latin market in its currency. Under continuous review. You do not start from zero: you arrive with a real price base for your market.</p>
+      {% endif %}
+    </div>
+    <div class="banner-cifras">
+      <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>line items</span></div>
+      <div class="cifra"><strong>{{ catalogo().recursos_txt }}</strong><span>resource prices</span></div>
+      <div class="cifra"><strong>{{ catalogo().lineas_descomp_txt }}</strong><span>breakdown lines</span></div>
+      {% if catalogo().packs %}
+      <div class="cifra"><strong>{{ catalogo().packs }}</strong><span>room packs</span></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Does this sound familiar?</h2>
+  <p class="intro">Every estimate is an afternoon of copy and paste. Prices live in someone's head or in a spreadsheet only one person understands. The client asks for two changes and everything has to be redone. And when they approve, nobody remembers which version was approved.</p>
+  <div class="grid3">
+    <div class="tarjeta">
+      <div class="icon">📚</div>
+      <h3>Your catalog, once</h3>
+      <p>Line items with prices, costs and technical breakdown. Import from Excel or from your previous local installation, or start from the included catalog. Load it once, use it always.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">⚡</div>
+      <h3>Estimates in minutes</h3>
+      <p>Sections, measurements by zones and live totals. Paste line items from Excel (TSV), duplicate, drag to reorder, undo with Ctrl+Z and type without the mouse with hands-free shortcuts. Local autosave: nothing is lost.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="icon">📄</div>
+      <h3>PDF that inspires trust</h3>
+      <p>Document with your logo, optional cover, summary by sections, conditions and warranties. Immutable versions: you will always know what was sent and what was approved.</p>
+      <p><a href="/static/pdf/presupuesto-ejemplo-en.pdf" target="_blank" rel="noopener">Download a sample estimate →</a></p>
+    </div>
+  </div>
+</section>
+
+{% if seo.faq %}
+<section class="seo-faq" id="preguntas-seo">
+  <span class="section-kicker">Frequently asked questions</span>
+  <h2>What contractors in {{ seo.nombre_pais }} ask before signing up.</h2>
+  {% for item in seo.faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="franja cta-final" id="pago">
+  <h2>Ready to stop estimating by hand?</h2>
+  <p class="intro">{{ product_name }} turns your country's catalog, your prices and your crew into estimates with your profit margin, your project time, your PDF with your logo and clear changes to resend. In Spain, in euros and with tax ID. Without Excel, without copy and paste.</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>
+    <a class="btn btn-secondary" href="/pago">See plans</a>
+    {% else %}
+    <a class="btn btn-primary" href="/pago">See plans and start</a>
+    <a class="btn btn-secondary" href="/acceso">Sign in</a>
+    {% endif %}
+  </div>
+</section>
+</main>
+
+{% include "_footer_publico_en.html" %}
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
+  "moneda": {{ ej.moneda | tojson }},
+  "simbolo": {{ ej.simbolo | tojson }},
+  "convierte": {{ ej.convierte | tojson }},
+  "tasa_txt": {{ ej.tasa_txt | tojson }},
+  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
+  "iva": {{ ej.iva | tojson }}
+}</script>
+{# El JSON-LD se aplaza al final del body (ver _seo_head.html): en el <head>
+   retrasaba el descubrimiento de la hoja de estilos. Sin este bloque las
+   landings en inglés no emitían ningún schema: Organization, WebPage,
+   SoftwareApplication, BreadcrumbList ni FAQPage. #}
+{% if seo is defined %}
+{% for bloque in jsonld_bloques %}
+<script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+{% endfor %}
+{% endif %}
+</body>
+</html>

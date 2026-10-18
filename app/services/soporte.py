@@ -78,6 +78,7 @@ def registrar_mensaje(
     ip_hash: str = "",
     notificar: bool = True,
     panel_url: str = "",
+    idioma: str = "es",
 ) -> tuple[MensajeSoporte, str]:
     """Guarda el mensaje y avisa por correo. Devuelve ``(mensaje, aviso_id)``.
 
@@ -134,13 +135,17 @@ def registrar_mensaje(
 
     aviso_id = ""
     if notificar:
-        aviso_id = _avisar(fila, organizacion_nombre=organizacion_nombre, panel_url=panel_url)
+        aviso_id = _avisar(
+            fila, organizacion_nombre=organizacion_nombre, panel_url=panel_url, idioma=idioma
+        )
         fila.aviso_enviado = bool(aviso_id)
         db.flush()
     return fila, aviso_id
 
 
-def _avisar(fila: MensajeSoporte, *, organizacion_nombre: str, panel_url: str) -> str:
+def _avisar(
+    fila: MensajeSoporte, *, organizacion_nombre: str, panel_url: str, idioma: str = "es"
+) -> str:
     """Avisa al buzón de soporte. Nunca lanza: el mensaje ya está guardado."""
     from .email import (
         EmailNotConfigured,
@@ -159,6 +164,7 @@ def _avisar(fila: MensajeSoporte, *, organizacion_nombre: str, panel_url: str) -
             organizacion_nombre=organizacion_nombre,
             pagina=fila.pagina,
             panel_url=panel_url,
+            idioma=idioma,
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         log.warning("Mensaje de soporte #%s guardado sin aviso por correo (%s).", fila.id, exc)

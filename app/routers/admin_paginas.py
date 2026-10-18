@@ -64,6 +64,12 @@ router = APIRouter()
 #: distinto pero comparten barra de filtros, vistas guardadas, CSV y navegación.
 _constructor = {}
 
+#: Tope del fichero de matriz de precios. El CSV se reenvía codificado en el
+#: formulario de confirmación para no depender de disco temporal entre dos
+#: peticiones (en un despliegue sin estado no hay garantías), así que el límite
+#: se fija pensando en ese viaje de ida y vuelta, no en el almacenamiento.
+MATRIZ_MAXIMO_MB = 4
+
 
 # ---------------------------------------------------------------------------
 # Utilidades comunes
@@ -1487,6 +1493,55 @@ def _sistema_datos(request: Request, db, contexto: dict) -> None:
     })
 
 
+def _sistema_precios(request: Request, db, contexto: dict) -> None:
+    """Matriz nacional de precios por país: estado y carga validada.
+
+    Las referencias nacionales las escribe el operador (RLS solo autoriza
+    escribir filas con ``organizacion_id`` nulo a quien tiene el rol de
+    operador), así que esta es la vía natural para cargarlas. Se muestra la
+    foto de cada mercado para que una carga no se decida a ciegas.
+    """
+    from ..paises import PAISES
+    from ..services.importador_precios_mercado import COLUMNAS_MATRIZ, MONEDA_PAIS
+    from ..services.precios_mercado import resumen_matriz_por_pais
+    from ..services.unidades_precio import sistema_unidades_pais
+
+    try:
+        resumen = resumen_matriz_por_pais(db)
+    except Exception:
+        db.rollback()
+        # La tabla puede no existir en una instalación aún sin las migraciones
+        # de precios por mercado. Se avisa en vez de romper el panel entero.
+        resumen = {}
+
+    rol = str(db.info.get("operador_rol") or "").lower()
+    mercados = []
+    for codigo, pais in sorted(PAISES.items(), key=lambda par: par[1]["nombre"]):
+        estado = resumen.get(codigo) or {
+            "pais": codigo, "referencias": 0, "monedas": [], "confianzas": [],
+            "ultima_consulta": None, "ultima_actualizacion": None,
+            "obsoletas": 0, "caducadas": 0, "sin_fecha": 0, "pendientes_revision": 0,
+        }
+        mercados.append({
+            "codigo": codigo,
+            "nombre": pais["nombre"],
+            "bandera": pais["bandera"],
+            "moneda": MONEDA_PAIS.get(codigo) or pais.get("moneda") or "",
+            "unidades": sistema_unidades_pais(codigo),
+            "estado": estado,
+        })
+
+    contexto.update({
+        "mercados": mercados,
+        "columnas_matriz": COLUMNAS_MATRIZ,
+        "con_carga": sorted(resumen),
+        "es_superadmin": rol == "superadmin",
+        "rol_actual": rol,
+        "maximo_mb": MATRIZ_MAXIMO_MB,
+        "resultado": contexto.get("resultado"),
+    })
+
+
 def _sistema_equipo(request: Request, db, contexto: dict) -> None:
     from ..models import ROLES_OPERADOR, ROLES_OPERADOR_ETIQUETA
     from ..services.operadores_admin import listar_operadores
@@ -1563,6 +1618,7 @@ _RELLENOS = {
     "estado": _sistema_estado,
     "automatizaciones": _sistema_automatizaciones,
     "datos": _sistema_datos,
+    "precios": _sistema_precios,
     "equipo": _sistema_equipo,
     "accesos": _sistema_accesos,
     "auditoria": _sistema_auditoria,

@@ -1,0 +1,81 @@
+{% macro editor_partida_catalogo(partida=None, mostrar_imagen=True) %}
+<div class="partida-catalogo-editor" data-partida-catalogo-editor>
+  <section class="catalog-editor-section catalog-editor-main">
+    <div class="catalog-editor-section-head">
+      <div><span class="section-kicker">Technical sheet</span><h3>Line item identification</h3></div>
+      <span class="section-status">Reusable data in any estimate</span>
+    </div>
+    <div class="form-grid catalog-editor-grid">
+      <div class="field field-full"><label>Line item name *</label><input name="nombre" required value="{{ partida.nombre if partida else '' }}" placeholder="e.g. Screeded rendering coat"></div>
+      <div class="field"><label>Section</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else '99 Custom line items' }}" placeholder="99 Custom line items"></div>
+      <div class="field"><label>Subsection</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="e.g. 99.01 General"></div>
+      <div class="field"><label>Subheading</label><input name="apartado" value="{{ partida.apartado if partida else '' }}" placeholder="e.g. 99.01.01 Miscellaneous work"></div>
+      <div class="field"><label>Unit of the line item</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, ea…"></div>
+      <div class="field"><label>Line item code</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
+      <div class="field field-full">
+        <div class="card-head">
+          <label>Technical description</label>
+          <button type="button" class="btn-ia-redactar" data-cotizat-click="ia-redactar-partida" title="Draft the technical specification with AI">✨ Draft with AI</button>
+        </div>
+        <textarea name="descripcion" rows="4" placeholder="Scope, materials, workmanship, standards and finish…">{{ partida.descripcion if partida else '' }}</textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog-price-sale">
+    <div class="sale-copy"><span class="section-kicker">Selling price</span><strong>Unit selling price</strong><p class="hint">Set the price on top of the direct cost. You can fix the profit % and the price is calculated for you.</p></div>
+    <div class="price-benefit-grid csp-s-96f594106b">
+      <div class="field"><label>Selling price ({{ moneda_local | default('USD') }}) *</label><div class="money-input"><span>{{ simbolo_local | default('$') }}</span><input type="number" name="precio_unitario" id="catalog-precio-venta" step="0.01" min="0" required value="{{ partida.precio_unitario if partida else 0 }}"></div></div>
+      <div class="field"><label>Profit (%) on cost</label><div class="money-input csp-s-972019b530"><span class="csp-s-2cd1543b50">%</span><input type="number" id="catalog-beneficio-pct" name="beneficio_pct" step="any" placeholder="40" title="e.g. 40 = Cost ×1.40" class="csp-s-7e16e24c5c"></div><small class="hint csp-s-0a0562f897" id="catalog-beneficio-hint">—</small></div>
+    </div>
+  </section>
+
+  <section class="catalog-breakdown">
+    <div class="breakdown-head">
+      <div><span class="section-kicker">Cost analysis</span><h3>Unit price analysis</h3><p class="hint">Add the real resources. Each amount is <strong>Productivity × Unit price</strong>.</p></div>
+      <button type="button" class="btn btn-sm btn-primary" data-action="add-recurso-catalogo">+ Add resource</button>
+    </div>
+    <div class="table-wrap catalog-breakdown-table-wrap">
+      <table class="table tabla-descomposicion-catalogo" data-role="tabla-descomposicion-catalogo">
+        <thead><tr><th>Group</th><th>Code</th><th>Unit</th><th>Description</th><th class="right">Productivity</th><th class="right">Output %</th><th class="right">Unit price</th><th class="right">Amount</th><th class="right">% of cost</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="breakdown-empty" data-role="breakdown-empty"><span>🧮</span><strong>No resources yet</strong><small>Add materials, labor, equipment or complementary costs.</small></div>
+    <div class="breakdown-totals" data-role="breakdown-totals">
+      <span>Materials <strong data-total="materiales">0.00</strong></span>
+      <span>Labor <strong data-total="mano_obra">0.00</strong></span>
+      <span>Equipment and other <strong data-total="otros">0.00</strong></span>
+      <span>Complementary <strong data-total="complementarios">0.00</strong></span>
+      <span class="direct-cost">Direct cost <strong data-total="directo">0.00</strong></span>
+    </div>
+    <p class="hint breakdown-help">For complementary direct costs, add a row with the group “Costes complementarios”, unit <code>%</code> and the percentage as the productivity. The base is calculated for you.</p>
+  </section>
+
+  <details class="catalog-advanced-fields">
+    <summary><span class="advanced-summary-icon">⚙</span><span><strong>Additional data</strong><small>Supplier, output, scheduling, notes and image</small></span></summary>
+    <div class="form-grid catalog-advanced-grid">
+      <div class="field"><label>Internal code</label><input name="codigo_interno" value="{{ partida.codigo_interno if partida else '' }}"></div>
+      <div class="field"><label>Usual supplier</label><input name="proveedor" value="{{ partida.proveedor if partida else '' }}"></div>
+      <div class="field"><label>Total estimated time (h/unit)</label><input type="number" step="any" min="0" name="tiempo_estimado_horas" value="{{ partida.tiempo_estimado_horas if partida and partida.tiempo_estimado_horas is not none else '' }}" placeholder="1.00"><small class="hint">Total hours per unit (split 60/40 if you do not break it down)</small></div>
+      <div class="field"><label>⏱ Journeyman h/unit</label><input type="number" step="any" min="0" name="tiempo_oficial_horas" value="{{ partida.tiempo_oficial_horas if partida and partida.tiempo_oficial_horas is not none else '' }}" placeholder="0.60"><small class="hint">Journeyman hours per unit</small></div>
+      <div class="field"><label>⏱ Helper h/unit</label><input type="number" step="any" min="0" name="tiempo_ayudante_horas" value="{{ partida.tiempo_ayudante_horas if partida and partida.tiempo_ayudante_horas is not none else '' }}" placeholder="0.40"><small class="hint">Helper / labourer hours per unit</small></div>
+      <div class="field"><label>⏱ Equipment h/unit</label><input type="number" step="any" min="0" name="tiempo_equipo_horas" value="{{ partida.tiempo_equipo_horas if partida and partida.tiempo_equipo_horas is not none else '' }}" placeholder="0.00"><small class="hint">Machinery / equipment hours per unit</small></div>
+      <div class="field"><label>Informational output</label><input name="rendimiento" value="{{ partida.rendimiento if partida else '' }}"></div>
+      <div class="field"><label>Recommended waste (%)</label><input type="number" name="desperdicio_recomendado_pct" step="0.01" min="0" max="100" value="{{ partida.desperdicio_recomendado_pct if partida else 0 }}"></div>
+      {% if mostrar_imagen %}
+      <div class="field field-full"><label>Reference image</label>
+        <div class="catalog-image-preview {{ '' if partida and partida.imagen else 'cotizat-hidden' }}" data-role="catalog-image-preview">
+          <img data-role="catalog-image" src="{{ partida.imagen | archivo_url if partida and partida.imagen else '' }}" alt="Image of the line item">
+          <label class="hint"><input type="checkbox" name="quitar_imagen" value="1"> Remove current image</label>
+        </div>
+        <input type="file" name="imagen" accept="image/*">
+      </div>
+      {% endif %}
+      <div class="field field-full"><label>Technical notes</label><textarea name="notas_tecnicas" rows="3" placeholder="Internal observations, measurement criteria, recommendations…">{{ partida.notas_tecnicas if partida else '' }}</textarea></div>
+    </div>
+  </details>
+
+  <script nonce="{{ request.state.csp_nonce }}" type="application/json" data-partida-editor-inicial>{{ (partida.descomposicion_json if partida and partida.descomposicion_json else '[]') | tojson }}</script>
+</div>
+{% endmacro %}

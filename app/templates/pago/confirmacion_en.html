@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Purchase registered · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing compra-confirmacion">
+{% set nav_modo = "cuenta" %}
+{% include "_nav_en.html" %}
+
+<main class="compra-confirmacion-main">
+  <div class="confirmacion-caja">
+    <div class="confirmacion-icono" aria-hidden="true">✓</div>
+    <h1>Purchase registered!</h1>
+    <p class="intro">Your purchase of <strong>{{ plan_nombre }}</strong> ({{ importe_texto }}) by <strong>{{ metodo_nombre }}</strong> was registered. We are reviewing your receipt.</p>
+
+    <div class="confirmacion-datos">
+      <div class="kv"><span>Purchase</span><strong>#{{ compra.id }}</strong></div>
+      <div class="kv"><span>Plan</span><strong>{{ plan_nombre }}</strong></div>
+      <div class="kv"><span>Method</span><strong>{{ metodo_nombre }}</strong></div>
+      <div class="kv"><span>Status</span><strong>{{ compra.etiqueta_estado }}</strong></div>
+      {% if verificacion %}
+      <div class="kv"><span>Verification</span><strong>{{ verificacion.values() | join(' · ') }}</strong></div>
+      {% endif %}
+    </div>
+
+    <div class="confirmacion-nota" role="alert">
+      <strong>What's next?</strong> We will verify your payment and activate your plan within 48 business hours. If there is any issue, we will write to your account email.
+    </div>
+
+    <div class="acciones mt-3">
+      <a class="btn btn-primary" href="/inicio">Go to my dashboard</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-int">
+    <div>© 2026 {{ titular_legal }}</div>
+    <div>
+      <a href="/legal/terminos">Terms</a>
+      <a href="/legal/privacidad">Privacy</a>
+      <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

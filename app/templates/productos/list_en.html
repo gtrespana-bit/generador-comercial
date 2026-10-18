@@ -1,0 +1,372 @@
+{% extends "base_en.html" %}
+{% block title %}Product Catalog{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Product Catalog</h1>
+    <p class="subtitle">Priced materials with a photo, independent of line items. New products you type while building an estimate are saved here automatically.</p>
+  </div>
+  <a href="/productos/nuevo" class="btn btn-primary">+ New Product</a>
+</div>
+
+<div class="filters csp-s-c6d264ee51">
+  <div class="csp-s-618c05be5c">
+    <input type="text" id="buscador" placeholder="🔍 Search by name, brand, model, SKU, supplier or category…" data-cotizat-keyup="productos-filter" class="csp-s-ea8cf769a3">
+    <div class="csp-s-316b05820a">Search box plus side categories. Use the checkboxes for bulk deletion.</div>
+  </div>
+  <div class="csp-s-9d48bcd569">
+    <div id="bulk-bar-productos" class="cotizat-hidden csp-s-4e6aaf2283">
+      <span id="sel-count-productos" class="csp-s-8cf7fda045">0</span>
+      <button type="button" class="btn btn-sm btn-danger" data-cotizat-click="productos-bulk-delete">🗑 Delete selected</button>
+      <button type="button" class="btn btn-sm btn-success" data-cotizat-click="productos-bulk-export">📥 Export selected</button>
+      <input type="text" id="move-cat-productos" placeholder="New category" class="csp-s-0f21bf64ba" list="categorias-datalist-productos">
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-bulk-move">➡️ Move to cat.</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-visible">Select visible</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="productos-select-none">Cancel</button>
+      <button type="button" class="btn btn-sm btn-danger csp-s-451d13ae38" data-cotizat-click="productos-delete-visible">🗑 Delete ALL visible</button>
+    </div>
+    <form method="post" action="/productos/ajustar" data-confirm="Adjust ALL products?" class="csp-s-014fb690a1">
+      <input type="number" name="porcentaje" step="any" placeholder="% ±" required class="csp-s-343d6c0de6">
+      <button class="btn btn-sm" type="submit">% Prices</button>
+    </form>
+    <a class="btn btn-sm" href="/productos/exportar">📥 CSV</a>
+  </div>
+</div>
+
+<div class="catalog-layout csp-s-a9b6bdb12f">
+  <!-- CATEGORY SIDEBAR -->
+  <div class="card category-sidebar csp-s-870e14e711">
+    <h3 class="csp-s-4397e20fe9">Categories</h3>
+    <div class="category-list csp-s-640fb6d0c5">
+      <button class="category-btn active csp-s-b7192152ef" data-cotizat-click="productos-filter-category" data-cat="todas" id="btn-cat-todas">
+        <span>📂 All</span>
+        <span class="badge csp-s-3b4bb75f0e">{{ productos | length }}</span>
+      </button>
+
+      {% for cat, cat_productos in productos | groupby('categoria') %}
+      <button class="category-btn drop-product-category csp-s-0f7a3355e6" data-cat="{{ cat }}" data-cotizat-click="productos-filter-category" id="btn-cat-{{ cat | replace(' ', '_') }}">
+        <span>🏷️ {{ cat }}</span>
+        <span class="badge csp-s-3b4bb75f0e">{{ cat_productos | length }}</span>
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- GROUPED PRODUCT LIST -->
+  <div class="csp-s-08376baafc">
+    {% for cat, cat_productos in productos | groupby('categoria') %}
+    <div class="card category-group drop-product-category" data-categoria="{{ cat }}" id="group-{{ cat | replace(' ', '_') }}">
+      <div class="csp-s-99c92f408f">
+        <h2 class="csp-s-e71e28dc61">
+          <span class="csp-s-10d73d1269">●</span> {{ cat }}
+        </h2>
+        <span class="badge badge-categoria csp-s-72559bf72e">{{ cat_productos | length }} products</span> <button type="button" class="btn btn-xs csp-s-d04d35ec75" data-cotizat-click="productos-delete-category">🗑 Delete cat.</button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="csp-s-bcd04dfac9"><input type="checkbox" data-cotizat-change="productos-toggle-all" title="Select all visible"></th>
+            <th class="csp-s-3e5bb81768">Photo</th>
+            <th>Name</th>
+            <th class="csp-s-3e5bb81768">Unit</th>
+            <th class="right csp-s-71f9841409">Cost</th>
+            <th class="right sortable csp-s-71f9841409" data-sort="precio">Sell</th>
+            <th class="right csp-s-d218c2c241">Margin</th>
+            <th class="right sortable csp-s-c5f3c1cb42" data-sort="usos">Uses</th>
+            <th class="right csp-s-0dfe35f39a">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in cat_productos %}
+          <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
+            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check"> <td>
+              {% if p.imagen %}
+              <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" loading="lazy" decoding="async" class="csp-s-55a1a17655">
+              {% else %}
+              <span class="csp-s-8bcf1c6072">🛍️</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong class="producto-nombre">{{ p.nombre }}</strong>
+              {% if p.sku %}<span class="badge csp-s-451d13ae38">{{ p.sku }}</span>{% endif %}
+              {% if p.usos %}<span class="badge csp-s-9a8ff29472" title="Uses in estimates">🔥 {{ p.usos }}</span>{% endif %}
+              <p class="catalog-meta">
+                {% if p.marca %}<span>{{ p.marca }}{% if p.modelo %} · {{ p.modelo }}{% endif %}</span>{% endif %}
+                {% if p.proveedor %}<span>🏪 {{ p.proveedor }}</span>{% endif %}
+                {% if p.fecha_actualizacion_precio %}<span>🗓 Price: {{ p.fecha_actualizacion_precio | fecha }}</span>{% endif %}
+                {% if p.ficha_tecnica %}<span><a class="link" href="{{ p.ficha_tecnica | archivo_url }}" target="_blank">📄 Spec sheet</a></span>{% endif %}
+              </p>
+              {% if p.descripcion %}<p class="hint csp-s-425a6e76cc">{{ p.descripcion }}</p>{% endif %}
+            </td>
+            <td><code class="csp-s-ee607fcc95">{{ p.unidad }}</code></td>
+            <td class="right">{{ p.precio_compra | money_iso(moneda_vista) if p.precio_compra is not none else '—' }}</td>
+            <td class="right" data-precio="{{ p.precio_unitario }}"><strong>{{ p.precio_unitario | money_iso(moneda_vista) }}</strong></td>
+            <td class="right">{% if p.precio_compra is not none and p.precio_unitario %}<span class="{{ 'text-danger' if p.precio_unitario < p.precio_compra else '' }}">{{ (((p.precio_unitario - p.precio_compra) / p.precio_unitario) * 100) | num }}%</span>{% else %}—{% endif %}</td>
+            <td class="right" data-usos="{{ p.usos or 0 }}">{{ p.usos or 0 }}</td>
+            <td class="right">
+              <div class="csp-s-6ab8cd05da">
+                <a href="/productos/{{ p.id }}/editar" class="btn btn-sm" title="Edit">✏️</a>
+                <form method="post" action="/productos/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="Delete this product from the catalog?">
+                  <button type="submit" class="btn btn-sm btn-danger" title="Delete">✕</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card empty">
+      <p>No products in the catalog yet.</p>
+      <p class="hint">Create one from here, or just type a new product while you build an estimate: it is saved automatically.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<datalist id="categorias-datalist-productos">
+  {% for cat, cat_productos in productos | groupby('categoria') %}
+  <option value="{{ cat }}"></option>
+  {% endfor %}
+</datalist>
+
+<style nonce="{{ request.state.csp_nonce }}">
+.category-btn { transition: all 0.15s ease; }
+.category-btn:hover { background: var(--bg) !important; color: var(--text) !important; }
+.category-btn.active { background: var(--accent) !important; color: #fff !important; }
+.category-btn.active .badge { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
+.drop-product-category.drag-over { outline:2px dashed var(--accent); outline-offset:-3px; background:var(--accent-soft) !important; }
+.producto-tr[draggable="true"] { cursor:grab; } .producto-tr.dragging { opacity:.4; }
+@media (max-width: 1024px) {
+  .catalog-layout { flex-direction: column; }
+  .category-sidebar { width: 100% !important; position: relative !important; top: 0 !important; }
+  .category-list { flex-direction: row !important; flex-wrap: wrap; }
+  .category-btn { width: auto !important; }
+}
+</style>
+
+<script nonce="{{ request.state.csp_nonce }}">
+let categoriaSeleccionada = 'todas';
+
+function filtrarCategoria(categoria) {
+  categoriaSeleccionada = categoria;
+  document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+  if (categoria === 'todas') {
+    document.getElementById('btn-cat-todas').classList.add('active');
+    document.querySelectorAll('.category-group').forEach(g => CotizatStyles.set(g, "display", ''));
+  } else {
+    const id = 'btn-cat-' + categoria.replace(/ /g, '_');
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.category-group').forEach(g => {
+      CotizatStyles.set(g, "display", (g.dataset.categoria === categoria) ? '' : 'none');
+    });
+  }
+  filtrarProductos();
+}
+
+function filtrarProductos() {
+  const q = (document.getElementById('buscador').value || '').toLowerCase().trim();
+  document.querySelectorAll('.category-group').forEach(group => {
+    const cat = group.dataset.categoria;
+    const byCat = (categoriaSeleccionada === 'todas' || categoriaSeleccionada === cat);
+    let vis = 0;
+    group.querySelectorAll('.producto-tr').forEach(row => {
+      const ok = !q || (row.dataset.nombre || '').toLowerCase().includes(q);
+      CotizatStyles.set(row, "display", ok ? '' : 'none');
+      if (ok) vis++;
+    });
+    CotizatStyles.set(group, "display", (byCat && vis > 0) ? '' : 'none');
+  });
+  updateBulkBarProductos();
+}
+
+// Bulk for products
+function updateBulkBarProductos() {
+  const bar = document.getElementById('bulk-bar-productos');
+  const cnt = document.getElementById('sel-count-productos');
+  if (!bar || !cnt) return;
+  const n = document.querySelectorAll('.row-check:checked').length;
+  if (n > 0) { cnt.textContent = n; CotizatStyles.set(bar, "display", 'flex'); }
+  else CotizatStyles.set(bar, "display", 'none');
+}
+function selectNoneProductos() {
+  document.querySelectorAll('.row-check').forEach(c => c.checked=false);
+  updateBulkBarProductos();
+}
+function toggleAllProductos(master) {
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (CotizatStyles.isHidden(g)) return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = master.checked; });
+  });
+  updateBulkBarProductos();
+}
+async function bulkDeleteProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return;
+  if (!confirm(`Delete ${ids.length} products?`)) return;
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const r = await fetch('/productos/bulk-delete', {method:'POST', body:fd});
+  if (r.redirected) window.location = r.url;
+}
+function initDragAndDropProductos() {
+  document.querySelectorAll('.producto-tr[draggable]').forEach(row => {
+    row.addEventListener('dragstart', event => {
+      let ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+      if (!ids.includes(row.dataset.id)) { selectNoneProductos(); const cb=row.querySelector('.row-check'); cb.checked=true; updateBulkBarProductos(); ids=[row.dataset.id]; }
+      event.dataTransfer.setData('text/plain', JSON.stringify(ids)); event.dataTransfer.effectAllowed='move'; row.classList.add('dragging');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.drop-product-category').forEach(target => {
+    target.addEventListener('dragover', e => { e.preventDefault(); target.classList.add('drag-over'); });
+    target.addEventListener('dragleave', () => target.classList.remove('drag-over'));
+    target.addEventListener('drop', async e => {
+      e.preventDefault(); target.classList.remove('drag-over'); let ids=[]; try { ids=JSON.parse(e.dataTransfer.getData('text/plain')); } catch (_) {}
+      const cat=target.dataset.cat || target.dataset.categoria; if (!ids.length || !cat) return;
+      const fd=new FormData(); ids.forEach(id=>fd.append('ids',id)); fd.append('new_category',cat);
+      const res=await fetch('/productos/bulk-move-category',{method:'POST',body:fd}); if(res.redirected) window.location=res.url; else if(res.ok) window.location.reload(); else alert('The selection could not be moved.');
+    });
+  });
+}
+function deleteCategoryProductos(cat) {
+  if (!confirm(`Delete ALL the products in «${cat}»?`)) return;
+  const g = document.getElementById('group-' + cat.replace(/ /g,'_'));
+  if (!g) return;
+  const ids = [];
+  g.querySelectorAll('.row-check').forEach(ch => ids.push(ch.dataset.id));
+  if (!ids.length) return alert('Empty');
+  const fd = new FormData();
+  ids.forEach(i => fd.append('ids', i));
+  fetch('/productos/bulk-delete', {method:'POST', body:fd}).then(r => {if(r.redirected) window.location=r.url;});
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  makeTableSortableProductos();
+  initDragAndDropProductos();
+});
+
+function makeTableSortableProductos() {
+  document.querySelectorAll('.category-group table').forEach(table => {
+    const thead = table.querySelector('thead');
+    if (!thead) return;
+    const headers = thead.querySelectorAll('th');
+    headers.forEach((th, idx) => {
+      if (idx === 0 || idx === 1 || idx === headers.length - 1) return; // skip checkbox, photo, actions
+      CotizatStyles.set(th, "cursor", 'pointer');
+      th.title = 'Click to sort';
+      let asc = true;
+      th.onclick = () => {
+        sortTableProductos(table, idx, asc);
+        asc = !asc;
+      };
+    });
+  });
+}
+
+function sortTableProductos(table, colIndex, asc) {
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll('tr.producto-tr'));
+  rows.sort((a, b) => {
+    const aCell = a.children[colIndex];
+    const bCell = b.children[colIndex];
+    if (!aCell || !bCell) return 0;
+
+    let aVal, bVal;
+    if (aCell.dataset.precio !== undefined) {
+      aVal = aCell.dataset.precio || '0';
+      bVal = bCell.dataset.precio || '0';
+    } else if (aCell.dataset.usos !== undefined) {
+      aVal = aCell.dataset.usos || '0';
+      bVal = bCell.dataset.usos || '0';
+    } else {
+      aVal = (aCell.textContent || '').trim().toLowerCase();
+      bVal = (bCell.textContent || '').trim().toLowerCase();
+    }
+
+    const aNum = parseFloat(String(aVal).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+    const bNum = parseFloat(String(bVal).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+    const numericCandidate = (aVal.match && aVal.match(/[\d.,-]/)) || (bVal.match && bVal.match(/[\d.,-]/));
+
+    if (!isNaN(aNum) && !isNaN(bNum) && numericCandidate) {
+      return asc ? aNum - bNum : bNum - aNum;
+    }
+    return asc ? String(aVal).localeCompare(String(bVal), 'en') : String(bVal).localeCompare(String(aVal), 'en');
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+function selectVisibleProductos() {
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (CotizatStyles.isHidden(g)) return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent !== null) ch.checked = true; });
+  });
+  updateBulkBarProductos();
+}
+async function deleteAllVisibleProductos() {
+  const ids = [];
+  document.querySelectorAll('.category-group').forEach(g => {
+    if (CotizatStyles.isHidden(g)) return;
+    g.querySelectorAll('.row-check').forEach(ch => { if (ch.offsetParent!==null) ids.push(ch.dataset.id); });
+  });
+  if (!ids.length) return alert('Nothing visible');
+  if (!confirm('Delete ' + ids.length + ' visible products?')) return;
+  const fd = new FormData(); ids.forEach(i=>fd.append('ids',i));
+  const r = await fetch('/productos/bulk-delete',{method:'POST',body:fd});
+  if (r.redirected) window.location = r.url;
+}
+
+async function bulkExportSelectedProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  if (!ids.length) return alert('Select at least one product.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  const res = await fetch('/productos/bulk-export-selected', { method: 'POST', body: fd });
+  if (res.ok) {
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'selected_products.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  } else {
+    alert('Error exporting');
+  }
+}
+
+async function bulkMoveCategoryProductos() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
+  const newCat = (document.getElementById('move-cat-productos') || {}).value || '';
+  if (!ids.length || !newCat.trim()) return alert('Select products and type a target category.');
+  const fd = new FormData();
+  ids.forEach(id => fd.append('ids', id));
+  fd.append('new_category', newCat.trim());
+  const res = await fetch('/productos/bulk-move-category', { method: 'POST', body: fd });
+  if (res.redirected) {
+    window.location = res.url;
+  } else {
+    alert('Error moving');
+  }
+}
+
+window.CotizatActions.register('productos-filter', () => filtrarProductos());
+window.CotizatActions.register('productos-filter-category', element => filtrarCategoria(element.dataset.cat || 'todas'));
+window.CotizatActions.register('productos-bulk-delete', () => bulkDeleteProductos());
+window.CotizatActions.register('productos-bulk-export', () => bulkExportSelectedProductos());
+window.CotizatActions.register('productos-bulk-move', () => bulkMoveCategoryProductos());
+window.CotizatActions.register('productos-select-visible', () => selectVisibleProductos());
+window.CotizatActions.register('productos-select-none', () => selectNoneProductos());
+window.CotizatActions.register('productos-delete-visible', () => deleteAllVisibleProductos());
+window.CotizatActions.register('productos-toggle-all', element => toggleAllProductos(element));
+window.CotizatActions.register('productos-row-check', () => updateBulkBarProductos());
+window.CotizatActions.register('productos-delete-category', element => {
+  const group = element.closest('.category-group');
+  deleteCategoryProductos(group?.dataset.categoria || '');
+});
+</script>
+{% endblock %}

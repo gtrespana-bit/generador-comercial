@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from . import common
 from .common import get_authenticated_db, get_db
+from ..i18n import mensaje_request
 from ..services.asistente_ia import (
     asistente_configurado,
     consultar_asistente_stream,
@@ -130,12 +131,21 @@ def _guardar_respuesta_best_effort(
         common.log.warning("No se pudo guardar la respuesta del asistente.", exc_info=True)
 
 
+def _idioma(request: Request | None = None) -> str:
+    """Idioma del panel: el asistente contesta en la lengua de la pantalla."""
+    if request is None:
+        return "es"
+    return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
 @router.post("/chat")
 async def api_chat_ia(
     solicitud: SolicitudChat,
+    request: Request,
     db: Session = Depends(get_db),
 ):
     """Endpoint principal: responde y guarda el turno en el tenant activo."""
+    idioma = _idioma(request)
     mensajes = [{"role": m.role, "content": m.content} for m in solicitud.messages]
     contexto = solicitud.contexto.model_dump() if solicitud.contexto else None
 
@@ -198,7 +208,9 @@ async def api_chat_ia(
                         "conversacion_id": conversation_id,
                     })
                 else:
-                    for fragmento in consultar_asistente_stream(db, mensajes, contexto):
+                    for fragmento in consultar_asistente_stream(
+                        db, mensajes, contexto, idioma,
+                    ):
                         enriquecido, payloads = _sse_con_identificador(
                             fragmento, conversation_id
                         )
@@ -243,7 +255,7 @@ async def api_chat_ia(
     if registro and registro.respuesta_existente is not None:
         respuesta = registro.respuesta_existente
     else:
-        respuesta = consultar_asistente_sync(db, mensajes, contexto)
+        respuesta = consultar_asistente_sync(db, mensajes, contexto, idioma)
         _guardar_respuesta_best_effort(db, registro, respuesta, completo=True)
     resultado = {"ok": True, "respuesta": respuesta}
     if registro:
@@ -256,14 +268,14 @@ async def api_chat_ia(
 
 @router.post("/redactar-descripcion")
 async def api_redactar_descripcion(
-    solicitud: SolicitudRedaccion,
+    request: Request, solicitud: SolicitudRedaccion,
     db: Session = Depends(get_authenticated_db),
 ):
     """Genera una especificación técnica rigurosa para una partida."""
     titulo = solicitud.titulo.strip()
     if not titulo:
         return JSONResponse(
-            {"ok": False, "error": "El título de la partida es obligatorio."},
+            {"ok": False, "error": mensaje_request(request, "El título de la partida es obligatorio.")},
             status_code=400,
         )
 
@@ -272,5 +284,6 @@ async def api_redactar_descripcion(
         titulo=titulo,
         categoria=solicitud.categoria or "",
         unidad=solicitud.unidad or "m2",
+        idioma=_idioma(request),
     )
     return JSONResponse({"ok": True, "descripcion": descripcion})

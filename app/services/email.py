@@ -193,6 +193,26 @@ def _post_resend(
     return envio_id
 
 
+def _render_correo(plantilla: str, contexto: dict, idioma: str) -> tuple[str, str]:
+    """Pinta el HTML y el texto plano de una plantilla de correo.
+
+    El sufijo ``_en`` elige la variante traducida y, además de los datos del
+    correo, se pasa el idioma a la plantilla: la base es común a los dos
+    idiomas y su marca y su pie no pueden quedarse en español cuando el
+    cuerpo va en inglés.
+    """
+    from ..i18n import normalizar_idioma
+
+    lang = normalizar_idioma(idioma)
+    sufijo = "_en" if lang == "en" else ""
+    ctx = dict(contexto)
+    ctx.setdefault("lang", lang)
+    return (
+        _jinja.get_template(f"{plantilla}{sufijo}.html").render(**ctx),
+        _jinja.get_template(f"{plantilla}{sufijo}.txt").render(**ctx),
+    )
+
+
 def enviar_invitacion_por_email(
     *,
     email: str,
@@ -202,6 +222,7 @@ def enviar_invitacion_por_email(
     invitador_email: str,
     rol: str,
     caduca_el: datetime,
+    lang: str = "es",
 ) -> str:
     """Envía el correo de invitación y devuelve el id del envío.
 
@@ -223,8 +244,7 @@ def enviar_invitacion_por_email(
         "anio": datetime.utcnow().year,
     }
     asunto = f"{invitador} te invitó a {organizacion_nombre} · {PRODUCT_NAME}"
-    html = _jinja.get_template("emails/invitacion.html").render(**contexto)
-    texto = _jinja.get_template("emails/invitacion.txt").render(**contexto)
+    html, texto = _render_correo("emails/invitacion", contexto, lang)
     try:
         envio_id = _post_resend(
             settings, to=email, subject=asunto, html=html, text=texto
@@ -255,6 +275,7 @@ def enviar_presupuesto_por_email(
     pdf: bytes,
     nombre_pdf: str,
     responder_a: str = "",
+    lang: str = "es",
 ) -> str:
     """Entrega al cliente un presupuesto PDF y devuelve el id de Resend."""
     email = str(email or "").strip().lower()
@@ -286,8 +307,9 @@ def enviar_presupuesto_por_email(
         "permite_responder": bool(responder_a),
         "anio": datetime.utcnow().year,
     }
-    html = _jinja.get_template("emails/presupuesto.html").render(**contexto)
-    texto = _jinja.get_template("emails/presupuesto.txt").render(**contexto)
+    from ..i18n import normalizar_idioma
+    _lang = normalizar_idioma(lang)
+    html, texto = _render_correo("emails/presupuesto", contexto, _lang)
     try:
         envio_id = _post_resend(
             settings,
@@ -323,6 +345,7 @@ def enviar_respuesta_propuesta_por_email(
     respondido_por_email: str,
     comentario: str,
     enlace_interno: str,
+    lang: str = "es",
 ) -> str:
     """Notifica a un administrador la respuesta registrada por el cliente."""
     email = str(email or "").strip().lower()
@@ -350,8 +373,7 @@ def enviar_respuesta_propuesta_por_email(
         f"Propuesta {decision}: {presupuesto_numero} · "
         f"{cliente_nombre or respondido_por_nombre}"
     )[:200]
-    html = _jinja.get_template("emails/respuesta_propuesta.html").render(**contexto)
-    texto = _jinja.get_template("emails/respuesta_propuesta.txt").render(**contexto)
+    html, texto = _render_correo("emails/respuesta_propuesta", contexto, lang)
     try:
         envio_id = _post_resend(
             settings,
@@ -384,6 +406,7 @@ def enviar_aviso_licencia(
     organizacion_nombre: str,
     vence: date,
     dias_restantes: int,
+    lang: str = "es",
 ) -> str:
     """Avisa a un administrador de que el acceso de su organización vence.
 
@@ -405,8 +428,7 @@ def enviar_aviso_licencia(
         f"Tu acceso a {PRODUCT_NAME} vence el "
         f"{vence.strftime('%d/%m/%Y')} · {organizacion_nombre}"
     )
-    html = _jinja.get_template("emails/aviso_licencia.html").render(**contexto)
-    texto = _jinja.get_template("emails/aviso_licencia.txt").render(**contexto)
+    html, texto = _render_correo("emails/aviso_licencia", contexto, lang)
     try:
         envio_id = _post_resend(settings, to=email, subject=asunto, html=html, text=texto)
     except EmailSendError as exc:
@@ -426,6 +448,7 @@ def enviar_recordatorio_vencimiento(
     es_prueba: bool,
     vence: date,
     dias_restantes: int,
+    lang: str = "es",
 ) -> str:
     """Recuerda a un administrador que su acceso vence en pocos días.
 
@@ -467,8 +490,7 @@ def enviar_recordatorio_vencimiento(
             f"{contexto['organizacion_nombre']}"
         )
     asunto = asunto[:200]
-    html = _jinja.get_template("emails/recordatorio_vencimiento.html").render(**contexto)
-    texto = _jinja.get_template("emails/recordatorio_vencimiento.txt").render(**contexto)
+    html, texto = _render_correo("emails/recordatorio_vencimiento", contexto, lang)
     try:
         envio_id = _post_resend(
             settings,
@@ -485,7 +507,7 @@ def enviar_recordatorio_vencimiento(
     return envio_id
 
 
-def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict) -> str:
+def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict, lang: str = "es") -> str:
     """Alerta interna al operador cuando la verificación diaria falla (E4-023).
 
     Es un correo **interno** (solo va a `COTIZAT_OPERADORES`), no un correo de
@@ -505,8 +527,7 @@ def enviar_alerta_operador(*, email: str, errores: list[str], checks: dict) -> s
     asunto = (
         f"Alerta operativa {PRODUCT_NAME}: {total} problema(s) en el despliegue"
     )[:200]
-    html = _jinja.get_template("emails/alerta_operador.html").render(**contexto)
-    texto = _jinja.get_template("emails/alerta_operador.txt").render(**contexto)
+    html, texto = _render_correo("emails/alerta_operador", contexto, lang)
     try:
         envio_id = _post_resend(
             settings,
@@ -534,6 +555,7 @@ def enviar_activacion_plan_por_email(
     vence: date,
     recibo_pdf: bytes = b"",
     recibo_nombre: str = "recibo.pdf",
+    lang: str = "es",
 ) -> str:
     """Avisa al comprador de que su plan quedó activo, con el recibo adjunto.
 
@@ -563,8 +585,7 @@ def enviar_activacion_plan_por_email(
         f"Tu {contexto['plan_nombre'].lower()} está activo hasta el "
         f"{vence.strftime('%d/%m/%Y')} · {PRODUCT_NAME}"
     )[:200]
-    html = _jinja.get_template("emails/plan_activado.html").render(**contexto)
-    texto = _jinja.get_template("emails/plan_activado.txt").render(**contexto)
+    html, texto = _render_correo("emails/plan_activado", contexto, lang)
 
     adjuntos: tuple[EmailAttachment, ...] = ()
     if recibo_pdf:
@@ -601,6 +622,7 @@ def enviar_solicitud_demo_por_email(
     presupuestos_mes: str = "",
     mensaje: str = "",
     destino_override: str = "",
+    lang: str = "es",
 ) -> str:
     """Notifica al equipo de soporte sobre una nueva solicitud de demo.
 
@@ -656,7 +678,7 @@ def enviar_solicitud_demo_por_email(
     }
     asunto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"[:200]
     try:
-        html = _jinja.get_template("emails/demo.html").render(**contexto)
+        html, texto = _render_correo("emails/demo", contexto, lang)
     except Exception:
         html = (
             "<h2>Nueva solicitud de demo</h2>"
@@ -664,9 +686,6 @@ def enviar_solicitud_demo_por_email(
             f"<p><strong>Email:</strong> {email}</p>"
             f"<p><strong>Empresa:</strong> {empresa}</p>"
         )
-    try:
-        texto = _jinja.get_template("emails/demo.txt").render(**contexto)
-    except Exception:
         texto = f"Nueva solicitud de demo: {nombre} ({empresa or email})"
 
     try:
@@ -697,6 +716,7 @@ def enviar_compra_por_email(
     comprobante_nombre: str,
     comprobante_bytes: bytes,
     destino_override: str = "",
+    lang: str = "es",
 ) -> str:
     """Notifica al titular una compra nueva con su comprobante adjunto.
 
@@ -744,8 +764,7 @@ def enviar_compra_por_email(
         f"{organizacion_nombre or email}"
     )[:200]
     try:
-        html = _jinja.get_template("emails/compra.html").render(**contexto)
-        texto = _jinja.get_template("emails/compra.txt").render(**contexto)
+        html, texto = _render_correo("emails/compra", contexto, lang)
     except Exception:
         html = (
             "<h2>Nueva compra registrada</h2>"
@@ -810,13 +829,18 @@ def _enviar_aviso_interno(
     destino_override: str = "",
     reply_to: str = "",
     etiqueta: str,
+    idioma: str = "es",
 ) -> str:
     """Renderiza y envía un aviso interno; devuelve el id o ``""``.
 
     Comparte con los demás avisos internos el criterio de no romper nada: sin
     correo configurado se registra un aviso en el log y se devuelve cadena
     vacía, porque el dato ya está en la base.
+
+    ``idioma`` elige la plantilla: con ``"en"`` se usa la variante
+    ``emails/<plantilla>_en.{html,txt}`` cuando existe; si no, la española.
     """
+
     destino = (
         str(destino_override or "").strip() or _env("COTIZAT_AVISOS_EMAIL") or _soporte_email()
     )
@@ -832,8 +856,7 @@ def _enviar_aviso_interno(
         )
         return ""
     try:
-        html = _jinja.get_template(f"emails/{plantilla}.html").render(**contexto)
-        texto = _jinja.get_template(f"emails/{plantilla}.txt").render(**contexto)
+        html, texto = _render_correo(f"emails/{plantilla}", contexto, idioma)
     except Exception:
         logger.warning("Plantilla de «%s» no disponible; se usa texto plano.", etiqueta)
         html = "".join(
@@ -869,6 +892,7 @@ def enviar_aviso_venta_por_email(
     origen: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Avisa al titular de una **venta confirmada** (Stripe o manual).
 
@@ -877,6 +901,7 @@ def enviar_aviso_venta_por_email(
     (webhook de Stripe o activación en el panel), con el plan, el importe, el
     método y el período pagado.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
 
     contexto = {
@@ -893,7 +918,8 @@ def enviar_aviso_venta_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
-    tipo = "Renovación" if renovacion else "Venta"
+    en = normalizar_idioma(idioma) == "en"
+    tipo = ("Renewal" if renovacion else "Sale") if en else ("Renovación" if renovacion else "Venta")
     asunto = (
         f"{tipo}: {contexto['plan_nombre']} · {contexto['importe_texto']} · "
         f"{contexto['organizacion_nombre'] or contexto['comprador_email']}"
@@ -905,6 +931,7 @@ def enviar_aviso_venta_por_email(
         destino_override=destino_override,
         reply_to=contexto["comprador_email"],
         etiqueta="venta",
+        idioma=idioma,
     )
 
 
@@ -918,6 +945,7 @@ def enviar_aviso_registro_por_email(
     prueba_texto: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Avisa al titular de una **cuenta nueva** (y de la prueba si se concede).
 
@@ -926,6 +954,7 @@ def enviar_aviso_registro_por_email(
     alta de la cuenta y, cuando el alta crea la empresa, se manda el segundo
     aviso con el nombre de la organización y la prueba concedida.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
 
     nombre = str(nombre or "").strip()
@@ -944,7 +973,10 @@ def enviar_aviso_registro_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
-    titulo = "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta registrada"
+    if normalizar_idioma(idioma) == "en":
+        titulo = "New company on trial" if origen == "prueba" else "New account registered"
+    else:
+        titulo = "Nueva empresa en prueba" if origen == "prueba" else "Nueva cuenta registrada"
     asunto = f"{titulo}: {nombre or email}" + (
         f" · {contexto['organizacion_nombre']}" if contexto["organizacion_nombre"] else ""
     )
@@ -955,6 +987,7 @@ def enviar_aviso_registro_por_email(
         destino_override=destino_override,
         reply_to=email,
         etiqueta="registro",
+        idioma=idioma,
     )
 
 
@@ -969,6 +1002,7 @@ def enviar_mensaje_soporte_por_email(
     pagina: str = "",
     panel_url: str = "",
     destino_override: str = "",
+    idioma: str = "es",
 ) -> str:
     """Reenvía al buzón de soporte un mensaje del formulario público.
 
@@ -977,6 +1011,7 @@ def enviar_mensaje_soporte_por_email(
     soporte. El mensaje ya está guardado en ``mensajes_soporte``; este correo
     es el empujón para que no se quede sin leer.
     """
+    from ..i18n import normalizar_idioma
     from ..branding import PRODUCT_NAME
     from ..models import TIPOS_SOPORTE_ETIQUETA
 
@@ -1001,8 +1036,9 @@ def enviar_mensaje_soporte_por_email(
         "panel_url": str(panel_url or "").strip(),
         "anio": datetime.utcnow().year,
     }
+    _prefijo = "Support" if normalizar_idioma(idioma) == "en" else "Soporte"
     asunto_correo = (
-        f"Soporte · {contexto['tipo']}: {nombre or email}"
+        f"{_prefijo} · {contexto['tipo']}: {nombre or email}"
     )
     return _enviar_aviso_interno(
         plantilla="soporte",
@@ -1011,6 +1047,7 @@ def enviar_mensaje_soporte_por_email(
         destino_override=destino_override,
         reply_to=email,
         etiqueta="soporte",
+        idioma=idioma,
     )
 
 

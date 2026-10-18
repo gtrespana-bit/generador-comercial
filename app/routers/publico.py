@@ -128,6 +128,14 @@ def _web_publico():
         return None
 
 
+def _idioma_de(request: Request | None) -> str:
+    """Idioma ya resuelto por el middleware (``request.state.lang``)."""
+    try:
+        return getattr(getattr(request, "state", None), "lang", "") or "es"
+    except Exception:
+        return "es"
+
+
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
     from ..paises import PAIS_GENERICO, PAISES, lista_paises
@@ -142,7 +150,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
-                "ej": contexto_ejemplo(codigo),
+                "ej": contexto_ejemplo(codigo, _idioma_de(request)),
                 # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
                 # final del body para no retrasar el descubrimiento del CSS.
                 "seo_skip_fonts": True,
@@ -159,7 +167,7 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
-        "ej": contexto_ejemplo(pais_codigo),
+        "ej": contexto_ejemplo(pais_codigo, _idioma_de(request)),
         # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
         # final del body para no retrasar el descubrimiento del CSS.
         "seo_skip_fonts": True,
@@ -173,14 +181,24 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
 
 
 def _landing_con_pais(request: Request, codigo: str):
-    """Renderiza la landing para un subdirectorio /co/, /mx/ ... y fija cookie."""
+    """Renderiza la landing para un subdirectorio /co/, /us/ ... y fija cookie."""
     from ..paises import PAISES
 
     codigo = str(codigo).strip().upper()
     if codigo not in PAISES:
         return Response("Página no encontrada.", status_code=404)
+    # Un mercado de habla inglesa no tiene versión en español: /us/ a secas
+    # dejaría la interfaz en español por la cookie. Se manda a la canónica
+    # (/en-us/), salvo que ya venga de ahí, que es cuando se sirve.
+    if PAISES[codigo].get("idioma") == "en":
+        original = str(getattr(request.state, "ruta_original", "") or "")
+        if not original.lower().startswith("/en"):
+            from ..seo import ruta_mercado
+
+            return RedirectResponse(ruta_mercado(codigo), status_code=301)
+    # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
+    # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request, pais_forzado=codigo)
-    # hreflang + canonical se inyectan en el template via ctx
     resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
     resp.set_cookie(
         "cotizat_pais",
@@ -229,6 +247,8 @@ def home_publica(request: Request):
             httponly=False,
         )
         return resp
+    # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
+    # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request)
     return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
@@ -290,6 +310,7 @@ def como_funciona(request: Request):
     from ..paises import lista_paises
     from ..seo import contexto_pagina_estatica
 
+    # Copy y canónica en inglés: los resuelve contexto_pagina_estatica().
     ctx = contexto_pagina_estatica(request, "como-funciona")
     ctx["paises"] = lista_paises()
     return TEMPLATES.TemplateResponse(request, "como_funciona.html", ctx)
@@ -421,7 +442,7 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
             "pais_codigo": codigo,
             "pais_generico": PAIS_GENERICO,
             "paises": lista_paises(),
-            "ej": contexto_ejemplo(codigo),
+            "ej": contexto_ejemplo(codigo, _idioma_de(request)),
             "ficha": ficha,
             "guias": lista_guias(),
         }
@@ -521,6 +542,7 @@ def pagina_legal(pagina: str, request: Request):
     from ..paises import lista_paises
     from ..seo import contexto_pagina_estatica
 
+    # Copy y canónica en inglés: los resuelve contexto_pagina_estatica().
     ctx = contexto_pagina_estatica(request, pagina)
     ctx.update(
         {
@@ -582,7 +604,8 @@ def pagina_soporte(request: Request):
     y funciona con o sin sesión: quien todavía no es cliente también puede
     escribir. El mensaje se guarda en el panel y se avisa al buzón de soporte.
     """
-    return TEMPLATES.TemplateResponse(request, "soporte.html", _contexto_soporte(request))
+    ctx = _contexto_soporte(request)
+    return TEMPLATES.TemplateResponse(request, "soporte.html", ctx)
 
 
 @router.post("/soporte", response_class=RedirectResponse, include_in_schema=False)
@@ -760,6 +783,7 @@ async def solicitar_demo(
                 telefono=telefono,
                 presupuestos_mes=presupuestos_mes,
                 mensaje=mensaje,
+                lang=getattr(getattr(request, "state", None), "lang", "es") or "es",
             )
         except (EmailNotConfigured, EmailValidationError) as exc:
             error = str(exc)
@@ -778,3 +802,110 @@ async def solicitar_demo(
         f"/?demo_enviado={quote(nombre)}#demo",
         status_code=303,
     )
+
+
+@router.get("/us", include_in_schema=False)
+def landing_us(request: Request):
+    return _redirige_a_slash("US")
+
+
+@router.get("/us/", response_class=HTMLResponse, include_in_schema=False)
+def landing_us_slash(request: Request):
+    return _landing_con_pais(request, "US")
+
+
+@router.get("/gb", include_in_schema=False)
+def landing_gb(request: Request):
+    return _redirige_a_slash("GB")
+
+
+@router.get("/gb/", response_class=HTMLResponse, include_in_schema=False)
+def landing_gb_slash(request: Request):
+    return _landing_con_pais(request, "GB")
+
+
+@router.get("/au", include_in_schema=False)
+def landing_au(request: Request):
+    return _redirige_a_slash("AU")
+
+
+@router.get("/au/", response_class=HTMLResponse, include_in_schema=False)
+def landing_au_slash(request: Request):
+    return _landing_con_pais(request, "AU")
+
+
+@router.get("/ca", include_in_schema=False)
+def landing_ca(request: Request):
+    return _redirige_a_slash("CA")
+
+
+@router.get("/ca/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ca_slash(request: Request):
+    return _landing_con_pais(request, "CA")
+
+
+@router.get("/ie", include_in_schema=False)
+def landing_ie(request: Request):
+    return _redirige_a_slash("IE")
+
+
+@router.get("/ie/", response_class=HTMLResponse, include_in_schema=False)
+def landing_ie_slash(request: Request):
+    return _landing_con_pais(request, "IE")
+
+
+# --- Piloto en inglés (locale en) ---
+@router.get("/en", include_in_schema=False)
+def landing_en(request: Request):
+    return RedirectResponse("/en/", status_code=301)
+
+
+@router.get("/en/", response_class=HTMLResponse, include_in_schema=False)
+def landing_en_slash(request: Request):
+    # «en» a secas resuelve a Estados Unidos en el registro de mercados, así
+    # que /en/ y /en-us/ serían la misma página en dos sitios. Se consolida
+    # en la del mercado con un 301 para no repartir la autoridad entre las
+    # dos ni dejar una URL ambigua compitiendo con las de cada país.
+    return RedirectResponse("/en-us/", status_code=301)
+
+
+# --- Conmutador de idioma -------------------------------------------------
+@router.get("/idioma/{idioma}", include_in_schema=False)
+def cambiar_idioma(idioma: str, destino: str = "/"):
+    """Fija el idioma y devuelve al visitante a la misma página.
+
+    El conmutador no puede limitarse a enlazar ``/en/...``: al volver al
+    español (que no lleva prefijo) la cookie seguiría en ``en`` y la interfaz
+    no cambiaría. La redirección pasa por aquí para escribir la cookie en los
+    dos sentidos y conservar país y query de la página de partida.
+    """
+    from ..i18n import (
+        COOKIE_IDIOMA,
+        COOKIE_IDIOMA_MAX_AGE,
+        normalizar_idioma,
+        ruta_en_idioma,
+        ruta_segura,
+    )
+    from urllib.parse import urlsplit
+
+    lang = normalizar_idioma(idioma)
+    # Se sanea el destino tal cual llega: partirlo antes permitiría colar un
+    # dominio ajeno (``//malo.com/x`` tiene path ``/x``) y convertir el
+    # conmutador en un open redirect.
+    ruta = ruta_en_idioma(ruta_segura(destino), lang)
+    query = urlsplit(str(destino or "/")).query
+    url = ruta + (f"?{query}" if query else "")
+
+    resp = RedirectResponse(url, status_code=307)
+    resp.set_cookie(
+        COOKIE_IDIOMA,
+        lang,
+        max_age=COOKIE_IDIOMA_MAX_AGE,
+        path="/",
+        samesite="lax",
+        httponly=False,
+    )
+    # Utilidad de navegación: no es contenido y no debe competir con la página
+    # a la que lleva.
+    resp.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return resp

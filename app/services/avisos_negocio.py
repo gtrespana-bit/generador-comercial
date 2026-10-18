@@ -61,6 +61,7 @@ def avisar_venta(
     licencia=None,
     renovacion: bool = False,
     origen: str = "",
+    idioma: str = "es",
 ) -> str:
     """Envía el aviso de venta confirmada. Devuelve el id o ``""``.
 
@@ -106,6 +107,7 @@ def avisar_venta(
             renovacion=bool(renovacion),
             origen=origen,
             panel_url=url_panel_absoluta("/admin/ingresos?tab=ventas"),
+            idioma=idioma,
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         log.warning("Venta de la compra %s sin aviso por correo (%s).", getattr(compra, "id", "?"), exc)
@@ -122,6 +124,7 @@ def avisar_registro(
     origen: str = "registro",
     organizacion_nombre: str = "",
     prueba_texto: str = "",
+    idioma: str = "es",
 ) -> str:
     """Envía el aviso de alta nueva (cuenta o prueba). Devuelve el id o ``""``."""
     from .email import (
@@ -140,6 +143,7 @@ def avisar_registro(
             organizacion_nombre=organizacion_nombre,
             prueba_texto=prueba_texto,
             panel_url=url_panel_absoluta("/admin/clientes"),
+            idioma=idioma,
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
         log.warning("Alta de %s sin aviso por correo (%s).", email, exc)

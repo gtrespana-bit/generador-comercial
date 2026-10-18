@@ -1,0 +1,53 @@
+{% extends "base_en.html" %}
+{% block title %}{{ 'Edit Resource' if recurso else 'New Resource' }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ 'Edit Resource' if recurso else 'New Resource' }}</h1><p class="subtitle">Reusable unit price (labor, material or equipment). Changing the price propagates automatically to every line item that uses it.</p></div></div>
+<div class="card">
+<form method="post" action="{{ '/recursos/' ~ recurso.id ~ '/editar' if recurso else '/recursos/nuevo' }}">
+  <div class="form-grid">
+    <div class="field"><label>Code (optional) *</label><input name="codigo" value="{{ recurso.codigo if recurso else '' }}" placeholder="la001, mt01..."><span class="hint">With a code, matching is by code. Without one, by description.</span></div>
+    <div class="field"><label>Unit *</label><input name="unidad" value="{{ recurso.unidad if recurso else 'h' }}" placeholder="h, kg, m3, ea..." required></div>
+    <div class="field field-full"><label>Description *</label><input name="descripcion" required value="{{ recurso.descripcion if recurso else '' }}" placeholder="Journeyman, general construction"></div>
+    <div class="field"><label>Category *</label>
+      <select name="categoria" required>
+        {% for cat in categorias %}
+          <option value="{{ cat }}" {% if recurso and recurso.categoria==cat %}selected{% endif %}>{{ etiquetas[cat] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {# The catalog base price is not market data: it is the original line item
+       price converted. It is neither shown nor edited. It stays in a hidden
+       field so the internal template is not lost if the user only adjusts the
+       market price. #}
+    <input type="hidden" name="precio" value="{{ precio_vista if precio_vista is not none else (recurso.precio if recurso else 0) }}">
+    <div class="field">
+      <label>Your price for {{ mercado_codigo }} ({{ mercado_moneda }})</label>
+      <input type="number" name="precio_mercado" step="0.0001" min="0" value="{{ precio_mercado_vista if precio_mercado_vista is not none else '' }}">
+      {% if precio_mercado and precio_mercado_vista is not none %}
+        <span class="hint">Yours is used before the market price. Leave it empty to fall back to the market price.</span>
+        {% if precio_referencia_nacional_vista is not none %}<div class="hint">📊 {{ mercado_codigo }} market: <strong>{{ precio_referencia_nacional_vista | money_iso(moneda_vista) }}</strong></div>{% endif %}
+      {% else %}
+        {% if precio_referencia_nacional_vista is not none %}
+          <span class="hint">The market price will be used automatically: <strong>{{ precio_referencia_nacional_vista | money_iso(moneda_vista) }}</strong>. Only type here if you want to fix your own.</span>
+        {% else %}
+          <span class="hint">⚠ No market price for {{ mercado_codigo }}. If you leave it empty, the resource is shown without a price until the national reference or your own price is loaded.</span>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="field"><label>Group (optional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Labor, Materials..."></div>
+    <div class="field"><label>Supplier (optional)</label><input name="proveedor" value="{{ recurso.proveedor if recurso else '' }}"></div>
+    <div class="field"><label>Subtype</label><input name="subtipo" value="{{ recurso.subtipo if recurso else '' }}" placeholder="journeyman, equipment, hauling"></div>
+    <div class="field"><label>Capacity / specification</label><input name="capacidad" value="{{ recurso.capacidad if recurso else '' }}" placeholder="10 t, 70 HP, 8 m3"></div>
+    <div class="field"><label>Rate mode</label><select name="modalidad_tarifa"><option value="hora">Hour</option><option value="jornada">Workday</option><option value="viaje">Trip</option><option value="km">Kilometre</option><option value="m2">m²</option></select></div>
+    <div class="field"><label>Output per workday</label><input name="rendimiento_jornada" type="number" step="any" value="{{ recurso.rendimiento_jornada if recurso and recurso.rendimiento_jornada is not none else '' }}"></div>
+    <div class="field field-full"><label>Includes</label><label><input type="checkbox" name="incluye_operador" {% if recurso and recurso.incluye_operador %}checked{% endif %}> operator</label><label><input type="checkbox" name="incluye_combustible" {% if recurso and recurso.incluye_combustible %}checked{% endif %}> fuel</label><label><input type="checkbox" name="incluye_flete" {% if recurso and recurso.incluye_flete %}checked{% endif %}> delivery</label></div>
+  </div>
+  <div class="card csp-s-e219c669dc">
+    <strong class="csp-s-1014e6cef4">ℹ️ Automatic propagation</strong>
+    <p class="hint csp-s-5fe9287197">On save, if the price changed, <strong>every</strong> breakdown row (catalog and estimates) that uses this resource is updated (same code, or same description + unit + category), recalculating amounts and direct costs.</p>
+  </div>
+  <div class="form-actions"><button class="btn btn-primary">💾 Save resource</button><a href="/recursos" class="btn">Cancel</a></div>
+</form>
+</div>
+<style nonce="{{ request.state.csp_nonce }}">.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.25rem}.field{display:flex;flex-direction:column;gap:.2rem}.field-full{grid-column:1/-1}.field label{font-size:.8rem;font-weight:600;color:var(--text-secondary)}.field input,.field select{padding:.45rem .7rem;border:1px solid var(--border);border-radius:6px;font-size:.875rem;font-family:inherit;background:var(--surface)}.field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}.hint{color:var(--text-muted);font-size:.75rem}.form-actions{display:flex;gap:.5rem;margin-top:.5rem}@media(max-width:650px){.form-grid{grid-template-columns:1fr}}</style>
+{% endblock %}

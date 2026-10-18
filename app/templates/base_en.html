@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+{% include "_ga.html" %}
+<title>{% block title %}Home{% endblock %} · {{ product_name }}</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="icon" type="image/png" href="/static/icono.png">
+<script src="{{ 'js/recovery_redirect.js' | asset }}"></script>
+<link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+<link rel="stylesheet" href="{{ 'css/style.css' | asset }}">
+<link rel="stylesheet" href="{{ 'css/csp.css' | asset }}">
+<script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/csp_styles.js' | asset }}"></script>
+<script src="{{ 'js/csp_events.js' | asset }}"></script>
+</head>
+<body spellcheck="true" class="{% block body_class %}{% endblock %}"{% if request.url.path in ['/inicio', '/presupuestos'] %} data-refresh-expired="1"{% endif %}>
+<script nonce="{{ request.state.csp_nonce }}">
+  window.cotizatArchivoUrl = function (referencia) {
+    var localSQLite = {{ 'true' if database_is_sqlite else 'false' }};
+    var valor = String(referencia || '').trim();
+    if (!valor) return '';
+    if (valor.indexOf('storage://') === 0) {
+      var clave = valor.slice('storage://'.length).split('/').map(encodeURIComponent).join('/');
+      return '/archivos/' + clave;
+    }
+    if (valor.charAt(0) === '/') return valor;
+    if (valor.indexOf('static/') === 0) return '/' + valor;
+    if (valor.indexOf('uploads/') === 0) {
+      return localSQLite ? '/static/' + valor : '/archivos-legado/' + valor.slice(8).split('/').map(encodeURIComponent).join('/');
+    }
+    if (valor.indexOf('importaciones/') === 0) {
+      return localSQLite ? '/static/uploads/' + valor : '/archivos-legado/' + valor.split('/').map(encodeURIComponent).join('/');
+    }
+    return '/static/' + valor;
+  };
+  (function () {
+    // The estimate editor forces focus mode (icon sidebar + full-width canvas).
+    // Everywhere else the stored preference is respected.
+    if (document.body.classList.contains('editor-focus')) {
+      document.body.classList.add('collapsed');
+    } else if (localStorage.getItem('sidebar-collapsed') === 'true') {
+      document.body.classList.add('collapsed');
+    }
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    if (localStorage.getItem('editor-density') === 'compact') {
+      document.body.classList.add('density-compact');
+    }
+  })();
+</script>
+<button type="button" id="mobile-nav-toggle" class="mobile-nav-toggle" aria-label="Open menu" aria-controls="app-sidebar" aria-expanded="false">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 5h12M3 9h12M3 13h12"/></svg>
+</button>
+<div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+
+<aside class="sidebar" id="app-sidebar">
+  <div class="brand">
+    <strong>
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="ct-mark-grad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#1a4a8c"/>
+            <stop offset="1" stop-color="#082a5e"/>
+          </linearGradient>
+        </defs>
+        <rect width="28" height="28" rx="8" fill="url(#ct-mark-grad)"/>
+        <path d="M8 7h7.5L19 10.5V20a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 7 20V8.5A1.5 1.5 0 0 1 8 7Z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" fill="rgba(255,255,255,.12)"/>
+        <path d="M15.5 7v3.5H19" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>
+        <path d="M10.6 15.1l2.2 2.2 4.3-4.8" stroke="#e5ae3c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>{{ product_name }}</span>
+    </strong>
+    <button type="button" id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Collapse menu" title="Collapse menu">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2.2L4.2 6l3.3 3.8"/></svg>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Main">
+    <div class="nav-section">Main</div>
+    <a href="/inicio" data-label="Dashboard" class="{{ 'active' if request.url.path == '/inicio' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="/presupuestos" data-label="Estimates" class="{{ 'active' if request.url.path.startswith('/presupuestos') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2.5h8.5L15 6v9.5a1 1 0 01-1 1H3a1 1 0 01-1-1v-12a1 1 0 011-1z"/><path d="M11 2.5V6h3.5"/><path d="M5 10h6M5 13h4"/></svg>
+      <span>Estimates</span>
+    </a>
+    <a href="/clientes" data-label="Clients" class="{{ 'active' if request.url.path.startswith('/clientes') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="6" r="3"/><path d="M1 16c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M13 4a3 3 0 010 5M15 16c0-2.5-1.3-4.5-3-5.5"/></svg>
+      <span>Clients</span>
+    </a>
+    <a href="/proyectos" data-label="Projects" class="{{ 'active' if request.url.path.startswith('/proyectos') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16h14M4 16V7l5-4 5 4v9"/><rect x="7" y="10" width="4" height="6" rx="0.5"/></svg>
+      <span>Projects</span>
+    </a>
+    <a href="/planos" data-label="Drawings" class="{{ 'active' if request.url.path == '/planos' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 1.7l2.3 2.3L4 16.3 1.7 14z"/><path d="M5.9 11.4l1.2 1.2M8.1 9.2l1.2 1.2M10.3 7l1.2 1.2M12.5 4.8l1.2 1.2"/></svg>
+      <span>Drawings</span>
+    </a>
+    <a href="/facturas" data-label="Collections" class="{{ 'active' if request.url.path.startswith('/facturas') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="1.5" width="14" height="15" rx="1.5"/><path d="M5 5h8M5 8h6M5 11h4"/><path d="M10 13h3"/></svg>
+      <span>Collections</span>
+    </a>
+
+    <div class="nav-section">Catalog</div>
+    <a href="/partidas" data-label="Line items" class="{{ 'active' if request.url.path.startswith('/partidas') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
+      <span>Line items</span>
+    </a>
+    <a href="/recursos" data-label="Resources" class="{{ 'active' if request.url.path.startswith('/recursos') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
+      <span>Resources</span>
+    </a>
+    <a href="/productos" data-label="Products" class="{{ 'active' if request.url.path.startswith('/productos') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5l7-3 7 3v8l-7 3-7-3V5z"/><path d="M2 5l7 3m0 0l7-3m-7 3v8"/></svg>
+      <span>Products</span>
+    </a>
+    <a href="/plantillas" data-label="Templates" class="{{ 'active' if request.url.path.startswith('/plantillas') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M2 7h14M7 7v9"/></svg>
+      <span>Templates</span>
+    </a>
+    <a href="/recetas" data-label="Packs" class="{{ 'active' if request.url.path.startswith('/recetas') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 2L4 10h5l-1 6 7-8h-5l1-6z"/></svg>
+      <span>Packs</span>
+    </a>
+
+    <div class="nav-section">Insights</div>
+    <a href="/reportes" data-label="Reports" class="{{ 'active' if request.url.path.startswith('/reportes') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 14l4-5 3 3 4-6 3 4"/><circle cx="2" cy="14" r="0.5" fill="currentColor"/></svg>
+      <span>Reports</span>
+    </a>
+    <a href="/buscar" data-label="Search" class="{{ 'active' if request.url.path == '/buscar' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5"/><path d="M16 16l-4-4"/></svg>
+      <span>Search</span>
+    </a>
+
+    <div class="nav-section">Settings</div>
+    <a href="/guia-rapida" data-label="Quick guide" class="{{ 'active' if request.url.path == '/guia-rapida' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 12.8v.4"/><path d="M9 10.8a2.6 2.6 0 10-2.5-3.3"/></svg>
+      <span>Quick guide</span>
+    </a>
+    {# Support: the direct channel for complaints, questions and ideas. The
+       form lives at /soporte and stores the message in the panel as well as
+       emailing it. #}
+    <a href="/soporte" data-label="Support" class="{{ 'active' if request.url.path == '/soporte' else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h13v8h-7l-4 3v-3h-2z"/><path d="M6 7.5h6M6 10h4"/></svg>
+      <span>Support</span>
+    </a>
+    <a href="/configuracion" data-label="Preferences" class="{{ 'active' if request.url.path.startswith('/configuracion') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.4 3.4l1.4 1.4M13.2 13.2l1.4 1.4M3.4 14.6l1.4-1.4M13.2 4.8l1.4-1.4"/></svg>
+      <span>Preferences</span>
+    </a>
+    {% if request.state.membresia is defined and request.state.membresia.rol in ['propietario', 'administrador'] %}
+    <a href="/equipo" data-label="Team" class="{{ 'active' if request.url.path.startswith('/equipo') else '' }}">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="13" cy="7" r="2"/><path d="M1 16c0-3 2.2-5 5-5s5 2 5 5M11 12c2.7 0 5 1.5 5 4"/></svg>
+      <span>Team</span>
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    {% if request.state.usuario is defined %}
+    <div class="sidebar-session">
+      <a class="sidebar-session-user" href="/cuenta" title="My account">
+        <span class="sidebar-session-avatar" aria-hidden="true">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</span>
+        <span class="sidebar-session-info">
+          <strong class="sidebar-session-nombre">{{ request.state.usuario.nombre or request.state.usuario.email }}</strong>
+          <span class="sidebar-session-sub">
+            {% if request.state.organizacion is defined %}
+            <a class="sidebar-session-org" href="/organizaciones" title="Switch organization">{{ request.state.organizacion.nombre }}</a>
+            {% endif %}
+            {% if request.state.licencia_resumen is defined and request.state.licencia_resumen.activo %}
+            <span class="sidebar-session-plan ok" title="Active plan{% if request.state.licencia_resumen.vence %}. Expires {{ request.state.licencia_resumen.vence.strftime('%d/%m/%Y') }}{% endif %}">✓ {{ request.state.licencia_resumen.plan_label }} · {{ request.state.licencia_resumen.dias_restantes }} d</span>
+            {% elif request.state.licencia_resumen is defined %}
+            <a class="sidebar-session-plan sin" href="/pago" title="Get a plan">No plan · See plans</a>
+            {% endif %}
+          </span>
+        </span>
+      </a>
+      <form class="sidebar-session-salir" action="/salir" method="post">
+        <button type="submit" aria-label="Sign out" title="Sign out">
+          <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15H3.5A1.5 1.5 0 012 13.5v-9A1.5 1.5 0 013.5 3H7"/><path d="M11 5.5L14.5 9l-3.5 3.5"/><path d="M14 9H6.5"/></svg>
+        </button>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="idioma-toggle-row">
+      <span class="theme-toggle-label idioma-toggle-label">Language</span>
+      {% include "_idioma_switch.html" %}
+    </div>
+    <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Switch theme" title="Light / dark mode">
+      <svg class="theme-icon-light" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="4"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.9 3.9l1.4 1.4M12.7 12.7l1.4 1.4M3.9 14.1l1.4-1.4M12.7 5.3l1.4-1.4"/></svg>
+      <svg class="theme-icon-dark cotizat-hidden" width="14" height="14" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M15.1 10.4A7 7 0 017.6 2.9 7 7 0 1015.1 10.4z"/></svg>
+      <span class="theme-toggle-label">Theme</span>
+    </button>
+  </div>
+</aside>
+<main class="content">
+  {% block content %}{% endblock %}
+</main>
+
+<nav class="bottom-nav" aria-label="Quick access">
+  <a href="/inicio" class="{{ 'active' if request.url.path == '/inicio' else '' }}">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="1.5" width="6" height="6" rx="1.5"/><rect x="1.5" y="10.5" width="6" height="6" rx="1.5"/><rect x="10.5" y="10.5" width="6" height="6" rx="1.5"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="/presupuestos" class="{{ 'active' if request.url.path.startswith('/presupuestos') else '' }}">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2.5h8.5L15 6v9.5a1 1 0 01-1 1H3a1 1 0 01-1-1v-12a1 1 0 011-1z"/><path d="M11 2.5V6h3.5"/><path d="M5 10h6M5 13h4"/></svg>
+    <span>Estimates</span>
+  </a>
+  <a href="/presupuestos/nuevo" class="bottom-nav-cta">
+    <span class="bottom-nav-cta-icon" aria-hidden="true">+</span>
+    <span>New</span>
+  </a>
+  <a href="/partidas" class="{{ 'active' if request.url.path.startswith('/partidas') else '' }}">
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
+    <span>Line items</span>
+  </a>
+  <button type="button" id="boton-menu-movil" class="bottom-nav-menu" aria-haspopup="dialog" aria-controls="menu-movil" aria-expanded="false">
+    <svg viewBox="0 0 18 18" fill="currentColor" stroke="none" aria-hidden="true"><circle cx="4" cy="4" r="1.7"/><circle cx="9" cy="4" r="1.7"/><circle cx="14" cy="4" r="1.7"/><circle cx="4" cy="9" r="1.7"/><circle cx="9" cy="9" r="1.7"/><circle cx="14" cy="9" r="1.7"/><circle cx="4" cy="14" r="1.7"/><circle cx="9" cy="14" r="1.7"/><circle cx="14" cy="14" r="1.7"/></svg>
+    <span>Menu</span>
+    <span class="menu-movil-punto" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<!-- ─────────────────────────────────────────────────────────────────────────
+     Mobile menu (bottom sheet). The single way into EVERY section from a
+     phone: section search, quick-create shortcuts and the account block. The
+     section list is cloned from the sidebar in menu_movil.js, so there is
+     only one source of truth for navigation.
+     ───────────────────────────────────────────────────────────────────────── -->
+<div id="menu-movil-backdrop" class="menu-movil-backdrop" aria-hidden="true"></div>
+<section id="menu-movil" class="menu-movil" role="dialog" aria-modal="true" aria-label="Menu and quick actions" aria-hidden="true">
+  <header class="menu-movil-head">
+    <span class="menu-movil-agarre" aria-hidden="true"></span>
+    <strong class="menu-movil-titulo">Menu</strong>
+    <button type="button" class="menu-movil-cerrar" data-menu-cerrar aria-label="Close menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </header>
+  <div class="menu-movil-cuerpo">
+    <div class="menu-movil-buscar">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5"/><path d="M16 16l-4-4"/></svg>
+      <input type="search" id="menu-movil-filtro" placeholder="Search section: line items, collections…" autocomplete="off" enterkeyhint="search" aria-label="Filter menu sections">
+    </div>
+    <div class="menu-movil-crear" role="group" aria-label="Create new">
+      <span class="menu-movil-crear-titulo" aria-hidden="true">Create</span>
+      <div class="menu-movil-crear-chips">
+        <a href="/presupuestos/nuevo">+ Estimate</a>
+        <a href="/clientes/nuevo">+ Client</a>
+        <a href="/partidas/nueva">+ Line item</a>
+        <a href="/recursos/nuevo">+ Resource</a>
+        <a href="/productos/nuevo">+ Product</a>
+        <a href="/recetas/nueva">+ Pack</a>
+      </div>
+    </div>
+    <nav class="menu-movil-nav" id="menu-movil-nav" aria-label="All sections"><!-- JS clones the sidebar menu here --></nav>
+    <p class="menu-movil-vacio" id="menu-movil-vacio" hidden>No matches. Try another word (e.g. “collections”).</p>
+  </div>
+  <footer class="menu-movil-pie">
+    {% if request.state.usuario is defined %}
+    <a class="menu-movil-usuario" href="/cuenta">
+      <span class="menu-movil-avatar" aria-hidden="true">{{ ((request.state.usuario.nombre or request.state.usuario.email) or '?')[:1] | upper }}</span>
+      <span class="menu-movil-usuario-info">
+        <strong>{{ request.state.usuario.nombre or request.state.usuario.email }}</strong>
+        {% if request.state.organizacion is defined %}<small>{{ request.state.organizacion.nombre }}</small>{% endif %}
+      </span>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg>
+    </a>
+    {% endif %}
+    <a class="menu-movil-pie-btn" href="/organizaciones">
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16h14M4 16V7l5-4 5 4v9"/><rect x="7" y="10" width="4" height="6" rx="0.5"/></svg>
+      <span>Organization</span>
+    </a>
+    <button id="menu-movil-tema" class="theme-toggle-btn menu-movil-pie-btn" type="button" aria-label="Switch theme" title="Light / dark mode">
+      <svg class="theme-icon-light" width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="4"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.9 3.9l1.4 1.4M12.7 12.7l1.4 1.4M3.9 14.1l1.4-1.4M12.7 5.3l1.4-1.4"/></svg>
+      <svg class="theme-icon-dark cotizat-hidden" width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M15.1 10.4A7 7 0 017.6 2.9 7 7 0 1015.1 10.4z"/></svg>
+      <span class="theme-toggle-label">Theme</span>
+    </button>
+    <form class="menu-movil-salir" action="/salir" method="post">
+      <button type="submit">
+        <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15H3.5A1.5 1.5 0 012 13.5v-9A1.5 1.5 0 013.5 3H7"/><path d="M11 5.5L14.5 9l-3.5 3.5"/><path d="M14 9H6.5"/></svg>
+        Sign out
+      </button>
+    </form>
+  </footer>
+</section>
+
+<script nonce="{{ request.state.csp_nonce }}">
+  // Prefetch of the main routes on hover over the sidebar or the bottom bar:
+  // the next page is already cached when the user clicks, so navigation feels
+  // instant. It uses <link rel="prefetch">, which runs nothing and does not
+  // compete with the current page.
+  (function () {
+    var prefetchados = {};
+    function prefetch(url) {
+      if (!url || url.charAt(0) !== "/" || prefetchados[url]) return;
+      // Do not prefetch the editor or the catalog: they are the heaviest pages
+      // and a hover on the menu used to fire them cold (Vercel + 3,000 items).
+      if (
+        url.indexOf("/presupuestos/nuevo") === 0 ||
+        (url.indexOf("/presupuestos/") === 0 && url.indexOf("/editar") !== -1) ||
+        url === "/partidas" ||
+        url.indexOf("/partidas/") === 0 ||
+        url === "/recursos" ||
+        url === "/reportes"
+      ) return;
+      prefetchados[url] = true;
+      var link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = url;
+      document.head.appendChild(link);
+    }
+    document.querySelectorAll("#app-sidebar a, .bottom-nav a").forEach(function (a) {
+      a.addEventListener("pointerenter", function () { prefetch(a.getAttribute("href")); });
+      a.addEventListener("focus", function () { prefetch(a.getAttribute("href")); });
+    });
+  })();
+
+  (function() {
+    var toggle = document.getElementById('sidebar-toggle');
+    if (toggle) {
+      function syncToggleLabel() {
+        var collapsed = document.body.classList.contains('collapsed');
+        var label = collapsed ? 'Expand menu' : 'Collapse menu';
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('title', label);
+      }
+      syncToggleLabel();
+      toggle.addEventListener('click', function() {
+        // Desktop: collapse to icons. On mobile the drawer closes separately.
+        if (window.matchMedia('(max-width: 768px)').matches) {
+          document.body.classList.remove('nav-open');
+          var btn = document.getElementById('mobile-nav-toggle');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+          var backdrop = document.getElementById('sidebar-backdrop');
+          if (backdrop) backdrop.hidden = true;
+          return;
+        }
+        document.body.classList.toggle('collapsed');
+        localStorage.setItem('sidebar-collapsed', document.body.classList.contains('collapsed'));
+        syncToggleLabel();
+      });
+    }
+
+    var mobileToggle = document.getElementById('mobile-nav-toggle');
+    var backdrop = document.getElementById('sidebar-backdrop');
+    function setNavOpen(open) {
+      document.body.classList.toggle('nav-open', open);
+      if (mobileToggle) mobileToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (backdrop) backdrop.hidden = !open;
+    }
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function() {
+        setNavOpen(!document.body.classList.contains('nav-open'));
+      });
+    }
+    if (backdrop) {
+      backdrop.addEventListener('click', function() { setNavOpen(false); });
+    }
+    // Close the drawer when navigating (same document, sidebar links)
+    document.querySelectorAll('#app-sidebar a').forEach(function(a) {
+      a.addEventListener('click', function() { setNavOpen(false); });
+    });
+
+    var themeBtns = Array.prototype.slice.call(document.querySelectorAll('.theme-toggle-btn'));
+    if (themeBtns.length) {
+      var sync = function () {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        themeBtns.forEach(function (themeBtn) {
+          var iconLight = themeBtn.querySelector('.theme-icon-light');
+          var iconDark = themeBtn.querySelector('.theme-icon-dark');
+          if (iconLight && iconDark) {
+            CotizatStyles.set(iconLight, "display", dark ? 'none' : 'block');
+            CotizatStyles.set(iconDark, "display", dark ? 'block' : 'none');
+          }
+        });
+      };
+      themeBtns.forEach(function (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+          if (dark) {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme','light');
+          } else {
+            document.documentElement.setAttribute('data-theme','dark');
+            localStorage.setItem('theme','dark');
+          }
+          sync();
+        });
+      });
+      sync();
+    }
+  })();
+
+  // Single tooltip for icon mode (collapsed sidebar). It lives in <body> with
+  // position:fixed, outside any overflow container, so it is never clipped.
+  // Native titles are removed in icon mode so they do not double up.
+  (function () {
+    var tip = document.createElement('div');
+    tip.className = 'sidebar-float-tip';
+    tip.setAttribute('role', 'tooltip');
+    document.body.appendChild(tip);
+
+    var candidatos = document.querySelectorAll('#app-sidebar a, #app-sidebar .sidebar-session-salir button, #app-sidebar .theme-toggle-btn');
+
+    function esModoIconos() {
+      return document.body.classList.contains('collapsed')
+        && !window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    function etiqueta(el) {
+      return el.getAttribute('data-label')
+        || el.getAttribute('data-titulo-original')
+        || el.getAttribute('aria-label')
+        || el.getAttribute('title')
+        || '';
+    }
+
+    function mostrar(el) {
+      var texto = etiqueta(el);
+      if (!texto) return;
+      tip.textContent = texto;
+      var r = el.getBoundingClientRect();
+      CotizatStyles.set(tip, 'left', Math.round(r.right + 10) + 'px');
+      CotizatStyles.set(tip, 'top', Math.round(r.top + r.height / 2) + 'px');
+      tip.classList.add('visible');
+    }
+
+    function ocultar() {
+      tip.classList.remove('visible');
+    }
+
+    function sincronizarTitulos() {
+      var iconos = esModoIconos();
+      candidatos.forEach(function (el) {
+        if (iconos) {
+          if (el.hasAttribute('title') && !el.hasAttribute('data-titulo-original')) {
+            el.setAttribute('data-titulo-original', el.getAttribute('title'));
+          }
+          el.removeAttribute('title');
+        } else if (el.hasAttribute('data-titulo-original')) {
+          el.setAttribute('title', el.getAttribute('data-titulo-original'));
+          el.removeAttribute('data-titulo-original');
+        }
+      });
+    }
+
+    candidatos.forEach(function (el) {
+      el.addEventListener('pointerenter', function () { if (esModoIconos()) mostrar(el); });
+      el.addEventListener('pointerleave', ocultar);
+      el.addEventListener('focus', function () { if (esModoIconos()) mostrar(el); });
+      el.addEventListener('blur', ocultar);
+      el.addEventListener('click', ocultar);
+    });
+
+    window.addEventListener('resize', ocultar);
+    window.addEventListener('scroll', ocultar, true);
+
+    // Keep titles in sync with the collapsed/expanded state.
+    var cuerpo = document.body;
+    var observador = new MutationObserver(function () { sincronizarTitulos(); });
+    observador.observe(cuerpo, { attributes: true, attributeFilter: ['class'] });
+    sincronizarTitulos();
+  })();
+
+  // Global helpers for downloading and printing PDF documents
+  function registrarDescargaPresupuesto(url) {
+    try {
+      var parsed = new URL(url, window.location.origin);
+      var match = parsed.origin === window.location.origin
+        ? parsed.pathname.match(/^\/presupuestos\/(\d+)\/pdf$/)
+        : null;
+      if (!match) return Promise.resolve();
+      return fetch('/presupuestos/' + match[1] + '/pdf-descargado', {
+        method: 'POST',
+        headers: {'Accept': 'application/json'}
+      }).then(function () {}, function () {});
+    } catch (_error) {
+      return Promise.resolve();
+    }
+  }
+
+  // Visible state while the server prepares the document: on large estimates
+  // generation takes a few seconds and without this signal the download
+  // looked like it had hung.
+  function marcarDescargaEnCurso(elemento) {
+    if (!elemento || !elemento.getAttribute) return;
+    if (!elemento.dataset.textoOriginal) {
+      elemento.dataset.textoOriginal = elemento.textContent;
+    }
+    elemento.textContent = 'Generating the PDF…';
+    elemento.setAttribute('aria-busy', 'true');
+    elemento.setAttribute('title', 'The document is being prepared; it may take a few seconds.');
+    CotizatStyles.set(elemento, 'opacity', '0.65');
+    CotizatStyles.set(elemento, 'pointerEvents', 'none');
+  }
+
+  function terminarDescarga(elemento) {
+    if (!elemento || !elemento.getAttribute) return;
+    if (elemento.dataset.textoOriginal) {
+      elemento.textContent = elemento.dataset.textoOriginal;
+    }
+    elemento.removeAttribute('aria-busy');
+    elemento.removeAttribute('title');
+    CotizatStyles.set(elemento, 'opacity', '');
+    CotizatStyles.set(elemento, 'pointerEvents', '');
+  }
+
+  function descargarPDF(event, url, filename) {
+    var boton = event && event.currentTarget ? event.currentTarget : null;
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+    if (!url) return;
+
+    marcarDescargaEnCurso(boton);
+    fetch(url)
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Error downloading the file: HTTP ' + response.status);
+        }
+        return response.blob();
+      })
+      .then(function(blob) {
+        registrarDescargaPresupuesto(url);
+        return blob;
+      })
+      .then(function(blob) {
+        var blobUrl = window.URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename || 'documento.pdf';
+        CotizatStyles.set(link, "display", 'none');
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(function() {
+          if (link.parentNode) link.parentNode.removeChild(link);
+          window.URL.revokeObjectURL(blobUrl);
+        }, 2000);
+        terminarDescarga(boton);
+      })
+      .catch(function(err) {
+        // If the blob download fails, navigate to the URL: the server answers
+        // with Content-Disposition: attachment, so the browser downloads the
+        // file natively (or shows the error if generation failed).
+        console.warn('Blob download failed, navigating to URL:', err);
+        terminarDescarga(boton);
+        window.location.href = url;
+      });
+  }
+
+  function imprimirPDF(url) {
+    if (!url) return;
+
+    var frameId = 'pdf-print-iframe';
+    var iframe = document.getElementById(frameId);
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = frameId;
+      CotizatStyles.set(iframe, "position", 'fixed');
+      CotizatStyles.set(iframe, "right", '0');
+      CotizatStyles.set(iframe, "bottom", '0');
+      CotizatStyles.set(iframe, "width", '0');
+      CotizatStyles.set(iframe, "height", '0');
+      CotizatStyles.set(iframe, "border", 'none');
+      CotizatStyles.set(iframe, "opacity", '0');
+      CotizatStyles.set(iframe, "pointerEvents", 'none');
+      document.body.appendChild(iframe);
+    }
+
+    fetch(url)
+      .then(function(response) {
+        if (!response.ok) throw new Error('Error loading PDF: HTTP ' + response.status);
+        return response.blob();
+      })
+      .then(function(blob) {
+        var blobUrl = window.URL.createObjectURL(blob);
+        iframe.src = blobUrl;
+        iframe.onload = function() {
+          setTimeout(function() {
+            try {
+              iframe.contentWindow.focus();
+              iframe.contentWindow.print();
+            } catch (e) {
+              console.warn('Could not print from iframe, opening window:', e);
+              var printWin = window.open(blobUrl, '_blank');
+              if (printWin) {
+                printWin.focus();
+                printWin.print();
+              }
+            }
+            setTimeout(function() {
+              window.URL.revokeObjectURL(blobUrl);
+            }, 60000);
+          }, 500);
+        };
+      })
+      .catch(function(err) {
+        console.warn('Error fetching PDF to print, opening URL:', err);
+        var win = window.open(url, '_blank');
+        if (win) {
+          win.focus();
+        }
+      });
+  }
+</script>
+{# Floating support button. It coexists with the assistant launcher (sits
+   above it, without covering it) and opens the form with the current screen
+   as context, so the team knows where the message was written from. #}
+<a class="soporte-flotante" href="/soporte?desde={{ request.url.path | urlencode }}"
+   aria-label="Contact support" title="Contact support">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5h13v8h-7l-4 3v-3h-2z"/><path d="M6 7.5h6M6 10h4"/></svg>
+  <span>Support</span>
+</a>
+{% include "_asistente_ia_en.html" %}
+<script src="{{ 'js/menu_movil.js' | asset }}"></script>
+<script src="{{ 'js/asistente_ia.js' | asset }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

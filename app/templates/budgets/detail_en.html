@@ -1,0 +1,471 @@
+{% extends "base_en.html" %}
+{% block title %}Estimate {{ p.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Estimates</a> › {{ p.numero }}</p>
+    <h1>Estimate {{ p.numero }}{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</h1>
+    <p class="subtitle">{% if p.titulo %}{{ p.titulo }} · {% endif %}Created on {{ p.created_at.strftime('%d/%m/%Y %H:%M') if p.created_at else '' }}</p>
+    {% if p.es_demo %}<p class="hint">This document is fictitious. You can explore it, edit it or delete it; it does not count as your first real estimate.</p>{% endif %}
+  </div>
+  <div class="actions budget-actions-main">
+    {% set wa = p.cliente.telefono | whatsapp('Hello ' ~ p.cliente.nombre ~ ', here is estimate ' ~ p.numero ~ ' (' ~ (p.titulo or '') ~ ') for a total of ' ~ (p.total | money_iso(p.moneda)) ~ '. Offer valid for: ' ~ p.validez_dias ~ ' days.') %}
+    {% if revision_envio and revision_envio.puede_enviar %}
+    <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/enlace-publico">🚀 Send proposal</a>
+    {% else %}
+    <a class="btn btn-primary" href="{{ (revision_envio.url_principal if revision_envio else ('/presupuestos/' ~ p.id ~ '/editar')) }}">⚠ Review before sending</a>
+    {% endif %}
+    {% if cambios_reenvio and cambios_reenvio.hay_cambios %}<a class="btn btn-secondary" href="#cambios-reenvio">🔁 Resend update</a>{% endif %}
+    <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}.pdf" data-cotizat-click="download-pdf">⬇ PDF</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/planos" title="Manual takeoff on drawings">📐 Drawings</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏️ Edit</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/tiempos" title="Scheduling of hours, crews and project duration">⏱ Schedule</a>
+    <details class="actions-more">
+      <summary class="btn">More options</summary>
+      <div class="actions-more-menu">
+        {% if wa %}<a class="btn btn-whatsapp" href="{{ wa }}" target="_blank" data-ga-event="presupuesto_whatsapp">💬 WhatsApp</a>{% endif %}
+        <a class="btn" href="/presupuestos/{{ p.id }}/enviar-email">✉️ Email</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">🔗 Public link</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/pdf?inline=1" target="_blank">👁 View PDF</a>
+        <button class="btn" type="button" data-cotizat-click="print-pdf" data-url="/presupuestos/{{ p.id }}/pdf?inline=1" title="Print the estimate as a PDF">🖨️ Print</button>
+        <a class="btn" href="/presupuestos/{{ p.id }}/exportar" title="Download CSV with the tabular detail">📥 CSV</a>
+        <a class="btn" href="/presupuestos/{{ p.id }}/exportar?formato=bc3" title="Export to basic BC3 (FIEBDC-3) for Presto/Arquímedes">📤 BC3</a>
+        <a class="btn" href="/presupuestos/nuevo" title="Create another estimate">+ New</a>
+        {% if p.estado == 'aprobado' %}
+        <form method="post" action="/presupuestos/{{ p.id }}/proyecto"><button class="btn" type="submit" title="Create a project and financial tracking">🏗️ Turn into project</button></form>
+        <form method="post" action="/presupuestos/{{ p.id }}/factura"><button class="btn" type="submit" title="Create a non-fiscal payment request from this approved estimate">🧾 Create payment request</button></form>
+        {% endif %}
+        <form method="post" action="/presupuestos/{{ p.id }}/duplicar"><button class="btn" type="submit">📋 Duplicate</button></form>
+        <form method="post" action="/presupuestos/{{ p.id }}/eliminar" data-confirm="Delete this estimate?"><button class="btn btn-danger" type="submit">🗑 Delete</button></form>
+      </div>
+    </details>
+  </div>
+</div>
+<div class="card csp-s-8cce60a093">
+  <div class="csp-s-e42b1fb4b3">
+      <div>
+        <h2 class="csp-s-d7d9b47f7a">Estimate summary</h2>
+        <p class="csp-s-affc49ecfb">
+          {% set con_costos = p.todas_partidas | selectattr('tiene_costes') | list %}
+          {% if con_costos %}
+          Profit margin (according to the internal costs loaded on {{ con_costos | length }} of {{ p.todas_partidas | length }} line item(s)):
+          {% if p.total_productos %}
+          work <strong class="csp-s-6464799a08">{{ p.margen_obra_pct }}%</strong> ({{ p.margen_obra | money_iso(p.moneda) }}) · products
+          {% if p.coste_productos_incompleto %}<strong class="csp-s-6464799a08">no purchase cost</strong> ({{ p.productos_sin_coste }} of {{ p.todas_partidas | selectattr('tiene_producto') | list | length }} line item(s) with a product)
+          {% else %}<strong class="csp-s-6464799a08">{{ p.margen_productos_pct }}%</strong> ({{ p.margen_productos | money_iso(p.moneda) }}){% endif %}
+          · total <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }}). The product total comes to <strong class="csp-s-6464799a08">{{ p.total_productos | money_iso(p.moneda) }}</strong>.
+          {% if p.coste_productos_incompleto %}<br><strong>⚠ {{ p.productos_sin_coste }} line item(s) sell a product with no purchase cost</strong>: their amount is not counted as profit until that cost is entered (the margin shown is the one for the work and the documented products).{% endif %}
+          {% else %}
+          <strong class="csp-s-6464799a08">{{ p.margen_pct }}%</strong> ({{ p.margen | money_iso(p.moneda) }} on an internal cost of {{ p.coste_interno | money_iso(p.moneda) }}).
+          {% endif %}
+          {% else %}
+          No margin to calculate: none of the line items in this estimate has internal costs (materials/labor) loaded yet.
+          {% endif %}
+          <br>
+          {% if tiempos and tiempos.n_partidas_activas %}
+          ⏱ Schedule: <strong class="csp-s-6464799a08">{{ "%.1f"|format(tiempos.total_mano_obra_h) }} man-hours</strong> (👷‍♂️ {{ "%.1f"|format(tiempos.total_oficial_h) }} h journeyman + 🧑‍🔧 {{ "%.1f"|format(tiempos.total_ayudante_h) }} h helper{% if tiempos.total_equipos_h %} + 🛠 {{ "%.1f"|format(tiempos.total_equipos_h) }} h equipment{% endif %}) · <strong class="csp-s-6464799a08">{{ "%.1f"|format(tiempos.total_dias_duracion) }} critical days</strong> <span class="hint">/ {{ "%.1f"|format(tiempos.total_dias) }} man-days</span> ({{ tiempos.n_con_datos }}/{{ tiempos.n_partidas_activas }} with data{% if sin_datos_tiempo is defined and sin_datos_tiempo %}{% else %}{% if tiempos.n_partidas_activas - tiempos.n_con_datos %} · ⚠ {{ tiempos.n_partidas_activas - tiempos.n_con_datos }} without data{% endif %}{% endif %}) · <a class="link" href="/presupuestos/{{ p.id }}/tiempos">📊 Plan &amp; assign hours</a>.
+          <br>
+          {% endif %}
+          Offer validity: expires on <strong class="csp-s-6464799a08">{{ fecha_vencimiento | fecha }}</strong>
+          {% if dias_restantes > 0 %}({{ dias_restantes }} day(s) left){% elif dias_restantes == 0 %}(expires today){% else %}<strong class="csp-s-be52c7a071">(expired {{ -dias_restantes }} day(s) ago)</strong>{% endif %}.
+        </p>
+      </div>
+      <div class="actions csp-s-38965f9b18">
+        <a class="btn" href="/presupuestos/{{ p.id }}/contrato?inline=1" target="_blank" title="Generates a real service contract in PDF with the data of this estimate">📄 View contract</a>
+        <a class="btn btn-ai" href="/presupuestos/{{ p.id }}/contrato" download="contrato_{{ p.numero }}.pdf" data-cotizat-click="download-pdf" data-ga-event="contrato_descargado">⬇ Download contract</a>
+      </div>
+  </div>
+</div>
+
+{% if revision_envio %}
+<div class="card revision-envio revision-{{ revision_envio.estado }}" id="revision-envio">
+  <div class="revision-head">
+    <div class="revision-score" aria-label="Estimate health {{ revision_envio.score }}%">
+      <strong>{{ revision_envio.score }}%</strong>
+      <span>health</span>
+    </div>
+    <div class="revision-copy">
+      <span class="section-kicker">Review before sending</span>
+      <h2>{{ revision_envio.titulo }}</h2>
+      <p class="hint">{{ revision_envio.resumen }}</p>
+    </div>
+    <div class="revision-actions">
+      {% if revision_envio.puede_enviar %}
+      <a class="btn btn-primary" href="/presupuestos/{{ p.id }}/enlace-publico">Send proposal</a>
+      {% else %}
+      <a class="btn btn-primary" href="{{ revision_envio.url_principal }}">Fix the critical</a>
+      <a class="btn" href="/presupuestos/{{ p.id }}/enlace-publico">Send anyway</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if revision_envio.criticos %}
+  <div class="revision-group revision-group-danger">
+    <h3>Critical before sending</h3>
+    <div class="revision-list">
+      {% for item in revision_envio.criticos %}
+      <div class="revision-item {{ item.estado }}">
+        <span class="revision-icon">!</span>
+        <div><strong>{{ item.titulo }}</strong>{% if item.detalle %}<small>{{ item.detalle }}</small>{% endif %}</div>
+        {% if item.url %}<a class="link" href="{{ item.url }}">{{ item.accion or 'Review' }}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if revision_envio.recomendaciones %}
+  <details class="revision-details" open>
+    <summary>Useful recommendations ({{ revision_envio.recomendaciones | length }})</summary>
+    <div class="revision-list">
+      {% for item in revision_envio.recomendaciones[:6] %}
+      <div class="revision-item {{ item.estado }}">
+        <span class="revision-icon">⚠</span>
+        <div><strong>{{ item.titulo }}</strong>{% if item.detalle %}<small>{{ item.detalle }}</small>{% endif %}</div>
+        {% if item.url %}<a class="link" href="{{ item.url }}">{{ item.accion or 'Review' }}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </details>
+  {% endif %}
+
+  <details class="revision-details revision-ok-list">
+    <summary>Checks passed ({{ revision_envio.correctos | length }})</summary>
+    <div class="revision-ok-grid">
+      {% for item in revision_envio.correctos %}
+      <span>✓ {{ item.titulo }}</span>
+      {% endfor %}
+    </div>
+  </details>
+</div>
+{% endif %}
+
+{% if cambios_reenvio and cambios_reenvio.hay_cambios %}
+<div class="card cambios-reenvio" id="cambios-reenvio">
+  <div class="card-head">
+    <div>
+      <h2>🔁 Resend updated version</h2>
+      <p class="hint">Changes detected against V{{ cambios_reenvio.version_numero }}. Download the updated PDF and copy a short summary for WhatsApp/email.</p>
+    </div>
+    <div class="actions">
+      <a class="btn" href="/presupuestos/{{ p.id }}/pdf" download="presupuesto_{{ p.numero }}_actualizado.pdf" data-ga-event="pdf_descargado">⬇ Updated PDF</a>
+      <button class="btn btn-primary" type="button" id="btn-copiar-resumen-cambios">Copy summary</button>
+    </div>
+  </div>
+  <div class="cambios-resumen-grid">
+    <div><span>Previous total</span><strong>{{ cambios_reenvio.total_anterior | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>New total</span><strong>{{ cambios_reenvio.total_actual | money_iso(cambios_reenvio.moneda) }}</strong></div>
+    <div><span>Difference</span><strong class="{{ 'margen-pos' if cambios_reenvio.diferencia >= 0 else 'margen-neg' }}">{{ cambios_reenvio.diferencia | money_iso(cambios_reenvio.moneda) }}</strong></div>
+  </div>
+  <details class="cambios-details" open>
+    <summary>See the main changes</summary>
+    <ul class="cambios-lista">
+      {% for c in cambios_reenvio.cambios_principales %}<li>{{ c }}</li>{% endfor %}
+      {% if cambios_reenvio.capitulos_añadidos %}<li>Sections added: {{ cambios_reenvio.capitulos_añadidos | join(', ') }}</li>{% endif %}
+      {% if cambios_reenvio.capitulos_eliminados %}<li>Sections removed: {{ cambios_reenvio.capitulos_eliminados | join(', ') }}</li>{% endif %}
+    </ul>
+  </details>
+  <details class="cambios-details">
+    <summary>Text for WhatsApp/email</summary>
+    <textarea id="texto-resumen-cambios" class="cambios-textarea" rows="10">{{ cambios_reenvio.texto }}</textarea>
+    <p class="hint">You can edit this text before copying it. It does not include internal costs or margin.</p>
+  </details>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="form-grid">
+    <div>
+      <h2>Client</h2>
+      <p><strong>{{ p.cliente.nombre }}</strong></p>
+      {% if p.cliente.rif %}<p class="muted">{{ cfg.etiqueta_id_fiscal or 'Tax ID' }}: {{ p.cliente.rif }}</p>{% endif %}
+      {% if p.cliente.pais %}<p class="muted">Country: {{ p.cliente.pais }}</p>{% endif %}
+      {% if p.cliente.telefono %}<p class="muted">📞 {{ p.cliente.telefono }}</p>{% endif %}
+      {% if p.cliente.email %}<p class="muted">✉️ {{ p.cliente.email }}</p>{% endif %}
+    </div>
+    <div>
+      <h2>Details</h2>
+      <p class="muted">Date: <strong>{{ p.fecha | fecha }}</strong></p>
+      {% if p.direccion_obra %}<p class="muted">Job site: <strong>{{ p.direccion_obra }}</strong>{% if p.codigo_postal %} (ZIP {{ p.codigo_postal }}){% endif %}</p>{% endif %}
+      <p class="muted">Valid for: <strong>{{ p.validez_dias }} days</strong></p>
+      <p class="muted">Currency: <strong>{{ p.moneda }}</strong>{% if p.tipo_cambio and p.moneda == 'USD' %}
+        {% set _mon_tasa = (cfg.moneda_default or '') | string | upper %}
+        {% if _mon_tasa == 'BS' %}{% set _mon_tasa = 'VES' %}{% endif %}
+        {% if _mon_tasa in ('', 'USD', 'PAB') %}{% set _mon_tasa = 'VES' %}{% endif %}
+        <span class="hint">(1 USD = {{ p.tipo_cambio | num }} {{ _mon_tasa }})</span>{% endif %}</p>
+      <p class="muted">VAT: <strong>{{ p.impuesto_pct | round(2) }}%</strong> · Discount: <strong>{{ p.descuento_pct | round(2) }}%</strong></p>
+      <p><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2>Sections and line items</h2>
+    <form method="post" action="/presupuestos/{{ p.id }}/estado" class="inline">
+      <select name="estado" class="select-inline">
+        {% for e in estados %}
+        <option value="{{ e }}" {{ 'selected' if p.estado == e else '' }}>{{ e | capitalize }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-sm" type="submit">Change status</button>
+    </form>
+  </div>
+
+  {% for cap in p.capitulos %}
+  <div class="doc-capitulo-banda"></div>
+  <div class="doc-capitulo">
+    <span>{{ cap.nombre }}</span>
+    <span>{{ cap.subtotal | money_iso(p.moneda) }}</span>
+  </div>
+  {% for part in cap.partidas %}
+  <div class="doc-partida">
+    <table class="table csp-s-768bda7dd9">
+      <tr>
+        <td>
+          <div class="doc-p-nombre">{% if part.codigo_externo %}<span class="hint">{{ part.codigo_externo }} · </span>{% endif %}{{ part.nombre }}</div>
+          {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
+          {% if part.descomposicion_cype %}
+          {% if part.descomposicion_cype.origen == 'manual' %}
+          <div class="cype-origin-note">🧮 Cost breakdown: {{ part.descomposicion_cype.filas | length }} resource rows · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">See costs</a></div>
+          {% else %}
+          <div class="cype-origin-note">📐 Technical breakdown: {{ part.descomposicion_cype.filas | length }} rows and {{ part.descomposicion_cype.columnas | length }} columns kept · <a class="link" href="/presupuestos/{{ p.id }}/partidas/{{ part.id }}/descomposicion">See matrix and costs</a>{% if part.descomposicion_cype.archivo_origen %} · <a class="link" href="{{ part.descomposicion_cype.archivo_origen | archivo_url(true) }}" download>Download original Excel</a>{% endif %}</div>
+          {% endif %}
+          {% endif %}
+        </td>
+        <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | money_iso(p.moneda) }}/{{ part.unidad }}</td>
+        <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(p.moneda) }}</td>
+        <td class="right csp-s-0231bd7a8a">
+          {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
+          {% if tp %}
+            {% if tp.fuente == 'manual' %}
+              <span class="tiempo-chip tiempo-chip-manual" title="✏ Manual · {{ '%.3f'|format(tp.horas_por_unidad) }} h/unit ({{ '%.2f'|format(tp.oficial_por_unidad) }} journeyman + {{ '%.2f'|format(tp.ayudante_por_unidad) }} helper)">✏ {{ "%.1f"|format(tp.horas) }} h · {{ "%.1f"|format(tp.oficial_h) }}+{{ "%.1f"|format(tp.ayudante_h) }}</span>
+            {% else %}
+              <span class="tiempo-chip" title="{{ tp.fuente_etiqueta }} · {{ '%.3f'|format(tp.horas_por_unidad) }} h/unit · 👷 {{ '%.2f'|format(tp.oficial_por_unidad) }} journeyman + 🧑 {{ '%.2f'|format(tp.ayudante_por_unidad) }} helper per {{ part.unidad }}">{{ "%.1f"|format(tp.horas) }} h<span class="hint csp-s-946cbebb5f"> · {{ "%.1f"|format(tp.oficial_h) }}+{{ "%.1f"|format(tp.ayudante_h) }}</span></span>
+            {% endif %}
+            {% if tp.duracion_h and tp.duracion_h != tp.horas %}<br><small class="hint" title="Critical (parallel) duration of the line item">{{ "%.1f"|format(tp.duracion_h) }} critical h</small>{% endif %}
+          {% elif part.descomposicion_cype %}
+            <span class="tiempo-chip tiempo-chip-vacio" title="The breakdown has no rows with a time unit (h, day…).">⏱ —</span> <a class="link csp-s-c9c4566341" href="/presupuestos/{{ p.id }}/tiempos">Assign</a>
+          {% else %}
+            <span class="hint">—</span> <a class="link csp-s-c9c4566341" href="/presupuestos/{{ p.id }}/tiempos">Assign</a>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+    {% if part.mediciones %}
+    <table class="doc-mediciones csp-s-9ccc4ca9d6">
+      {% for m in part.mediciones %}
+      <tr>
+        <td class="csp-s-9908383064">{{ m.concepto or '–' }}</td>
+        <td class="right csp-s-71f9841409">{{ m.cantidad | cant(part.unidad) }}</td>
+        <td class="right csp-s-0dfe35f39a">—</td>
+        <td class="right csp-s-0dfe35f39a">{{ (m.cantidad * part.precio_unitario) | money_iso(p.moneda) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+    {% if part.tiene_producto %}
+    {% set pm = part.productos_multiples %}
+    {% if pm and pm | length > 1 %}
+    <div class="doc-prod-multiples csp-s-aa94639263">
+      <div class="csp-s-4a64adc6be">📦 Product options to choose from:</div>
+      <div class="csp-s-62d1f19f78">
+        {% set eleg = part.indice_producto_elegido %}
+        {% for op in pm %}
+        {% set es_sel = (loop.index0 == eleg) %}
+        <div class="product-option-card {{ 'product-option-card-selected' if es_sel else '' }}">
+          <div class="csp-s-cc5c8095d8">
+            <span class="product-option-badge {{ 'product-option-badge-selected' if es_sel else '' }}">
+              {{ '✓ SELECTED' if es_sel else 'OPTION ' ~ loop.index }}
+            </span>
+            {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
+            {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
+            {% if op_precio is not none %}
+            <strong class="csp-s-d5d7f32738">{{ op_precio | money_iso(p.moneda) }} / {{ op_unidad }}</strong>
+            {% endif %}
+          </div>
+          {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
+          {% set op_imagen = op.imagen if op.imagen is defined and op.imagen else op.producto_imagen %}
+          <div class="csp-s-55b7a80ce1">{{ op_nombre }}</div>
+          {% set op_marca = op.marca if op.marca is defined else '' %}
+          {% set op_modelo = op.modelo if op.modelo is defined else '' %}
+          {% set op_color = op.color if op.color is defined else '' %}
+          {% set op_acabado = op.acabado if op.acabado is defined else '' %}
+          {% set specs = [op_marca, op_modelo, op_color, op_acabado] | select | join(' · ') %}
+          {% if specs %}<div class="csp-s-1b5784f27a">{{ specs }}</div>{% endif %}
+          {% if op_imagen %}
+          <div class="csp-s-97673d5a5a">
+            <img src="{{ op_imagen | archivo_url }}" alt="{{ op_nombre }}" loading="lazy" decoding="async" class="csp-s-5f3c4a8792">
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% if part.producto_precio is not none %}
+      <small class="hint doc-prod-desglose">Unit price breakdown: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · product {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="doc-prod">
+      <strong>Product in the estimate:</strong>
+      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      <em class="muted">{{ part.producto_nombre }}</em>
+      {% if part.producto_precio is not none %}
+      <br><small class="hint">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      {% endif %}
+      {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Product" loading="lazy" decoding="async">{% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+    {% if part.tiene_costes %}
+    <div class="hint csp-s-d703051526">
+      Cost: {{ part.coste | money_iso(p.moneda) }} · Profit: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) | replace(".", ",") }}% on cost, {{ part.margen_beneficio_pct | num }}% margin)
+      {% if part.producto_coste_pendiente %}
+      <br><strong>⚠ The product purchase cost is missing</strong>: the profit counted is only that of labor and resources (base of {{ (part.precio_unitario - (part.producto_precio or 0)) | money_iso(p.moneda) }} / {{ part.unidad }}). Enter it on the line item to see the real profit on the material.
+      {% endif %}
+    </div>
+    {% elif part.producto_coste_pendiente %}
+    <div class="hint csp-s-d703051526">
+      <strong>⚠ Product with no purchase cost entered</strong>: until you enter it, its amount does not count as profit.
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="csp-s-57baee63f7"></div>
+  {% endfor %}
+
+  <table class="table doc-totales csp-s-9ccc4ca9d6">
+    <tr><td class="right csp-s-9eae69365e">INCLUDED SUBTOTAL</td><td class="right">{{ p.subtotal | money_iso(p.moneda) }}</td></tr>
+    {% if p.usar_funciones_avanzadas and p.subtotal_opcional %}<tr><td class="right">OPTIONAL ITEMS AVAILABLE</td><td class="right">{{ p.subtotal_opcional | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.subtotal_alternativas %}<tr><td class="right">ALTERNATIVES AVAILABLE</td><td class="right">{{ p.subtotal_alternativas | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.usar_funciones_avanzadas and p.costes_adicionales %}<tr><td class="right">ADDITIONAL COSTS</td><td class="right">{{ p.costes_adicionales | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if p.total_productos %}<tr><td class="right">TOTAL WORK / LINE ITEMS</td><td class="right">{{ p.subtotal_obra | money_iso(p.moneda) }}</td></tr><tr><td class="right">TOTAL PRODUCTS</td><td class="right">{{ p.total_productos | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% set mostrar_margenes = cfg.mostrar_costes_internos or con_costos %}
+    {% if mostrar_margenes %}
+      <tr><td class="right">INTERNAL COST (internal use)</td><td class="right">{{ p.coste_interno | money_iso(p.moneda) }}</td></tr>
+      {% if p.total_productos %}
+      <tr><td class="right">PROFIT ON WORK</td><td class="right csp-s-3f12fa5639">{{ p.margen_obra | money_iso(p.moneda) }} ({{ p.margen_obra_pct | num }} %)</td></tr>
+      <tr><td class="right">PROFIT ON PRODUCTS</td><td class="right csp-s-3f12fa5639">
+        {% if p.coste_productos_incompleto and not p.productos_con_coste %}
+        no purchase cost entered
+        {% else %}
+        {{ p.margen_productos | money_iso(p.moneda) }} ({{ p.margen_productos_pct | num }} %){% if p.coste_productos_incompleto %} · partial: the cost of {{ p.productos_sin_coste }} product(s) is missing{% endif %}
+        {% endif %}
+      </td></tr>
+      {% endif %}
+      <tr><td class="right">ESTIMATED TOTAL PROFIT</td><td class="right csp-s-3f12fa5639">{{ p.margen | money_iso(p.moneda) }}</td></tr>
+      <tr><td class="right">TOTAL MARGIN</td><td class="right csp-s-3f12fa5639">{{ p.margen_pct | num }} %</td></tr>
+    {% endif %}
+    <tr><td class="right csp-s-9eae69365e">TAXABLE BASE</td><td class="right">{{ p.base | money_iso(p.moneda) }}</td></tr>
+    {% if p.descuento_pct %}
+    <tr><td class="right">DISCOUNT ({{ p.descuento_pct | round(2) }} %)</td><td class="right">- {{ p.descuento_monto | money_iso(p.moneda) }}</td></tr>
+    {% endif %}
+    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %) — reverse charge (not charged)</td><td class="right">{{ 0 | money_iso(p.moneda) }}</td></tr>{% else %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if fiscalidad_gb and fiscalidad_gb.cis_aplica %}<tr><td class="right">LABOUR ELEMENT SUBJECT TO DEDUCTION</td><td class="right">{{ fiscalidad_gb.base_cis | money_iso(p.moneda) }}</td></tr><tr><td class="right">CIS DEDUCTION ({{ fiscalidad_gb.cis_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_gb.retencion_cis | money_iso(p.moneda) }}</td></tr>{% endif %}
+    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_gb %}TOTAL PAYABLE{% if fiscalidad_gb.cis_aplica %} (after CIS deduction){% endif %}{% else %}ESTIMATE TOTAL{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else p.total) | money_iso(p.moneda) }}</strong></td></tr>
+    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_gb.leyenda_iva }}</td></tr>{% endif %}
+  </table>
+</div>
+
+<div class="card no-print" id="versiones">
+  <div class="card-head"><div><h2>📌 Frozen versions</h2><p class="hint">Versions store the exact content and total at that moment.</p></div></div>
+  <form method="post" action="/presupuestos/{{ p.id }}/versiones" class="form-actions csp-s-3e6b3dde8c">
+    <div class="field csp-s-6253876a64"><label>Reason (optional)</label><input name="motivo" maxlength="500" placeholder="e.g. Sales proposal sent to the client"></div><button class="btn" type="submit">❄️ Freeze version</button>
+  </form>
+  {% if versiones %}
+  <table class="table table-mobile-cards"><thead><tr><th>Version</th><th>Date</th><th>Status</th><th>Reason</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td data-label="Date">{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td data-label="Status">{{ v.estado | replace('_',' ') | capitalize }}</td><td data-label="Reason">{{ v.motivo or '—' }}</td><td class="right" data-label="Total">{{ v.total | money_iso(p.moneda) }}</td><td data-label="Document"><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">View</a>{% if v.pdf_snapshot %} · <a class="link" href="{{ v.pdf_snapshot | archivo_url(true) }}" target="_blank">PDF sent</a>{% endif %}</td></tr>{% endfor %}</tbody></table>
+  {% if versiones|length > 1 %}<form method="get" action="/presupuestos/{{ p.id }}/versiones/comparar" class="inline csp-s-726e8b317f"><label>Compare</label><select name="a">{% for v in versiones %}<option value="{{ v.id }}">V{{ v.numero_version }}</option>{% endfor %}</select><span>with</span><select name="b">{% for v in versiones %}<option value="{{ v.id }}" {{ 'selected' if loop.index == 2 else '' }}>V{{ v.numero_version }}</option>{% endfor %}</select><button class="btn btn-sm" type="submit">Compare</button></form>{% endif %}
+  {% else %}<p class="empty">No versions yet. One is created automatically when the estimate is sent or approved.</p>{% endif %}
+</div>
+
+<div class="card no-print" id="anexos">
+  <h2>📎 Document attachments</h2><p class="hint">Add spec sheets, drawings, photographs converted to PDF or supplier documents. When you turn on «Include attachments» in Edit, their pages are appended to the end of the estimate PDF and the index states which page each one starts on; those that do not fit by size are announced as a separate delivery.</p>
+  <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Visible name of the attachment" class="csp-s-6253876a64"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Add PDF</button></form>
+  {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" data-confirm="Delete attachment?"><button class="btn btn-sm btn-danger" type="submit">Delete</button></form></li>{% endfor %}</ul>{% endif %}
+</div>
+
+{% if p.notas %}
+<div class="card">
+  <h2>Additional information</h2>
+  <p class="prewrap">{{ p.notas }}</p>
+</div>
+{% endif %}
+{% if p.condiciones %}
+<div class="card">
+  <h2>Estimate terms</h2>
+  <p class="prewrap">{{ p.condiciones }}</p>
+</div>
+{% endif %}
+
+{% if p.mostrar_garantias %}
+<div class="card" id="garantias-obra">
+  <div class="card-head">
+    <div class="csp-s-68443324e1">
+      <h2 class="csp-s-38965f9b18">🛡️ Work warranties</h2>
+    </div>
+    <span class="badge badge-aprobado">Warranty by type of work</span>
+  </div>
+  <p class="hint csp-s-0d380d852d">
+    Periods covering the <strong>workmanship and installation</strong> of the work included in this estimate, grouped by type of work. Materials, light fittings, taps and equipment keep their manufacturer’s warranty.
+  </p>
+  
+  {% set familias = garantias_familias(p, _idioma) %}
+  {% if familias %}
+  <div class="csp-s-6206e40284">
+    {% for fam in familias %}
+    <div class="csp-s-143c5275fe">
+      <div class="csp-s-66991e8561">
+        <strong class="csp-s-484a671fb4">{{ fam.grupo }}</strong>
+        <span class="badge csp-s-e4bfd0f716">{{ fam.plazo }}</span>
+      </div>
+      <p class="csp-s-8bbd12e9d0">{{ fam.alcance }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  <div class="csp-s-5e082dbc8d">
+    <strong class="csp-s-6464799a08">Legal note:</strong> {{ garantias_nota_legal(_idioma) }}
+  </div>
+</div>
+{% endif %}
+
+<div class="card no-print" id="notas">
+  <h2>📝 Follow-up notes</h2>
+  <p class="hint csp-s-3909374075">Internal notes about this estimate (calls, changes, agreements…). They do not appear on the PDF.</p>
+  <form method="post" action="/presupuestos/{{ p.id }}/notas" class="csp-s-0d5ff492ea">
+    <input type="text" name="texto" placeholder="Write a note…" required class="csp-s-6253876a64" maxlength="500">
+    <button class="btn btn-primary btn-sm" type="submit">Add</button>
+  </form>
+  {% if p.notas_seguimiento %}
+  <div class="notas-lista">
+    {% for n in p.notas_seguimiento %}
+    <div class="nota-item">
+      <span class="nota-fecha">{{ n.created_at.strftime('%d/%m/%Y %H:%M') if n.created_at else '' }}</span>
+      <p>{{ n.texto }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var btn = document.getElementById('btn-copiar-resumen-cambios');
+  var txt = document.getElementById('texto-resumen-cambios');
+  if(!btn || !txt) return;
+  btn.addEventListener('click', function(){
+    var valor = txt.value || '';
+    function ok(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy summary'; }, 1800); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(valor).then(ok).catch(function(){ txt.select(); document.execCommand('copy'); ok(); });
+    } else {
+      txt.select(); document.execCommand('copy'); ok();
+    }
+  });
+})();
+</script>
+{% endblock %}

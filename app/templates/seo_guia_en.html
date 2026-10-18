@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="Breadcrumb">
+    <a href="/en/">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="/en/mapa-del-sitio">Guides</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ guia.h1 }}</span>
+  </nav>
+  <span class="section-kicker">{{ guia.kicker }}</span>
+  <h1>{{ guia.h1 }}</h1>
+  <p class="sub">{{ guia.lead }}</p>
+  {% for titulo, pars in guia.secciones %}
+  <section class="hub-bloque">
+    <h2>{{ titulo }}</h2>
+    {% for p in pars %}
+    <p>{{ p }}</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+  {% if guia.faq %}
+  <section class="seo-faq" id="preguntas">
+    <h2>Frequently asked questions</h2>
+    {% for item in guia.faq %}
+    <details>
+      <summary>{{ item.q }}</summary>
+      <p>{{ item.a }}</p>
+    </details>
+    {% endfor %}
+  </section>
+  {% endif %}
+  <section class="hub-relacionadas">
+    <h2>Keep reading</h2>
+    <ul>
+      {% if guia.related is defined %}
+      {% for nombre, ruta in guia.related %}
+      <li><a href="{{ ruta }}">{{ nombre }}</a></li>
+      {% endfor %}
+      {% endif %}
+      <li><a href="/en/como-funciona">How {{ product_name }} works</a></li>
+      <li><a href="/en/mapa-del-sitio">Site map</a></li>
+    </ul>
+  </section>
+</article>
+<section class="franja cta-final">
+  <h2>Want to do it with your own catalog?</h2>
+  <p class="intro">{% if hay_prueba_gratuita() %}{{ dias_de_prueba() }} days free, no card.{% else %}See the plans.{% endif %}</p>
+  <div class="acciones mt-3">
+    {% if hay_prueba_gratuita() %}
+    <a class="btn btn-primary" href="/acceso">{{ dias_de_prueba() }} days free</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="/en/pago">See plans</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" %}
+</body>
+</html>

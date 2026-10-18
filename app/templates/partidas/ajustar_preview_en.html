@@ -1,0 +1,43 @@
+{% extends "base_en.html" %}
+{% block title %}Preview price adjustment{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📚 <a href="/partidas">Catalog</a> › Price adjustment</p>
+    <h1>Preview price adjustment</h1>
+    <p class="subtitle">Review the impact before touching the catalog. Nothing changes until you confirm.</p>
+  </div>
+  <div class="actions"><a class="btn" href="/partidas">← Back to catalog</a></div>
+</div>
+
+<div class="card ajuste-preview">
+  <div class="ajuste-resumen-grid">
+    <div><span>Adjustment</span><strong>{{ porcentaje | num }}%</strong></div>
+    <div><span>Line items affected</span><strong>{{ total }}</strong></div>
+    <div><span>Current average</span><strong>{{ promedio_actual | money_iso(moneda_vista) }}</strong></div>
+    <div><span>New average</span><strong>{{ promedio_nuevo | money_iso(moneda_vista) }}</strong></div>
+  </div>
+  <p class="hint">The adjustment only applies to catalog prices for future estimates. It does not change estimates already issued.</p>
+  <form method="post" action="/partidas/ajustar" data-confirm="Apply this adjustment to the catalog?" class="form-actions">
+    <input type="hidden" name="porcentaje" value="{{ porcentaje }}">
+    <button class="btn btn-primary" type="submit">Confirm adjustment</button>
+    <a class="btn" href="/partidas">Cancel</a>
+  </form>
+</div>
+
+{% if muestras %}
+<div class="card">
+  <h2>Examples of affected line items</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Line item</th><th class="right">Before</th><th class="right">After</th></tr></thead>
+      <tbody>
+        {% for m in muestras %}
+        <tr><td>{{ m.nombre }}</td><td class="right">{{ m.antes | money_iso(moneda_vista) }}</td><td class="right"><strong>{{ m.despues | money_iso(moneda_vista) }}</strong></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

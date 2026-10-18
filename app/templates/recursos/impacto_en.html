@@ -1,0 +1,45 @@
+{% extends "base_en.html" %}
+{% block title %}Resource impact{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🧱 <a href="/recursos">Resources</a> › Impact</p>
+    <h1>{{ recurso.descripcion | traducir(mercado_codigo) }}</h1>
+    <p class="subtitle">{{ recurso.codigo or 'No code' }} · {{ recurso.unidad }} · {% if precio_vista is not none %}{{ precio_vista | money_iso(moneda_vista) }}{% else %}⚠ No market price for {{ mercado_codigo }}{% endif %}</p>
+  </div>
+  <div class="actions"><a class="btn" href="/recursos">← Back to resources</a><a class="btn btn-primary" href="/recursos/{{ recurso.id }}/editar">Edit price</a></div>
+</div>
+
+<div class="card recurso-impacto">
+  <h2>Line items that use this resource</h2>
+  <p class="hint">Before changing the price, review where it appears. Saving the resource recalculates the linked line items.</p>
+  <div class="ajuste-resumen-grid">
+    <div><span>Line items affected</span><strong>{{ partidas_afectadas|length }}</strong></div>
+    <div><span>Rows found</span><strong>{{ total_filas }}</strong></div>
+  </div>
+</div>
+
+{% if partidas_afectadas %}
+<div class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Line item</th><th>Path</th><th class="right">Rows</th><th></th></tr></thead>
+      <tbody>
+        {% for p in partidas_afectadas %}
+        <tr>
+          <td><strong>{{ p.nombre }}</strong></td>
+          <td class="muted">{{ p.ruta }}</td>
+          <td class="right">{{ p.filas }}</td>
+          <td class="right"><a class="link" href="/partidas/{{ p.id }}/editar">Edit line item</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card empty">
+  <p>This resource does not appear in catalog breakdowns yet.</p>
+</div>
+{% endif %}
+{% endblock %}

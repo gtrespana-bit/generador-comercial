@@ -506,13 +506,195 @@ def cuerpo_pais(codigo: str) -> list[tuple[str, list[str]]]:
     return CUERPO_PAIS.get(codigo) or CUERPO_PAIS[""]
 
 
-def ficha_guia(slug: str) -> dict | None:
+# Traducciones en inglés de las guías (incremental). Si una guía no está
+# aquí, se usa la versión en español como fallback.
+GUIAS_EN: dict[str, dict] = {
+    "presupuesto-de-obra": {
+        "slug": "presupuesto-de-obra",
+        "title": "CotizaT: how to write a construction estimate step by step",
+        "h1": "How to write a construction estimate (without a spreadsheet that breaks)",
+        "description": (
+            "Guide to building a construction estimate by sections and line items: "
+            "quantities, prices, VAT, PDF and changes. With catalog and unit price analysis."
+        ),
+        "kicker": "Guide",
+        "lead": (
+            "A clear construction estimate has sections, line items with quantity and "
+            "price, VAT and a PDF the client can read on a phone. This guide "
+            "describes the method; CotizaT is the software that runs it."
+        ),
+        "secciones": [
+            (
+                "1. Company and client data",
+                [
+                    "Before any line item: trade name, logo, currency, VAT and tax ID. For the client: name, phone or email. Without that the PDF does not close and the WhatsApp send has no recipient.",
+                    "In CotizaT you choose the country at signup and the workspace is born with currency, VAT and tax label (RIF, NIT, RFC, RUC).",
+                ],
+            ),
+            (
+                "2. Sections, not a loose list",
+                [
+                    "A bathroom estimate is not 40 loose lines. It is Demolition, Plumbing, Waterproofing, Finishes, Electrical. Each section has a subtotal. The client understands the scope; you see the margin per section.",
+                ],
+            ),
+            (
+                "3. Line items with quantity, unit and price",
+                [
+                    "Each line item: name, unit (m², ml, unit), quantity and unit price. Quantity can be direct or the sum of measurements by zone (kitchen 8 m², bathroom 4 m²). Amount is quantity × price, rounded to two decimals.",
+                    "If the line item comes from the catalog, it arrives with a technical description and, if there is a unit price analysis, with internal cost. The selling price is yours to set.",
+                ],
+            ),
+            (
+                "4. Review before sending",
+                [
+                    "Line items at zero price, zero quantities, client without phone, missing logo, low margin. Software must warn you. A bad PDF gets resent ten times.",
+                ],
+            ),
+            (
+                "5. PDF, WhatsApp and versions",
+                [
+                    "The client does not want a platform. They want a PDF with your logo. Send it by WhatsApp or email. If they ask for changes, do not rewrite the file blindly: save a version, change it, and tell them what moved and what the new total is.",
+                ],
+            ),
+            (
+                "What a construction estimate is not in CotizaT",
+                [
+                    "It is not a BIM viewer, not a public tender document and not a tax invoice. It is the commercial document with which you close scope and price.",
+                ],
+            ),
+        ],
+        "faq": [
+            {
+                "q": "Does CotizaT work offline?",
+                "a": "The web version needs a connection. The desktop version worked offline; if you come from it, you can import your whole installation.",
+            },
+            {
+                "q": "Can I import from Excel?",
+                "a": "Yes. Paste TSV or import an .xlsx with breakdowns; it classifies materials, labor and equipment.",
+            },
+        ],
+    },
+    "analisis-precios-unitarios": {
+        "slug": "analisis-precios-unitarios",
+        "title": "CotizaT: what is a unit price analysis (APU) and how to calculate it",
+        "h1": "What is a unit price analysis (APU)",
+        "description": (
+            "What an APU is in construction: resources, productivity, direct cost "
+            "and selling price. How to edit it without breaking the estimate."
+        ),
+        "kicker": "Guide",
+        "lead": (
+            "The APU explains where a line item's price comes from. Without it you "
+            "quote from memory. With it you see cost, margin and hours before sending."
+        ),
+        "secciones": [
+            (
+                "The formula",
+                [
+                    "Each resource in the APU has productivity (how much is used per unit of line item) and a unit price. Amount = productivity × price. Materials, labor and equipment are summed. On top of that base, complementary direct costs can be added as a percentage. The result is the direct cost per unit.",
+                    "The selling price is not the cost. You apply profit. The client sees the selling price; cost and margin stay in the app.",
+                ],
+            ),
+            (
+                "Why spreadsheets break",
+                [
+                    "In a sheet, changing the crew's hourly rate means finding every line item that uses it. In a connected APU, you change the resource once and the line items recalculate. Estimates already sent are not touched: each version stays frozen.",
+                ],
+            ),
+            (
+                "Crew hours",
+                [
+                    "Labor rows with a time unit (h, day) feed man-hours. With the configured workday you get project days. That is for planning, not for printing to the client.",
+                ],
+            ),
+            (
+                "Excel and BC3",
+                [
+                    "If you already export breakdown matrices in Excel (.xlsx), they can be imported classifying materials, labor and complementary costs without losing rows. TSV can also be pasted from Excel or .bc3 (FIEBDC-3) imported.",
+                ],
+            ),
+            (
+                "What this APU does not cover",
+                [
+                    "It does not calculate Colombian state-contract AIU and does not export BC3/FIEBDC with certifications. It does import architects' BC3 and measures on plans in assisted manual mode (no AI). CotizaT's APU is for private work: resources, productivity and selling price you decide.",
+                ],
+            ),
+        ],
+        "faq": [
+            {
+                "q": "Does CotizaT include a ready-made APU?",
+                "a": "Yes. The own catalog brings line items decomposed into resources with productivity and price, editable.",
+            },
+            {
+                "q": "Does the APU appear in the client's PDF?",
+                "a": "Not by default. The PDF carries line items, quantities, prices and totals. The cost breakdown is internal.",
+            },
+        ],
+    },
+    "presupuesto-remodelacion": {
+        "slug": "presupuesto-remodelacion",
+        "title": "CotizaT: how to estimate a remodel",
+        "h1": "How to estimate a remodel (bathroom, kitchen, home)",
+        "description": (
+            "Method for remodel estimates: room packs, line items you do not forget, "
+            "product options and resending changes."
+        ),
+        "kicker": "Guide",
+        "lead": (
+            "A remodel is lost through forgotten line items (waterproofing, pass-throughs) "
+            "and undocumented changes. The method is catalog + room pack + PDF with versions."
+        ),
+        "secciones": [
+            (
+                "Start with the room, not the line item",
+                [
+                    "A bathroom is not 12 loose searches. It is a section: demolition, waterproofing, flooring, cladding, plumbing, sanitary ware, faucets, lighting. A room pack inserts that section scaled to the real square meters. Fixed pieces (toilet, vanity) are not multiplied.",
+                ],
+            ),
+            (
+                "Options for the client",
+                [
+                    "Included, optional or alternative, with photo. The client chooses the porcelain tile without you rewriting the estimate. The document marks what was approved.",
+                ],
+            ),
+            (
+                "What you do not show the client",
+                [
+                    "Internal cost, margin and crew hours. They exist so you do not give the bathroom away and do not promise an impossible deadline. The PDF carries scope, prices and totals.",
+                ],
+            ),
+            (
+                "When they call and ask for changes",
+                [
+                    "That is the real case. You edit, a new version is sealed and you copy: previous total, new total, line items added or removed. You resend it over the same WhatsApp.",
+                ],
+            ),
+            (
+                "What it is not",
+                [
+                    "It is not interior-design software nor a single-store catalog. It works if you estimate by construction and finishing line items. If you only sell furniture without work, this is not the flow.",
+                ],
+            ),
+        ],
+        "faq": [
+            {
+                "q": "How many packs does CotizaT include?",
+                "a": "Six in series (bathroom, kitchen, floors, bedroom, living room, electrical) and you can save your own from any section.",
+            },
+        ],
+    },
+}
+
+
+def ficha_guia(slug: str, lang: str = "es") -> dict | None:
     slug = str(slug or "").strip()
+    if lang == "en" and slug in GUIAS_EN:
+        return GUIAS_EN[slug]
     if slug in GUIAS:
         return GUIAS[slug]
     from .seo_articulos import ficha_articulo
 
-    return ficha_articulo(slug)
+    return ficha_articulo(slug, lang=lang)
 
 
 def lista_guias() -> list[dict]:

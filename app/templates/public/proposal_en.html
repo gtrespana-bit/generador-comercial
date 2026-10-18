@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Proposal {{ propuesta.presupuesto_numero }} · {{ propuesta.empresa_nombre }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<header class="prop-header">
+  <div>
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ propuesta.empresa_nombre }}
+    </a>
+    <span>Protected proposal · CotizaT</span>
+  </div>
+</header>
+
+<main class="prop-main">
+  <div class="prop-card">
+    <div class="prop-eyebrow">Commercial proposal</div>
+    <h1>Estimate {{ propuesta.presupuesto_numero }}</h1>
+    {% if propuesta.presupuesto_titulo %}<p class="titulo">{{ propuesta.presupuesto_titulo }}</p>{% endif %}
+
+    <div class="prop-grid">
+      <div class="prop-dato"><span>Prepared for</span><strong>{{ propuesta.cliente_nombre or 'Client' }}</strong></div>
+      <div class="prop-dato"><span>Date</span><strong>{{ propuesta.fecha_presupuesto.strftime('%d/%m/%Y') }}</strong></div>
+      <div class="prop-dato"><span>Valid until</span><strong>{{ propuesta.valido_hasta.strftime('%d/%m/%Y') }}</strong></div>
+      <div class="prop-dato prop-total"><span>Total</span><strong>{{ propuesta.total | money_iso(propuesta.moneda) }}</strong></div>
+    </div>
+
+    <div class="prop-acciones">
+      <a class="btn btn-primary" href="/propuestas/{{ token }}/pdf" target="_blank" rel="noreferrer">View proposal as PDF</a>
+      <a class="btn" href="/propuestas/{{ token }}/pdf?download=1" rel="noreferrer">Download PDF</a>
+    </div>
+
+    <div class="prop-aviso">This link is confidential and grants access only to this version of the proposal. Do not forward it to people who should not consult the document.</div>
+
+    {% if error_respuesta %}<div class="alert error" role="alert">{{ error_respuesta }}</div>{% endif %}
+
+    {% if propuesta.respuesta == 'pendiente' %}
+    <div class="prop-respuesta">
+      <h2>Respond to the proposal</h2>
+      <p class="intro">Your response will be associated with this exact version of the estimate, together with your declared identity and the date and time.</p>
+      <form method="post" action="/propuestas/{{ token }}/responder">
+        <div class="field"><label for="nombre">Full name</label><input id="nombre" name="nombre" type="text" maxlength="200" value="{{ datos_respuesta.nombre }}" required></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="254" value="{{ datos_respuesta.email }}" required></div>
+        <div class="field"><label for="comentario">Optional comment</label><textarea id="comentario" name="comentario" rows="4" maxlength="2000">{{ datos_respuesta.comentario }}</textarea></div>
+        <label class="declaracion"><input type="checkbox" name="declaracion" value="confirmada" required><span>I confirm that I am the recipient or that I am authorized to accept or reject this proposal.</span></label>
+        <div class="decision">
+          <button class="btn btn-primary" type="submit" name="decision" value="aceptada">Accept proposal</button>
+          <button class="btn btn-reject" type="submit" name="decision" value="rechazada">Reject proposal</button>
+        </div>
+      </form>
+    </div>
+    {% else %}
+    <div class="resultado {{ propuesta.respuesta }}" role="status">
+      <h2>Proposal {{ 'accepted' if propuesta.respuesta == 'aceptada' else 'rejected' }}</h2>
+      <p>Response recorded by <strong>{{ propuesta.respondido_por_nombre }}</strong>{% if propuesta.responded_at %} on {{ propuesta.responded_at.strftime('%d/%m/%Y at %H:%M') }} UTC{% endif %}. This version no longer accepts another response.</p>
+      {% if propuesta.notificacion_enviada_at %}<p>The company was notified automatically.</p>{% elif propuesta.notificacion_error %}<p>The response is saved correctly. The company can consult it within CotizaT even though the email notice could not be delivered.</p>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <footer class="prop-footer">Scope, amounts, validity and full conditions are in the frozen PDF.</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organizations · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="page-stage">
+  <main class="page-card page-card-narrow">
+    <div class="page-head-row">
+      <a class="brand" href="/">
+        <span class="mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        {{ product_name }}
+      </a>
+      <form action="/salir" method="post"><button class="btn" type="submit">Sign out</button></form>
+    </div>
+
+    <h1>Select an organization</h1>
+    <p class="text-soft">{{ usuario.email }} · Access is checked against your active membership.</p>
+
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
+
+    {% for invitacion in invitaciones %}
+    <div class="org-card invitation">
+      <div>
+        <strong>You were invited to a team</strong>
+        <div class="text-soft small">For {{ invitacion.email }} · role <span class="role-badge">{{ invitacion.rol }}</span></div>
+      </div>
+      <form action="/invitaciones/pendientes/{{ invitacion.id }}/aceptar" method="post"><button class="btn btn-primary" type="submit">Accept invitation</button></form>
+    </div>
+    {% endfor %}
+
+    {% for membresia in membresias %}
+    <div class="org-card">
+      <div>
+        <strong>{{ membresia.organizacion.nombre }}</strong>
+        <div><span class="role-badge">{{ membresia.rol }}</span></div>
+      </div>
+      <div class="org-actions">
+        {% if organizacion_activa_id == membresia.organizacion_id %}
+        <a class="btn" href="/configuracion">Configure company</a>
+        {% else %}
+        <form action="/organizaciones/{{ membresia.organizacion_id }}/seleccionar" method="post"><button class="btn btn-primary" type="submit">Enter</button></form>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+      {% if not invitaciones %}<div class="empty"><p>You do not belong to any organization yet.</p></div>{% endif %}
+    {% endfor %}
+
+    <a class="btn btn-secondary mt-2" href="/organizaciones/nueva">Create another organization</a>
+  </main>
+</div>
+</body>
+</html>

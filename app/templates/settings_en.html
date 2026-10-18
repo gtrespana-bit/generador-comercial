@@ -1,0 +1,460 @@
+{% extends "base_en.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Settings</h1>
+    <p class="subtitle">Your company details and default values</p>
+  </div>
+</div>
+
+{% if licencia is defined %}
+<div class="card">
+  <h2>Your plan</h2>
+  {% if licencia.activo %}
+  <div class="plan-activo">
+    <div class="plan-activo-badge">✓</div>
+    <div>
+      <strong>{{ licencia.plan_label }}</strong> active
+      <span class="subtitle">
+        Expires on {{ licencia.vence.strftime("%d/%m/%Y") }} · {{ licencia.dias_restantes }} day{{ "s" if licencia.dias_restantes != 1 }} remaining
+        {% if licencia.metodo_cobro %} · paid by {{ licencia.metodo_cobro }}{% endif %}
+      </span>
+      {% if compra_recibo %}
+      <p class="plan-recibo">
+        <a href="/pago/recibo/{{ compra_recibo.id }}.pdf">Download receipt (PDF)</a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="plan-sin">
+    <p class="subtitle">You do not have an active plan.</p>
+    <a class="btn" href="/pago">See plans and subscribe</a>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<form method="post" action="/configuracion" enctype="multipart/form-data">
+  {% if not puede_editar %}<div class="notice rol-notice">Only owners and administrators can edit settings.</div>{% endif %}
+  <fieldset {% if not puede_editar %}disabled{% endif %}>
+  <div class="card">
+    <h2>Your organization</h2>
+    <p class="subtitle">The organization name is the one shown in the side menu.</p>
+    {% set _pais_form = pais_de_nombre(cfg.empresa_pais or '') %}
+    <div class="form-grid">
+      <div class="field field-full">
+        <label>Organization name *</label>
+        <input type="text" name="organizacion_nombre" value="{{ org_nombre }}" required maxlength="200" placeholder="e.g. Remodeling {{ _pais_form.ciudad_ejemplo or 'Your City' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-org-nombre">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Company details</h2>
+    <p class="subtitle csp-s-bdf32b3fef">They appear in the header box of the PDF.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label>Company name *</label>
+        <input type="text" name="empresa_nombre" value="{{ cfg.empresa_nombre }}" required placeholder="e.g. Remodeling {{ _pais_form.ciudad_ejemplo or 'Your City' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-empresa-nombre">
+      </div>
+      <div class="field">
+        <label>Legal name</label>
+        <input type="text" name="empresa_legal" value="{{ cfg.empresa_legal }}" placeholder="e.g. Construction Group {{ _pais_form.ciudad_ejemplo or 'Your City' }}{{ (' ' ~ _pais_form.razon_social_ejemplo) if _pais_form.razon_social_ejemplo else '' }}" id="input-legal">
+      </div>
+      <div class="field">
+        <label><span id="label-rif">{{ cfg.etiqueta_id_fiscal or 'Tax ID' }}</span> <span class="hint csp-tasa-hint-inline">(Tax ID)</span></label>
+        <input type="text" name="empresa_rif" value="{{ cfg.empresa_rif }}" placeholder="{{ _pais_form.id_fiscal_placeholder or 'Tax ID, NIT, RUC, RFC…' }}" id="input-rif">
+      </div>
+      <div class="field">
+        <label>Tax ID label</label>
+        <input type="text" name="etiqueta_id_fiscal" value="{{ cfg.etiqueta_id_fiscal or 'RIF' }}" placeholder="RIF, NIT, RUT, CUIT, RUC, RFC..." maxlength="20" id="input-etiqueta">
+        <p class="hint">What your tax ID is called in your country. Shown in clients, estimates and PDF.</p>
+      </div>
+      <div class="field">
+        <label>Country</label>
+        <select name="empresa_pais" id="select-pais">
+          {% for p in paises %}
+          <option value="{{ p.nombre }}" {{ 'selected' if cfg.empresa_pais == p.nombre else '' }}>{{ p.bandera }} {{ p.nombre }}</option>
+          {% endfor %}
+          <option value="Latinoamérica" {{ 'selected' if cfg.empresa_pais in ['Latinoamérica', '', 'Otro'] else '' }}>🌎 Other / Latin America</option>
+          <option value="España y Latinoamérica" {{ 'selected' if cfg.empresa_pais == 'España y Latinoamérica' else '' }}>🌎 Spain and Latin America</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>City</label>
+        <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="e.g. {{ _pais_form.ciudad_ejemplo or 'Your City' }}" id="input-ciudad">
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <input type="text" name="empresa_telefono" value="{{ cfg.empresa_telefono }}" placeholder="{{ _pais_form.telefono_ejemplo or '+00 000 000 0000' }}" id="input-telefono">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="empresa_email" value="{{ cfg.empresa_email }}">
+      </div>
+      <div class="field">
+        <label>Website</label>
+        <input type="text" name="empresa_web" value="{{ cfg.empresa_web }}" placeholder="www.yourcompany.com">
+      </div>
+      <div class="field">
+        <label>Primary brand color (PDF)</label>
+        <div class="csp-s-4f4fe07927">
+          <input type="color" name="pdf_color" value="{{ cfg.pdf_color or '#04265D' }}" class="csp-s-5d5d9f2c44" data-cotizat-change="show-color-value">
+          <span class="csp-s-50d8f808d5">{{ cfg.pdf_color or '#04265D' }}</span>
+        </div>
+      </div>
+      <div class="field field-full">
+        <label>Address</label>
+        <input type="text" name="empresa_direccion" value="{{ cfg.empresa_direccion }}" placeholder="Office / showroom, city">
+      </div>
+      <div class="field field-full">
+        <label>Logo (right side of header)</label>
+        {% if cfg.logo %}
+        <div class="csp-s-098616dfc0">
+          <img src="{{ cfg.logo | archivo_url }}" alt="Logo" class="csp-s-956e30a089">
+          <label class="hint csp-s-047507c35c">
+            <input type="checkbox" name="quitar_logo" value="1"> Remove logo
+          </label>
+        </div>
+        {% endif %}
+        <input type="file" name="logo" accept="image/*">
+        <p class="hint">PNG or JPG. It is automatically fitted to the header box.</p>
+        <div class="csp-s-484a54c78b">
+          <label class="hint csp-s-aa5624ae65">Size in PDF:</label>
+          <input type="range" id="logo_ancho" name="logo_ancho_pdf" min="120" max="420" step="10"
+                 value="{{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }}"
+                 class="csp-s-098e4d12c1"
+                 data-cotizat-input="show-logo-width">
+          <span id="logo_ancho_val" class="csp-s-2968716aac">
+            {{ cfg.logo_ancho_pdf|int if cfg.logo_ancho_pdf else 360 }} pt
+          </span>
+        </div>
+        <p class="hint">Maximum logo width in the PDF (header and cover). 360 pt ≈ 12.7 cm is the current default; drag to preview the value before saving.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="moneda">Default values for new estimates</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>Default currency</label>
+        <select name="moneda_default" id="select-moneda">
+          <option value="USD" {{ 'selected' if cfg.moneda_default in ['USD',''] else '' }}>USD — US dollar</option>
+          <option value="COP" {{ 'selected' if cfg.moneda_default == 'COP' else '' }}>COP — Colombian peso</option>
+          <option value="MXN" {{ 'selected' if cfg.moneda_default == 'MXN' else '' }}>MXN — Mexican peso</option>
+          <option value="PEN" {{ 'selected' if cfg.moneda_default == 'PEN' else '' }}>PEN — Peruvian sol</option>
+          <option value="CLP" {{ 'selected' if cfg.moneda_default == 'CLP' else '' }}>CLP — Chilean peso</option>
+          <option value="ARS" {{ 'selected' if cfg.moneda_default == 'ARS' else '' }}>ARS — Argentine peso</option>
+          <option value="UYU" {{ 'selected' if cfg.moneda_default == 'UYU' else '' }}>UYU — Uruguayan peso</option>
+          <option value="PYG" {{ 'selected' if cfg.moneda_default == 'PYG' else '' }}>PYG — Paraguayan guaraní</option>
+          <option value="BOB" {{ 'selected' if cfg.moneda_default == 'BOB' else '' }}>BOB — Bolivian boliviano</option>
+          <option value="DOP" {{ 'selected' if cfg.moneda_default == 'DOP' else '' }}>DOP — Dominican peso</option>
+          <option value="PAB" {{ 'selected' if cfg.moneda_default == 'PAB' else '' }}>PAB — Panamanian balboa</option>
+          <option value="CRC" {{ 'selected' if cfg.moneda_default == 'CRC' else '' }}>CRC — Costa Rican colón</option>
+          <option value="GTQ" {{ 'selected' if cfg.moneda_default == 'GTQ' else '' }}>GTQ — Guatemalan quetzal</option>
+          <option value="HNL" {{ 'selected' if cfg.moneda_default == 'HNL' else '' }}>HNL — Honduran lempira</option>
+          <option value="NIO" {{ 'selected' if cfg.moneda_default == 'NIO' else '' }}>NIO — Nicaraguan córdoba</option>
+          <option value="BRL" {{ 'selected' if cfg.moneda_default == 'BRL' else '' }}>BRL — Brazilian real</option>
+          <option value="EUR" {{ 'selected' if cfg.moneda_default == 'EUR' else '' }}>EUR — euro</option>
+        </select>
+        <p class="hint">The catalog stores USD; if you choose COP/MXN/PEN it is shown converted with your rate.</p>
+      </div>
+      <div class="field">
+        <label>Default VAT (%)</label>
+        <input type="number" name="iva_default" step="any" min="0" max="100" value="{{ cfg.iva_default }}" id="input-iva">
+        <p class="hint">Suggested: VE 16% · CO 19% · MX 16% · PE 18% · EC 15% — leave at 0 if not applicable.</p>
+      </div>
+      <div class="field field-full tasa-box">
+        <label class="tasa-label-bold">Reference rate USD → <span id="label-tasa-moneda">{{ cfg.moneda_default or 'COP' }}</span></label>
+        <p class="hint">To convert the USD catalog to your local currency. 1 USD = X in your currency. If your currency is USD, leave 1.</p>
+        <div class="tasa-flex">
+          <div class="tasa-flex-1">
+            <label class="tasa-label-sm">Rate: 1 USD =</label>
+            <div class="tasa-input-row">
+              <input type="number" name="tasa_cambio" id="input-tasa" step="any" min="0" value="{{ cfg.tasa_cambio if cfg.tasa_cambio else '' }}" placeholder="{{ ('e.g. ' ~ tasas[cfg.moneda_default]) if tasas.get(cfg.moneda_default) else 'Enter the official rate of the day' }}" class="tasa-input">
+              <span id="label-tasa-simbolo" class="tasa-simbolo">{{ cfg.moneda_default or 'COP' }}</span>
+            </div>
+          </div>
+          <div class="tasa-fecha-col">
+            <label class="tasa-label-sm">Rate date</label>
+            <input type="date" name="fecha_tasa" id="input-fecha-tasa" value="{{ cfg.fecha_tasa.isoformat() if cfg.fecha_tasa else '' }}">
+          </div>
+          <button type="button" class="btn" id="btn-tasa-auto" class="tasa-btn-nowrap">↻ Today's rate (auto)</button>
+        </div>
+        <p class="hint" id="hint-tasa" class="tasa-hint-mt"></p>
+      </div>
+      <div class="field">
+        <label>Default validity (days)</label>
+        <input type="number" name="validez_default" min="1" value="{{ cfg.validez_default }}">
+      </div>
+      <div class="field field-full csp-s-16bcf666ae">
+        <label class="csp-s-4b43428289">Default PDF options:</label>
+        <p class="hint csp-s-b578c7f3a6">
+          If you check a box and save, it is also applied to <strong>existing estimates</strong> (all of them will include that option). If you leave it unchecked, it only affects new estimates. To remove an option from a specific estimate, open it, uncheck the box in “Premium options” and save it.
+        </p>
+        <label class="csp-s-25e01abf0a">
+          <input type="checkbox" name="con_portada_default" value="1" {{ 'checked' if cfg.con_portada_default else '' }}>
+          Add full-page editorial cover by default
+        </label>
+        <label class="csp-s-25e01abf0a">
+          <input type="checkbox" name="mostrar_resumen_capitulos_default" value="1" {{ 'checked' if cfg.mostrar_resumen_capitulos_default else '' }}>
+          Show executive summary table of sections at the start by default
+        </label>
+        <label class="csp-s-25e01abf0a">
+          <input type="checkbox" name="mostrar_firmas_default" value="1" {{ 'checked' if cfg.mostrar_firmas_default else '' }}>
+          Show formal acceptance signature block at the end by default
+        </label>
+        <label class="csp-s-25e01abf0a">
+          <input type="checkbox" name="mostrar_garantias_default" value="1" {{ 'checked' if cfg.mostrar_garantias_default else '' }}>
+          Include warranty table by work type (floors, carpentry, plumbing…) by default
+        </label>
+      </div>
+      <div class="field field-full csp-s-30e51cbec9">
+        <label class="csp-s-6b2a94ea3b">Advanced creator functions</label>
+        <p class="hint">The creator stays simple by default. Enable this option to show cost, margin, alternative and additional charge settings in estimates.</p>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="activar_funciones_avanzadas" value="1" {{ 'checked' if cfg.activar_funciones_avanzadas else '' }}> Enable advanced mode in new estimates</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_costes_internos" value="1" {{ 'checked' if cfg.mostrar_costes_internos else '' }}> Show internal costs and margin</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_alternativas" value="1" {{ 'checked' if cfg.mostrar_alternativas else '' }}> Enable alternatives and optional line items</label>
+        <label class="csp-s-48d378d077"><input type="checkbox" name="mostrar_cargos_adicionales" value="1" {{ 'checked' if cfg.mostrar_cargos_adicionales else '' }}> Enable indirect costs, contingencies and charges</label>
+        <div class="field field-full csp-s-c2600a842f">
+          <label class="csp-s-6b2a94ea3b">⏱ Construction time estimate</label>
+          <p class="hint">Hours are calculated from labor productivity of line items (breakdown rows with unit h/day) and, failing that, from the catalog estimated time. With the average rate, hours are estimated when the line item only has labor cost.</p>
+          <div class="csp-s-7194258dd4">
+            <label class="csp-s-dd0904f904">Hours per workday
+              <input type="number" name="horas_jornada" step="0.5" min="1" max="24" value="{{ cfg.horas_jornada or 8 }}" class="csp-s-73a0665eae">
+            </label>
+            <label class="csp-s-dd0904f904">Average labor rate (currency/h)
+              <input type="number" name="tarifa_hora_media" step="0.5" min="0.5" value="{{ cfg.tarifa_hora_media or 8 }}" class="csp-s-73a0665eae">
+            </label>
+          </div>
+          <label class="csp-s-bf283309bc"><input type="checkbox" name="estimar_tiempo_por_coste" value="1" {{ 'checked' if cfg.estimar_tiempo_por_coste else '' }}> Estimate hours from labor cost when the line item has no time productivity</label>
+        </div>
+      </div>
+      <div class="field field-full csp-s-30e51cbec9"><label class="csp-s-6b2a94ea3b">🌎 Regional functions (optional)</label><p class="hint">They stay hidden in the creator until you enable this capability. They adapt to your country (control number, rate, equivalent, withholdings).</p><label class="csp-s-d6241da47c"><input type="checkbox" name="activar_funciones_venezuela" {{ 'checked' if cfg.activar_funciones_venezuela else '' }}> Enable Venezuelan options</label><div class="csp-s-9ba0b3ba7c"><label><input type="checkbox" name="mostrar_numero_control" {{ 'checked' if cfg.mostrar_numero_control else '' }}> Control number</label><label><input type="checkbox" name="mostrar_tasa_cambio" {{ 'checked' if cfg.mostrar_tasa_cambio else '' }}> Rate and date</label><label><input type="checkbox" name="mostrar_total_bs" {{ 'checked' if cfg.mostrar_total_bs else '' }}> Local-currency equivalent</label><label><input type="checkbox" name="mostrar_retenciones" {{ 'checked' if cfg.mostrar_retenciones else '' }}> Withholdings / tax-exempt</label><label><input type="checkbox" name="mostrar_clausula_cambiaria" {{ 'checked' if cfg.mostrar_clausula_cambiaria else '' }}> Currency clause</label></div><label class="csp-s-726e8b317f">Bank details and payment methods</label><textarea name="datos_bancarios" rows="3" placeholder="Bank, account, mobile payment, Zelle, USDT…">{{ cfg.datos_bancarios }}</textarea></div>
+    </div>
+  </div>
+
+      <div class="field field-full">
+        <label>Default additional information</label>
+        <textarea name="notas_default" rows="3" placeholder="Text filled in automatically on every new estimate">{{ cfg.notas_default }}</textarea>
+      </div>
+      <div class="field field-full">
+        <label>Default terms</label>
+        <textarea name="condiciones_default" rows="3" placeholder="Payment method, schedule, warranty…">{{ cfg.condiciones_default }}</textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">💾 Save settings</button>
+  </div>
+  </fieldset>
+</form>
+
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="tasas-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ tasas | tojson }}</script>
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  var paisSel = document.getElementById('select-pais');
+  var etiquetaInput = document.getElementById('input-etiqueta');
+  var labelRif = document.getElementById('label-rif');
+  var monedaSel = document.getElementById('select-moneda');
+  var ivaInput = document.getElementById('input-iva');
+  var tasaInput = document.getElementById('input-tasa');
+  var fechaInput = document.getElementById('input-fecha-tasa');
+  var labelTasaMoneda = document.getElementById('label-tasa-moneda');
+  var labelTasaSimbolo = document.getElementById('label-tasa-simbolo');
+  var hintTasa = document.getElementById('hint-tasa');
+  var btnAuto = document.getElementById('btn-tasa-auto');
+  if(!paisSel) return;
+  // Data injected by the server (app/paises.py + app/services/tasa.py):
+  // a single source of truth, with no rates or labels duplicated by hand.
+  var datos = { paises: [], generico: null, tasas: {} };
+  try { datos.paises = JSON.parse(document.getElementById('paises-data').textContent || '[]'); } catch(_){}
+  try { datos.generico = JSON.parse(document.getElementById('pais-generico-data').textContent || 'null'); } catch(_){}
+  try { datos.tasas = JSON.parse(document.getElementById('tasas-data').textContent || '{}'); } catch(_){}
+  if (!datos.generico) datos.generico = { nombre:'Latin America', id_fiscal:'Tax ID', iva:16, moneda:'USD' };
+  var porNombre = {};
+  datos.paises.forEach(function(p){ porNombre[p.nombre] = p; });
+  function cfgPais(nombre){ return porNombre[nombre || ''] || datos.generico; }
+
+  var rifInput = document.getElementById('input-rif');
+  var orgNombreInput = document.getElementById('input-org-nombre');
+  var empresaNombreInput = document.getElementById('input-empresa-nombre');
+  var legalInput = document.getElementById('input-legal');
+  var ciudadInput = document.getElementById('input-ciudad');
+  var telInput = document.getElementById('input-telefono');
+
+  function hintParaMoneda(moneda){
+    if(moneda === 'USD' || moneda === 'PAB') return 'Your currency is ' + moneda + ' — you do not need a rate.';
+    var tasa = datos.tasas[moneda];
+    if(tasa) return 'Suggested: 1 USD = ' + tasa + ' ' + moneda + '. Confirm it or adjust it to your official source.';
+    return 'No verified rate for ' + moneda + ' — press «Today’s rate» or type the official one.';
+  }
+
+  function actualizarPorPais(autoTasa){
+    var p = cfgPais(paisSel.value);
+    if(etiquetaInput && !etiquetaInput.dataset.tocado) { etiquetaInput.value = p.id_fiscal || 'Tax ID'; if(labelRif) labelRif.textContent = p.id_fiscal || 'Tax ID'; }
+    if(rifInput && p.id_fiscal_placeholder) rifInput.placeholder = p.id_fiscal_placeholder;
+    if(orgNombreInput && p.ciudad_ejemplo) orgNombreInput.placeholder = 'e.g. Remodeling ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(empresaNombreInput && p.ciudad_ejemplo) empresaNombreInput.placeholder = 'e.g. Remodeling ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(legalInput && p.ciudad_ejemplo) legalInput.placeholder = 'e.g. Construction Group ' + p.ciudad_ejemplo + (p.razon_social_ejemplo ? ' ' + p.razon_social_ejemplo : '');
+    if(ciudadInput && p.ciudad_ejemplo) ciudadInput.placeholder = 'e.g. ' + p.ciudad_ejemplo;
+    if(telInput && p.telefono_ejemplo) telInput.placeholder = p.telefono_ejemplo;
+    if(ivaInput && !ivaInput.dataset.tocado) ivaInput.value = p.iva;
+    if(monedaSel && !monedaSel.dataset.tocado) monedaSel.value = p.moneda;
+    refrescarTasaPorMoneda();
+    if(autoTasa && tasaInput && !tasaInput.value && datos.tasas[p.moneda]){
+      tasaInput.value = datos.tasas[p.moneda];
+      if(fechaInput && !fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
+    }
+  }
+
+  // Refreshes the placeholder, label and hint of the rate field according to
+  // the currency currently selected. Called when the country or the currency
+  // changes; without it the placeholder kept the previous currency and people
+  // typed a rate that did not match the select.
+  function refrescarTasaPorMoneda(){
+    if(!monedaSel) return;
+    var m = (monedaSel.value || '').toUpperCase();
+    if(m === 'BS') m = 'VES';
+    if(labelTasaMoneda) labelTasaMoneda.textContent = m;
+    if(labelTasaSimbolo) labelTasaSimbolo.textContent = m;
+    var tasa = datos.tasas[m];
+    if(tasaInput) tasaInput.placeholder = (tasa !== null && tasa !== undefined) ? ('e.g. ' + tasa) : 'Type today’s official rate';
+    if(hintTasa) hintTasa.textContent = hintParaMoneda(m);
+  }
+  // marks the field as touched if the person edits it by hand
+  [etiquetaInput, ivaInput, monedaSel, tasaInput].forEach(function(el){
+    if(!el) return;
+    el.addEventListener('change', function(){ el.dataset.tocado='1'; });
+    el.addEventListener('input', function(){ el.dataset.tocado='1'; });
+  });
+  paisSel.addEventListener('change', function(){
+    // changing country clears "touched" so suggestions come back
+    if(etiquetaInput) delete etiquetaInput.dataset.tocado;
+    if(ivaInput) delete ivaInput.dataset.tocado;
+    if(monedaSel) delete monedaSel.dataset.tocado;
+    actualizarPorPais(true);
+  });
+  // currency change -> refresh label, placeholder and hint and, if the person
+  // has not touched it by hand, fill the field with the suggested rate.
+  if(monedaSel){
+    monedaSel.addEventListener('change', function(){
+      if(tasaInput && !tasaInput.dataset.tocado){
+        var m = (monedaSel.value || '').toUpperCase();
+        if(m === 'BS') m = 'VES';
+        if(m === 'USD' || m === 'PAB'){
+          tasaInput.value = 1;
+        } else if(datos.tasas[m]){
+          tasaInput.value = datos.tasas[m];
+        }
+        if(fechaInput && !fechaInput.value && (m === 'USD' || m === 'PAB' || datos.tasas[m])){
+          fechaInput.value = new Date().toISOString().slice(0,10);
+        }
+      }
+      refrescarTasaPorMoneda();
+    });
+  }
+  if(btnAuto){
+    btnAuto.addEventListener('click', function(){
+      var moneda = monedaSel ? monedaSel.value : 'COP';
+      if(moneda === 'VES' || moneda === 'Bs') moneda='VES';
+      btnAuto.textContent='⏳ Checking...';
+      btnAuto.disabled=true;
+      fetch('/configuracion/tasa-auto?moneda='+encodeURIComponent(moneda), {headers:{'Accept':'application/json'}})
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if(j.ok && j.tasa){
+            tasaInput.value = j.tasa;
+            if(fechaInput) fechaInput.value = j.fecha || new Date().toISOString().slice(0,10);
+            hintTasa.textContent = 'Today’s rate: 1 USD = '+j.tasa+' '+moneda+' (source: open.er-api.com)';
+          } else {
+            hintTasa.textContent = 'Could not fetch the rate: '+(j.error||'no connection')+'. Enter it manually.';
+          }
+        })
+        .catch(function(e){
+          hintTasa.textContent = 'No connection — enter the rate manually.';
+        })
+        .finally(function(){
+          btnAuto.textContent='↻ Today’s rate (auto)';
+          btnAuto.disabled=false;
+        });
+    });
+  }
+  // initial
+  actualizarPorPais(false);
+})();
+</script>
+
+{% if puede_editar %}
+<div class="card csp-s-a3c9c5afaa">
+  <h2>Intelligent Assistant (CotizaT Copilot)</h2>
+  <div class="form-grid">
+    <div class="field field-full">
+      <label>Estimating and support assistant with AI</label>
+      <p class="hint">CotizaT integrates an assistant capable of searching real data, reviewing the visible draft, calculating and applying measurements, preparing batches of line items and detecting possible scope gaps. Every change requires selection and confirmation. These tools work even without an external AI key.</p>
+      <div class="quick-guide-strip">
+        <div>
+          <strong>⚡ AI engine:</strong>
+          <span>GPT OSS 120B via Groq Cloud</span>
+        </div>
+        <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary">Get Groq key ↗</a>
+      </div>
+      <p class="hint">The Groq key is only needed for generative writing and conversation. To enable them, add <code>GROQ_API_KEY=gsk_...</code> to the <code>.env</code> file; tools over your own data do not consume tokens. Groq's free tier has quotas and conditions defined by the provider, so it does not equal guaranteed unlimited generative use.</p>
+    </div>
+  </div>
+</div>
+
+<div class="card csp-s-a3c9c5afaa">
+  <h2>Activity log</h2>
+  <div class="form-grid">
+    <div class="field">
+      <label>Who did what in this organization</label>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/actividad">📋 View activity log</a>
+      <p class="hint">Traceability of price changes, estimate and document statuses, team management, backups and exports. The log is immutable: it is recorded, not edited.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card csp-s-a3c9c5afaa">
+  <h2>Backup and restore</h2>
+  <div class="form-grid">
+    <div class="field">
+      <label>Full web backup (data and files)</label>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/respaldo">🛡️ Web backup and restore</a>
+      <p class="hint">Download a verifiable package with all data of this organization and its files (each with its SHA-256 fingerprint) or restore a copy in two steps with explicit confirmation. Restore never deletes or overwrites what already exists.</p>
+    </div>
+  </div>
+  {% if database_is_sqlite %}
+  <p class="subtitle csp-s-bdf32b3fef">Download all your work and restore it in another installation or in a new version of the application.</p>
+  <div class="form-grid">
+    <div class="field">
+      <label>Download backup</label>
+      <a class="btn btn-primary csp-s-a85c615773" href="/configuracion/backup">⬇️ Download backup (.zip)</a>
+      <p class="hint">Includes the complete database and all images (logo, products and project photos). Keep it safe: with it you can recover everything or move it to a new version. In addition, the application creates <strong>an automatic weekly copy</strong> in the application data folder (<code>backups/</code>) every time it starts.</p>
+    </div>
+    <div class="field">
+      <label>Restore backup</label>
+      <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data" data-confirm="⚠️ All current data will be replaced by the backup. Continue?">
+        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62">
+        <button class="btn" type="submit">↩️ Restore backup</button>
+      </form>
+      <p class="hint">Select the backup .zip (or a .db). Before restoring, a copy of the current data is automatically saved in the application <code>backups/</code> folder.</p>
+    </div>
+  </div>
+  {% else %}
+  <p class="subtitle">Local SQLite file restore is disabled in the web version to avoid replacing shared data. Use the <strong>full web backup</strong> above to download or restore this organization.</p>
+  {% endif %}
+  <div class="field">
+    <label>Import a local installation</label>
+    <a class="btn" href="/configuracion/importar-instalacion">⬆️ Import data from my desktop CotizaT</a>
+    <p class="hint">Brings clients, catalog, estimates, billing documents and projects from the backup of your local installation. With prior analysis and explicit confirmation; nothing is imported automatically.</p>
+  </div>
+</div>
+{% endblock %}

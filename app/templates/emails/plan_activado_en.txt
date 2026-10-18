@@ -1,0 +1,17 @@
+{{ product_name }} — Your {{ plan_nombre | lower }} is now active
+
+We verified your payment and activated the access of {{ organizacion_nombre }}. You can now sign in and use {{ product_name }} with all its features.
+
+Plan: {{ plan_nombre }}
+Amount: {{ importe_texto }}
+{% if metodo_nombre %}Payment method: {{ metodo_nombre }}
+{% endif %}Access from: {{ inicio.strftime('%d/%m/%Y') }}
+Valid until: {{ vence.strftime('%d/%m/%Y') }}
+
+{{ vence.strftime('%d/%m/%Y') }} is the last day included. We will let you know before it ends so you can decide whether to renew.
+
+We attach the PDF receipt for this payment. You can also download it whenever you want from Settings, in the "Your plan" card.
+
+Something does not add up? Write to us at {{ soporte_email }}.
+
+You receive this email because you bought a plan of {{ product_name }} for {{ organizacion_nombre }}. The attached receipt is a commercial voucher between the parties and does not replace a tax invoice.

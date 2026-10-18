@@ -1,0 +1,977 @@
+{% extends "base.html" %}
+{% block title %}Estimated work schedule · Estimate {{ p.numero }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">📄 <a href="/presupuestos">Estimates</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Work schedule</p>
+    <h1>⏱ Work scheduling — {{ p.numero }}</h1>
+    <p class="subtitle">{% if p.titulo %}{{ p.titulo }} · {% endif %}A professional estimate broken down by trade (journeyman / helper) with critical duration. {{ tiempos.n_partidas }} line item(s) in the estimate.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/presupuestos/{{ p.id }}">◀ View estimate</a>
+    <a class="btn" href="/presupuestos/{{ p.id }}/editar">✏ Edit line items</a>
+    <button class="btn" type="button" data-cotizat-click="window-print">🖨️ Print schedule</button>
+  </div>
+</div>
+
+{% set con_datos = tiempos.n_con_datos %}
+{% set sin_datos = tiempos.n_partidas_activas - con_datos %}
+{% set cobertura = (con_datos / tiempos.n_partidas_activas * 100) if tiempos.n_partidas_activas else 0 %}
+{% set pct_oficial = (tiempos.total_oficial_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 %}
+{% set pct_ayudante = (tiempos.total_ayudante_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 %}
+
+<!-- ================= KPIs PRINCIPALES ================= -->
+<div class="tiempos-kpi-grid">
+  <!-- Plazo es lo que ve el cliente; esfuerzo es el coste en personal -->
+  <div class="tiempo-card tiempo-card-principal csp-s-c203c4f4e6">
+    <div class="tiempo-card-label">⏱ Critical schedule — actual duration <span class="hint" title="Sum of durations per line item with work in parallel (max journeyman/helper). It is the shortest schedule with 1 sequential crew.">ⓘ</span></div>
+    <div class="tiempo-card-valor csp-s-f4cd63326c"><span id="kpi-plazo-horas">{{ "%.1f"|format(tiempos.total_duracion_h) }}</span> <small>h</small> <span class="hint csp-s-8d7681f06b">· <span id="kpi-plazo-dias-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> days</span></div>
+    <div class="tiempo-card-detalle">
+      <span class="hint">With <span id="kpi-cuadrilla-label-top">1 crew (1 journeyman + 1 helper)</span> and a workday of <span id="kpi-jornada-top">{{ "%.0f"|format(tiempos.horas_jornada) }}</span> h: <span id="kpi-dias-cuadrilla-top">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> critical days.</span>
+    </div>
+    <div class="tiempo-card-nota csp-s-a0688da494">
+      Total effort: <strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} man-hours</strong>
+      {% if tiempos.total_mano_obra_h %}
+        · <span class="kpi-chip kpi-oficial">👷‍♂️ {{ "%.1f"|format(tiempos.total_oficial_h) }} h jrn. <em>{{ "%.0f"|format(pct_oficial) }}%</em></span>
+        <span class="kpi-chip kpi-ayudante">🧑‍🔧 {{ "%.1f"|format(tiempos.total_ayudante_h) }} h hlp. <em>{{ "%.0f"|format(pct_ayudante) }}%</em></span>
+      {% endif %}
+      {% if tiempos.total_equipos_h %}<span class="kpi-chip kpi-equipos">🛠 {{ "%.1f"|format(tiempos.total_equipos_h) }} h eqp.</span>{% endif %}
+      <br><small class="hint csp-s-f4cd63326c">💡 Adding a helper <em>increases</em> man-hours (e.g. 36→50) but <em>shortens</em> the schedule (e.g. 36→25 days) because the journeyman and the helper work in parallel. Look at <strong>Schedule</strong>, not just effort.</small>
+    </div>
+  </div>
+
+  <div class="tiempo-card">
+    <div class="tiempo-card-label">Effort — man-hours <span class="hint" title="Sum of hours for all personnel. Useful for cost and workload; it is not the schedule.">ⓘ</span></div>
+    <div class="tiempo-card-valor">{{ "%.1f"|format(tiempos.total_mano_obra_h) }} <small>mh</small></div>
+    <div class="tiempo-card-detalle">
+      <span class="hint">{{ "%.1f"|format(tiempos.total_oficial_h) }} jrn. + {{ "%.1f"|format(tiempos.total_ayudante_h) }} hlp.{% if tiempos.total_equipos_h %} + {{ "%.1f"|format(tiempos.total_equipos_h) }} eqp. = {{ "%.1f"|format(tiempos.total_horas) }} h (labor+equipment){% endif %}</span>
+      <br><span class="hint">=<span id="kpi-esfuerzo-dias-hombre">{{ "%.1f"|format(tiempos.total_dias) }}</span> man-days / <span id="kpi-esfuerzo-jornada">{{ "%.0f"|format(tiempos.horas_jornada) }}</span>h</span>
+    </div>
+    <div class="tiempo-cobertura-track" title="Schedule vs effort ratio — the more you parallelize, the lower it gets"><div class="tiempo-cobertura-fill coverage-accent" data-cotizat-width="{{ (tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0 }}"></div></div>
+    <small class="hint">Parallelization efficiency: {{ "%.0f"|format((tiempos.total_duracion_h / tiempos.total_mano_obra_h * 100) if tiempos.total_mano_obra_h else 0) }}% (100% = no parallel work)</small>
+  </div>
+
+  <div class="tiempo-card">
+    <div class="tiempo-card-label">Schedule in days / weeks</div>
+    <div class="tiempo-card-valor"><span id="kpi-dias-duracion">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</span> <small>days</small> <span class="hint">· <span id="kpi-semanas">{{ "%.1f"|format(tiempos.total_semanas_duracion) }}</span> wks.</span></div>
+    <div class="tiempo-card-detalle" id="kpi-dias-detalle">
+      With <span id="kpi-cuadrilla-label">1 crew (1 jrn. + 1 hlp.)</span> · <strong id="kpi-dias-cuadrilla">{{ "%.1f"|format(tiempos.total_dias_duracion) }}</strong> critical days
+      <br><span class="hint">Man-hours equal <span id="kpi-dias-hombre">{{ "%.1f"|format(tiempos.total_dias) }}</span> man-days.</span>
+    </div>
+  </div>
+
+  <div class="tiempo-card">
+    <div class="tiempo-card-label">Data coverage</div>
+    <div class="tiempo-card-valor">{{ "%.0f"|format(cobertura) }} <small>%</small> <span class="hint">· {{ con_datos }}/{{ tiempos.n_partidas_activas }}</span></div>
+    <div class="tiempo-card-detalle">{{ con_datos }} line item(s) with data · <span class="fuente-badge badge-sin-datos">{{ sin_datos }} without data</span></div>
+    <div class="tiempo-cobertura-track"><div class="tiempo-cobertura-fill {{ 'coverage-good' if cobertura>=80 else 'coverage-warning' if cobertura>=50 else 'coverage-danger' }}" data-cotizat-width="{{ cobertura }}"></div></div>
+    {% if sin_datos %}<div class="hint csp-s-1d436efc1f">Assign hours below — <strong>h/unit is consumption (hours per unit)</strong>. A higher value is slower.</div>{% endif %}
+  </div>
+</div>
+
+<!-- ================= PANEL DE PLANIFICACIÓN ================= -->
+<div class="card" id="panel-planificacion">
+  <div class="card-head">
+    <div>
+      <h2>🗓 Quick scheduling</h2>
+      <p class="hint">Adjust the workday, crews and start date to see the schedule and the labor load live. Nothing is saved until you assign manual times; it is only a simulator.</p>
+    </div>
+    <span class="badge badge-categoria" id="badge-planificacion">Simulator</span>
+  </div>
+  <div class="planificacion-grid">
+    <div class="field">
+      <label>Workday (h/day)</label>
+      <div class="plan-control">
+        <input type="range" id="input-jornada" min="4" max="12" step="0.5" value="{{ tiempos.horas_jornada }}">
+        <input type="number" id="input-jornada-num" value="{{ tiempos.horas_jornada }}" min="4" max="12" step="0.5" class="csp-s-3e5bb81768">
+      </div>
+      <small class="hint">Temporary adjustment for the simulation. The workday of the estimate is {{ tiempos.horas_jornada }} h.</small>
+    </div>
+    <div class="field">
+      <label>Crews in parallel</label>
+      <div class="plan-control">
+        <input type="range" id="input-cuadrillas" min="1" max="6" step="1" value="1">
+        <input type="number" id="input-cuadrillas-num" value="1" min="1" max="6" step="1" class="csp-s-3e5bb81768">
+      </div>
+      <small class="hint">If you double the crews, the critical schedule is halved. Each crew uses the chosen composition.</small>
+    </div>
+    <div class="field">
+      <label>Crew composition</label>
+      <select id="select-composicion">
+        <option value="1of1ay" selected>1 journeyman + 1 helper (standard)</option>
+        <option value="2of1ay">2 journeymen + 1 helper</option>
+        <option value="1of2ay">1 journeyman + 2 helpers</option>
+        <option value="2of2ay">2 journeymen + 2 helpers</option>
+        <option value="1of">Journeyman only</option>
+        <option value="1ay">Helper only</option>
+      </select>
+      <small class="hint">Affects the schedule: each line item is recalculated based on how many journeymen and helpers work in parallel.</small>
+    </div>
+    <div class="field">
+      <label>Start date (to date the estimated finish)</label>
+      <input type="date" id="input-fecha-inicio" value="{{ p.fecha.isoformat() if p.fecha else '' }}">
+      <small class="hint" id="hint-fecha-fin">Estimated finish: —</small>
+    </div>
+    <div class="field">
+      <label>Simple calendar</label>
+      <label class="check-line"><input type="checkbox" id="input-trabajar-sabado"> Work on Saturdays</label>
+      <small class="hint">By default it works Mon–Fri. Public holidays are not included.</small>
+    </div>
+    <div class="field">
+      <label>Recommended buffer</label>
+      <div class="plan-control plan-control-short">
+        <input type="number" id="input-buffer-dias" value="2" min="0" max="30" step="1" class="csp-s-3e5bb81768">
+        <span class="hint">working days</span>
+      </div>
+      <small class="hint">It is only added to the promised date, not to the technical calculation.</small>
+    </div>
+  </div>
+
+  <div class="planificacion-resumen" id="plan-resumen">
+    <div class="plan-bloque">
+      <strong id="plan-dias-criticos">{{ "%.1f"|format(tiempos.total_dias_duracion) }} critical days</strong>
+      <span>with the current settings</span>
+      <small id="plan-detalle-dias">Man-hours {{ "%.1f"|format(tiempos.total_dias) }} days · Critical duration {{ "%.1f"|format(tiempos.total_dias_duracion) }} days (1 crew)</small>
+    </div>
+    <div class="plan-bloque">
+      <strong id="plan-oficial-dias">{{ "%.1f"|format(tiempos.oficial_dias) }} journeyman-days</strong>
+      <span>({{ "%.1f"|format(tiempos.total_oficial_h) }} h)</span>
+      <small id="plan-ayudante-dias">{{ "%.1f"|format(tiempos.ayudante_dias) }} helper-days · {{ "%.1f"|format(tiempos.total_ayudante_h) }} h</small>
+    </div>
+    <div class="plan-bloque">
+      <strong id="plan-fecha-fin">—</strong>
+      <span>estimated finish date</span>
+      <small>(working days Mon–Fri only, no public holidays)</small>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ASISTENTE DE DECISIÓN ================= -->
+<div class="card tiempos-asistente" id="asistente-planificacion">
+  <div class="card-head">
+    <div>
+      <h2>🧭 Scheduling assistant</h2>
+      <p class="hint">A simple summary to choose the crew without overwhelming you: compare scenarios, find the bottleneck and build an internal schedule by section.</p>
+    </div>
+    <button class="btn btn-sm" type="button" data-cotizat-click="window-print">Export internal plan</button>
+  </div>
+
+  <div class="asistente-grid">
+    <section class="asistente-panel asistente-destacado" aria-labelledby="asistente-recomendacion-titulo">
+      <span class="asistente-kicker">Recommendation</span>
+      <h3 id="asistente-recomendacion-titulo">What to do</h3>
+      <p id="asistente-recomendacion">Calculating recommendation…</p>
+      <div class="asistente-metricas">
+        <span><strong id="asistente-plazo">—</strong><small>technical schedule</small></span>
+        <span><strong id="asistente-fecha">—</strong><small>promised date</small></span>
+      </div>
+    </section>
+
+    <section class="asistente-panel" aria-labelledby="asistente-cuello-titulo">
+      <span class="asistente-kicker">Bottleneck</span>
+      <h3 id="asistente-cuello-titulo">Where the job gets stuck</h3>
+      <p id="asistente-cuello">Calculating bottleneck…</p>
+      <div class="cuello-barras" aria-hidden="true">
+        <div><span>Journeyman</span><strong id="cuello-oficial-label">—</strong><i><b id="cuello-oficial-bar"></b></i></div>
+        <div><span>Helper</span><strong id="cuello-ayudante-label">—</strong><i><b id="cuello-ayudante-bar"></b></i></div>
+        <div><span>Equipment</span><strong id="cuello-equipos-label">—</strong><i><b id="cuello-equipos-bar"></b></i></div>
+      </div>
+    </section>
+  </div>
+
+  <details class="asistente-details" open>
+    <summary>Compare crew scenarios</summary>
+    <div class="table-wrap">
+      <table class="table tabla-escenarios">
+        <thead><tr><th>Scenario</th><th>Crew</th><th class="right">Schedule</th><th class="right">Improvement</th><th class="right">Labor cost</th><th>Quick read</th></tr></thead>
+        <tbody id="tabla-escenarios-body"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="asistente-details">
+    <summary>Internal schedule by section</summary>
+    <p class="hint">A simple internal view. It keeps the section order and spreads the schedule according to the current composition; use it for purchasing, coordination and follow-up.</p>
+    <div class="cronograma" id="cronograma-capitulos"></div>
+  </details>
+</div>
+
+{% if sin_datos %}
+<div class="alert csp-s-a01f14dd06">
+  <div class="csp-s-618c05be5c">⚠ <strong>{{ sin_datos }} line item(s)</strong> without data are not counted in the totals. Assign them directly below (journeyman / helper / equipment per unit) and it will be saved instantly. You can also work through section by section.</div>
+  <button type="button" class="btn btn-sm" data-cotizat-click="scroll-target" data-target="tabla-detalle">⬇ Go to assign</button>
+</div>
+
+<!-- Asignación rápida masiva -->
+<div class="card" id="card-bulk">
+  <div class="card-head">
+    <div>
+      <h2>⚡ Quick bulk assignment</h2>
+      <p class="hint">Select several line items without data and give them all the same time per unit in one click. Ideal for similar line items (painting, cleaning, etc.).</p>
+    </div>
+  </div>
+  <div class="bulk-tiempo-grid">
+    <label class="check-line csp-s-d56e3e3bc1"><input type="checkbox" id="bulk-check-all"> Seleccionar todas sin datos ({{ sin_datos }})</label>
+    <div class="bulk-inputs">
+      <div class="field"><label>Journeyman h / unit</label><input type="number" id="bulk-oficial" step="0.05" min="0" placeholder="0,60"></div>
+      <div class="field"><label>Helper h / unit</label><input type="number" id="bulk-ayudante" step="0.05" min="0" placeholder="0,40"></div>
+      <div class="field"><label>Equipment h / unit</label><input type="number" id="bulk-equipo" step="0.05" min="0" placeholder="0,00"></div>
+      <div class="field"><label>Or apply a total (splits 60/40)</label><input type="number" id="bulk-total" step="0.05" min="0" placeholder="1,00"></div>
+    </div>
+    <div class="form-actions compact-actions">
+      <button type="button" class="btn btn-primary" id="btn-bulk-aplicar">Apply to selected</button>
+      <button type="button" class="btn" id="btn-bulk-borrar">Clear assignment (back to automatic)</button>
+      <span class="hint" id="bulk-status"></span>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ================= RESUMEN POR CAPÍTULOS ================= -->
+<div class="card">
+  <div class="card-head">
+    <div>
+      <h2>Summary by section</h2>
+      <p class="hint">Man-hours per section. The bar shows its share of the total. The Duration column is the critical (parallel) one per section.</p>
+    </div>
+  </div>
+  {% if tiempos.capitulos %}
+  <div class="barra-capitulos">
+    {% for c in tiempos.capitulos %}
+    <div class="barra-capitulo" data-cotizat-flex-basis="{{ c.pct }}" title="{{ c.nombre }}: {{ c.pct }}% of the hours · {{ c.oficial_h }}h journeyman + {{ c.ayudante_h }}h helper"></div>
+    {% endfor %}
+  </div>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Section</th><th class="right">Man-hours</th><th class="right">Journeyman</th><th class="right">Helper</th><th class="right">Equipment</th><th class="right">Duration</th><th class="right">Share of total</th><th class="right">Items</th></tr></thead>
+      <tbody>
+      {% for c in tiempos.capitulos %}
+        <tr>
+          <td><strong>{{ c.nombre }}</strong></td>
+          <td class="right">{{ "%.1f"|format(c.horas) }} h</td>
+          <td class="right">{{ "%.1f"|format(c.oficial_h) }} h</td>
+          <td class="right">{{ "%.1f"|format(c.ayudante_h) }} h</td>
+          <td class="right">{{ "%.1f"|format(c.equipos_h) }} h</td>
+          <td class="right"><strong>{{ "%.1f"|format(c.duracion_h) }} h</strong></td>
+          <td class="right">{{ "%.1f"|format(c.pct) }} %</td>
+          <td class="right">{{ c.n_partidas }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Donut / leyenda por oficio -->
+  <div class="tiempos-leyenda">
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-29d4ad1ec3"></span> Journeyman {{ "%.1f"|format(tiempos.total_oficial_h) }} h ({{ "%.0f"|format(pct_oficial) }}%)</span>
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-8fb634d160"></span> Helper {{ "%.1f"|format(tiempos.total_ayudante_h) }} h ({{ "%.0f"|format(pct_ayudante) }}%)</span>
+    {% if tiempos.total_capataz_h %}<span class="leyenda-item"><span class="leyenda-dot csp-s-bddef4339f"></span> Foreman {{ "%.1f"|format(tiempos.total_capataz_h) }} h</span>{% endif %}
+    <span class="leyenda-item"><span class="leyenda-dot csp-s-80cd702205"></span> Equipment {{ "%.1f"|format(tiempos.total_equipos_h) }} h</span>
+  </div>
+  {% else %}
+  <p class="empty">No line items with estimated hours yet.</p>
+  {% endif %}
+</div>
+
+<!-- ================= TABLA DE DETALLE CON EDICIÓN RÁPIDA ================= -->
+<div class="card" id="tabla-detalle">
+  <div class="card-head">
+    <div>
+      <h2>Line item detail — quick edit</h2>
+      <p class="hint">Hours per unit × quantity = line item hours. <strong>Journeyman / Helper / Equipment</strong> they add up as man-hours; the duration is the maximum among them (work in parallel within the same line item). Click <em>✏ Assign</em> to set manual hours in seconds.</p>
+    </div>
+    <div class="actions">
+      <input type="text" id="filtro-tiempos" placeholder="🔍 Filter line items…" class="csp-s-c0b35682cc">
+      <select id="filtro-fuente" class="select-inline csp-s-38965f9b18"><option value="">All sources</option><option value="descompuesto">Breakdown</option><option value="catalogo">Catalog</option><option value="coste">From cost</option><option value="manual">Manual</option><option value="sin_datos">No data</option></select>
+    </div>
+  </div>
+
+  {% set ns = namespace(actual="") %}
+  {% for t in tiempos.partidas %}
+    {% if t.capitulo != ns.actual %}
+      {% if ns.actual %}</tbody></table></div>{% endif %}
+      {% set ns.actual = t.capitulo %}
+      <div class="doc-capitulo-banda"></div>
+      <div class="doc-capitulo tiempos-capitulo-head">
+        <span>{{ t.capitulo or 'GENERAL SECTION' }}</span>
+        <span class="hint csp-s-6b2a94ea3b">{{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='horas') | sum) }} man-hours · {{ "%.1f"|format(tiempos.capitulos | selectattr('nombre', 'equalto', t.capitulo) | map(attribute='duracion_h') | sum) }} h duration</span>
+      </div>
+      <div class="table-wrap">
+      <table class="table table-tiempos">
+        <thead>
+          <tr>
+            <th class="csp-s-9fda40b045">Line item</th>
+            <th class="right csp-s-71f9841409">Quantity</th>
+            <th class="right csp-s-0dfe35f39a">Rate h/unit</th>
+            <th class="right csp-s-11e632aedb" title="Journeyman hours">👷‍♂️ Journeyman</th>
+            <th class="right csp-s-11e632aedb" title="Helper hours">🧑‍🔧 Helper</th>
+            <th class="right csp-s-71f9841409">Equipment</th>
+            <th class="right csp-s-71f9841409">Duration</th>
+            <th class="right csp-s-11e632aedb">Total mh</th>
+            <th class="csp-s-8378652daa">Source</th>
+            <th class="csp-s-72244bfef4">Assign</th>
+          </tr>
+        </thead>
+        <tbody data-capitulo="{{ t.capitulo }}">
+    {% endif %}
+    <tr class="{{ 'tiempos-inactiva' if not t.activa else '' }} {{ 'tiempos-sin-datos' if t.fuente == 'sin_datos' else '' }} fila-tiempo" data-partida-id="{{ t.partida_id }}" data-fuente="{{ t.fuente }}" data-nombre="{{ t.nombre|lower }}">
+      <td>
+        {% if t.detalle %}
+        <details class="tiempos-detalle">
+          <summary title="View resources contributing hours">{{ t.nombre }}</summary>
+          <table class="table table-tiempos-filas">
+            <thead><tr><th>Resource</th><th>Unit</th><th class="right">Rate</th><th class="right">h / {{ t.unidad or 'ud' }}</th><th>Role</th></tr></thead>
+            <tbody>
+            {% for f in t.detalle %}
+              <tr>
+                <td>{% if f.codigo %}<span class="hint">{{ f.codigo }} · </span>{% endif %}{{ f.descripcion or '—' }}{% if f.grupo %} <span class="hint">({{ f.grupo }})</span>{% endif %}</td>
+                <td>{{ f.unidad }}</td>
+                <td class="right">{{ "%.4f"|format(f.rendimiento) }}</td>
+                <td class="right">{{ "%.4f"|format(f.horas_por_unidad) }}</td>
+                <td><span class="fuente-badge {{ 'badge-mano-obra' if f.categoria == 'mano_obra' else 'badge-equipos' }} {{ 'badge-oficial' if f.rol=='oficial' else 'badge-ayudante' if f.rol=='ayudante' else '' }}">{{ f.rol_etiqueta or ('Labor' if f.categoria == 'mano_obra' else 'Equipment') }}</span></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </details>
+        {% else %}
+        <span class="tiempos-sin-detalle" title="{{ t.fuente_etiqueta }}{{ (' — ' ~ t.nota) if t.nota else '' }}">{{ t.nombre }}</span>
+        {% endif %}
+        {% if t.fuente == 'sin_datos' %}<br><span class="hint csp-s-e6fd6b5ab2">No time — assign below</span>{% endif %}
+      </td>
+      <td class="right">{{ "%.2f"|format(t.cantidad) }} {{ t.unidad or 'ud' }}</td>
+      <td class="right">{% if t.fuente != 'sin_datos' %}{{ "%.3f"|format(t.horas_por_unidad) }}<br><small class="hint">{{ "%.3f"|format(t.duracion_por_unidad) }} crit.</small>{% else %}—{% endif %}</td>
+      <td class="right">{% if t.fuente != 'sin_datos' %}{{ "%.1f"|format(t.oficial_h) }}<br><small class="hint">{{ "%.3f"|format(t.oficial_por_unidad) }}/ud</small>{% else %}—{% endif %}</td>
+      <td class="right">{% if t.fuente != 'sin_datos' %}{{ "%.1f"|format(t.ayudante_h) }}<br><small class="hint">{{ "%.3f"|format(t.ayudante_por_unidad) }}/ud</small>{% else %}—{% endif %}</td>
+      <td class="right">{% if t.fuente != 'sin_datos' %}{{ "%.1f"|format(t.equipos_h) }}{% else %}—{% endif %}</td>
+      <td class="right">{% if t.fuente != 'sin_datos' %}<strong>{{ "%.1f"|format(t.duracion_h) }}</strong>{% else %}—{% endif %}</td>
+      <td class="right"><strong>{% if t.fuente != 'sin_datos' %}{{ "%.1f"|format(t.horas) }}{% else %}—{% endif %}</strong></td>
+      <td>
+        {% if t.fuente == 'manual' %}<span class="fuente-badge badge-manual" title="Time set manually for this line item">✏ Manual</span>
+        {% elif t.fuente == 'descompuesto' %}<span class="fuente-badge badge-descompuesto" title="Hours from productivity rates (h/day) in the breakdown">📐 Breakdown</span>
+        {% elif t.fuente == 'catalogo' %}<span class="fuente-badge badge-catalogo" title="Hours per unit from the catalog">📖 Catalog</span>
+        {% elif t.fuente == 'coste' %}<span class="fuente-badge badge-coste" title="Labor cost ÷ rate {{ '%.2f'|format(tiempos.tarifa_hora_media) }} $/h">💰 From cost</span>
+        {% else %}<span class="fuente-badge badge-sin-datos">No data</span>{% endif %}
+        {% if not t.activa %}<span class="fuente-badge badge-inactiva">Not included</span>{% endif %}
+      </td>
+      <td>
+        <div class="tiempo-edit" data-partida="{{ t.partida_id }}">
+          {% if t.fuente == 'manual' %}
+            <div class="tiempo-edit-valores hint" title="Manual values per unit">
+              {{ "%.2f"|format(t.oficial_por_unidad) }}/{{ "%.2f"|format(t.ayudante_por_unidad) }}/{{ "%.2f"|format(t.equipos_por_unidad) }} <span title="Journeyman / Helper / Equipment">J/H/E</span>
+            </div>
+          {% endif %}
+          <div class="tiempo-edit-form csp-s-017ade935b">
+            <input type="number" step="0.05" min="0" placeholder="Jrn." title="Journeyman h/unit" class="input-tiempo input-oficial csp-s-76976c3274" data-rol="oficial" value="{{ '' if t.fuente!='manual' else (t.oficial_por_unidad if t.oficial_por_unidad else '') }}">
+            <input type="number" step="0.05" min="0" placeholder="Hlp." title="Helper h/unit" class="input-tiempo input-ayudante csp-s-76976c3274" data-rol="ayudante" value="{{ '' if t.fuente!='manual' else (t.ayudante_por_unidad if t.ayudante_por_unidad else '') }}">
+            <input type="number" step="0.05" min="0" placeholder="Eqp." title="Equipment h/unit" class="input-tiempo input-equipo csp-s-76976c3274" data-rol="equipo" value="{{ '' if t.fuente!='manual' else (t.equipos_por_unidad if t.equipos_por_unidad else '') }}">
+            <button type="button" class="btn btn-sm btn-primary btn-guardar-tiempo" data-partida="{{ t.partida_id }}" title="Save manual time">💾</button>
+            {% if t.fuente == 'manual' %}<button type="button" class="btn btn-sm btn-ghost btn-borrar-tiempo" data-partida="{{ t.partida_id }}" title="Clear manual and go back to automatic">↺</button>{% endif %}
+            <label class="check-line csp-s-15e65b4ac3" title="Select for bulk assignment"><input type="checkbox" class="bulk-check" value="{{ t.partida_id }}" {% if t.fuente=='sin_datos' %}checked{% endif %}> bulk</label>
+          </div>
+          <div class="tiempo-edit-total csp-s-de8b6f07a0">
+            <input type="number" step="0.05" min="0" placeholder="Total h/unit (60/40)" title="Total h/unit — if you use it, it splits 60% journeyman / 40% helper" class="input-tiempo input-total csp-s-dffece7534" data-rol="total">
+            <button type="button" class="btn btn-xs btn-guardar-tiempo-total" data-partida="{{ t.partida_id }}" title="Save total">Total →</button>
+          </div>
+        </div>
+        <div class="tiempo-edit-status hint csp-s-982b0a31a7"></div>
+      </td>
+    </tr>
+  {% endfor %}
+  {% if tiempos.partidas %}</tbody></table></div>{% endif %}
+
+  {% if not tiempos.partidas %}
+  <p class="empty">This estimate has no line items yet.</p>
+  {% else %}
+  <table class="table doc-totales csp-s-767f2cb245">
+    <tr><td class="right csp-s-87c7216e17"><strong>TOTAL MAN-HOURS</strong> <span class="hint">(journeyman {{ "%.1f"|format(tiempos.total_oficial_h) }} + helper {{ "%.1f"|format(tiempos.total_ayudante_h) }}{% if tiempos.total_capataz_h %} + foreman {{ "%.1f"|format(tiempos.total_capataz_h) }}{% endif %})</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_mano_obra_h) }} h</strong></td></tr>
+    <tr><td class="right"> + Equipment / machinery</td><td class="right">{{ "%.1f"|format(tiempos.total_equipos_h) }} h</td></tr>
+    <tr><td class="right"><strong>TOTAL HOURS (labor + equipment)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_horas) }} h</strong></td></tr>
+    <tr class="csp-s-dbcfa29b81"><td class="right"><strong>TOTAL CRITICAL DURATION</strong> <span class="hint">(max per line item, work in parallel)</span></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_duracion_h) }} h</strong> · {{ "%.1f"|format(tiempos.total_dias_duracion) }} days</td></tr>
+    <tr><td class="right"><strong>WORKING DAYS (man-hours / {{ "%.0f"|format(tiempos.horas_jornada) }} h)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_dias) }} days</strong> <span class="hint">· {{ "%.1f"|format(tiempos.total_semanas) }} sem.</span></td></tr>
+    <tr><td class="right"><strong>CRITICAL DAYS (duration / {{ "%.0f"|format(tiempos.horas_jornada) }} h)</strong></td><td class="right"><strong>{{ "%.1f"|format(tiempos.total_dias_duracion) }} days</strong> <span class="hint">· {{ "%.1f"|format(tiempos.total_semanas_duracion) }} sem.</span></td></tr>
+  </table>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>📊 How it is calculated — professional methodology</h2>
+  <ul class="tiempos-metodo">
+    <li><strong>Manual (top priority):</strong> if you assign hours manually to a line item (journeyman / helper / equipment per unit), that value overrides any breakdown, catalog or cost-based estimate. It is saved for this estimate only.</li>
+    <li><strong>Breakdown (measured):</strong> each row with a time unit (h, day…) multiplies rate × quantity. Labor rows are classified by role (journeyman / helper / foreman) from their description; the rest with a time unit count as equipment.</li>
+    <li><strong>Catalog (measured):</strong> if the line item comes from the catalog and has no breakdown with hours, its estimated time is used. If the catalog has a breakdown by trade, that is kept; otherwise it is split 60% journeyman / 40% helper.</li>
+    <li><strong>From cost (estimated):</strong> if none of the above applies, hours ≈ labor cost ÷ average rate of {{ "%.2f"|format(tiempos.tarifa_hora_media) }} $/h (configurable in Settings).</li>
+    <li><strong>Critical duration:</strong> per line item it is the maximum among journeyman, helper, foreman and equipment (work in parallel within the same line item). Total duration is the sum of durations — the shortest schedule with one full crew and no overlap between line items.</li>
+    <li><strong>Crews and composition:</strong> each line item is recalculated according to the composition chosen. With 2 journeymen the journeyman work is split; with 2 helpers the helper work is split; with <em>n</em> identical crews the resulting schedule is divided by <em>n</em>. Use the simulator above for projections.</li>
+    <li><strong>Why does adding a helper push it from 36h to 50h?</strong> Because <strong>man-hours</strong> is effort (sum: 30h journeyman + 20h helper = 50h), while <strong>schedule</strong> is duration (max: 30h). With a helper, effort goes up a little but the schedule drops from 36h to 30h. The field <em>h/unit is consumption (hours per unit)</em>: <code>0.5 h/m²</code> = 30 min per m². A higher number is slower. It is not productivity (m²/h).</li>
+  </ul>
+  <div class="alert csp-s-749f8ab21b">
+    💡 <strong>Professional tip:</strong> fill in the line items without data first, using manual times (even approximate ones). With coverage above 90%, the schedule estimate and the labor load (journeyman-days / helper-days) are reliable enough to plan purchases and subcontractors.
+  </div>
+</div>
+
+<div id="tiempos-toast" class="undo-flash csp-s-a0a5f73abb"></div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function(){
+  const presupuestoId = {{ p.id | tojson }};
+  const tiemposBase = {{ tiempos | tojson }};
+  let horasJornada = {{ tiempos.horas_jornada | tojson }};
+  let totalManoObraH = {{ tiempos.total_mano_obra_h | tojson }};
+  let totalDuracionH = {{ tiempos.total_duracion_h | tojson }};
+  let totalHorasH = {{ tiempos.total_horas | tojson }};
+  let totalOficialH = {{ tiempos.total_oficial_h | tojson }};
+  let totalAyudanteH = {{ tiempos.total_ayudante_h | tojson }};
+  let totalCapatazH = {{ tiempos.total_capataz_h | tojson }};
+  let totalEquiposH = {{ tiempos.total_equipos_h | tojson }};
+
+  const toast = document.getElementById('tiempos-toast');
+  function showToast(msg, ok=true){
+    toast.textContent = msg;
+    CotizatStyles.set(toast, "background", ok ? 'var(--zinc-900)' : '#e11d48');
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 2500);
+  }
+
+  // ---------- Simulador ----------
+  const inpJ = document.getElementById('input-jornada');
+  const inpJNum = document.getElementById('input-jornada-num');
+  const inpC = document.getElementById('input-cuadrillas');
+  const inpCNum = document.getElementById('input-cuadrillas-num');
+  const inpFecha = document.getElementById('input-fecha-inicio');
+  const inpSabado = document.getElementById('input-trabajar-sabado');
+  const inpBuffer = document.getElementById('input-buffer-dias');
+  const selComp = document.getElementById('select-composicion');
+
+  function syncJornada(v){
+    horasJornada = parseFloat(v) || 8;
+    inpJ.value = horasJornada;
+    inpJNum.value = horasJornada;
+    actualizarPlanificacion();
+  }
+  if(inpJ) inpJ.addEventListener('input', e=> syncJornada(e.target.value));
+  if(inpJNum) inpJNum.addEventListener('input', e=> syncJornada(e.target.value));
+  function syncCuadrillas(v){
+    let n = parseInt(v,10)||1;
+    inpC.value=n; inpCNum.value=n;
+    actualizarPlanificacion();
+  }
+  if(inpC) inpC.addEventListener('input', e=> syncCuadrillas(e.target.value));
+  if(inpCNum) inpCNum.addEventListener('input', e=> syncCuadrillas(e.target.value));
+  if(inpFecha) inpFecha.addEventListener('change', actualizarPlanificacion);
+  if(inpSabado) inpSabado.addEventListener('change', actualizarPlanificacion);
+  if(inpBuffer) inpBuffer.addEventListener('input', actualizarPlanificacion);
+  if(selComp) selComp.addEventListener('change', actualizarPlanificacion);
+
+  function diasLaborablesEntre(inicio, dias, trabajarSabado=false){
+    let d = new Date(inicio);
+    let count=0;
+    let cur = new Date(d);
+    while(count < dias){
+      cur.setDate(cur.getDate()+1);
+      const day = cur.getDay();
+      const laborable = trabajarSabado ? day !== 0 : (day !== 0 && day !== 6);
+      if(laborable) count++;
+    }
+    return cur;
+  }
+
+  function formatoDias(v){
+    return v.toLocaleString('es-VE',{maximumFractionDigits:1});
+  }
+
+  function textoFecha(fecha){
+    return fecha.toLocaleDateString('es-VE',{day:'2-digit', month:'short', year:'numeric'});
+  }
+
+  function composicionActual(){
+    const value = (selComp && selComp.value) || '1of1ay';
+    const mapa = {
+      '1of1ay': {oficiales: 1, ayudantes: 1, label: '1 journeyman + 1 helper'},
+      '2of1ay': {oficiales: 2, ayudantes: 1, label: '2 journeymen + 1 helper'},
+      '1of2ay': {oficiales: 1, ayudantes: 2, label: '1 journeyman + 2 helpers'},
+      '2of2ay': {oficiales: 2, ayudantes: 2, label: '2 journeymen + 2 helpers'},
+      '1of': {oficiales: 1, ayudantes: 0, label: 'journeyman only'},
+      '1ay': {oficiales: 0, ayudantes: 1, label: 'helper only'}
+    };
+    return mapa[value] || mapa['1of1ay'];
+  }
+
+  function numero(v){
+    const n = Number(v || 0);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function duracionPartidaConComposicion(t, comp){
+    const of = numero(t.oficial_h);
+    const ay = numero(t.ayudante_h) + numero(t.otros_mo_h);
+    const cap = numero(t.capataz_h);
+    const eq = numero(t.equipos_h);
+    const oficiales = Math.max(0, Number(comp.oficiales || 0));
+    const ayudantes = Math.max(0, Number(comp.ayudantes || 0));
+    let durMO = 0;
+
+    // Con oficial y ayudante, cada rol se reparte entre sus integrantes.
+    // Si falta uno de los roles, el simulador permite ver un caso aproximado:
+    // el personal disponible absorbe toda la mano de obra, por eso el plazo sube.
+    if(oficiales > 0 && ayudantes > 0){
+      durMO = Math.max(
+        oficiales ? (of + cap) / oficiales : 0,
+        ayudantes ? ay / ayudantes : 0
+      );
+    } else if(oficiales > 0){
+      durMO = (of + ay + cap) / oficiales;
+    } else if(ayudantes > 0){
+      durMO = (of + ay + cap) / ayudantes;
+    } else {
+      durMO = of + ay + cap;
+    }
+    // La maquinaria/equipo puede ir en paralelo con la mano de obra, pero si tarda más, manda.
+    return Math.max(durMO, eq);
+  }
+
+  function duracionTotalConComposicion(comp){
+    const partidas = Array.isArray(tiemposBase && tiemposBase.partidas) ? tiemposBase.partidas : [];
+    let total = 0;
+    partidas.forEach(t => {
+      if(!t || t.activa === false || t.fuente === 'sin_datos') return;
+      total += duracionPartidaConComposicion(t, comp);
+    });
+    return total > 0 ? total : totalDuracionH;
+  }
+
+  function diasEscenario(composicionValue, cuadrillas, jornada){
+    const anterior = selComp ? selComp.value : '1of1ay';
+    let comp;
+    if(selComp) selComp.value = composicionValue;
+    comp = composicionActual();
+    if(selComp) selComp.value = anterior;
+    return (duracionTotalConComposicion(comp) / jornada) / Math.max(1, cuadrillas || 1);
+  }
+
+  function analizarCuello(comp, n, j){
+    const capacidadOf = n * comp.oficiales;
+    const capacidadAy = n * comp.ayudantes;
+    const diasOf = capacidadOf > 0 ? (totalOficialH + totalCapatazH) / (j * capacidadOf) : 0;
+    const diasAy = capacidadAy > 0 ? totalAyudanteH / (j * capacidadAy) : 0;
+    const diasEq = totalEquiposH ? totalEquiposH / (j * n) : 0;
+    const max = Math.max(diasOf, diasAy, diasEq, 0.01);
+    const tipo = max === diasOf ? 'oficiales' : max === diasAy ? 'ayudantes' : 'equipos';
+    return {diasOf, diasAy, diasEq, max, tipo};
+  }
+
+  function escapeHtml(txt){
+    return String(txt == null ? '' : txt).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function setBar(id, pct){
+    const el = document.getElementById(id);
+    if(el) CotizatStyles.set(el, 'width', Math.max(2, Math.min(100, pct)) + '%');
+  }
+
+  function actualizarCuelloVisual(cuello){
+    const fo = document.getElementById('cuello-oficial-label');
+    const fa = document.getElementById('cuello-ayudante-label');
+    const fe = document.getElementById('cuello-equipos-label');
+    if(fo) fo.textContent = formatoDias(cuello.diasOf) + ' d';
+    if(fa) fa.textContent = formatoDias(cuello.diasAy) + ' d';
+    if(fe) fe.textContent = formatoDias(cuello.diasEq) + ' d';
+    setBar('cuello-oficial-bar', cuello.diasOf / cuello.max * 100);
+    setBar('cuello-ayudante-bar', cuello.diasAy / cuello.max * 100);
+    setBar('cuello-equipos-bar', cuello.diasEq / cuello.max * 100);
+    const txt = document.getElementById('asistente-cuello');
+    if(txt){
+      if(cuello.tipo === 'oficiales') txt.textContent = 'The schedule depends mostly on journeymen. If you want to speed it up, try 2 journeymen or a second crew.';
+      else if(cuello.tipo === 'ayudantes') txt.textContent = 'The bottleneck is helpers/laborers. Adding a helper can cut days without touching every line item.';
+      else txt.textContent = 'Machinery/equipment drives the schedule. Check availability, rentals or overlaps.';
+    }
+  }
+
+  function actualizarEscenarios(j, diasActuales, compActual, nActual){
+    const tbody = document.getElementById('tabla-escenarios-body');
+    if(!tbody) return;
+    const base = diasEscenario('1of1ay', 1, j) || diasActuales;
+    const opciones = [
+      {nombre:'Normal', comp:'1of1ay', cuad:1, lectura:'Simple baseline for estimating without extra crew.'},
+      {nombre:'More journeymen', comp:'2of1ay', cuad:1, lectura:'Useful when the bottleneck is journeymen.'},
+      {nombre:'More helpers', comp:'1of2ay', cuad:1, lectura:'Useful when the laborer/helper load is high.'},
+      {nombre:'Reinforced crew', comp:'2of2ay', cuad:1, lectura:'Shortens the schedule while keeping a single work front.'},
+      {nombre:'Dos frentes', comp: selComp ? selComp.value : '1of1ay', cuad:2, lectura:'Speeds things up a lot, but it takes coordination and space.'},
+    ];
+    tbody.textContent = '';
+    let mejor = null;
+    opciones.forEach(o => {
+      const dias = diasEscenario(o.comp, o.cuad, j);
+      if(!mejor || dias < mejor.dias) mejor = {dias, nombre:o.nombre};
+      const tr = document.createElement('tr');
+      const mejora = base > 0 ? Math.max(0, (1 - dias / base) * 100) : 0;
+      const compLabel = (function(){ const prev = selComp ? selComp.value : ''; if(selComp) selComp.value = o.comp; const lbl = composicionActual().label; if(selComp) selComp.value = prev; return lbl; })();
+      const costeMo = totalManoObraH * numero(tiemposBase && tiemposBase.tarifa_hora_media);
+      const costeTxt = costeMo ? costeMo.toLocaleString('es-VE',{maximumFractionDigits:0}) + ' ' + ({{ p.moneda | tojson }} || '') : '—';
+      function td(text, cls, strong){
+        const cell = document.createElement('td');
+        if(cls) cell.className = cls;
+        if(strong){ const st = document.createElement('strong'); st.textContent = text; cell.appendChild(st); }
+        else cell.textContent = text;
+        return cell;
+      }
+      tr.appendChild(td(o.nombre, '', true));
+      tr.appendChild(td(o.cuad + ' crew(s) · ' + compLabel));
+      tr.appendChild(td(formatoDias(dias) + ' d', 'right', true));
+      tr.appendChild(td(mejora ? '−' + mejora.toFixed(0) + '%' : '—', 'right'));
+      tr.appendChild(td(costeTxt, 'right'));
+      tr.appendChild(td(o.lectura));
+      if(o.comp === (selComp ? selComp.value : '1of1ay') && o.cuad === nActual) tr.classList.add('escenario-actual');
+      tbody.appendChild(tr);
+    });
+    const rec = document.getElementById('asistente-recomendacion');
+    if(rec && mejor){
+      const cuello = analizarCuello(compActual, nActual, j);
+      let accion = cuello.tipo === 'oficiales' ? 'add journeymen' : cuello.tipo === 'ayudantes' ? 'add helpers' : 'review equipment/machinery';
+      rec.textContent = `Your current scenario gives ${formatoDias(diasActuales)} days. To speed it up without overcomplicating it, the first step would be ${accion}. The shortest scenario in the table is “${mejor.nombre}” with ${formatoDias(mejor.dias)} days.`;
+    }
+  }
+
+  function actualizarCronograma(comp, n, j){
+    const cont = document.getElementById('cronograma-capitulos');
+    if(!cont) return;
+    const partidas = Array.isArray(tiemposBase && tiemposBase.partidas) ? tiemposBase.partidas : [];
+    const orden = [];
+    const porCap = {};
+    partidas.forEach(t => {
+      if(!t || t.activa === false || t.fuente === 'sin_datos') return;
+      const cap = t.capitulo || 'GENERAL SECTION';
+      if(!porCap[cap]) { porCap[cap] = 0; orden.push(cap); }
+      porCap[cap] += duracionPartidaConComposicion(t, comp) / j / Math.max(1, n);
+    });
+    const total = orden.reduce((acc, cap) => acc + porCap[cap], 0) || 1;
+    cont.textContent = '';
+    let acumulado = 0;
+    orden.forEach((cap, idx) => {
+      const dias = porCap[cap];
+      const fila = document.createElement('div');
+      fila.className = 'cronograma-row';
+      const offset = acumulado / total * 100;
+      const width = dias / total * 100;
+      const capEl = document.createElement('span');
+      capEl.className = 'cronograma-cap';
+      capEl.textContent = (idx + 1) + '. ' + cap;
+      const track = document.createElement('div');
+      track.className = 'cronograma-track';
+      const bar = document.createElement('i');
+      track.appendChild(bar);
+      const dur = document.createElement('strong');
+      dur.textContent = formatoDias(dias) + ' d';
+      fila.appendChild(capEl);
+      fila.appendChild(track);
+      fila.appendChild(dur);
+      CotizatStyles.set(bar, 'left', offset + '%');
+      CotizatStyles.set(bar, 'width', Math.max(3, width) + '%');
+      cont.appendChild(fila);
+      acumulado += dias;
+    });
+  }
+
+  function actualizarAsistente(ctx){
+    const plazo = document.getElementById('asistente-plazo');
+    const fecha = document.getElementById('asistente-fecha');
+    if(plazo) plazo.textContent = formatoDias(ctx.diasCriticos) + ' days';
+    if(fecha) fecha.textContent = ctx.finPrometido ? textoFecha(ctx.finPrometido) : '—';
+    const cuello = analizarCuello(ctx.comp, ctx.n, ctx.j);
+    actualizarCuelloVisual(cuello);
+    actualizarEscenarios(ctx.j, ctx.diasCriticos, ctx.comp, ctx.n);
+    actualizarCronograma(ctx.comp, ctx.n, ctx.j);
+  }
+
+  function actualizarPlanificacion(){
+    const n = Math.max(1, parseInt((inpCNum && inpCNum.value) || 1,10));
+    const j = Math.max(1, parseFloat((inpJNum && inpJNum.value) || 8));
+    const comp = composicionActual();
+    const duracionComposicionH = duracionTotalConComposicion(comp);
+    const diasHombre = (totalManoObraH / j);
+    const diasCriticosUnaCuadrilla = duracionComposicionH / j;
+    const diasCriticos = diasCriticosUnaCuadrilla / n;
+    const semanasCrit = diasCriticos / 5;
+    const diasOfCarga = totalOficialH / j;
+    const diasAyCarga = totalAyudanteH / j;
+    const capacidadOficiales = n * comp.oficiales;
+    const capacidadAyudantes = n * comp.ayudantes;
+    const diasOfCalendario = capacidadOficiales > 0 ? ((totalOficialH + totalCapatazH) / (j * capacidadOficiales)) : null;
+    const diasAyCalendario = capacidadAyudantes > 0 ? (totalAyudanteH / (j * capacidadAyudantes)) : null;
+    const cuello = Math.max(diasOfCalendario || 0, diasAyCalendario || 0, totalEquiposH ? totalEquiposH / j / n : 0);
+
+    const elDiasCrit = document.getElementById('plan-dias-criticos');
+    const elPlazoHoras = document.getElementById('kpi-plazo-horas');
+    const elPlazoDiasTop = document.getElementById('kpi-plazo-dias-top');
+    const elEsfuerzoDiasHombre = document.getElementById('kpi-esfuerzo-dias-hombre');
+    const elEsfuerzoJornada = document.getElementById('kpi-esfuerzo-jornada');
+    const elDetalle = document.getElementById('plan-detalle-dias');
+    const elOf = document.getElementById('plan-oficial-dias');
+    const elAy = document.getElementById('plan-ayudante-dias');
+    const elSem = document.getElementById('kpi-semanas');
+    const elDiasDur = document.getElementById('kpi-dias-duracion');
+    const elDiasH = document.getElementById('kpi-dias-hombre');
+    const elCuadLabel = document.getElementById('kpi-cuadrilla-label');
+    const elCuadLabelTop = document.getElementById('kpi-cuadrilla-label-top');
+    const elJornadaTop = document.getElementById('kpi-jornada-top');
+    const elDiasCuad = document.getElementById('kpi-dias-cuadrilla');
+    const elDiasCuadTop = document.getElementById('kpi-dias-cuadrilla-top');
+    const elFechaFin = document.getElementById('plan-fecha-fin');
+    const elHintFin = document.getElementById('hint-fecha-fin');
+
+    const fmt = v => v.toLocaleString('es-VE',{maximumFractionDigits:1});
+    if(elDiasCrit) elDiasCrit.textContent = fmt(diasCriticos) + ' critical days';
+    if(elPlazoHoras) elPlazoHoras.textContent = fmt(duracionComposicionH / n);
+    if(elPlazoDiasTop) elPlazoDiasTop.textContent = fmt(diasCriticos);
+    if(elEsfuerzoDiasHombre) elEsfuerzoDiasHombre.textContent = fmt(diasHombre);
+    if(elEsfuerzoJornada) elEsfuerzoJornada.textContent = fmt(j);
+    if(elDetalle) elDetalle.textContent = `Man-hours ${fmt(diasHombre)} days · with ${comp.label}: ${fmt(diasCriticosUnaCuadrilla)} days (1 crew) → with ${n} crew(s) = ${fmt(diasCriticos)} days`;
+    if(elOf) elOf.textContent = fmt(diasOfCarga) + ' journeyman-days';
+    if(elAy){
+      const capTxt = `capacidad: ${capacidadOficiales || 0} jrn. + ${capacidadAyudantes || 0} hlp.`;
+      elAy.textContent = `${fmt(diasAyCarga)} helper-days · ${capTxt} · bottleneck: ${fmt(cuello)} days`;
+    }
+    if(elSem) elSem.textContent = fmt(semanasCrit);
+    if(elDiasDur) elDiasDur.textContent = fmt(diasCriticos);
+    if(elDiasH) elDiasH.textContent = fmt(diasHombre);
+    if(elCuadLabel) elCuadLabel.textContent = n + ' crew(s) (' + comp.label + ')';
+    if(elCuadLabelTop) elCuadLabelTop.textContent = n + ' crew(s) (' + comp.label + ')';
+    if(elJornadaTop) elJornadaTop.textContent = fmt(j);
+    if(elDiasCuad) elDiasCuad.textContent = fmt(diasCriticos);
+    if(elDiasCuadTop) elDiasCuadTop.textContent = fmt(diasCriticos);
+
+    // Fecha fin
+    let finTxt = '—';
+    let hintTxt = 'Fin estimado: —';
+    let finTecnico = null;
+    let finPrometido = null;
+    const trabajarSabado = !!(inpSabado && inpSabado.checked);
+    const bufferDias = Math.max(0, parseInt((inpBuffer && inpBuffer.value) || 0, 10) || 0);
+    if(inpFecha && inpFecha.value){
+      try{
+        const inicio = new Date(inpFecha.value + 'T12:00:00');
+        finTecnico = diasLaborablesEntre(inicio, Math.ceil(diasCriticos), trabajarSabado);
+        finPrometido = diasLaborablesEntre(inicio, Math.ceil(diasCriticos) + bufferDias, trabajarSabado);
+        finTxt = finPrometido.toLocaleDateString('es-VE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+        hintTxt = 'Technical finish: ' + finTecnico.toLocaleDateString('es-VE') + (bufferDias ? ' · promised with buffer: ' + finPrometido.toLocaleDateString('es-VE') : '');
+      }catch(e){}
+    }
+    if(elFechaFin) elFechaFin.textContent = finTxt;
+    if(elHintFin) elHintFin.textContent = hintTxt;
+    actualizarAsistente({diasCriticos, comp, n, j, finTecnico, finPrometido, trabajarSabado, bufferDias});
+  }
+  actualizarPlanificacion();
+
+  // ---------- Filtros ----------
+  const filtroNombre = document.getElementById('filtro-tiempos');
+  const filtroFuente = document.getElementById('filtro-fuente');
+  function aplicarFiltros(){
+    const q = (filtroNombre && filtroNombre.value || '').toLowerCase().trim();
+    const f = filtroFuente && filtroFuente.value || '';
+    document.querySelectorAll('.fila-tiempo').forEach(tr=>{
+      const nombre = tr.dataset.nombre || '';
+      const fuente = tr.dataset.fuente || '';
+      const okNombre = !q || nombre.includes(q);
+      const okFuente = !f || fuente===f;
+      CotizatStyles.set(tr, "display", (okNombre && okFuente) ? '' : 'none');
+    });
+  }
+  if(filtroNombre) filtroNombre.addEventListener('input', aplicarFiltros);
+  if(filtroFuente) filtroFuente.addEventListener('change', aplicarFiltros);
+
+  // ---------- Guardar manual por partida ----------
+  async function guardarTiempo(partidaId, payload){
+    const editEl = document.querySelector(`.tiempo-edit[data-partida="${partidaId}"]`);
+    const statusEl = editEl && editEl.parentElement ? editEl.parentElement.querySelector('.tiempo-edit-status') : null;
+    if(statusEl) statusEl.textContent = 'Guardando…';
+    try{
+      const res = await fetch(`/presupuestos/${presupuestoId}/tiempos/manual`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(Object.assign({partida_id: partidaId}, payload))
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || 'Error');
+      if(statusEl) { statusEl.textContent = '✓ Guardado'; CotizatStyles.set(statusEl, "color", 'var(--green)'); setTimeout(()=> statusEl.textContent='', 2000); }
+      // Actualizar KPIs si viene tiempos
+      if(data.tiempos){
+        totalManoObraH = data.tiempos.total_mano_obra_h;
+        totalDuracionH = data.tiempos.total_duracion_h;
+        totalHorasH = data.tiempos.total_horas;
+        totalOficialH = data.tiempos.total_oficial_h;
+        totalAyudanteH = data.tiempos.total_ayudante_h;
+        totalCapatazH = data.tiempos.total_capataz_h;
+        totalEquiposH = data.tiempos.total_equipos_h;
+        if(data.tiempos.partidas) tiemposBase.partidas = data.tiempos.partidas;
+        actualizarPlanificacion();
+      }
+      // Mostrar toast y opción de recargar para ver tabla actualizada completa
+      showToast('Manual time saved — reload to see exact totals in the table');
+      // Opcional: marcar fila como manual sin recargar
+      const fila = document.querySelector(`.fila-tiempo[data-partida-id="${partidaId}"]`);
+      if(fila){
+        fila.dataset.fuente = 'manual';
+        const badge = fila.querySelector('td:nth-child(9) .fuente-badge');
+        if(badge){ badge.textContent='✏ Manual'; badge.className='fuente-badge badge-manual'; }
+      }
+    }catch(e){
+      if(statusEl){ statusEl.textContent = '✗ ' + (e.message||'Error'); CotizatStyles.set(statusEl, "color", 'var(--rose)');}
+      showToast(e.message||'Error while saving', false);
+    }
+  }
+
+  document.querySelectorAll('.btn-guardar-tiempo').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const pid = btn.dataset.partida;
+      const wrap = document.querySelector(`.tiempo-edit[data-partida="${pid}"]`);
+      if(!wrap) return;
+      const of = wrap.querySelector('.input-oficial').value;
+      const ay = wrap.querySelector('.input-ayudante').value;
+      const eq = wrap.querySelector('.input-equipo').value;
+      // Si todos vacíos, no hacer nada
+      if(!of && !ay && !eq){ showToast('Enter at least a journeyman or a helper', false); return; }
+      guardarTiempo(pid, {
+        horas_oficial: of === '' ? null : of,
+        horas_ayudante: ay === '' ? null : ay,
+        horas_equipo: eq === '' ? null : eq
+      });
+    });
+  });
+  document.querySelectorAll('.btn-guardar-tiempo-total').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const pid = btn.dataset.partida;
+      const wrap = document.querySelector(`.tiempo-edit[data-partida="${pid}"]`);
+      if(!wrap) return;
+      const tot = wrap.querySelector('.input-total').value;
+      if(!tot){ showToast('Enter the total h/unit', false); return; }
+      guardarTiempo(pid, {horas: tot});
+    });
+  });
+  document.querySelectorAll('.btn-borrar-tiempo').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const pid = btn.dataset.partida;
+      if(!confirm('Delete the manual time and go back to the automatic estimate?')) return;
+      await guardarTiempo(pid, {horas:null, horas_oficial:null, horas_ayudante:null, horas_equipo:null});
+      // Limpiar inputs
+      const wrap = document.querySelector(`.tiempo-edit[data-partida="${pid}"]`);
+      if(wrap){
+        wrap.querySelectorAll('.input-tiempo').forEach(i=> i.value='');
+      }
+      showToast('Manual assignment deleted');
+      setTimeout(()=> location.reload(), 900);
+    });
+  });
+
+  // Enter en inputs guarda
+  document.querySelectorAll('.input-tiempo').forEach(inp=>{
+    inp.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){
+        e.preventDefault();
+        const wrap = inp.closest('.tiempo-edit');
+        const pid = wrap && wrap.dataset.partida;
+        const btn = wrap && wrap.querySelector('.btn-guardar-tiempo');
+        const btnTot = wrap && wrap.querySelector('.btn-guardar-tiempo-total');
+        if(inp.classList.contains('input-total')){
+          if(btnTot) btnTot.click();
+        } else {
+          if(btn) btn.click();
+        }
+      }
+    });
+  });
+
+  // ---------- Bulk ----------
+  const bulkAll = document.getElementById('bulk-check-all');
+  const bulkStatus = document.getElementById('bulk-status');
+  if(bulkAll){
+    bulkAll.addEventListener('change', ()=>{
+      document.querySelectorAll('.bulk-check').forEach(cb=>{
+        const tr = cb.closest('.fila-tiempo');
+        if(tr && !CotizatStyles.isHidden(tr)) cb.checked = bulkAll.checked;
+      });
+    });
+  }
+  const btnBulkAplicar = document.getElementById('btn-bulk-aplicar');
+  if(btnBulkAplicar){
+    btnBulkAplicar.addEventListener('click', async ()=>{
+      const seleccionados = Array.from(document.querySelectorAll('.bulk-check:checked')).map(cb=> parseInt(cb.value,10)).filter(Boolean);
+      if(!seleccionados.length){ showToast('Select at least one line item', false); return; }
+      let h_of = document.getElementById('bulk-oficial').value;
+      let h_ay = document.getElementById('bulk-ayudante').value;
+      let h_eq = document.getElementById('bulk-equipo').value;
+      let h_tot = document.getElementById('bulk-total').value;
+      // Normalizar: vacío -> null
+      const payload = {items: seleccionados.map(id=> ({partida_id:id})) };
+      // Si hay total, lo usamos para todos
+      if(h_tot && !h_of && !h_ay && !h_eq){
+        payload.horas = h_tot;
+      } else {
+        if(h_of) payload.horas_oficial = h_of;
+        if(h_ay) payload.horas_ayudante = h_ay;
+        if(h_eq) payload.horas_equipo = h_eq;
+        // Si no hay desglose pero sí total, payload.horas ya está
+        if(!payload.horas_oficial && !payload.horas_ayudante && !payload.horas_equipo && !payload.horas){
+          showToast('Enter Jrn/Hlp/Equip or a Total', false); return;
+        }
+      }
+      // Construir items con valores por partida (si se usa total, todos iguales)
+      // Para el endpoint bulk, enviamos items con horas individuales si hay total
+      if(payload.horas && !payload.horas_oficial && !payload.horas_ayudante){
+        payload.items = seleccionados.map(id=> ({partida_id:id, horas: payload.horas}));
+        delete payload.horas;
+      } else {
+        // desglose: todos con mismo desglose
+        payload.items = seleccionados.map(id=> ({
+          partida_id:id,
+          horas_oficial: payload.horas_oficial || null,
+          horas_ayudante: payload.horas_ayudante || null,
+          horas_equipo: payload.horas_equipo || null
+        }));
+        // limpiar defaults duplicados
+        delete payload.horas_oficial; delete payload.horas_ayudante; delete payload.horas_equipo;
+      }
+      btnBulkAplicar.disabled=true; btnBulkAplicar.textContent='Aplicando…';
+      if(bulkStatus) bulkStatus.textContent='Aplicando a ' + seleccionados.length + ' line items…';
+      try{
+        const res = await fetch(`/presupuestos/${presupuestoId}/tiempos/bulk`, {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(!data.ok) throw new Error(data.error||'Error');
+        if(bulkStatus) bulkStatus.textContent = `✓ ${data.actualizadas} line items updated`;
+        showToast(`${data.actualizadas} line items updated — reloading…`);
+        setTimeout(()=> location.reload(), 1100);
+      }catch(e){
+        if(bulkStatus) bulkStatus.textContent = '✗ ' + (e.message||'Error');
+        showToast(e.message||'Error in bulk assignment', false);
+      }finally{
+        btnBulkAplicar.disabled=false; btnBulkAplicar.textContent='Aplicar a seleccionadas';
+      }
+    });
+  }
+  const btnBulkBorrar = document.getElementById('btn-bulk-borrar');
+  if(btnBulkBorrar){
+    btnBulkBorrar.addEventListener('click', async ()=>{
+      const seleccionados = Array.from(document.querySelectorAll('.bulk-check:checked')).map(cb=> parseInt(cb.value,10)).filter(Boolean);
+      if(!seleccionados.length){ showToast('Select line items', false); return; }
+      if(!confirm(`Delete the manual assignment of ${seleccionados.length} line item(s) and go back to automatic?`)) return;
+      btnBulkBorrar.disabled=true;
+      try{
+        // Enviar con horas null para borrar (nuestro bulk interpreta null como borrar? necesitamos enviar explícito)
+        // Hacemos fetch individual de borrado para asegurar
+        for(const pid of seleccionados){
+          await fetch(`/presupuestos/${presupuestoId}/tiempos/manual`, {
+            method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({partida_id: pid, horas:null, horas_oficial:null, horas_ayudante:null, horas_equipo:null})
+          });
+        }
+        showToast('Manual cleared — reloading…');
+        setTimeout(()=> location.reload(), 900);
+      }catch(e){ showToast(e.message||'Error', false); }
+      finally{ btnBulkBorrar.disabled=false; }
+    });
+  }
+
+})();
+</script>
+{% endblock %}

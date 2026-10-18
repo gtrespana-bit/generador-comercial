@@ -28,19 +28,20 @@ def _paises_presentes_en_selector(body: str) -> list[str]:
     return [cod for cod, _ in _opts(body) if cod in PAISES]
 
 
-def test_orden_selector_contiene_los_18_paises():
-    """El selector visible debe incluir los 18 países definidos.
+def test_orden_selector_contiene_los_23_mercados():
+    """El selector visible debe incluir los 23 mercados definidos.
 
     El filtro histórico (VE, CO, MX, EC, PE, ES) dejaba fuera 12 mercados
     que ya estaban definidos. Sin este cambio, usuarios de CR/PA/CL/etc.
     no podían elegir su país al registrarse: el sistema los forzaba a
     quedar en 'Latinoamérica (genérico)' y luego caer al fallback VE.
     """
-    assert len(lista_paises()) == 18, (
-        f"lista_paises() devolvió {len(lista_paises())} países; esperaba 18."
+    assert len(lista_paises()) == 23, (
+        f"lista_paises() devolvió {len(lista_paises())} mercados; esperaba 23."
     )
     for codigo in ["VE", "CO", "MX", "EC", "PE", "CL", "AR", "DO", "UY",
-                   "PY", "BO", "PA", "CR", "GT", "HN", "SV", "NI", "ES"]:
+                   "PY", "BO", "PA", "CR", "GT", "HN", "SV", "NI", "ES",
+                   "US", "GB", "AU", "CA", "IE"]:
         assert codigo in PAISES, f"{codigo} no está en PAISES"
     # ORDEN_SELECTOR coincide con lo que se envía al template.
     assert set(ORDEN_SELECTOR) == set(PAISES.keys()), (
@@ -48,12 +49,12 @@ def test_orden_selector_contiene_los_18_paises():
     )
 
 
-def test_home_landing_lista_los_18_paises():
+def test_home_landing_lista_los_23_mercados():
     with TestClient(app) as c:
         body = c.get("/").text
     paises = _paises_presentes_en_selector(body)
     assert "ES" in paises, f"España no está en el selector. Vistos: {paises}"
-    assert len(paises) == 18, f"Landing lista {len(paises)} países (esperaba 18)"
+    assert len(paises) == 23, f"Landing lista {len(paises)} mercados (esperaba 23)"
     # El genérico por defecto ya no dice solo 'Latinoamérica' sin España.
     m = re.search(r'pais-bar-hint[^>]*>([^<]+)</span>', body)
     assert m and "España" in m.group(1), (
@@ -61,12 +62,12 @@ def test_home_landing_lista_los_18_paises():
     )
 
 
-def test_pago_lista_los_18_paises():
+def test_pago_lista_los_23_mercados():
     with TestClient(app) as c:
         body = c.get("/pago").text
     paises = _paises_presentes_en_selector(body)
     assert "ES" in paises
-    assert len(paises) == 18, f"/pago lista {len(paises)} países"
+    assert len(paises) == 23, f"/pago lista {len(paises)} mercados"
 
 
 def test_es_subdirectorio_ya_no_dice_latinoamrica():
@@ -81,8 +82,10 @@ def test_es_subdirectorio_ya_no_dice_latinoamrica():
         f"El hero kiker no personaliza a España: {m.group(1) if m else 'no encontrado'}"
     )
     m = re.search(r'pais-bar-hint[^>]*>([^<]+)</span>', body)
-    assert m and "España" in m.group(1) and "NIF" in m.group(1) and "21%" in m.group(1), (
-        f"El hint de /es/ debería mencionar España, NIF y 21%. Visto: {m.group(1) if m else 'no encontrado'}"
+    # La alícuota se escribe con la convención del producto («21 %», con
+    # espacio, como en el PDF), así que no se ata la prueba al espaciado.
+    assert m and "España" in m.group(1) and "NIF" in m.group(1) and "21" in m.group(1), (
+        f"El hint de /es/ debería mencionar España, NIF y el 21%. Visto: {m.group(1) if m else 'no encontrado'}"
     )
     m = re.search(r'<h2 id="banner-h2"[^>]*>(.*?)</h2>', body, re.S)
     assert m and "España" in re.sub(r'<[^>]+>', ' ', m.group(1)), (

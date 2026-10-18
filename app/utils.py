@@ -7,6 +7,8 @@ igual que en los presupuestos de referencia.
 
 # Semana 2 — Bloque B: catálogo de símbolos por ISO 4217 (20 monedas LatAm + extras)
 # Bs se mantiene como alias histórico de VES para no romper presupuestos antiguos.
+# GBP/AUD/CAD entran con los mercados de habla inglesa: esta es la lista que
+# valida los formularios (normalizar_moneda), no solo la de monedas.py.
 SIMBOLOS = {
     "USD": "$",
     "VES": "Bs",
@@ -27,6 +29,9 @@ SIMBOLOS = {
     "NIO": "C$",
     "BRL": "R$",
     "EUR": "€",
+    "GBP": "£",
+    "AUD": "$",
+    "CAD": "$",
 }
 
 # Símbolo inequívoco por moneda. Doce países de la región usan «$» para
@@ -39,6 +44,9 @@ SIMBOLOS_DISTINTIVOS = {
     "COP": "COL$",
     "CLP": "CLP$",
     "ARS": "AR$",
+    "AUD": "A$",
+    "CAD": "C$",
+    "GBP": "£",
 }
 
 
@@ -75,9 +83,24 @@ def saneado(texto: str) -> str:
     return texto
 
 
-def fmt_num(valor, decimales=2) -> str:
-    """1234567.891 -> '1.234.567,89'"""
+def fmt_num(valor, decimales=2, idioma="es", mercado=None) -> str:
+    """1234567.891 -> '1.234.567,89' (España) o '1,234,567.89' (México).
+
+    El separador de miles y decimales es del **mercado**, no del idioma:
+    México y España escriben español los dos, pero México separa como Estados
+    Unidos (1,234.56) y España como Europa (1.234,56). Igual que Reino Unido
+    y Estados Unidos escriben los números igual y no comparten el orden de la
+    fecha. `mercado` manda; `idioma` solo se usa si no se pasa mercado.
+    """
     s = f"{valor:,.{decimales}f}"
+    if mercado is not None:
+        miles = mercado.get("separador_miles") or ","
+        dec = mercado.get("separador_decimal") or "."
+        # Marcas intermedias para no pisar un separador con el otro.
+        return (s.replace(".", "\x01").replace(",", "\x02")
+                 .replace("\x01", dec).replace("\x02", miles))
+    if str(idioma or "es").strip().lower().startswith("en"):
+        return s
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
@@ -111,8 +134,13 @@ def decimales_moneda(moneda: str | None) -> int:
         return 2
 
 
-def fmt_monto(valor, moneda="USD") -> str:
-    """Importe con símbolo inequívoco: 35.755,89 MX$ / 4.200.000 COL$"""
+def fmt_monto(valor, moneda="USD", mercado=None) -> str:
+    """Importe con símbolo inequívoco: 35.755,89 MX$ / 4.200.000 COL$
+
+    Los separadores son del **mercado**, igual que en ``fmt_monto_iso``:
+    sin mercado se hereda el convenio del idioma y México escribiría sus
+    importes como España, que es justo el error que se evita.
+    """
     # Normaliza Bs→VES para que el símbolo sea consistente
     clave = str(moneda or "USD").strip()
     # Respeta Bs si viene literal (presupuestos antiguos)
@@ -120,16 +148,18 @@ def fmt_monto(valor, moneda="USD") -> str:
         clave = "VES"
     else:
         clave = clave.upper() if clave else "USD"
-    return f"{fmt_num(valor, decimales_moneda(clave))} {simbolo_moneda(clave)}"
+    return (f"{fmt_num(valor, decimales_moneda(clave), mercado=mercado)} "
+            f"{simbolo_moneda(clave)}")
 
 
-def fmt_monto_iso(valor, moneda="USD") -> str:
+def fmt_monto_iso(valor, moneda="USD", idioma="es", mercado=None) -> str:
     """Importe profesional con código ISO, no símbolo ambiguo."""
     try:
         from .services.monedas import formato_iso
-        return formato_iso(valor, moneda)
+        return formato_iso(valor, moneda, idioma, mercado)
     except Exception:
-        return f"{fmt_num(valor)} {str(moneda or 'USD').upper()}"
+        return (f"{fmt_num(valor, idioma=idioma, mercado=mercado)} "
+                f"{str(moneda or 'USD').upper()}")
 
 
 def fmt_monto_raw(valor, moneda="USD") -> str:
@@ -137,18 +167,27 @@ def fmt_monto_raw(valor, moneda="USD") -> str:
     return fmt_monto(valor, moneda)
 
 
-def fmt_precio_u_iso(valor, moneda="USD", unidad="") -> str:
+def fmt_precio_u_iso(valor, moneda="USD", unidad="", idioma="es", mercado=None) -> str:
     """Precio unitario profesional: 32,50 COP/m2."""
-    base = fmt_monto_iso(valor, moneda)
+    base = fmt_monto_iso(valor, moneda, idioma, mercado)
     return f"{base}/{unidad}" if unidad else base
 
 
-def fmt_precio_u(valor, moneda="USD", unidad="") -> str:
+def unir_precio_u(simbolo: str, unidad: str) -> str:
+    """Une símbolo y unidad sin duplicar la barra: «S/» + «m²» -> «S/m²».
+
+    El sol peruano ya trae la barra en el símbolo (S/), así que añadir
+    otra dejaría «S//m²» en cada precio unitario del mercado peruano.
+    """
+    if not unidad:
+        return simbolo
+    return f"{simbolo}{'' if simbolo.rstrip().endswith('/') else '/'}{unidad}"
+
+
+def fmt_precio_u(valor, moneda="USD", unidad="", mercado=None) -> str:
     """Precio unitario histórico con símbolo: 32,50 $/m2"""
-    base = f"{fmt_num(valor, decimales_moneda(moneda))} {simbolo_moneda(moneda)}"
-    if unidad:
-        base += f"/{unidad}"
-    return base
+    simbolo = unir_precio_u(simbolo_moneda(moneda), unidad)
+    return f"{fmt_num(valor, decimales_moneda(moneda), mercado=mercado)} {simbolo}"
 
 
 def fmt_cantidad(valor, unidad="") -> str:
@@ -157,9 +196,19 @@ def fmt_cantidad(valor, unidad="") -> str:
     return f"{s} {unidad}".strip()
 
 
-def fmt_fecha(fecha) -> str:
-    """dd/mm/aaaa"""
-    return fecha.strftime("%d/%m/%Y")
+def fmt_fecha(fecha, idioma="es", mercado=None) -> str:
+    """Fecha corta con el orden propio del **mercado**, no del idioma.
+
+    Estados Unidos: mm/dd/aaaa (08/15/2026). Reino Unido, Australia, Canadá,
+    Irlanda y todos los hispanos: dd/mm/aaaa (15/08/2026). Reino Unido y
+    Estados Unidos hablan inglés los dos y no escriben la fecha igual, así
+    que mirar el idioma aquí sería un error.
+    """
+    if mercado is not None:
+        usa_mes_primero = mercado.get("formato_fecha") == "MM/DD/YYYY"
+    else:
+        usa_mes_primero = str(idioma or "es").strip().lower().startswith("en")
+    return fecha.strftime("%m/%d/%Y" if usa_mes_primero else "%d/%m/%Y")
 
 
 def fmt_pct(valor) -> str:

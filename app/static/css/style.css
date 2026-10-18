@@ -495,6 +495,41 @@ body.collapsed .theme-toggle-label {
   .sidebar-toggle-btn { display: none; }
 }
 
+/* ── Conmutador de idioma en el pie del sidebar ─────────────────────────── */
+.idioma-toggle-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 36px;
+  padding: 0.3rem 0.4rem 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-alt);
+  transition: all var(--dur) var(--ease-out);
+}
+.idioma-toggle-row .idioma-switch { margin-left: auto; }
+.idioma-toggle-row .idioma-switch-opcion { font-size: 0.68rem; padding: 0.24rem 0.42rem; }
+.idioma-toggle-row:hover { background: var(--accent-soft); border-color: var(--accent-light); }
+/* Con el sidebar en modo iconos solo queda el segmento ES/EN, centrado. */
+body.collapsed .idioma-toggle-row {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  justify-content: center;
+  align-self: center;
+}
+body.collapsed .idioma-toggle-row .idioma-switch {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  gap: 1px;
+}
+body.collapsed .idioma-toggle-row .idioma-switch-opcion { padding: 0.12rem 0.14rem; }
+
 /* Theme Toggle — dentro del footer, nunca encima de la nav */
 .theme-toggle-btn {
   position: relative;
@@ -8334,4 +8369,43 @@ body { -webkit-tap-highlight-color: transparent; }
     padding: 0.5rem;
   }
   .soporte-flotante span { display: none; }
+}
+
+/* Vigencia de los precios de referencia por mercado.
+   El estado lo calcula app/services/vigencia_precios.py: aquí solo se le da
+   color, para que de un vistazo se distinga lo que sirve de lo que no. */
+.pill-vigencia {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-vigencia small { font-weight: 400; opacity: 0.7; }
+.pill-vigente {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid rgba(5, 150, 105, 0.15);
+}
+.pill-por_revisar {
+  background: var(--amber-soft);
+  color: var(--amber);
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+.pill-obsoleta {
+  background: var(--rose-soft);
+  color: var(--rose);
+  border: 1px solid rgba(225, 29, 72, 0.15);
+}
+/* Vencido por su propia fecha de vigencia: el proveedor dejó de sostenerlo. */
+.pill-caducada {
+  background: var(--rose);
+  color: #fff;
+  border: 1px solid var(--rose);
+}
+.pill-sin_fecha {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
 }

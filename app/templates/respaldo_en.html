@@ -1,0 +1,134 @@
+{% extends "base_en.html" %}
+{% block title %}Backup and restore{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Backup and restore</h1>
+    <p class="subtitle">A complete, verifiable backup of this organization: data and files, with a checksum for every file</p>
+  </div>
+</div>
+
+{% if resultado %}
+<div class="card">
+  <h2>✅ Restore completed</h2>
+  <p class="subtitle">The backup was verified as intact and its data is now in this organization. Nothing that already existed was deleted or overwritten.</p>
+  <h3>Restored</h3>
+  <ul>
+    {% for clave, cantidad in resultado.restaurados.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+    {% if not resultado.restaurados %}
+    <li>Nothing new: everything the backup contains already existed here.</li>
+    {% endif %}
+  </ul>
+  <h3>Reused without duplicating</h3>
+  <ul>
+    {% for clave, cantidad in resultado.reutilizados.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+  </ul>
+  <p>
+    <strong>{{ resultado.archivos_restaurados }}</strong> file(s) restored and
+    <strong>{{ resultado.archivos_reutilizados }}</strong> file(s) reused by checksum.
+    Commercial settings: {{ resultado.configuracion }}.
+  </p>
+  {% if resultado.avisos %}
+  <h3>Warnings</h3>
+  <ul>
+    {% for aviso in resultado.avisos %}
+    <li>{{ aviso | mensaje(_idioma) }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <p><a class="btn btn-primary" href="/presupuestos">View estimates</a>
+     <a class="btn" href="/configuracion/respaldo">Back to backup</a></p>
+</div>
+{% elif resumen %}
+<div class="card">
+  <h2>Step 2 of 2 — Review and confirm</h2>
+  {% if resumen.organizacion.nombre %}
+  <p class="subtitle">Backup of <strong>{{ resumen.organizacion.nombre }}</strong>, verified intact. Nothing is restored yet: review the summary and confirm.</p>
+  {% else %}
+  <p class="subtitle">Backup verified intact. Nothing is restored yet: review the summary and confirm.</p>
+  {% endif %}
+  <h3>What will be restored (nothing current is deleted)</h3>
+  <ul>
+    {% for clave, cantidad in resumen.conteos.items() %}
+    <li><strong>{{ cantidad }}</strong> {{ clave.replace('.json', '').replace('_', ' ') }}</li>
+    {% endfor %}
+    <li><strong>{{ resumen.archivos|length }}</strong> file(s) verified ({{ (resumen.total_bytes / 1048576) | round(1) }} MB)</li>
+  </ul>
+  {% if resumen.reutilizables %}
+  <h3>What already exists here will be reused</h3>
+  <ul>
+    {% for clave, notas in resumen.reutilizables.items() %}
+    {% for nota in notas %}
+    <li>{{ nota }}</li>
+    {% endfor %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <h3>What is NOT restored and why</h3>
+  <ul>
+    {% for clave, motivo in resumen.omitido.items() %}
+    <li><strong>{{ clave.replace('_', ' ') }}:</strong> {{ motivo }}</li>
+    {% endfor %}
+  </ul>
+  {% if resumen.avisos %}
+  <h3>Warnings from the backup</h3>
+  <ul>
+    {% for aviso in resumen.avisos %}
+    <li>{{ aviso | mensaje(_idioma) }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <form method="post" action="/configuracion/respaldo/restaurar/confirmar" enctype="multipart/form-data">
+    <input type="hidden" name="sha256" value="{{ resumen.sha256_paquete }}">
+    <div class="field">
+      <label>Select the same file again</label>
+      <input type="file" name="archivo" accept=".zip" required>
+      <p class="hint">For security, the server does not keep your file between steps. It must be exactly the same file: it is checked against its checksum.</p>
+    </div>
+    <div class="field">
+      <label class="hint">
+        <input type="checkbox" name="confirmar" value="si" required>
+        I confirm that I own this data and that I want to restore this backup into this organization.
+      </label>
+    </div>
+    <button class="btn btn-primary" type="submit">↩️ Restore backup</button>
+    <a class="btn" href="/configuracion/respaldo">Cancel</a>
+  </form>
+</div>
+{% else %}
+<div class="card">
+  <h2>Download a full backup</h2>
+  <p class="subtitle">A single .zip file with every piece of data in this organization and its files (PDFs, attachments, photos, the logo used in references, data sheets), each one verified with its SHA-256 checksum. Keep it somewhere safe.</p>
+  <a class="btn btn-primary" href="/configuracion/respaldo/descargar">⬇️ Download backup (.zip)</a>
+  <p class="hint">Up to 300 MB. It does not include user accounts, licences, invitations or active public links; historical responses to proposals travel as follow-up notes.</p>
+</div>
+<div class="card">
+  <h2>Export your data to take it with you</h2>
+  <p class="subtitle">A package that any tool can read: one CSV sheet per table (opens straight in Excel or LibreOffice), your files under their original names and, inside, the complete verifiable backup in case you ever come back to CotizaT.</p>
+  <a class="btn" href="/configuracion/exportacion/descargar">📤 Download export (.zip)</a>
+</div>
+<div class="card">
+  <h2>Restore a backup</h2>
+  <p class="subtitle">Step 1 of 2 — Analyze the backup. First you will see what it contains and what it does not; nothing is restored without your explicit confirmation.</p>
+  <form method="post" action="/configuracion/respaldo/restaurar" enctype="multipart/form-data">
+    <div class="field">
+      <label>Backup file (.zip)</label>
+      <input type="file" name="archivo" accept=".zip" required>
+      <p class="hint">Up to 300 MB. Restoring never deletes or overwrites what already exists: matching records are reused and only what is missing is added.</p>
+    </div>
+    <button class="btn btn-primary" type="submit">🔍 Analyze backup</button>
+  </form>
+</div>
+{% if rol == 'propietario' %}
+<div class="card">
+  <h2>Close the organization</h2>
+  <p class="subtitle">Permanent and irreversible deletion of all data and files in this organization. Download your export first and confirm by typing the exact name of the organization.</p>
+  <a class="btn" href="/configuracion/baja">🗑️ Close the organization</a>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

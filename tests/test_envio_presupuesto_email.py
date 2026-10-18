@@ -246,7 +246,7 @@ def test_envio_exitoso_congela_version_pdf_y_constancia(
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\npresupuesto enviado"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\npresupuesto enviado"),
     )
 
     with _cliente() as client:
@@ -294,7 +294,7 @@ def test_fallo_del_proveedor_no_cambia_estado_ni_crea_version(
     monkeypatch.setattr(
         main_module.pdf_service,
         "generar_pdf",
-        lambda presupuesto, cfg: BytesIO(b"%PDF-1.4\nfallo"),
+        lambda presupuesto, cfg, *a, **k: BytesIO(b"%PDF-1.4\nfallo"),
     )
 
     with _cliente() as client:

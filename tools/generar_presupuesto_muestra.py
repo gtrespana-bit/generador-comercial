@@ -1,8 +1,14 @@
 """Regenera el «PDF de ejemplo» de la landing (E1-052).
 
 Genera el presupuesto de muestra comercial (datos ficticios, ver
-`app/services/presupuesto_muestra.py`) y escribe el PDF en
-`app/static/pdf/presupuesto-ejemplo.pdf`, que enlaza `/conocer`.
+`app/services/presupuesto_muestra.py`) en los dos idiomas de la landing y
+escribe los PDF en `app/static/pdf/`:
+
+  · `presupuesto-ejemplo.pdf`    — enlazado desde `/conocer`
+  · `presupuesto-ejemplo-en.pdf` — enlazado desde `/en/`
+
+Los dos documentos muestran el mismo presupuesto: mismas mediciones, mismos
+importes y mismo total. Cambia únicamente la redacción.
 
 Uso:
 
@@ -17,7 +23,11 @@ import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-DESTINO = RAIZ / "app" / "static" / "pdf" / "presupuesto-ejemplo.pdf"
+DIR_PDF = RAIZ / "app" / "static" / "pdf"
+SALIDAS = (
+    ("es", "presupuesto-ejemplo.pdf"),
+    ("en", "presupuesto-ejemplo-en.pdf"),
+)
 
 
 def main() -> int:
@@ -25,14 +35,15 @@ def main() -> int:
         sys.path.insert(0, str(RAIZ))
     from app.services.presupuesto_muestra import construir
 
-    datos = construir()
-    if not datos.startswith(b"%PDF"):
-        print("Error: el contenido generado no es un PDF válido.", file=sys.stderr)
-        return 1
-
-    DESTINO.parent.mkdir(parents=True, exist_ok=True)
-    DESTINO.write_bytes(datos)
-    print(f"Presupuesto de muestra escrito en {DESTINO.relative_to(RAIZ)} ({len(datos)} bytes)")
+    DIR_PDF.mkdir(parents=True, exist_ok=True)
+    for idioma, nombre in SALIDAS:
+        datos = construir(idioma)
+        if not datos.startswith(b"%PDF"):
+            print(f"Error: el PDF en {idioma!r} no es válido.", file=sys.stderr)
+            return 1
+        destino = DIR_PDF / nombre
+        destino.write_bytes(datos)
+        print(f"{destino.relative_to(RAIZ)} ({len(datos)} bytes)")
     return 0
 
 

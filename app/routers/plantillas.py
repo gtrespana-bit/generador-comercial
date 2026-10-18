@@ -1,8 +1,9 @@
 """Plantillas de presupuesto."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
+from ..i18n import mensaje_request
 
 router = APIRouter()
 
@@ -23,13 +24,13 @@ async def guardar_plantilla(request: Request, db: Session = Depends(get_db)):
     nombre = str(form.get("nombre", "")).strip()
     datos = str(form.get("datos", "")).strip()
     if not nombre:
-        return {"ok": False, "error": "El nombre es obligatorio."}
+        return {"ok": False, "error": mensaje_request(request, "El nombre es obligatorio.")}
     if not datos:
-        return {"ok": False, "error": "No hay datos que guardar."}
+        return {"ok": False, "error": mensaje_request(request, "No hay datos que guardar.")}
     try:
         json.loads(datos)  # validar que sea JSON
     except ValueError:
-        return {"ok": False, "error": "Datos inválidos."}
+        return {"ok": False, "error": mensaje_request(request, "Datos inválidos.")}
     existente = db.query(Plantilla).filter(Plantilla.nombre == nombre).first()
     if existente:
         existente.datos = datos
@@ -42,14 +43,14 @@ async def guardar_plantilla(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/plantillas/{plantilla_id}/datos")
-def plantilla_datos(plantilla_id: int, db: Session = Depends(get_db)):
+def plantilla_datos(request: Request, plantilla_id: int, db: Session = Depends(get_db)):
     plantilla = db.get(Plantilla, plantilla_id)
     if plantilla is None:
-        return {"ok": False, "error": "Plantilla no encontrada."}
+        return {"ok": False, "error": mensaje_request(request, "Plantilla no encontrada.")}
     try:
         return {"ok": True, "nombre": plantilla.nombre, "capitulos": json.loads(plantilla.datos or "[]")}
     except ValueError:
-        return {"ok": False, "error": "Plantilla corrupta."}
+        return {"ok": False, "error": mensaje_request(request, "Plantilla corrupta.")}
 
 
 @router.post("/plantillas/{plantilla_id}/eliminar")

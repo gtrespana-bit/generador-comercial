@@ -1,0 +1,18 @@
+{{ product_name }} — OPERATIONAL ALERT
+
+There are {{ errores|length }} problem(s) in the deployment. The daily
+verification has failed. Review the operations panel (/admin/operacion) and the
+deployment logs.
+
+{% if errores %}Problems detected:
+{% for error in errores %}  • {{ error }}
+{% endfor %}
+{% endif %}{% if checks %}Status of the checks (readyz):
+{% for clave, valor in checks.items() %}  {{ clave }}: {{ valor }}
+{% endfor %}
+{% endif %}
+If the problem persists, check /readyz from a browser or write to us at
+{{ soporte_email }}.
+
+Internal operations message generated automatically; do not forward this
+email to clients.

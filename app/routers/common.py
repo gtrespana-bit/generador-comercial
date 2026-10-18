@@ -250,7 +250,76 @@ from ..storage import (
     validate_tenant_object_key,
 )
 
-TEMPLATES = Jinja2Templates(directory=str(BASE_DIR / "app" / "templates"))
+class _CotizaTemplates(Jinja2Templates):
+    """Jinja con selección automática de plantilla por idioma.
+
+    Si el request tiene ``state.lang != 'es'`` y existe una plantilla con
+    sufijo ``_<lang>`` (p. ej. ``landing_en.html``), se usa esa; si no,
+    se cae a la plantilla base en español.
+    """
+
+    def TemplateResponse(self, request, name, context=None, status_code=200, headers=None, media_type=None, background=None):
+        ctx = dict(context or {})
+        ctx.setdefault("request", request)
+        lang = "es"
+        try:
+            lang = getattr(getattr(request, "state", None), "lang", "es") or "es"
+        except Exception:
+            lang = "es"
+        if lang and lang != "es":
+            base, ext = os.path.splitext(str(name))
+            alt = f"{base}_{lang}{ext}"
+            exists = (BASE_DIR / "app" / "templates" / alt).is_file()
+            if exists:
+                name = alt
+        # Idioma resuelto, listo para usarlo en la plantilla (``{{ error |
+        # mensaje(_idioma) }}``). ``setdefault`` para no pisar nada que el
+        # router ya traiga en el contexto.
+        ctx.setdefault("_idioma", lang or "es")
+        return super().TemplateResponse(
+            request, name, ctx, status_code=status_code, headers=headers,
+            media_type=media_type, background=background,
+        )
+
+
+TEMPLATES = _CotizaTemplates(directory=str(BASE_DIR / "app" / "templates"))
+# Filtro de traducción por clave (i18n). Fallback a español si falta la clave.
+try:
+    from ..i18n import t as _t, normalizar_idioma as _norm_lang
+    TEMPLATES.env.filters["t"] = lambda clave, idioma=None, **kw: _t(clave, idioma, **kw)
+    TEMPLATES.env.globals["t"] = _t
+    TEMPLATES.env.globals["normalizar_idioma"] = _norm_lang
+    # Conmutador de idioma: construye el enlace a la misma página en el otro
+    # idioma (ver app/i18n.py). El middleware reescribe /en/... a la ruta
+    # canónica, así que `request.url.path` siempre sirve como punto de partida.
+    from ..i18n import ruta_en_idioma as _ruta_idioma
+    from ..i18n import url_cambio_idioma as _url_cambio_idioma
+    # Traducción de *mensajes*: el texto español que los routers y los
+    # servicios ponen en pantalla (?error=, ?mensaje=, JSON de la API). Se
+    # traduce al pintarlo, así que no hay claves que propagar por el código.
+    from ..i18n import mensaje as _mensaje
+
+    TEMPLATES.env.globals["ruta_en_idioma"] = _ruta_idioma
+    # Ruta canónica de un mercado: /mx/ o /en-us/. Las plantillas la usan
+    # para enlazar cada mercado sin encadenar un 301 por el camino corto.
+    from ..paises import texto_impuesto as _texto_impuesto
+    from ..seo import ruta_mercado as _ruta_mercado
+
+    TEMPLATES.env.globals["ruta_mercado"] = _ruta_mercado
+    TEMPLATES.env.globals["texto_impuesto"] = _texto_impuesto
+    TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
+    TEMPLATES.env.globals["mensaje"] = _mensaje
+    TEMPLATES.env.filters["mensaje"] = lambda texto, idioma=None: _mensaje(texto, idioma)
+    # Tabla de garantías: se calcula desde el presupuesto, así que el idioma
+    # llega en el momento de pintarla (el modelo no sabe de requests).
+    from ..services.garantias import familias_para_pdf as _familias_garantia
+    from ..services.garantias import nota_legal as _nota_garantias
+
+    TEMPLATES.env.globals["garantias_familias"] = _familias_garantia
+    TEMPLATES.env.globals["garantias_nota_legal"] = _nota_garantias
+except Exception:
+    pass
+
 TEMPLATES.env.filters["money"] = fmt_monto
 try:
     from ..services.monedas import formato_iso as _formato_iso
@@ -459,8 +528,15 @@ TEMPLATES.env.filters["whatsapp"] = whatsapp_url
 
 # Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
 try:
-    from ..services.traduccion import traducir as _traducir_termino, codigo_desde_pais as _codigo_pais
+    from ..services.traduccion import (
+        codigo_desde_pais as _codigo_pais,
+        traducir as _traducir_termino,
+        traducir_recurso_por_codigo as _traducir_recurso,
+    )
     TEMPLATES.env.filters["traducir"] = _traducir_termino
+    # Para las filas del descompuesto, cuyo texto es libre: se traducen por el
+    # código del recurso y se dejan igual si el código no es del catálogo.
+    TEMPLATES.env.filters["traducir_recurso"] = _traducir_recurso
     TEMPLATES.env.globals["codigo_pais"] = _codigo_pais
 except Exception:
     pass

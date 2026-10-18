@@ -38,6 +38,9 @@ MONEDAS: dict[str, DefinicionMoneda] = {
     "HNL": DefinicionMoneda("HNL", "Lempira hondureño", 2, "L"),
     "NIO": DefinicionMoneda("NIO", "Córdoba nicaragüense", 2, "C$"),
     "BRL": DefinicionMoneda("BRL", "Real brasileño", 2, "R$"),
+    "GBP": DefinicionMoneda("GBP", "Libra esterlina", 2, "£"),
+    "AUD": DefinicionMoneda("AUD", "Dólar australiano", 2, "A$"),
+    "CAD": DefinicionMoneda("CAD", "Dólar canadiense", 2, "C$"),
     "EUR": DefinicionMoneda("EUR", "Euro", 2, "€"),
     # Compatibilidad de datos antiguos; no se ofrece como moneda visible en
     # Venezuela y no se usa para nuevos valores persistidos.
@@ -78,10 +81,26 @@ def cuantizar(valor, moneda: str | None = "USD") -> Decimal:
     return Decimal(str(valor or 0)).quantize(quantum, rounding=ROUND_HALF_UP)
 
 
-def formato_iso(valor, moneda: str | None = "USD") -> str:
-    """Formato textual estable: valor + código ISO, sin símbolos ambiguos."""
+def formato_iso(valor, moneda: str | None = "USD", idioma: str = "es",
+                mercado: dict | None = None) -> str:
+    """Formato textual estable: valor + código ISO, sin símbolos ambiguos.
+
+    El separador de miles y decimales sigue al **mercado** del documento, no
+    a la moneda ni al idioma: México muestra «35,041.65 MXN» y Colombia
+    «35.041,65 COP» escribiendo español los dos. `idioma` solo se usa si no
+    se pasa mercado.
+    """
     d = cuantizar(valor, moneda)
-    return f"{d:,.{decimales(moneda)}f}".replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
+    s = f"{d:,.{decimales(moneda)}f}"
+    if mercado is not None:
+        miles = mercado.get("separador_miles") or ","
+        dec = mercado.get("separador_decimal") or "."
+        s = (s.replace(".", "\x01").replace(",", "\x02")
+              .replace("\x01", dec).replace("\x02", miles))
+        return s + f" {codigo_iso(moneda)}"
+    if str(idioma or "es").strip().lower().startswith("en"):
+        return s + f" {codigo_iso(moneda)}"
+    return s.replace(",", "X").replace(".", ",").replace("X", ".") + f" {codigo_iso(moneda)}"
 
 
 def convertir(valor, origen: str, destino: str, tasa_usd_destino=None,

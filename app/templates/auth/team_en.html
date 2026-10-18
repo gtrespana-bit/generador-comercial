@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="page-stage">
+  <main class="page-card">
+    <div class="page-head-row">
+      <div>
+        <a class="brand" href="/">
+          <span class="mark">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          {{ product_name }}
+        </a>
+        <h1 class="mt-1">Team of {{ request.state.organizacion.nombre }}</h1>
+      </div>
+      <a class="btn" href="/inicio">Back</a>
+    </div>
+
+    <p class="text-soft">Only owners and administrators manage the team. Ownership is not transferred from this screen.</p>
+
+    {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+    {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
+
+    <section class="panel">
+      <h2>Invite a person</h2>
+      <p class="muted">The link is single-use, expires in 7 days and only works with the verified email provided.</p>
+      <form class="team-grid" action="/equipo/invitaciones" method="post">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" required></div>
+        <div class="field"><label for="rol">Role</label><select id="rol" name="rol">
+          {% if actor_rol == 'propietario' %}<option value="administrador">Administrator</option>{% endif %}
+          <option value="miembro" selected>Member</option>
+          <option value="lectura">Read only</option>
+        </select></div>
+        <button class="btn btn-primary" type="submit">Create invitation</button>
+      </form>
+      {% if invitation_link %}<div class="link-box"><strong>Link generated</strong><p class="muted">The email could not be sent. Copy it now and share it through a secure channel: the secret is not shown again.</p><input value="{{ invitation_link }}" readonly aria-label="Invitation link"></div>{% endif %}
+    </section>
+
+    <section class="panel">
+      <h2>Members</h2>
+      {% for membresia in membresias %}
+      <div class="org-card">
+        <div>
+          <strong>{{ membresia.usuario.nombre or membresia.usuario.email }}</strong>
+          <div class="text-soft small">{{ membresia.usuario.email }} <span class="role-badge">{{ membresia.rol }}</span>{% if not membresia.activa %} <span class="role-badge">inactive</span>{% endif %}</div>
+        </div>
+        {% if membresia.rol == 'propietario' or (actor_rol != 'propietario' and membresia.rol == 'administrador') %}
+          <span class="text-muted small">No changes available</span>
+        {% else %}
+        <form class="member-form" action="/equipo/membresias/{{ membresia.id }}" method="post">
+          <select name="rol" aria-label="Role of {{ membresia.usuario.email }}">
+            {% if actor_rol == 'propietario' %}<option value="administrador" {{ 'selected' if membresia.rol == 'administrador' else '' }}>Administrator</option>{% endif %}
+            <option value="miembro" {{ 'selected' if membresia.rol == 'miembro' else '' }}>Member</option>
+            <option value="lectura" {{ 'selected' if membresia.rol == 'lectura' else '' }}>Read only</option>
+          </select>
+          <label class="check"><input type="checkbox" name="activa" value="1" {{ 'checked' if membresia.activa else '' }}> Active</label>
+          <button class="btn btn-sm" type="submit">Save</button>
+        </form>
+        {% endif %}
+      </div>
+      {% else %}<div class="empty">No members.</div>{% endfor %}
+    </section>
+
+    <section class="panel">
+      <h2>Pending invitations</h2>
+      {% for invitacion in invitaciones %}
+      <div class="org-card">
+        <div>
+          <strong>{{ invitacion.email }}</strong>
+          <div><span class="role-badge">{{ invitacion.rol }}</span> <span class="text-muted small">· {% if invitacion.expires_at <= ahora %}expired{% else %}expires {{ invitacion.expires_at.strftime('%d/%m/%Y %H:%M') }} UTC{% endif %}</span></div>
+        </div>
+        {% if actor_rol == 'propietario' or invitacion.rol != 'administrador' %}<form action="/equipo/invitaciones/{{ invitacion.id }}/revocar" method="post"><button class="btn btn-danger" type="submit">Revoke</button></form>{% endif %}
+      </div>
+      {% else %}<div class="empty">No pending invitations.</div>{% endfor %}
+    </section>
+  </main>
+</div>
+</body>
+</html>
