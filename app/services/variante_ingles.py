@@ -43,7 +43,10 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "organization": "organisation",
     "fiber": "fibre",
     "liter": "litre",
-    "meter": "metre",
+    "per square meter": "per square metre",
+    "per cubic meter": "per cubic metre",
+    "per linear meter": "per linear metre",
+    "per meter": "per metre",
     "color": "colour",
     "aluminum": "aluminium",
     "recognize": "recognise",
@@ -216,7 +219,6 @@ _VOCABULARIO_GB: dict[str, str] = {
     "shims": "packers",                    # calzos
     "sandwich panel": "composite panel",        # panel sándwich
     "steel shores": "steel props",              # puntales metálicos
-    "lumber": "timber",                   # madera aserrada
     "mat foundation": "raft foundation",          # losa de fundación
     "grade beam": "ground beam",                  # viga de fundación
     "cast-in-place pile": "bored pile",           # pilote vaciado en sitio
@@ -231,6 +233,24 @@ _VOCABULARIO_GB: dict[str, str] = {
     "stuccoing": "rendering",               # frisado (gerundio)
     "stuccoed": "rendered",                 # frisado (participio)
     "dabs of adhesive": "dot and dab",      # trasdosado con pelladas
+
+    # ── Instalaciones ──────────────────────────────────────────────────────
+    "antenna": "aerial",                    # antena de televisión
+    "hoistway": "lift shaft",               # hueco de ascensor
+    "transfer switch": "changeover switch",  # tablero de transferencia
+    "main distribution board": "main consumer unit",
+    "distribution board": "consumer unit",  # tablero eléctrico
+    "shut-off valve": "isolating valve",    # llave de corte
+    "ground resistance": "earth resistance",
+    "ground terminal": "earth terminal",
+    "connection to ground": "connection to earth",
+    "drainfield": "soakaway",               # campo de infiltración
+    "lightning rod": "lightning conductor",
+    # «Meter» es «metre» cuando es unidad de longitud y «meter» cuando es
+    # contador. La ortografía no puede distinguirlo, así que el compuesto
+    # entra aquí para ganar por ser la clave más larga.
+    "gas meter": "gas meter",
+    "water meter": "water meter",
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
@@ -257,6 +277,16 @@ _CONSONANTE_ESCRITA_COMO_VOCAL = frozenset({
     "useful", "useless", "uv", "uplift",
 })
 
+# Letras cuyo nombre empieza por sonido vocálico: F (ef), H (aitch), L (el),
+# M (em), N (en), R (ar), S (es), X (ex), además de las vocales. Una sigla
+# que empiece por una de ellas pide «an»: «an HVAC duct», «an MDF architrave».
+_LETRA_CON_SONIDO_VOCALICO = frozenset("AEFHILMNORSX")
+
+
+def _es_sigla(palabra: str) -> bool:
+    """¿Secuencia de dos o más mayúsculas, como HVAC, MDF, LED o PVC?"""
+    return len(palabra) >= 2 and palabra.isalpha() and palabra.isupper()
+
 
 def _fijar_articulos(texto: str) -> str:
     """Revisa «a» y «an» después de sustituir vocabulario.
@@ -268,10 +298,14 @@ def _fijar_articulos(texto: str) -> str:
     """
     def _ajustar(m) -> str:
         articulo, hueco, palabra = m.group(1), m.group(2), m.group(3)
-        suena_a_vocal = (
-            palabra[:1].lower() in "aeiou"
-            and palabra.lower() not in _CONSONANTE_ESCRITA_COMO_VOCAL
-        )
+        if _es_sigla(palabra):
+            # «an HVAC» se dice «aitch-vac»; «a PVC» se dice «pee-vee-cee».
+            suena_a_vocal = palabra[:1].upper() in _LETRA_CON_SONIDO_VOCALICO
+        else:
+            suena_a_vocal = (
+                palabra[:1].lower() in "aeiou"
+                and palabra.lower() not in _CONSONANTE_ESCRITA_COMO_VOCAL
+            )
         correcto = "an" if suena_a_vocal else "a"
         if articulo.isupper():
             correcto = correcto.upper()

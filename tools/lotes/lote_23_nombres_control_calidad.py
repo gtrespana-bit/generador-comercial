@@ -100,7 +100,7 @@ LOTE = {
 
 # ── Instalaciones eléctricas ──────────────────────────────────────────────
 "Medición de resistencia de puesta a tierra.":
-    "Measurement of grounding resistance.",
+    "Measurement of ground resistance.",
 "Prueba de continuidad de conductores.":
     "Continuity test of conductors.",
 "Prueba de aislamiento de conductores.":

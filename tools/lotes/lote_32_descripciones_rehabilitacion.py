@@ -143,9 +143,9 @@ LOTE = {
 "Colocación de toldo exterior de protección solar, para reducir la ganancia térmica. El toldo lo elige el cliente.":
     "Installation of an external solar shading awning, to reduce heat gain. The awning is selected by the client.",
 "Colocación de persiana enrollable de aluminio para control solar. La persiana la elige el cliente.":
-    "Installation of an aluminium roller shutter for solar control. The shutter is selected by the client.",
+    "Installation of an aluminum roller shutter for solar control. The shutter is selected by the client.",
 "Colocación de celosía o romanilla de aluminio para sombreado, reduciendo la ganancia solar.":
-    "Installation of an aluminium louver screen for shading, reducing solar gain.",
+    "Installation of an aluminum louver screen for shading, reducing solar gain.",
 "Ejecución de pérgola de sombreado exterior, para proteger del sol las zonas acristaladas.":
     "Construction of an external shading pergola, to protect glazed areas from the sun.",
 "Aplicación de lámina de control solar sobre los vidrios, para reducir la ganancia térmica.":

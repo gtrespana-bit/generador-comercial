@@ -4,7 +4,7 @@
 Criterios de este lote:
   · Cada descripción nombra el equipo con el que se hace la prueba, y en
     inglés ese equipo tiene nombre propio: slump cone, rebound hammer,
-    cover meter, torque wrench, earth tester, megohmmeter, anemometer.
+    cover meter, torque wrench, ground resistance tester, megohmmeter, anemometer.
     Ninguno se describe; se nombra.
   · «Puntos singulares» en una cubierta son los details: los encuentros,
     los remontes y los desagües, que es donde falla la impermeabilización.
@@ -105,7 +105,7 @@ LOTE = {
 
 # ── Electricidad ──────────────────────────────────────────────────────────
 "Medición de la resistencia de puesta a tierra con telurómetro, para verificar el valor exigido por la norma.":
-    "Measurement of grounding resistance with an earth tester, to verify compliance with the value required by the standard.",
+    "Measurement of ground resistance with a ground resistance tester, to verify compliance with the value required by the standard.",
 "Prueba de continuidad de los conductores de la instalación eléctrica, verificando la ausencia de cortes.":
     "Continuity test of the conductors of the electrical installation, verifying there are no breaks.",
 "Prueba de resistencia de aislamiento de los conductores, con megóhmetro, para verificar la ausencia de fugas.":

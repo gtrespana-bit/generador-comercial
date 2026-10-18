@@ -186,7 +186,7 @@ LOTE = {
     "Supply and installation of a sliding closet door with its top and bottom tracks, carriers, door leaves and pulls. Includes leveling the top track, which carries the weight and on which it depends that the leaves neither drop nor drag, fitting the bottom guide, hanging the leaves on their adjustable carriers, adjusting the verticality and the overlap between leaves and fitting the stops and brush seals. Measured by the area actually carried out.",
 
 "Fabricación y montaje de entrepaños, cajoneras, zapateras y organizadores interiores de closet en melamina, con sus soportes y herrajes. Incluye el despiece según la distribución acordada, el corte y canteado, el replanteo de las alturas útiles, el montaje de soportes y entrepaños nivelados, el montaje de cajones con sus correderas y la regulación de frentes. Medido en longitud de entrepaño u organizador realmente instalado.":
-    "Manufacture and fitting of melamine closet shelves, drawer units, shoe storage and internal organisers, with their supports and hardware. Includes preparing the cutting list to the layout agreed, cutting and edging, setting out the working heights, fitting the supports and shelves level, fitting the drawers on their slides and adjusting the fronts. Measured by the length of shelf or organiser actually installed.",
+    "Manufacture and fitting of melamine closet shelves, drawer units, shoe storage and internal organizers, with their supports and hardware. Includes preparing the cutting list to the layout agreed, cutting and edging, setting out the working heights, fitting the supports and shelves level, fitting the drawers on their slides and adjusting the fronts. Measured by the length of shelf or organizer actually installed.",
 
 "Fabricación e instalación de closet empotrado a medida en melamina, con puertas, entrepaños y barra de colgar. Incluye el despiece y el armado.":
     "Manufacture and installation of a built-in closet to measure in melamine, with doors, shelves and a hanging rail. Includes cutting list and assembly.",
@@ -195,7 +195,7 @@ LOTE = {
     "Manufacture and installation of a sliding closet door, with top and bottom tracks and carriers. Includes assembly and adjustment.",
 
 "Colocación de entrepaños y organizadores interiores de closet, con soportes regulables. Incluye el corte y la fijación.":
-    "Installation of closet shelves and internal organisers, with adjustable supports. Includes cutting and fixing.",
+    "Installation of closet shelves and internal organizers, with adjustable supports. Includes cutting and fixing.",
 
 "Fabricación e instalación de closet de vestidor con cajoneras, barras y entrepaños, en melamina. Incluye el despiece y el armado.":
     "Manufacture and installation of a melamine walk-in closet with drawer units, hanging rails and shelves. Includes cutting list and assembly.",
@@ -222,7 +222,7 @@ LOTE = {
     "Manufacture and installation of a closet door with an integrated mirror, hinged or sliding. Includes assembly and adjustment.",
 
 "Colocación de organizador de alacena con canastillas extraíbles y soportes. Incluye la fijación y la regulación.":
-    "Installation of a pantry organiser with pull-out baskets and supports. Includes fixing and adjustment.",
+    "Installation of a pantry organizer with pull-out baskets and supports. Includes fixing and adjustment.",
 
 "Reparación de closet o armario con ajuste de puertas, sustitución de herrajes y regulación. Incluye la revisión y el ajuste.":
     "Repair of a closet or cupboard with adjustment of the doors, replacement of hardware and adjustment. Includes inspection and adjustment.",
@@ -275,7 +275,7 @@ LOTE = {
     "Supply and installation of a stainless steel grab bar in an accessible bathroom, anchored to the wall. The anchorage is the critical part: a grab bar has to take the full weight of a person leaning on it or falling against it, so fixing it with plastic plugs into gypsum board without internal strengthening serves no purpose beyond the decorative. Includes checking or providing the strengthening of the backing, setting out the standard height and position, drilling, mechanical or chemical anchoring depending on the substrate and load testing. Measured per unit installed.",
 
 "Suministro y montaje del juego de accesorios y herrajes complementarios del mobiliario: tiradores, organizadores, bisagras de cierre suave, sistemas de elevación y topes. Incluye el replanteo, el pretaladrado con plantilla para garantizar la alineación de los tiradores en todos los frentes, que es lo que se nota a simple vista en un mueble bien terminado, el montaje y la regulación final de cierres y amortiguadores. Medido por juego instalado.":
-    "Supply and fitting of the set of complementary accessories and hardware for the cabinetry: pulls, organisers, soft close hinges, lift systems and stops. Includes setting out, pilot drilling with a jig to ensure the pulls line up across every front, which is what is immediately obvious in a well finished cabinet, fitting and final adjustment of the catches and soft closers. Measured per set installed.",
+    "Supply and fitting of the set of complementary accessories and hardware for the cabinetry: pulls, organizers, soft close hinges, lift systems and stops. Includes setting out, pilot drilling with a jig to ensure the pulls line up across every front, which is what is immediately obvious in a well finished cabinet, fitting and final adjustment of the catches and soft closers. Measured per set installed.",
 
 "Colocación de barra de apoyo de acero inoxidable para accesibilidad en baño, con fijación reforzada a la pared. Incluye el replanteo y la fijación.":
     "Installation of a stainless steel accessibility grab bar in a bathroom, with strengthened fixing to the wall. Includes setting out and fixing.",

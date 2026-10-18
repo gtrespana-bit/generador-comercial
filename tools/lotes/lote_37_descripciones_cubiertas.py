@@ -411,7 +411,7 @@ LOTE = {
     "Replacement of a damaged rainwater gutter, taking down the old and installing the new. Includes fixing and the finishings.",
 
 "Limpieza de cubierta con agua a presión para eliminar suciedad, hongos y sedimentos, previa a la impermeabilización o pintura. Incluye la limpieza a presión.":
-    "Cleaning of a roof with a pressure washer to remove dirt, mould and silt, before waterproofing or painting. Includes pressure washing.",
+    "Cleaning of a roof with a pressure washer to remove dirt, mold and silt, before waterproofing or painting. Includes pressure washing.",
 
 "Aplicación de pintura impermeabilizante elastomérica sobre cubierta metálica, con dos manos. Incluye la limpieza y la aplicación.":
     "Application of an elastomeric waterproofing coating to a metal roof, in two coats. Includes cleaning and application.",

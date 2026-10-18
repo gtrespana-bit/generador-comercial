@@ -216,7 +216,7 @@ LOTE = {
 "Desmontaje de marco de puerta de madera o metálico, sin dañar el vano. Incluye la retirada del marco y la limpieza del vano. Medido por unidad desmontada.":
     "Removal of a wood or metal door frame, without damaging the opening. Includes taking out the frame and cleaning the opening. Measured per unit removed.",
 "Desmontaje de ventana de aluminio con su marco, sin dañar el vano. Incluye la retirada de la ventana y la limpieza. Medido por unidad desmontada.":
-    "Removal of an aluminium window with its frame, without damaging the opening. Includes taking out the window and cleaning up. Measured per unit removed.",
+    "Removal of an aluminum window with its frame, without damaging the opening. Includes taking out the window and cleaning up. Measured per unit removed.",
 "Desmontaje de ventana de madera con su marco, sin dañar el vano. Incluye la retirada de la ventana y la limpieza. Medido por unidad desmontada.":
     "Removal of a wood window with its frame, without damaging the opening. Includes taking out the window and cleaning up. Measured per unit removed.",
 "Desmontaje de persiana enrollable con su cajón y mecanismo. Incluye la retirada de la persiana y el cajón. Medido por unidad desmontada.":

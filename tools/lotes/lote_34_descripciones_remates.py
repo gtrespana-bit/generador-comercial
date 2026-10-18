@@ -215,7 +215,7 @@ LOTE = {
 "Colocación de tapajuntas de madera en puerta o ventana. Incluye la fijación y el acabado. Medido por metro lineal colocado.":
     "Installation of wood architrave to a door or window. Includes fixing and finishing. Measured per meter installed.",
 "Colocación de tapajuntas de aluminio. Incluye la fijación. Medido por metro lineal colocado.":
-    "Installation of an aluminium cover strip. Includes fixing. Measured per meter installed.",
+    "Installation of an aluminum cover strip. Includes fixing. Measured per meter installed.",
 "Colocación de tapajuntas de MDF. Incluye la fijación. Medido por metro lineal colocado.":
     "Installation of an MDF architrave. Includes fixing. Measured per meter installed.",
 "Colocación de remate de tapajuntas de esquina. Incluye la fijación. Medido por metro lineal colocado.":

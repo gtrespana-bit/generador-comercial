@@ -501,7 +501,7 @@ LOTE = {
     "Installation of a fixed external awning or shade, with the structure and tensioning. Includes the structure and tensioning. The awning is selected by the client.",
 
 "Colocación de celosía o romanilla de aluminio en terraza, con marco y fijación. Incluye la colocación.":
-    "Installation of an aluminium louver screen on a terrace, with a frame and fixing. Includes installation.",
+    "Installation of an aluminum louver screen on a terrace, with a frame and fixing. Includes installation.",
 
 "Fabricación e instalación de mueble de exterior a medida en madera tratada. Incluye el despiece y el armado.":
     "Manufacture and installation of external furniture to measure in treated lumber. Includes cutting list and assembly.",

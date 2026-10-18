@@ -67,7 +67,7 @@ LOTE = {
 "Ejecución de fachada de chapa metálica con junta alzada, con fijación a estructura. Incluye la colocación de la chapa y el remate de juntas. Medido por metro cuadrado ejecutado.":
     "Construction of a standing seam metal sheet facade, fixed to the structure. Includes installing the sheeting and finishing the joints. Measured per square meter constructed.",
 "Ejecución de fachada revestida con lámina de aluminio, con subestructura. Incluye la subestructura y el revestimiento. Medido por metro cuadrado ejecutado.":
-    "Construction of a facade clad in aluminium sheet, with a support frame. Includes the frame and the cladding. Measured per square meter constructed.",
+    "Construction of a facade clad in aluminum sheet, with a support frame. Includes the frame and the cladding. Measured per square meter constructed.",
 "Ejecución de fachada revestida con placa fenólica o composite. Incluye la subestructura y el revestimiento. Medido por metro cuadrado ejecutado.":
     "Construction of a facade clad in phenolic or composite panels. Includes the support frame and the cladding. Measured per square meter constructed.",
 "Ejecución de fachada revestida con listones de madera tratada. Incluye la subestructura y la colocación de los listones. Medido por metro cuadrado ejecutado.":
@@ -306,7 +306,7 @@ LOTE = {
 "Remate y sellado del encuentro de pared con estructura. Incluye la limpieza de la junta y el sellado. Medido por metro lineal ejecutado.":
     "Finishing and sealing the junction of the wall with the structure. Includes cleaning the joint and sealing. Measured per meter constructed.",
 "Colocación de remate de vano con perfil de aluminio. Incluye la fijación del perfil y el remate. Medido por metro lineal ejecutado.":
-    "Installation of an aluminium trim to an opening. Includes fixing the profile and the trim. Measured per meter constructed.",
+    "Installation of an aluminum trim to an opening. Includes fixing the profile and the trim. Measured per meter constructed.",
 "Suministro y colocación de dintel metálico para vano. Incluye la fabricación y el montaje del dintel. Medido por metro lineal ejecutado.":
     "Supply and installation of a steel lintel to an opening. Includes fabricating and installing the lintel. Measured per meter constructed.",
 "Ejecución de vierteaguas de concreto en ventana. Incluye el encofrado, el vaciado y el acabado. Medido por metro lineal ejecutado.":
@@ -344,7 +344,7 @@ LOTE = {
 
 # ── Fachadas ventiladas, SATE y celosías ──────────────────────────────────
 "Ejecución de fachada ventilada de panel composite de aluminio, con subestructura. Incluye la subestructura, la colocación de los paneles y el remate. Medido por metro cuadrado ejecutado.":
-    "Construction of a ventilated facade of aluminium composite panels, with a support frame. Includes the frame, installing the panels and the trim. Measured per square meter constructed.",
+    "Construction of a ventilated facade of aluminum composite panels, with a support frame. Includes the frame, installing the panels and the trim. Measured per square meter constructed.",
 "Ejecución de fachada ventilada de gres porcelánico, con fijación mecánica. Incluye la subestructura y la colocación de las piezas. Medido por metro cuadrado ejecutado.":
     "Construction of a ventilated facade of porcelain stoneware, mechanically fixed. Includes the support frame and installing the units. Measured per square meter constructed.",
 "Ejecución de fachada ventilada de piedra natural ligera, con fijación mecánica. Incluye la subestructura y la colocación de la piedra. Medido por metro cuadrado ejecutado.":
@@ -368,13 +368,13 @@ LOTE = {
 "Ejecución de SATE de muro con acabado texturado. Incluye el panel, la malla, el mortero y el acabado. Medido por metro cuadrado ejecutado.":
     "Construction of an EIFS to a wall with a textured finish. Includes the board, the mesh, the stucco and the finish. Measured per square meter constructed.",
 "Suministro y colocación de celosía de fachada de aluminio, con lamas fijas o orientables. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.":
-    "Supply and installation of an aluminium facade louver screen, with fixed or adjustable blades. Includes the support frame and installing the blades. Measured per square meter installed.",
+    "Supply and installation of an aluminum facade louver screen, with fixed or adjustable blades. Includes the support frame and installing the blades. Measured per square meter installed.",
 "Suministro y colocación de celosía de fachada de madera tratada. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.":
     "Supply and installation of a treated wood facade louver screen. Includes the support frame and installing the blades. Measured per square meter installed.",
 "Suministro y colocación de celosía cerámica de fachada. Incluye la subestructura y la colocación de las piezas. Medido por metro cuadrado instalado.":
     "Supply and installation of a ceramic facade screen. Includes the support frame and installing the units. Measured per square meter installed.",
 "Suministro y colocación de cerramiento de lamas orientables de aluminio. Incluye la subestructura y la colocación de las lamas. Medido por metro cuadrado instalado.":
-    "Supply and installation of an aluminium adjustable louver screen. Includes the support frame and installing the blades. Measured per square meter installed.",
+    "Supply and installation of an aluminum adjustable louver screen. Includes the support frame and installing the blades. Measured per square meter installed.",
 "Suministro y colocación de celosía metálica decorativa de fachada. Incluye la fabricación y el montaje. Medido por metro cuadrado instalado.":
     "Supply and installation of a decorative metal facade screen. Includes fabrication and installation. Measured per square meter installed.",
 "Suministro y colocación de celosía de fachada de acero. Incluye la fabricación y el montaje. Medido por metro cuadrado instalado.":
@@ -397,10 +397,10 @@ LOTE = {
     "Cleaning of a facade by pressure washing at a pressure regulated to the type of substrate, removing dust, soot and surface deposits. The pressure has to be matched to the material: the pressure that cleans sound concrete strips an aged stucco or opens the joint of a face brick, so it is always tried first on an inconspicuous area before starting on the field. Includes protecting the joinery, the fittings and the footway at the foot of the facade, barring off, washing in panels from the top down, rinsing and collecting the run-off. Measured by the area actually carried out.",
 
 "Tratamiento de fachada afectada por moho, verdín o algas, mediante aplicación de solución fungicida y algicida con su tiempo de actuación y posterior enjuague. Pintar sobre una fachada con moho sin tratarlo no lo elimina: el hongo sigue vivo bajo la pintura y reaparece en la primera temporada de lluvias, de modo que este tratamiento es condición previa a cualquier acabado. Incluye la protección del entorno y de la vegetación, la aplicación de la solución sobre superficie seca, el respeto del tiempo de actuación indicado, el cepillado de las zonas de mayor colonización, el enjuague y el secado antes de pintar. Medido en superficie realmente ejecutada.":
-    "Treatment of a facade affected by mould, algae or lichen, by applying a fungicidal and algicidal solution, leaving it to act and rinsing afterwards. Painting over a facade with mould without treating it does not remove it: the fungus stays alive beneath the paint and reappears at the first rainy season, so this treatment is a precondition of any finish. Includes protecting the surroundings and the planting, applying the solution to a dry surface, respecting the contact time indicated, brushing the areas of heaviest growth, rinsing and drying before painting. Measured by the area actually carried out.",
+    "Treatment of a facade affected by mold, algae or lichen, by applying a fungicidal and algicidal solution, leaving it to act and rinsing afterwards. Painting over a facade with mold without treating it does not remove it: the fungus stays alive beneath the paint and reappears at the first rainy season, so this treatment is a precondition of any finish. Includes protecting the surroundings and the planting, applying the solution to a dry surface, respecting the contact time indicated, brushing the areas of heaviest growth, rinsing and drying before painting. Measured by the area actually carried out.",
 
 "Limpieza química de fachada para eliminar eflorescencias, manchas de óxido, restos de mortero, grafitis o depósitos incrustados, con el producto específico para cada tipo de mancha y de soporte. La elección del producto es lo determinante: un limpiador ácido sobre mármol, granito pulido o aluminio anodizado produce un daño irreversible que resulta peor que la mancha original, por lo que se ensaya siempre en zona oculta. Incluye la identificación del tipo de mancha, el ensayo previo, la protección del entorno, la aplicación con su tiempo de actuación, el cepillado, la neutralización y el enjuague abundante. Medido en superficie realmente ejecutada.":
-    "Chemical cleaning of a facade to remove efflorescence, rust staining, mortar residue, graffiti or ingrained deposits, with the product specific to each type of stain and each substrate. The choice of product is what decides it: an acid cleaner on marble, polished granite or anodized aluminium causes irreversible damage worse than the original stain, so it is always tried first in a hidden area. Includes identifying the type of stain, the prior trial, protecting the surroundings, application with its contact time, brushing, neutralizing and rinsing thoroughly. Measured by the area actually carried out.",
+    "Chemical cleaning of a facade to remove efflorescence, rust staining, mortar residue, graffiti or ingrained deposits, with the product specific to each type of stain and each substrate. The choice of product is what decides it: an acid cleaner on marble, polished granite or anodized aluminum causes irreversible damage worse than the original stain, so it is always tried first in a hidden area. Includes identifying the type of stain, the prior trial, protecting the surroundings, application with its contact time, brushing, neutralizing and rinsing thoroughly. Measured by the area actually carried out.",
 
 "Aplicación de hidrofugante incoloro de impregnación sobre fachada de concreto, ladrillo visto, piedra o friso, para reducir la absorción de agua sin formar película ni alterar el aspecto. A diferencia de una pintura, deja el poro abierto al vapor, de modo que la fachada sigue transpirando y no se producen desprendimientos por presión de vapor desde el interior. Incluye la limpieza y secado previo del soporte, la reparación de fisuras, la aplicación por saturación de abajo hacia arriba hasta que el producto escurra sobre la zona ya tratada, y la segunda mano en fresco sobre la primera. Medido en superficie realmente ejecutada.":
     "Application of a colorless penetrating water repellent to a concrete, face brick, stone or stuccoed facade, to reduce the absorption of water without forming a film or altering the appearance. Unlike a paint, it leaves the pore open to vapour, so the facade continues to breathe and there is no delamination from vapour pressure from inside. Includes cleaning and drying the substrate beforehand, repairing cracks, applying to saturation from the bottom up until the product runs down over the area already treated, and the second coat applied wet on the first. Measured by the area actually carried out.",
@@ -412,7 +412,7 @@ LOTE = {
 "Limpieza de fachada con hidrolavado a presión. Incluye la limpieza por franjas y la protección de carpintería. Medido por metro cuadrado limpiado.":
     "Cleaning of a facade by pressure washing. Includes cleaning in bands and protecting the joinery. Measured per square meter cleaned.",
 "Tratamiento fungicida de fachada contra moho y verdín. Incluye la limpieza y la aplicación del fungicida. Medido por metro cuadrado tratado.":
-    "Fungicidal treatment of a facade against mould and algae. Includes cleaning and applying the fungicide. Measured per square meter treated.",
+    "Fungicidal treatment of a facade against mold and algae. Includes cleaning and applying the fungicide. Measured per square meter treated.",
 "Eliminación de grafitis en fachada. Incluye la limpieza química y mecánica. Medido por metro cuadrado tratado.":
     "Removal of graffiti from a facade. Includes chemical and mechanical cleaning. Measured per square meter treated.",
 "Eliminación de eflorescencias salinas en fachada. Incluye la limpieza y el tratamiento. Medido por metro cuadrado tratado.":
