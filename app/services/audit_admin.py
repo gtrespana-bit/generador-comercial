@@ -48,6 +48,7 @@ ACCIONES_LECIBLES = {
     "admin.vista_eliminada": "Vista eliminada",
     "api_key.creada": "Clave de API creada",
     "api_key.revocada": "Clave de API revocada",
+    "matriz_precios.cargada": "Matriz nacional de precios cargada",
     "analitica.chats_listado_visto": "Listado de conversaciones visto",
     "analitica.chat_detalle_visto": "Detalle de conversación visto",
     "analitica.chats_exportado": "Conversaciones exportadas",

@@ -290,3 +290,72 @@ def resolver_precios_para_presupuesto_lote(db: Session, recursos, pais_codigo: s
         except ValueError:
             salida[recurso.id] = {"precio": res.precio, "moneda": origen, "origen": res.origen, "confianza": res.confianza, "aviso": "Falta tasa para convertir el precio al presupuesto", "requiere_tasa": True}
     return salida
+
+
+def resumen_matriz_por_pais(db: Session, paises: list[str] | None = None) -> dict:
+    """Foto de las referencias nacionales activas, país a país.
+
+    Es lo que ve el operador antes de cargar una matriz: cuántas referencias
+    tiene cada mercado, de cuándo son y cuántas están ya obsoletas o caducadas.
+    ``paises`` acota la consulta; sin él se devuelven todos los que tengan
+    alguna referencia cargada.
+
+    Las fechas se cuentan en Python y no en SQL a propósito: la vigencia se
+    define en un solo sitio (``vigencia_precios``) y repetirla como expresión
+    SQL la dejaría obsoleta en cuanto cambie el criterio.
+    """
+    from .vigencia_precios import CADUCADA, OBSOLETA, evaluar_vigencia
+
+    consulta = db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.organizacion_id.is_(None),
+        PrecioRecursoMercado.activo.is_(True),
+    )
+    if paises:
+        consulta = consulta.filter(PrecioRecursoMercado.pais_codigo.in_(list(paises)))
+
+    salida: dict[str, dict] = {}
+    for fila in consulta.all():
+        pais = str(fila.pais_codigo or "").upper()
+        bloque = salida.get(pais)
+        if bloque is None:
+            bloque = salida[pais] = {
+                "pais": pais,
+                "referencias": 0,
+                "monedas": set(),
+                "confianzas": set(),
+                "ultima_consulta": None,
+                "ultima_actualizacion": None,
+                "obsoletas": 0,
+                "caducadas": 0,
+                "sin_fecha": 0,
+            }
+        bloque["referencias"] += 1
+        if fila.moneda:
+            bloque["monedas"].add(str(fila.moneda).upper())
+        if fila.confianza:
+            bloque["confianzas"].add(str(fila.confianza))
+        if fila.fecha_consulta and (
+            bloque["ultima_consulta"] is None or fila.fecha_consulta > bloque["ultima_consulta"]
+        ):
+            bloque["ultima_consulta"] = fila.fecha_consulta
+        if fila.fecha_actualizacion and (
+            bloque["ultima_actualizacion"] is None
+            or fila.fecha_actualizacion > bloque["ultima_actualizacion"]
+        ):
+            bloque["ultima_actualizacion"] = fila.fecha_actualizacion
+
+        vigencia = evaluar_vigencia(fila.fecha_consulta, fila.fecha_vigencia, fila.confianza)
+        if vigencia.estado == CADUCADA:
+            bloque["caducadas"] += 1
+        elif vigencia.estado == OBSOLETA:
+            bloque["obsoletas"] += 1
+        elif vigencia.estado == "sin_fecha":
+            bloque["sin_fecha"] += 1
+
+    for bloque in salida.values():
+        bloque["monedas"] = sorted(bloque["monedas"])
+        bloque["confianzas"] = sorted(bloque["confianzas"])
+        bloque["pendientes_revision"] = (
+            bloque["obsoletas"] + bloque["caducadas"] + bloque["sin_fecha"]
+        )
+    return salida

@@ -8,12 +8,13 @@ parciales con unidad, rango, país o moneda incoherentes.
 from __future__ import annotations
 
 import csv
+import io
 from datetime import date
 from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from ..models import Recurso
+from ..models import PrecioRecursoMercado, Recurso
 from .precios_mercado import guardar_precio
 from .unidades_precio import convertir_precio_unidad, sistema_unidades_pais
 
@@ -26,6 +27,16 @@ MONEDA_PAIS = {"CO": "COP", "PE": "PEN", "MX": "MXN", "EC": "USD", "PA": "USD", 
 CONFIANZAS = {"confirmado", "referencia", "derivado", "provisional"}
 IVA_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}
 TRANSPORTE_VALIDO = {"si", "no", "no_aplica", "no_confirmado", "por_verificar"}
+
+#: Contrato del CSV, en el orden en que se publica. El panel de operador lo
+#: muestra como ayuda y el validador lo exige: una sola definición para que la
+#: ayuda nunca se quede atrás respecto a la validación.
+COLUMNAS_MATRIZ: tuple[str, ...] = (
+    "codigo_recurso", "descripcion", "categoria", "unidad_fuente",
+    "pais_codigo", "moneda", "precio_referencia", "precio_min",
+    "precio_max", "fuente", "fecha_consulta", "confianza",
+    "incluye_iva", "incluye_transporte", "origen", "observaciones",
+)
 
 
 def _texto(row: dict, clave: str) -> str:
@@ -67,35 +78,154 @@ def _unidad(valor: str) -> str:
     return normalizar_unidad(valor)
 
 
+def _texto_matriz(fuente) -> str:
+    """Contenido de la matriz desde una ruta, unos bytes o un stream abierto.
+
+    El panel de operador recibe el fichero subido como bytes; la herramienta de
+    línea de comandos pasa una ruta. Un único punto de lectura evita que las
+    dos vías validen de forma distinta.
+    """
+    if isinstance(fuente, (str, Path)):
+        return Path(fuente).read_text(encoding="utf-8-sig")
+    if isinstance(fuente, (bytes, bytearray)):
+        return bytes(fuente).decode("utf-8-sig")
+    if hasattr(fuente, "read"):
+        bruto = fuente.read()
+        if isinstance(bruto, (bytes, bytearray)):
+            return bytes(bruto).decode("utf-8-sig")
+        return str(bruto)
+    raise TypeError("fuente debe ser una ruta, bytes o un stream de lectura")
+
+
+def resolver_recursos(db: Session, *, nacional: bool = False) -> dict[str, Recurso]:
+    """Recursos por código normalizado.
+
+    En modo **nacional** la búsqueda se hace sin filtro de organización: una
+    referencia nacional sirve a todas las empresas, de modo que no puede
+    resolverse solo dentro de la organización que carga el fichero. Si varias
+    organizaciones tienen el mismo código manda el identificador más bajo, el
+    mismo criterio del SQL de carga, porque la referencia queda ligada al
+    código estable y no a una copia concreta del recurso.
+    """
+    consulta = db.query(Recurso)
+    if nacional:
+        consulta = consulta.execution_options(sin_filtro_organizacion=True)
+    salida: dict[str, Recurso] = {}
+    for recurso in consulta.all():
+        codigo = str(recurso.codigo or "").strip()
+        if not codigo:
+            continue
+        actual = salida.get(codigo)
+        if actual is None or recurso.id < actual.id:
+            salida[codigo] = recurso
+    return salida
+
+
+#: Filas que se enseñan en la vista previa del panel. El informe completo va
+#: por contadores; la muestra solo sirve para comprobar que el fichero es el
+#: que se cree antes de pulsar «cargar».
+MUESTRA_MAXIMA = 12
+
+#: Campos que se comparan para decidir si una fila cambia de verdad. El
+#: precio solo no basta: una referencia puede moverse de moneda o de rango
+#: manteniendo el número, y eso también es un cambio que hay que contar.
+CAMPOS_COMPARABLES = (
+    "precio", "moneda", "precio_min", "precio_max",
+    "unidad_referencia", "confianza", "incluye_iva", "incluye_transporte",
+)
+
+
+#: Estado de cada fila -> clave del contador en el resultado.
+CONTADOR_ESTADO = {
+    "creada": "creadas",
+    "actualizada": "actualizadas",
+    "sin_cambios": "sin_cambios",
+}
+
+
+def _referencias_nacionales(db: Session, paises: list[str]) -> list[PrecioRecursoMercado]:
+    """Referencias nacionales activas de los países indicados."""
+    if not paises:
+        return []
+    return (
+        db.query(PrecioRecursoMercado)
+        .filter(
+            PrecioRecursoMercado.pais_codigo.in_(paises),
+            PrecioRecursoMercado.organizacion_id.is_(None),
+            PrecioRecursoMercado.activo.is_(True),
+        )
+        .all()
+    )
+
+
+def _indice_existentes(db: Session, paises: list[str]) -> dict[tuple, PrecioRecursoMercado]:
+    """Índice por código estable y por identificador, como `guardar_precio`."""
+    indice: dict[tuple, PrecioRecursoMercado] = {}
+    for fila in _referencias_nacionales(db, paises):
+        codigo = str(fila.codigo_recurso or "").strip()
+        if codigo:
+            indice[("cod", codigo, fila.pais_codigo)] = fila
+        indice[("id", fila.recurso_id, fila.pais_codigo)] = fila
+    return indice
+
+
+def _buscar_existente(indice: dict[tuple, PrecioRecursoMercado], recurso: Recurso, pais: str):
+    """El código manda sobre el identificador: sobrevive a copias del recurso."""
+    codigo = str(recurso.codigo or "").strip()
+    if codigo:
+        fila = indice.get(("cod", codigo, pais))
+        if fila is not None:
+            return fila
+    return indice.get(("id", recurso.id, pais))
+
+
+def _mismo_precio(fila: PrecioRecursoMercado, dato: dict) -> bool:
+    """¿La fila que ya existe es equivalente a la que traería el fichero?"""
+    for campo in CAMPOS_COMPARABLES:
+        actual = getattr(fila, campo, None)
+        nuevo = dato.get(campo)
+        if isinstance(actual, float) or isinstance(nuevo, float):
+            try:
+                if abs(float(actual or 0.0) - float(nuevo or 0.0)) > 1e-9:
+                    return False
+                continue
+            except (TypeError, ValueError):
+                return False
+        if (actual or None) != (nuevo or None):
+            return False
+    return True
+
+
 def importar_matriz_csv(
     db: Session,
-    ruta: str | Path,
+    fuente,
     *,
     aplicar: bool = False,
     incluir_respaldo: bool = False,
+    nacional: bool = False,
+    reemplazar: bool = False,
 ) -> dict:
-    ruta = Path(ruta)
     resultado = {
         "filas": 0,
         "aplicables": 0,
         "creadas_o_actualizadas": 0,
         "pendientes": 0,
         "no_encontrados": 0,
+        "creadas": 0,
+        "actualizadas": 0,
+        "sin_cambios": 0,
+        "eliminadas": 0,
+        "paises": [],
+        "muestra": [],
         "errores": [],
     }
-    recursos = {r.codigo.strip(): r for r in db.query(Recurso).all() if r.codigo}
+    recursos = resolver_recursos(db, nacional=nacional)
     vistos: set[tuple[str, str]] = set()
     planes: list[tuple[Recurso, dict]] = []
 
-    with ruta.open("r", encoding="utf-8-sig", newline="") as fh:
+    with io.StringIO(_texto_matriz(fuente), newline="") as fh:
         reader = csv.DictReader(fh, delimiter=";")
-        requeridas = {
-            "codigo_recurso", "descripcion", "categoria", "unidad_fuente",
-            "pais_codigo", "moneda", "precio_referencia", "precio_min",
-            "precio_max", "fuente", "fecha_consulta", "confianza",
-            "incluye_iva", "incluye_transporte", "origen", "observaciones",
-        }
-        faltantes = sorted(requeridas - set(reader.fieldnames or []))
+        faltantes = sorted(set(COLUMNAS_MATRIZ) - set(reader.fieldnames or []))
         if faltantes:
             resultado["errores"].append(
                 "Faltan columnas obligatorias: " + ", ".join(faltantes)
@@ -211,6 +341,51 @@ def importar_matriz_csv(
             }))
 
     resultado["aplicables"] = len(planes)
+    resultado["paises"] = sorted({dato["pais"] for _, dato in planes})
+
+    # Clasificación de la vista previa. Se resuelve con la misma regla que usa
+    # `guardar_precio` (por código estable y, si no, por identificador) para
+    # que el número prometido sea exactamente el número escrito.
+    existentes = _indice_existentes(db, resultado["paises"])
+    for recurso, dato in planes:
+        fila = _buscar_existente(existentes, recurso, dato["pais"])
+        estado = "creada"
+        if fila is not None:
+            estado = "sin_cambios" if _mismo_precio(fila, dato) else "actualizada"
+        resultado[CONTADOR_ESTADO[estado]] = resultado[CONTADOR_ESTADO[estado]] + 1
+        if len(resultado["muestra"]) < MUESTRA_MAXIMA:
+            resultado["muestra"].append({
+                "codigo": str(recurso.codigo or "").strip(),
+                "descripcion": str(recurso.descripcion or "").strip(),
+                "unidad": str(recurso.unidad or "").strip(),
+                "pais": dato["pais"],
+                "precio": dato["precio"],
+                "moneda": dato["moneda"],
+                "precio_anterior": (fila.precio if fila is not None else None),
+                "estado": estado,
+            })
+
+    # Huérfanas: referencias nacionales del país que el fichero no menciona.
+    # Solo se retiran en modo «reemplazar» y nunca se borran: se desactivan,
+    # que para el cálculo de precios es lo mismo (`resolver_precio` filtra por
+    # `activo`) pero conserva el histórico y se puede deshacer.
+    huerfanas: list[PrecioRecursoMercado] = []
+    if reemplazar and planes and not resultado["errores"]:
+        cubiertos: set[tuple] = set()
+        for recurso, dato in planes:
+            codigo = str(recurso.codigo or "").strip()
+            if codigo:
+                cubiertos.add(("cod", codigo, dato["pais"]))
+            cubiertos.add(("id", recurso.id, dato["pais"]))
+        for fila in _referencias_nacionales(db, resultado["paises"]):
+            codigo = str(fila.codigo_recurso or "").strip()
+            if ("id", fila.recurso_id, fila.pais_codigo) in cubiertos:
+                continue
+            if codigo and ("cod", codigo, fila.pais_codigo) in cubiertos:
+                continue
+            huerfanas.append(fila)
+    resultado["eliminadas"] = len(huerfanas)
+
     # La carga es todo-o-nada: un rango corrupto no puede convivir con las
     # filas que sí alcanzaron a guardarse antes del error.
     if aplicar and not resultado["errores"]:
@@ -232,6 +407,8 @@ def importar_matriz_csv(
                     incluye_transporte=dato["incluye_transporte"],
                     observaciones=dato["observaciones"],
                 )
+            for fila in huerfanas:
+                fila.activo = False
             db.commit()
             resultado["creadas_o_actualizadas"] = len(planes)
         except Exception:

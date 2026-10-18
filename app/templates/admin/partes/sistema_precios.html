@@ -1,0 +1,239 @@
+{# Sistema › Matrices de precios.
+
+   Referencia nacional = fila con `organizacion_id` nulo: sirve a TODAS las
+   empresas de un país, así que solo la escribe un operador (lo marca la
+   política RLS) y solo un superadmin la carga desde aquí.
+
+   El flujo es «validar y luego cargar»: el primer paso no toca la base y
+   enseña exactamente qué pasaría. Enviar el CSV codificado en el formulario de
+   confirmación evita guardarlo en un temporal, que en un despliegue sin
+   estado no sobrevive entre dos peticiones. #}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Referencias nacionales por mercado</h2>
+    <div class="card-header-acc">
+      <span class="badge {{ 'badge-success' if con_carga|length == mercados|length else 'badge-warning' }}">
+        {{ con_carga|length }} de {{ mercados|length }} con matriz
+      </span>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="muted-note">
+      Sin matriz cargada, el país cae al precio base del catálogo convertido por tipo de cambio:
+      un presupuesto sale con números plausibles y equivocados. «Por revisar» son referencias
+      obsoletas, caducadas o sin fecha de consulta.
+    </p>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Moneda</th>
+          <th>Unidades</th>
+          <th class="tabla-num">Referencias</th>
+          <th>Última consulta</th>
+          <th class="tabla-num">Por revisar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mercado in mercados %}
+        <tr>
+          <td>
+            <span aria-hidden="true">{{ mercado.bandera }}</span>
+            <b>{{ mercado.nombre }}</b>
+            <span class="muted">{{ mercado.codigo }}</span>
+          </td>
+          <td>{{ mercado.moneda }}</td>
+          <td>{{ 'Imperial' if mercado.unidades == 'imperial' else 'Métrico' }}</td>
+          <td class="tabla-num">
+            {% if mercado.estado.referencias %}
+            <span class="badge badge-success">{{ mercado.estado.referencias }}</span>
+            {% else %}
+            <span class="badge badge-warning">Sin cargar</span>
+            {% endif %}
+          </td>
+          <td>
+            {{ mercado.estado.ultima_consulta.strftime('%d/%m/%Y') if mercado.estado.ultima_consulta else '—' }}
+          </td>
+          <td class="tabla-num">
+            {% if mercado.estado.pendientes_revision %}
+            <span class="badge badge-warning">{{ mercado.estado.pendientes_revision }}</span>
+            {% else %}
+            <span class="muted">0</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Cargar una matriz</h2>
+    {% if not es_superadmin %}
+    <div class="card-header-acc"><span class="badge badge-neutral">Solo superadmin</span></div>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    {% if es_superadmin %}
+    <form class="form-cuadricula" method="post" action="/admin/matriz-precios/validar" enctype="multipart/form-data">
+      <div class="form-group grid-full">
+        <label class="form-label" for="matriz-archivo">Fichero CSV</label>
+        <input class="form-control" type="file" id="matriz-archivo" name="archivo"
+               accept=".csv,text/csv" required>
+        <small class="muted">Separado por punto y coma, con BOM o sin él. Máximo {{ maximo_mb }} MB.</small>
+      </div>
+      <div class="form-group grid-full">
+        <label class="form-check">
+          <input type="checkbox" name="reemplazar" value="1">
+          <span>Desactivar las referencias de esos países que el fichero no traiga</span>
+        </label>
+        <small class="muted">
+          Solo para una matriz completa del país. Sin marcarlo, lo que ya existe se queda como está.
+          Las referencias se desactivan, no se borran: el histórico se conserva.
+        </small>
+      </div>
+      <div class="form-acciones grid-full">
+        <button class="btn btn-secondary" type="submit">Validar sin escribir</button>
+      </div>
+    </form>
+    {% else %}
+    <p class="muted-note">
+      Cargar una matriz cambia lo que pagan todos los clientes de un país. Tu rol es
+      <b>{{ rol_actual or 'operador' }}</b>; hace falta superadmin.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+{% if resultado %}
+<div class="card">
+  <div class="card-header">
+    <h2>{{ nombre_fichero or 'Matriz validada' }}</h2>
+    <div class="card-header-acc">
+      {% if resultado.errores %}
+      <span class="badge badge-danger">{{ resultado.errores|length }} error(es)</span>
+      {% else %}
+      <span class="badge badge-success">Validación correcta</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="estado-grid">
+      <div class="estado-caja">
+        <div class="label">Filas leídas</div>
+        <div class="value">{{ resultado.filas }}</div>
+      </div>
+      <div class="estado-caja">
+        <div class="label">Nuevas</div>
+        <div class="value">{{ resultado.creadas }}</div>
+      </div>
+      <div class="estado-caja">
+        <div class="label">Actualizadas</div>
+        <div class="value">{{ resultado.actualizadas }}</div>
+      </div>
+      <div class="estado-caja">
+        <div class="label">Igual que ahora</div>
+        <div class="value">{{ resultado.sin_cambios }}</div>
+      </div>
+      {% if resultado.eliminadas %}
+      <div class="estado-caja">
+        <div class="label">Se desactivarían</div>
+        <div class="value">{{ resultado.eliminadas }}</div>
+      </div>
+      {% endif %}
+      <div class="estado-caja">
+        <div class="label">Países</div>
+        <div class="value">{{ resultado.paises|join(', ') if resultado.paises else '—' }}</div>
+      </div>
+    </div>
+
+    {% if resultado.errores %}
+    <ul class="lista-problema">
+      {% for fallo in resultado.errores %}
+      <li>
+        <svg class="svg-fix" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        <span>{{ fallo }}</span>
+      </li>
+      {% if loop.index == 25 and resultado.errores|length > 25 %}
+      <li class="aviso"><span>…y {{ resultado.errores|length - 25 }} más. Corrige el fichero y vuelve a validarlo.</span></li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+    <p class="muted-note">No se escribió nada. Corrige el fichero y vuelve a validarlo.</p>
+    {% else %}
+    <p class="muted-note">
+      Muestra de las primeras {{ resultado.muestra|length }} filas. Revisa que el país, la moneda
+      y los importes son los que esperas antes de escribir.
+    </p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Recurso</th>
+            <th class="tabla-num">Precio</th>
+            <th class="tabla-num">Antes</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resultado.muestra %}
+          <tr>
+            <td><code>{{ fila.codigo }}</code></td>
+            <td>{{ fila.descripcion }}</td>
+            <td class="tabla-num">{{ '%.2f'|format(fila.precio) }} {{ fila.moneda }}/{{ fila.unidad }}</td>
+            <td class="tabla-num">
+              {% if fila.precio_anterior is not none %}{{ '%.2f'|format(fila.precio_anterior) }}{% else %}—{% endif %}
+            </td>
+            <td>
+              {% if fila.estado == 'creada' %}<span class="badge badge-info">Nueva</span>
+              {% elif fila.estado == 'actualizada' %}<span class="badge badge-warning">Actualiza</span>
+              {% else %}<span class="badge badge-neutral">Igual</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <form method="post" action="/admin/matriz-precios/cargar" class="form-inline">
+      <input type="hidden" name="contenido_csv" value="{{ contenido_csv }}">
+      {% if reemplazar %}<input type="hidden" name="reemplazar" value="1">{% endif %}
+      <div class="form-acciones">
+        <button class="btn btn-danger" type="submit">Escribir {{ resultado.aplicables }} referencias</button>
+        <a class="btn btn-secondary" href="/admin/sistema?tab=precios">Descartar</a>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Formato del CSV</h2>
+    <div class="card-header-acc"><span class="badge badge-neutral">{{ columnas_matriz|length }} columnas</span></div>
+  </div>
+  <div class="card-body">
+    <p class="muted-note">
+      Cabecera obligatoria, en este orden y separada por punto y coma. El país y la moneda
+      se validan contra los 23 mercados; la unidad se convierte sola cuando el mercado es
+      imperial y el recurso es métrico.
+    </p>
+    <div class="table-container">
+      <table>
+        <thead><tr><th class="tabla-num">#</th><th>Columna</th></tr></thead>
+        <tbody>
+          {% for columna in columnas_matriz %}
+          <tr><td class="tabla-num">{{ loop.index }}</td><td><code>{{ columna }}</code></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
