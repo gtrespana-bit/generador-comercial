@@ -35,25 +35,25 @@ LOTE = {
 "Medición de los espesores de aislamiento existentes en la envolvente, con detector.":
     "Measurement of the thickness of the existing insulation in the envelope with a detector.",
 "Inspección del estado de la carpintería y vidrios, para evaluar su contribución a las pérdidas térmicas.":
-    "Inspection of the condition of the joinery and glazing, to assess their contribution to heat loss.",
+    "Inspection of the condition of the carpentry and glazing, to assess their contribution to heat loss.",
 "Levantamiento de la envolvente térmica de la vivienda, con medición de superficies y composición.":
     "Survey of the thermal envelope of the dwelling, with measurement of areas and construction.",
 "Elaboración de propuesta de medidas de rehabilitación energética, con estimación de ahorros.":
-    "Preparation of a proposal of energy refurbishment measures, with an estimate of the savings.",
+    "Preparation of a proposal of energy retrofit measures, with an estimate of the savings.",
 "Seguimiento y medición del ahorro energético tras la rehabilitación, con comparación de consumos.":
-    "Monitoring and measurement of the energy saving after the refurbishment, by comparison of consumption.",
+    "Monitoring and measurement of the energy saving after the remodeling, by comparison of consumption.",
 
 # ── Fachada ───────────────────────────────────────────────────────────────
 "Colocación de panel de poliestireno extruido sobre fachada, fijado y con capa de protección.":
-    "Installation of extruded polystyrene boards on a facade, fixed and with a protective coating.",
+    "Installation of extruded polystyrene boards on a facade, fastened and with a protective coating.",
 "Colocación de panel de lana de roca sobre fachada, fijado y con capa de protección.":
-    "Installation of rock wool boards on a facade, fixed and with a protective coating.",
+    "Installation of rock wool boards on a facade, fastened and with a protective coating.",
 "Sistema de aislamiento térmico exterior (SATE) de fachada con poliestireno expandido, malla y mortero.":
     "External insulation and finish system (EIFS) to a facade, with expanded polystyrene, mesh and stucco.",
 "Ejecución de fachada ventilada con subestructura metálica y aislamiento térmico, con cámara de aire.":
     "Construction of a ventilated facade with a metal support frame and thermal insulation, with an air cavity.",
 "Colocación de panel composite sobre fachada, con fijación mecánica, para mejorar el aislamiento y la estética.":
-    "Installation of composite panels on a facade, mechanically fixed, to improve insulation and appearance.",
+    "Installation of sandwich panels on a facade, mechanically fixed, to improve insulation and appearance.",
 "Proyección de lana mineral aislante sobre fachada, para relleno de cámaras y mejora térmica.":
     "Spraying of insulating mineral wool on a facade, to fill cavities and improve thermal performance.",
 "Inyección de aislamiento en la cámara de aire de la fachada, para mejorar la resistencia térmica.":
@@ -85,7 +85,7 @@ LOTE = {
 "Colocación de refuerzo de aislamiento en la cumbrera de la cubierta, para eliminar el puente térmico.":
     "Installation of additional insulation at the ridge of the roof, to eliminate the thermal bridge.",
 "Colocación de aislamiento en el perímetro del lucernario o claraboya, para reducir las pérdidas.":
-    "Installation of insulation around the perimeter of the rooflight, to reduce heat loss.",
+    "Installation of insulation around the perimeter of the skylight, to reduce heat loss.",
 "Ejecución de cubierta fría con aislamiento y cámara ventilada, para reducir la ganancia de calor.":
     "Construction of a cold roof with insulation and a ventilated cavity, to reduce heat gain.",
 "Colocación de aislamiento en el techo que separa espacios acondicionados de no acondicionados.":
@@ -129,13 +129,13 @@ LOTE = {
 "Sustitución de la junta de estanqueidad de las ventanas, para mejorar la hermeticidad.":
     "Replacement of the weather seals of the windows, to improve airtightness.",
 "Calafateado y sellado de la carpintería exterior, para eliminar infiltraciones de aire y agua.":
-    "Caulking and sealing of the external joinery, to eliminate air and water infiltration.",
+    "Caulking and sealing of the external carpentry, to eliminate air and water infiltration.",
 "Colocación de persiana aislante con cajón estanco, para mejorar el aislamiento del hueco. La persiana la elige el cliente.":
     "Installation of an insulated roller shutter with a sealed box, to improve the insulation of the opening. The shutter is selected by the client.",
 "Sustitución de puerta exterior por una con núcleo aislante, para reducir las pérdidas. La puerta la elige el cliente.":
     "Replacement of an external door with one having an insulated core, to reduce heat loss. The door is selected by the client.",
 "Colocación de burlete de estanqueidad en el perímetro de las puertas exteriores, para reducir infiltraciones.":
-    "Installation of draught seals around the perimeter of the external doors, to reduce infiltration.",
+    "Installation of weatherstripping around the perimeter of the external doors, to reduce infiltration.",
 "Sustitución por ventana de doble acristalamiento con gas argón y marco aislante, de altas prestaciones. El sistema lo elige el cliente.":
     "Replacement with a high performance window with argon-filled double glazing and a thermally broken frame. The system is selected by the client.",
 
@@ -221,7 +221,7 @@ LOTE = {
 "Instalación de sistema de agua caliente solar, con conexión hidráulica. El sistema lo elige el cliente.":
     "Installation of a solar water heating system, with the hydraulic connection. The system is selected by the client.",
 "Ejecución de estructura soporte de paneles solares, con perfiles y fijación.":
-    "Construction of the support structure for solar panels, with profiles and fixings.",
+    "Construction of the support structure for solar panels, with profiles and fasteners.",
 "Conexión del sistema fotovoltaico a la red, con protecciones y puesta en marcha.":
     "Connection of the photovoltaic system to the grid, with protective devices and commissioning.",
 "Instalación de medidor bidireccional de energía, para la compensación de excedentes. El medidor lo elige el cliente.":
@@ -235,5 +235,5 @@ LOTE = {
 "Mantenimiento del sistema fotovoltaico, con limpieza de paneles y revisión de conexiones.":
     "Maintenance of the photovoltaic system, including cleaning of the panels and checking of connections.",
 "Ejecución de estructura de soporte de paneles solares sobre techo inclinado, con fijación a la cubierta y sellado de los pasos.":
-    "Construction of the support structure for solar panels on a pitched roof, with fixing to the roof and sealing of the penetrations.",
+    "Construction of the support structure for solar panels on a pitched roof, with fastening to the roof and sealing of the penetrations.",
 }

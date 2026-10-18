@@ -13,63 +13,63 @@ potencia induce interferencias que degradan la señal.
 
 LOTE = {
     "Instalación de luminaria led empotrada., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a recessed LED light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a recessed LED light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de pared., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a wall light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a wall light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de aplique de exterior., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of an external wall light, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of an external wall light, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de emergencia., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of an emergency light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of an emergency light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de foco de piso., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a floor uplight, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a floor uplight, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de closet., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a closet light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a closet light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de espejo., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a mirror light, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a mirror light, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de tira led en zócalo., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of an LED strip in the baseboard, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of an LED strip in the baseboard, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria colgante., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a pendant light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a pendant light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de techo., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a ceiling light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a ceiling light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de reflector con sensor., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a sensor floodlight, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a sensor floodlight, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de riel., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a track light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a track light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de piscina., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a pool light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a pool light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de jardín., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a garden light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a garden light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de garaje., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a garage light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a garage light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de escalera., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a stair light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a stair light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria decorativa., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a decorative light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a decorative light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de oficina., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of an office light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of an office light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de baño., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a bathroom light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a bathroom light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de cocina., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a kitchen light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a kitchen light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de sala., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a living room light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a living room light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de dormitorio., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a bedroom light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a bedroom light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de pasillo., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a corridor light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a corridor light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de fachada., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a facade light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a facade light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de terraza., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a terrace light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a terrace light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de lavandería., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a laundry room light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a laundry room light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de recibidor., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a hall light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a hall light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de comedor., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a dining room light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a dining room light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Instalación de luminaria de estudio., con conexión y fijación. Incluye la conexión eléctrica y la fijación. Medido por unidad instalada.":
-        "Installation of a study light fixture, with the connection and fixing. Includes the electrical connection and fixing. Measured per unit installed.",
+        "Installation of a study light fixture, with the connection and fastening. Includes the electrical connection and fastening. Measured per unit installed.",
     "Ejecución de punto de datos para computadora., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.":
         "Installation of a data outlet for a computer, with conduit and connection. Includes laying the cable and the connection. Measured per point constructed.",
     "Ejecución de punto de teléfono., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.":

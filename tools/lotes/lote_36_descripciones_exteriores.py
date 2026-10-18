@@ -11,13 +11,13 @@ Criterios de este lote:
   · «Escobillado» es broom finish y «allanadora mecánica» es power trowel.
     El escobillado se da en el punto justo de fraguado: pronto se cierra
     la textura y tarde no marca.
-  · «Tanquilla» es inspection chamber en el Reino Unido y manhole en
+  · «Tanquilla» es cleanout en el Reino Unido y manhole en
     Estados Unidos cuando es registrable.
   · «Malla ciclónica» es chain link, y los postes que reciben la tensión
     son los straining posts.
   · «Grama en panes» es sod en Estados Unidos y turf en el Reino Unido.
     Se rueda para que arraigue: rolling.
-  · «Llave de jardín» es hose bibb y garden tap. «Sumidero» es catch basin
+  · «Llave de jardín» es hose bibb y garden faucet. «Sumidero» es catch basin
     y gully.
   · «Vaso» de piscina es pool shell, «rebosadero» es overflow channel y
     las «boquillas» son return and suction fittings.
@@ -35,10 +35,10 @@ LOTE = {
     "External gravel or decorative stone surface on a geotextile and compacted base, with edge restraint. The separating geotextile is what stops the gravel sinking into the ground and vegetation growing up through it, the two reasons this surface breaks down. Includes leveling and compacting the base, laying the geotextile with laps, spreading the gravel to the uniform thickness specified and the final raking. Measured by the area actually constructed.",
 
 "Rampa de acceso vehicular de concreto armado con acabado antideslizante estriado y su drenaje de pie. Las estrías transversales no son decorativas: en pendiente y con lluvia son lo único que da tracción al vehículo y agarre al peatón. Incluye el replanteo de la pendiente comprobando que el vehículo no roce en los quiebres de entrada y salida, la preparación de la base, la malla, el encofrado lateral, el vaciado y reglado, el estriado transversal, el canal o rejilla de recogida al pie de la rampa que impide que el agua entre al garaje, el aserrado de juntas y el curado. Medido en superficie realmente ejecutada.":
-    "Reinforced concrete driveway ramp with a non-slip grooved finish and a drainage channel at the foot. The transverse grooves are not decorative: on a slope and in rain they are the only thing that gives the vehicle grip and the pedestrian purchase. Includes setting out the gradient and checking that the vehicle will not ground at the breaks at the top and bottom, preparing the base, the mesh, the side formwork, pouring and screeding, the transverse grooving, the channel or grate at the foot of the ramp that keeps water out of the garage, saw cutting the joints and curing. Measured by the area actually constructed.",
+    "Reinforced concrete driveway ramp with a non-slip grooved finish and a drainage channel at the foot. The transverse grooves are not decorative: on a slope and in rain they are the only thing that gives the vehicle grip and the pedestrian purchase. Includes field layout of the gradient and checking that the vehicle will not ground at the breaks at the top and bottom, preparing the base, the mesh, the side formwork, pouring and screeding, the transverse grooving, the channel or grate at the foot of the ramp that keeps water out of the garage, saw cutting the joints and curing. Measured by the area actually constructed.",
 
 "Escalera exterior de concreto armado con acabado antideslizante, sobre terreno o estructura, con su fundación corrida. Incluye el replanteo verificando que huella y contrahuella se mantienen constantes en todo el tramo, la fundación, el armado, el encofrado del fondo y de los tabicones de peldaño, el vaciado ascendente con concreto de consistencia seca, el fratasado antideslizante de las huellas, la pendiente de evacuación hacia el exterior en cada peldaño para que no empocen, el curado y el desencofrado. Medido en superficie desarrollando huella y contrahuella.":
-    "External reinforced concrete stair with a non-slip finish, on ground or on a structure, with its strip footing. Includes setting out and checking that the going and the rise stay constant over the whole flight, the footing, the reinforcement, the soffit and riser formwork, pouring from the bottom up with a dry mix, floating the treads to a non-slip finish, the fall outwards on each tread so that they do not hold water, curing and striking. Measured by the developed area of treads and risers.",
+    "External reinforced concrete stair with a non-slip finish, on ground or on a structure, with its strip footing. Includes field layout and checking that the going and the rise stay constant over the whole flight, the footing, the reinforcement, the soffit and riser formwork, pouring from the bottom up with a dry mix, floating the treads to a non-slip finish, the fall outwards on each tread so that they do not hold water, curing and stripping. Measured by the developed area of treads and risers.",
 
 "Pavimento exterior de concreto con acabado escobillado antideslizante, sobre base compactada, con juntas de retracción. Incluye el vaciado, el acabado y las juntas.":
     "External concrete paving with a non-slip broom finish, on a compacted base, with shrinkage joints. Includes pouring, finishing and the joints.",
@@ -75,10 +75,10 @@ LOTE = {
 
 # ── Brocales y aceras ─────────────────────────────────────────────────────
 "Ejecución de brocal o bordillo de concreto, prefabricado o vaciado en sitio, sobre su dado de apoyo, con juntas selladas. Incluye el replanteo de la línea y de la rasante con cuerda, la excavación y vaciado del dado de apoyo, la colocación de las piezas a nivel y alineación, el macizado lateral que impide su vuelco bajo el empuje del pavimento, el rejuntado y el curado. Medido en longitud realmente ejecutada.":
-    "Construction of a concrete curb, precast or cast in place, on its bed, with the joints sealed. Includes setting out the line and level with a string line, excavating and pouring the curb bed, laying the units level and to line, the haunching that stops them overturning under the thrust of the paving, pointing and curing. Measured by the length actually constructed.",
+    "Construction of a concrete curb, precast or cast in place, on its bed, with the joints sealed. Includes field layout of the line and level with a string line, excavating and pouring the curb bed, laying the units level and to line, the haunching that stops them overturning under the thrust of the paving, pointing and curing. Measured by the length actually constructed.",
 
 "Acera de concreto de 8 cm sobre base compactada, con juntas de control y acabado antideslizante, con la pendiente transversal de evacuación. Incluye el replanteo de rasantes y pendientes, el encofrado perimetral, la colocación de la malla, el vaciado y reglado, el acabado, el aserrado o formación de juntas de control a la separación indicada y el curado. Medido en superficie realmente ejecutada.":
-    "Concrete sidewalk 8 cm thick on a compacted base, with control joints and a non-slip finish, with the cross fall for drainage. Includes setting out levels and falls, the perimeter formwork, placing the mesh, pouring and screeding, the finish, saw cutting or forming the control joints at the spacing indicated and curing. Measured by the area actually constructed.",
+    "Concrete sidewalk 8 cm thick on a compacted base, with control joints and a non-slip finish, with the cross fall for drainage. Includes field layout of levels and falls, the perimeter formwork, placing the mesh, pouring and screeding, the finish, saw cutting or forming the control joints at the spacing indicated and curing. Measured by the area actually constructed.",
 
 "Ejecución de brocal o bordillo de concreto para confinamiento de pavimento, con encofrado y curado. Incluye el vaciado y el acabado.":
     "Construction of a concrete curb to restrain paving, with formwork and curing. Includes pouring and finishing.",
@@ -102,7 +102,7 @@ LOTE = {
     "Construction of a concrete channel to carry surface water, with formwork and finish. Includes pouring and finishing.",
 
 "Colocación de pasamanos exterior de acero, con fijación y pintura. Incluye la fijación y el acabado.":
-    "Installation of an external steel handrail, fixed and painted. Includes fixing and finishing.",
+    "Installation of an external steel handrail, fastened and painted. Includes fastening and finishing.",
 
 "Colocación de peldaño prefabricado de concreto para escalera exterior. Incluye la colocación y el rejuntado.":
     "Installation of a precast concrete step for an external stair. Includes laying and pointing.",
@@ -118,16 +118,16 @@ LOTE = {
 
 # ── Drenaje exterior ──────────────────────────────────────────────────────
 "Suministro e instalación de canal de drenaje lineal prefabricado con su rejilla, sobre dado de concreto, con conexión a la red de drenaje. Incluye el replanteo de la línea y de la pendiente hacia el punto de descarga, la excavación, el vaciado del dado de apoyo, la colocación del canal a la cota exacta que debe quedar un par de milímetros por debajo del pavimento terminado para que el agua entre y no lo salte, el macizado lateral, la conexión de salida y la colocación de la rejilla. Medido en longitud realmente instalada.":
-    "Supply and installation of a precast linear drainage channel with its grate, on a concrete bed, connected to the drainage system. Includes setting out the line and the fall to the discharge point, excavation, pouring the bed, setting the channel to the exact level, which must sit a couple of millimetres below the finished paving so that water enters it rather than riding over it, the haunching, the outlet connection and fitting the grate. Measured by the length actually installed.",
+    "Supply and installation of a precast linear drainage channel with its grate, on a concrete bed, connected to the drainage system. Includes field layout of the line and the fall to the discharge point, excavation, pouring the bed, setting the channel to the exact level, which must sit a couple of millimetres below the finished paving so that water enters it rather than riding over it, the haunching, the outlet connection and fitting the grate. Measured by the length actually installed.",
 
 "Construcción de tanquilla o registro de drenaje en mampostería o concreto, con su solera, paredes frisadas, tapa y conexiones. Incluye la excavación, el vaciado de la solera con la media caña de conducción que guía el flujo y evita la sedimentación, el levantamiento de las paredes, el friso interior impermeabilizado, la conexión de las tuberías de entrada y salida con sus cotas y pendientes, la colocación del marco y la tapa a la rasante del pavimento y la prueba de escurrimiento. Medido por unidad ejecutada.":
-    "Construction of a drainage inspection chamber in masonry or concrete, with its base slab, stuccoed walls, cover and connections. Includes excavation, pouring the base slab with the benching that guides the flow and prevents siltation, building the walls, the waterproofed internal stucco, connecting the inlet and outlet pipes at their levels and gradients, setting the frame and cover flush with the paving and the flow test. Measured per unit constructed.",
+    "Construction of a drainage cleanout in masonry or concrete, with its base slab, stuccoed walls, cover and connections. Includes excavation, pouring the base slab with the benching that guides the flow and prevents siltation, building the walls, the waterproofed internal stucco, connecting the inlet and outlet pipes at their levels and gradients, setting the frame and cover flush with the paving and the flow test. Measured per unit constructed.",
 
 "Colocación de canal de drenaje lineal prefabricado con rejilla, sobre base de mortero. Incluye la colocación y la nivelación.":
     "Installation of a precast linear drainage channel with a grate, on a mortar bed. Includes laying and leveling.",
 
 "Ejecución de tanquilla o registro de drenaje, con base y tapa. Incluye la excavación y la colocación.":
-    "Construction of a drainage inspection chamber, with a base and a cover. Includes excavation and installation.",
+    "Construction of a drainage cleanout, with a base and a cover. Includes excavation and installation.",
 
 "Colocación de tubería de drenaje perforada corrugada envuelta en geotextil, sobre cama de gravilla. Incluye la colocación y el relleno.":
     "Installation of perforated corrugated drainage pipe wrapped in geotextile, on a gravel bed. Includes laying and backfilling.",
@@ -151,7 +151,7 @@ LOTE = {
     "Repair of a drainage channel by replacing damaged sections of grate or channel. Includes replacement.",
 
 "Ejecución de registro de inspección de drenaje con tapa y marco. Incluye la excavación y la colocación.":
-    "Construction of a drainage inspection chamber with a cover and frame. Includes excavation and installation.",
+    "Construction of a drainage cleanout with a cover and frame. Includes excavation and installation.",
 
 "Conexión de drenaje exterior a la red existente, con excavación, empalme y relleno. Incluye la conexión y el relleno.":
     "Connection of external drainage to the existing system, with excavation, the junction and backfilling. Includes connection and backfilling.",
@@ -161,10 +161,10 @@ LOTE = {
 
 # ── Cerramientos ──────────────────────────────────────────────────────────
 "Cerca perimetral de bloque de concreto con sus machones de confinamiento y viga de corona, frisada por ambas caras. Incluye el replanteo de la línea de lindero, la ejecución de la fundación corrida, el levantamiento de la mampostería a nivel y plomo, los machones de confinamiento a la separación de proyecto, la viga de corona, el friso por ambas caras y el remate superior con pendiente que evacúa el agua y protege la coronación. Medido en superficie realmente ejecutada.":
-    "Perimeter wall of concrete blocks with its confining piers and ring beam, stuccoed on both faces. Includes setting out the boundary line, constructing the strip footing, building the masonry level and plumb, the confining piers at the spacing specified, the ring beam, the stucco on both faces and the coping with a fall that sheds water and protects the top of the wall. Measured by the area actually constructed.",
+    "Perimeter wall of concrete blocks with its confining piers and ring beam, stuccoed on both faces. Includes field layout of the boundary line, constructing the strip footing, building the masonry level and plumb, the confining piers at the spacing specified, the ring beam, the stucco on both faces and the coping with a fall that sheds water and protects the top of the wall. Measured by the area actually constructed.",
 
 "Cerca perimetral de malla ciclónica con sus postes, tensores, alambre de púas de coronación y dados de concreto. Incluye el replanteo de la línea, la excavación y vaciado de los dados de los postes, el aplomado y arriostramiento de los postes de esquina y de tiro que son los que reciben toda la tensión de la malla, el tendido y tensado de la malla con su alambre de amarre, la colocación de los tensores y el remate de coronación. Medido en longitud realmente ejecutada.":
-    "Perimeter chain link fence with its posts, straining wires, barbed wire topping and concrete footings. Includes setting out the line, excavating and pouring the post footings, plumbing and bracing the corner and straining posts, which take all the tension of the mesh, running out and tensioning the mesh with its tie wire, fitting the straining wires and the topping. Measured by the length actually constructed.",
+    "Perimeter chain link fence with its posts, straining wires, barbed wire topping and concrete footings. Includes field layout of the line, excavating and pouring the post footings, plumbing and bracing the corner and straining posts, which take all the tension of the mesh, running out and tensioning the mesh with its tie wire, fitting the straining wires and the topping. Measured by the length actually constructed.",
 
 "Ejecución de cerca perimetral de bloque de concreto, con columnas de refuerzo y friso. Incluye la mampostería y el friso.":
     "Construction of a perimeter wall of concrete blocks, with strengthening columns and stucco. Includes masonry and stucco.",
@@ -237,16 +237,16 @@ LOTE = {
     "Repair of an access gate with adjustment of the hinges, replacement of parts and painting. Includes inspection and adjustment.",
 
 "Instalación de cerradura de seguridad en portón de acceso, con fijación y ajuste. Incluye la fijación y el ajuste.":
-    "Installation of a security lock on an access gate, fixed and adjusted. Includes fixing and adjustment.",
+    "Installation of a security lock on an access gate, fastened and adjusted. Includes fastening and adjustment.",
 
 "Colocación de baranda de acceso peatonal, con fijación y pintura. Incluye la fijación y el acabado.":
-    "Installation of a guardrail at a pedestrian access, fixed and painted. Includes fixing and finishing.",
+    "Installation of a guardrail at a pedestrian access, fastened and painted. Includes fastening and finishing.",
 
 "Fabricación e instalación de portón de malla metálica para acceso, con marco y bisagras. Incluye el montaje. El portón lo elige el cliente.":
     "Manufacture and installation of a wire mesh access gate, with a frame and hinges. Includes assembly. The gate is selected by the client.",
 
 "Colocación de buzón de correspondencia, con fijación o empotrado en el cerramiento. Incluye la fijación.":
-    "Installation of a mailbox, fixed to or recessed into the boundary. Includes fixing.",
+    "Installation of a mailbox, fastened to or recessed into the boundary. Includes fastening.",
 
 "Instalación de interruptor o pulsador de apertura de portón, con cableado. Incluye la instalación y la conexión.":
     "Installation of a switch or push button to open the gate, with cabling. Includes installation and connection.",
@@ -299,7 +299,7 @@ LOTE = {
 
 # ── Riego ─────────────────────────────────────────────────────────────────
 "Instalación de red de riego con tubería de polietileno, sus goteros o aspersores, y conexión al punto de agua. Incluye el replanteo del trazado y de la posición de los emisores según el marco de riego de la plantación, la apertura de la zanja poco profunda, el tendido de la tubería, el montaje de los emisores, la purga de la línea antes de colocar los últimos emisores para arrastrar la suciedad que de otro modo los obstruye, la prueba de presión y caudal y el tapado de la zanja. Medido en longitud de red realmente instalada.":
-    "Installation of an irrigation system with polyethylene pipe, its drippers or sprinklers, and connection to the water point. Includes setting out the run and the position of the emitters according to the planting layout, opening a shallow trench, laying the pipe, fitting the emitters, flushing the line before fitting the last emitters to carry out the dirt that would otherwise block them, the pressure and flow test and backfilling the trench. Measured by the length of system actually installed.",
+    "Installation of an irrigation system with polyethylene pipe, its drippers or sprinklers, and connection to the water point. Includes field layout of the run and the position of the emitters according to the planting layout, opening a shallow trench, laying the pipe, fitting the emitters, flushing the line before fitting the last emitters to carry out the dirt that would otherwise block them, the pressure and flow test and backfilling the trench. Measured by the length of system actually installed.",
 
 "Ejecución de red de riego por goteo o aspersión, con tubería de polietileno y emisores. Incluye la colocación y la conexión.":
     "Installation of a drip or sprinkler irrigation system, with polyethylene pipe and emitters. Includes laying and connection.",
@@ -329,7 +329,7 @@ LOTE = {
     "Installation of an irrigation line for a vertical garden, with drip and supports. Includes laying and connection.",
 
 "Ejecución de punto de riego con llave, manguera y aspersor. Incluye la colocación y la conexión.":
-    "Installation of an irrigation point with a tap, hose and sprinkler. Includes installation and connection.",
+    "Installation of an irrigation point with a faucet, hose and sprinkler. Includes installation and connection.",
 
 "Ejecución de red de riego con tubería principal de polietileno y derivaciones. Incluye la colocación y las conexiones.":
     "Installation of an irrigation system with a polyethylene main and branches. Includes laying and the connections.",
@@ -345,16 +345,16 @@ LOTE = {
     "External water point with its branch, hose bibb and trim. Includes the branch off the main with an accessible shut-off valve, the buried or concealed pipe run, fitting the hose bibb with its hose thread, anchoring the assembly so that it cannot turn when used, which is what eventually breaks the connection, and the tightness test. Measured per point completed and tested.",
 
 "Ejecución de punto de agua exterior con llave de jardín y conexión a la red. Incluye la conexión y la llave.":
-    "Installation of an external water point with a hose bibb and connection to the main. Includes connection and the tap.",
+    "Installation of an external water point with a hose bibb and connection to the main. Includes connection and the faucet.",
 
 "Ejecución de acometida de agua exterior desde la red a la edificación, con tubería y llave de corte. Incluye la conexión.":
-    "Installation of an external water service from the main to the building, with pipework and a shut-off valve. Includes connection.",
+    "Installation of an external water service from the main to the building, with piping and a shut-off valve. Includes connection.",
 
 "Ejecución de punto de desagüe exterior, con conexión a la red de drenaje. Incluye la conexión.":
     "Installation of an external drain point, connected to the drainage system. Includes connection.",
 
 "Ejecución de conexión de gas exterior, con tubería y regulador. Incluye la conexión y la prueba de estanqueidad.":
-    "Installation of an external gas connection, with pipework and a regulator. Includes connection and the tightness test.",
+    "Installation of an external gas connection, with piping and a regulator. Includes connection and the tightness test.",
 
 "Ejecución de acometida eléctrica exterior con cableado y canalización. Incluye la canalización y el cableado.":
     "Installation of an external electrical service with cabling and conduit. Includes the conduit and the cabling.",
@@ -363,7 +363,7 @@ LOTE = {
     "Installation of an external electrical point with a receptacle or connection. Includes connection.",
 
 "Conexión de bomba exterior con tubería, válvula y electricidad. Incluye la conexión hidráulica y eléctrica. La bomba la elige el cliente.":
-    "Connection of an external pump with pipework, a valve and the electrical supply. Includes the hydraulic and electrical connections. The pump is selected by the client.",
+    "Connection of an external pump with piping, a valve and the electrical supply. Includes the hydraulic and electrical connections. The pump is selected by the client.",
 
 "Tendido de tubería exterior enterrada para agua o gas, con excavación, colocación y relleno. Incluye la colocación.":
     "Laying of external buried pipe for water or gas, with excavation, laying and backfilling. Includes laying.",
@@ -372,29 +372,29 @@ LOTE = {
     "Installation of an external foul water service connection, with PVC pipe and falls. Includes laying.",
 
 "Ejecución de caja de registro de servicios exterior, con base y tapa. Incluye la colocación.":
-    "Installation of an external service inspection chamber, with a base and a cover. Includes installation.",
+    "Installation of an external service cleanout, with a base and a cover. Includes installation.",
 
 "Ejecución de punto de agua para lavado de vehículo, con llave y manguera. Incluye la conexión.":
-    "Installation of a water point for washing vehicles, with a tap and hose. Includes connection.",
+    "Installation of a water point for washing vehicles, with a faucet and hose. Includes connection.",
 
 "Reparación de red exterior de servicios con sustitución de tramos de tubería dañados. Incluye la sustitución.":
     "Repair of the external services network by replacing damaged sections of pipe. Includes replacement.",
 
 "Ejecución de punto de drenaje de condensados exterior, con tubería y sifón. Incluye la colocación y la conexión.":
-    "Installation of an external condensate drain point, with pipework and a trap. Includes installation and connection.",
+    "Installation of an external condensate drain point, with piping and a trap. Includes installation and connection.",
 
 # ── Iluminación exterior ──────────────────────────────────────────────────
 "Punto de iluminación exterior de jardín o acceso, con su canalización enterrada, cableado, caja estanca y base de anclaje de la luminaria. Incluye el replanteo, la apertura de la zanja, la canalización enterrada con cinta de señalización sobre ella, el tendido del conductor apto para intemperie, la ejecución de la base de anclaje, la conexión estanca y la prueba. La luminaria la elige el cliente y se presupuesta aparte. Medido por punto terminado y probado.":
-    "External lighting point for a garden or access, with its buried conduit, cabling, weatherproof box and base to anchor the fixture. Includes setting out, opening the trench, the buried conduit with warning tape over it, drawing in a cable rated for external use, constructing the anchorage base, the weatherproof connection and testing. The fixture is selected by the client and priced separately. Measured per point completed and tested.",
+    "External lighting point for a garden or access, with its buried conduit, cabling, weatherproof box and base to anchor the fixture. Includes field layout, opening the trench, the buried conduit with warning tape over it, drawing in a cable rated for external use, constructing the anchorage base, the weatherproof connection and testing. The fixture is selected by the client and priced separately. Measured per point completed and tested.",
 
 "Ejecución de punto de iluminación exterior de jardín, con luminaria, cableado y fijación. Incluye la conexión. La luminaria la elige el cliente.":
-    "Installation of an external garden lighting point, with the fixture, cabling and fixing. Includes connection. The fixture is selected by the client.",
+    "Installation of an external garden lighting point, with the fixture, cabling and fastening. Includes connection. The fixture is selected by the client.",
 
 "Instalación de poste de iluminación exterior, con base de concreto y conexión. Incluye la cimentación y la conexión. El poste lo elige el cliente.":
     "Installation of an external lighting column, with a concrete base and connection. Includes the footing and the connection. The column is selected by the client.",
 
 "Instalación de reflector exterior de seguridad, con fijación y conexión. Incluye la conexión. El reflector lo elige el cliente.":
-    "Installation of an external security floodlight, fixed and connected. Includes connection. The floodlight is selected by the client.",
+    "Installation of an external security floodlight, fastened and connected. Includes connection. The floodlight is selected by the client.",
 
 "Ejecución de iluminación de caminería exterior con balizas o faroles, con cableado. Incluye la conexión. Las luminarias las elige el cliente.":
     "Installation of external path lighting with bollards or lanterns, with cabling. Includes connection. The fixtures are selected by the client.",
@@ -406,13 +406,13 @@ LOTE = {
     "Installation of an external photocell or dusk sensor, connected. Includes installation. The sensor is selected by the client.",
 
 "Instalación de iluminación de fachada con reflectores, con fijación y conexión. Incluye la conexión. Los reflectores los elige el cliente.":
-    "Installation of facade lighting with floodlights, fixed and connected. Includes connection. The floodlights are selected by the client.",
+    "Installation of facade lighting with floodlights, fastened and connected. Includes connection. The floodlights are selected by the client.",
 
 "Ejecución de circuito de iluminación exterior, con cableado y canalización. Incluye el cableado.":
     "Installation of an external lighting circuit, with cabling and conduit. Includes cabling.",
 
 "Instalación de aplique de pared exterior, con fijación y conexión. Incluye la conexión. El aplique lo elige el cliente.":
-    "Installation of an external wall light, fixed and connected. Includes connection. The fitting is selected by the client.",
+    "Installation of an external wall light, fastened and connected. Includes connection. The fitting is selected by the client.",
 
 "Instalación de iluminación de estacionamiento exterior, con luminaria y conexión. Incluye la conexión. La luminaria la elige el cliente.":
     "Installation of external parking area lighting, with the fixture and connection. Includes connection. The fixture is selected by the client.",
@@ -440,7 +440,7 @@ LOTE = {
     "Construction of a concrete pool step, built into the pool shell. Includes formwork, reinforcement and pouring.",
 
 "Instalación de escalera metálica de piscina, con fijación y anclaje. Incluye la fijación. La escalera la elige el cliente.":
-    "Installation of a metal pool ladder, fixed and anchored. Includes fixing. The ladder is selected by the client.",
+    "Installation of a metal pool ladder, fastened and anchored. Includes fastening. The ladder is selected by the client.",
 
 "Instalación de equipo de filtrado de piscina, con conexión hidráulica. Incluye la conexión. El equipo lo elige el cliente.":
     "Installation of pool filtration equipment, with the hydraulic connection. Includes connection. The equipment is selected by the client.",
@@ -471,7 +471,7 @@ LOTE = {
 
 # ── Pérgolas, jardineras y mobiliario ─────────────────────────────────────
 "Fabricación y montaje de pérgola de madera tratada para exterior, con sus pilares, vigas, correas y anclajes a la base. En clima tropical el punto de fallo es siempre el encuentro del pilar con el piso: la madera en contacto directo con el concreto absorbe humedad por capilaridad y se pudre desde la base, de modo que debe apoyarse sobre herraje metálico que la separe del piso. Incluye la ejecución de los dados de anclaje, el montaje de los herrajes separadores, el corte y labra de las piezas, el montaje de la estructura con apeo provisional, la fijación con herrajes y el tratamiento preservante en todas las caras y testas. Medido en superficie realmente ejecutada.":
-    "Manufacture and assembly of an external pergola in treated lumber, with its posts, beams, purlins and anchors to the base. In a tropical climate the point of failure is always where the post meets the floor: lumber in direct contact with concrete takes up moisture by capillary action and rots from the bottom up, so it must stand on a metal shoe that holds it clear of the floor. Includes forming the anchorage blocks, fitting the post shoes, cutting and shaping the members, erecting the structure with temporary supports, fixing with the hardware and applying preservative to every face and every end grain. Measured by the area actually constructed.",
+    "Manufacture and assembly of an external pergola in treated lumber, with its posts, beams, purlins and anchors to the base. In a tropical climate the point of failure is always where the post meets the floor: lumber in direct contact with concrete takes up moisture by capillary action and rots from the bottom up, so it must stand on a metal shoe that holds it clear of the floor. Includes forming the anchorage blocks, fitting the post shoes, cutting and shaping the members, erecting the structure with temporary supports, fastening with the hardware and applying preservative to every face and every end grain. Measured by the area actually constructed.",
 
 "Construcción de jardinera de obra en exterior, con su fábrica, friso, impermeabilización interior, drenaje y capa filtrante. Una jardinera sin impermeabilizar y sin drenaje transmite humedad permanente al muro contiguo y encharca la tierra hasta pudrir la raíz, de modo que ambas capas son parte del elemento y no un extra. Incluye la fundación, el levantamiento de la fábrica, el friso exterior, la impermeabilización interior con refuerzo de encuentros, el pase y la tubería de drenaje, la capa de gravilla con geotextil y el remate superior. No incluye el sustrato ni la plantación. Medido en longitud de jardinera.":
     "Construction of a planter externally, with its masonry, stucco, internal waterproofing, drainage and filter layer. A planter without waterproofing and without drainage transmits permanent moisture to the adjoining wall and waterlogs the soil until the roots rot, so both layers are part of the element and not an extra. Includes the footing, building the masonry, the external stucco, the internal waterproofing with reinforcement at the junctions, the sleeve and the drainage pipe, the gravel layer with geotextile and the capping. The growing medium and the planting are not included. Measured by the length of planter.",
@@ -480,28 +480,28 @@ LOTE = {
     "Construction of an external lumber pergola, with a structure of beams and treated battens. Includes assembly and erection.",
 
 "Ejecución de jardinera de obra en exterior, de bloque o concreto, con drenaje. Incluye la mampostería y el drenaje.":
-    "Construction of an external planter in blockwork or concrete, with drainage. Includes masonry and drainage.",
+    "Construction of an external planter in concrete masonry or concrete, with drainage. Includes masonry and drainage.",
 
 "Ejecución de pérgola metálica para exterior, con estructura de perfiles y pintura. Incluye el armado y el montaje.":
     "Construction of an external metal pergola, with a structure of sections and paint. Includes assembly and erection.",
 
 "Colocación de jardinera prefabricada exterior, con fijación y drenaje. Incluye la colocación. La jardinera la elige el cliente.":
-    "Installation of a precast external planter, fixed and drained. Includes installation. The planter is selected by the client.",
+    "Installation of a precast external planter, fastened and drained. Includes installation. The planter is selected by the client.",
 
 "Ejecución de banco de obra exterior, de concreto o bloque revestido. Incluye la ejecución y el acabado.":
-    "Construction of an external bench in concrete or faced blockwork. Includes construction and finishing.",
+    "Construction of an external bench in concrete or faced concrete masonry. Includes construction and finishing.",
 
 "Ejecución de mesa de obra exterior, de concreto o bloque revestido. Incluye la ejecución y el acabado.":
-    "Construction of an external table in concrete or faced blockwork. Includes construction and finishing.",
+    "Construction of an external table in concrete or faced concrete masonry. Includes construction and finishing.",
 
 "Ejecución de parrillera de obra exterior, de bloque o concreto revestido. Incluye la ejecución.":
-    "Construction of an external barbecue in blockwork or faced concrete. Includes construction.",
+    "Construction of an external barbecue in concrete masonry or faced concrete. Includes construction.",
 
 "Instalación de toldo o sombra exterior fija, con estructura y tensado. Incluye la estructura y el tensado. El toldo lo elige el cliente.":
     "Installation of a fixed external awning or shade, with the structure and tensioning. Includes the structure and tensioning. The awning is selected by the client.",
 
 "Colocación de celosía o romanilla de aluminio en terraza, con marco y fijación. Incluye la colocación.":
-    "Installation of an aluminum louver screen on a terrace, with a frame and fixing. Includes installation.",
+    "Installation of an aluminum louver screen on a terrace, with a frame and fastening. Includes installation.",
 
 "Fabricación e instalación de mueble de exterior a medida en madera tratada. Incluye el despiece y el armado.":
     "Manufacture and installation of external furniture to measure in treated lumber. Includes cutting list and assembly.",
@@ -513,5 +513,5 @@ LOTE = {
     "Installation of a precast concrete planter, leveled and drained. Includes installation.",
 
 "Ejecución de pérgola bioclimática exterior, con estructura y lamas orientables. Incluye el montaje. El sistema lo elige el cliente.":
-    "Installation of an external louvered roof pergola, with the structure and adjustable louvres. Includes assembly. The system is selected by the client.",
+    "Installation of an external louvered roof pergola, with the structure and adjustable louvers. Includes assembly. The system is selected by the client.",
 }

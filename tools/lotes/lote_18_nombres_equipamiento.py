@@ -6,7 +6,7 @@ Capítulo completo.
 Criterios de este lote:
   · «Mueble bajo» y «mueble alto» de cocina son base cabinet y wall
     cabinet: en inglés se nombran por dónde van, no por cómo son.
-  · «Mesón» es countertop en Estados Unidos, worktop en Reino Unido y
+  · «Mesón» es countertop en Estados Unidos, countertop en Reino Unido y
     benchtop en Australia.
   · «Triturador» de cocina es garbage disposal en Estados Unidos y waste
     disposal unit en Reino Unido.
@@ -83,7 +83,7 @@ LOTE = {
 "Espejo de baño con iluminación integrada.":
     "Bathroom mirror with integrated lighting.",
 "Repisa de baño.": "Bathroom shelf.",
-"Gabinetes altos de baño.": "Wall-mounted bathroom cabinets.",
+"Gabinetes altos de baño.": "Wall-mounted medicine cabinets.",
 "Accesorio de baño (toallero, jabonera, etc.).":
     "Bathroom accessory, such as a towel rail or soap dish.",
 "Mueble lavadero con fregadero.": "Laundry room unit with a sink.",

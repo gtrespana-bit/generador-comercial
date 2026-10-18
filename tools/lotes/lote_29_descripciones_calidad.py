@@ -49,7 +49,7 @@ LOTE = {
 "Ensayo radiográfico de soldaduras de alta exigencia, para verificación de calidad interna, con informe.":
     "Radiographic testing of high-integrity welds to verify internal quality, with a report.",
 "Prueba de carga de anclaje químico o mecánico, para verificar la capacidad de fijación a la estructura.":
-    "Load testing of a chemical or mechanical anchor, to verify its fixing capacity to the structure.",
+    "Load testing of a chemical or mechanical anchor, to verify its fastening capacity to the structure.",
 "Verificación del par de apriete de los pernos de alta resistencia de la estructura, con llave dinamométrica.":
     "Checking the tightening torque of the high-strength bolts of the structure with a torque wrench.",
 "Verificación dimensional y de plomos de la estructura metálica montada, con nivel láser.":
@@ -83,9 +83,9 @@ LOTE = {
 
 # ── Fontanería ────────────────────────────────────────────────────────────
 "Prueba hidrostática de la tubería de agua potable, con presión controlada y verificación de ausencia de fugas.":
-    "Hydrostatic test of the potable water pipework under controlled pressure, verifying the absence of leaks.",
+    "Hydrostatic test of the potable water piping under controlled pressure, verifying the absence of leaks.",
 "Prueba de estanqueidad de la tubería de gas con manómetro y jabón detector, para verificar la ausencia de fugas.":
-    "Tightness test of the gas pipework with a pressure gauge and leak detection solution, to verify the absence of leaks.",
+    "Tightness test of the gas piping with a pressure gauge and leak detection solution, to verify the absence of leaks.",
 "Prueba de desagüe de aparato sanitario por vaciado controlado, para verificar la correcta evacuación.":
     "Discharge test of a plumbing fixture under controlled discharge, to verify correct drainage.",
 "Verificación de la ventilación de la red de desagüe, para evitar sifonado y malos olores.":
@@ -93,7 +93,7 @@ LOTE = {
 "Prueba de presión general de la red de agua potable, con bomba de prueba y verificación de uniones.":
     "General pressure test of the potable water system with a test pump, including checking of joints.",
 "Verificación de las pendientes de la tubería de desagüe, con nivel láser, para asegurar la evacuación.":
-    "Checking the falls of the drainage pipework with a laser level, to ensure proper drainage.",
+    "Checking the falls of the drainage piping with a laser level, to ensure proper drainage.",
 "Prueba de estanqueidad de la trampa de grasa, con llenado y verificación de ausencia de fugas.":
     "Watertightness test of a grease interceptor by filling and verifying the absence of leaks.",
 "Verificación del funcionamiento de válvulas y llaves de corte, con apertura y cierre.":
@@ -159,7 +159,7 @@ LOTE = {
 "Medición del contenido de humedad del piso, para verificar la idoneidad antes de colocar revestimientos.":
     "Measurement of the moisture content of a floor, to verify suitability before laying finishes.",
 "Detección de armadura, tuberías y conducciones empotradas con detector, para evitar perforaciones.":
-    "Detection of reinforcement, pipework and concealed services with a detector, to avoid drilling into them.",
+    "Detection of reinforcement, piping and concealed services with a detector, to avoid drilling into them.",
 "Inspección de fisuras en elementos estructurales, con mapeo y diagnóstico de la causa.":
     "Inspection of cracks in structural elements, with mapping and diagnosis of the cause.",
 "Ensayo esclerométrico en elementos de concreto para estimar la resistencia, con informe.":

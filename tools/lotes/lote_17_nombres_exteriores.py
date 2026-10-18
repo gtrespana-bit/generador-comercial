@@ -8,7 +8,7 @@ Criterios de este lote:
     para la superficie y evita el choque.
   · «Sumidero» es catch basin en Estados Unidos y gully en Reino Unido.
   · «Grama en panes» es sod y turf, y «grama» a secas es lawn.
-  · «Llave de jardín» es hose bibb en Estados Unidos y garden tap en
+  · «Llave de jardín» es hose bibb en Estados Unidos y garden faucet en
     Reino Unido.
   · «Vaso de piscina» es pool shell, «coronación» es coping y
     «rebosadero» es overflow channel. «Boquillas de retorno y aspiración»
@@ -63,10 +63,10 @@ LOTE = {
 "Canal de drenaje lineal con rejilla.":
     "Linear drainage channel with a grille.",
 "Tanquilla o registro de drenaje.":
-    "Drainage manhole or inspection chamber.",
+    "Drainage manhole or cleanout.",
 "Canal de drenaje con rejilla metálica.":
     "Drainage channel with a metal grille.",
-"Registro de drenaje con tapa.": "Drainage inspection chamber with a cover.",
+"Registro de drenaje con tapa.": "Drainage cleanout with a cover.",
 "Tubería de drenaje perforada con geotextil.":
     "Perforated drainage pipe wrapped in a geotextile.",
 "Pozo de drenaje o sumidero exterior.":
@@ -78,23 +78,23 @@ LOTE = {
 "Limpieza y mantenimiento de drenaje exterior.":
     "Cleaning and maintenance of exterior drainage.",
 "Reparación de canal de drenaje.": "Repair of a drainage channel.",
-"Registro de inspección de drenaje.": "Drainage inspection chamber.",
+"Registro de inspección de drenaje.": "Drainage cleanout.",
 "Conexión de drenaje a red existente.":
     "Connection of drainage to an existing system.",
 "Tubería de drenaje de aguas lluvias exterior.":
     "Exterior rainwater drainage pipe.",
 
 # ── Cerramientos ──────────────────────────────────────────────────────────
-"Cerca perimetral de bloque.": "Perimeter blockwork fence.",
+"Cerca perimetral de bloque.": "Perimeter concrete masonry fence.",
 "Cerca de malla ciclónica.": "Chain-link fence.",
-"Cerca de bloque con columnas.": "Blockwork fence with piers.",
+"Cerca de bloque con columnas.": "Concrete masonry fence with piers.",
 "Cerca de malla ciclónica sobre postes.": "Chain-link fence on posts.",
 "Cerca de tubos metálicos.": "Metal tube fence.",
-"Muro de cerramiento de parcela de bloque.": "Blockwork boundary wall.",
+"Muro de cerramiento de parcela de bloque.": "Concrete masonry boundary wall.",
 "Verja metálica de cerramiento.": "Metal railing fence.",
 "Muro de contención de parcela.": "Retaining wall to a plot.",
 "Cerca de reja sobre murete de bloque.":
-    "Grille fence on a blockwork dwarf wall.",
+    "Grille fence on a concrete masonry dwarf wall.",
 "Portillo peatonal de cerramiento.": "Pedestrian gate in a boundary wall.",
 "Reparación de cerca perimetral.": "Repair of a perimeter fence.",
 "Pintura de cerramiento metálico.": "Painting of a metal fence.",
@@ -183,11 +183,11 @@ LOTE = {
 "Punto de electricidad exterior.": "Exterior power point.",
 "Conexión de bomba exterior.": "Connection of an exterior pump.",
 "Tendido de tubería exterior enterrada.":
-    "Laying of buried exterior pipework.",
+    "Laying of buried exterior piping.",
 "Acometida de aguas servidas exterior.":
     "Exterior sanitary sewer connection.",
 "Caja de registro de servicios exterior.":
-    "Exterior services inspection chamber.",
+    "Exterior services cleanout.",
 "Punto de agua para lavado de vehículo.":
     "Water point for vehicle washing.",
 "Reparación de red exterior de servicios.":
@@ -238,7 +238,7 @@ LOTE = {
 "Pérgola de madera para exterior.": "Exterior wood pergola.",
 "Jardinera de obra en exterior.": "Exterior masonry planter.",
 "Pérgola de madera tratada.": "Treated wood pergola.",
-"Jardinera de bloque revestido.": "Clad blockwork planter.",
+"Jardinera de bloque revestido.": "Clad concrete masonry planter.",
 "Pérgola metálica para exterior.": "Exterior metal pergola.",
 "Jardinera prefabricada exterior.": "Precast exterior planter.",
 "Banco de obra exterior.": "Exterior masonry bench.",

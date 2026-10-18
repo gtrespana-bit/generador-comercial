@@ -6,7 +6,7 @@ Criterios de este lote:
     anglosajón es una partida con nombre propio, la obra de albañilería
     que se hace para que otras instalaciones puedan pasar.
   · «Roza» y «regata» son la misma cosa y en inglés son chase.
-  · «Recibido de marco» es bedding and fixing: recibir no es instalar, es
+  · «Recibido de marco» es bedding and fastening: recibir no es instalar, es
     fijar y ajustar en su sitio lo que ya está colocado.
   · «Sellado cortafuego» es firestopping, una sola palabra de oficio.
   · «Vierteaguas» es weather sill y «alféizar» es window sill: la primera
@@ -35,9 +35,9 @@ LOTE = {
 "Ayuda de albañilería para ventilación.":
     "Builder's work for the ventilation installation.",
 "Apertura y tapado de paso en muro.":
-    "Opening up and making good a penetration in a wall.",
+    "Opening up and patching a penetration in a wall.",
 "Apertura y tapado de paso en losa.":
-    "Opening up and making good a penetration in a slab.",
+    "Opening up and patching a penetration in a slab.",
 "Ayuda de albañilería para solar.":
     "Builder's work for the solar installation.",
 "Resane de rozas y pasos.": "Patching of chases and penetrations.",
@@ -46,7 +46,7 @@ LOTE = {
 "Roza en pared de bloque para instalación.":
     "Chase in a block wall for services.",
 "Roza en muro de concreto.": "Chase in a concrete wall.",
-"Regata para tubería en pared.": "Chase for pipework in a wall.",
+"Regata para tubería en pared.": "Chase for piping in a wall.",
 "Roza en techo.": "Chase in a soffit.",
 "Regata para cable en piso.": "Chase for cabling in a floor.",
 "Roza en bloque de arcilla.": "Chase in a clay block wall.",
@@ -58,31 +58,31 @@ LOTE = {
 "Paso de conducto en losa.": "Penetration for a duct in a slab.",
 "Perforación de hueco para caja.": "Cutting of a recess for a box.",
 "Paso de tubería en muro con sello.":
-    "Penetration for pipework through a wall, sealed.",
+    "Penetration for piping through a wall, sealed.",
 
 # ── Recibidos ─────────────────────────────────────────────────────────────
-"Recibido de marco de puerta.": "Bedding and fixing of a door frame.",
-"Recibido de marco de ventana.": "Bedding and fixing of a window frame.",
+"Recibido de marco de puerta.": "Bedding and fastening of a door frame.",
+"Recibido de marco de ventana.": "Bedding and fastening of a window frame.",
 "Recibido de caja de persiana.":
-    "Bedding and fixing of a roller shutter box.",
-"Recibido de premarco metálico.": "Bedding and fixing of a metal subframe.",
-"Recibido de reja.": "Bedding and fixing of a grille.",
+    "Bedding and fastening of a roller shutter box.",
+"Recibido de premarco metálico.": "Bedding and fastening of a metal subframe.",
+"Recibido de reja.": "Bedding and fastening of a grille.",
 "Recibido de aparato sanitario.":
-    "Bedding and fixing of a plumbing fixture.",
+    "Bedding and fastening of a plumbing fixture.",
 "Recibido de mesón de cocina.":
-    "Bedding and fixing of a kitchen countertop.",
+    "Bedding and fastening of a kitchen countertop.",
 "Recibido de equipo de aire acondicionado.":
-    "Bedding and fixing of an air conditioning unit.",
-"Recibido de barra de apoyo.": "Bedding and fixing of a grab bar.",
-"Recibido de espejo.": "Bedding and fixing of a mirror.",
-"Recibido de tanque de agua.": "Bedding and fixing of a water tank.",
+    "Bedding and fastening of an air conditioning unit.",
+"Recibido de barra de apoyo.": "Bedding and fastening of a grab bar.",
+"Recibido de espejo.": "Bedding and fastening of a mirror.",
+"Recibido de tanque de agua.": "Bedding and fastening of a water tank.",
 "Recibido de equipo de bombeo.":
-    "Bedding and fixing of pumping equipment.",
-"Recibido de calentador.": "Bedding and fixing of a water heater.",
+    "Bedding and fastening of pumping equipment.",
+"Recibido de calentador.": "Bedding and fastening of a water heater.",
 
 # ── Sellados ──────────────────────────────────────────────────────────────
 "Sellado de junta con silicona sanitaria.":
-    "Sealing of a joint with sanitary silicone.",
+    "Sealing of a joint with silicone sealant.",
 "Sellado de junta con poliuretano.":
     "Sealing of a joint with polyurethane.",
 "Sellado de encuentro piso-pared.":
@@ -116,7 +116,7 @@ LOTE = {
 "Coronación de muro con mortero.": "Coping of a wall in mortar.",
 "Coronación de muro con pieza.": "Coping of a wall with precast units.",
 "Coronación de peto de cubierta.": "Coping of a roof parapet.",
-"Coronación con ladrillo visto.": "Coping in facing brick.",
+"Coronación con ladrillo visto.": "Coping in face brick.",
 "Coronación de muro con chapa.": "Coping of a wall with sheet metal.",
 
 # ── Bases y soportes ──────────────────────────────────────────────────────
@@ -130,14 +130,14 @@ LOTE = {
 "Soporte metálico para equipo.": "Metal support for equipment.",
 "Soporte para condensadora.": "Support for a condensing unit.",
 "Base de bomba de agua.": "Base for a water pump.",
-"Bancada de madera para equipo.": "Timber plinth for equipment.",
+"Bancada de madera para equipo.": "Lumber plinth for equipment.",
 "Soporte de calentador.": "Support for a water heater.",
 "Base para hidroneumático.": "Base for a hydropneumatic tank.",
 "Soporte de panel solar.": "Support for a solar panel.",
 
 # ── Forrados y cajones ────────────────────────────────────────────────────
 "Forrado de tubería con placa de yeso.":
-    "Boxing in of pipework with drywall.",
+    "Boxing in of piping with drywall.",
 "Cajón para instalaciones.": "Service duct.",
 "Falso pilar de placa de yeso.": "False column in drywall.",
 "Forrado de viga con placa de yeso.": "Boxing in of a beam with drywall.",
@@ -146,7 +146,7 @@ LOTE = {
 "Forrado de montante de instalación.":
     "Boxing in of a service riser.",
 "Forrado de bajante con placa de cemento.":
-    "Boxing in of a downpipe with cement board.",
+    "Boxing in of a downspout with cement board.",
 "Cajón para persiana con registro.":
     "Roller shutter box with an access panel.",
 

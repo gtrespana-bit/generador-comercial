@@ -18,7 +18,7 @@ Criterios de vocabulario aplicados en este bloque:
 · «Pararrayos» con dispositivo de cebado se traduce como lightning
   conductor, no como lightning rod: la primera es la instalación, la
   segunda es la punta.
-· Antena es antenna en inglés americano; aerial es la forma británica y
+· Antena es antenna en inglés americano; antenna es la forma británica y
   la pone la variante.
 """
 
@@ -26,19 +26,19 @@ LOTE = {
     'Ejecución de acometida de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por metro lineal ejecutado/a.':
         'Installation of a gas service connection, with the connection and the tightness test. Includes the connection and the tightness test. Measured per linear meter completed.',
     'Ejecución de bajante con unión de comprobación., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a down conductor with a test joint, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a down conductor with a test joint, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de bajante de aluminio., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of an aluminum down conductor, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of an aluminum down conductor, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de bajante de cobre aislada., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of an insulated copper down conductor, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of an insulated copper down conductor, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de canalización de datos., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.':
         'Installation of data cabling containment, with the containment and the connection. Includes running the cable and making the connection. Measured per point completed.',
     'Ejecución de captación de pararrayos en antena., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a lightning protection air terminal on an antenna, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a lightning protection air terminal on an antenna, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de captación de pararrayos en chimenea., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a lightning protection air terminal on a chimney, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a lightning protection air terminal on a chimney, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de captación de pararrayos en cumbrera., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a lightning protection air terminal on a ridge, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a lightning protection air terminal on a ridge, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de instalación de detector de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.':
         'Installation of a gas detector, with the connection and the tightness test. Includes the connection and the tightness test. Measured per unit completed.',
     'Ejecución de instalación de gabinete de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.':
@@ -60,19 +60,19 @@ LOTE = {
     'Ejecución de instalación de válvula de seguridad., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.':
         'Installation of a safety valve, with the connection and the tightness test. Includes the connection and the tightness test. Measured per unit completed.',
     'Ejecución de malla captadora en fachada., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of air termination mesh on a facade, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of air termination mesh on a facade, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de patch panel de red., con canalización y conexión. Incluye el tendido del cable y la conexión. Medido por punto ejecutado.':
         'Installation of a network patch panel, with the containment and the connection. Includes running the cable and making the connection. Measured per point completed.',
     'Ejecución de protector de sobretensión combinado., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a combined surge protective device, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a combined surge protective device, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de protector de sobretensión de antena., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a surge protective device for the antenna, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a surge protective device for the antenna, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de protector de sobretensión de datos., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a surge protective device for the data line, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a surge protective device for the data line, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de protector de sobretensión de red., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a surge protective device for the mains supply, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a surge protective device for the mains supply, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de protector de sobretensión de teléfono., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a surge protective device for the telephone line, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a surge protective device for the telephone line, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de prueba de aislamiento eléctrico., con verificación. Incluye la verificación y el ajuste. Medido por unidad ejecutada.':
         'Electrical insulation resistance test, with the verification. Includes the verification and the adjustment. Measured per unit completed.',
     'Ejecución de prueba de estanqueidad de gas., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por unidad ejecutado/a.':
@@ -130,9 +130,9 @@ LOTE = {
     'Ejecución de reparación de ventilador., con verificación. Incluye la verificación y el ajuste. Medido por unidad ejecutada.':
         'Repair of a fan, with the verification. Includes the verification and the adjustment. Measured per unit completed.',
     'Ejecución de toma de tierra de pararrayos., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a lightning protection grounding electrode, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a lightning protection grounding electrode, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de toma de tierra en anillo., con conexión. Incluye la conexión y la fijación. Medido por unidad ejecutada.':
-        'Installation of a ring grounding electrode, with the connection. Includes the connection and the fixing. Measured per unit completed.',
+        'Installation of a ring grounding electrode, with the connection. Includes the connection and the fastening. Measured per unit completed.',
     'Ejecución de tubería de gas de acero., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por metro lineal ejecutado/a.':
         'Installation of steel gas piping, with the connection and the tightness test. Includes the connection and the tightness test. Measured per linear meter completed.',
     'Ejecución de tubería de gas de cobre., con conexión y prueba. Incluye la conexión y la prueba de estanqueidad. Medido por metro lineal ejecutado/a.':
@@ -154,7 +154,7 @@ LOTE = {
     'Instalación de alarma con sensores., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of an alarm system with sensors, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de alarma de incendio., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire alarm, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire alarm, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de alarma interior., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an internal alarm, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de alarma perimetral., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -232,13 +232,13 @@ LOTE = {
     'Instalación de cableado solar., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a solar cabling, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de campana extractora., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a range hood, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a range hood, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de central de incendios., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire alarm control panel, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire alarm control panel, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de central domótica con control remoto., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a home automation controller with remote control, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de cine en casa., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
-        'Installation of a home cinema system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
+        'Installation of a home theater system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de citófono., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a door entry phone, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de control de acceso biométrico., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
@@ -266,31 +266,31 @@ LOTE = {
     'Instalación de cámara interior., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of an internal camera, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de detector combinado., con fijación y señalización. Incluye la fijación. Medido por unidad instalada.':
-        'Installation of a combined detector, with fixing and signage. Includes the fixing. Measured per unit installed.',
+        'Installation of a combined detector, with fastening and signage. Includes the fastening. Measured per unit installed.',
     'Instalación de detector de calor., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a heat detector, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a heat detector, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detector de humo., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a smoke detector, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a smoke detector, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en cocina., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a kitchen, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a kitchen, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en depósito., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a store, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a store, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en dormitorio., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a bedroom, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a bedroom, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en escalera., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a stairwell, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a stairwell, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en garaje., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a garage, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a garage, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en pasillo., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a corridor, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a corridor, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de detectores en sala., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of detectors in a living room, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of detectors in a living room, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de difusor., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a diffuser, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a diffuser, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ducto flexible., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a flexible duct, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a flexible duct, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ducto rígido., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a rigid duct, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a rigid duct, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de elevador de fachada para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a facade platform lift for accessibility. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de elevador de plataforma para accesibilidad. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
@@ -346,37 +346,37 @@ LOTE = {
     'Instalación de estructura de paneles., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a panel support structure, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de extintor de co2., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a CO2 fire extinguisher, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a CO2 fire extinguisher, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor de espuma., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a foam fire extinguisher, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a foam fire extinguisher, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor de polvo., con fijación y señalización. Incluye la fijación. Medido por unidad instalada.':
-        'Installation of a dry powder fire extinguisher, with fixing and signage. Includes the fixing. Measured per unit installed.',
+        'Installation of a dry powder fire extinguisher, with fastening and signage. Includes the fastening. Measured per unit installed.',
     'Instalación de extintor en cocina., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in a kitchen, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in a kitchen, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en comercio., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in commercial premises, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in commercial premises, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en depósito., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in a store, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in a store, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en garaje., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in a garage, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in a garage, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en local., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in premises, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in premises, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en oficina., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher in an office, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher in an office, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extintor en terraza., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a fire extinguisher on a terrace, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a fire extinguisher on a terrace, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de extractor de baño., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a bathroom extractor fan, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a bathroom extractor fan, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de extractor de campana., con conexión. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a range hood extractor fan, with the connection. Includes the connection. Measured per unit installed.',
     'Instalación de extractor de cocina., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a kitchen extractor fan, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a kitchen extractor fan, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de gabinete de manguera., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a hose reel cabinet, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a hose reel cabinet, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de grabador de video., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a video recorder, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de hidrante., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a hydrant, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a hydrant, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de intercomunicación general., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a general intercom system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de intercomunicador de edificio., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
@@ -398,9 +398,9 @@ LOTE = {
     'Instalación de lector de tarjetas., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a card reader, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de luminaria de emergencia con señalización. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of an emergency light fixture with signage. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of an emergency light fixture with signage. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de luz de emergencia., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of an emergency light, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of an emergency light, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de medidor bidireccional., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a bidirectional energy meter, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de monitor de vigilancia., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -408,7 +408,7 @@ LOTE = {
     'Instalación de montacargas de carga., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
         'Installation of a freight elevator, with assembly and commissioning. Includes the assembly. Measured per unit installed.',
     'Instalación de montacargas de cocina o servicio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
-        'Installation of a service lift for a kitchen or for service. Includes the assembly and commissioning. Measured per unit installed.',
+        'Installation of a dumbwaiter for a kitchen or for service. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de montacargas de obra o de servicio. Incluye el montaje y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a construction or service hoist. Includes the assembly and commissioning. Measured per unit installed.',
     'Instalación de módulo de control de bomba., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -456,7 +456,7 @@ LOTE = {
     'Instalación de proyector., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a projector, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de pulsador de alarma., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of an alarm call point, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of an alarm call point, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de pulsador de escena inalámbrico., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a wireless scene controller, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de rampa mecánica., con montaje y puesta en marcha. Incluye el montaje. Medido por unidad instalada.':
@@ -470,7 +470,7 @@ LOTE = {
     'Instalación de regulador de carga., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a charge controller, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de extracción., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of an extract grille, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of an extract grille, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de rejilla de retorno., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a return air grille, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de retorno., con conexión. Incluye la conexión. Medido por unidad instalada.':
@@ -478,11 +478,11 @@ LOTE = {
     'Instalación de rejilla de suministro., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a supply air grille, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de rejilla de ventilación., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ventilation grille, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ventilation grille, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de repetidor de señal cableada., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a wired signal repeater, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de rociador., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a sprinkler head, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a sprinkler head, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de salvaescaleras de plataforma. Incluye el montaje del riel y la plataforma. Medido por unidad instalada.':
         'Installation of a platform stairlift. Includes the assembly of the rail and the platform. Measured per unit installed.',
     'Instalación de salvaescaleras para accesibilidad. Incluye el montaje del riel y la silla. Medido por unidad instalada.':
@@ -502,9 +502,9 @@ LOTE = {
     'Instalación de sensor de ventana., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a window sensor, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de señal de salida., con fijación y señalización. Incluye la fijación. Medido por unidad instalada.':
-        'Installation of an exit sign, with fixing and signage. Includes the fixing. Measured per unit installed.',
+        'Installation of an exit sign, with fastening and signage. Includes the fastening. Measured per unit installed.',
     'Instalación de señalización de evacuación., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of an escape route signage, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of an escape route signage, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de silla salvaescaleras. Incluye el montaje del riel y la silla. Medido por unidad instalada.':
         'Installation of a stairlift. Includes the assembly of the rail and the seat. Measured per unit installed.',
     'Instalación de sirena de alarma., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -512,7 +512,7 @@ LOTE = {
     'Instalación de sirena exterior., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of an external siren, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de sirena., con fijación y señalización. Incluye la fijación y la señalización. Medido por unidad instalada.':
-        'Installation of a siren, with fixing and signage. Includes the fixing and signage. Measured per unit installed.',
+        'Installation of a siren, with fastening and signage. Includes the fastening and signage. Measured per unit installed.',
     'Instalación de sistema cctv., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
         'Installation of a CCTV system, with the connection and configuration. Includes the connection and configuration. Measured per unit installed.',
     'Instalación de sistema de acceso., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -526,7 +526,7 @@ LOTE = {
     'Instalación de sistema de bombeo., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a pumping system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema de cine., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
-        'Installation of a home cinema system, with the connection and configuration. Includes the connection. Measured per unit installed.',
+        'Installation of a home theater system, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de sistema de conductos., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of a ducted air conditioning system, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de sistema de intercomunicación., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':
@@ -598,45 +598,45 @@ LOTE = {
     'Instalación de unidad interior., con conexión y puesta en marcha. Incluye la conexión y la puesta en marcha. Medido por unidad instalada.':
         'Installation of an indoor unit, with the connection and commissioning. Includes the connection and commissioning. Measured per unit installed.',
     'Instalación de ventilación de baño., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a bathroom ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a bathroom ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de closet., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a closet ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a closet ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de cocina., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a kitchen ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a kitchen ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de comedor., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a dining room ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a dining room ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de comercio., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ventilation for commercial premises, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ventilation for commercial premises, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de cuarto técnico., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ventilation for a plant room, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ventilation for a mechanical room, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de depósito., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ventilation for a store, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ventilation for a store, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de dormitorio., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a bedroom ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a bedroom ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de estudio., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a study ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a study ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de garaje., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a garage ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a garage ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de lavandería., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a laundry room ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a laundry room ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de local., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ventilation for premises, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ventilation for premises, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de oficina., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of an office ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of an office ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de sala., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a living room ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a living room ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de sótano., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a basement ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a basement ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilación de terraza., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a terrace ventilation, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a terrace ventilation, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilador de baño con sensor., con conexión. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a bathroom fan with a sensor, with the connection. Includes the connection. Measured per unit installed.',
     'Instalación de ventilador de pared., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a wall fan, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a wall fan, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilador de piso., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a pedestal fan, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a pedestal fan, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de ventilador de techo., con conexión. Incluye la conexión y la fijación. Medido por unidad instalada.':
-        'Installation of a ceiling fan, with the connection. Includes the connection and fixing. Measured per unit installed.',
+        'Installation of a ceiling fan, with the connection. Includes the connection and fastening. Measured per unit installed.',
     'Instalación de videoportero con cámara., con conexión y configuración. Incluye la conexión. Medido por unidad instalada.':
         'Installation of a video door entry system with a camera, with the connection and configuration. Includes the connection. Measured per unit installed.',
     'Instalación de videoportero con monitor., con conexión y configuración. Incluye la conexión y la configuración. Medido por unidad instalada.':

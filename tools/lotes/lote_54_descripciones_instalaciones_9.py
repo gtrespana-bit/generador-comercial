@@ -15,7 +15,7 @@ Vocabulario aplicado:
 · «Puesta en marcha» es commissioning, así que «sistema puesto en
   marcha» se mide per system commissioned.
 · «Desatasco» es clearing the blockage, y «grifería» son faucets en
-  inglés americano (taps en británico, que pone la variante).
+  inglés americano (faucets en británico, que pone la variante).
 · «Protecciones» de un tablero son protective devices, que es como se
   llama a los interruptores automáticos en el oficio.
 """

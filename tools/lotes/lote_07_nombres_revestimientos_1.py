@@ -125,7 +125,7 @@ LOTE = {
 "Friso de yeso proyectado.":
     "Machine-applied gypsum plaster.",
 "Enlucido de yeso sobre bloque.":
-    "Gypsum skim coat on blockwork.",
+    "Gypsum skim coat on concrete masonry.",
 "Reparación de friso de yeso en zona amplia.":
     "Repair of gypsum plaster over a large area.",
 "Friso de yeso con fibra de refuerzo.":

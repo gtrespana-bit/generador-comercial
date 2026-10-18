@@ -29,22 +29,22 @@ LOTE = {
         "Supply and installation of a precast concrete tread over an existing structure. Includes preparing the substrate, placing and leveling the tread. Measured per tread installed.",
 
     "Colocación de peldaño de madera flotante sobre escalera existente, con fijación. Incluye la preparación del soporte y la fijación del peldaño. Medido por metro lineal de peldaño.":
-        "Fixing of a floating wood tread over an existing stair, with fixing. Includes preparing the substrate and fixing the tread. Measured per meter of tread.",
+        "Fastening of a floating wood tread over an existing stair, with fastening. Includes preparing the substrate and fastening the tread. Measured per meter of tread.",
 
     "Revestimiento de rampa con pieza antideslizante o sistema de resinas, para circulación segura. Incluye la preparación del soporte y la colocación del revestimiento. Medido por metro cuadrado revestido.":
         "Covering of a ramp with an anti-slip tile or a resin system, for safe circulation. Includes preparing the substrate and laying the covering. Measured per square meter covered.",
 
     "Colocación de nariz de peldaño de metal (aluminio o acero) con perfil antideslizante. Incluye la fijación del perfil a la nariz del peldaño. Medido por metro lineal de nariz.":
-        "Fixing of a metal stair nosing (aluminum or steel) with an anti-slip profile. Includes fixing the profile to the stair nosing. Measured per meter of nosing.",
+        "Fastening of a metal stair nosing (aluminum or steel) with an anti-slip profile. Includes fastening the profile to the stair nosing. Measured per meter of nosing.",
 
     "Ejecución de junta de dilatación en escalera, con perfil y sellado elástico. Incluye la colocación del perfil y el sellado de la junta. Medido por metro lineal de junta.":
         "Formation of a movement joint in a stair, with a profile and a flexible sealing. Includes placing the profile and sealing the joint. Measured per meter of joint.",
 
     "Colocación de pasamanos de madera sobre escalera, con soportes y remates. Incluye la fijación del pasamanos y el acabado. Medido por metro lineal de pasamanos.":
-        "Fixing of a wood handrail on a stair, with brackets and end caps. Includes fixing the handrail and the finish. Measured per meter of handrail.",
+        "Fastening of a wood handrail on a stair, with brackets and end caps. Includes fastening the handrail and the finish. Measured per meter of handrail.",
 
     "Suministro y montaje de trasdosado autoportante de placa de yeso laminado estándar de 12,5 mm, sobre estructura de acero galvanizado separada del muro, sin aislamiento. Incluye el replanteo de la estructura con montantes cada 60 cm, la fijación de canales de arranque al piso y al techo con banda perimetral de estanqueidad, el atornillado de la placa, el tratamiento de juntas con pasta y cinta, y el remate de encuentros con muros y techo. Medido por metro cuadrado de trasdosado terminado.":
-        "Supply and installation of a self-supporting lining of standard 12.5 mm drywall, on a galvanized steel framework held off the wall, without insulation. Includes setting out the framework with studs every 60 cm, fixing the base and head tracks to the floor and to the ceiling with a perimeter sealing strip, screwing the board, treating the joints with compound and tape, and finishing the junctions with the walls and the ceiling. Measured per square meter of lining completed.",
+        "Supply and installation of a self-supporting lining of standard 12.5 mm drywall, on a galvanized steel framework held off the wall, without insulation. Includes field layout of the framework with studs every 60 cm, fastening the base and head tracks to the floor and to the ceiling with a perimeter sealing strip, screwing the board, treating the joints with compound and tape, and finishing the junctions with the walls and the ceiling. Measured per square meter of lining completed.",
 
     "Suministro y montaje de trasdosado autoportante de placa de yeso laminado de 12,5 mm con panel de lana mineral de 60 mm en la cámara, para aislamiento térmico y acústico. Incluye la estructura separada del muro, la colocación del panel de lana en la cámara sin comprimirlo, el atornillado de la placa y el tratamiento de juntas. Medido por metro cuadrado de trasdosado terminado.":
         "Supply and installation of a self-supporting lining of 12.5 mm drywall with a 60 mm mineral wool panel in the cavity, for thermal and acoustic insulation. Includes the framework held off the wall, placing the mineral wool panel in the cavity without compressing it, screwing the board and the joint treatment. Measured per square meter of lining completed.",

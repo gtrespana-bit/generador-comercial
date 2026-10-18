@@ -17,7 +17,7 @@ Criterios de este lote:
 
 LOTE = {
 "Traslado del mobiliario y enseres del cliente desde la zona de obra hasta un ambiente de acopio dentro del mismo inmueble, con su protección y su devolución al finalizar. En reforma de vivienda habitada es una tarea real que consume jornadas y que casi nunca se presupuesta, de modo que sale del bolsillo del constructor. Incluye el desmontaje de lo que lo requiera, el traslado con protección de pisos y esquinas en el recorrido, el apilado ordenado y cubierto en la zona de acopio, y el traslado de vuelta y montaje al terminar. Medido en superficie realmente ejecutada.":
-    "Removal of the client's furniture and belongings from the work area to a storage room within the same building, protected, and returned when the work is finished. In an occupied dwelling under refurbishment this is real work that takes days and is almost never priced, so it comes out of the builder's pocket. Includes dismantling whatever needs it, moving it with protection to floors and corners along the route, stacking it neatly and covered in the storage room, and moving and reassembling everything on completion. Measured by the area actually completed.",
+    "Removal of the client's furniture and belongings from the work area to a storage room within the same building, protected, and returned when the work is finished. In an occupied dwelling under remodeling this is real work that takes days and is almost never priced, so it comes out of the builder's pocket. Includes dismantling whatever needs it, moving it with protection to floors and corners along the route, stacking it neatly and covered in the storage room, and moving and reassembling everything on completion. Measured by the area actually completed.",
 
 "Colocación de malla de protección en la fachada o en el andamio, para retener la caída de material y polvo hacia la vía pública o hacia las propiedades vecinas. Es exigible siempre que se trabaje en altura sobre zonas de paso, y su ausencia es motivo habitual de paralización por parte de la autoridad municipal. Incluye el izado, el tendido de los paños solapados, su atado a la estructura del andamio en todo el perímetro, la revisión periódica de amarres tras episodios de viento y el desmontaje. Medido en superficie realmente ejecutada.":
     "Installation of protective netting on the facade or on the scaffold, to contain falling material and dust towards the public highway or neighboring property. It is required whenever work at height is carried out over areas in use, and its absence is a common reason for the local authority to stop the work. Includes hoisting, hanging the overlapping sheets, tying them to the scaffold structure around the whole perimeter, periodic checking of the ties after windy weather and dismantling. Measured by the area actually completed.",
@@ -50,13 +50,13 @@ LOTE = {
     "Protection of an existing kitchen countertop or cabinet. Includes covering with cardboard and sheet. Measured per square meter protected.",
 
 "Colocación de barrera antipolvo con lámina plástica. Incluye la fijación de la lámina y el cierre. Medido por metro cuadrado colocado.":
-    "Installation of a dust barrier of plastic sheeting. Includes fixing the sheeting and the closure. Measured per square meter installed.",
+    "Installation of a dust barrier of plastic sheeting. Includes fastening the sheeting and the closure. Measured per square meter installed.",
 
 "Cerramiento provisional de vano con lámina de madera. Incluye la fijación de la lámina. Medido por metro cuadrado cerrado.":
-    "Temporary closing off of an opening with a wood panel. Includes fixing the panel. Measured per square meter closed off.",
+    "Temporary closing off of an opening with a wood panel. Includes fastening the panel. Measured per square meter closed off.",
 
 "Colocación de junta de estanqueidad antipolvo en vano. Incluye la fijación de la junta. Medido por metro lineal colocado.":
-    "Installation of a dust-tight seal around an opening. Includes fixing the seal. Measured per meter installed.",
+    "Installation of a dust-tight seal around an opening. Includes fastening the seal. Measured per meter installed.",
 
 "Colocación de mampara antipolvo con puerta de paso. Incluye la estructura y la lámina. Medido por metro cuadrado colocado.":
     "Installation of a dust screen with a door. Includes the frame and the sheeting. Measured per square meter installed.",
@@ -68,7 +68,7 @@ LOTE = {
     "Installation of access control to the work area. Includes signage and delimitation of the access. Measured per access point provided.",
 
 "Colocación de cartel informativo de obra. Incluye la fijación del cartel. Medido por unidad colocado.":
-    "Installation of a site information board. Includes fixing the board. Measured per unit installed.",
+    "Installation of a site information board. Includes fastening the board. Measured per unit installed.",
 
 "Andamio tubular metálico apoyado en fachada, con plataformas de trabajo, barandas, rodapiés y escalera interior de acceso, incluido su montaje, el primer mes de permanencia y su desmontaje. Incluye el estudio previo del apoyo y del arriostramiento a fachada, el montaje por personal competente, la colocación de las protecciones colectivas, la revisión del conjunto antes de la puesta en servicio y tras cualquier modificación, el desmontaje ordenado y el retiro del material. No incluye la permanencia adicional más allá del primer mes, que se valora en la partida siguiente. Medido en superficie de fachada realmente cubierta por el andamio.":
     "Tubular steel scaffold bearing on the facade, with working platforms, guardrails, toe boards and an internal access stair, including its erection, the first month on hire and its dismantling. Includes the prior assessment of the bearing and of the ties to the facade, erection by competent personnel, the installation of the collective protective measures, inspection of the whole assembly before it is brought into service and after any modification, orderly dismantling and removal of the material. It does not include hire beyond the first month, which is priced in the following item. Measured by the area of facade actually covered by the scaffold.",
@@ -83,7 +83,7 @@ LOTE = {
     "Provision of a site hoist or crane for lowering debris and raising materials on works above ground floor level, including one month on hire. Includes delivery of the equipment, its erection and anchoring, verification of the maximum permissible load and of the bearing point, signage and barring off of the landing area, periodic inspection of ropes and brakes, dismantling and removal. Measured per month of the equipment on site.",
 
 "Puesta a disposición de andamio colgante o silleta suspendida para trabajos puntuales en fachada donde no se justifica el montaje de andamio tubular. Su seguridad depende por completo de los puntos de anclaje en cubierta y del uso obligatorio de línea de vida independiente del equipo de suspensión, requisito que no admite excepción. Incluye el estudio y ejecución de los anclajes, el montaje del equipo, la prueba de carga previa, la revisión diaria de cables y frenos, el uso durante el periodo y el desmontaje. Medido en superficie realmente ejecutada.":
-    "Provision of a swing stage or suspended cradle for one-off work on a facade where erecting a tubular scaffold is not justified. Its safety depends entirely on the anchor points on the roof and on the mandatory use of a lifeline independent of the suspension equipment, a requirement that admits no exception. Includes the assessment and installation of the anchors, erection of the equipment, the proof load test beforehand, daily inspection of ropes and brakes, use over the period and dismantling. Measured by the area actually completed.",
+    "Provision of a swing stage for one-off work on a facade where erecting a tubular scaffold is not justified. Its safety depends entirely on the anchor points on the roof and on the mandatory use of a lifeline independent of the suspension equipment, a requirement that admits no exception. Includes the assessment and installation of the anchors, erection of the equipment, the proof load test beforehand, daily inspection of ropes and brakes, use over the period and dismantling. Measured by the area actually completed.",
 
 "Montaje, alquiler y desmontaje de andamio tubular de fachada con plataformas. Incluye el montaje, la permanencia y el desmontaje. Medido por metro cuadrado montado.":
     "Erection, hire and dismantling of a tubular facade scaffold with working platforms. Includes erection, hire and dismantling. Measured per square meter erected.",

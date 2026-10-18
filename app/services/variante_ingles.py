@@ -123,7 +123,14 @@ _VOCABULARIO_GB: dict[str, str] = {
     "shoring": "propping",                # apeo de losas y vigas
     "shore": "prop",                      # puntal (Acrow prop)
     "lumber": "timber",                   # madera como material
+    "fasteners": "fixings",               # herrajes de fijación
     "fastening": "fixing",                # fijación
+    "fastened": "fixed",                  # fijado (participio)
+    "clay masonry": "clay blockwork",     # fábrica de bloque de arcilla
+    "energy retrofit": "energy refurbishment",
+    "stripping the formwork": "striking the formwork",  # desencofrado
+    "curing and stripping": "curing and striking",
+    "the street": "the pavement",         # vía pública ante la parcela
     "debris container": "skip",           # bote del escombro
     "concrete placing": "concreting",     # vaciado del concreto
     "exploratory opening": "opening up",  # cata de reconocimiento
@@ -163,7 +170,7 @@ _VOCABULARIO_GB: dict[str, str] = {
     "semi-gloss": "mid-sheen",            # pintura semibrillo
     "exterior wood": "exterior timber",   # madera exterior
     "interior wood": "interior timber",   # madera interior
-    "timber shutter": "louvred shutter",  # persiana de madera
+    "lumber shutter": "timber shutter",   # persiana de madera
     "walk-in cooler": "cold room",        # cámara frigorífica
     "wood-boring insects": "woodworm",    # carcoma
     "sidewalk": "pavement",               # acera

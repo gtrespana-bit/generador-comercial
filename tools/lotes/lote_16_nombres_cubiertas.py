@@ -7,7 +7,7 @@ Criterios de este lote:
     son dos palabras distintas y se usan en frases distintas.
   · «Teja criolla» es barrel tile, y su sistema de «canal y cobija» es
     pan and cover. No es mission tile ni S-tile: son piezas distintas.
-  · «Pendientado» es sloping fill en Estados Unidos y screed to falls en
+  · «Pendientado» es sloping fill en Estados Unidos y sloping fill en
     Reino Unido. «Maestras» son screed rails.
   · «Limatesa» es hip y «cumbrera» es ridge. «Caballete» es la pieza que
     remata la cumbrera: ridge cap.
@@ -234,9 +234,9 @@ LOTE = {
 "Canalón de alero de cubierta.":
     "Eaves gutter of a roof.",
 "Bajante de aguas lluvias con fijaciones.":
-    "Rainwater downspout with fixings.",
+    "Rainwater downspout with fasteners.",
 "Boquilla de desagüe de cubierta con rejilla.":
-    "Roof outlet with a grille.",
+    "Roof drain with a grille.",
 "Remate de borde de cubierta con goterón.":
     "Edge trim of a roof with a drip edge.",
 

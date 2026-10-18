@@ -5,7 +5,7 @@ Cierra el capítulo: protecciones, barreras antipolvo, andamiaje y apeos.
 
 Criterios de este lote:
   · «Andamio colgante» y «silleta» son swing stage en Estados Unidos y
-    suspended cradle en Reino Unido: la plataforma que cuelga de la
+    swing stage en Reino Unido: la plataforma que cuelga de la
     cubierta con pescantes.
   · «Andamio de borriquetas» es trestle scaffold: las borriquetas son
     trestles.

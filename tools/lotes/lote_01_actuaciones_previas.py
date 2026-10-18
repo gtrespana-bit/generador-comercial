@@ -47,7 +47,7 @@ LOTE = {
     "Shut-off and draining of the water installation.",
 
 "Cierre y drenaje de la instalación de agua de la zona de obra. Incluye el cierre de llaves y el vaciado de las tuberías. Medido por servicio cerrado.":
-    "Shut-off and draining of the water installation serving the work area. Includes closing the stop valves and draining the pipework. Measured per service shut off.",
+    "Shut-off and draining of the water installation serving the work area. Includes closing the stop valves and draining the piping. Measured per service shut off.",
 
 "Aislamiento de servicio de gas existente.":
     "Isolation of the existing gas service.",
@@ -77,7 +77,7 @@ LOTE = {
     "Measured survey of the existing building.",
 
 "Levantamiento en sitio de las medidas del inmueble existente, con toma de dimensiones de ambientes, alturas libres, vanos, y posición de instalaciones y elementos estructurales visibles, para elaborar el plano de estado actual sobre el que se proyecta la reforma. Incluye la medición con distanciómetro y cinta, la comprobación de escuadras y desplomes, el croquis acotado en sitio, el registro fotográfico de cada ambiente y la anotación de patologías aparentes. Medido en superficie de inmueble realmente levantada.":
-    "Measured survey on site of the existing building, taking the dimensions of rooms, clear heights, openings and the position of visible services and structural elements, in order to produce the as-built drawing on which the refurbishment is designed. Includes measuring with a laser distance meter and tape, checking squareness and plumb, a dimensioned sketch drawn on site, photographic recording of every room and noting any visible defects. Measured over the floor area of the building actually surveyed.",
+    "Measured survey on site of the existing building, taking the dimensions of rooms, clear heights, openings and the position of visible services and structural elements, in order to produce the as-built drawing on which the remodeling is designed. Includes measuring with a laser distance meter and tape, checking squareness and plumb, a dimensioned sketch drawn on site, photographic recording of every room and noting any visible defects. Measured over the floor area of the building actually surveyed.",
 
 "Cata en techo para reconocimiento de losa.":
     "Exploratory opening in a ceiling to inspect the slab.",

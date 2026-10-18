@@ -13,7 +13,7 @@ Criterios de este lote:
   · «Peto» es parapet y «remate» es flashing cuando es chapa o banda que
     echa el agua, y trim cuando es puramente estético.
   · «Suelo radiante» es radiant floor heating en Estados Unidos y
-    underfloor heating en Reino Unido.
+    radiant floor heating en Reino Unido.
   · «Humedad ascendente» es rising damp, que es exactamente el término
     británico consagrado; en Estados Unidos se describe, no se nombra.
   · «Lámina nodular» es dimpled membrane, y «manta» es blanket cuando es
@@ -39,7 +39,7 @@ LOTE = {
     "Thermal insulation of a roof deck with sandwich panels.",
 "Aislamiento térmico reflectivo en fachada.":
     "Reflective thermal insulation on a facade.",
-"Aislamiento térmico de tubería.": "Thermal insulation of pipework.",
+"Aislamiento térmico de tubería.": "Thermal insulation of piping.",
 "Aislamiento térmico de losa con poliestireno.":
     "Thermal insulation of a slab with polystyrene.",
 "Aislamiento de pared medianera con lana de roca.":

@@ -16,7 +16,7 @@ LOTE = {
     "Temporary electrical supply for the works, with a distribution panel.",
 
 "Instalación eléctrica provisional para el suministro de la obra, formada por tablero con interruptor diferencial y protecciones magnetotérmicas, tomas de fuerza y cable encauchetado hasta los frentes de trabajo. Incluye la conexión al punto de suministro autorizado, el montaje y fijación del tablero en lugar protegido y accesible, el tendido del cableado por recorridos que no crucen zonas de paso ni de agua, la puesta a tierra del conjunto, la comprobación del disparo del diferencial antes de la puesta en servicio, el mantenimiento durante la obra y el desmontaje final. Medido por instalación realmente ejecutada.":
-    "Temporary electrical installation to supply the works, made up of a distribution panel with a ground-fault circuit interrupter and circuit breakers, power outlets, and heavy-duty rubber cable run to the work faces. Includes connecting to the authorized supply point, mounting and fixing the panel somewhere protected and accessible, running the cable along routes that cross neither walkways nor wet areas, grounding the whole installation, testing that the ground-fault interrupter trips before the system is brought into service, maintaining it while the works last, and dismantling it at the end. Measured per installation actually carried out.",
+    "Temporary electrical installation to supply the works, made up of a distribution panel with a ground-fault circuit interrupter and circuit breakers, power outlets, and heavy-duty rubber cable run to the work faces. Includes connecting to the authorized supply point, mounting and fastening the panel somewhere protected and accessible, running the cable along routes that cross neither walkways nor wet areas, grounding the whole installation, testing that the ground-fault interrupter trips before the system is brought into service, maintaining it while the works last, and dismantling it at the end. Measured per installation actually carried out.",
 
 "Punto de agua provisional de obra.":
     "Temporary water point for the works.",
@@ -28,7 +28,7 @@ LOTE = {
     "Temporary site lighting.",
 
 "Iluminación provisional de los frentes de trabajo mediante reflectores de obra sobre soporte o suspendidos, alimentados desde el tablero provisional, garantizando el nivel de luz necesario para trabajar con seguridad y con calidad de acabado. Incluye el reparto de los puntos de luz según los frentes activos, el tendido del cableado, la fijación de los reflectores fuera de las zonas de paso y de proyección de material, su reubicación conforme avanza la obra, la reposición de lámparas y el desmontaje final. Medido en superficie de obra realmente iluminada.":
-    "Temporary lighting of the work faces using site floodlights on stands or suspended, fed from the temporary panel, providing the light level needed to work safely and to a good finish. Includes distributing the lighting points among the active work faces, running the cable, fixing the floodlights clear of walkways and of the line of throw of materials, repositioning them as the works progress, replacing lamps, and dismantling at the end. Measured over the area of the works actually lit.",
+    "Temporary lighting of the work faces using site floodlights on stands or suspended, fed from the temporary panel, providing the light level needed to work safely and to a good finish. Includes distributing the lighting points among the active work faces, running the cable, fastening the floodlights clear of walkways and of the line of throw of materials, repositioning them as the works progress, replacing lamps, and dismantling at the end. Measured over the area of the works actually lit.",
 
 "Baño portátil de obra, por mes de permanencia.":
     "Portable site toilet, per month on site.",
@@ -82,7 +82,7 @@ LOTE = {
     "Site fire extinguisher.",
 
 "Suministro y colocación de extintor de obra. Incluye la fijación y la señalización. Medido por extintor suministrado.":
-    "Supply and siting of a site fire extinguisher. Includes fixing it in place and signing it. Measured per extinguisher supplied.",
+    "Supply and siting of a site fire extinguisher. Includes fastening it in place and signing it. Measured per extinguisher supplied.",
 
 "Zona de lavado de herramienta.":
     "Tool wash area.",
@@ -106,11 +106,11 @@ LOTE = {
     "Shoring of an opening while it is formed.",
 
 "Apuntalamiento provisional del muro situado sobre un vano que se va a abrir o ampliar, mediante puntales y durmientes que reciben la carga de la fábrica superior mientras se ejecuta la demolición y se coloca el dintel definitivo. Es la operación que evita el colapso de la fábrica al retirar el apoyo. Incluye el replanteo, la apertura de las cajas de apoyo del durmiente en el muro, el montaje y puesta en carga de los puntales a ambas caras, la verificación durante la demolición, la retirada del apeo una vez fraguado y en carga el dintel definitivo y el resane de las cajas de apoyo. Medido por vano realmente apuntalado.":
-    "Temporary shoring of the wall over an opening that is to be formed or widened, using shores and spreader beams that carry the load of the masonry above while the demolition is carried out and the permanent lintel is placed. This is what stops the masonry collapsing when its support is removed. Includes setting out, cutting the bearing pockets for the spreader beam into the wall, erecting and loading the shores on both faces, checking them during the demolition, removing the shoring once the permanent lintel has cured and taken load, and patching the bearing pockets. Measured per opening actually shored.",
+    "Temporary shoring of the wall over an opening that is to be formed or widened, using shores and spreader beams that carry the load of the masonry above while the demolition is carried out and the permanent lintel is placed. This is what stops the masonry collapsing when its support is removed. Includes field layout, cutting the bearing pockets for the spreader beam into the wall, erecting and loading the shores on both faces, checking them during the demolition, removing the shoring once the permanent lintel has cured and taken load, and patching the bearing pockets. Measured per opening actually shored.",
 
 "Apeo o arriostramiento provisional de muro.":
     "Temporary shoring or bracing of a wall.",
 
 "Apeo o arriostramiento provisional de muro mediante puntales inclinados con durmientes de reparto, para estabilizarlo frente a empujes o vuelco durante los trabajos en su entorno. Debe responder a la instrucción del profesional responsable. Incluye el replanteo de los puntos de apoyo, la preparación de las bases de reparto en el piso, el montaje y puesta en carga de los puntales inclinados, la comprobación periódica de la estabilidad y del apriete, y el desmontaje una vez consolidado el elemento. Medido en superficie de muro realmente apeada.":
-    "Temporary shoring or bracing of a wall using raking shores with spreader beams, to stabilize it against thrust or overturning while work goes on around it. Must follow the instruction of the engineer or architect in charge. Includes setting out the bearing points, preparing the spreader bases on the floor, erecting and loading the raking shores, periodically checking stability and tightness, and dismantling once the element has been made good. Measured over the area of wall actually shored.",
+    "Temporary shoring or bracing of a wall using raking shores with spreader beams, to stabilize it against thrust or overturning while work goes on around it. Must follow the instruction of the engineer or architect in charge. Includes field layout of the bearing points, preparing the spreader bases on the floor, erecting and loading the raking shores, periodically checking stability and tightness, and dismantling once the element has been made good. Measured over the area of wall actually shored.",
 }

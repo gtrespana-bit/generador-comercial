@@ -2,7 +2,7 @@
 """Nombres de partida — Fachadas y particiones (capítulo completo, 180).
 
 Criterios de este lote:
-  · «Fachada de bloque» es blockwork facade, no block facade: blockwork es
+  · «Fachada de bloque» es concrete masonry facade, no block facade: concrete masonry es
     la palabra de oficio para la fábrica de bloques, igual que brickwork
     lo es para la de ladrillo.
   · «Tabique» es partition; «división» es divider, porque son piezas
@@ -21,23 +21,23 @@ Criterios de este lote:
 LOTE = {
 # ── Fachadas de fábrica ───────────────────────────────────────────────────
 "Fachada de bloque de concreto de 15 cm.":
-    "15 cm concrete blockwork facade.",
+    "15 cm concrete masonry facade.",
 "Fachada de bloque de concreto de 20 cm.":
-    "20 cm concrete blockwork facade.",
+    "20 cm concrete masonry facade.",
 "Fachada de bloque de concreto con friso.":
-    "Concrete blockwork facade with stucco.",
+    "Concrete concrete masonry facade with stucco.",
 "Fachada de bloque de concreto con acabado a la vista.":
-    "Concrete blockwork facade with an exposed finish.",
+    "Concrete concrete masonry facade with an exposed finish.",
 "Fachada de bloque de concreto con refuerzo.":
-    "Reinforced concrete blockwork facade.",
+    "Reinforced concrete masonry facade.",
 "Fachada de bloque de concreto de 12 cm.":
-    "12 cm concrete blockwork facade.",
+    "12 cm concrete masonry facade.",
 "Fachada de bloque de arcilla de 15 cm.":
-    "15 cm clay blockwork facade.",
+    "15 cm clay masonry facade.",
 "Fachada de ladrillo macizo de arcilla.":
     "Solid clay brick facade.",
 "Fachada de bloque de arcilla con friso.":
-    "Clay blockwork facade with stucco.",
+    "Clay concrete masonry facade with stucco.",
 "Fachada de ladrillo visto.":
     "Face brick facade.",
 "Fachada de ladrillo visto con juntas coloreadas.":
@@ -67,7 +67,7 @@ LOTE = {
 "Fachada revestida con placa fenólica.":
     "Phenolic panel clad facade.",
 "Fachada revestida con listones de madera.":
-    "Timber batten clad facade.",
+    "Lumber batten clad facade.",
 "Fachada revestida con gres porcelánico.":
     "Porcelain stoneware clad facade.",
 
@@ -123,23 +123,23 @@ LOTE = {
 
 # ── Mampostería estructural ───────────────────────────────────────────────
 "Pared de mampostería estructural de bloque de concreto de 15 cm.":
-    "15 cm structural concrete blockwork wall.",
+    "15 cm structural concrete masonry wall.",
 "Pared de mampostería estructural de bloque de concreto de 20 cm.":
-    "20 cm structural concrete blockwork wall.",
+    "20 cm structural concrete masonry wall.",
 "Viga dintel de mampostería estructural con bloque canal.":
     "Lintel beam in structural masonry with a bond beam block.",
 "Refuerzo de celda vertical con acero y relleno de concreto.":
     "Reinforcement of a vertical cell with steel and concrete fill.",
 "Mampostería estructural de bloque de 10 cm.":
-    "10 cm structural blockwork.",
+    "10 cm structural concrete masonry.",
 "Mampostería estructural de bloque de 15 cm.":
-    "15 cm structural blockwork.",
+    "15 cm structural concrete masonry.",
 "Mampostería estructural de bloque de 20 cm.":
-    "20 cm structural blockwork.",
+    "20 cm structural concrete masonry.",
 "Mampostería estructural con bloque canal.":
     "Structural masonry with a bond beam block.",
 "Mampostería estructural de bloque de arcilla.":
-    "Structural clay blockwork.",
+    "Structural clay masonry.",
 
 # ── Tabiques de placa de yeso ─────────────────────────────────────────────
 "Tabique autoportante de placa de yeso laminado 15+70+15, doble placa por cara.":
@@ -153,7 +153,7 @@ LOTE = {
 "Trasdosado directo de placa de yeso laminado pegada al muro.":
     "Direct drywall lining bonded to a wall.",
 "Refuerzo interior para anclaje de cargas en tabique de yeso laminado.":
-    "Internal reinforcement for fixing loads in a drywall partition.",
+    "Internal reinforcement for fastening loads in a drywall partition.",
 "Tabique de yeso laminado con aislamiento acústico.":
     "Drywall partition with acoustic insulation.",
 "Tabique de yeso laminado con placa de alta dureza.":
@@ -173,7 +173,7 @@ LOTE = {
 "Tabique de yeso laminado con doble placa.":
     "Drywall partition with two layers of board.",
 "Tabique de yeso laminado con refuerzo de cargas.":
-    "Drywall partition with load fixing reinforcement.",
+    "Drywall partition with load fastening reinforcement.",
 "Tabique de yeso laminado curvo.":
     "Curved drywall partition.",
 "Tabique de yeso laminado con cajón de instalaciones.":
@@ -237,7 +237,7 @@ LOTE = {
 "Mampara de oficina con doble acristalamiento.":
     "Office partition with double glazing.",
 "Mampara de ducha a ras de piso.":
-    "Walk-in shower screen.",
+    "Walk-in shower panel.",
 "Mampara divisoria con vidrio laminado.":
     "Partition with laminated glass.",
 "Tabique plegable de paneles.":
@@ -303,7 +303,7 @@ LOTE = {
 
 # ── Fachada ventilada y SATE ──────────────────────────────────────────────
 "Fachada ventilada de panel composite.":
-    "Ventilated facade of composite panels.",
+    "Ventilated facade of sandwich panels.",
 "Fachada ventilada de gres porcelánico.":
     "Ventilated facade of porcelain stoneware.",
 "Fachada ventilada de piedra natural.":
@@ -331,7 +331,7 @@ LOTE = {
 "Celosía de fachada de aluminio.":
     "Aluminum facade louver screen.",
 "Celosía de fachada de madera.":
-    "Timber facade louver screen.",
+    "Lumber facade louver screen.",
 "Celosía cerámica de fachada.":
     "Ceramic facade louver screen.",
 "Cerramiento de lamas orientables.":

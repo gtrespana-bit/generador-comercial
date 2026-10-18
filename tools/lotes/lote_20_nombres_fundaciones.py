@@ -139,7 +139,7 @@ LOTE = {
 "Muro de contención con acabado visto.":
     "Retaining wall with an exposed finish.",
 "Muro de contención de bloque con refuerzo.":
-    "Reinforced blockwork retaining wall.",
+    "Reinforced concrete masonry retaining wall.",
 "Muro de contención con junta de dilatación.":
     "Retaining wall with an expansion joint.",
 "Reparación de muro de contención.": "Repair of a retaining wall.",

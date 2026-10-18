@@ -29,7 +29,7 @@ LOTE = {
 "Medición de espesores de aislamiento existente.":
     "Measurement of the thickness of existing insulation.",
 "Inspección de carpintería y vidrios.":
-    "Inspection of joinery and glazing.",
+    "Inspection of carpentry and glazing.",
 "Levantamiento de la envolvente térmica.":
     "Survey of the thermal envelope.",
 "Propuesta de medidas de rehabilitación energética.":
@@ -47,7 +47,7 @@ LOTE = {
 "Fachada ventilada con subestructura y aislamiento.":
     "Ventilated facade with a substructure and insulation.",
 "Revestimiento de fachada con panel composite.":
-    "Facade cladding with composite panels.",
+    "Facade cladding with sandwich panels.",
 "Aislamiento de fachada con lana mineral proyectada.":
     "Facade insulation with sprayed mineral wool.",
 "Inyección de aislamiento en cámara de fachada.":
@@ -59,7 +59,7 @@ LOTE = {
 "Tratamiento de puentes térmicos de fachada.":
     "Treatment of thermal bridges in a facade.",
 "Acabado de fachada aislada con mortero.":
-    "Rendered finish to an insulated facade.",
+    "Stuccoed finish to an insulated facade.",
 
 # ── Cubierta y techo ──────────────────────────────────────────────────────
 "Aislamiento de techo con poliestireno extruido.":
@@ -116,7 +116,7 @@ LOTE = {
 "Sustitución de junta de estanqueidad de ventana.":
     "Replacement of a window weather seal.",
 "Calafateado de carpintería exterior.":
-    "Caulking of exterior joinery.",
+    "Caulking of exterior carpentry.",
 "Persiana aislante con cajón estanco.":
     "Insulated roller shutter with a sealed box.",
 "Sustitución de puerta exterior con aislamiento.":

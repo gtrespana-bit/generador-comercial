@@ -15,7 +15,7 @@ LOTE = {
     "Protection of finished flooring while the works are carried out.",
 
 "Protección de piso existente que permanece, mediante cartón corrugado en rollo solapado y fijado con cinta en las juntas, colocado sobre lámina de polietileno cuando exista riesgo de humedad. Se emplea en reformas parciales donde el piso de las áreas que no se intervienen debe entregarse intacto. Incluye la limpieza previa de la superficie, el extendido y solape del material, el sellado de juntas y del perímetro contra el rodapié, la reposición de las zonas que se deterioren durante la obra, y el retiro y desecho de la protección al finalizar los trabajos. Medido en superficie realmente protegida.":
-    "Protection of existing flooring that is to remain, using overlapping rolls of corrugated cardboard taped at the joints, laid over polyethylene sheeting where there is a risk of moisture. Used on partial refurbishments where the flooring in areas not being worked on has to be handed back undamaged. Includes cleaning the surface beforehand, laying and lapping the material, sealing the joints and the perimeter against the baseboard, replacing any areas that deteriorate during the works, and removing and disposing of the protection when the work finishes. Measured over the area actually protected.",
+    "Protection of existing flooring that is to remain, using overlapping rolls of corrugated cardboard taped at the joints, laid over polyethylene sheeting where there is a risk of moisture. Used on partial remodeling projects where the flooring in areas not being worked on has to be handed back undamaged. Includes cleaning the surface beforehand, laying and lapping the material, sealing the joints and the perimeter against the baseboard, replacing any areas that deteriorate during the works, and removing and disposing of the protection when the work finishes. Measured over the area actually protected.",
 
 "Protección de mobiliario y equipos con lámina plástica.":
     "Protection of furniture and equipment with plastic sheeting.",
@@ -27,19 +27,19 @@ LOTE = {
     "Dust barrier in plastic sheeting with an access opening.",
 
 "Barrera provisional de confinamiento de polvo entre la zona de obra y las áreas en uso, formada por bastidor de listón de madera y lámina de polietileno tensada y sellada en todo su perímetro contra piso, paredes y techo, con cierre tipo cremallera para el paso del personal. Es la medida que permite trabajar en un ambiente mientras el resto del inmueble sigue habitado u operativo. Incluye el replanteo, el montaje del bastidor, la colocación y sellado de la lámina, el montaje del cierre de paso, el mantenimiento de la barrera durante la obra y su desmontaje y retiro al finalizar. Medido en superficie de barrera realmente ejecutada.":
-    "Temporary dust containment barrier between the work area and the areas still in use, made up of a lumber batten frame with polyethylene sheeting stretched and sealed around its whole perimeter against floor, walls and ceiling, with a zip door for access. This is what allows work to go on in one room while the rest of the building stays occupied and operating. Includes setting out, erecting the frame, fitting and sealing the sheeting, fitting the access opening, maintaining the barrier while the works last, and dismantling and removing it at the end. Measured over the area of barrier actually erected.",
+    "Temporary dust containment barrier between the work area and the areas still in use, made up of a lumber batten frame with polyethylene sheeting stretched and sealed around its whole perimeter against floor, walls and ceiling, with a zip door for access. This is what allows work to go on in one room while the rest of the building stays occupied and operating. Includes field layout, erecting the frame, fitting and sealing the sheeting, fitting the access opening, maintaining the barrier while the works last, and dismantling and removing it at the end. Measured over the area of barrier actually erected.",
 
 "Cerramiento provisional de vano con lámina de madera.":
     "Temporary closure of an opening with a wood panel.",
 
 "Cerramiento provisional de vano de puerta o ventana mediante lámina de madera contrachapada u OSB sobre bastidor de listón, anclada al vano. Se emplea para cerrar huecos abiertos por demolición o desmontaje de carpintería, protegiendo el interior frente a la intemperie y frente a intrusiones mientras llega la carpintería definitiva. Incluye el replanteo y corte de la lámina, el montaje del bastidor, la fijación al vano con tacos, el sellado perimetral, su mantenimiento durante la obra y el desmontaje al colocar la carpintería definitiva. Medido en superficie de vano realmente cerrada.":
-    "Temporary closure of a door or window opening using a plywood or OSB panel on a batten frame, anchored into the opening. Used to close up voids left by demolition or by removing doors and windows, keeping the interior safe from the weather and from intruders until the permanent units arrive. Includes setting out and cutting the panel, building the frame, fixing it into the opening with anchors, sealing around the perimeter, maintaining it while the works last, and taking it down when the permanent units are fitted. Measured over the area of opening actually closed.",
+    "Temporary closure of a door or window opening using a plywood or OSB panel on a batten frame, anchored into the opening. Used to close up voids left by demolition or by removing doors and windows, keeping the interior safe from the weather and from intruders until the permanent units arrive. Includes field layout and cutting the panel, building the frame, fastening it into the opening with anchors, sealing around the perimeter, maintaining it while the works last, and taking it down when the permanent units are fitted. Measured over the area of opening actually closed.",
 
 "Cerramiento perimetral provisional de obra con malla de señalización.":
     "Temporary perimeter hoarding with warning mesh.",
 
 "Cerramiento provisional del perímetro de la zona de obra mediante malla plástica de señalización sostenida por parales metálicos o de madera, con señalización de advertencia. Delimita el área de trabajo e impide el paso de personas ajenas, requisito básico de seguridad cuando la obra convive con zonas en uso o da a espacios comunes. Incluye el replanteo, la colocación y arriostramiento de los parales, el tensado y fijación de la malla, la colocación de las señales de advertencia, el mantenimiento durante la obra y el desmontaje y retiro al finalizar. Medido en longitud realmente cerrada.":
-    "Temporary enclosure of the perimeter of the work area using plastic warning mesh on steel or lumber posts, with warning signs. It defines the work area and keeps unauthorized people out, a basic safety requirement where the works share the site with areas still in use or open onto common areas. Includes setting out, placing and bracing the posts, stretching and fixing the mesh, putting up the warning signs, maintaining it while the works last, and dismantling and removing it at the end. Measured over the length actually enclosed.",
+    "Temporary enclosure of the perimeter of the work area using plastic warning mesh on steel or lumber posts, with warning signs. It defines the work area and keeps unauthorized people out, a basic safety requirement where the works share the site with areas still in use or open onto common areas. Includes field layout, placing and bracing the posts, stretching and fastening the mesh, putting up the warning signs, maintaining it while the works last, and dismantling and removing it at the end. Measured over the length actually enclosed.",
 
 "Protección de carpintería y aparatos que permanecen en obra.":
     "Protection of doors, windows and fixtures remaining on site.",
@@ -108,22 +108,22 @@ LOTE = {
     "Shoring of an internal slope or excavation. Includes installing the trench sheeting. Measured per square meter shored.",
 
 "Replanteo general de la obra y trazado de ejes.":
-    "General setting out of the works and marking of grid lines.",
+    "General field layout of the works and marking of grid lines.",
 
 "Replanteo general de la intervención sobre el inmueble, con trazado de los ejes de tabiquería, los niveles de piso terminado y las cotas de referencia, ejecutado con nivel láser y equipo de medición. Incluye la comprobación de escuadras y de la geometría real frente a la del plano, el marcado de los ejes sobre piso y paramentos, el establecimiento de la cota de nivel de referencia que regirá toda la obra, la señalización de los puntos fijos y la anotación de las discrepancias detectadas respecto al proyecto. Medido en superficie de intervención realmente replanteada.":
-    "General setting out of the works in the building, marking the partition grid lines, the finished floor levels and the datum levels, carried out with a laser level and measuring equipment. Includes checking squareness and comparing the actual geometry against the drawing, marking the grid lines on floor and walls, establishing the datum level that will govern the whole job, marking the fixed reference points and noting any discrepancies found against the design. Measured over the area of work actually set out.",
+    "General field layout of the works in the building, marking the partition grid lines, the finished floor levels and the datum levels, carried out with a laser level and measuring equipment. Includes checking squareness and comparing the actual geometry against the drawing, marking the grid lines on floor and walls, establishing the datum level that will govern the whole job, marking the fixed reference points and noting any discrepancies found against the design. Measured over the area of work actually set out.",
 
 "Replanteo de ejes de muros.":
-    "Setting out of wall grid lines.",
+    "Field layout of wall grid lines.",
 
 "Replanteo de ejes de muros con nivel láser. Incluye el trazado de los ejes. Medido por metro lineal replanteado.":
-    "Setting out of wall grid lines with a laser level. Includes marking the lines. Measured per linear meter set out.",
+    "Field layout of wall grid lines with a laser level. Includes marking the lines. Measured per linear meter set out.",
 
 "Replanteo de niveles y pendientes.":
-    "Setting out of levels and falls.",
+    "Field layout of levels and falls.",
 
 "Replanteo de niveles y pendientes de piso. Incluye el marcado de cotas. Medido por metro lineal replanteado.":
-    "Setting out of floor levels and falls. Includes marking the levels. Measured per linear meter set out.",
+    "Field layout of floor levels and falls. Includes marking the levels. Measured per linear meter set out.",
 
 "Control geométrico de paramentos.":
     "Geometric check of wall and ceiling surfaces.",
@@ -132,28 +132,28 @@ LOTE = {
     "Geometric check that wall and ceiling surfaces are plumb and level. Includes checking with a laser level. Measured per square meter checked.",
 
 "Replanteo de instalaciones.":
-    "Setting out of services.",
+    "Field layout of services.",
 
 "Replanteo de instalaciones (eléctrica, sanitaria) con trazado de recorridos. Incluye el marcado. Medido por instalación replanteada.":
-    "Setting out of services (electrical, plumbing) with the runs marked. Includes marking. Measured per installation set out.",
+    "Field layout of services (electrical, plumbing) with the runs marked. Includes marking. Measured per installation set out.",
 
 "Replanteo de vanos y carpintería.":
-    "Setting out of openings and door and window units.",
+    "Field layout of openings and door and window units.",
 
 "Replanteo de vanos y carpintería. Incluye el trazado de las posiciones. Medido por metro lineal replanteado.":
-    "Setting out of openings and door and window units. Includes marking the positions. Measured per linear meter set out.",
+    "Field layout of openings and door and window units. Includes marking the positions. Measured per linear meter set out.",
 
 "Replanteo de cielos rasos.":
-    "Setting out of suspended ceilings.",
+    "Field layout of suspended ceilings.",
 
 "Replanteo de cielos rasos y alturas. Incluye el marcado de cotas. Medido por metro cuadrado replanteado.":
-    "Setting out of suspended ceilings and their heights. Includes marking the levels. Measured per square meter set out.",
+    "Field layout of suspended ceilings and their heights. Includes marking the levels. Measured per square meter set out.",
 
 "Replanteo de escalera.":
-    "Setting out of a stair.",
+    "Field layout of a stair.",
 
 "Replanteo de escalera y peldaños. Incluye el trazado de huellas y contrahuellas. Medido por escalera replanteada.":
-    "Setting out of a stair and its treads. Includes marking the treads and risers. Measured per stair set out.",
+    "Field layout of a stair and its treads. Includes marking the treads and risers. Measured per stair set out.",
 
 "Control de planitud de pisos.":
     "Flatness check of floors.",
@@ -162,14 +162,14 @@ LOTE = {
     "Flatness check of floors with a straightedge and level. Includes the check. Measured per square meter checked.",
 
 "Replanteo de desagües y pendientes.":
-    "Setting out of drains and falls.",
+    "Field layout of drains and falls.",
 
 "Replanteo de desagües y pendientes de piso. Incluye el marcado de las pendientes. Medido por metro lineal replanteado.":
-    "Setting out of floor drains and falls. Includes marking the falls. Measured per linear meter set out.",
+    "Field layout of floor drains and falls. Includes marking the falls. Measured per linear meter set out.",
 
 "Replanteo de particiones.":
-    "Setting out of partitions.",
+    "Field layout of partitions.",
 
 "Replanteo de particiones y tabiques. Incluye el trazado de los ejes. Medido por metro cuadrado replanteado.":
-    "Setting out of partitions and partition walls. Includes marking the grid lines. Measured per square meter set out.",
+    "Field layout of partitions and partition walls. Includes marking the grid lines. Measured per square meter set out.",
 }

@@ -152,7 +152,7 @@ LOTE = {
 "Medición de humedad de piso.":
     "Measurement of moisture in a floor.",
 "Detección de armadura y tuberías empotradas.":
-    "Detection of reinforcement and concealed pipework.",
+    "Detection of reinforcement and concealed piping.",
 "Inspección de fisuras y diagnóstico estructural.":
     "Inspection of cracks and structural diagnosis.",
 "Ensayo de esclerometría en elementos de concreto.":

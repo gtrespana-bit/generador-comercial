@@ -61,10 +61,10 @@ LOTE = {
         "Application of washable enamel paint on substrates in kitchens, pantries or service areas, with two coats. Includes preparing the substrate and the two coats of washable enamel paint resistant to frequent cleaning. Measured per square meter painted.",
 
     "Aplicación de pintura de señalización de seguridad interior, con franjas y marcas según normativa. Incluye el replanteo de las marcas y la aplicación. Medido por metro cuadrado pintado.":
-        "Application of internal safety marking paint, with stripes and markings to the applicable standard. Includes setting out the markings and the application. Measured per square meter painted.",
+        "Application of internal safety marking paint, with stripes and markings to the applicable standard. Includes field layout of the markings and the application. Measured per square meter painted.",
 
     "Aplicación de pintura decorativa con plantilla sobre paramento interior, con una o varias manos. Incluye el replanteo del diseño y la aplicación con plantilla. Medido por metro cuadrado pintado.":
-        "Application of decorative paint with a stencil on an internal substrate, with one or more coats. Includes setting out the design and applying with a stencil. Measured per square meter painted.",
+        "Application of decorative paint with a stencil on an internal substrate, with one or more coats. Includes field layout of the design and applying with a stencil. Measured per square meter painted.",
 
     "Aplicación de pintura decorativa con acabado perlado o metalizado sobre paramento interior. Incluye la preparación del soporte y la aplicación del acabado. Medido por metro cuadrado pintado.":
         "Application of decorative paint with a pearlescent or metallic finish on an internal substrate. Includes preparing the substrate and applying the finish. Measured per square meter painted.",

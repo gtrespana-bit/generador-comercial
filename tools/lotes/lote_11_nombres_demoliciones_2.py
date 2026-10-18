@@ -11,7 +11,7 @@ Criterios de este lote:
     la demolición.
   · «Picado» sigue siendo chipping off y «repicado» es scabbling, la
     operación de picar el concreto para que agarre la capa nueva.
-  · «Mesón» es countertop en Estados Unidos y worktop en Reino Unido,
+  · «Mesón» es countertop en Estados Unidos y countertop en Reino Unido,
     «acera» es sidewalk y «estacionamiento» es parking lot, siempre en la
     base americana; la capa de variantes pone pavement, curb y car park.
   · «Acerolit» es el nombre comercial venezolano de la lámina de
@@ -77,7 +77,7 @@ LOTE = {
 "Desmontaje de canal de aguas lluvias.":
     "Removal of a rainwater channel.",
 "Desmontaje de bajante de aguas lluvias.":
-    "Removal of a rainwater downpipe.",
+    "Removal of a rainwater downspout.",
 "Desmontaje de cubierta de teja.":
     "Removal of a tile roof.",
 "Desmontaje de cubierta de lámina metálica o acerolit.":
@@ -85,7 +85,7 @@ LOTE = {
 "Desmontaje de estructura de techo.":
     "Dismantling of a roof structure.",
 "Demolición de pendientado y protección de cubierta plana.":
-    "Demolition of the screed to falls and protection of a flat roof.",
+    "Demolition of the sloping fill and protection of a flat roof.",
 "Desmontaje de cubierta de policarbonato.":
     "Removal of a polycarbonate roof.",
 "Desmontaje de cubierta de panel sándwich.":
@@ -99,7 +99,7 @@ LOTE = {
 "Desmontaje de viga de techo de madera.":
     "Removal of a lumber roof beam.",
 "Demolición de pendientado de cubierta.":
-    "Demolition of the screed to falls of a roof.",
+    "Demolition of the sloping fill of a roof.",
 "Desmontaje de claraboya o domo.":
     "Removal of a skylight or dome.",
 "Desmontaje de impermeabilización de cubierta.":
@@ -115,7 +115,7 @@ LOTE = {
 "Desmontaje de canalón de cubierta.":
     "Removal of a roof gutter.",
 "Desmontaje de bajante de aguas lluvias con soportes.":
-    "Removal of a rainwater downpipe with its brackets.",
+    "Removal of a rainwater downspout with its brackets.",
 
 # ── Pisos ─────────────────────────────────────────────────────────────────
 "Demolición de piso cerámico y su capa de pega.":
@@ -187,7 +187,7 @@ LOTE = {
 "Demolición de trasdosado de yeso laminado y su estructura.":
     "Demolition of a drywall wall lining and its framing.",
 "Demolición de trasdosado de bloque o ladrillo adosado a muro.":
-    "Demolition of a blockwork or brick lining against a wall.",
+    "Demolition of a concrete masonry or brick lining against a wall.",
 "Desmontaje de trasdosado directo de placa pegada al muro.":
     "Removal of a direct board lining bonded to a wall.",
 "Retiro de papel tapiz en paramento.":
@@ -259,7 +259,7 @@ LOTE = {
 "Desmontaje de cerca de malla ciclónica.":
     "Removal of a chain-link fence.",
 "Demolición de tanquilla o registro enterrado.":
-    "Demolition of a buried manhole or inspection chamber.",
+    "Demolition of a buried manhole or cleanout.",
 "Tala y destronque de árbol.":
     "Felling a tree and removing its stump.",
 "Demolición de jardinera o elemento de obra en exterior.":
@@ -281,7 +281,7 @@ LOTE = {
 "Demolición de pavimento asfáltico de estacionamiento.":
     "Demolition of asphalt paving in a parking lot.",
 "Demolición de tanquilla o registro.":
-    "Demolition of a manhole or inspection chamber.",
+    "Demolition of a manhole or cleanout.",
 "Demolición de jardinera exterior.":
     "Demolition of an external planter.",
 "Demolición de base de concreto exterior.":

@@ -9,7 +9,7 @@ Criterios de este lote:
   · «Trasdosado autoportante» es independent wall lining.
   · «Peldaño» es tread, «nariz de peldaño» es stair nosing, y «descansillo»
     o «rellano» es landing.
-  · «Rodapié» es baseboard en Estados Unidos y skirting en Reino Unido: lo
+  · «Rodapié» es baseboard en Estados Unidos y baseboard en Reino Unido: lo
     ajusta después la capa de variantes.
   · «Pintura de caucho» es el venezolanismo de la pintura plástica: latex
     paint en Estados Unidos, latex paint en Reino Unido.
@@ -20,7 +20,7 @@ LOTE = {
 "Lijado y barnizado de piso de madera.":
     "Sanding and varnishing of a wood floor.",
 "Piso de deck de madera o madera técnica para exterior.":
-    "Timber or composite decking for outdoors.",
+    "Lumber or composite decking for outdoors.",
 "Piso de parquet colocado en espiga.":
     "Herringbone parquet flooring.",
 "Piso de bambú encolado.":
@@ -132,7 +132,7 @@ LOTE = {
 "Trasdosado de medianería con aislamiento y placa.":
     "Party wall lining with insulation and board.",
 "Trasdosado autoportante con refuerzo interior para anclaje de cargas.":
-    "Independent wall lining with internal reinforcement for fixing loads.",
+    "Independent wall lining with internal reinforcement for fastening loads.",
 "Trasdosado con doble placa y aislamiento.":
     "Wall lining with two layers of board and insulation.",
 "Trasdosado con barrera de vapor.":
@@ -260,11 +260,11 @@ LOTE = {
 "Cielo raso de machihembrado de madera.":
     "Tongued and grooved lumber ceiling.",
 "Cielo raso de listones de madera.":
-    "Timber batten ceiling.",
+    "Lumber batten ceiling.",
 "Cielo raso de paneles acústicos de madera.":
     "Acoustic lumber panel ceiling.",
 "Cielo raso de listones de madera con junta abierta.":
-    "Timber batten ceiling with open joints.",
+    "Lumber batten ceiling with open joints.",
 "Cielo raso de tablero decorativo de madera.":
     "Decorative lumber panel ceiling.",
 "Moldura perimetral de remate en cielo raso.":
@@ -294,7 +294,7 @@ LOTE = {
 "Pintura de cielo raso, dos manos.":
     "Ceiling paint, two coats.",
 "Pintura de caucho sobre friso nuevo, tres manos.":
-    "Emulsion paint on new plaster, three coats.",
+    "Latex paint on new plaster, three coats.",
 "Repintado de paramento interior sobre pintura existente.":
     "Repainting of interior surfaces over existing paint.",
 "Pintura antimoho para cocina y baño.":

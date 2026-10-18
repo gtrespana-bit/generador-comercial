@@ -25,7 +25,7 @@ LOTE = {
 "Zona de acopio de chatarra metálica.": "Scrap metal storage area.",
 "Zona de acopio de cartón y embalajes.":
     "Cardboard and packaging storage area.",
-"Zona de acopio de madera y pallets.": "Timber and pallet storage area.",
+"Zona de acopio de madera y pallets.": "Lumber and pallet storage area.",
 "Separación selectiva de residuos en origen.":
     "Separation of waste at source.",
 "Identificación y etiquetado de contenedores de residuos.":
@@ -53,7 +53,7 @@ LOTE = {
 "Contenedor de escombro de 3 m³, por mes.":
     "3 m³ debris container, per month.",
 "Contenedor de chatarra metálica.": "Scrap metal container.",
-"Contenedor de residuos de madera.": "Timber waste container.",
+"Contenedor de residuos de madera.": "Lumber waste container.",
 "Saco big-bag de escombro.": "Bulk bag for debris.",
 "Contenedor de residuos mezclados.": "Mixed waste container.",
 "Acopio de escombro en sacos apilados.":
@@ -111,7 +111,7 @@ LOTE = {
 "Limpieza final de obra para entrega.":
     "Final clean of the works ahead of handover.",
 "Limpieza de vidrios y carpintería.":
-    "Cleaning of glazing and joinery.",
+    "Cleaning of glazing and carpentry.",
 "Limpieza de aparatos sanitarios y grifería.":
     "Cleaning of plumbing fixtures and faucets.",
 "Limpieza de pisos con pulidora.":

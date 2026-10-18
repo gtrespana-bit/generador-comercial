@@ -8,7 +8,7 @@ Criterios de este lote:
   · «Esmalte» sobre carpintería es enamel paint cuando es sintético y
     water-based enamel cuando es al agua: las dos cosas se piden distinto.
   · «Carpintería» se resuelve como woodwork y metalwork, que es como se
-    nombra en inglés lo que se pinta, y no como «joinery», que el
+    nombra en inglés lo que se pinta, y no como «carpentry», que el
     estadounidense no usa.
   · «Hidrolavado» e «hidrofugación» son la misma familia de agua a presión
     y repelente: pressure washing y water-repellent treatment.

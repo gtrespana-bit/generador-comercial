@@ -18,7 +18,7 @@ Criterios de vocabulario aplicados:
   con anclaje; «aplacado» es siempre cladding.
 · «Capa fina» es thin bed, que es como se llama el sistema de adhesivo.
 · «Rodapié» es baseboard y «peldaño» es tread, con contrahuella riser.
-· «Carpintería» es joinery y «cielo raso» es ceiling, como en el resto
+· «Carpintería» es carpentry y «cielo raso» es ceiling, como en el resto
   del catálogo.
 · «Anime» es poliestireno expandido en Venezuela, así que se dice
   polystyrene EPS y no se traduce la marca.
@@ -28,17 +28,17 @@ LOTE = {
     'Afirmado de concreto aligerado con anime de poliestireno como relleno, para nivelación de pisos. Incluye el replanteo, el vaciado y la nivelación. Medido por metro cuadrado ejecutado.':
         'Lightweight concrete fill with polystyrene EPS as filler, for leveling floors. Includes the field layout, the casting and the leveling. Measured per square meter completed.',
     'Aplacado de paramento con lámina o panel metálico decorativo, con fijación mecánica. Incluye la preparación, la fijación del panel y el remate de juntas. Medido por metro cuadrado aplacado.':
-        'Cladding of a substrate with decorative metal sheet or panel, with mechanical fixing. Includes the preparation, fixing the panel and finishing the joints. Measured per square meter clad.',
+        'Cladding of a substrate with decorative metal sheet or panel, with mechanical fastening. Includes the preparation, fastening the panel and finishing the joints. Measured per square meter clad.',
     'Aplicación de barniz protector sobre madera estructural interior, con dos manos. Incluye la preparación de la madera y las dos manos de barniz. Medido por metro cuadrado barnizado.':
         'Application of protective varnish to interior structural wood, with two coats. Includes preparation of the wood and the two coats of varnish. Measured per square meter varnished.',
     'Aplicación de esmalte al agua sobre carpintería interior de madera, con fondo y dos manos. Incluye la preparación de la superficie, el fondo y las dos manos de esmalte. Medido por metro cuadrado pintado.':
-        'Application of water based enamel paint to interior wood joinery, with a primer and two coats. Includes preparation of the surface, the primer and the two coats of enamel. Measured per square meter painted.',
+        'Application of water based enamel paint to interior wood carpentry, with a primer and two coats. Includes preparation of the surface, the primer and the two coats of enamel. Measured per square meter painted.',
     'Aplicación de esmalte o laca sobre persiana de madera, con fondo y dos manos. Incluye la preparación y las dos manos. Medido por metro cuadrado pintado.':
         'Application of enamel paint or lacquer to a wooden roller shutter, with a primer and two coats. Includes the preparation and the two coats. Measured per square meter painted.',
     'Aplicación de esmalte sintético sobre carpintería de madera exterior, con fondo y dos manos. Incluye la preparación de la madera, el fondo y las dos manos de esmalte. Medido por metro cuadrado pintado.':
-        'Application of synthetic enamel paint to exterior wood joinery, with a primer and two coats. Includes preparation of the wood, the primer and the two coats of enamel. Measured per square meter painted.',
+        'Application of synthetic enamel paint to exterior wood carpentry, with a primer and two coats. Includes preparation of the wood, the primer and the two coats of enamel. Measured per square meter painted.',
     'Aplicación de esmalte sintético sobre carpintería metálica exterior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos de esmalte. Medido por metro cuadrado pintado.':
-        'Application of synthetic enamel paint to exterior metal joinery, with an anticorrosion primer and two coats. Includes the cleaning, the primer and the two coats of enamel. Measured per square meter painted.',
+        'Application of synthetic enamel paint to exterior metal carpentry, with an anticorrosion primer and two coats. Includes the cleaning, the primer and the two coats of enamel. Measured per square meter painted.',
     'Aplicación de esmalte sobre closet o mueble de madera, con fondo y dos manos. Incluye la preparación y las dos manos de esmalte. Medido por metro cuadrado pintado.':
         'Application of enamel paint to a closet or wood cabinet, with a primer and two coats. Includes the preparation and the two coats of enamel. Measured per square meter painted.',
     'Aplicación de esmalte sobre estructura metálica interior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos. Medido por metro cuadrado pintado.':
@@ -70,7 +70,7 @@ LOTE = {
     'Aplicación de imprimación selladora o fondo fijador sobre paramento poroso previo a la pintura. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado imprimado.':
         'Application of a sealing primer or stabilizing primer to a porous substrate prior to painting. Includes the cleaning and applying the sealer. Measured per square meter primed.',
     'Aplicación de laca sobre carpintería interior de madera, con fondo y dos manos. Incluye el lijado, el fondo y las dos manos de laca. Medido por metro cuadrado lacado.':
-        'Application of lacquer to interior wood joinery, with a primer and two coats. Includes sanding, the primer and the two coats of lacquer. Measured per square meter lacquered.',
+        'Application of lacquer to interior wood carpentry, with a primer and two coats. Includes sanding, the primer and the two coats of lacquer. Measured per square meter lacquered.',
     'Aplicación de laca sobre puertas de interior, con fondo y dos manos. Incluye la preparación, el fondo y las dos manos de laca. Medido por metro cuadrado lacado.':
         'Application of lacquer to interior doors, with a primer and two coats. Includes the preparation, the primer and the two coats of lacquer. Measured per square meter lacquered.',
     'Aplicación de pintura acrílica lavable en paramentos de cocina, con dos manos. Incluye la preparación del soporte y las dos manos de pintura. Medido por metro cuadrado pintado.':
@@ -110,19 +110,19 @@ LOTE = {
     'Cielo raso continuo de placa de yeso laminado en foso de escalera, con estructura y placa. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.':
         'Continuous drywall ceiling in a stairwell, with the framework and the board. Includes the framework, the board and the joint treatment. Measured per square meter completed.',
     'Cielo raso de láminas de PVC para local comercial o área de servicio, con perfilería. Incluye la estructura, la colocación de las láminas y el remate. Medido por metro cuadrado ejecutado.':
-        'PVC sheet ceiling for commercial premises or service areas, with the grid system. Includes the framework, fixing the sheets and the finishing. Measured per square meter completed.',
+        'PVC sheet ceiling for commercial premises or service areas, with the grid system. Includes the framework, fastening the sheets and the finishing. Measured per square meter completed.',
     'Cielo raso de paneles acústicos de madera, con estructura de fijación y remate. Incluye la estructura, la colocación de los paneles y el remate perimetral. Medido por metro cuadrado ejecutado.':
-        'Wood acoustic panel ceiling, with the fixing framework and the trim. Includes the framework, fixing the panels and the perimeter trim. Measured per square meter completed.',
+        'Wood acoustic panel ceiling, with the fastening framework and the trim. Includes the framework, fastening the panels and the perimeter trim. Measured per square meter completed.',
     'Cielo raso de tablero decorativo de madera sobre rastreles, con acabado. Incluye la estructura, la colocación del tablero y el remate. Medido por metro cuadrado ejecutado.':
-        'Decorative wood board ceiling on battens, with the finish. Includes the framework, fixing the board and the finishing. Measured per square meter completed.',
+        'Decorative wood board ceiling on battens, with the finish. Includes the framework, fastening the board and the finishing. Measured per square meter completed.',
     'Cielo raso desmontable de fibra mineral con perfilería oculta, en retícula de 60x60. Incluye la estructura suspendida, la colocación de los paneles y el remate perimetral. Medido por metro cuadrado ejecutado.':
-        'Demountable mineral fiber ceiling with a concealed grid, on a 60x60 grid. Includes the suspended framework, fixing the panels and the perimeter trim. Measured per square meter completed.',
+        'Demountable mineral fiber ceiling with a concealed grid, on a 60x60 grid. Includes the suspended framework, fastening the panels and the perimeter trim. Measured per square meter completed.',
     'Cielo raso desmontable de fibra mineral de alta absorción acústica, con perfilería. Incluye la estructura, la colocación de los paneles y el remate. Medido por metro cuadrado ejecutado.':
-        'Demountable mineral fiber ceiling with high acoustic absorption, with the grid system. Includes the framework, fixing the panels and the finishing. Measured per square meter completed.',
+        'Demountable mineral fiber ceiling with high acoustic absorption, with the grid system. Includes the framework, fastening the panels and the finishing. Measured per square meter completed.',
     'Cielo raso desmontable de lámina de aluminio lineal, con perfilería de suspensión. Incluye la estructura, la colocación de las láminas y el remate perimetral. Medido por metro cuadrado ejecutado.':
-        'Demountable linear aluminum strip ceiling, with the suspension system. Includes the framework, fixing the sheets and the perimeter trim. Measured per square meter completed.',
+        'Demountable linear aluminum strip ceiling, with the suspension system. Includes the framework, fastening the sheets and the perimeter trim. Measured per square meter completed.',
     'Colocación de perfil de cierre entre cielos rasos de distinta cota, como transición. Incluye la fijación del perfil y el remate. Medido por metro lineal de cierre.':
-        'Fixing of a closure profile between ceilings at different levels, as a transition. Includes fixing the profile and the finishing. Measured per meter of closure.',
+        'Fastening of a closure profile between ceilings at different levels, as a transition. Includes fastening the profile and the finishing. Measured per meter of closure.',
     'Colocación de piso cerámico con guarda o cenefa perimetral de pieza decorativa, en capa fina. Incluye el replanteo, la colocación y el rejuntado. Medido por metro cuadrado colocado.':
         'Laying of a ceramic tile floor with a perimeter border of decorative tile, in a thin bed. Includes the field layout, laying and grouting. Measured per square meter laid.',
     'Colocación de piso de bambú encolado sobre afirmado nivelado. Incluye la preparación del soporte, el encolado y el remate de juntas. Medido por metro cuadrado colocado.':
@@ -132,33 +132,33 @@ LOTE = {
     'Colocación de piso de mármol en placa de gran formato, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado colocado.':
         'Laying of a marble floor in large format slabs, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter laid.',
     'Colocación de piso de parquet encolado en espiga, sobre afirmado nivelado. Incluye el replanteo del patrón, el encolado y el lijado. Medido por metro cuadrado colocado.':
-        'Laying of a glued parquet floor in a herringbone pattern, over a leveled fill. Includes setting out the pattern, the gluing and sanding. Measured per square meter laid.',
+        'Laying of a glued parquet floor in a herringbone pattern, over a leveled fill. Includes field layout of the pattern, the gluing and sanding. Measured per square meter laid.',
     'Colocación de piso de piedra natural a junta mínima, en capa fina. Incluye la preparación, la colocación y el sellado de la junta. Medido por metro cuadrado colocado.':
         'Laying of a natural stone floor with a minimal joint, in a thin bed. Includes the preparation, laying and sealing the joint. Measured per square meter laid.',
     'Colocación de piso de porcelanato rectificado de junta mínima, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado colocado.':
         'Laying of a rectified porcelain tile floor with a minimal joint, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter laid.',
     'Colocación de rodapié de PVC, con su adhesivo y remates. Incluye la preparación del soporte y la fijación del rodapié. Medido por metro lineal colocado.':
-        'Fixing of a PVC baseboard, with its adhesive and trim. Includes preparation of the substrate and fixing the baseboard. Measured per meter laid.',
+        'Fastening of a PVC baseboard, with its adhesive and trim. Includes preparation of the substrate and fastening the baseboard. Measured per meter laid.',
     'Colocación de rodapié de aluminio, con fijación mecánica o adhesiva. Incluye la preparación del soporte y la fijación del rodapié. Medido por metro lineal colocado.':
-        'Fixing of an aluminum baseboard, with mechanical or adhesive fixing. Includes preparation of the substrate and fixing the baseboard. Measured per meter laid.',
+        'Fastening of an aluminum baseboard, with mechanical or adhesive fastening. Includes preparation of the substrate and fastening the baseboard. Measured per meter laid.',
     'Colocación de rodapié de madera lacada, con fijación mecánica o adhesiva. Incluye la preparación del soporte y la fijación del rodapié. Medido por metro lineal colocado.':
-        'Fixing of a lacquered wood baseboard, with mechanical or adhesive fixing. Includes preparation of the substrate and fixing the baseboard. Measured per meter laid.',
+        'Fastening of a lacquered wood baseboard, with mechanical or adhesive fastening. Includes preparation of the substrate and fastening the baseboard. Measured per meter laid.',
     'Colocación de rodapié de piedra natural, con adhesivo y rejuntado. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal colocado.':
-        'Fixing of a natural stone baseboard, with adhesive and grouting. Includes preparation of the substrate, laying and grouting. Measured per meter laid.',
+        'Fastening of a natural stone baseboard, with adhesive and grouting. Includes preparation of the substrate, laying and grouting. Measured per meter laid.',
     'Colocación de rodapié de porcelanato rectificado, con adhesivo y junta mínima. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal colocado.':
-        'Fixing of a rectified porcelain baseboard, with adhesive and a minimal joint. Includes preparation of the substrate, laying and grouting. Measured per meter laid.',
+        'Fastening of a rectified porcelain baseboard, with adhesive and a minimal joint. Includes preparation of the substrate, laying and grouting. Measured per meter laid.',
     'Eliminación de restos de adhesivo y pintura vieja en paramento, con decapante o raspado, previo al nuevo acabado. Incluye la limpieza de la superficie. Medido por metro cuadrado limpiado.':
         'Removal of adhesive residue and old paint from a substrate, with paint stripper or scraping, prior to the new finish. Includes cleaning the surface. Measured per square meter cleaned.',
     'Enchapado de columna con pieza cerámica o porcelanato, en capa fina. Incluye la preparación del soporte, la colocación con cortes y el rejuntado. Medido por metro cuadrado revestido.':
         'Tiling of a column with ceramic or porcelain tile, in a thin bed. Includes preparation of the substrate, laying with cut pieces and grouting. Measured per square meter covered.',
     'Enchapado de fachada con pieza de piedra natural fijada con anclaje mecánico puntual. Incluye la fijación de los anclajes, la colocación de la pieza y el sellado de juntas. Medido por metro cuadrado enchapado.':
-        'Cladding of a facade with natural stone fixed with local mechanical anchors. Includes fixing the anchors, placing the piece and sealing the joints. Measured per square meter tiled.',
+        'Cladding of a facade with natural stone fastened with local mechanical anchors. Includes fastening the anchors, placing the piece and sealing the joints. Measured per square meter tiled.',
     'Enchapado de mocheta o zócalo con pieza de mármol, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado enchapado.':
         'Tiling of a reveal or base with marble, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter tiled.',
     'Enchapado de paramento con gres porcelánico técnico de gran resistencia, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado enchapado.':
         'Tiling of a substrate with high strength technical porcelain stoneware, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter tiled.',
     'Enchapado de paramento con pieza cerámica colocada en espiga, en capa fina. Incluye el replanteo del patrón, la colocación con cortes y el rejuntado. Medido por metro cuadrado enchapado.':
-        'Tiling of a substrate with ceramic tile laid in a herringbone pattern, in a thin bed. Includes setting out the pattern, laying with cut pieces and grouting. Measured per square meter tiled.',
+        'Tiling of a substrate with ceramic tile laid in a herringbone pattern, in a thin bed. Includes field layout of the pattern, laying with cut pieces and grouting. Measured per square meter tiled.',
     'Enchapado de paramento con pieza cerámica o porcelanato de junta mínima, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado enchapado.':
         'Tiling of a substrate with ceramic or porcelain tile with a minimal joint, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter tiled.',
     'Enchapado de paramento con pieza de formato largo (tipo metro o lamosa), en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado enchapado.':
@@ -214,27 +214,27 @@ LOTE = {
     'Revestimiento de paramento con gres porcelánico imitación madera, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado revestido.':
         'Covering of a substrate with wood effect porcelain stoneware, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter covered.',
     'Revestimiento de paramento con ladrillo visto decorativo (ladrillo caravista o plaqueta). Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with decorative facing brick (facing brick or brick slips). Includes preparation of the substrate, laying and grouting. Measured per square meter covered.',
+        'Covering of a substrate with decorative face brick (face brick or brick slips). Includes preparation of the substrate, laying and grouting. Measured per square meter covered.',
     'Revestimiento de paramento con lámina acrílica o policarbonato decorativo, con perfil de fijación. Incluye la preparación, la colocación y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with decorative acrylic or polycarbonate sheet, with a fixing profile. Includes the preparation, laying and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with decorative acrylic or polycarbonate sheet, with a fastening profile. Includes the preparation, laying and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con láminas o paneles de corcho, con su adhesivo y remates. Incluye la preparación del soporte, la colocación y el remate. Medido por metro cuadrado revestido.':
         'Covering of a substrate with cork sheets or panels, with their adhesive and trim. Includes preparation of the substrate, laying and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con panel de metal expandido o malla decorativa, con fijación mecánica. Incluye la preparación del soporte, la fijación del panel y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with expanded metal or decorative mesh panel, with mechanical fixing. Includes preparation of the substrate, fixing the panel and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with expanded metal or decorative mesh panel, with mechanical fastening. Includes preparation of the substrate, fastening the panel and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con panel perforado acústico decorativo, con bastidor. Incluye la preparación del soporte, la colocación del panel y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with decorative perforated acoustic panel, with the framework. Includes preparation of the substrate, fixing the panel and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with decorative perforated acoustic panel, with the framework. Includes preparation of the substrate, fastening the panel and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con paneles 3D decorativos, con su adhesivo y remates. Incluye la preparación del soporte, la colocación y el remate. Medido por metro cuadrado revestido.':
         'Covering of a substrate with decorative 3D panels, with their adhesive and trim. Includes preparation of the substrate, laying and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con paneles de madera acabados con laca, con su bastidor. Incluye la preparación del soporte, la colocación del panel y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with lacquer finished wood panels, with their batten framework. Includes preparation of the substrate, fixing the panel and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with lacquer finished wood panels, with their batten framework. Includes preparation of the substrate, fastening the panel and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con paneles o listones de bambú, con bastidor de fijación. Incluye la preparación del soporte, la colocación y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with bamboo panels or battens, with the fixing framework. Includes preparation of the substrate, laying and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with bamboo panels or battens, with the fastening framework. Includes preparation of the substrate, laying and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con pieza de piedra decorativa ligera, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro cuadrado revestido.':
         'Covering of a substrate with lightweight decorative stone, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per square meter covered.',
     'Revestimiento de paramento con plancha de melamina, con bastidor y remates. Incluye la preparación del soporte, la colocación del tablero y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with melamine sheet, with the framework and the trim. Includes preparation of the substrate, fixing the board and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with melamine sheet, with the framework and the trim. Includes preparation of the substrate, fastening the board and the finishing. Measured per square meter covered.',
     'Revestimiento de paramento con tablero OSB decorativo, con bastidor y acabado. Incluye la preparación del soporte, la colocación del tablero y el remate. Medido por metro cuadrado revestido.':
-        'Covering of a substrate with decorative OSB board, with the framework and the finish. Includes preparation of the substrate, fixing the board and the finishing. Measured per square meter covered.',
+        'Covering of a substrate with decorative OSB board, with the framework and the finish. Includes preparation of the substrate, fastening the board and the finishing. Measured per square meter covered.',
     'Revestimiento de peldaño con pieza de piedra natural recuperada o laja, en capa fina. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal de peldaño.':
         'Covering of a tread with reclaimed natural stone or flagstone, in a thin bed. Includes preparation of the substrate, laying and grouting. Measured per meter of tread.',
     'Revestimiento de peldaño de escalera con huella y contrahuella de granito o piedra prefabricada. Incluye la preparación del soporte, la colocación y el rejuntado. Medido por metro lineal de peldaño.':

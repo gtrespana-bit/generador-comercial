@@ -174,7 +174,7 @@ LOTE = {
 "Malla captadora en fachada.": "Air-termination network on the facade.",
 "Captación de pararrayos en cumbrera.": "Air terminal along the ridge.",
 "Bajante de cobre desnudo con fijaciones.":
-    "Bare copper down conductor with fixings.",
+    "Bare copper down conductor with fasteners.",
 "Bajante con contador de descargas y mando de comprobación.":
     "Down conductor with strike counter and test joint.",
 "Puesta a tierra dedicada para protección contra rayos.":
@@ -182,7 +182,7 @@ LOTE = {
 "Unión equipotencial de la bajante con la red de tierra general.":
     "Equipotential bonding of the down conductor to the general grounding system.",
 "Bajante de cobre aislada.": "Insulated copper down conductor.",
-"Bajante de aluminio.": "Aluminium down conductor.",
+"Bajante de aluminio.": "Aluminum down conductor.",
 "Toma de tierra de pararrayos.": "Grounding electrode for lightning protection.",
 "Bajante con unión de comprobación.": "Down conductor with test joint.",
 "Toma de tierra en anillo.": "Ring grounding electrode.",

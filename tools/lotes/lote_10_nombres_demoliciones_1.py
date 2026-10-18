@@ -25,7 +25,7 @@ LOTE = {
 "Demolición de muro de sótano de concreto armado.":
     "Demolition of a reinforced concrete basement wall.",
 "Demolición de platea de fundación.":
-    "Demolition of a raft foundation.",
+    "Demolition of a mat foundation.",
 "Corte y demolición de viga de fundación.":
     "Cutting and demolition of a foundation beam.",
 "Demolición de cabezal de pilote.":
@@ -103,7 +103,7 @@ LOTE = {
 "Desmontaje de reja de protección en fachada.":
     "Removal of a protective grille on a facade.",
 "Demolición de muro de fachada de bloque o ladrillo.":
-    "Demolition of a blockwork or brick facade wall.",
+    "Demolition of a concrete masonry or brick facade wall.",
 "Desmontaje de cerramiento ligero de láminas metálicas.":
     "Removal of lightweight metal sheet cladding.",
 "Picado de salpicado o graniplast en fachada.":
@@ -127,7 +127,7 @@ LOTE = {
 "Picado de aplacado cerámico de fachada.":
     "Chipping off ceramic cladding from a facade.",
 "Desmontaje de bajante o canalón de fachada.":
-    "Removal of a facade downpipe or gutter.",
+    "Removal of a facade downspout or gutter.",
 "Demolición de cornisa o remate de fachada.":
     "Demolition of a facade cornice or trim.",
 "Desmontaje de marquesina de fachada.":
@@ -143,13 +143,13 @@ LOTE = {
 
 # ── Tabiquería y particiones ──────────────────────────────────────────────
 "Demolición de tabique de bloque o ladrillo, incluidos sus revestimientos.":
-    "Demolition of a blockwork or brick partition, including its finishes.",
+    "Demolition of a concrete masonry or brick partition, including its finishes.",
 "Demolición de tabique de yeso laminado y su estructura.":
     "Demolition of a drywall partition and its framing.",
 "Demolición de muro de concreto no estructural.":
     "Demolition of a non-structural concrete wall.",
 "Apertura de vano en pared de bloque o ladrillo.":
-    "Formation of an opening in a blockwork or brick wall.",
+    "Formation of an opening in a concrete masonry or brick wall.",
 "Demolición de tabique de bloque de vidrio.":
     "Demolition of a glass block partition.",
 "Apertura de nicho u hornacina en pared.":
@@ -177,7 +177,7 @@ LOTE = {
 "Demolición de tabique de bloque de vidrio existente.":
     "Demolition of an existing glass block partition.",
 "Demolición de pared de bloques con armado.":
-    "Demolition of a reinforced blockwork wall.",
+    "Demolition of a reinforced concrete masonry wall.",
 "Demolición de tabique de fibra o panel.":
     "Demolition of a fiber or panel partition.",
 "Apertura de roza en muro de concreto.":
@@ -191,7 +191,7 @@ LOTE = {
 "Desmontaje de reja o protector metálico interior.":
     "Removal of an interior grille or protective guard.",
 "Retiro de vidrio de carpintería existente.":
-    "Removal of glass from existing joinery.",
+    "Removal of glass from existing carpentry.",
 "Desmontaje de puerta interior con su marco.":
     "Removal of an interior door and frame.",
 "Desmontaje de puerta exterior o metálica con su marco.":
@@ -225,7 +225,7 @@ LOTE = {
 "Retiro de vidrio de fachada.":
     "Removal of glass from a facade.",
 "Desmontaje de mampara de baño.":
-    "Removal of a shower screen.",
+    "Removal of a shower panel.",
 "Desmontaje de caja de persiana.":
     "Removal of a roller shutter box.",
 "Desmontaje de alféizar o repisa de ventana.":
@@ -279,7 +279,7 @@ LOTE = {
 "Desmontaje de canalización eléctrica vista.":
     "Removal of surface electrical conduit.",
 "Desmontaje de red de tuberías de agua o desagüe.":
-    "Removal of a water or drainage pipework system.",
+    "Removal of a water or drainage piping system.",
 "Desmontaje de aparato sanitario y su grifería.":
     "Removal of a plumbing fixture and its faucet.",
 "Desmontaje de tubería de agua de PPR.":

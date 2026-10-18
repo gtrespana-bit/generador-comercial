@@ -82,7 +82,7 @@ LOTE = {
 "Excavación localizada a mano en interior.":
     "Localized hand excavation indoors.",
 "Excavación de registro enterrado.":
-    "Excavation for a buried inspection chamber.",
+    "Excavation for a buried cleanout.",
 
 # ── Zanjas ────────────────────────────────────────────────────────────────
 "Excavación manual en zanja para fundaciones.":

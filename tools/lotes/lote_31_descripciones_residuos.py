@@ -40,7 +40,7 @@ LOTE = {
     "Separation at source of demolition and strip-out waste, separating recoverable material from material for landfill, to cut the cost of disposal.",
 
 "Colocación de identificación y etiquetado sobre los contenedores o zonas de acopio, indicando el tipo de residuo admitido.":
-    "Identification and labelling of the containers or storage areas, indicating the type of waste accepted.",
+    "Identification and labeling of the containers or storage areas, indicating the type of waste accepted.",
 
 "Bajada de escombro desde plantas altas hasta el punto de acopio o carga, mediante montacargas, tolva o traslado manual, según la accesibilidad de la obra. Es un costo que se olvida sistemáticamente y que en un edificio sin ascensor de obra puede superar al del propio bote. Incluye el ensacado del escombro, su traslado hasta el punto de descenso, la bajada con el medio disponible, el acopio ordenado en planta baja y la limpieza continua de las zonas comunes de paso, que en un edificio habitado es obligada y consume tiempo real. Medido en volumen de escombro esponjado realmente bajado.":
     "Removal of debris from upper floors to the storage or loading point, by hoist, hopper or by hand, depending on access at the site. It is a cost that is consistently forgotten, and in a building without a site hoist it can exceed the cost of disposal itself. Includes bagging the debris, moving it to the point of descent, lowering it by the means available, stacking it neatly at ground level and the continuous cleaning of the common circulation areas, which in an occupied building is mandatory and takes real time. Measured by the volume of bulked debris actually removed.",
@@ -64,7 +64,7 @@ LOTE = {
     "Internal movement of debris from the point where it arises to the storage area, by hand or by wheelbarrow.",
 
 "Puesta a disposición de contenedor de escombro en obra, con su colocación, retiros y vaciados durante un mes. Incluye la gestión del permiso de ocupación de vía pública cuando el contenedor se sitúa fuera de la parcela, su emplazamiento sobre tacos que protegen el pavimento, la señalización reflectante, los retiros y sustituciones a medida que se llena y el traslado a vertedero autorizado con su canon. Medido por mes de permanencia.":
-    "Provision of a debris container on site, including its placing, removals and emptying over one month. Includes obtaining the street occupation permit where the container stands outside the plot, setting it on blocks that protect the pavement, reflective marking, removal and replacement as it fills and cartage to a licensed disposal site with its tipping fee. Measured per month on site.",
+    "Provision of a debris container on site, including its placing, removals and emptying over one month. Includes obtaining the street occupation permit where the container stands outside the plot, setting it on blocks that protect the street, reflective marking, removal and replacement as it fills and cartage to a licensed disposal site with its tipping fee. Measured per month on site.",
 
 "Alquiler mensual de contenedor de escombro de 3 m³, con su colocación y retirada por el gestor.":
     "Monthly hire of a 3 m³ debris container, including delivery and collection by the waste carrier.",
@@ -145,7 +145,7 @@ LOTE = {
     "Removal of packaging and waste material from the work area, sorted for recycling.",
 
 "Limpieza final de la obra terminada, dejando el inmueble en condiciones de entrega. Incluye la retirada de los restos y protecciones, el barrido y aspirado de todas las superficies, la limpieza de pisos con el producto adecuado a cada material, la limpieza de sanitarios, griferías y carpinterías, la retirada de etiquetas y adhesivos de vidrios y aparatos, la limpieza de mecanismos y luminarias y el repaso final de manchas de pintura y de mortero. Medido en superficie de inmueble realmente limpiada.":
-    "Final clean of the completed works, leaving the building ready for handover. Includes removal of waste and protection, sweeping and vacuuming of all surfaces, cleaning of floors with the product suited to each material, cleaning of plumbing fixtures, faucets and joinery, removal of labels and adhesive from glazing and appliances, cleaning of switch plates and light fixtures, and a final pass over paint and mortar splashes. Measured by the area of the building actually cleaned.",
+    "Final clean of the completed works, leaving the building ready for handover. Includes removal of waste and protection, sweeping and vacuuming of all surfaces, cleaning of floors with the product suited to each material, cleaning of plumbing fixtures, faucets and carpentry, removal of labels and adhesive from glazing and appliances, cleaning of switch plates and light fixtures, and a final pass over paint and mortar splashes. Measured by the area of the building actually cleaned.",
 
 "Limpieza profunda de vidrios, espejos, acabados pulidos y superficies delicadas al finalizar la obra. Requiere producto y técnica específicos por material: un desincrustante ácido usado sobre mármol o sobre aluminio anodizado lo mancha de forma irreversible, y ese daño aparece justo el día de la entrega. Incluye la retirada de restos de mortero, silicona y adhesivos con espátula plástica, la limpieza con el producto compatible con cada material, el secado sin dejar marcas y la revisión final. Medido en superficie realmente tratada.":
     "Deep cleaning of glazing, mirrors, polished finishes and delicate surfaces on completion of the works. It requires the product and technique specific to each material: an acid descaler used on marble or on anodized aluminum stains it irreversibly, and that damage appears on the very day of handover. Includes removal of mortar, sealant and adhesive residue with a plastic scraper, cleaning with the product compatible with each material, drying without leaving marks and a final check. Measured by the area actually treated.",
@@ -154,7 +154,7 @@ LOTE = {
     "Final clean of the works ahead of handover, with sweeping, removal of waste and cleaning of all surfaces.",
 
 "Limpieza de vidrios, carpintería y herrajes al final de la obra, con productos adecuados y sin dejar residuos.":
-    "Cleaning of glazing, joinery and hardware on completion of the works, with suitable products and leaving no residue.",
+    "Cleaning of glazing, carpentry and hardware on completion of the works, with suitable products and leaving no residue.",
 
 "Limpieza de aparatos sanitarios y grifería al final de la obra, con desincrustante y pulido.":
     "Cleaning of plumbing fixtures and faucets on completion of the works, with descaling and polishing.",

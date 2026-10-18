@@ -23,7 +23,7 @@ Vocabulario aplicado:
 
 LOTE = {
     "Decapado químico de capas de pintura existentes en paramento o carpintería, previo a un nuevo acabado. Incluye la aplicación del decapante, el retiro de la pintura reblandecida y la limpieza de la superficie. Medido por metro cuadrado decapado.":
-        "Chemical stripping of existing paint layers on a substrate or joinery, prior to a new finish. Includes applying the stripper, the removal of the softened paint and the cleaning of the surface. Measured per square meter stripped.",
+        "Chemical stripping of existing paint layers on a substrate or carpentry, prior to a new finish. Includes applying the stripper, the removal of the softened paint and the cleaning of the surface. Measured per square meter stripped.",
 
     "Limpieza química de paramento de piedra natural para eliminar manchas, eflorescencias y contaminación. Incluye la aplicación del producto, el cepillado y el aclarado sin dañar la piedra. Medido por metro cuadrado limpiado.":
         "Chemical cleaning of a natural stone substrate to remove stains, efflorescence and pollution. Includes applying the product, the brushing and the rinsing without damaging the stone. Measured per square meter cleaned.",
@@ -50,7 +50,7 @@ LOTE = {
         "Application of an anti-graffiti protector on a painted facade. Includes the previous cleaning and the application of the protector. Measured per square meter treated.",
 
     "Restauración de carpintería de madera con decapado del acabado anterior, lijado y barnizado nuevo. Incluye el decapado, el lijado, el fondo y las dos manos de barniz. Medido por metro cuadrado restaurado.":
-        "Restoration of wood joinery with stripping of the previous finish, sanding and new varnishing. Includes the stripping, the sanding, the primer and the two coats of varnish. Measured per square meter restored.",
+        "Restoration of wood carpentry with stripping of the previous finish, sanding and new varnishing. Includes the stripping, the sanding, the primer and the two coats of varnish. Measured per square meter restored.",
 
     "Cristalizado y abrillantado de piso de piedra natural o granito, para recuperar el brillo y la protección superficial. Incluye el pulido mecánico con abrasivos y el abrillantado final. Medido por metro cuadrado abrillantado.":
         "Crystallizing and buffing of a natural stone or granite floor, to recover the shine and the surface protection. Includes the mechanical polishing with abrasives and the final buffing. Measured per square meter polished.",
@@ -59,7 +59,7 @@ LOTE = {
         "Reinstatement of missing sections and polishing of a terrazzo floor poured on site, to recover its finish. Includes the patching of the damaged areas and the polishing and buffing of the whole. Measured per square meter restored.",
 
     "Restauración de carpintería de madera con relleno de masilla, lijado y acabado. Incluye el resane de golpes, el lijado y el acabado. Medido por metro cuadrado restaurado.":
-        "Restoration of wood joinery with filling with wood filler, sanding and finishing. Includes the filling of the knocks, the sanding and the finish. Measured per square meter restored.",
+        "Restoration of wood carpentry with filling with wood filler, sanding and finishing. Includes the filling of the knocks, the sanding and the finish. Measured per square meter restored.",
 
     "Abrillantado de piso de mármol con pulido mecánico y cristalizado. Incluye el pulido, el cristalizado y el abrillantado final. Medido por metro cuadrado abrillantado.":
         "Buffing of a marble floor with mechanical polishing and crystallizing. Includes the polishing, the crystallizing and the final buffing. Measured per square meter polished.",

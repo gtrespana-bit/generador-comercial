@@ -108,7 +108,7 @@ LOTE = {
 "Puerta de acceso de madera con doble cerradura.":
     "Wood access door with a double lock.",
 "Puerta de acceso de madera con mirilla.":
-    "Wood access door with a door viewer.",
+    "Wood access door with a peephole.",
 "Puerta de acceso de madera con refuerzo metálico.":
     "Wood access door with a metal reinforcement.",
 
@@ -256,13 +256,13 @@ LOTE = {
 
 # ── Vidrios y espejos ─────────────────────────────────────────────────────
 "Suministro y colocación de vidrio en carpintería.":
-    "Supply and installation of glass in joinery.",
+    "Supply and installation of glass in carpentry.",
 "Suministro y colocación de espejo.":
     "Supply and installation of a mirror.",
 "Baranda o cerramiento de vidrio templado.":
     "Tempered glass guardrail or screen.",
 "Colocación de vidrio templado en carpintería.":
-    "Installation of tempered glass in joinery.",
+    "Installation of tempered glass in carpentry.",
 "Colocación de vidrio laminado de seguridad.":
     "Installation of laminated safety glass.",
 "Colocación de doble acristalamiento.":
@@ -302,9 +302,9 @@ LOTE = {
 "Mampara de baño fija de vidrio templado.":
     "Fixed tempered glass bathroom screen.",
 "Mampara de ducha abatible.":
-    "Hinged shower screen.",
+    "Hinged shower panel.",
 "Mampara de ducha corrediza.":
-    "Sliding shower screen.",
+    "Sliding shower panel.",
 "División de oficina acristalada.":
     "Glazed office partition.",
 "Mampara de baño con perfil de acero inoxidable.":
@@ -318,7 +318,7 @@ LOTE = {
 "Separador de cocina con vidrio.":
     "Glass kitchen divider.",
 "Mampara de ducha sin perfil.":
-    "Frameless shower screen.",
+    "Frameless shower panel.",
 "Mampara divisoria de baño para inodoro.":
     "Toilet partition screen.",
 "Cerramiento de ducha a ras de piso.":
@@ -326,7 +326,7 @@ LOTE = {
 "Mampara de vidrio para local comercial.":
     "Glass screen for commercial premises.",
 "Mampara de ducha plegable.":
-    "Folding shower screen.",
+    "Folding shower panel.",
 "Separador de ambientes de vidrio.":
     "Glass room divider.",
 
@@ -400,5 +400,5 @@ LOTE = {
 "Restauración de baranda de madera.":
     "Restoration of a wood guardrail.",
 "Sustitución de vidrio roto en carpintería.":
-    "Replacement of broken glass in joinery.",
+    "Replacement of broken glass in carpentry.",
 }
