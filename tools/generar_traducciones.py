@@ -65,14 +65,24 @@ CAMPOS = ("nombre", "descripcion", "categoria", "subcategoria", "apartado")
 
 CATALOGO = RAIZ / "basedatos_partidas" / "salida" / "catalogo_partidas.json"
 ARBOL = RAIZ / "basedatos_partidas" / "salida" / "arbol_catalogo.json"
+RECURSOS = RAIZ / "basedatos_partidas" / "datos" / "recursos.json"
 
 
-def _recoger_cadenas() -> list[str]:
+def _recoger_cadenas(glosario: str | None = None) -> list[str]:
     """Todas las cadenas traducibles del catálogo, sin repeticiones y ordenadas.
 
     Ordenadas para que el fichero sea estable: dos generaciones sobre el
     mismo catálogo producen el mismo JSON, y el diff de git sigue siendo
     legible.
+
+    Los 388 recursos solo entran en la tabla EN. En los mercados hispanos se
+    dejan fuera a propósito: sus glosarios son de término suelto y, al no
+    concertar género ni número, producen «forjado nervada» o «Lámina asfáltica
+    prefabricado», y en algún caso cambian el sentido («vaciado» del contenedor
+    pasa a «hormigonado»). Precalcular esos fallos sería peor que dejarlos
+    como están: en runtime caen en el glosario igual que hasta ahora, así que
+    el comportamiento de esos mercados no cambia. El inglés no tiene ese
+    problema porque los recursos van traducidos uno a uno.
     """
     vistas: set[str] = set()
 
@@ -92,6 +102,27 @@ def _recoger_cadenas() -> list[str]:
             print(f"  aviso: no está {ruta.name}, se omite", file=sys.stderr)
             continue
         _visitar(json.loads(ruta.read_text(encoding="utf-8")))
+
+    # Los recursos (mano de obra, materiales y maquinaria) también se ven en
+    # pantalla y hay que traducirlos. Sin esto sus 388 descripciones caían en
+    # el glosario genérico y salían como calcos del español.
+    if glosario == "EN" and RECURSOS.is_file():
+        datos = json.loads(RECURSOS.read_text(encoding="utf-8"))
+        for categoria in datos.values():
+            if not isinstance(categoria, dict):
+                continue
+            for item in categoria.values():
+                if not isinstance(item, dict):
+                    continue
+                # Los compuestos no son un recurso físico: son una receta que
+                # se arma con otros. No se muestran, así que no se traducen.
+                if "composicion" in item:
+                    continue
+                texto = item.get("descripcion")
+                if isinstance(texto, str) and texto.strip():
+                    vistas.add(texto)
+    elif not RECURSOS.is_file():
+        print(f"  aviso: no está {RECURSOS.name}, se omite", file=sys.stderr)
     return sorted(vistas)
 
 
@@ -140,11 +171,11 @@ def main() -> int:
                         help="verifica sin escribir; sale con 1 si algo no cuadra")
     args = parser.parse_args()
 
-    cadenas = _recoger_cadenas()
-    if not cadenas:
+    base = _recoger_cadenas()
+    if not base:
         print("No se han encontrado cadenas; ¿falta el catálogo?", file=sys.stderr)
         return 1
-    print(f"Cadenas traducibles: {len(cadenas):,}")
+    print(f"Cadenas traducibles: {len(base):,}")
 
     glosarios = _glosarios_disponibles()
     SALIDA_TRADUCCIONES.mkdir(parents=True, exist_ok=True)
@@ -154,6 +185,8 @@ def main() -> int:
     total = 0
 
     for glosario in glosarios:
+        # Solo el inglés añade los recursos; ver _recoger_cadenas.
+        cadenas = _recoger_cadenas(glosario) if glosario == "EN" else base
         tabla = construir(cadenas, glosario)
         huella = _huella(cadenas, glosario)
         ruta = SALIDA_TRADUCCIONES / f"{glosario}.json"

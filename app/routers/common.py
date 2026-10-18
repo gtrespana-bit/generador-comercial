@@ -528,8 +528,15 @@ TEMPLATES.env.filters["whatsapp"] = whatsapp_url
 
 # Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
 try:
-    from ..services.traduccion import traducir as _traducir_termino, codigo_desde_pais as _codigo_pais
+    from ..services.traduccion import (
+        codigo_desde_pais as _codigo_pais,
+        traducir as _traducir_termino,
+        traducir_recurso_por_codigo as _traducir_recurso,
+    )
     TEMPLATES.env.filters["traducir"] = _traducir_termino
+    # Para las filas del descompuesto, cuyo texto es libre: se traducen por el
+    # código del recurso y se dejan igual si el código no es del catálogo.
+    TEMPLATES.env.filters["traducir_recurso"] = _traducir_recurso
     TEMPLATES.env.globals["codigo_pais"] = _codigo_pais
 except Exception:
     pass

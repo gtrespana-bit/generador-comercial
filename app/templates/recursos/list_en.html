@@ -135,14 +135,14 @@
                 </thead>
                 <tbody>
                   {% for r in cat_recursos|sort(attribute='descripcion') %}
-                  <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ r.descripcion ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
+                  <tr class="recurso-tr" data-id="{{ r.id }}" data-categoria="{{ r.categoria }}" data-nombre="{{ (r.codigo ~ ' ' ~ (r.descripcion | traducir(mercado_codigo)) ~ ' ' ~ r.grupo ~ ' ' ~ r.proveedor) | lower }}">
                     <td class="col-check"><input type="checkbox" class="row-check" data-id="{{ r.id }}" data-cotizat-change="recursos-row-check"></td>
                     <td class="col-code">
                       {% if r.codigo %}<code class="code-badge">{{ r.codigo[:14] }}</code>{% else %}<span class="code-empty">—</span>{% endif %}
                     </td>
                     <td class="col-nombre">
                       <div class="partida-main">
-                        <span class="partida-nombre" title="{{ r.descripcion }}">{{ r.descripcion }}</span>
+                        <span class="partida-nombre" title="{{ r.descripcion | traducir(mercado_codigo) }}">{{ r.descripcion | traducir(mercado_codigo) }}</span>
                         {% if r.usos and r.usos>0 %}<span class="usos-mini" title="Usado en {{ r.usos }} partidas/filas">· {{ r.usos }} usos</span>{% endif %}
                       </div>
                       <div class="partida-sub">
@@ -173,7 +173,7 @@
                       <div class="row-actions">
                         <a href="/recursos/{{ r.id }}/impacto" class="btn btn-sm btn-ghost" title="See affected line items">Impact</a>
                         <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Edit">✏️</a>
-                        <form method="post" action="/recursos/{{ r.id }}/eliminar" class="csp-s-a91548c594" data-confirm="Delete resource «{{ r.descripcion }}»?">
+                        <form method="post" action="/recursos/{{ r.id }}/eliminar" class="csp-s-a91548c594" data-confirm="Delete resource «{{ r.descripcion | traducir(mercado_codigo) }}»?">
                           <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Delete">✕</button>
                         </form>
                       </div>

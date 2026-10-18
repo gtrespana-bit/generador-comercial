@@ -68,6 +68,7 @@ _ORTOGRAFIA_GB: dict[str, str] = {
     "matte": "matt",
     "plasticizing": "plasticising",
     "colored": "coloured",     # el grupo de sufijo solo cubre -s y -es
+    "gray": "grey",
     "galvanized": "galvanised",
     "neighboring": "neighbouring",
     "neighbor": "neighbour",
@@ -281,6 +282,28 @@ _VOCABULARIO_GB: dict[str, str] = {
     # entra aquí para ganar por ser la clave más larga.
     "gas meter": "gas meter",
     "water meter": "water meter",
+    "ground fault circuit interrupter": "residual current device",  # diferencial
+    "ground fault": "earth fault",
+
+    # ── Oficios (grados del CIJC británico) ────────────────────────────────
+    # En EE. UU. el oficial cualificado es «journeyman» y el ayudante
+    # «helper». El Reino Unido no usa esas palabras: el Convenio de la
+    # Industria de la Construcción (CIJC) clasifica por «craft operative»,
+    # «skilled operative» y «general operative», y esos son los términos que
+    # aparecen en las nóminas y en las tarifas británicas.
+    "Journeyman": "Craft operative",
+    "journeyman": "craft operative",
+    "Skilled helper": "Skilled operative",
+    "skilled helper": "skilled operative",
+    "Helper": "General operative",
+    "helper": "general operative",
+
+    # ── Residuos y acabados ────────────────────────────────────────────────
+    "dumpster": "skip",                      # contenedor de escombro
+    "window shades": "blinds",               # persianas
+    "stamped concrete": "imprinted concrete",  # concreto estampado
+    "stamping mats": "imprinting mats",
+    "traffic paint": "line marking paint",   # pintura de demarcación
 }
 
 # ── Australia ────────────────────────────────────────────────────────────
@@ -289,6 +312,16 @@ _VOCABULARIO_AU: dict[str, str] = {
     **_VOCABULARIO_GB,
     "countertop": "benchtop",
     "concrete masonry unit": "concrete block",
+    # Los grados del CIJC («craft operative», «general operative») son del
+    # convenio británico. Australia no los usa: allí el oficial cualificado es
+    # «tradesperson» y el ayudante, «labourer». Canadá sí dice «journeyman»,
+    # así que no hereda estas dos y se queda con la base estadounidense.
+    "Journeyman": "Tradesperson",
+    "journeyman": "tradesperson",
+    "Skilled helper": "Skilled labourer",
+    "skilled helper": "skilled labourer",
+    "Helper": "Labourer",
+    "helper": "labourer",
 }
 
 _VARIANTES: dict[str, dict[str, str]] = {

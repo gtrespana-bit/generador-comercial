@@ -58,7 +58,7 @@
         {% if fila.tipo == 'recurso' %}
         {% set es_pct = (fila.unidad or '') | trim == '%' %}
         <tr class="cype-row-recurso" data-fila-id="{{ fila.id }}" data-grupo="{{ fila.grupo }}" data-categoria="{{ categorias.get(fila.id, 'otros') }}" data-pct="{{ '1' if es_pct else '0' }}">
-          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td>
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td>
           <td class="right"><input type="number" step="any" min="0" name="rend_{{ fila.id }}" value="{{ fila.rendimiento if fila.rendimiento is not none else '' }}" data-campo="rendimiento" title="Cantidad de este recurso ({{ fila.unidad or 'ud' }}) por cada {{ d.unidad or part.unidad }} de partida"></td>
           <td class="right">
             {% if es_pct %}
@@ -71,12 +71,12 @@
         </tr>
         {% elif fila.tipo == 'subtotal' %}
         <tr class="cype-row-subtotal" data-grupo="{{ fila.grupo }}" data-categoria="{{ grupos_categoria.get(fila.grupo or '', 'otros') }}">
-          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td><td></td><td></td>
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td><td></td><td></td>
           <td class="right"><span data-campo="importe">{{ fila.importe | num if fila.importe is not none else '—' }}</span></td>
         </tr>
         {% else %}
         <tr class="cype-row-total">
-          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ fila.descripcion or '—' }}</td><td></td><td></td>
+          <td>{{ fila.numero_fila_excel }}</td><td>{{ fila.grupo or '—' }}</td><td>{{ fila.codigo or '—' }}</td><td>{{ fila.unidad or '—' }}</td><td>{{ (fila.descripcion | traducir_recurso(fila.codigo, mercado_codigo)) or '—' }}</td><td></td><td></td>
           <td class="right"><strong><span data-campo="importe-total">{{ fila.importe | num if fila.importe is not none else '—' }}</span></strong></td>
         </tr>
         {% endif %}

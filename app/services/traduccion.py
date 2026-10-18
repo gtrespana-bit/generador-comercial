@@ -44,6 +44,7 @@ from typing import Mapping
 
 # Raíz del repo: app/services -> ../../basedatos_partidas
 BASE_GLOSARIOS = Path(__file__).resolve().parents[2] / "basedatos_partidas" / "glosarios"
+BASE_RECURSOS = Path(__file__).resolve().parents[2] / "basedatos_partidas" / "datos"
 
 
 # ── Tablas precalculadas ─────────────────────────────────────────────────
@@ -91,7 +92,60 @@ def _cargar_excepciones(codigo: str) -> Mapping[str, str]:
         data = json.loads(ruta.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return MappingProxyType({})
-    return MappingProxyType(data.get("cadenas") or {})
+    tabla = dict(data.get("cadenas") or {})
+    tabla.update(_excepciones_recursos(codigo))
+    return MappingProxyType(tabla)
+
+
+@lru_cache(maxsize=None)
+def _recurso_en_por_codigo() -> Mapping[str, str]:
+    """Índice «código de recurso -> redacción inglesa» de ``recursos_en.json``."""
+    try:
+        datos = json.loads((BASE_RECURSOS / "recursos_en.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return MappingProxyType({})
+    salida: dict[str, str] = {}
+    for categoria, pares in datos.items():
+        if isinstance(pares, dict) and not str(categoria).startswith("_"):
+            for codigo, texto in pares.items():
+                if isinstance(texto, str) and texto.strip():
+                    salida[str(codigo).strip()] = texto
+    return MappingProxyType(salida)
+
+
+@lru_cache(maxsize=None)
+def _excepciones_recursos(codigo: str) -> Mapping[str, str]:
+    """Traducciones de los recursos del catálogo, como excepciones de cadena completa.
+
+    Viven en ``basedatos_partidas/datos/recursos_<glosario>.json`` claveadas por
+    CÓDIGO de recurso, no por el texto español. El código es estable; el texto
+    cambia. Si estuvieran claveadas por el texto, una coma de más en el original
+    dejaría el recurso sin traducir y sin avisar, que es exactamente lo que
+    pasaba antes de existir este fichero: los 388 recursos caían en el glosario
+    genérico y salían como calcos («Oficial of 1ª bricklayer»).
+
+    Aquí se convierten a «texto español -> texto traducido», que es la forma en
+    que las excepciones se consultan.
+    """
+    if codigo != "EN":
+        return MappingProxyType({})
+    recuros_es = BASE_RECURSOS / "recursos.json"
+    traducciones = BASE_RECURSOS / "recursos_en.json"
+    try:
+        originales = json.loads(recuros_es.read_text(encoding="utf-8"))
+        textos = json.loads(traducciones.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return MappingProxyType({})
+    salida: dict[str, str] = {}
+    for categoria, pares in textos.items():
+        if not isinstance(pares, dict) or categoria.startswith("_"):
+            continue
+        fuente = originales.get(categoria) or {}
+        for codigo_recurso, traducido in pares.items():
+            original = (fuente.get(codigo_recurso) or {}).get("descripcion")
+            if isinstance(original, str) and original.strip() and isinstance(traducido, str):
+                salida[original] = traducido
+    return MappingProxyType(salida)
 
 # Mapeo nombre de país (cfg.empresa_pais) -> código ISO
 # Formas de llamar a un país que no son su nombre oficial: «USA», «UK»,
@@ -513,6 +567,37 @@ def traducir(texto: str | None, pais_codigo: str | None) -> str:
     else:
         out = _traducir_reglas(texto, mercado, glosario)
     return aplicar_variante(out, mercado)
+
+
+def traducir_recurso_por_codigo(
+    texto: str | None, codigo_recurso: str | None, pais_codigo: str | None
+) -> str:
+    """Traduce un recurso identificado por su código, no por su texto.
+
+    En el descompuesto de una partida la descripción es texto libre: viene del
+    Excel que sube el usuario y no tiene por qué coincidir con el catálogo.
+    Traducir ese texto «a ojo» cae en el glosario y produce los calcos que se
+    quieren evitar, así que ahí el código es la única clave fiable: si el
+    recurso es del catálogo se traduce con su redacción propia y, si no, se
+    devuelve el texto tal cual, que siempre será mejor que una traducción
+    inventada sobre datos que no controlamos.
+    """
+    if not texto:
+        return texto or ""
+    mercado = resolver_mercado(str(pais_codigo or "").strip().upper())
+    # Solo los mercados anglófonos. En los hispanos el texto ya está en
+    # español, que es la lengua base del catálogo, así que se devuelve igual:
+    # permite usar el mismo filtro en las dos plantillas (española e inglesa)
+    # sin que una de ellas traduzca lo que no debe.
+    if mercado.get("idioma") != "en":
+        return texto
+    codigo = str(codigo_recurso or "").strip()
+    if not codigo:
+        return texto
+    base = _recurso_en_por_codigo().get(codigo)
+    if not base:
+        return texto
+    return aplicar_variante(base, mercado)
 
 
 def traducir_partida(partida, pais_codigo: str | None):

@@ -3106,6 +3106,20 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
 
 
 @router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
+def _codigo_pais_descompuesto(db, cfg) -> str:
+    """Mercado de la empresa, para traducir los textos del descompuesto.
+
+    Devuelve «VE» (el idioma base del catálogo) si no se puede resolver: con
+    ese código ``traducir`` no toca el texto, así que el descompuesto se ve
+    igual que siempre en lugar de romperse.
+    """
+    try:
+        from ..services.traduccion import codigo_desde_pais
+        return codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+    except Exception:
+        return "VE"
+
+
 def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Request, db: Session = Depends(get_db)):
     """Muestra la matriz CYPE guardada sin volver a transformar el Excel."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -3144,6 +3158,10 @@ def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Re
         # Símbolo inequívoco (MX$, COL$, US$…): la matriz de descomposición se
         # lee junto al total del presupuesto y no puede sugerir otra moneda.
         "simbolo_moneda": _simbolo_moneda(presupuesto.moneda),
+        # Código del mercado, para que la plantilla traduzca las descripciones
+        # de los recursos. Sin él, la matriz CYPE se mostraba en español
+        # aunque el resto de la pantalla estuviera en inglés.
+        "mercado_codigo": _codigo_pais_descompuesto(db, cfg),
     })
 
 
