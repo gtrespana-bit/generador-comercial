@@ -2,7 +2,7 @@
 
 **Rama:** `arena/76b3d95f-generador-comercial` sobre `main` (`cbb5e99`, que ya
 incluye el trabajo inglés fusionado en la PR #124 y la PR #128)
-**Última verificación:** 18 de octubre de 2026 · suite **1832 pasan, 9 omitidos**
+**Última verificación:** 18 de octubre de 2026 · suite **1872 pasan, 9 omitidos**
 
 Este documento existe para poder retomar el trabajo sin tener que reconstruir
 el contexto. Dice qué está terminado, qué queda, en qué orden conviene
@@ -290,6 +290,21 @@ Estados Unidos es el que más trabajo lleva: es el único imperial, así que las
 cotizaciones llegan en libras, galones, pies y yardas mientras el catálogo
 cuenta en kilos, litros y metros.
 
+**Presencia web (hecho, 2026-10-18).** Los cuatro tienen ya landing con
+contenido de mercado —no plantilla con el país cambiado—, FAQ de su
+fiscalidad y su sitio en la portada: accesos directos en el hero, bloque
+propio en la tabla de los 23 mercados y mención explícita en el copy genérico.
+Detalle en `docs/SEO_MERCADOS_INGLESES.md`. Lo que sigue faltando es el
+estudio de precios, y sin él no se abren a clientes.
+
+| Mercado | Landing | Cuerpo de mercado | FAQ propia | Matriz de precios |
+|---|---|---|---|---|
+| Reino Unido | `/en-gb/` | Sí (+ 4 artículos) | Sí | **Cargada** |
+| Estados Unidos | `/en-us/` | Sí | Sí | Pendiente |
+| Australia | `/en-au/` | Sí | Sí | Pendiente |
+| Canadá | `/en-ca/` | Sí | Sí | Pendiente |
+| Irlanda | `/en-ie/` | Sí | Sí | Pendiente (y revisar tasa EUR) |
+
 ---
 
 ## 4. Orden recomendado
@@ -362,6 +377,7 @@ Ficheros que concentran el trabajo:
 | Divisa y vigencia | `app/services/tasa.py`, `app/services/vigencia_precios.py` |
 | Carga desde el panel | `app/routers/admin.py`, `app/routers/admin_paginas.py` |
 | SEO de Reino Unido | `app/seo_reino_unido.py`, `docs/SEO_REINO_UNIDO.md`, `tests/test_seo_reino_unido.py` |
+| Presencia de los mercados ingleses | `app/seo_mercados_en.py`, `docs/SEO_MERCADOS_INGLESES.md`, `tests/test_presencia_mercados_angloparlantes.py` |
 
 **Al añadir una migración**, se rompen cinco tests a la vez: hay que actualizar
 los cuatro parches de la cadena de heads, añadir `docs/staging_upgrade_<rev>.sql`
@@ -379,7 +395,7 @@ y subir `EXPECTED_ALEMBIC_HEAD` en `app/database.py`.
 | Referencias de la matriz británica | 388 (167 investigadas + 221 derivadas) |
 | Resto de español en el catálogo inglés | 0 |
 | Pares de plantillas EN sin problemas | 92 / 92 |
-| Tests | 1832 pasan, 9 omitidos (34 nuevos de SEO británico) |
+| Tests | 1872 pasan, 9 omitidos (34 de SEO británico + 34 de presencia de mercados) |
 | Head de Alembic | `l7d0e3f6a9c4` |
 | Recargo empresarial británico | 19,8 % sobre 1.751,9 h facturables |
 | Tasa adoptada | 1 USD = 0,7502 GBP |

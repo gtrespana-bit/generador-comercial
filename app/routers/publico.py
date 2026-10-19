@@ -138,9 +138,24 @@ def _idioma_de(request: Request | None) -> str:
 
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
-    from ..paises import PAIS_GENERICO, PAISES, lista_paises
+    from ..paises import (
+        PAIS_GENERICO,
+        PAISES,
+        lista_paises,
+        mercados_destacados,
+        mercados_por_bloque,
+    )
     from ..seo import contexto_seo
     from ..services.landing_ejemplo import contexto_ejemplo
+
+    idioma = _idioma_de(request)
+    # Qué mercados se pintan y en qué orden. La plantilla no puede decidirlo
+    # con un ``paises[:6]``: el orden de validación deja fuera a los cinco
+    # mercados de habla inglesa en todas las páginas. El mercado de la propia
+    # página va primero entre los accesos directos.
+    codigo_actual = str(pais_forzado or "").strip().upper() or _resolver_pais_landing(request)[1]
+    destacados = mercados_destacados(idioma, codigo_actual)
+    bloques_mercados = mercados_por_bloque(idioma)
 
     if pais_forzado:
         codigo = str(pais_forzado).strip().upper()
@@ -150,7 +165,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
-                "ej": contexto_ejemplo(codigo, _idioma_de(request)),
+                "destacados": destacados,
+                "mercados_bloques": bloques_mercados,
+                "ej": contexto_ejemplo(codigo, idioma),
                 # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
                 # final del body para no retrasar el descubrimiento del CSS.
                 "seo_skip_fonts": True,
@@ -167,7 +184,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
-        "ej": contexto_ejemplo(pais_codigo, _idioma_de(request)),
+        "destacados": destacados,
+        "mercados_bloques": bloques_mercados,
+        "ej": contexto_ejemplo(pais_codigo, idioma),
         # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
         # final del body para no retrasar el descubrimiento del CSS.
         "seo_skip_fonts": True,

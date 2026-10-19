@@ -4227,6 +4227,19 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .landing .mercados-intro h2 { margin-bottom: .75rem; }
 .landing .mercados-intro .intro { margin: 0 auto; }
+/* Rótulo de cada bloque de la tabla de mercados (hispano / anglófono).
+   Sin él, los cinco mercados de habla inglesa quedaban como una cola de
+   filas al final de la lista y se leían como un apéndice. */
+.landing .mercado-bloque-titulo {
+  position: relative;
+  margin: 2.1rem auto .75rem;
+  font-size: .74rem;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent-h);
+}
+.landing .mercado-bloque-titulo:first-of-type { margin-top: .4rem; }
 .landing .mercado-grid {
   position: relative;
   border: 1px solid var(--border);
@@ -4304,6 +4317,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   .landing .mercado-cab { padding: .8rem 1rem; }
 }
 @media (max-width: 620px) {
+  .landing .mercado-bloque-titulo { padding: 0 1rem; }
   .landing .mercado-cab,
   .landing .mercado-fila { grid-template-columns: 1fr auto; gap: .3rem .8rem; }
   .landing .mercado-fiscal { display: none; }

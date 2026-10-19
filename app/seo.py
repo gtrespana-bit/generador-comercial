@@ -271,16 +271,20 @@ def _aplicar_prueba(ficha: dict, lang: str = "es", incluir_prueba: bool = True) 
     patron = _RE_PRUEBA_EN if en else _RE_PRUEBA
     desc = patron.sub("", str(ficha.get("description") or "")).strip()
     desc = re.sub(r"\s{2,}", " ", desc).rstrip(" .")
-    if not incluir_prueba:
-        desc = desc + "."
-    elif n:
-        desc = f"{desc}. {n} days free, no card." if en else f"{desc}. {n} días gratis, sin tarjeta."
-    else:
-        desc = desc + "."
     # 160 y no 170: Google corta el snippet alrededor de los 155-160
     # caracteres en escritorio, y con la coletilla de la prueba una
     # descripción de 145 acababa en 168 y se veía partida.
-    ficha["description"] = _recortar_meta(desc, 160)
+    maximo = 160
+    sufijo = ""
+    if incluir_prueba is not False and n:
+        sufijo = f". {n} days free, no card." if en else f". {n} días gratis, sin tarjeta."
+    if sufijo:
+        # Se recorta la base, no la coletilla: antes se cortaba el texto ya
+        # unido y el snippet acababa en «7 días gratis, sin…».
+        base = _recortar_a_palabra(desc, maximo - len(sufijo))
+        ficha["description"] = base + sufijo
+    else:
+        ficha["description"] = _recortar_meta(desc + ".", maximo)
 
     faqs = []
     for item in ficha.get("faq") or []:
@@ -309,6 +313,22 @@ def _aplicar_prueba(ficha: dict, lang: str = "es", incluir_prueba: bool = True) 
         faqs.append({**item, "q": q, "a": a})
     ficha["faq"] = faqs
     return ficha
+
+
+def _recortar_a_palabra(texto: str, maximo: int) -> str:
+    """Recorta sin dejar palabras partidas y sin añadir puntos suspensivos.
+
+    Se usa para la parte descriptiva cuando después va una coletilla fija:
+    el resultado se une con ella y el conjunto cabe en el límite.
+    """
+    t = re.sub(r"\s{2,}", " ", str(texto or "").strip())
+    if len(t) <= maximo:
+        return t
+    corte = t[:maximo]
+    ultimo = corte.rfind(" ")
+    if ultimo > maximo * 0.5:
+        corte = corte[:ultimo]
+    return corte.rstrip(" ,;·.")
 
 
 def _recortar_meta(texto: str, maximo: int = 160) -> str:
@@ -344,19 +364,26 @@ _LANDING: dict[str, dict] = {
     "": {
         "title": "CotizaT: software de presupuestos de construcción",
         "description": (
-            "Software de presupuestos de construcción y reformas para España y "
-            "Latinoamérica. Cada país con su catálogo de precios, IVA y NIF/RIF/RFC. "
-            "APU, margen y PDF profesional. 7 días gratis."
+            "Presupuestos de construcción para España, Latinoamérica y mercados "
+            "de habla inglesa. Catálogo y fiscalidad por país, APU y PDF."
         ),
-        "h1": "Software de presupuestos de obra para España y Latinoamérica",
+        "h1": (
+            "Software de presupuestos de obra para España, Latinoamérica y "
+            "mercados de habla inglesa"
+        ),
         "h1_resalte": "margen, tiempos y cierre",
         "sub": (
             "CotizaT convierte tu catálogo y tus precios en presupuestos de obra "
-            "claros, con coste interno, beneficio y horas de cuadrilla. España con "
-            "precios en EUR, NIF e IVA 21 %; Latinoamérica con su moneda y fiscalidad. "
-            "PDF con tu logo, listo para WhatsApp."
+            "claros, con coste interno, beneficio y horas de cuadrilla. España en "
+            "EUR con NIF e IVA 21 %; Latinoamérica con su moneda y su fiscalidad; "
+            "Reino Unido en libras con CIS e IVA por tipo de obra; Estados Unidos, "
+            "Australia, Irlanda y Canadá con su impuesto, su ID fiscal y su "
+            "terminología. PDF con tu logo, listo para WhatsApp."
         ),
-        "kicker": "Sistema comercial para España y Latinoamérica · Construcción y reformas",
+        "kicker": (
+            "Sistema comercial para España, Latinoamérica, Reino Unido, Estados "
+            "Unidos, Australia, Irlanda y Canadá · Construcción y reformas"
+        ),
         "faq": [
             {
                 "q": "¿CotizaT sirve para presupuestos de construcción en España y Latinoamérica?",
@@ -365,6 +392,17 @@ _LANDING: dict[str, dict] = {
                     "contratistas de España, Venezuela, Colombia, México, Ecuador y Perú. "
                     "Cada país tiene su catálogo de precios, su moneda, su IVA y su ID fiscal "
                     "(NIF, RIF, NIT, RFC, RUC) y se elige al entrar."
+                ),
+            },
+            {
+                "q": "¿CotizaT sirve también para Reino Unido o Estados Unidos?",
+                "a": (
+                    "Sí. Reino Unido tiene catálogo en libras, retenciones CIS "
+                    "(20 %, 30 % o 0 %) e IVA según el tipo de obra, incluida la "
+                    "inversión del sujeto pasivo. Estados Unidos, Australia, Irlanda "
+                    "y Canadá tienen su moneda, su impuesto (sales tax, GST/HST, VAT "
+                    "irlandés) y el vocabulario de obra de cada país. Eliges mercado "
+                    "al entrar y el documento sale con su moneda y su fiscalidad."
                 ),
             },
             {
@@ -1272,9 +1310,7 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
         cuerpo: list = []
         articulos: list = []
         if codigo == "GB":
-            # Solo Reino Unido tiene cuerpo largo propio; el resto de mercados
-            # anglófonos sigue con la plantilla hasta que tengan su estudio de
-            # precios y su texto de mercado.
+            # Reino Unido tiene además artículos de cola larga con URL propia.
             from .seo_reino_unido import cuerpo_landing, guias as _guias_uk
 
             cuerpo = cuerpo_landing()
@@ -1282,6 +1318,12 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
                 {"h1": a["h1"], "ruta": f"/en-gb/guia/{a['slug']}"}
                 for a in _guias_uk()
             ]
+        else:
+            # Estados Unidos, Australia, Canadá e Irlanda: sin cuerpo propio
+            # sus landings eran la misma página con el nombre cambiado.
+            from .seo_mercados_en import cuerpo_landing as _cuerpo_mercado
+
+            cuerpo = _cuerpo_mercado(codigo)
         return _aplicar_prueba(
             {
                 **base,

@@ -552,8 +552,7 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
         "faq": _faq_landing(codigo),
     }
     if codigo == "GB":
-        # Reino Unido es el único mercado inglés con contenido propio: el
-        # título y la descripción genéricos anunciaban «20% VAT» como si la
+        # El título y la descripción genéricos anunciaban «20% VAT» como si la
         # obra británica tuviera una sola alícuota, y el FAQ no mencionaba
         # CIS ni la inversión del sujeto pasivo, que es lo que busca un
         # contratista británico antes de pagar.
@@ -562,6 +561,13 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
         ficha["title"] = LANDING_TITLE
         ficha["description"] = LANDING_DESCRIPTION
         ficha["faq"] = list(ficha["faq"]) + [LANDING_FAQ[0], LANDING_FAQ[1], LANDING_FAQ[2]]
+    elif codigo:
+        # Cada mercado anglófono añade las preguntas de su fiscalidad: sales
+        # tax por estado, GST, HST o RCT. Sin ellas el FAQ es el mismo texto
+        # en las cinco páginas.
+        from .seo_mercados_en import faq_landing
+
+        ficha["faq"] = list(ficha["faq"]) + faq_landing(codigo)
     return ficha
 
 

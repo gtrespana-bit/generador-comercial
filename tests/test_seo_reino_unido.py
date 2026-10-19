@@ -47,17 +47,47 @@ def _tipos_jsonld(html: str) -> set[str]:
 # Landing /en-gb/
 # ---------------------------------------------------------------------------
 
-def test_la_landing_britanica_tiene_cuerpo_propio_y_no_el_de_eeuu():
-    """/en-gb/ no puede ser /en-us/ con otro nombre de país."""
+@pytest.mark.parametrize(
+    "ruta,marca",
+    [
+        ("/en-gb/", "A UK quote is not a Spanish budget"),
+        ("/en-us/", "An estimate is not a bid"),
+        ("/en-au/", "prime cost"),
+        ("/en-ca/", "holdback"),
+        ("/en-ie/", "Relevant Contracts Tax"),
+    ],
+)
+def test_cada_mercado_anglonfono_tiene_cuerpo_propio(ruta, marca):
+    """/en-gb/ y /en-us/ no pueden ser la misma página con otro país.
+
+    Las cinco landings anglófonas compartían plantilla y solo cambiaban el
+    nombre, la moneda y el impuesto: para Google eran duplicados y para un
+    contratista, un folleto genérico.
+    """
+    with _cliente() as client:
+        html = client.get(ruta).text
+    assert 'id="for-your-market"' in html, ruta
+    assert marca in html, ruta
+
+
+def test_los_cuerpos_de_los_cinco_mercados_ingleses_no_se_repiten():
+    from app.seo_mercados_en import CUERPO as CUERPO_EN
+    from app.seo_reino_unido import LANDING_CUERPO as CUERPO_GB
+
+    cuerpos = {"GB": CUERPO_GB, **CUERPO_EN}
+    assert set(cuerpos) == {"GB", "US", "AU", "CA", "IE"}
+    primeros_titulos = [v[0][0] for v in cuerpos.values()]
+    assert len(set(primeros_titulos)) == 5, primeros_titulos
+    for codigo, cuerpo in cuerpos.items():
+        assert len(cuerpo) >= 4, codigo
+
+
+def test_la_landing_britanica_habla_de_cis_y_del_vocabulario_de_obra():
     with _cliente() as client:
         gb = client.get("/en-gb/").text
-        us = client.get("/en-us/").text
-    assert 'id="for-your-market"' in gb
-    assert 'id="for-your-market"' not in us
     assert "CIS" in gb and "reverse charge" in gb.lower()
-    assert "Skirting" in gb or "skirting" in gb
-    # El cuerpo británico no aparece en la versión estadounidense.
-    assert "A UK quote is not a Spanish budget" not in us
+    assert "skirting" in gb.lower()
+    assert "A UK quote is not a Spanish budget" in gb
 
 
 def test_la_descripcion_cabe_en_el_snippet():

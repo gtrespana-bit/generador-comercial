@@ -44,7 +44,7 @@
       {% endfor %}
     </select>
     <span class="pais-bar-badge">✨ prices for your market</span>
-    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catalog of {{ pais_actual.nombre_en }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo, 'en') }}{% else %}Choose your country to see its price catalog (Spain · Latin America){% endif %}</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catalog of {{ pais_actual.nombre_en }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo, 'en') }}{% else %}Choose your country to see its price catalog (United Kingdom · United States · Australia · Ireland · Canada · Spain · Latin America){% endif %}</span>
   </div>
 </div>
 {% include "_nav_en.html" %}
@@ -64,7 +64,7 @@
       {% if pais_actual %}
       <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Commercial system for {{ pais_actual.nombre_en }} · Construction and remodeling · own price catalog</span>
       {% else %}
-      <span class="hero-kicker" id="hero-kicker">🇪🇸 Spain · 🌎 Latin America — Construction estimating and remodeling system · price catalog by country</span>
+      <span class="hero-kicker" id="hero-kicker">🇬🇧 United Kingdom · 🇺🇸 United States · 🇦🇺 Australia · 🇮🇪 Ireland · 🇨🇦 Canada — Construction estimating and remodeling system · price catalog by country</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} free days · no credit card required</span>
@@ -76,14 +76,16 @@
       {% endif %}
       <p class="sub">Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF. No Excel, no copy and paste.</p>
       <div class="hero-mercados" aria-label="Available markets">
-        {% set destacados = paises[:6] %}
-        {% for p in destacados %}
+        {# In English pages the market access points lead with the five
+           English-speaking markets; the server decides the order. #}
+        {% set accesos = destacados | default(paises[:6]) %}
+        {% for p in accesos %}
         <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
           <span>{{ p.bandera }}</span>{{ p.nombre_en }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en') }}</small>
         </a>
         {% endfor %}
-        {% if paises|length > destacados|length %}
-        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - destacados|length }} markets</span>
+        {% if paises|length > accesos|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - accesos|length }} markets</span>
         {% endif %}
       </div>
       <div class="acciones">
@@ -243,25 +245,27 @@
     <p class="intro">{{ product_name }} is not a single price list with a flag on top. Each market carries its reference prices, currency, VAT, tax ID and construction terminology. That is why the country is chosen <strong>on entry</strong>: so you see the prices of your project, not someone else's.</p>
   </div>
 
-  <div class="mercado-grid" role="table" aria-label="Example catalogs by country">
+  {# Every market, not just the first six: one link per market and the
+     English-speaking block first, which is the one this visitor came for. #}
+  {% for rotulo, lista in (mercados_bloques | default([])) %}
+  <h3 class="mercado-bloque-titulo">{{ rotulo }}</h3>
+  <div class="mercado-grid" role="table" aria-label="Price catalogs: {{ rotulo }}">
     <div class="mercado-cab" role="row">
       <span role="columnheader">Market</span>
       <span role="columnheader">Currency</span>
       <span role="columnheader">Tax</span>
       <span role="columnheader">Speaks your trade</span>
     </div>
-    {% for p in paises[:6] %}
+    {% for p in lista %}
     <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}">
       <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre_en }}</span>
-<span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · {{ texto_impuesto(p.codigo, 'en') }}</span>
+      <span role="cell" class="mercado-moneda">{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en') }}</span>
       <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
       <span role="cell" class="mercado-vocab">{{ p.vocab_en }}</span>
     </a>
     {% endfor %}
   </div>
-  {% if paises|length > 6 %}
-  <p class="mercados-mas">+ {{ paises|length - 6 }} countries with their own catalog, currency, VAT and terminology. Choose yours at the top of the page.</p>
-  {% endif %}
+  {% endfor %}
 </section>
 
 <section class="flujo-real" id="flujo-real">
