@@ -90,6 +90,7 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada, verificada y cargada en producción (19-10-2026)** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
 | Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
 | Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
+| Estados Unidos | US | USD | «Sales tax» estatal+local, sin tipo nacional (media combinada 7,53 %) | EIN | Base inglesa (en-US) | 388 `precios_recursos_estados_unidos.csv` — 52 anclas investigadas (13 %) + ~83 derivados explícitos, **generada y verificada (19-10-2026), pendiente de carga** | 1.0 (la base ya es USD) | `/en-us/` | **FASE 0 HECHA (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -198,5 +199,38 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   fiscal (GST/HST y la declaración T5018 de pagos a subcontratistas de
   construcción).
 
-**Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
-requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.
+**Estados Unidos — estado real (2026-10-19).**
+
+- **Análisis previo hecho** (`docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`): EE. UU. es el único
+  mercado que exige código además de datos — cantidades imperiales en la interfaz (hoy el
+  conversor imperial solo actúa sobre precios al importar; la landing lo afirmaba para las
+  cantidades y **se ha corregido el texto en este mismo corte**) y un impuesto que en la
+  mayoría de estados ni siquiera se cobra al cliente. Decisiones del titular (19-10-2026):
+  capa de entrada/lectura imperial (almacenamiento métrico), motor fiscal por **estado de la
+  obra con modo de base imponible** (patrón CIS/RCT), y Fase 0 primero.
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en USD, base coste empresa, sin
+  «sales tax» (la estantería publica antes de impuestos, como en Canadá). Cobertura: mano de
+  obra 17/17; total 52 anclas `referencia` (13 %) y ~83 precios explícitos por analogía
+  declarada. Mercado imperial en el comercio pero matriz publicada en la unidad métrica del
+  recurso (la carga por SQL no convierte; la conversión investigada queda citada en cada
+  ancla: $/yd³→$/m³, saco de 94 lb, placa 4×8 ft, $/gal→$/l). Validada con el importador real
+  (`tools/verificar_matriz_importable.py US`): 388 filas, 0 errores. Detalle en
+  `docs/INVESTIGACION_PRECIOS_ESTADOS_UNIDOS.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_ESTADOS_UNIDOS.md`.
+- **Mano de obra.** Medianas **nacionales BLS OEWS mayo 2025** (15/05/2026) elevadas un 5 % a
+  oct-2026. FICA empresarial 7,65 % (Seguridad Social con base 184.500 $, no vinculante) +
+  FUTA neto 0,6 % + SUTA representativo 2,7 % + **workers' compensation por clase NCCI**
+  (4,00 electricidad → 10,00 acero de refuerzo), sobre 1.912 h trabajadas (2.080 pagadas con
+  PTO dentro) → oficial (carpintero) 39,07 $/h, peón 30,68; el fontanero es el más caro
+  (40,21) y el cabillero empata con el oficial por su clase de seguro
+  (`tools/coste_empresa_eeuu.py`). Rango −15 %/+35 %, el más ancho de la expansión: la
+  dispersión estatal/metro del OEWS es de ±20-40 %. Seguro médico y jubilación fuera (no son
+  obligación federal para la pyme), documentado.
+- **Producción: pendiente la carga del SQL** (`docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`,
+  fila 19 de `docs/PENDIENTES_OPERATIVOS.md`). Quedan la **Fase 1 (cantidades imperiales en
+  editor/detalle/PDF)** y la **Fase 2 (motor fiscal por estado: estado de obra con default de
+  empresa, modo de base y defaults investigados)**, ambas aprobadas.
+
+**Orden de apertura:** GB → IE → AU → CA → US, los cinco con su Fase 0 hecha a 19-10-2026.
+El Reino Unido es métrico, así que no requiere conversión de unidades; el sistema imperial
+queda como necesidad exclusiva de EE. UU. (Fase 1 aprobada, pendiente de construir).

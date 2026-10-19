@@ -57,11 +57,15 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
         (
             "Feet, inches and gallons — and CSI divisions",
             [
-                "The United States is the only imperial market in the product: "
-                "measurements arrive in square feet, linear feet and gallons while "
-                "the catalog is built in metres, litres and kilos. CotizaT converts "
-                "the quantity and the price, not just the label, so a rate per square "
-                "metre becomes a rate per square foot with its range intact.",
+                "The United States is the only imperial market in the product. The "
+                "US price library is researched in the units the market actually "
+                "sells — cubic yards of ready-mix, 94-lb cement bags, 4x8 sheets, "
+                "gallons of paint — and kept with its low-high range, so the number "
+                "behind a line item is an American price, not a foreign one "
+                "converted. Entering quantities in feet and inches is in "
+                "development; until it lands, estimates are measured in the "
+                "catalog's metric units, and we'd rather tell you that here than "
+                "in the small print.",
                 "The catalog is organised in sections that map onto the CSI "
                 "MasterFormat divisions a general contractor already uses: concrete, "
                 "masonry, metals, thermal and moisture protection, finishes, "
@@ -341,9 +345,11 @@ FAQ: dict[str, list[dict[str, str]]] = {
         {
             "q": "Does it handle imperial measurements?",
             "a": (
-                "Yes. The United States is the only imperial market in the product: "
-                "quantities and prices convert between square feet and square "
-                "metres, gallons and litres, feet and metres, with the range kept."
+                "Prices yes, quantities not yet. The US price library is built from "
+                "American sources in their own units (cubic yards, square feet, "
+                "gallons, pounds) with the price range kept. Feet-and-inches "
+                "quantity entry is in development; today quantities are worked in "
+                "the catalog's metric units."
             ),
         },
     ],

@@ -33,6 +33,7 @@ Estado al escribir esta guía:
 | 16 | **SQL — carga de precios de Irlanda (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`; la matriz IE está en producción. Detalle en §15 |
 | 17 | **SQL — carga de precios de Australia (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_australia_2026-10-19.sql`; la matriz AU está en producción. Detalle en §16 |
 | 18 | **SQL — carga de precios de Canadá (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_canada_2026-10-19.sql`; la matriz CA está en producción. Detalle en §17 |
+| 19 | **SQL — carga de precios de Estados Unidos (388 recursos)** | ⏳ **pendiente de ejecutar** (generado 19/10/2026, Fase 0 de Estados Unidos). `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` en el SQL Editor de Supabase, o el CSV por el panel («Validar sin escribir» primero: 388 filas · 0 errores). Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar con una consulta puntual (p. ej. que `MT-CEMENTO/US` existe a 0,446 USD). Detalle en §18 |
 
 ---
 
@@ -591,3 +592,27 @@ aplicados y **no** deben volver a ejecutarse);
 (4) `docs/cargar_precios_referencia_canada_2026-10-19.sql`. Filas 15–18
 cerradas ✅. Con esto el despliegue del PR #131 ya no dejará `/readyz` en
 503 por esquema: `public.alembic_version` debe decir `m8e1f4a7b2c5`.
+
+## 18. SQL de Estados Unidos (19/10/2026) ⏳ pendiente de ejecutar
+
+La Fase 0 de Estados Unidos (análisis + estudio de precios y matriz USD,
+19/10/2026) deja un **quinto** SQL generado, posterior a los cuatro ya
+ejecutados de las filas 15–18:
+
+- **Matriz de precios de Estados Unidos (388 recursos)** —
+  `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`, o el CSV
+  `basedatos_partidas/salida/precios_recursos_estados_unidos.csv` por el
+  panel de operador (Sistema › Matrices de precios, «Validar sin escribir»
+  primero: deben salir 388 filas · 0 errores). La matriz deriva de
+  `docs/INVESTIGACION_PRECIOS_ESTADOS_UNIDOS.md`; sin esta carga Estados
+  Unidos queda sin precios nacionales en producción.
+- Es una **carga de datos**, no una migración: no necesita ningún
+  `staging_upgrade` nuevo (el esquema ya está en el head `m8e1f4a7b2c5`)
+  y no hay que re-ejecutar ninguno de los anteriores.
+- La matriz se publica en la **unidad métrica del recurso** a propósito:
+  la ruta SQL inserta el precio tal cual, sin la conversión imperial que
+  sí hace el importador del panel. No «corregir» las unidades al cargar.
+
+Al ejecutarse: reemplazar la celda de estado de la fila 19 por
+«✅ ejecutado» con la fecha y comprobar una fila puntual (p. ej.
+`MT-CEMENTO` / `US` = 0,446 USD o `MO-OF1` / `US` ≈ 39,07 USD).

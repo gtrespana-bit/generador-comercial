@@ -304,6 +304,34 @@ precios, `PAISES["US"]` (sigue `iva: 7.0` neutralizado por
 cantidades sigue vigente hasta que se apruebe corregirla). Ninguna
 migración nueva.
 
+## 9. Decisiones adoptadas (19-10-2026)
+
+- **Unidades**: opción B de §3 — capa de presentación/entrada imperial
+  (cantidades y precios unitarios en la interfaz y el PDF;
+  almacenamiento y cálculo métricos). Descartados el statu quo métrico
+  y el catálogo imperial nativo.
+- **Impuesto**: motor por estado de §4 — estado de la obra + modo de
+  base imponible con defaults investigados por estado y tipo editable.
+  Descartado el selector que solo precarga un %.
+- **Ubicación del estado**: valor por defecto de la empresa
+  (`Configuracion`) heredado y editable en cada presupuesto/factura.
+- **Orden**: Fase 0 (matriz USD) primero, con la corrección SEO 0.1;
+  después Fase 1 (cantidades imperiales) y Fase 2 (fiscalidad por
+  estado), en bloques separados dentro de este PR.
+
+**Ejecución (19-10-2026):** la Fase 0 está hecha el mismo día —
+`tools/coste_empresa_eeuu.py` (medianas OEWS + FICA/FUTA/SUTA +
+workers' comp por clase), `tools/generar_matriz_precios_eeuu.py`, 388
+precios USD (52 investigados; factores 1,841 materiales / 2,174
+maquinaria), verificador 388/388, SQL de carga generado (pendiente de
+ejecutar: fila 19 de `docs/PENDIENTES_OPERATIVOS.md`), 8 tests y los
+documentos de investigación y metodología. La matriz se publica en la
+unidad métrica del recurso, como recomienda §2 (trampa de la ruta
+SQL). La corrección SEO 0.1 también está aplicada: la landing y la
+FAQ ya no afirman conversión de cantidades («Prices yes, quantities
+not yet»). Pendientes de construir: Fase 1 (cantidades imperiales) y
+Fase 2 (motor fiscal por estado).
+
 ## Fuentes (consultadas el 19-10-2026)
 
 - Avalara, «Sales tax requirements for construction contractors»

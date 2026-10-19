@@ -39,6 +39,7 @@ MERCADOS = {
     "IE": ("Irlanda", "irlanda"),
     "AU": ("Australia", "australia"),
     "CA": ("Canadá", "canada"),
+    "US": ("Estados Unidos", "estados_unidos"),
 }
 
 
