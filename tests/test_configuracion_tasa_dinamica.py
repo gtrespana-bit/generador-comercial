@@ -53,7 +53,7 @@ def test_settings_placeholder_tasa_coincide_con_moneda_inicial(entorno, cliente_
 
 def test_settings_placeholder_tasa_eur(entorno, cliente_web):
     """Para España/EUR el placeholder del input de tasa debe usar la
-    tasa verificada de EUR (≈0.8564), no 1.0 de USD ni la del COP.
+    tasa verificada de EUR (≈0.8886, BCE 16/10/2026), no 1.0 de USD ni la del COP.
     """
     Session, _ids, _rol = entorno
     with Session() as db:
@@ -62,13 +62,13 @@ def test_settings_placeholder_tasa_eur(entorno, cliente_web):
         cfg.etiqueta_id_fiscal = "NIF"
         cfg.moneda_default = "EUR"
         cfg.iva_default = 21
-        cfg.tasa_cambio = 0.8564
+        cfg.tasa_cambio = 0.8886
         db.commit()
     resp = cliente_web.get("/configuracion")
     assert resp.status_code == 200
     placeholder = _moneda_placeholder_para(resp.text)
-    assert placeholder and "0.8564" in placeholder, (
-        f"El placeholder para EUR debería mencionar 0.8564. Visto: {placeholder!r}"
+    assert placeholder and "0.8886" in placeholder, (
+        f"El placeholder para EUR debería mencionar 0.8886. Visto: {placeholder!r}"
     )
     label = _moneda_label_para(resp.text)
     assert label == "EUR", f"El label debería ser EUR, visto: {label!r}"

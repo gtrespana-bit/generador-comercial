@@ -87,6 +87,7 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | País | Código | Moneda | IVA | ID Fiscal | Terminología | Recursos nacionales | Tasa verificada | SEO | Estado |
 |---|---|---|---|---|---|---|---|---|---|
 | Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
+| Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada y verificada; pendiente de carga** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 HECHA (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -111,6 +112,29 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   hreflang `en`, el `inLanguage` del schema y los hubs ingleses que pintaban el
   cuerpo en español. Detalle en `docs/SEO_REINO_UNIDO.md`.
 - **Pendiente (no es código):** enlaces entrantes y medición en Search Console.
+
+**Irlanda — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en EUR, base coste empresa,
+  sin IVA. Cobertura: mano de obra 17/17, maquinaria 29 referencias + 15 por
+  analogía declarada, materiales 60/327 investigados (18 %) — total 106 anclas
+  `referencia` (27 %) y 128 precios explícitos. Irlanda publica menos listas que
+  GB: el hormigón se ancla en Hanly Quarries (única lista pública de la
+  República, con el DCPL del 5 % dentro) y la maquinaria en Mr Hire. Validada
+  con el importador real (`tools/verificar_matriz_importable.py IE`): 388
+  filas, 0 errores. Detalle en `docs/INVESTIGACION_PRECIOS_IRLANDA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_IRLANDA.md`.
+- **Mano de obra.** Construction SEO desde 01-08-2026 (craft 23,74 €/h) y,
+  porque los SEO eléctrico y mecánico fueron anulados, escalas pactadas AECI
+  (electricista 27,60) y Connect (fontanero 29,12). PRSI empresa 11,40 % desde
+  01-10-2026 + CWPS 36,43 €/semana, sobre 1.747,2 h facturables
+  (`tools/coste_empresa_irlanda.py`). El peón irlandés (29,60 €/h coste
+  empresa) cuesta más que el oficial español (21,00).
+- **Tasa EUR reverificada:** 0,8886 (BCE 16/10/2026), compartida con España.
+- **Pendiente:** cargar la matriz en producción (panel de operador o
+  `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`, ya generado) y la
+  **Fase 1 fiscal**: no existe motor RCT (retenciones 0/20/35 %) — la landing ya
+  lo describe en su FAQ, así que hay que implementarlo o ajustar el texto.
 
 **Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
 requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.

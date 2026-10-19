@@ -36,9 +36,9 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "MXN": 17.06,
     # SUNAT (12/08/2026: 3,364 compra / 3,372 venta; ~3,37)
     "PEN": 3.37,
-    # EUR/USD 1,1677 (xe.com mid-market 22/08/2026; BCE 21/08: 1,1681)
-    # -> 1 USD = 0,8564 EUR
-    "EUR": 0.8564,
+    # EUR/USD 1,1253 (tipo de referencia del BCE, 16/10/2026)
+    # -> 1 USD = 0,8886 EUR. Misma tasa de corte que la matriz de precios IE.
+    "EUR": 0.8886,
     # CLP/USD 18/08/2026 (currency.me.uk 925.903, mid-market 913.16) → 925.90 adoptado
     "CLP": 925.90,
     # ARS/USD 08-11/08/2026 (pluang 1497.38, alanchand 1498.36) → 1497.38 adoptado
@@ -80,6 +80,7 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
 # Si una moneda no aparece aquí se usa ``TASAS_ACTUALIZADAS``, que es la fecha
 # de la revisión general de la tabla.
 TASAS_FECHA: dict[str, str] = {
+    "EUR": "2026-10-16",
     "GBP": "2026-10-16",
     "AUD": "2026-10-16",
     "CAD": "2026-10-16",

@@ -88,7 +88,7 @@ def test_bienvenida_lista_las_monedas_completas(entorno, cliente_web):
 
 def test_bienvenida_tasa_eur_esta_disponible_en_el_json(entorno, cliente_web):
     """El JSON de tasas inyectado al wizard incluye la tasa EUR verificada
-    (≈ 0.8564), para que el placeholder del campo tasa se personalice al
+    (≈ 0.8886, BCE 16/10/2026), para que el placeholder del campo tasa se personalice al
     elegir España.
     """
     Session, _ids, _rol = entorno
@@ -101,8 +101,8 @@ def test_bienvenida_tasa_eur_esta_disponible_en_el_json(entorno, cliente_web):
     m = re.search(r'<script id="tasas-data"[^>]*>(.*?)</script>', resp.text, re.S)
     assert m, "No se inyectó el JSON de tasas en /bienvenida"
     tasas = _json.loads(m.group(1))
-    assert "EUR" in tasas and tasas["EUR"] == pytest.approx(0.8564), (
-        f"Se esperaba EUR=0.8564 en TASAS_SUGERIDAS, visto: {tasas.get('EUR')}"
+    assert "EUR" in tasas and tasas["EUR"] == pytest.approx(0.8886), (
+        f"Se esperaba EUR=0.8886 en TASAS_SUGERIDAS, visto: {tasas.get('EUR')}"
     )
 
 

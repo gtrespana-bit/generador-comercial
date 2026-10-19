@@ -2,7 +2,7 @@
 
 **Rama:** `arena/76b3d95f-generador-comercial` sobre `main` (`cbb5e99`, que ya
 incluye el trabajo inglés fusionado en la PR #124 y la PR #128)
-**Última verificación:** 18 de octubre de 2026 · suite **1872 pasan, 9 omitidos**
+**Última verificación:** 19 de octubre de 2026 · suite **1879 pasan, 9 omitidos**
 
 Este documento existe para poder retomar el trabajo sin tener que reconstruir
 el contexto. Dice qué está terminado, qué queda, en qué orden conviene
@@ -27,16 +27,19 @@ una estimación o un juicio, se dice expresamente.
 | Lectura RLS de operador sobre `recursos` | **Hecho y desplegado** | `l7d0e3f6a9c4` (`/readyz` = head) |
 | Cargar la matriz de Reino Unido en producción | **Hecho** | 18-10-2026, SQL Editor |
 | Reino Unido · Fase 3 — SEO de cola larga | **Hecho** | esta rama (`docs/SEO_REINO_UNIDO.md`) |
-| Irlanda, Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
+| Irlanda · Fase 0 — estudio de precios y matriz EUR | **Hecho** | esta rama (`docs/INVESTIGACION_PRECIOS_IRLANDA.md`) |
+| Irlanda · carga en producción y Fase 1 — RCT | Pendiente | la landing ya promete RCT: hay que implementarlo |
+| Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
 
 **Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
 SEO. La matriz de 388 recursos está cargada, la migración `l7d0e3f6a9c4` está
 desplegada (`/readyz` la confirma) y el mercado tiene landing, tres hubs y
 cuatro artículos con URL propia (`docs/SEO_REINO_UNIDO.md`).
 
-Lo que queda ya no es un bloqueo técnico: son los otros cuatro mercados
-(Irlanda, Australia, Canadá y Estados Unidos), y cada uno necesita su estudio
-de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
+Lo que queda ya no es un bloqueo técnico: Irlanda tiene su estudio de precios
+y su matriz generada y verificada (19-10-2026) a falta de cargarla en
+producción y de su Fase 1 fiscal (RCT), y Australia, Canadá y Estados Unidos
+necesitan cada uno su estudio de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
 **conseguir enlaces entrantes y medir** en Search Console: el contenido está,
 la autoridad de dominio se construye fuera del código.
 
@@ -245,8 +248,8 @@ el término británico.
   una guarda que cae a USD en vez de inventar la conversión), pero queda como
   código muerto que conviene limpiar.
 - Las tasas se verificaron de una en una para **GBP, AUD, CAD y USD**. El
-  **euro sigue con la tasa del 25-08-2026** y es el que necesita Irlanda:
-  conviene reverificarlo antes de abrir ese mercado.
+  **euro quedó reverificado el 19-10-2026** al fixing del BCE del 16/10
+  (EUR/USD 1,1253 → 0,8886), la misma tasa de corte de la matriz irlandesa.
 - El resto de monedas del selector siguen con las tasas de agosto.
 
 ### 3.5 Fase 3 — SEO de cola larga: hecha
@@ -281,7 +284,7 @@ abre un mercado sin él.
 
 | Mercado | Unidades | Moneda | Situación |
 |---|---|---|---|
-| **Irlanda** | métrico | EUR | Conducto listo; falta estudio de precios |
+| **Irlanda** | métrico | EUR | **Estudio de precios hecho (19-10-2026)**; falta carga en producción y Fase 1 (RCT) |
 | **Australia** | métrico | AUD | Conducto listo; falta estudio de precios |
 | **Canadá** | métrico | CAD | Conducto listo; falta estudio de precios |
 | **Estados Unidos** | **imperial** | USD | Conversión de unidades hecha; falta estudio de precios |
@@ -303,7 +306,7 @@ estudio de precios, y sin él no se abren a clientes.
 | Estados Unidos | `/en-us/` | Sí | Sí | Pendiente |
 | Australia | `/en-au/` | Sí | Sí | Pendiente |
 | Canadá | `/en-ca/` | Sí | Sí | Pendiente |
-| Irlanda | `/en-ie/` | Sí | Sí | Pendiente (y revisar tasa EUR) |
+| Irlanda | `/en-ie/` | Sí | Sí | **Generada y verificada**; pendiente de carga |
 
 ---
 
@@ -317,9 +320,11 @@ estudio de precios, y sin él no se abren a clientes.
 3. **Enlaces entrantes** para Reino Unido: directorios de oficio, FMB,
    TrustMark y prensa del sector. Es lo único que separa el contenido de las
    primeras posiciones.
-4. **Irlanda**: el siguiente más barato (métrico, euro, vocabulario británico).
-   Antes de abrirlo, reverificar la tasa EUR (sigue en 25-08-2026) y hacer su
-   estudio de precios.
+4. **Irlanda**: estudio de precios **hecho** (19-10-2026) y tasa EUR
+   reverificada. Siguiente paso: cargar la matriz en producción (panel de
+   operador o `docs/cargar_precios_referencia_irlanda_2026-10-19.sql` en el
+   SQL Editor, ya generado) y hacer la Fase 1 fiscal (motor RCT 0/20/35 %,
+   que la FAQ de la landing ya describe).
 5. **Australia y Canadá** después, cada uno con su matriz.
 6. **Estados Unidos** al final: imperial y el que más exige.
 
