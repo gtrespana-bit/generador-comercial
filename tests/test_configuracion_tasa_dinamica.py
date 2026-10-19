@@ -53,7 +53,9 @@ def test_settings_placeholder_tasa_coincide_con_moneda_inicial(entorno, cliente_
 
 def test_settings_placeholder_tasa_eur(entorno, cliente_web):
     """Para España/EUR el placeholder del input de tasa debe usar la
-    tasa verificada de EUR (≈0.8886, BCE 16/10/2026), no 1.0 de USD ni la del COP.
+    tasa verificada de EUR (≈0.8886), no 1.0 de USD, la del COP ni la tasa ya
+    guardada en la configuración: el placeholder sugiere la referencia vigente,
+    no repite el valor actual.
     """
     Session, _ids, _rol = entorno
     with Session() as db:
@@ -62,7 +64,7 @@ def test_settings_placeholder_tasa_eur(entorno, cliente_web):
         cfg.etiqueta_id_fiscal = "NIF"
         cfg.moneda_default = "EUR"
         cfg.iva_default = 21
-        cfg.tasa_cambio = 0.8886
+        cfg.tasa_cambio = 0.9111
         db.commit()
     resp = cliente_web.get("/configuracion")
     assert resp.status_code == 200
