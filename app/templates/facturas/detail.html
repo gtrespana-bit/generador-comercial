@@ -66,8 +66,8 @@
           <div class="doc-p-nombre">{{ part.nombre }}</div>
           {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
         </td>
-        <td class="right csp-s-463c663c8c">{{ part.cantidad | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right csp-s-463c663c8c">{{ (part.cantidad | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad | unidad_mostrada(es_imperial) }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(f.moneda) }}</td>
       </tr>
     </table>
@@ -81,10 +81,15 @@
     {% if f.descuento_pct %}
     <tr><td class="right">DESCUENTO ({{ f.descuento_pct | round(2) }} %)</td><td class="right">- {{ f.descuento_monto | money_iso(f.moneda) }}</td></tr>
     {% endif %}
-    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %) — inversión del sujeto pasivo (no se cobra)</td><td class="right">{{ 0 | money_iso(f.moneda) }}</td></tr>{% else %}<tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>{% endif %}
+    {% if fiscalidad_us %}<tr><td class="right">{{ fiscalidad_us.nombre_impuesto | upper }} ({{ fiscalidad_us.estado_codigo }} {{ f.impuesto_pct | round(2) }} %){% if fiscalidad_us.modo == 'materials' %} — SOLO MATERIALES{% elif fiscalidad_us.modo == 'labor' %} — SOLO MANO DE OBRA{% elif fiscalidad_us.modo == 'none' %} — NO SE COBRA AL CLIENTE{% endif %}</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>{% elif (fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo) or (fiscalidad_ie and fiscalidad_ie.con_inversion_sujeto_pasivo) %}<tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %) — inversión del sujeto pasivo (no se cobra)</td><td class="right">{{ 0 | money_iso(f.moneda) }}</td></tr>{% else %}<tr><td class="right">I.V.A. ({{ f.impuesto_pct | round(2) }} %)</td><td class="right">{{ f.impuesto_monto | money_iso(f.moneda) }}</td></tr>{% endif %}
     {% if fiscalidad_gb and fiscalidad_gb.cis_aplica %}<tr><td class="right">ELEMENTO DE MANO DE OBRA SUJETO A RETENCIÓN</td><td class="right">{{ fiscalidad_gb.base_cis | money_iso(f.moneda) }}</td></tr><tr><td class="right">RETENCIÓN CIS ({{ fiscalidad_gb.cis_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_gb.retencion_cis | money_iso(f.moneda) }}</td></tr>{% endif %}
-    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_gb %}TOTAL A COBRAR{% if fiscalidad_gb.cis_aplica %} (tras retención CIS){% endif %}{% else %}TOTAL A PAGAR{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else f.total) | money_iso(f.moneda) }}</strong></td></tr>
+    {% if fiscalidad_ie and fiscalidad_ie.rct_aplica %}<tr><td class="right">RETENCIÓN RCT ({{ fiscalidad_ie.rct_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_ie.retencion_rct | money_iso(f.moneda) }}</td></tr>{% endif %}
+    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_ie and (fiscalidad_ie.rct_aplica or fiscalidad_ie.con_inversion_sujeto_pasivo) %}TOTAL A COBRAR{% if fiscalidad_ie.rct_aplica %} (tras retención RCT){% endif %}{% elif fiscalidad_gb %}TOTAL A COBRAR{% if fiscalidad_gb.cis_aplica %} (tras retención CIS){% endif %}{% else %}TOTAL A PAGAR{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_ie.total_a_cobrar if fiscalidad_ie and (fiscalidad_ie.rct_aplica or fiscalidad_ie.con_inversion_sujeto_pasivo) else (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else f.total)) | money_iso(f.moneda) }}</strong></td></tr>
     {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_gb.leyenda_iva }}</td></tr>{% endif %}
+    {% if fiscalidad_ie and fiscalidad_ie.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_ie.leyenda_iva }}</td></tr>{% endif %}
+    {% if fiscalidad_us %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_us.leyenda }}</td></tr>{% endif %}
+    {% if fiscalidad_us and fiscalidad_us.avisos %}{% for aviso in fiscalidad_us.avisos %}<tr><td class="right csp-s-6b643de52a" colspan="2">⚠ {{ aviso }}</td></tr>{% endfor %}{% endif %}
+    {% if fiscalidad_ie and fiscalidad_ie.avisos %}{% for aviso in fiscalidad_ie.avisos %}<tr><td class="right csp-s-6b643de52a" colspan="2">⚠ {{ aviso }}</td></tr>{% endfor %}{% endif %}
   </table>
 </div>
 

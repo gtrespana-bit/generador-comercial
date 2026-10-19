@@ -398,12 +398,31 @@ def _anexar_filas_importadas(presupuesto: Presupuesto, filas: list[dict]) -> lis
         tipo = fila.get("tipo_partida", "included")
         if tipo != "included":
             usa_avanzado = True
+        # Un Excel puede venir medido en imperial («sq ft»): lo que se
+        # persiste es métrico, sea cual sea el mercado (la unidad es la
+        # marca). CYPE/BC3 no pasan por aquí y ya son métricos por formato.
+        unidad_fila = fila.get("unidad", "ud") or "ud"
+        cantidad_fila = fila.get("cantidad", 1.0)
+        precio_fila = fila.get("precio", 0.0)
+        try:
+            from ..services.unidades_precio import metrica_desde_mostrada as _mdm_fila
+
+            _destino_fila = _mdm_fila(unidad_fila)
+        except Exception:
+            _destino_fila = None
+        if _destino_fila is not None:
+            unidad_fila, _factor_fila = _destino_fila
+            try:
+                cantidad_fila = float(cantidad_fila or 0) / _factor_fila
+                precio_fila = float(precio_fila or 0) * _factor_fila
+            except (TypeError, ValueError):
+                pass
         item = PresupuestoItem(
             nombre=fila["nombre"],
             descripcion=fila.get("descripcion", ""),
-            unidad=fila.get("unidad", "ud") or "ud",
-            cantidad=fila.get("cantidad", 1.0),
-            precio_unitario=fila.get("precio", 0.0),
+            unidad=unidad_fila,
+            cantidad=cantidad_fila,
+            precio_unitario=precio_fila,
             moneda=presupuesto.moneda or "USD",
             orden=ordenes_partidas[clave_orden],
             tipo_partida=tipo,
@@ -825,11 +844,41 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
                 }) if isinstance(f, dict) else f
                 for f in filas_descompuestas
             ]
+        # Unidad: misma regla que con la moneda. Un Excel en «sq ft» trae el
+        # precio por pie cuadrado y los rendimientos por pie cuadrado; el
+        # catálogo guarda por m². (CYPE/BC3 son métricos: no se tocan. El
+        # precio de cada recurso es por SU unidad y tampoco se toca.)
+        unidad_catalogo = str(item.get("unidad", "ud")).strip() or "ud"
+        try:
+            from ..services.unidades_precio import metrica_desde_mostrada as _mdm_cat
+
+            _destino_cat = _mdm_cat(unidad_catalogo)
+        except Exception:
+            _destino_cat = None
+        if _destino_cat is not None:
+            unidad_catalogo, _factor_cant = _destino_cat
+            precio = precio * _factor_cant
+            costes = {k: _f(v, 0) * _factor_cant for k, v in costes.items()}
+            if isinstance(filas_descompuestas, list):
+                _filas_u = []
+                for _fdesc in filas_descompuestas:
+                    if isinstance(_fdesc, dict):
+                        _fdesc = dict(_fdesc)
+                        if str(_fdesc.get("unidad") or "").strip() == "%":
+                            for _campo_p in ("precio", "precio_unitario"):
+                                if isinstance(_fdesc.get(_campo_p), (int, float)):
+                                    _fdesc[_campo_p] = _fdesc[_campo_p] * _factor_cant
+                        elif isinstance(_fdesc.get("rendimiento"), (int, float)):
+                            _fdesc["rendimiento"] = _fdesc["rendimiento"] * _factor_cant
+                        if isinstance(_fdesc.get("importe"), (int, float)):
+                            _fdesc["importe"] = _fdesc["importe"] * _factor_cant
+                    _filas_u.append(_fdesc)
+                filas_descompuestas = _filas_u
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
             precio_unitario=_base(precio),
-            unidad=str(item.get("unidad", "ud")).strip() or "ud",
+            unidad=unidad_catalogo,
             categoria=categoria,
             subcategoria=subcategoria[:80],
             apartado=apartado[:120],
@@ -842,7 +891,7 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
                 "origen": "cype" if es_cype else "manual",
                 "codigo": codigo,
                 "codigo_legacy": codigo_legacy,
-                "unidad": str(item.get("unidad") or "ud"),
+                "unidad": unidad_catalogo,
                 "filas": filas_descompuestas,
             }, ensure_ascii=False),
             coste_materiales=_base(max(0.0, _f(costes.get("materiales"), 0))),
@@ -1157,6 +1206,14 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
             if (partida := db.query(Partida).filter(Partida.nombre == str(fila.get("nombre", "")).strip()).first())
         ]
         capitulos_editor = _capitulos_importados_para_editor(resultado, formato)
+        if _es_imperial_cfg(_config(db)):
+            from ..services.unidades_precio import (
+                capitulos_editor_a_mostrada as _caps_imp,
+                ficha_catalogo_a_mostrada as _ficha_imp,
+            )
+
+            catalogo_editor = [_ficha_imp(c, True) for c in catalogo_editor]
+            capitulos_editor = _caps_imp(capitulos_editor, True)
         db.commit()
         _sincronizar_recursos(db)
         mensaje = (
@@ -1228,6 +1285,14 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     ]
     _registrar_usos(db, resultado["filas"])
     capitulos_editor = _capitulos_importados_para_editor(resultado, formato, items_importados)
+    if _es_imperial_cfg(_config(db)):
+        from ..services.unidades_precio import (
+            capitulos_editor_a_mostrada as _caps_imp2,
+            ficha_catalogo_a_mostrada as _ficha_imp2,
+        )
+
+        catalogo_editor = [_ficha_imp2(c, True) for c in catalogo_editor]
+        capitulos_editor = _caps_imp2(capitulos_editor, True)
     mensaje_final = f"{mensaje}: {len(resultado['filas'])} partida(s)."
     db.commit()
     _sincronizar_recursos(db)
@@ -1380,6 +1445,16 @@ def _url_datos_editor(moneda, tasa) -> str:
     return "/presupuestos/editor/datos" + (("?" + urlencode(params)) if params else "")
 
 
+def _es_imperial_cfg(cfg) -> bool:
+    """¿La empresa mide en imperial? (EE. UU.; ver unidades_precio)."""
+    try:
+        from ..services.unidades_precio import es_imperial_config
+
+        return es_imperial_config(cfg)
+    except Exception:
+        return False
+
+
 def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
     """Datos baratos del formulario: el catálogo viaja en otra petición.
 
@@ -1403,11 +1478,28 @@ def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
         "url_datos_editor": _url_datos_editor(moneda, tasa),
         "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, moneda, tasa),
         # Código ISO del mercado de la empresa. El editor lo usa para abrir
-        # bloques que solo existen en un país —hoy, el CIS y la inversión del
-        # sujeto pasivo británicos— sin enseñar a un constructor de Perth una
+        # bloques que solo existen en un país —hoy, el CIS británico y el RCT
+        # irlandés, con sus inversiones del sujeto pasivo— sin enseñar a un constructor de Perth una
         # casilla que no le concierne.
         "codigo_pais": _codigo_pais_descompuesto(db, cfg),
+        # Mercado imperial (EE. UU.): los datos iniciales del editor se
+        # pintan en ft/sq ft/cu yd/gal/lb; el guardado normaliza a métrico
+        # guiándose por la propia unidad (servicios.unidades_precio).
+        "es_imperial": _es_imperial_cfg(cfg),
+        # Bloque 🇺🇸 del editor: defaults investigados por estado (modo de
+        # base + tipo combinado medio) y el estado habitual de la empresa.
+        "estados_eeuu": _estados_eeuu(),
+        "estado_eeuu_defecto": getattr(cfg, "empresa_estado_eeuu", "") or "",
     }
+
+
+def _estados_eeuu():
+    try:
+        from ..services.fiscalidad_eeuu import ESTADOS_EEUU
+
+        return ESTADOS_EEUU
+    except Exception:
+        return ()
 
 
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
@@ -1471,6 +1563,19 @@ def datos_editor_catalogo(
             .all()
         )
         recursos = _recursos_editor_mercado(db, recursos_base, cfg, moneda_doc, tasa_doc)
+    if _es_imperial_cfg(cfg):
+        # El catálogo vive en métrico; el editor imperial recibe precio por
+        # sq ft/ft/cu yd con su etiqueta, para que insertar una partida no
+        # cotice «$/m²» en una línea rotulada en pies. Los recursos NO se
+        # convierten: el APU sigue costando en $/kg, $/h… y es el
+        # rendimiento (por unidad de partida) el que absorbe el cambio.
+        from ..services.unidades_precio import (
+            ficha_catalogo_a_mostrada,
+            producto_catalogo_a_mostrado,
+        )
+
+        partidas = [ficha_catalogo_a_mostrada(p, True) for p in partidas]
+        productos = [producto_catalogo_a_mostrado(p, True) for p in productos]
     return {
         "ok": True,
         "partidas": partidas,
@@ -1506,6 +1611,10 @@ def hojas_editor_catalogo(
     except (TypeError, ValueError):
         tasa_doc = cfg.tasa_cambio
     hojas = _hojas_catalogo_editor(db, categoria, subcategoria, apartado, moneda_doc, tasa_doc)
+    if _es_imperial_cfg(cfg):
+        from ..services.unidades_precio import ficha_catalogo_a_mostrada
+
+        hojas = [ficha_catalogo_a_mostrada(h, True) for h in hojas]
     return {"ok": True, "partidas": hojas}
 
 
@@ -2030,6 +2139,12 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     if cliente is None:
         return _redirect("/presupuestos/nuevo", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    # Capa imperial: una partida que llega en «sq ft» trae sus cantidades en
+    # pies cuadrados; el almacenamiento es siempre métrico (la conversión se
+    # guía por la propia unidad, sin banderas en el formulario).
+    from ..services.unidades_precio import normalizar_partidas_a_metrico
+
+    normalizar_partidas_a_metrico(partidas)
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect("/presupuestos/nuevo", error="Agrega al menos un capítulo con nombre.")
@@ -2102,7 +2217,8 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         mostrar_ahorro=bool(form.get("mostrar_ahorro")), incluir_anexos=bool(form.get("incluir_anexos")),
         mostrar_desglose_precio=bool(form.get("mostrar_desglose_precio")),
         numero_control=str(form.get("numero_control", "")).strip(), fecha_tipo_cambio=fecha_tipo_cambio, retencion_pct=_f(form.get("retencion_pct")), operacion_exenta=bool(form.get("operacion_exenta")), clausula_cambiaria=str(form.get("clausula_cambiaria", "")).strip(),
-        iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0],
+        iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0], rct_tipo=_fiscalidad_ie_desde_form(form)[0],
+        estado_codigo=_fiscalidad_eeuu_desde_form(form)[0], us_tax_base=_fiscalidad_eeuu_desde_form(form)[1], us_tax_fraccion=_fiscalidad_eeuu_desde_form(form)[2],
         client_id=cliente.id,
     )
     # Imágenes de producto subidas
@@ -2955,8 +3071,11 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "tiempos_por_partida": tiempos_por_partida,
             "revision_envio": revision_envio,
             "cambios_reenvio": cambios_reenvio,
-            # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF.
+            # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF.
             "fiscalidad_gb": _fiscalidad_gb_documento(presupuesto, cfg),
+            "fiscalidad_ie": _fiscalidad_ie_documento(presupuesto, cfg),
+            "fiscalidad_us": _fiscalidad_eeuu_documento(presupuesto, cfg),
+            "es_imperial": _es_imperial_cfg(cfg),
         },
     )
 
@@ -3147,7 +3266,6 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
     return {"ok": True, "actualizadas": updated, "tiempos": t}
 
 
-@router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
 def _fiscalidad_gb_desde_form(form) -> tuple[float | None, str]:
     """Lee del formulario el tipo de CIS y el tratamiento del IVA.
 
@@ -3220,6 +3338,159 @@ def _fiscalidad_gb_documento(presupuesto, cfg):
         return None
     return f
 
+def _fiscalidad_ie_desde_form(form) -> tuple[float | None, str]:
+    """Lee del formulario el tipo de RCT y el tratamiento del IVA irlandés.
+
+    Igual que el CIS: ``None`` cuando el documento no está bajo RCT y 0 cuando
+    sí lo está pero Revenue retiene al 0 % por el historial del
+    subcontratista. Un valor que no sea 0, 20 o 35 se descarta: no existe
+    ninguna autorización de deducción con otro tipo, y guardar uno inventado
+    retendría una cifra que Revenue no va a reconocer.
+    """
+    from ..services.fiscalidad_irlanda import TIPOS_RCT, TRATAMIENTOS_IVA_IE
+
+    crudo = str(form.get("rct_tipo", "") or "").strip()
+    rct = None
+    if crudo:
+        try:
+            valor = float(crudo)
+        except (TypeError, ValueError):
+            valor = None
+        if valor is not None and any(valor == float(t) for t in TIPOS_RCT):
+            rct = valor
+
+    tratamiento = str(form.get("iva_tratamiento", "") or "").strip()
+    if tratamiento not in TRATAMIENTOS_IVA_IE:
+        tratamiento = ""
+    return rct, tratamiento
+
+
+def _aplicar_fiscalidad_ie(presupuesto, form) -> None:
+    # El tratamiento comparte campo con el británico y _aplicar_fiscalidad_gb
+    # ya lo escribió con el mismo saneado; asignarlo también aquí deja claro
+    # que el bloque irlandés del editor gobierna las dos cosas.
+    presupuesto.rct_tipo, presupuesto.iva_tratamiento = _fiscalidad_ie_desde_form(form)
+
+
+def _fiscalidad_ie_documento(presupuesto, cfg):
+    """Fiscalidad irlandesa del documento, o ``None`` si no le afecta.
+
+    Dos diferencias con la británica. La base del RCT es el importe íntegro
+    sin IVA, así que el coste de materiales no interviene en la retención;
+    pero sí en la regla de los dos tercios, que puede obligar a subir el IVA
+    del 13,5 % al 23 % en un documento sin ninguna retención. Por eso el
+    coste se calcula siempre en Irlanda —aunque ``_totales`` no lo reparta
+    sin RCT— y por eso el objeto se devuelve también cuando solo hay avisos:
+    un presupuesto irlandés corriente puede estar mal de tipo sin saberlo.
+    """
+    from ..services.fiscalidad_irlanda import calcular_fiscalidad_ie
+
+    try:
+        from ..services.traduccion import codigo_desde_pais
+
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+    except Exception:
+        pais = ""
+    totales = getattr(presupuesto, "_totales", None)
+    if totales is not None:
+        base, coste_materiales = totales.base, totales.coste_materiales
+        if pais == "IE" and not coste_materiales and getattr(presupuesto, "capitulos", None):
+            from ..services.calculations import calcular_totales
+
+            coste_materiales = calcular_totales(
+                presupuesto, con_costes_categoria=True
+            ).coste_materiales
+    else:
+        base = getattr(presupuesto, "base", 0) or 0
+        coste_materiales = getattr(presupuesto, "coste_materiales", 0) or 0
+    f = calcular_fiscalidad_ie(
+        pais_codigo=pais,
+        base_imponible=base,
+        coste_materiales=coste_materiales,
+        iva_pct=presupuesto.impuesto_pct,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
+    )
+    if not (f.aplica and (f.con_inversion_sujeto_pasivo or f.rct_aplica or f.avisos)):
+        return None
+    return f
+
+
+def _fiscalidad_eeuu_desde_form(form) -> tuple[str, str, float]:
+    """Lee del formulario el estado de la obra y el modo de base (EE. UU.).
+
+    El estado se valida contra los 51 códigos y el modo contra los cinco
+    que el motor conoce: un valor inventado haría que el PDF dijera que
+    aplica una regla que ningún estado tiene. La fracción (65 % en
+    Arizona) se acota a [0, 1]; fuera de rango vuelve a 1.0, que es el
+    comportamiento inocuo (base íntegra).
+    """
+    from ..services.fiscalidad_eeuu import BASES_US, CODIGOS_ESTADO_EEUU
+
+    estado = str(form.get("estado_codigo", "") or "").strip().upper()
+    if estado not in CODIGOS_ESTADO_EEUU:
+        estado = ""
+    modo = str(form.get("us_tax_base", "") or "").strip()
+    if modo not in BASES_US:
+        modo = ""
+    try:
+        fraccion = float(str(form.get("us_tax_fraccion_pct", "") or "").replace(",", "."))
+        fraccion = fraccion / 100.0
+    except (TypeError, ValueError):
+        fraccion = 1.0
+    if not (0.0 <= fraccion <= 1.0):
+        fraccion = 1.0
+    return estado, modo, fraccion
+
+
+def _aplicar_fiscalidad_eeuu(presupuesto, form) -> None:
+    presupuesto.estado_codigo, presupuesto.us_tax_base, presupuesto.us_tax_fraccion = (
+        _fiscalidad_eeuu_desde_form(form)
+    )
+
+
+def _fiscalidad_eeuu_documento(presupuesto, cfg):
+    """Fiscalidad estadounidense del documento, o ``None`` si no le afecta.
+
+    A diferencia del CIS/RCT, aquí el impuesto ya viene calculado por el
+    motor de totales (es el impuesto del documento, no una retención):
+    este objeto aporta la etiqueta, la leyenda y los avisos. Se devuelve
+    siempre que el motor esté activo —también en modo «ninguna», porque
+    la leyenda («no se cobra sales tax») es parte del documento—.
+
+    La factura no recalcula: su base gravada quedó congelada al emitir.
+    """
+    from ..services.fiscalidad_eeuu import calcular_fiscalidad_eeuu
+
+    try:
+        from ..services.traduccion import codigo_desde_pais
+
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+    except Exception:
+        pais = ""
+    totales = getattr(presupuesto, "_totales", None)
+    if totales is not None:
+        base = totales.base
+        venta_materiales = totales.venta_materiales
+        base_gravada = None
+    else:
+        base = getattr(presupuesto, "base", 0) or 0
+        venta_materiales = 0
+        base_gravada = getattr(presupuesto, "us_base_gravada", None)
+    f = calcular_fiscalidad_eeuu(
+        pais_codigo=pais,
+        base_imponible=base,
+        venta_materiales=venta_materiales,
+        base_gravada=base_gravada,
+        tipo_pct=presupuesto.impuesto_pct,
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+    )
+    if not f.aplica:
+        return None
+    return f
+
 
 def _codigo_pais_descompuesto(db, cfg) -> str:
     """Mercado de la empresa, para traducir los textos del descompuesto.
@@ -3235,6 +3506,7 @@ def _codigo_pais_descompuesto(db, cfg) -> str:
         return "VE"
 
 
+@router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
 def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Request, db: Session = Depends(get_db)):
     """Muestra la matriz CYPE guardada sin volver a transformar el Excel."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -3387,7 +3659,7 @@ def comparar_versiones(presupuesto_id: int, a: int, b: int, request: Request, db
     va, vb = versiones.get(a), versiones.get(b)
     if not va or not vb:
         return _redirect(f"/presupuestos/{presupuesto_id}#versiones", error="Selecciona dos versiones válidas.")
-    return TEMPLATES.TemplateResponse(request, "budgets/compare_versions.html", {"p": va.presupuesto, "a": va, "b": vb, "sa": leer_snapshot(va), "sb": leer_snapshot(vb)})
+    return TEMPLATES.TemplateResponse(request, "budgets/compare_versions.html", {"p": va.presupuesto, "a": va, "b": vb, "sa": leer_snapshot(va), "sb": leer_snapshot(vb), "es_imperial": _es_imperial_cfg(_config(db))})
 
 
 @router.get("/presupuestos/{presupuesto_id}/versiones/{version_id}", response_class=HTMLResponse)
@@ -3395,7 +3667,7 @@ def ver_version(presupuesto_id: int, version_id: int, request: Request, db: Sess
     version = db.get(PresupuestoVersion, version_id)
     if version is None or version.presupuesto_id != presupuesto_id:
         return _redirect(f"/presupuestos/{presupuesto_id}", error="Versión no encontrada.")
-    return TEMPLATES.TemplateResponse(request, "budgets/version.html", {"p": version.presupuesto, "version": version, "snapshot": leer_snapshot(version)})
+    return TEMPLATES.TemplateResponse(request, "budgets/version.html", {"p": version.presupuesto, "version": version, "snapshot": leer_snapshot(version), "es_imperial": _es_imperial_cfg(_config(db))})
 
 
 @router.get("/presupuestos/{presupuesto_id}/exportar")
@@ -3438,11 +3710,24 @@ def exportar_presupuesto(presupuesto_id: int, request: Request, formato: str = "
         ["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad",
          "Precio unitario", "Importe"], _idioma(request),
     )]
+    # La hoja habla en la unidad del usuario (sq ft en EE. UU.); el importe
+    # no cambia. El BC3 de arriba queda en métrico: FIEBDC es un estándar de
+    # intercambio entre herramientas métricas y su unidad es parte del formato.
+    from ..services.unidades_precio import (
+        cantidad_mostrada as _cant_mostrada,
+        precio_mostrado as _precio_mostrada,
+        unidad_mostrada as _unidad_mostrada,
+    )
+
+    _imp_csv = _es_imperial_cfg(_config(db))
     for cap in p.capitulos:
         for part in cap.partidas:
             filas.append([
-                cap.nombre, part.nombre, part.descripcion, part.unidad,
-                num(part.cantidad_total), num(part.precio_unitario), num(part.importe),
+                cap.nombre, part.nombre, part.descripcion,
+                _unidad_mostrada(part.unidad, _imp_csv),
+                num(_cant_mostrada(part.cantidad_total, part.unidad, _imp_csv)),
+                num(_precio_mostrada(part.precio_unitario, part.unidad, _imp_csv)),
+                num(part.importe),
             ])
     filas.append([])
     # Al final, las mismas etiquetas que el resto del documento.
@@ -3512,12 +3797,24 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         fuente_tipo_cambio=getattr(presupuesto, "fuente_tipo_cambio", "") or "",
         impuesto_pct=presupuesto.impuesto_pct,
         descuento_pct=presupuesto.descuento_pct,
-        # Fiscalidad británica: la factura es la que se declara, así que la
-        # retención se hereda del presupuesto aprobado. El coste de materiales
+        # Fiscalidad británico-irlandesa: la factura es la que se declara, así
+        # que la retención se hereda del presupuesto aprobado. El coste de materiales
         # se congela aquí porque ``FacturaItem`` no guarda costes y la factura
         # no debe recalcularse si el presupuesto cambia después.
         iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
         cis_tipo=getattr(presupuesto, "cis_tipo", None),
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
+        # Fiscalidad estadounidense: se hereda igual, con la base gravada
+        # congelada (el reparto materiales/mano de obra se estimó con los
+        # costes del presupuesto y la factura no debe recalcular otro
+        # impuesto distinto del aprobado).
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+        us_base_gravada=(
+            float(presupuesto._totales.us_base_gravada)
+            if (getattr(presupuesto, "us_tax_base", "") or "") else None
+        ),
         coste_materiales=float(presupuesto._totales.coste_materiales),
         notas=presupuesto.notas,
         condiciones=presupuesto.condiciones,
@@ -3594,9 +3891,13 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
     return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {
         "f": factura,
-        # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF, que
-        # es el documento que se declara en el CIS300.
+        # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF,
+        # que es el documento que se declara (el CIS300 británico; en Irlanda,
+        # la autorización de deducción de Revenue en ROS).
         "fiscalidad_gb": _fiscalidad_gb_documento(factura, _config(db)),
+        "fiscalidad_ie": _fiscalidad_ie_documento(factura, _config(db)),
+        "fiscalidad_us": _fiscalidad_eeuu_documento(factura, _config(db)),
+        "es_imperial": _es_imperial_cfg(_config(db)),
     })
 
 
@@ -3772,6 +4073,11 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     if cliente is None:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    # Capa imperial (ver crear_presupuesto): normalizar a métrico antes de
+    # cualquier conversión de moneda o validación de importes.
+    from ..services.unidades_precio import normalizar_partidas_a_metrico
+
+    normalizar_partidas_a_metrico(partidas)
     if cambio_moneda:
         tasa_origen = presupuesto.tipo_cambio if moneda_anterior != "USD" else 1
         tasa_destino = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
@@ -3829,6 +4135,8 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.mostrar_desglose_precio = bool(form.get("mostrar_desglose_precio"))
     presupuesto.numero_control = str(form.get("numero_control", "")).strip(); presupuesto.retencion_pct = _f(form.get("retencion_pct")); presupuesto.operacion_exenta = bool(form.get("operacion_exenta")); presupuesto.clausula_cambiaria = str(form.get("clausula_cambiaria", "")).strip()
     _aplicar_fiscalidad_gb(presupuesto, form)
+    _aplicar_fiscalidad_ie(presupuesto, form)
+    _aplicar_fiscalidad_eeuu(presupuesto, form)
     try: presupuesto.fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError: presupuesto.fecha_tipo_cambio = None
 
@@ -3997,7 +4305,10 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         # La fiscalidad británica se hereda al duplicar: copiar un presupuesto
         # bajo el CIS y que la copia saliera sin retención es un error que se
         # paga en la declaración mensual.
-        iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo,
+        iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo, rct_tipo=original.rct_tipo,
+        # Y la estadounidense: la copia de una obra en Texas no puede nacer
+        # cobrando un «sales tax» que el original no cobraba.
+        estado_codigo=original.estado_codigo, us_tax_base=original.us_tax_base, us_tax_fraccion=original.us_tax_fraccion,
         client_id=original.client_id,
     )
 

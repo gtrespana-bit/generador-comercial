@@ -29,6 +29,12 @@ Estado al escribir esta guía:
 | 10 | **Emails de Supabase Auth (alta y recuperación) con el diseño de CotizaT** | ✅ **completado** (18–19/08/2026): plantillas pegadas en Supabase (Authentication → Email Templates): **Confirm signup**, **Reset password** y **Password changed**. Referencia: `docs/SUPABASE_EMAIL_TEMPLATES.md` y `docs/supabase_templates/` (ver §10) |
 | 11 | **Operación automática (E4-021/E4-023) — parte de panel** | **código ✅** (19/08/2026: cron `/api/cron/mantenimiento`). **Falta en paneles:** `application/zip` en los MIME del bucket `cotizat-private`, vigilante externo de disponibilidad (p. ej. UptimeRobot sobre `/healthz`) y backups automáticos de Supabase Pro (ver §11) |
 | 14 | **Stripe Checkout (tarjeta)** | **código ✅** (20/08/2026). **Falta en paneles:** cuenta Stripe ES, `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` en Vercel, endpoint `https://www.cotizat.online/pago/stripe/webhook`, migración `c3e9a1b7d4f2` en Supabase. Guía: `docs/STRIPE.md` |
+| 15 | **SQL — migración `m8e1f4a7b2c5` (RCT Irlanda)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/staging_upgrade_m8e1f4a7b2c5.sql` aplicado en el SQL Editor de Supabase; es el **único** `staging_upgrade` de este despliegue (los anteriores ya estaban aplicados; head único `m8e1f4a7b2c5`, down_revision `l7d0e3f6a9c4`). Verificable con `SELECT version_num FROM public.alembic_version` → `m8e1f4a7b2c5`. Detalle en §15 |
+| 16 | **SQL — carga de precios de Irlanda (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`; la matriz IE está en producción. Detalle en §15 |
+| 17 | **SQL — carga de precios de Australia (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_australia_2026-10-19.sql`; la matriz AU está en producción. Detalle en §16 |
+| 18 | **SQL — carga de precios de Canadá (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_canada_2026-10-19.sql`; la matriz CA está en producción. Detalle en §17 |
+| 19 | **SQL — carga de precios de Estados Unidos (388 recursos)** | ✅ **ejecutado el 19/10/2026** (confirmado por el titular; generado 19/10/2026, Fase 0 de Estados Unidos). `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` en el SQL Editor de Supabase, o el CSV por el panel («Validar sin escribir» primero: 388 filas · 0 errores). Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar con una consulta puntual (p. ej. que `MT-CEMENTO/US` existe a 0,446 USD). Detalle en §18 |
+| 20 | **SQL — migración `n9f2a5b8c3d6` (sales tax por estado, Fase 2 de EE. UU.)** | ✅ **ejecutado el 19/10/2026** — antes de desplegar el código de la Fase 2 (así se hizo) (el runtime exige el head `n9f2a5b8c3d6`). `docs/staging_upgrade_n9f2a5b8c3d6.sql` en el SQL Editor de Supabase, con la versión actual en `m8e1f4a7b2c5`. Es independiente de la fila 19 (una es esquema, la otra datos) y **no** hay que re-ejecutar ningún `staging_upgrade` anterior. Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar `/readyz` (debe reportar head `n9f2a5b8c3d6`). Detalle en §19 |
 
 ---
 
@@ -520,3 +526,121 @@ estados, documentos, equipo y datos; sin GRANT de UPDATE/DELETE), la función
 baja **corregida**: ahora borra también `compras_plan` (sin esto, una
 organización con compras registradas no puede darse de baja) y
 `eventos_auditoria`.
+
+---
+
+## 15. SQL de Irlanda (recordatorio — 19/10/2026) ✅ ejecutados 19/10/2026
+
+> Marcado a petición del titular: **recordar estos dos SQL antes de fusionar/
+> desplegar el PR #131**. ✅ **Ambos ejecutados en Supabase el 19/10/2026**
+> (confirmado por el titular); se conserva la nota como registro.
+
+1. **Migración `m8e1f4a7b2c5` (columna `rct_tipo`, RCT Irlanda)** —
+   `docs/staging_upgrade_m8e1f4a7b2c5.sql`. SQL Editor con rol administrativo,
+   una sola vez, con la versión aún en `l7d0e3f6a9c4`. El runtime exige el
+   nuevo head: desplegar el código sin este SQL deja `/readyz` en 503.
+2. **Matriz de precios de Irlanda (388 recursos)** —
+   `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`, o el CSV
+   `basedatos_partidas/salida/precios_recursos_irlanda.csv` por el panel de
+   operador (Sistema › Matrices de precios, «Validar sin escribir» primero:
+   deben salir 388 filas · 0 errores).
+
+✅ **Ejecutados el 19/10/2026** (confirmado por el titular); filas 15–16 de
+la tabla superior cerradas. La migración aplicada es la única que hacía
+falta: `m8e1f4a7b2c5` es el head único de Alembic (down_revision
+`l7d0e3f6a9c4`, que ya estaba en producción) y AU/CA no introdujeron
+cambios de esquema, solo cargas de precios.
+
+## 16. SQL de Australia (19/10/2026) ✅ ejecutado 19/10/2026
+
+La Fase 0 de Australia (estudio de precios y matriz AUD, 19/10/2026) dejó un
+tercer SQL generado, ✅ **ejecutado el 19/10/2026** (confirmado por el
+titular):
+
+- **Matriz de precios de Australia (388 recursos)** —
+  `docs/cargar_precios_referencia_australia_2026-10-19.sql`, o el CSV
+  `basedatos_partidas/salida/precios_recursos_australia.csv` por el panel de
+  operador (Sistema › Matrices de precios, «Validar sin escribir» primero:
+  deben salir 388 filas · 0 errores). La matriz deriva de
+  `docs/INVESTIGACION_PRECIOS_AUSTRALIA.md`; sin esta carga Australia queda
+  sin precios nacionales en producción.
+
+**Orden en que se ejecutaron (19/10/2026):** (1) migración `m8e1f4a7b2c5`
+(§15.1), (2) matriz IE (§15.2), (3) matriz AU (aquí), (4) matriz CA (§17).
+Fila 17 cerrada ✅.
+
+## 17. SQL de Canadá (19/10/2026) ✅ ejecutado 19/10/2026
+
+La Fase 0 de Canadá (estudio de precios y matriz CAD, 19/10/2026) dejó un
+cuarto SQL generado, ✅ **ejecutado el 19/10/2026** junto a los de Irlanda y
+Australia, como pidió el titular:
+
+- **Matriz de precios de Canadá (388 recursos)** —
+  `docs/cargar_precios_referencia_canada_2026-10-19.sql`, o el CSV
+  `basedatos_partidas/salida/precios_recursos_canada.csv` por el panel de
+  operador (Sistema › Matrices de precios, «Validar sin escribir» primero:
+  deben salir 388 filas · 0 errores). La matriz deriva de
+  `docs/INVESTIGACION_PRECIOS_CANADA.md`; sin esta carga Canadá queda sin
+  precios nacionales en producción.
+
+**Resumen: los cuatro SQL están ✅ ejecutados (19/10/2026, confirmado por
+el titular)** — (1) migración `m8e1f4a7b2c5`
+(`docs/staging_upgrade_m8e1f4a7b2c5.sql`, el **único** `staging_upgrade`
+que hacía falta: los ~47 anteriores de `docs/` corresponden a heads ya
+aplicados y **no** deben volver a ejecutarse);
+(2) `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`;
+(3) `docs/cargar_precios_referencia_australia_2026-10-19.sql`;
+(4) `docs/cargar_precios_referencia_canada_2026-10-19.sql`. Filas 15–18
+cerradas ✅. Con esto el despliegue del PR #131 ya no dejará `/readyz` en
+503 por esquema: `public.alembic_version` debe decir `m8e1f4a7b2c5`.
+
+## 18. SQL de Estados Unidos (19/10/2026) ✅ ejecutado el 19/10/2026
+
+La Fase 0 de Estados Unidos (análisis + estudio de precios y matriz USD,
+19/10/2026) deja un **quinto** SQL generado, posterior a los cuatro ya
+ejecutados de las filas 15–18:
+
+- **Matriz de precios de Estados Unidos (388 recursos)** —
+  `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`, o el CSV
+  `basedatos_partidas/salida/precios_recursos_estados_unidos.csv` por el
+  panel de operador (Sistema › Matrices de precios, «Validar sin escribir»
+  primero: deben salir 388 filas · 0 errores). La matriz deriva de
+  `docs/INVESTIGACION_PRECIOS_ESTADOS_UNIDOS.md`; sin esta carga Estados
+  Unidos queda sin precios nacionales en producción.
+- Es una **carga de datos**, no una migración: no necesita ningún
+  `staging_upgrade` nuevo (el esquema ya está en el head `m8e1f4a7b2c5`)
+  y no hay que re-ejecutar ninguno de los anteriores.
+- La matriz se publica en la **unidad métrica del recurso** a propósito:
+  la ruta SQL inserta el precio tal cual, sin la conversión imperial que
+  sí hace el importador del panel. No «corregir» las unidades al cargar.
+
+Al ejecutarse: reemplazar la celda de estado de la fila 19 por
+«✅ ejecutado» con la fecha y comprobar una fila puntual (p. ej.
+`MT-CEMENTO` / `US` = 0,446 USD o `MO-OF1` / `US` ≈ 39,07 USD).
+
+**La Fase 1 de Estados Unidos (cantidades imperiales, hecha el 19/10/2026)
+no deja ningún paso operativo**: no hay migración (la conversión se deriva
+del país de la empresa y el almacenamiento no cambia), no hay SQL que
+ejecutar ni datos que cargar. Llega con el despliegue normal del código.
+
+## 19. SQL de la Fase 2 de Estados Unidos (19/10/2026) ✅ ejecutado el 19/10/2026
+
+La Fase 2 (motor fiscal por estado) sí cambia el esquema, así que deja un
+paso operativo **previo al despliegue**, como la migración del RCT:
+
+- **Migración `n9f2a5b8c3d6`** — `docs/staging_upgrade_n9f2a5b8c3d6.sql`,
+  con la versión actual en `m8e1f4a7b2c5`. Añade `estado_codigo`,
+  `us_tax_base` y `us_tax_fraccion` a `presupuestos` y `facturas`,
+  `us_base_gravada` a `facturas` y `empresa_estado_eeuu` a
+  `configuracion`. Nacen vacías: ningún documento ya emitido cambia.
+- **Orden**: ejecutar el SQL y **después** desplegar el código. El runtime
+  comprueba el head (`EXPECTED_ALEMBIC_HEAD = n9f2a5b8c3d6`): desplegar
+  primero dejaría `/readyz` en falso y los SELECT de presupuestos
+  fallando por columnas inexistentes.
+- Es independiente de la carga de la fila 19: pueden ejecutarse en
+  cualquier orden entre sí, pero esta va antes que el despliegue sí o sí.
+
+Al ejecutarse: reemplazar la celda de estado de la fila 20 por
+«✅ ejecutado» con la fecha, comprobar `/readyz` y hacer la prueba
+funcional que trae el propio SQL (empresa EE. UU. con estado Texas →
+presupuesto nuevo → PDF en inglés sin línea de impuesto).

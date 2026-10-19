@@ -381,7 +381,7 @@ class ContextoInteractivo:
     """
 
     def __init__(self, presupuesto, moneda, color_texto, color_acento,
-                 etiqueta_total="PRESUPUESTO TOTAL", lang="es"):
+                 etiqueta_total="PRESUPUESTO TOTAL", lang="es", imperial=False):
         from ..paises import resolver_mercado
 
         self.presupuesto = presupuesto
@@ -391,6 +391,11 @@ class ContextoInteractivo:
         self.color_acento = color_acento
         self.etiqueta_total = etiqueta_total
         self.lang = lang
+        # Mercado imperial: la tabla que consume el JavaScript se construye
+        # ya en sq ft/ft… (cantidad ×factor, precios ÷factor), así el texto
+        # inicial en Python y el recálculo en el visor coinciden sin tocar
+        # una sola fórmula.
+        self.imperial = bool(imperial)
         # Separadores del mercado: el PDF interactivo recalcula importes en
         # JavaScript, así que el JS tiene que escribirlos igual que el
         # Python o el cliente vería cambiar el formato al hacer clic.
@@ -491,14 +496,35 @@ class ContextoInteractivo:
                     continue
 
                 pid = self.id_partida(partida)
+                _factor_imp = None
+                if self.imperial:
+                    from .unidades_precio import factor_cantidad
+
+                    _factor_imp = factor_cantidad(getattr(partida, "unidad", ""))
+                _cantidad_imp = float(getattr(partida, "cantidad_total", 0) or 0)
+                _base_imp = float(getattr(partida, "precio_base_sin_producto", 0) or 0)
+                _precios_imp = [self._precio_de(op) for op in opciones]
+                _unidades_imp = [self._unidad_de(op, partida) for op in opciones]
+                _mediciones_imp = [float(m.cantidad or 0) for m in (partida.mediciones or [])]
+                if _factor_imp:
+                    from .unidades_precio import etiqueta_mostrada
+
+                    _cantidad_imp = round(_cantidad_imp * _factor_imp, 4)
+                    _base_imp = round(_base_imp / _factor_imp, 4)
+                    _precios_imp = [round(p / _factor_imp, 4) for p in _precios_imp]
+                    _mediciones_imp = [round(c * _factor_imp, 4) for c in _mediciones_imp]
+                    _unidades_imp = [
+                        etiqueta_mostrada(u, getattr(partida, "unidad", ""), True)
+                        for u in _unidades_imp
+                    ]
                 self.partidas[pid] = {
-                    "cantidad": float(getattr(partida, "cantidad_total", 0) or 0),
-                    "base": float(getattr(partida, "precio_base_sin_producto", 0) or 0),
-                    "precios": [self._precio_de(op) for op in opciones],
+                    "cantidad": _cantidad_imp,
+                    "base": _base_imp,
+                    "precios": _precios_imp,
                     "nombres": [self._nombre_de(op) for op in opciones],
-                    "unidades": [self._unidad_de(op, partida) for op in opciones],
+                    "unidades": _unidades_imp,
                     "elegido": int(getattr(partida, "indice_producto_elegido", 0) or 0),
-                    "mediciones": [float(m.cantidad or 0) for m in (partida.mediciones or [])],
+                    "mediciones": _mediciones_imp,
                     "capitulo": cid,
                     "cuenta_capitulo": bool(cuenta_en_capitulo),
                     "tipo": tipo,

@@ -520,6 +520,8 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
         j5b8e1c4a9f2_alembic_version_con_rls as rls_alembic_migracion,
         k6c9f2d5b8a3_fiscalidad_reino_unido as fiscalidad_migracion,
         l7d0e3f6a9c4_lectura_operador_catalogo_recursos as lectura_operador_migracion,
+        m8e1f4a7b2c5_fiscalidad_irlanda_rct as fiscalidad_ie_migracion,
+        n9f2a5b8c3d6_fiscalidad_estados_unidos as fiscalidad_us_migracion,
     )
     # Fase 3 (web + CRM + salud/operación), uso real de presupuestos y
     # conversaciones del asistente forman ahora la cabeza.
@@ -537,7 +539,12 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     # matrices de precios).
     assert fiscalidad_migracion.down_revision == rls_alembic_migracion.revision
     assert lectura_operador_migracion.down_revision == fiscalidad_migracion.revision
-    assert lectura_operador_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # Sobre la lectura de operador cuelga la fiscalidad irlandesa (RCT) y
+    # sobre ella la estadounidense («sales tax» por estado), que es la
+    # cabeza vigente.
+    assert fiscalidad_ie_migracion.down_revision == lectura_operador_migracion.revision
+    assert fiscalidad_us_migracion.down_revision == fiscalidad_ie_migracion.revision
+    assert fiscalidad_us_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

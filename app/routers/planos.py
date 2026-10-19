@@ -370,6 +370,28 @@ def mediciones_selector_presupuesto(request: Request, presupuesto_id: int, db: S
             "total_muros": sum(1 for e in (plano.elementos or []) if e.tipo == "muro"),
         })
     diagnostico["total_mediciones"] = total_mediciones
+    try:
+        # Mercado imperial: el editor enseña la partida en sq ft/ft, así que
+        # la medida elegida debe llegar ya en pies — si no, se sumaría una
+        # superficie en m² a una cantidad en sq ft. La medición guardada en
+        # el plano no se toca (el dibujo se calibra en metros).
+        from ..services.unidades_precio import (
+            cantidad_mostrada as _cant_imp,
+            es_imperial_config as _es_imp,
+            unidad_mostrada as _und_imp,
+        )
+
+        if _es_imp(_config(db)):
+            for _plano in resultado:
+                for _medida in _plano.get("mediciones", []):
+                    for _opcion in _medida.get("opciones", []):
+                        if _opcion.get("cantidad") is not None:
+                            _opcion["cantidad"] = _cant_imp(
+                                _opcion["cantidad"], _opcion.get("unidad"), True
+                            )
+                        _opcion["unidad"] = _und_imp(_opcion.get("unidad"), True)
+    except Exception:
+        pass
     return {"ok": True, "planos": resultado, "diagnostico": diagnostico}
 
 

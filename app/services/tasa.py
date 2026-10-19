@@ -36,9 +36,8 @@ TASAS_SUGERIDAS: dict[str, float | None] = {
     "MXN": 17.06,
     # SUNAT (12/08/2026: 3,364 compra / 3,372 venta; ~3,37)
     "PEN": 3.37,
-    # EUR/USD 1,1253 (tipo de referencia del BCE del 16/10/2026; Yahoo 1,1242
-    # el 17/10) -> 1 USD = 0,8886 EUR. Misma tasa de corte que la matriz de
-    # precios de Irlanda, que es el mercado en euros que se abre ahora.
+    # EUR/USD 1,1253 (tipo de referencia del BCE, 16/10/2026)
+    # -> 1 USD = 0,8886 EUR. Misma tasa de corte que la matriz de precios IE.
     "EUR": 0.8886,
     # CLP/USD 18/08/2026 (currency.me.uk 925.903, mid-market 913.16) → 925.90 adoptado
     "CLP": 925.90,

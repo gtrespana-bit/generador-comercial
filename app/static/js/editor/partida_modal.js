@@ -205,8 +205,9 @@
   function selectorMagnitudInicial(unidadFuente) {
     var unidadOriginal = String(unidadFuente != null ? unidadFuente : valor("unidad") || "").trim().toLowerCase();
     var unidad = norm(unidadOriginal);
-    if (unidadOriginal === "m²" || unidadOriginal === "m2" || unidadOriginal === "m^2" || unidad === "m2") return "suelo";
-    if (["m", "ml", "metro", "metros"].indexOf(unidad) !== -1) return "perimetro";
+    if (unidadOriginal === "m²" || unidadOriginal === "m2" || unidadOriginal === "m^2" || unidad === "m2"
+        || unidadOriginal === "sq ft" || unidad === "sqft" || unidad === "ft2") return "suelo";
+    if (["m", "ml", "metro", "metros", "ft", "pie", "pies"].indexOf(unidad) !== -1) return "perimetro";
     return "suelo";
   }
 

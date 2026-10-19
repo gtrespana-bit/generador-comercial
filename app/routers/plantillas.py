@@ -28,9 +28,23 @@ async def guardar_plantilla(request: Request, db: Session = Depends(get_db)):
     if not datos:
         return {"ok": False, "error": mensaje_request(request, "No hay datos que guardar.")}
     try:
-        json.loads(datos)  # validar que sea JSON
+        estructura = json.loads(datos)  # validar que sea JSON
     except ValueError:
         return {"ok": False, "error": mensaje_request(request, "Datos inválidos.")}
+    # La plantilla se guarda en métrico como todo lo persistente: si el
+    # editor trabajaba en imperial («sq ft»), sus partidas se normalizan
+    # aquí y al cargarla se vuelve a convertir según el mercado de turno.
+    try:
+        if isinstance(estructura, list):
+            from ..services.unidades_precio import normalizar_partida_a_metrico
+
+            for _cap in estructura:
+                if isinstance(_cap, dict):
+                    for _pd in _cap.get("partidas") or []:
+                        normalizar_partida_a_metrico(_pd)
+            datos = json.dumps(estructura, ensure_ascii=False)
+    except Exception:
+        pass
     existente = db.query(Plantilla).filter(Plantilla.nombre == nombre).first()
     if existente:
         existente.datos = datos
@@ -48,9 +62,21 @@ def plantilla_datos(request: Request, plantilla_id: int, db: Session = Depends(g
     if plantilla is None:
         return {"ok": False, "error": mensaje_request(request, "Plantilla no encontrada.")}
     try:
-        return {"ok": True, "nombre": plantilla.nombre, "capitulos": json.loads(plantilla.datos or "[]")}
+        capitulos = json.loads(plantilla.datos or "[]")
     except ValueError:
         return {"ok": False, "error": mensaje_request(request, "Plantilla corrupta.")}
+    try:
+        from ..services.unidades_precio import (
+            capitulos_editor_a_mostrada,
+            es_imperial_config,
+        )
+
+        capitulos = capitulos_editor_a_mostrada(
+            capitulos, es_imperial_config(_config(db))
+        )
+    except Exception:
+        pass
+    return {"ok": True, "nombre": plantilla.nombre, "capitulos": capitulos}
 
 
 @router.post("/plantillas/{plantilla_id}/eliminar")

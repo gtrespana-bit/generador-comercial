@@ -9,6 +9,8 @@ Uso:
     python3 tools/generar_sql_precios_pais.py ES
     python3 tools/generar_sql_precios_pais.py GB
     python3 tools/generar_sql_precios_pais.py IE
+    python3 tools/generar_sql_precios_pais.py AU
+    python3 tools/generar_sql_precios_pais.py CA
 
 La salida se pega en el editor SQL de Supabase. Sustituye únicamente las
 referencias nacionales del mercado indicado; no toca precios propios de
@@ -35,6 +37,9 @@ MERCADOS = {
     "ES": ("España", "espana"),
     "GB": ("Reino Unido", "reino_unido"),
     "IE": ("Irlanda", "irlanda"),
+    "AU": ("Australia", "australia"),
+    "CA": ("Canadá", "canada"),
+    "US": ("Estados Unidos", "estados_unidos"),
 }
 
 

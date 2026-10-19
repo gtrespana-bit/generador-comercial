@@ -64,6 +64,14 @@ from ..utils import (
 from .traduccion import codigo_desde_pais, traducir
 from . import pdf_anexos, pdf_planos
 from .pdf_interactivo import ContextoInteractivo
+from .unidades_precio import (
+    cantidad_mostrada,
+    es_imperial_codigo,
+    es_imperial_config,
+    etiqueta_mostrada,
+    precio_mostrado,
+    unidad_mostrada,
+)
 
 # Código de país activo para traducir terminología al vuelo (VE base -> CO/MX/EC/PE)
 _CODIGO_PAIS_ACTUAL = ""
@@ -479,7 +487,7 @@ def _marco_imagen(ruta_rel, azul_color, ancho=140, max_w=132, max_h=148):
     return marco
 
 
-def _datos_opcion(op, partida):
+def _datos_opcion(op, partida, imperial=False):
     """Normaliza una opción de producto (o el propio primario de la partida).
 
     Ojo: cuando `op` **es** la partida, sus atributos `nombre`/`unidad` son
@@ -512,6 +520,12 @@ def _datos_opcion(op, partida):
         descripcion = str(getattr(op, "descripcion", "") or "")
 
     unidad = unidad or str(getattr(partida, "unidad", "") or "ud")
+    if imperial:
+        # El precio del producto ya está sumado por unidad de partida: se
+        # muestra por sq ft con el factor de la partida, y su etiqueta solo
+        # acompaña si era la misma unidad.
+        precio = precio_mostrado(precio, getattr(partida, "unidad", ""), True)
+        unidad = etiqueta_mostrada(unidad, getattr(partida, "unidad", ""), True)
     detalle_items = [v for v in (marca, modelo, color, acabado) if v]
     detalle = " · ".join(detalle_items) if detalle_items else ""
 
@@ -531,7 +545,7 @@ def _datos_opcion(op, partida):
 
 
 def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
-                      ctx, interactiva, pid, lang="es"):
+                      ctx, interactiva, pid, lang="es", imperial=False):
     """Filas del bloque «producto(s)» de una partida.
 
     Con una sola opción se conserva el formato clásico («Producto
@@ -574,7 +588,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
 
     # ---- Un solo producto: formato clásico ------------------------------
     if len(opciones) == 1:
-        datos = _datos_opcion(opciones[0], partida)
+        datos = _datos_opcion(opciones[0], partida, imperial=imperial)
         fila_ancho_completo(Paragraph(_rot('Producto presupuestado:', 'Quoted product:', lang), st["prod_lab"]), arriba=6, abajo=1)
         linea = ""
         if datos["precio"] is not None:
@@ -603,7 +617,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     ancho_texto = _ANCHO - ancho_foto - 24
 
     for i, op in enumerate(opciones):
-        datos = _datos_opcion(op, partida)
+        datos = _datos_opcion(op, partida, imperial=imperial)
         marcado = (i == elegido)
 
         # Cabecera de la tarjeta con badge de Opción
@@ -711,7 +725,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     return filas, estilos
 
 
-def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None, lang="es"):
+def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None, lang="es", imperial=False):
     """Una partida: fila principal + mediciones + producto presupuestado.
 
     Si `num` (p. ej. "1.2") no es None, se antepone al nombre de la partida
@@ -726,6 +740,13 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     filas = []
     interactiva = ctx is not None and ctx.es_interactiva(partida)
     pid = ctx.id_partida(partida) if interactiva else ""
+    # Capa imperial: los importes se siguen calculando en métrico (cantidad
+    # × precio guardados); solo cambian la cantidad y el precio unitario que
+    # se ESCRIBEN, convertidos el uno contra el otro para que el importe
+    # impreso siga siendo su producto exacto.
+    unidad_txt = _esc(unidad_mostrada(partida.unidad or "ud", imperial))
+    precio_txt_val = precio_mostrado(partida.precio_unitario, partida.unidad, imperial)
+    cantidad_txt_val = cantidad_mostrada(partida.cantidad_total, partida.unidad, imperial)
 
     tipo = (getattr(partida, "tipo_partida", "included") or "included").lower()
     if _en(lang):
@@ -774,12 +795,12 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
             COLS[3],
         )
     else:
-        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["tot_c"])
+        celda_precio = Paragraph(fmt_precio_u(precio_txt_val, moneda, unidad_txt, mercado=mercado), st["tot_c"])
         celda_importe = Paragraph(fmt_monto(partida.importe, moneda, mercado=mercado), st["tot_c"])
 
     filas.append([
         celda_texto,
-        Paragraph(fmt_cantidad(partida.cantidad_total, _esc(partida.unidad or "ud")), st["tot_c"]),
+        Paragraph(fmt_cantidad(cantidad_txt_val, unidad_txt), st["tot_c"]),
         celda_precio,
         celda_importe,
     ])
@@ -803,11 +824,11 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
                 COLS[3], alto=10, tam=8.25, fuente="Helvetica",
             )
         else:
-            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["med_c"])
+            celda_med_precio = Paragraph(fmt_precio_u(precio_txt_val, moneda, unidad_txt, mercado=mercado), st["med_c"])
             celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda, mercado=mercado), st["med_c"])
         filas.append([
             Paragraph(_esc(m.concepto.strip()) or "-", st["med_d"]),
-            Paragraph(fmt_cantidad(m.cantidad, _esc(partida.unidad or "ud")), st["med_c"]),
+            Paragraph(fmt_cantidad(cantidad_mostrada(m.cantidad, partida.unidad, imperial), unidad_txt), st["med_c"]),
             celda_med_precio,
             celda_med_importe,
         ])
@@ -828,7 +849,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     # -- Productos presupuestados -----------------------------------------
     if partida.tiene_producto:
         filas, estilos = _bloque_productos(
-            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid, lang=lang
+            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid, lang=lang,
+            imperial=imperial,
         )
 
     idx_ultima = len(filas) - 1
@@ -841,13 +863,13 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     return t
 
 
-def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None, lang="es"):
+def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None, lang="es", imperial=False):
     banda = _banda(azul_color)
     titulo = _fila_capitulo(cap, st, moneda, azul_color, ctx=ctx, lang=lang)
     columnas = _fila_columnas(st, lang=lang)
     partidas = [
         _tabla_partida(p, st, moneda, i == len(cap.partidas) - 1, azul_color,
-                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx, lang=lang)
+                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx, lang=lang, imperial=imperial)
         for i, p in enumerate(cap.partidas)
     ]
     flujo = []
@@ -915,7 +937,16 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # una cosa distinta que las líneas de encima. En esos documentos el bloque
     # se imprime cerrado.
     fiscalidad = _fiscalidad_gb(presupuesto, tot, mercado)
-    ctx_efectivo = None if fiscalidad is not None else ctx
+    fiscalidad_ie = _fiscalidad_ie(presupuesto, tot, mercado)
+    fiscalidad_us = _fiscalidad_eeuu(presupuesto, tot, mercado)
+    # El motor JS tampoco modela una base estadounidense parcial (solo
+    # materiales, solo mano de obra, fracción de brutos o «no se cobra»):
+    # recalcularía «base × %» y el total dejaría de cuadrar con la
+    # leyenda. En modo «completa» sí coincide y el PDF sigue interactivo.
+    ctx_efectivo = None if (
+        fiscalidad is not None or fiscalidad_ie is not None
+        or (fiscalidad_us is not None and fiscalidad_us.modo != "full")
+    ) else ctx
 
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
@@ -950,7 +981,28 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
     _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
                 else mercado["etiqueta_impuesto"])
-    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+    if fiscalidad_us is not None:
+        # La fila dice el tributo, el estado y la base que grava; la
+        # leyenda completa va debajo del bloque, como la del «reverse
+        # charge». El importe ya lo calculó el motor de totales.
+        _sufijos_us = {
+            "none": _rot(' — no se cobra al cliente', ' — not charged to the customer', lang),
+            "materials": _rot(' — solo materiales', ' — materials only', lang),
+            "labor": _rot(' — solo mano de obra', ' — labor only', lang),
+            "gross_receipts": _rot(' — ingresos brutos', ' — gross receipts', lang),
+        }
+        filas.append([
+            Paragraph(
+                f"{fiscalidad_us.nombre_impuesto} ({fiscalidad_us.estado_codigo} "
+                f"{fmt_pct(presupuesto.impuesto_pct)} %)"
+                f"{_sufijos_us.get(fiscalidad_us.modo, '')}",
+                st["tot_lab_s"]),
+            valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
+        ])
+    elif (
+        (fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo)
+        or (fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo)
+    ):
         # El impuesto no se cobra: lo declara el cliente. La fila se imprime
         # igualmente, con el tipo y a cero, porque es la que le dice al cliente
         # cuánto tiene que ingresar él.
@@ -987,7 +1039,27 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
         etiqueta_total = _rot('TOTAL A COBRAR (tras retención CIS)',
                               'TOTAL PAYABLE (after CIS deduction)', lang)
 
-    _total_final = fiscalidad.total_a_cobrar if fiscalidad is not None else tot.total
+    # ── Retención del RCT ──────────────────────────────────────────────────
+    # A diferencia del CIS no hay fila de base: el RCT retiene sobre el
+    # importe íntegro sin IVA, materiales incluidos («overall contract
+    # rule»), y esa cifra ya es la BASE IMPONIBLE de encima. Mostrar una
+    # base menor sería aplicar la regla británica en Irlanda.
+    if fiscalidad_ie is not None and fiscalidad_ie.rct_aplica:
+        filas.append([
+            Paragraph(
+                f"{_rot('RETENCIÓN RCT', 'RCT DEDUCTION', lang)} "
+                f"({fmt_pct(fiscalidad_ie.rct_tipo)} %)", st["tot_lab_s"]),
+            valor("retencion_rct", fiscalidad_ie.retencion_rct, "tot_lab_s", prefijo="- "), "",
+        ])
+        etiqueta_total = _rot('TOTAL A COBRAR (tras retención RCT)',
+                              'TOTAL PAYABLE (after RCT deduction)', lang)
+
+    if fiscalidad_ie is not None:
+        _total_final = fiscalidad_ie.total_a_cobrar
+    elif fiscalidad is not None:
+        _total_final = fiscalidad.total_a_cobrar
+    else:
+        _total_final = tot.total
     filas.append([
         Paragraph(etiqueta_total, st["tot_lab_g"]),
         valor("total", _total_final, "tot_lab_g"), "",
@@ -1022,9 +1094,70 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # puede saber que el impuesto lo declara él.
     if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
         notas.append(Paragraph(_esc(fiscalidad.leyenda_iva), st["desg_nota"]))
+    # En Irlanda la leyenda la dicta Revenue («VAT on this supply to be
+    # accounted for by the Principal Contractor»): sin ella —y sin el número
+    # de IVA del subcontratista— la inversión no queda acreditada.
+    if fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo:
+        notas.append(Paragraph(_esc(fiscalidad_ie.leyenda_iva), st["desg_nota"]))
+    # EE. UU.: la leyenda explica qué se está cobrando (o por qué no se
+    # cobra nada) sin que el cliente tenga que conocer el marco estatal.
+    if fiscalidad_us is not None:
+        notas.append(Paragraph(_esc(fiscalidad_us.leyenda), st["desg_nota"]))
     if not notas:
         return t
     return [t] + notas
+
+
+def _fiscalidad_eeuu(presupuesto, tot, mercado):
+    """Fiscalidad estadounidense del documento, o ``None`` si no le afecta.
+
+    Espejo de la británica con una diferencia de fondo: el «sales tax» no
+    es una retención que se reste de lo cobrado, es el impuesto del
+    documento y ya viene sumado por el motor de totales. Aquí solo se
+    resuelven su etiqueta (el tributo se llama distinto en Hawái o Nuevo
+    México), su leyenda y la base que se declara. La factura lee su base
+    gravada congelada; el presupuesto, la que acaba de calcular.
+    """
+    from .fiscalidad_eeuu import calcular_fiscalidad_eeuu
+
+    f = calcular_fiscalidad_eeuu(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        venta_materiales=getattr(tot, "venta_materiales", 0) or 0,
+        base_gravada=getattr(presupuesto, "us_base_gravada", None),
+        tipo_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+    )
+    if not f.aplica:
+        return None
+    return f
+
+
+def _fiscalidad_ie(presupuesto, tot, mercado):
+    """Fiscalidad irlandesa del documento, o ``None`` si no le afecta.
+
+    Espejo de la británica, con la diferencia que define al RCT: la retención
+    cae sobre el importe íntegro sin IVA, así que el coste de materiales no
+    forma parte del cálculo (solo alimenta el aviso de la regla de los dos
+    tercios, que en el PDF no se imprime: es un problema del emisor, no algo
+    que el cliente tenga que leer). Por eso una factura irlandesa retiene
+    bien sin ninguna instantánea de costes.
+    """
+    from .fiscalidad_irlanda import calcular_fiscalidad_ie
+
+    f = calcular_fiscalidad_ie(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        coste_materiales=getattr(tot, "coste_materiales", 0) or 0,
+        iva_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
+    )
+    if not (f.aplica and (f.con_inversion_sujeto_pasivo or f.rct_aplica)):
+        return None
+    return f
 
 
 def _fiscalidad_gb(presupuesto, tot, mercado):
@@ -1829,22 +1962,30 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         _CODIGO_PAIS_ACTUAL = codigo_desde_pais(getattr(config, "empresa_pais", "") or "")
     except Exception:
         _CODIGO_PAIS_ACTUAL = ""
+    # El sistema de medida lo manda el país de la empresa (como la fecha o
+    # los separadores), no la lengua del documento: un PDF en inglés para un
+    # cliente británico sigue en m² y uno en español para Miami, en sq ft.
+    imperial = es_imperial_codigo(_CODIGO_PAIS_ACTUAL)
 
     # Capa interactiva. `preparar()` decide si hay algo que hacer: sin
     # partidas de varios productos devuelve False y el PDF sale exactamente
     # igual que antes, sin formulario ni JavaScript.
     ctx = ContextoInteractivo(presupuesto, moneda, TEXTO, azul_color,
                               etiqueta_total=_rot('PRESUPUESTO TOTAL', 'ESTIMATE TOTAL', lang),
-                              lang=lang)
+                              lang=lang, imperial=imperial)
     if not ctx.preparar():
         ctx = None
-    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni la
-    # inversión del sujeto pasivo: recalcula los totales como «base + IVA» y
+    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni el
+    # RCT ni la inversión del sujeto pasivo: recalcula «base + IVA» y
     # dejaría el bloque fiscal diciendo una cosa y el resumen otra. En esos
-    # documentos el presupuesto sale cerrado.
+    # documentos el presupuesto sale cerrado. Con la base estadounidense
+    # ocurre igual salvo en modo «completa», donde «base × %» es justo lo
+    # que el JS recalcula.
     if ctx is not None and (
         getattr(presupuesto, "cis_tipo", None) is not None
+        or getattr(presupuesto, "rct_tipo", None) is not None
         or (getattr(presupuesto, "iva_tratamiento", "") or "") == "inversion_sujeto_pasivo"
+        or (getattr(presupuesto, "us_tax_base", "") or "") not in ("", "full")
     ):
         ctx = None
 
@@ -1885,7 +2026,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     for i, cap in enumerate(presupuesto.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx, lang=lang)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx, lang=lang, imperial=imperial)
 
     # Totales (en página nueva si no caben las ~160 pt)
     story.append(Spacer(1, 22))
@@ -1999,10 +2140,11 @@ def generar_factura_pdf(factura, config, lang: str = "es"):
         t("cobro_alcance"), t("cobro_alcance_txt"), st, azul_color, lang=lang,
     ))
     story.append(Spacer(1, 14))
+    imperial = es_imperial_config(config)
     for i, cap in enumerate(factura.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang, imperial=imperial)
 
     story.append(Spacer(1, 22))
     story.append(KeepTogether(_totales(

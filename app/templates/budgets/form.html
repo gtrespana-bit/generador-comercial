@@ -185,6 +185,8 @@
 
         {% if cfg.activar_funciones_venezuela %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇻🇪 Datos regionales (opcionales)</label><div class="form-grid">{% if cfg.mostrar_numero_control %}<div class="field"><label>Número de control</label><input name="numero_control" value="{{ presupuesto.numero_control if presupuesto else '' }}"></div>{% endif %}{% if cfg.mostrar_retenciones %}<div class="field"><label>Retención (%)</label><input type="number" step="any" min="0" name="retencion_pct" value="{{ presupuesto.retencion_pct if presupuesto else 0 }}"></div><label><input type="checkbox" name="operacion_exenta" {{ 'checked' if presupuesto and presupuesto.operacion_exenta else '' }}> Operación exenta</label>{% endif %}{% if cfg.mostrar_clausula_cambiaria %}<div class="field field-full"><label>Cláusula de ajuste cambiario</label><textarea name="clausula_cambiaria">{{ presupuesto.clausula_cambiaria if presupuesto else '' }}</textarea></div>{% endif %}</div></div>{% endif %}
         {% if codigo_pais == 'GB' %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇬🇧 Fiscalidad británica (opcional)</label><div class="form-grid"><div class="field"><label>Retención CIS</label><select name="cis_tipo"><option value="" {{ 'selected' if not presupuesto or presupuesto.cis_tipo is none else '' }}>Sin CIS (cliente particular o servicio fuera del ámbito)</option><option value="0" {{ 'selected' if presupuesto and presupuesto.cis_tipo == 0 else '' }}>0 % — Gross Payment Status</option><option value="20" {{ 'selected' if presupuesto and presupuesto.cis_tipo == 20 else '' }}>20 % — subcontratista registrado y verificado</option><option value="30" {{ 'selected' if presupuesto and presupuesto.cis_tipo == 30 else '' }}>30 % — sin registro verificable</option></select><small>El tipo lo fija Hacienda al verificar al subcontratista: no lo elige usted. Se calcula sobre el elemento de mano de obra, descontando el coste de los materiales.</small></div><div class="field"><label>Tratamiento del IVA</label><select name="iva_tratamiento"><option value="" {{ 'selected' if not presupuesto or not presupuesto.iva_tratamiento else '' }}>IVA normal</option><option value="estandar" {{ 'selected' if presupuesto and presupuesto.iva_tratamiento == 'estandar' else '' }}>IVA normal — condiciones comprobadas</option><option value="inversion_sujeto_pasivo" {{ 'selected' if presupuesto and presupuesto.iva_tratamiento == 'inversion_sujeto_pasivo' else '' }}>Inversión del sujeto pasivo (VATA 1994 s. 55A)</option></select><small>Con la inversión del sujeto pasivo el presupuesto va sin IVA y el cliente lo declara. Procede si ambas partes están dadas de alta en el IVA y en el CIS y el cliente <strong>no</strong> es usuario final, o siéndolo no lo ha notificado por escrito.</small></div></div></div>{% endif %}
+        {% if codigo_pais == 'IE' %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇮🇪 Fiscalidad irlandesa (opcional)</label><div class="form-grid"><div class="field"><label>Retención RCT (Relevant Contracts Tax)</label><select name="rct_tipo"><option value="" {{ 'selected' if not presupuesto or presupuesto.rct_tipo is none else '' }}>Sin RCT (cliente particular u operación no sujeta)</option><option value="0" {{ 'selected' if presupuesto and presupuesto.rct_tipo == 0 else '' }}>0 % — historial fiscal al día</option><option value="20" {{ 'selected' if presupuesto and presupuesto.rct_tipo == 20 else '' }}>20 % — tipo estándar registrado</option><option value="35" {{ 'selected' if presupuesto and presupuesto.rct_tipo == 35 else '' }}>35 % — sin registro o con incumplimientos</option></select><small>El tipo lo fija Revenue y lo confirma en la autorización de deducción de cada pago (ROS): no lo elige usted. Se calcula sobre el importe íntegro sin IVA, <strong>materiales incluidos</strong> — a diferencia del CIS británico, que solo retiene sobre la mano de obra.</small></div><div class="field"><label>Tratamiento del IVA</label><select name="iva_tratamiento"><option value="" {{ 'selected' if not presupuesto or not presupuesto.iva_tratamiento else '' }}>IVA normal</option><option value="estandar" {{ 'selected' if presupuesto and presupuesto.iva_tratamiento == 'estandar' else '' }}>IVA normal — condiciones comprobadas</option><option value="inversion_sujeto_pasivo" {{ 'selected' if presupuesto and presupuesto.iva_tratamiento == 'inversion_sujeto_pasivo' else '' }}>Inversión del sujeto pasivo (reverse charge, s. 16(3) VATCA 2010)</option></select><small>Como subcontratista de un contratista principal en una operación sujeta a RCT, no cargue IVA: lo declara el contratista principal. A un cliente particular se le factura IVA normal (13,5 % en construcción; 23 % si los materiales superan dos tercios del importe).</small></div></div></div>{% endif %}
+        {% if codigo_pais == 'US' %}<div class="field field-full csp-s-d66c3f479a"><label class="csp-s-6b2a94ea3b">🇺🇸 Sales tax por estado</label><div class="form-grid"><div class="field"><label>Estado de la obra</label><select name="estado_codigo" id="us-estado">{% set _us_estado = (presupuesto.estado_codigo if presupuesto and presupuesto.estado_codigo else estado_eeuu_defecto) %}<option value="" {{ 'selected' if not _us_estado else '' }}>— Elegir estado —</option>{% for e in estados_eeuu %}<option value="{{ e.codigo }}" data-base="{{ e.base_defecto }}" data-tipo="{{ e.tipo_medio }}" data-fraccion="{{ (e.fraccion_defecto * 100) | round(2) }}" data-nota="{{ e.nota }}" {{ 'selected' if _us_estado == e.codigo else '' }}>{{ e.nombre }} ({{ e.codigo }})</option>{% endfor %}</select><small>El impuesto sigue al <strong>lugar de la obra</strong>. Al cambiar el estado se proponen el modo de base y el tipo combinado medio investigados (Tax Foundation, 2026): son un punto de partida — ajusta el tipo exacto de la dirección de la obra.</small></div><div class="field"><label>Base del impuesto</label><select name="us_tax_base" id="us-base">{% set _us_modo = (presupuesto.us_tax_base if presupuesto else '') %}<option value="" {{ 'selected' if not _us_modo else '' }}>Sin ajuste por estado (impuesto sobre el total)</option><option value="none" {{ 'selected' if _us_modo == 'none' else '' }}>No cobrar al cliente (el contratista paga el impuesto en los materiales)</option><option value="materials" {{ 'selected' if _us_modo == 'materials' else '' }}>Solo sobre los materiales</option><option value="labor" {{ 'selected' if _us_modo == 'labor' else '' }}>Solo sobre la mano de obra</option><option value="full" {{ 'selected' if _us_modo == 'full' else '' }}>Sobre el importe completo (materiales + mano de obra)</option><option value="gross_receipts" {{ 'selected' if _us_modo == 'gross_receipts' else '' }}>Ingresos brutos del contratista</option></select><small>En la mayoría de los estados el contratista <strong>no</strong> cobra «sales tax» en una reforma: paga el impuesto al comprar los materiales y la mano de obra sobre el inmueble no se grava. El reparto materiales/mano de obra se estima con los costes de las partidas.</small></div><div class="field"><label>Fracción gravada (%)</label><input type="number" name="us_tax_fraccion_pct" id="us-fraccion" step="any" min="0" max="100" value="{{ (presupuesto.us_tax_fraccion * 100) | round(2) if presupuesto else 100 }}"><small>Solo para «ingresos brutos»: porcentaje del contrato que se grava (Arizona «prime contracting»: 65 %).</small></div></div><small id="us-nota"></small></div>{% endif %}
         {% if cfg.activar_funciones_avanzadas or (presupuesto and presupuesto.usar_funciones_avanzadas) %}
         <div class="field field-full advanced-budget-options csp-s-acdc88ecde">
           <label class="csp-s-5898011ec9">
@@ -791,7 +793,7 @@
         </div>
         <div>
           <label class="csp-s-b44d0ad3fc">Unidad base</label>
-          <input type="text" id="guardar-pack-unidad" class="input csp-s-331aa27b27" value="m²">
+          <input type="text" id="guardar-pack-unidad" class="input csp-s-331aa27b27" value="{{ 'sq ft' if es_imperial else 'm²' }}">
         </div>
       </div>
       <div class="csp-s-68227a9129">
@@ -866,12 +868,20 @@
 
 <datalist id="unidades-comunes">
   <option value="ud"></option>
+  {% if es_imperial %}
+  <option value="sq ft"></option>
+  <option value="ft"></option>
+  <option value="cu yd"></option>
+  <option value="lb"></option>
+  <option value="gal"></option>
+  {% else %}
   <option value="m2"></option>
   <option value="m"></option>
   <option value="ml"></option>
+  <option value="kg"></option>
+  {% endif %}
   <option value="glb"></option>
   <option value="juego"></option>
-  <option value="kg"></option>
   <option value="hora"></option>
 </datalist>
 {% endblock %}
@@ -887,7 +897,7 @@
         {% for p in cap.partidas %}{
           "partida_id": {{ p.id | tojson }},
           "catalogo_id": {{ ((p|attr('partida_catalogo_id') if p is defined else '') or '') | tojson }},
-          "tiempo_estimado_horas": {{ ((tiempos_catalogo or {}).get(p.partida_catalogo_id) if p.partida_catalogo_id else none) | tojson }},
+          "tiempo_estimado_horas": {{ (((tiempos_catalogo or {}).get(p.partida_catalogo_id) if p.partida_catalogo_id else none) | rend_mostrado(p.unidad, es_imperial)) | tojson }},
           "codigo_externo": {{ p.codigo_externo | tojson }},
           "tiene_descomposicion_cype": {{ (p.descomposicion_cype is not none) | tojson }},
           "nombre_descomposicion_cype": {{ (p.descomposicion_cype.nombre_archivo_origen if p.descomposicion_cype else '') | tojson }},
@@ -895,25 +905,25 @@
             "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
             "archivo_origen": {{ (p.descomposicion_cype.archivo_origen or '') | tojson }},
             "codigo": {{ (p.descomposicion_cype.codigo or '') | tojson }},
-            "unidad": {{ (p.descomposicion_cype.unidad or '') | tojson }},
+            "unidad": {{ ((p.descomposicion_cype.unidad or '') | etiqueta_mostrada(p.unidad, es_imperial)) | tojson }},
             "nombre_archivo_origen": {{ (p.descomposicion_cype.nombre_archivo_origen or '') | tojson }}
           }{% else %}{}{% endif %},
           "nombre": {{ p.nombre | tojson }},
           "descripcion": {{ p.descripcion | tojson }},
-          "unidad": {{ p.unidad | tojson }},
-          "precio": {{ p.precio_unitario | tojson }},
-          "cantidad": {{ p.cantidad | tojson }},
+          "unidad": {{ (p.unidad | unidad_mostrada(es_imperial)) | tojson }},
+          "precio": {{ (p.precio_unitario | precio_mostrado(p.unidad, es_imperial)) | tojson }},
+          "cantidad": {{ (p.cantidad | cant_mostrada(p.unidad, es_imperial)) | tojson }},
           "prod_nombre": {{ p.producto_nombre | tojson }},
-          "prod_precio": {{ (p.producto_precio if p.producto_precio is not none else '') | tojson }},
-          "prod_coste": {{ (p.producto_coste if p.producto_coste is not none else '') | tojson }},
-          "prod_unidad": {{ p.producto_unidad | tojson }},
+          "prod_precio": {{ ((p.producto_precio | precio_mostrado(p.unidad, es_imperial)) if p.producto_precio is not none else '') | tojson }},
+          "prod_coste": {{ ((p.producto_coste | precio_mostrado(p.unidad, es_imperial)) if p.producto_coste is not none else '') | tojson }},
+          "prod_unidad": {{ (p.producto_unidad | etiqueta_mostrada(p.unidad, es_imperial)) | tojson }},
           "prod_imagen": {{ p.producto_imagen | tojson }},
           "tipo_partida": {{ (p.tipo_partida or 'included') | tojson }},
           "seleccionada": {{ (p.seleccionada or false) | tojson }},
-          "coste_materiales": {{ (p.coste_materiales or 0) | tojson }},
-          "coste_mano_obra": {{ (p.coste_mano_obra or 0) | tojson }},
-          "coste_complementarios": {{ (p.coste_complementarios or 0) | tojson }},
-          "coste_otros": {{ (p.coste_otros or 0) | tojson }},
+          "coste_materiales": {{ ((p.coste_materiales or 0) | precio_mostrado(p.unidad, es_imperial)) | tojson }},
+          "coste_mano_obra": {{ ((p.coste_mano_obra or 0) | precio_mostrado(p.unidad, es_imperial)) | tojson }},
+          "coste_complementarios": {{ ((p.coste_complementarios or 0) | precio_mostrado(p.unidad, es_imperial)) | tojson }},
+          "coste_otros": {{ ((p.coste_otros or 0) | precio_mostrado(p.unidad, es_imperial)) | tojson }},
           "desperdicio_pct": {{ (p.desperdicio_pct or 0) | tojson }},
           "margen_pct": {{ (p.margen_pct or 0) | tojson }},
           "grupo_alternativa": {{ (p.grupo_alternativa or '') | tojson }},
@@ -922,9 +932,9 @@
               "id": {{ op.id | tojson }},
               "nombre": {{ op.nombre | tojson }},
               "descripcion": {{ op.descripcion | tojson }},
-              "precio": {{ op.precio | tojson }},
-              "coste": {{ (op.coste if op.coste is not none else '') | tojson }},
-              "unidad": {{ op.unidad | tojson }},
+              "precio": {{ (op.precio | precio_mostrado(p.unidad, es_imperial)) | tojson }},
+              "coste": {{ ((op.coste | precio_mostrado(p.unidad, es_imperial)) if op.coste is not none else '') | tojson }},
+              "unidad": {{ (op.unidad | etiqueta_mostrada(p.unidad, es_imperial)) | tojson }},
               "categoria": {{ op.categoria | tojson }},
               "marca": {{ op.marca | tojson }},
               "modelo": {{ op.modelo | tojson }},
@@ -939,7 +949,7 @@
           "descomposicion": {% if p.descomposicion_cype %}{
             "origen": {{ (p.descomposicion_cype.origen or '') | tojson }},
             "codigo": {{ p.descomposicion_cype.codigo | tojson }},
-            "unidad": {{ p.descomposicion_cype.unidad | tojson }},
+            "unidad": {{ (p.descomposicion_cype.unidad | etiqueta_mostrada(p.unidad, es_imperial)) | tojson }},
             "filas": [
               {% for f in p.descomposicion_cype.filas if (f.tipo or '') != 'vacia' %}{
                 "tipo": {{ f.tipo | tojson }},
@@ -948,9 +958,9 @@
                 "codigo": {{ f.codigo | tojson }},
                 "unidad": {{ f.unidad | tojson }},
                 "descripcion": {{ f.descripcion | tojson }},
-                "rendimiento": {{ (f.rendimiento if f.rendimiento is not none else '') | tojson }},
-                "precio": {{ (f.precio_unitario if f.precio_unitario is not none else '') | tojson }},
-                "importe": {{ (f.importe if f.importe is not none else '') | tojson }},
+                "rendimiento": {{ ((f.rendimiento | rend_mostrado(p.unidad, es_imperial)) if (f.rendimiento is not none and (f.tipo or 'recurso') == 'recurso' and (f.unidad or '') != '%') else (f.rendimiento if f.rendimiento is not none else '')) | tojson }},
+                "precio": {{ ((f.precio_unitario | precio_mostrado(p.unidad, es_imperial)) if (f.precio_unitario is not none and (f.unidad or '') == '%') else (f.precio_unitario if f.precio_unitario is not none else '')) | tojson }},
+                "importe": {{ ((f.importe | precio_mostrado(p.unidad, es_imperial)) if f.importe is not none else '') | tojson }},
                 "numero": {{ f.numero_fila_excel | tojson }},
                 "celdas": {{ f.celdas | tojson }},
                 "formulas": {{ f.formulas | tojson }}
@@ -958,7 +968,7 @@
             ]
           }{% else %}null{% endif %},
           "mediciones": [
-            {% for m in p.mediciones %}{ "concepto": {{ m.concepto | tojson }}, "cantidad": {{ m.cantidad | tojson }} }{{ "," if not loop.last }}{% endfor %}
+            {% for m in p.mediciones %}{ "concepto": {{ m.concepto | tojson }}, "cantidad": {{ (m.cantidad | cant_mostrada(p.unidad, es_imperial)) | tojson }} }{{ "," if not loop.last }}{% endfor %}
           ]
         }{{ "," if not loop.last }}{% endfor %}
       ]
@@ -1068,6 +1078,10 @@
   window.COTIZAT_MONEDA_ACTIVA = {{ (presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | tojson }};
   window.COTIZAT_TASA_ACTIVA = {{ (presupuesto.tipo_cambio if presupuesto else cfg.tasa_cambio) | tojson }};
   window.COTIZAT_SIMBOLO_ACTIVO = {{ ((presupuesto.moneda if presupuesto else cfg.moneda_default or 'USD') | simbolo) | tojson }};
+  // Mercado imperial (EE. UU.): el selector de unidad de la partida ofrece
+  // ft/sq ft/cu yd/lb/gal. Las cantidades viajan tal cual se escriben; es el
+  // servidor quien normaliza a métrico al guardar, guiado por la unidad.
+  window.COTIZAT_UNIDADES_IMPERIALES = {{ (es_imperial or false) | tojson }};
   window.CATALOGO_DATOS_URL = {{ (url_datos_editor or '/presupuestos/editor/datos') | tojson }};
   // Respaldo del autocompletado de recursos de la ficha: si el índice
   // diferido todavía no llegó, la ficha consulta al servidor directamente.

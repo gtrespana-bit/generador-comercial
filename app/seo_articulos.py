@@ -358,13 +358,20 @@ def ficha_articulo(slug: str, lang: str = "es") -> dict | None:
     if lang == "en" and slug in ARTICULOS_EN:
         return ARTICULOS_EN[slug]
     # Los artículos británicos solo existen en inglés: pedirlos en español
-    # devolvería un texto que no está traducido.
+    # devolvería un texto que no está traducido. Los de Estados Unidos,
+    # Irlanda, Australia y Canadá viven en su propio módulo con la misma
+    # regla.
     if lang == "en":
         from .seo_reino_unido import articulo as _articulo_uk
 
         uk = _articulo_uk(slug)
         if uk:
             return uk
+        from .seo_articulos_mercados_en import articulo as _articulo_mercados_en
+
+        mercado = _articulo_mercados_en(slug)
+        if mercado:
+            return mercado
     return ARTICULOS.get(slug)
 
 
@@ -373,12 +380,15 @@ def lista_articulos() -> list[dict]:
 
 
 def lista_articulos_en() -> list[dict]:
-    """Artículos en inglés, incluidos los de mercado británico."""
+    """Artículos en inglés, incluidos los de mercado anglófono (GB + 4)."""
     from .seo_reino_unido import ORDEN_ARTICULOS as ORDEN_UK
     from .seo_reino_unido import articulo as _articulo_uk
+    from .seo_articulos_mercados_en import ORDEN_ARTICULOS as ORDEN_EN
+    from .seo_articulos_mercados_en import articulo as _articulo_mercados_en
 
     out = [ARTICULOS_EN[k] for k in ORDEN_ARTICULOS if k in ARTICULOS_EN]
     out.extend(_articulo_uk(slug) for slug in ORDEN_UK)
+    out.extend(_articulo_mercados_en(slug) for slug in ORDEN_EN)
     return [a for a in out if a]
 
 

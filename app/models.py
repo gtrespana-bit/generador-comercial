@@ -662,6 +662,32 @@ class Presupuesto(TenantMixin, Base):
     # (cliente particular, o servicio fuera del ámbito del CIS). Nunca se
     # deduce: lo fija Hacienda, no lo elige el contratista.
     cis_tipo = Column(Float, nullable=True)
+    # ``rct_tipo``: equivalente irlandés (Relevant Contracts Tax): 0, 20 o 35
+    # según el historial fiscal que Revenue tenga del subcontratista; el tipo
+    # definitivo llega en la autorización de deducción de cada pago (ROS).
+    # NULL = el documento no está bajo RCT (cliente particular u operación no
+    # relevante). Campo propio y no reutilizado del CIS porque la base es la
+    # contraria: el RCT retiene sobre el importe íntegro sin IVA, materiales
+    # incluidos, y heredar un tipo británico retendría mal. El
+    # ``iva_tratamiento`` sí se comparte: la inversión del sujeto pasivo
+    # irlandesa (VATCA 2010 s. 16(3)) es la misma pregunta con otra leyenda.
+    rct_tipo = Column(Float, nullable=True)
+    # ── Fiscalidad estadounidense («sales tax» por estado) ─────────────────
+    # En EE. UU. no basta el porcentaje: la mayoría de los estados ni
+    # siquiera cobra el impuesto al cliente (el contratista es consumidor
+    # final de los materiales), otros gravan solo materiales o solo mano
+    # de obra según el tipo de obra, y unos pocos aplican un impuesto
+    # sobre los ingresos brutos del contratista (Arizona, sobre el 65 %).
+    # ``estado_codigo`` es el estado DE LA OBRA (el impuesto sigue al lugar
+    # de la obra, no a la empresa; el default de empresa vive en
+    # ``Configuracion.empresa_estado_eeuu``). ``us_tax_base`` vacío =
+    # documento sin el motor (impuesto genérico de siempre); con modo, el
+    # motor de totales aplica el ``impuesto_pct`` sobre la base que
+    # corresponda. La lógica vive en ``services/fiscalidad_eeuu.py`` y los
+    # defaults investigados en ``docs/INVESTIGACION_FISCALIDAD_ESTADOS_UNIDOS.md``.
+    estado_codigo = Column(String(2), default="")
+    us_tax_base = Column(String(20), default="")
+    us_tax_fraccion = Column(Float, default=1.0)
     clausula_cambiaria = Column(Text, default="")
     # Total comercial congelado al guardar (misma cifra que el PDF). El panel
     # y el listado lo leen sin hidratar capítulos/partidas.
@@ -707,11 +733,16 @@ class Presupuesto(TenantMixin, Base):
     @property
     def _totales(self):
         from .services.calculations import calcular_totales
-        # El reparto del coste por categoría solo hace falta para la retención
-        # británica del CIS, así que se pide únicamente cuando el documento
-        # está bajo el CIS: el resto de los mercados no paga la segunda pasada
-        # por las descomposiciones.
-        return calcular_totales(self, con_costes_categoria=self.cis_tipo is not None)
+        # El reparto del coste por categoría hace falta para la retención
+        # británica del CIS y para la regla irlandesa de los dos tercios (el
+        # RCT no lo usa para su base —retiene el importe íntegro—, pero el
+        # aviso de tipo sí lo necesita), así que se pide únicamente cuando el
+        # documento está bajo alguna de las dos: el resto de los mercados no
+        # paga la segunda pasada por las descomposiciones.
+        return calcular_totales(
+            self,
+            con_costes_categoria=(self.cis_tipo is not None or self.rct_tipo is not None),
+        )
 
     @property
     def subtotal(self):
@@ -1396,6 +1427,11 @@ class Configuracion(TenantMixin, Base):
     empresa_legal = Column(String(250), default="")       # razón social
     empresa_rif = Column(String(50), default="")
     empresa_pais = Column(String(80), default="Venezuela")
+    # Estado de obra por defecto (solo EE. UU.): la mayoría de las empresas
+    # trabaja en un solo estado, así que el selector del presupuesto nace
+    # con este valor y se puede cambiar documento a documento. El estado
+    # manda porque el «sales tax» sigue al lugar de la obra.
+    empresa_estado_eeuu = Column(String(2), default="")
     empresa_ciudad = Column(String(120), default="")
     empresa_direccion = Column(Text, default="")
     empresa_telefono = Column(String(50), default="")
@@ -1872,12 +1908,26 @@ class Factura(TenantMixin, Base):
     fuente_tipo_cambio = Column(String(120), default="")
     impuesto_pct = Column(Float, default=16.0)
     descuento_pct = Column(Float, default=0.0)
-    # ── Fiscalidad británica: mismos campos que en el presupuesto ──────────
+    # ── Fiscalidad británico-irlandesa: mismos campos que el presupuesto ──
     # La factura es el documento que se declara en el CIS300, así que la
     # retención tiene que constar en ella. Se copian del presupuesto al
     # convertirlo, no se recalculan.
     iva_tratamiento = Column(String(30), default="")
     cis_tipo = Column(Float, nullable=True)
+    # RCT irlandés: se hereda igual que el CIS. Su base es el importe íntegro
+    # sin IVA, así que no depende de la instantánea de abajo; la instantánea
+    # solo alimenta, en su caso, el aviso de la regla de los dos tercios.
+    rct_tipo = Column(Float, nullable=True)
+    # Fiscalidad estadounidense: mismos campos que el presupuesto, heredados
+    # al convertirlo. ``us_base_gravada`` congela la base sobre la que se
+    # aplicó el tipo, porque el reparto materiales/mano de obra se estima
+    # con los costes del presupuesto y ``FacturaItem`` no guarda costes:
+    # sin la instantánea, la factura recalcularía otro impuesto distinto
+    # del presupuesto aprobado que la origina.
+    estado_codigo = Column(String(2), default="")
+    us_tax_base = Column(String(20), default="")
+    us_tax_fraccion = Column(Float, default=1.0)
+    us_base_gravada = Column(Float, nullable=True)
     # Instantánea del coste de materiales en el momento de emitir. El CIS
     # descuenta ese coste de la base de retención, y ``FacturaItem`` no guarda
     # costes: recalcularlo aquí rompería la regla de que la factura es una
@@ -1936,6 +1986,11 @@ class Factura(TenantMixin, Base):
     @property
     def impuesto_monto(self):
         from .services.calculations import money
+        # EE. UU.: la base gravada quedó congelada al emitir (el reparto
+        # materiales/mano de obra se estimó con los costes del presupuesto,
+        # que la factura no guarda). Sin instantánea, el cálculo genérico.
+        if (self.us_tax_base or "") and self.us_base_gravada is not None:
+            return float(money(self.us_base_gravada * self.impuesto_pct / 100.0))
         return float(money(self.base * self.impuesto_pct / 100.0))
 
     @property

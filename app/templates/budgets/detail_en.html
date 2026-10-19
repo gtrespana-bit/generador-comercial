@@ -233,8 +233,8 @@
           {% endif %}
           {% endif %}
         </td>
-        <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | money_iso(p.moneda) }}/{{ part.unidad }}</td>
+        <td class="right csp-s-463c663c8c">{{ (part.cantidad_total | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }}/{{ part.unidad | unidad_mostrada(es_imperial) }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(p.moneda) }}</td>
         <td class="right csp-s-0231bd7a8a">
           {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
@@ -258,7 +258,7 @@
       {% for m in part.mediciones %}
       <tr>
         <td class="csp-s-9908383064">{{ m.concepto or '–' }}</td>
-        <td class="right csp-s-71f9841409">{{ m.cantidad | cant(part.unidad) }}</td>
+        <td class="right csp-s-71f9841409">{{ (m.cantidad | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
         <td class="right csp-s-0dfe35f39a">—</td>
         <td class="right csp-s-0dfe35f39a">{{ (m.cantidad * part.precio_unitario) | money_iso(p.moneda) }}</td>
       </tr>
@@ -282,7 +282,7 @@
             {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
             {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
             {% if op_precio is not none %}
-            <strong class="csp-s-d5d7f32738">{{ op_precio | money_iso(p.moneda) }} / {{ op_unidad }}</strong>
+            <strong class="csp-s-d5d7f32738">{{ (op_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ op_unidad | etiqueta_mostrada(part.unidad, es_imperial) }}</strong>
             {% endif %}
           </div>
           {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
@@ -303,16 +303,16 @@
         {% endfor %}
       </div>
       {% if part.producto_precio is not none %}
-      <small class="hint doc-prod-desglose">Unit price breakdown: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · product {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      <small class="hint doc-prod-desglose">Unit price breakdown: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · product {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
       {% endif %}
     </div>
     {% else %}
     <div class="doc-prod">
       <strong>Product in the estimate:</strong>
-      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      {% if part.producto_precio is not none %}<strong>{{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ (part.producto_unidad or part.unidad) | etiqueta_mostrada(part.unidad, es_imperial) }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
       {% if part.producto_precio is not none %}
-      <br><small class="hint">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      <br><small class="hint">Desglose del P.U.: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · producto {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
       {% endif %}
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Product" loading="lazy" decoding="async">{% endif %}
     </div>
@@ -322,7 +322,7 @@
     <div class="hint csp-s-d703051526">
       Cost: {{ part.coste | money_iso(p.moneda) }} · Profit: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) | replace(".", ",") }}% on cost, {{ part.margen_beneficio_pct | num }}% margin)
       {% if part.producto_coste_pendiente %}
-      <br><strong>⚠ The product purchase cost is missing</strong>: the profit counted is only that of labor and resources (base of {{ (part.precio_unitario - (part.producto_precio or 0)) | money_iso(p.moneda) }} / {{ part.unidad }}). Enter it on the line item to see the real profit on the material.
+      <br><strong>⚠ The product purchase cost is missing</strong>: the profit counted is only that of labor and resources (base of {{ ((part.precio_unitario - (part.producto_precio or 0)) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}). Enter it on the line item to see the real profit on the material.
       {% endif %}
     </div>
     {% elif part.producto_coste_pendiente %}
@@ -361,10 +361,14 @@
     {% if p.descuento_pct %}
     <tr><td class="right">DISCOUNT ({{ p.descuento_pct | round(2) }} %)</td><td class="right">- {{ p.descuento_monto | money_iso(p.moneda) }}</td></tr>
     {% endif %}
-    {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %) — reverse charge (not charged)</td><td class="right">{{ 0 | money_iso(p.moneda) }}</td></tr>{% else %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money_iso(p.moneda) }}</td></tr>{% endif %}
+    {% if fiscalidad_us %}<tr><td class="right">{{ fiscalidad_us.nombre_impuesto | upper }} ({{ fiscalidad_us.estado_codigo }} {{ p.impuesto_pct | round(2) }} %){% if fiscalidad_us.modo == 'materials' %} — MATERIALS ONLY{% elif fiscalidad_us.modo == 'labor' %} — LABOR ONLY{% elif fiscalidad_us.modo == 'none' %} — NOT CHARGED TO THE CUSTOMER{% endif %}</td><td class="right">{{ p.impuesto_monto | money_iso(p.moneda) }}</td></tr>{% elif (fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo) or (fiscalidad_ie and fiscalidad_ie.con_inversion_sujeto_pasivo) %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %) — reverse charge (not charged)</td><td class="right">{{ 0 | money_iso(p.moneda) }}</td></tr>{% else %}<tr><td class="right">VAT ({{ p.impuesto_pct | round(2) }} %)</td><td class="right">{{ p.impuesto_monto | money_iso(p.moneda) }}</td></tr>{% endif %}
     {% if fiscalidad_gb and fiscalidad_gb.cis_aplica %}<tr><td class="right">LABOUR ELEMENT SUBJECT TO DEDUCTION</td><td class="right">{{ fiscalidad_gb.base_cis | money_iso(p.moneda) }}</td></tr><tr><td class="right">CIS DEDUCTION ({{ fiscalidad_gb.cis_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_gb.retencion_cis | money_iso(p.moneda) }}</td></tr>{% endif %}
-    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_gb %}TOTAL PAYABLE{% if fiscalidad_gb.cis_aplica %} (after CIS deduction){% endif %}{% else %}ESTIMATE TOTAL{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else p.total) | money_iso(p.moneda) }}</strong></td></tr>
+    {% if fiscalidad_ie and fiscalidad_ie.rct_aplica %}<tr><td class="right">RCT DEDUCTION ({{ fiscalidad_ie.rct_tipo | round(2) }} %)</td><td class="right">- {{ fiscalidad_ie.retencion_rct | money_iso(p.moneda) }}</td></tr>{% endif %}
+    <tr class="row-total"><td class="right"><strong>{% if fiscalidad_ie and (fiscalidad_ie.rct_aplica or fiscalidad_ie.con_inversion_sujeto_pasivo) %}TOTAL PAYABLE{% if fiscalidad_ie.rct_aplica %} (after RCT deduction){% endif %}{% elif fiscalidad_gb %}TOTAL PAYABLE{% if fiscalidad_gb.cis_aplica %} (after CIS deduction){% endif %}{% else %}ESTIMATE TOTAL{% endif %}</strong></td><td class="right"><strong>{{ (fiscalidad_ie.total_a_cobrar if fiscalidad_ie and (fiscalidad_ie.rct_aplica or fiscalidad_ie.con_inversion_sujeto_pasivo) else (fiscalidad_gb.total_a_cobrar if fiscalidad_gb else p.total)) | money_iso(p.moneda) }}</strong></td></tr>
     {% if fiscalidad_gb and fiscalidad_gb.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_gb.leyenda_iva }}</td></tr>{% endif %}
+    {% if fiscalidad_ie and fiscalidad_ie.con_inversion_sujeto_pasivo %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_ie.leyenda_iva }}</td></tr>{% endif %}
+    {% if fiscalidad_us %}<tr><td class="right csp-s-6b643de52a" colspan="2">{{ fiscalidad_us.leyenda }}</td></tr>{% endif %}
+    {% if fiscalidad_us and fiscalidad_us.avisos %}{% for aviso in fiscalidad_us.avisos %}<tr><td class="right csp-s-6b643de52a" colspan="2">⚠ {{ aviso }}</td></tr>{% endfor %}{% endif %}
   </table>
 </div>
 

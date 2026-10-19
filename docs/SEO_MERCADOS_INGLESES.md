@@ -87,10 +87,39 @@ RCT, prime cost) y conserva el schema `FAQPage` visible en la página.
 - **Sitemap y enlaces coinciden**: las cinco URLs `/en-xx/` están en la
   portada, en el mapa del sitio y en `sitemap.xml`.
 
+### 2.5 Cola larga y titulares (19-10-2026)
+
+Auditoría previa a la fusión de la rama de mercados: la técnica era
+sólida (canónicas, hreflang de 25 mercados, JSON-LD completo), pero solo
+GB tenía artículos long-tail y había tres defectos:
+
+- **Artículos por mercado** (`app/seo_articulos_mercados_en.py`): 12
+  guías nuevas (3 por mercado, ~800–1.100 palabras) con el patrón que
+  funciona en GB — qué debe llevar el documento, cómo se grava, qué
+  cuesta la mano de obra. Las cifras son las investigadas (BLS OEWS,
+  SEO, awards MA000020/25/36, Job Bank) convertidas a coste empresa, y
+  la tabla de sales tax de los 51 estados se **genera** desde
+  `app/services/fiscalidad_eeuu.py`: la guía no puede desincronizarse
+  del motor. La plantilla de guía admite tablas HTML reales.
+- **Titulares propios por mercado**: landing y hub compartían `<title>`
+  y H1 en los cuatro mercados (canibalización del término principal), y
+  la meta de EE. UU. se recortaba en «…, sales.». Cada mercado declara
+  ahora titular/descripción de landing y de hub con su oficio local
+  («US contractors», «Irish builders», «Aussie builders and tradies»,
+  «Canadian contractors»), y el recortador ya no deja conectores
+  colgando («analysis and.»). Los hubs suman cuerpo de mercado
+  (~570 → ~800 palabras) y las landings publican la sección «2026 prices
+  behind the catalog» con las anclas de su matriz.
+- **Duplicados de guía cerrados**: `/en-us/guia/<artículo GB>` devolvía
+  200 con la canónica a `/en-gb/` (5 URLs rastreables por documento);
+  ahora es 404 si el artículo no es del mercado del prefijo. El bloque
+  «seguir leyendo» enlaza solo guías del mismo mercado, el mapa del
+  sitio en inglés lista las 16 y el sitemap las anuncia todas.
+
 ## 3. Cómo comprobarlo
 
 ```bash
-.venv/bin/python -m pytest tests/test_presencia_mercados_angloparlantes.py -q
+.venv/bin/python -m pytest tests/test_presencia_mercados_angloparlantes.py tests/test_seo_guias_mercados_en.py -q
 ```
 
 34 pruebas que fijan: los cinco mercados en los accesos directos, la tabla
@@ -106,11 +135,19 @@ En producción, con el servidor en marcha:
 
 ## 4. Lo que sigue pendiente (y no se disimula)
 
-- **Precios.** Solo Reino Unido tiene matriz cargada (388 recursos). US, AU,
-  CA e IE tienen catálogo, moneda, impuesto y terminología, pero **no**
-  estudio de precios propio: por eso su texto explica cómo se presupuesta y
-  no publica cifras de mercado. Cuando cada uno tenga su matriz, las cifras
-  entran en su landing y en su hub.
-- **Irlanda** necesita además reverificar la tasa EUR (sigue en 25-08-2026).
-- **Enlaces entrantes y medición.** Igual que en Reino Unido: el contenido
-  está, la autoridad de dominio se construye fuera del código.
+- **Precios.** ~~Solo Reino Unido tiene matriz cargada~~ — resuelto el
+  19-10-2026: IE, AU, CA y US tienen matriz investigada (388 recursos) y
+  su texto ya publica las cifras ancla (§2.5). La carga del SQL de EE. UU.
+  sigue pendiente en `docs/PENDIENTES_OPERATIVOS.md` (fila 19).
+- **Enlaces entrantes y medición.** El contenido está; la autoridad de
+  dominio se construye fuera del código (directorios de software por país,
+  reseñas). Alta/verificación de Search Console y envío del sitemap es
+  operación del titular tras desplegar.
+- **URLs con slug en español** (`/en-us/software-presupuestos`,
+  `/en-ca/remodelacion`, `/en-ie/apu`): son las URL históricas, compartidas
+  con LatAm; cambiarlas exigiría 301 sobre lo ya indexado a cambio de un
+  factor menor. Los artículos nuevos sí nacen con slug en inglés. Revisar
+  solo si Search Console muestra que el slug daña el CTR.
+- **Ejemplo demo localizado** en las landings de IE/AU/CA (GB y US lo
+  tienen; `app/services/landing_ejemplo.py`): suma prueba visual por
+  mercado y es el siguiente paso natural tras la fusión.

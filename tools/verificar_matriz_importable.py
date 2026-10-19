@@ -12,6 +12,8 @@ Uso:
     python3 tools/verificar_matriz_importable.py GB
     python3 tools/verificar_matriz_importable.py ES
     python3 tools/verificar_matriz_importable.py IE
+    python3 tools/verificar_matriz_importable.py AU
+    python3 tools/verificar_matriz_importable.py CA
 """
 from __future__ import annotations
 
@@ -103,7 +105,7 @@ def verificar(mercado: str) -> int:
     )
 
     mercado = mercado.strip().upper()
-    sufijo = {"ES": "espana", "GB": "reino_unido", "IE": "irlanda"}.get(mercado)
+    sufijo = {"ES": "espana", "GB": "reino_unido", "IE": "irlanda", "AU": "australia", "CA": "canada", "US": "estados_unidos"}.get(mercado)
     if sufijo is None:
         raise SystemExit(f"Mercado no soportado: {mercado}")
     matriz = ROOT / f"basedatos_partidas/salida/precios_recursos_{sufijo}.csv"

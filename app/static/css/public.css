@@ -4601,6 +4601,25 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 }
 .guia-articulo { padding: 2.4rem 1.5rem 1rem; max-width: 760px; margin: 0 auto; }
 .guia-articulo .hub-bloque p { margin: 0 0 0.85rem; }
+/* Tablas de datos en las guías (tarifas por oficio, estados, provincias):
+   el formato que buscadores y lectores escanean; con scroll horizontal en
+   móvil para no romper el ancho de lectura. */
+.guia-tabla-wrap { overflow-x: auto; margin: 0.4rem 0 0.9rem; }
+.guia-tabla {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.guia-tabla th, .guia-tabla td {
+  border: 1px solid rgba(18,63,120,.18);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+.guia-tabla thead th { background: rgba(18,63,120,.08); font-weight: 700; }
+.guia-tabla tbody tr:nth-child(even) { background: rgba(18,63,120,.03); }
+.guia-tabla-nota { font-size: 0.85rem; color: var(--text-secondary); }
 
 /* ───────────────────── Landing · pulido premium global ───────────────────── */
 /* Refinamientos encima de estilos de sección existentes: elevan la sensación

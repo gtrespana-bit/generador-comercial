@@ -67,6 +67,13 @@ class Totales:
     # elemento de mano de obra, así que hay que poder restar los materiales.
     # En cualquier otro mercado se queda a cero y no se usa.
     coste_materiales: Decimal = Decimal("0")
+    # EE. UU.: precio de venta estimado de los materiales dentro de la base
+    # (la parte de obra repartida por coste + la venta de productos) y la
+    # base que el tipo grava según el modo elegido («solo materiales»,
+    # «ingresos brutos al 65 %»…). Fuera del motor estadounidense,
+    # ``us_base_gravada`` coincide con la base y nadie la lee.
+    venta_materiales: Decimal = Decimal("0")
+    us_base_gravada: Decimal = Decimal("0")
 
     @property
     def coste_productos_incompleto(self) -> bool:
@@ -422,7 +429,15 @@ def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales
     que hoy solo necesita el Reino Unido para la retención del CIS. Se deja
     apagado por defecto porque recorre las descomposiciones por segunda vez y
     el PDF ya es el camino más pesado de la aplicación.
+
+    Excepción: el motor estadounidense en modo «solo materiales» o «solo
+    mano de obra» fuerza esa pasada él mismo, porque de ella depende el
+    propio impuesto (no un dato informativo): quien llame sin pedirla
+    —p. ej. al congelar ``total_calculado``— seguiría obteniendo la
+    cifra correcta.
     """
+    modo_us = str(getattr(presupuesto, "us_tax_base", "") or "").strip()
+    necesita_categoria = con_costes_categoria or modo_us in ("materials", "labor")
     incluido = Decimal("0")
     opcional = Decimal("0")
     alternativas = Decimal("0")
@@ -468,7 +483,7 @@ def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales
             importe_obra = money(importe - importe_producto)
             coste_obra_partida_total = coste_obra_partida(partida)
 
-            if con_costes_categoria:
+            if necesita_categoria:
                 coste_materiales += costes_obra_partida(partida)["materiales"]
             coste_interno += money(coste_obra_partida_total + coste_producto)
             total_productos += importe_producto
@@ -498,11 +513,13 @@ def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales
     bruto = money(base_partidas + costes_adicionales)
     descuento = money(bruto * pct(getattr(presupuesto, "descuento_pct", 0)) / 100)
     base = money(bruto - descuento)
-    impuesto = money(base * pct(getattr(presupuesto, "impuesto_pct", 0)) / 100)
-    total = money(base + impuesto)
 
     # El descuento comercial se reparte proporcionalmente entre obra y
     # productos para que ambos márgenes reflejen el ingreso neto real.
+    # (Se calcula antes del impuesto porque el motor estadounidense
+    # necesita la base de obra y la de productos por separado para
+    # estimar el precio de venta de los materiales; el reparto no
+    # depende del impuesto, así que el resto de mercados no cambia.)
     if bruto > 0:
         bruto_obra = money(subtotal_obra + costes_adicionales)
         bruto_productos = total_productos
@@ -519,6 +536,30 @@ def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales
 
     base_obra = money(bruto_obra - descuento_obra)
     base_productos = money(bruto_productos - descuento_productos)
+
+    # Impuesto. Con el motor estadounidense activo (modo elegido en el
+    # documento) el tipo no cae sobre la base completa sino sobre la que
+    # el estado grava: nada en los estados «contratista consumidor»,
+    # solo materiales, solo mano de obra, o una fracción de los ingresos
+    # brutos. Sin modo —todos los demás mercados y los documentos
+    # anteriores— el cálculo es el de siempre.
+    tipo_impuesto = pct(getattr(presupuesto, "impuesto_pct", 0))
+    if modo_us in ("none", "materials", "labor", "full", "gross_receipts"):
+        from .fiscalidad_eeuu import base_gravada_eeuu, estimar_venta_materiales
+
+        venta_materiales = estimar_venta_materiales(
+            base_obra, base_productos, coste_materiales, coste_obra
+        )
+        us_base_gravada = base_gravada_eeuu(
+            modo_us, base, venta_materiales,
+            getattr(presupuesto, "us_tax_fraccion", 1.0),
+        )
+        impuesto = money(us_base_gravada * tipo_impuesto / 100)
+    else:
+        venta_materiales = Decimal("0")
+        us_base_gravada = base
+        impuesto = money(base * tipo_impuesto / 100)
+    total = money(base + impuesto)
 
     # Los productos cuyo coste de compra NO consta quedan fuera del margen:
     # su venta no es beneficio (es un dato que falta) y tampoco se puede
@@ -562,4 +603,6 @@ def calcular_totales(presupuesto, con_costes_categoria: bool = False) -> Totales
         margen_obra_pct=_pct_sobre_base(margen_obra, base_obra),
         base_productos=base_productos,
         coste_materiales=coste_materiales,
+        venta_materiales=venta_materiales,
+        us_base_gravada=us_base_gravada,
     )

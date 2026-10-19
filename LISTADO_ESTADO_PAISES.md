@@ -87,6 +87,10 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | País | Código | Moneda | IVA | ID Fiscal | Terminología | Recursos nacionales | Tasa verificada | SEO | Estado |
 |---|---|---|---|---|---|---|---|---|---|
 | Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
+| Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada, verificada y cargada en producción (19-10-2026)** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
+| Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
+| Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
+| Estados Unidos | US | USD | «Sales tax» estatal+local, sin tipo nacional (media combinada 7,53 %) | EIN | Base inglesa (en-US) | 388 `precios_recursos_estados_unidos.csv` — 52 anclas investigadas (13 %) + ~83 derivados explícitos, **generada y verificada (19-10-2026), pendiente de carga** | 1.0 (la base ya es USD) | `/en-us/` | **FASES 0, 1 Y 2 HECHAS (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -112,5 +116,143 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   cuerpo en español. Detalle en `docs/SEO_REINO_UNIDO.md`.
 - **Pendiente (no es código):** enlaces entrantes y medición en Search Console.
 
-**Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
-requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.
+**Irlanda — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en EUR, base coste empresa,
+  sin IVA. Cobertura: mano de obra 17/17, maquinaria 29 referencias + 15 por
+  analogía declarada, materiales 60/327 investigados (18 %) — total 106 anclas
+  `referencia` (27 %) y 128 precios explícitos. Irlanda publica menos listas que
+  GB: el hormigón se ancla en Hanly Quarries (única lista pública de la
+  República, con el DCPL del 5 % dentro) y la maquinaria en Mr Hire. Validada
+  con el importador real (`tools/verificar_matriz_importable.py IE`): 388
+  filas, 0 errores. Detalle en `docs/INVESTIGACION_PRECIOS_IRLANDA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_IRLANDA.md`.
+- **Mano de obra.** Construction SEO desde 01-08-2026 (craft 23,74 €/h) y,
+  porque los SEO eléctrico y mecánico fueron anulados, escalas pactadas AECI
+  (electricista 27,60) y Connect (fontanero 29,12). PRSI empresa 11,40 % desde
+  01-10-2026 + CWPS 36,43 €/semana, sobre 1.747,2 h facturables
+  (`tools/coste_empresa_irlanda.py`). El peón irlandés (29,60 €/h coste
+  empresa) cuesta más que el oficial español (21,00).
+- **Tasa EUR reverificada:** 0,8886 (BCE 16/10/2026), compartida con España.
+- **Fase 1 — fiscalidad. Hecha (19-10-2026).** Motor RCT propio
+  (`app/services/fiscalidad_irlanda.py`): retención 0/20/35 % sobre el
+  **importe íntegro sin IVA, materiales incluidos** — lo contrario del CIS
+  británico, que solo retiene mano de obra —, inversión del sujeto pasivo
+  (s. 16(3) VATCA 2010) con la leyenda literal de Revenue y aviso de la regla
+  de los dos tercios (materiales > ⅔ ⇒ 23 % en lugar de 13,5 %). Columna
+  nueva `rct_tipo` (migración `m8e1f4a7b2c5`), `iva_tratamiento` compartido
+  con GB, bloque 🇮🇪 en el editor, herencia a factura y al duplicar, fila RCT
+  en detalle y PDF. La landing describía el RCT sobre la mano de obra —
+  estilo CIS — y se ha corregido el texto el mismo día: ahora dice lo que
+  hace el motor y lo que manda Revenue.
+- **Producción: hecho (19-10-2026).** Migración `m8e1f4a7b2c5` aplicada y
+  matriz cargada en Supabase (confirmado por el titular; registro en
+  `docs/PENDIENTES_OPERATIVOS.md` §15). Irlanda queda como Reino Unido
+  salvo el SEO de cola larga.
+
+**Australia — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en AUD, base coste empresa,
+  sin GST. Cobertura: mano de obra 17/17; total 56 anclas `referencia` (14 %) y
+  ~75 precios explícitos por analogía declarada. Australia es el mercado con
+  menos precios públicos de la expansión: el canal profesional (Cooper, cuentas
+  ABN) y las grandes de alquiler (Coates, Kennards) no publican listas, así que
+  las anclas salen de merchants medianos con tienda online, Bunnings (÷1,1 para
+  quitar el GST) y listas de hire independientes. Validada con el importador
+  real (`tools/verificar_matriz_importable.py AU`): 388 filas, 0 errores.
+  Detalle en `docs/INVESTIGACION_PRECIOS_AUSTRALIA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_AUSTRALIA.md`.
+- **Mano de obra.** Modern Awards de la Fair Work Commission desde 01-07-2026:
+  Building MA000020 (CW3 1.119,10 $/semana + industry 67,15 + tool por oficio),
+  Electrical MA000025 grado 5 (31,13 $/h) y Plumbing MA000036 L1 (31,63 $/h).
+  Superannuation guarantee 12 % + workers comp NSW 4,95 % + LSL 1,7 % + leave
+  loading 17,5 % + fares & travel 22,41 $/día, sobre 1.688 h facturables
+  (13 RDO al año) → oficial 48,06 $/h coste empresa (`tools/coste_empresa_australia.py`).
+  Payroll tax excluido (umbral NSW 1,2 M$). Perfil NSW para seguros y residuos
+  (waste levy 180,20 $/t).
+- **Producción: matriz cargada (19-10-2026).** Queda la futura Fase 1
+  (retención por falta de ABN 47 %, *taxable payments annual report* TPAR,
+  GST), análoga a CIS/RCT.
+
+**Canadá — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en CAD, base coste empresa,
+  sin GST/HST. Cobertura: mano de obra 17/17; total 52 anclas `referencia` (13 %)
+  y ~80 precios explícitos por analogía declarada. Canadá es el caso inverso a
+  Australia: el retail publica precio y **sin impuestos** («+ taxes»), dos
+  productores dan lista de planta del hormigón (CBM/Ontario Redi-Mix 2026) y
+  Hamilton Builders' Supply publica su guía mayorista completa; a cambio no hay
+  escala salarial legal del sector. Validada con el importador real
+  (`tools/verificar_matriz_importable.py CA`): 388 filas, 0 errores. Detalle en
+  `docs/INVESTIGACION_PRECIOS_CANADA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_CANADA.md`.
+- **Mano de obra.** Medianas Job Bank de **Ontario** (19/11/2025, referencia
+  2023-24) elevadas un 5 % a oct-2026 — el mismo enfoque que GB con la ONS, no
+  un suelo legal como IE/AU —. CPP empresa 5,95 % con techo YMPE 74.600 $ +
+  CPP2 4 %, EI 2,282 % con techo 68.900 $, WSIB por clase (G1 2,18 / G3 3,55 /
+  G4 1,54 / G5 2,15 %), vacation pay 4 %, divisor de 1.904 h (solo 2 semanas
+  ESA de vacaciones) → oficial 42,09 $/h, peón 35,84 (`tools/coste_empresa_canada.py`).
+  El cabillero (rodworker, suboficio del ironworker) es el más caro: 50,66.
+  Rango −10 %/+25 % (base mediana); el paquete sindical ICI del GTA queda por
+  encima, documentado. EHT excluido (exención 1 M$).
+- **Producción: matriz cargada (19-10-2026).** Queda la futura Fase 1
+  fiscal (GST/HST y la declaración T5018 de pagos a subcontratistas de
+  construcción).
+
+**Estados Unidos — estado real (2026-10-19).**
+
+- **Análisis previo hecho** (`docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`): EE. UU. es el único
+  mercado que exige código además de datos — cantidades imperiales en la interfaz (hoy el
+  conversor imperial solo actúa sobre precios al importar; la landing lo afirmaba para las
+  cantidades y **se ha corregido el texto en este mismo corte — y restaurado al hacerse la
+  Fase 1, ver abajo —**) y un impuesto que en la
+  mayoría de estados ni siquiera se cobra al cliente. Decisiones del titular (19-10-2026):
+  capa de entrada/lectura imperial (almacenamiento métrico), motor fiscal por **estado de la
+  obra con modo de base imponible** (patrón CIS/RCT), y Fase 0 primero.
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en USD, base coste empresa, sin
+  «sales tax» (la estantería publica antes de impuestos, como en Canadá). Cobertura: mano de
+  obra 17/17; total 52 anclas `referencia` (13 %) y ~83 precios explícitos por analogía
+  declarada. Mercado imperial en el comercio pero matriz publicada en la unidad métrica del
+  recurso (la carga por SQL no convierte; la conversión investigada queda citada en cada
+  ancla: $/yd³→$/m³, saco de 94 lb, placa 4×8 ft, $/gal→$/l). Validada con el importador real
+  (`tools/verificar_matriz_importable.py US`): 388 filas, 0 errores. Detalle en
+  `docs/INVESTIGACION_PRECIOS_ESTADOS_UNIDOS.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_ESTADOS_UNIDOS.md`.
+- **Mano de obra.** Medianas **nacionales BLS OEWS mayo 2025** (15/05/2026) elevadas un 5 % a
+  oct-2026. FICA empresarial 7,65 % (Seguridad Social con base 184.500 $, no vinculante) +
+  FUTA neto 0,6 % + SUTA representativo 2,7 % + **workers' compensation por clase NCCI**
+  (4,00 electricidad → 10,00 acero de refuerzo), sobre 1.912 h trabajadas (2.080 pagadas con
+  PTO dentro) → oficial (carpintero) 39,07 $/h, peón 30,68; el fontanero es el más caro
+  (40,21) y el cabillero empata con el oficial por su clase de seguro
+  (`tools/coste_empresa_eeuu.py`). Rango −15 %/+35 %, el más ancho de la expansión: la
+  dispersión estatal/metro del OEWS es de ±20-40 %. Seguro médico y jubilación fuera (no son
+  obligación federal para la pyme), documentado.
+- **Fase 1 — cantidades imperiales. Hecha (19-10-2026).** El editor, el detalle, el PDF
+  (también el interactivo) y las exportaciones trabajan en **ft / sq ft / cu yd / gal / lb**
+  para la empresa estadounidense, con el almacenamiento siempre en métrico: la propia unidad
+  es la marca que dispara la conversión al guardar, sin migración. Catálogo (ficha, buscador,
+  índice, guardar desde el editor), packs, plantillas, mediciones de plano e importaciones
+  incluidos; la afirmación de la landing sobre cantidades vuelve a ser cierta y está
+  restaurada. Interior del APU y CRUD de catálogo en métrico (superficie del operador).
+  Detalle y límites deliberados en §9 de `docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`;
+  19 tests (`tests/test_unidades_imperiales.py`).
+- **Fase 2 — fiscalidad por estado. Hecha (19-10-2026).** Selector del **estado de la obra**
+  (default de empresa en Configuración, editable por documento) con **modo de base** por
+  estado: sin cobrar al cliente (la mayoría: el contratista paga el impuesto en los
+  materiales), solo materiales, solo mano de obra (Kansas comercial), importe completo
+  (Washington) o ingresos brutos con fracción (Arizona 65 %, GET de Hawái, GRT de Nuevo
+  México, «excise» de Dakota del Sur). 51 defaults investigados (modo + tipo combinado medio
+  Tax Foundation midyear 2026 como punto de partida) en
+  `docs/INVESTIGACION_FISCALIDAD_ESTADOS_UNIDOS.md`; el impuesto correcto entra en el motor
+  de totales (no es un adorno del PDF) y el reparto materiales/mano de obra se estima con
+  los costes del presupuesto. Migración `n9f2a5b8c3d6`. 41 tests
+  (`tests/test_fiscalidad_estados_unidos.py`).
+- **Producción: pendientes DOS ejecuciones** — la carga de la matriz
+  (`docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`, fila 19 de
+  `docs/PENDIENTES_OPERATIVOS.md`) y la **migración** (`docs/staging_upgrade_n9f2a5b8c3d6.sql`,
+  fila 20, **antes de desplegar** el código: el runtime exige el nuevo head). Con las tres
+  fases construidas, Estados Unidos queda completo a falta de esas dos ejecuciones.
+
+**Orden de apertura:** GB → IE → AU → CA → US, los cinco con su Fase 0 hecha a 19-10-2026.
+El Reino Unido es métrico, así que no requiere conversión de unidades; el sistema imperial
+queda como necesidad exclusiva de EE. UU. (Fase 1 aprobada, pendiente de construir).

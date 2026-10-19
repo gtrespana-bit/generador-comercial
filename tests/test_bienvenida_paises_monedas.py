@@ -88,7 +88,7 @@ def test_bienvenida_lista_las_monedas_completas(entorno, cliente_web):
 
 def test_bienvenida_tasa_eur_esta_disponible_en_el_json(entorno, cliente_web):
     """El JSON de tasas inyectado al wizard incluye la tasa EUR verificada
-    (≈ 0.8886), para que el placeholder del campo tasa se personalice al
+    (≈ 0.8886, BCE 16/10/2026), para que el placeholder del campo tasa se personalice al
     elegir España.
     """
     Session, _ids, _rol = entorno
