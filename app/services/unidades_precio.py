@@ -765,4 +765,3 @@ def receta_a_mostrada(receta: dict, imperial: bool) -> dict:
         items.append(nuevo)
     salida["items"] = items
     return salida
-

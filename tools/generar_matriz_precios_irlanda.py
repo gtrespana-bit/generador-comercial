@@ -669,7 +669,7 @@ def main() -> int:
     campos = list(filas[0].keys())
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with OUT.open("w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=campos, delimiter=";")
+        w = csv.DictWriter(fh, fieldnames=campos, delimiter=";", lineterminator="\n")
         w.writeheader()
         w.writerows(filas)
 
