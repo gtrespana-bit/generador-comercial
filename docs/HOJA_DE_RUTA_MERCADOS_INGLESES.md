@@ -30,7 +30,9 @@ una estimación o un juicio, se dice expresamente.
 | Irlanda · Fase 0 — estudio de precios y matriz EUR | **Hecho** | esta rama (`docs/INVESTIGACION_PRECIOS_IRLANDA.md`) |
 | Irlanda · Fase 1 — RCT e inversión del sujeto pasivo | **Hecho** | esta rama (`app/services/fiscalidad_irlanda.py`) |
 | Irlanda · carga de la matriz y migración en producción | Pendiente | SQL ya generado (`docs/staging_upgrade_m8e1f4a7b2c5.sql`) |
-| Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
+| Australia · Fase 0 — estudio de precios y matriz AUD | **Hecho** | esta rama (`docs/INVESTIGACION_PRECIOS_AUSTRALIA.md`) |
+| Australia · carga de la matriz en producción | Pendiente | SQL ya generado (`docs/cargar_precios_referencia_australia_2026-10-19.sql`) |
+| Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
 
 **Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
 SEO. La matriz de 388 recursos está cargada, la migración `l7d0e3f6a9c4` está
@@ -40,7 +42,9 @@ cuatro artículos con URL propia (`docs/SEO_REINO_UNIDO.md`).
 Lo que queda ya no es un bloqueo técnico: Irlanda tiene su estudio de precios,
 su matriz generada y verificada y su Fase 1 fiscal (RCT) hecha (19-10-2026),
 a falta solo de cargar la matriz y aplicar la migración `m8e1f4a7b2c5` en
-producción, y Australia, Canadá y Estados Unidos necesitan cada uno su
+producción; Australia tiene su estudio de precios y su matriz generada y
+verificada (19-10-2026), a falta solo de cargarla en producción y de su
+Fase 1 fiscal, y Canadá y Estados Unidos necesitan cada uno su
 estudio de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
 **conseguir enlaces entrantes y medir** en Search Console: el contenido está,
 la autoridad de dominio se construye fuera del código.
@@ -287,7 +291,7 @@ abre un mercado sin él.
 | Mercado | Unidades | Moneda | Situación |
 |---|---|---|---|
 | **Irlanda** | métrico | EUR | **Estudio de precios y Fase 1 (RCT) hechos (19-10-2026)**; falta cargar la matriz y migrar en producción |
-| **Australia** | métrico | AUD | Conducto listo; falta estudio de precios |
+| **Australia** | métrico | AUD | **Estudio de precios hecho (19-10-2026)**; falta cargar la matriz y la Fase 1 fiscal (ABN/TPAR) |
 | **Canadá** | métrico | CAD | Conducto listo; falta estudio de precios |
 | **Estados Unidos** | **imperial** | USD | Conversión de unidades hecha; falta estudio de precios |
 
@@ -306,7 +310,7 @@ estudio de precios, y sin él no se abren a clientes.
 |---|---|---|---|---|
 | Reino Unido | `/en-gb/` | Sí (+ 4 artículos) | Sí | **Cargada** |
 | Estados Unidos | `/en-us/` | Sí | Sí | Pendiente |
-| Australia | `/en-au/` | Sí | Sí | Pendiente |
+| Australia | `/en-au/` | Sí | Sí | **Generada y verificada**; pendiente de carga |
 | Canadá | `/en-ca/` | Sí | Sí | Pendiente |
 | Irlanda | `/en-ie/` | Sí | Sí | **Generada y verificada**; pendiente de carga |
 
@@ -346,7 +350,10 @@ entonces.
    `docs/cargar_precios_referencia_irlanda_2026-10-19.sql` en el SQL Editor,
    ya generado) y aplicar la migración `m8e1f4a7b2c5`
    (`docs/staging_upgrade_m8e1f4a7b2c5.sql`).
-5. **Australia y Canadá** después, cada uno con su matriz.
+5. **Australia** (Fase 0 hecha el 19-10-2026): cargar la matriz en producción
+   (`docs/cargar_precios_referencia_australia_2026-10-19.sql`, ya generado) y
+   Fase 1 fiscal — retención del 47 % por falta de ABN, *taxable payments
+   annual report* (TPAR) y GST al 10 %. **Canadá** después, con su matriz.
 6. **Estados Unidos** al final: imperial y el que más exige.
 
 ---

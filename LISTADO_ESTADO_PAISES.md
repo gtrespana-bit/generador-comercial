@@ -88,6 +88,7 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 |---|---|---|---|---|---|---|---|---|---|
 | Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
 | Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada y verificada; pendiente de carga** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
+| Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada y verificada; pendiente de carga** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -147,6 +148,31 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   aplicar la migración `m8e1f4a7b2c5`
   (`docs/staging_upgrade_m8e1f4a7b2c5.sql`). Con eso Irlanda queda como Reino
   Unido salvo el SEO de cola larga.
+
+**Australia — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en AUD, base coste empresa,
+  sin GST. Cobertura: mano de obra 17/17; total 56 anclas `referencia` (14 %) y
+  ~75 precios explícitos por analogía declarada. Australia es el mercado con
+  menos precios públicos de la expansión: el canal profesional (Cooper, cuentas
+  ABN) y las grandes de alquiler (Coates, Kennards) no publican listas, así que
+  las anclas salen de merchants medianos con tienda online, Bunnings (÷1,1 para
+  quitar el GST) y listas de hire independientes. Validada con el importador
+  real (`tools/verificar_matriz_importable.py AU`): 388 filas, 0 errores.
+  Detalle en `docs/INVESTIGACION_PRECIOS_AUSTRALIA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_AUSTRALIA.md`.
+- **Mano de obra.** Modern Awards de la Fair Work Commission desde 01-07-2026:
+  Building MA000020 (CW3 1.119,10 $/semana + industry 67,15 + tool por oficio),
+  Electrical MA000025 grado 5 (31,13 $/h) y Plumbing MA000036 L1 (31,63 $/h).
+  Superannuation guarantee 12 % + workers comp NSW 4,95 % + LSL 1,7 % + leave
+  loading 17,5 % + fares & travel 22,41 $/día, sobre 1.688 h facturables
+  (13 RDO al año) → oficial 48,06 $/h coste empresa (`tools/coste_empresa_australia.py`).
+  Payroll tax excluido (umbral NSW 1,2 M$). Perfil NSW para seguros y residuos
+  (waste levy 180,20 $/t).
+- **Pendiente (producción):** cargar la matriz
+  (`docs/cargar_precios_referencia_australia_2026-10-19.sql`, ya generado, o el
+  CSV por el panel de operador) y la futura Fase 1 (retención por falta de ABN
+  47 %, *taxable payments annual report* TPAR, GST), análoga a CIS/RCT.
 
 **Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
 requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.
