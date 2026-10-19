@@ -346,7 +346,7 @@ def test_bienvenida_espana_habla_espanol(entorno, cliente_web):
     assert "S.L." in resp.text
     assert "Madrid" in resp.text
     # Tasa verificada EUR del servidor, visible en el wizard
-    assert "0.8564" in resp.text
+    assert "0.8886" in resp.text
 
 
 def test_partidas_se_muestran_en_espanol_y_en_eur(entorno, cliente_web):

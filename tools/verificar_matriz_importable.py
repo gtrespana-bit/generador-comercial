@@ -11,6 +11,7 @@ recursos, que se levanta de ``basedatos_partidas/datos/recursos.json``.
 Uso:
     python3 tools/verificar_matriz_importable.py GB
     python3 tools/verificar_matriz_importable.py ES
+    python3 tools/verificar_matriz_importable.py IE
 """
 from __future__ import annotations
 
@@ -102,7 +103,7 @@ def verificar(mercado: str) -> int:
     )
 
     mercado = mercado.strip().upper()
-    sufijo = {"ES": "espana", "GB": "reino_unido"}.get(mercado)
+    sufijo = {"ES": "espana", "GB": "reino_unido", "IE": "irlanda"}.get(mercado)
     if sufijo is None:
         raise SystemExit(f"Mercado no soportado: {mercado}")
     matriz = ROOT / f"basedatos_partidas/salida/precios_recursos_{sufijo}.csv"

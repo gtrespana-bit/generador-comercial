@@ -27,18 +27,22 @@ una estimación o un juicio, se dice expresamente.
 | Lectura RLS de operador sobre `recursos` | **Hecho y desplegado** | `l7d0e3f6a9c4` (`/readyz` = head) |
 | Cargar la matriz de Reino Unido en producción | **Hecho** | 18-10-2026, SQL Editor |
 | Reino Unido · Fase 3 — SEO de cola larga | **Hecho** | esta rama (`docs/SEO_REINO_UNIDO.md`) |
-| Irlanda, Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
+| Presencia de US, GB, IE, AU y CA en la web pública | **Hecho** | `2588563` (`docs/SEO_MERCADOS_INGLESES.md`) |
+| Irlanda · Fase 1 — matriz de precios en euros | **Hecho, sin cargar** | esta rama (`docs/INVESTIGACION_PRECIOS_IRLANDA.md`) |
+| Irlanda · Fase 2 — ampliar anclas de fontanería y electricidad | Pendiente | 15 % de anclas investigadas |
+| Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
 
 **Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
 SEO. La matriz de 388 recursos está cargada, la migración `l7d0e3f6a9c4` está
 desplegada (`/readyz` la confirma) y el mercado tiene landing, tres hubs y
 cuatro artículos con URL propia (`docs/SEO_REINO_UNIDO.md`).
 
-Lo que queda ya no es un bloqueo técnico: son los otros cuatro mercados
-(Irlanda, Australia, Canadá y Estados Unidos), y cada uno necesita su estudio
-de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
-**conseguir enlaces entrantes y medir** en Search Console: el contenido está,
-la autoridad de dominio se construye fuera del código.
+Los cinco mercados de habla inglesa ya **existen en la web pública** (landing,
+cuerpo de mercado, FAQ y sitio propio en la portada de los 23 mercados). Lo que
+queda no es un bloqueo técnico: Irlanda tiene su primera matriz en euros y hay
+que cargarla y ampliarla; Australia, Canadá y Estados Unidos necesitan su
+estudio de precios antes de abrirse. De Reino Unido sigue pendiente lo que no
+se resuelve en el código: **enlaces entrantes y medición** en Search Console.
 
 ---
 
@@ -244,9 +248,11 @@ el término británico.
   `tasa_sugerida(moneda) or 1.0`. El `1.0` ya no se muestra (justo debajo hay
   una guarda que cae a USD en vez de inventar la conversión), pero queda como
   código muerto que conviene limpiar.
-- Las tasas se verificaron de una en una para **GBP, AUD, CAD y USD**. El
-  **euro sigue con la tasa del 25-08-2026** y es el que necesita Irlanda:
-  conviene reverificarlo antes de abrir ese mercado.
+- Las tasas se verificaron de una en una para **GBP, AUD, CAD, USD y EUR**.
+  El euro se reverificó el 16/10/2026 (EUR/USD 1,1253, BCE) y
+  `TASAS_SUGERIDAS` pasa a 0,8886 EUR por dólar, la misma tasa de corte que la
+  matriz irlandesa. La cifra de 0,8564 queda solo donde está congelada: la
+  matriz española de agosto.
 - El resto de monedas del selector siguen con las tasas de agosto.
 
 ### 3.5 Fase 3 — SEO de cola larga: hecha
@@ -281,7 +287,7 @@ abre un mercado sin él.
 
 | Mercado | Unidades | Moneda | Situación |
 |---|---|---|---|
-| **Irlanda** | métrico | EUR | Conducto listo; falta estudio de precios |
+| **Irlanda** | métrico | EUR | Primera matriz en euros (57 anclas); falta ampliarla |
 | **Australia** | métrico | AUD | Conducto listo; falta estudio de precios |
 | **Canadá** | métrico | CAD | Conducto listo; falta estudio de precios |
 | **Estados Unidos** | **imperial** | USD | Conversión de unidades hecha; falta estudio de precios |
@@ -303,7 +309,7 @@ estudio de precios, y sin él no se abren a clientes.
 | Estados Unidos | `/en-us/` | Sí | Sí | Pendiente |
 | Australia | `/en-au/` | Sí | Sí | Pendiente |
 | Canadá | `/en-ca/` | Sí | Sí | Pendiente |
-| Irlanda | `/en-ie/` | Sí | Sí | Pendiente (y revisar tasa EUR) |
+| Irlanda | `/en-ie/` | Sí | Sí | **Primera ronda** (57 anclas, 15 %) |
 
 ---
 
@@ -318,8 +324,11 @@ estudio de precios, y sin él no se abren a clientes.
    TrustMark y prensa del sector. Es lo único que separa el contenido de las
    primeras posiciones.
 4. **Irlanda**: el siguiente más barato (métrico, euro, vocabulario británico).
-   Antes de abrirlo, reverificar la tasa EUR (sigue en 25-08-2026) y hacer su
-   estudio de precios.
+   El estudio de precios ya existe en su primera ronda (57 anclas investigadas,
+   331 derivadas, tasa EUR reverificada), así que falta **cargar**
+   `docs/cargar_precios_referencia_irlanda_2026-10-18.sql` en Supabase y, antes
+   de abrirlo a clientes, ampliar las anclas de fontanería y electricidad de
+   aparamenta, que hoy descansan en el factor de categoría.
 5. **Australia y Canadá** después, cada uno con su matriz.
 6. **Estados Unidos** al final: imperial y el que más exige.
 
@@ -358,9 +367,10 @@ python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
 Comandos de control que conviene pasar antes de cualquier cambio:
 
 ```bash
-.venv/bin/python -m pytest -q                    # suite completa (~5 min)
+.venv/bin/python -m pytest -q                    # suite completa (~8 min)
 .venv/bin/python tools/chequear_plantillas_en.py # pares de plantillas EN
 .venv/bin/python tools/verificar_matriz_importable.py GB   # matriz británica
+.venv/bin/python tools/verificar_matriz_importable.py IE   # matriz irlandesa
 .venv/bin/python tools/verificar_matriz_importable.py ES   # matriz española
 ```
 
@@ -368,8 +378,9 @@ Ficheros que concentran el trabajo:
 
 | Qué | Dónde |
 |---|---|
-| Generación de matrices de precios | `tools/generar_matriz_precios_reino_unido.py` |
-| Metodología e investigación de precios | `docs/METODOLOGIA_PRECIOS_REFERENCIA_REINO_UNIDO.md`, `docs/INVESTIGACION_PRECIOS_REINO_UNIDO.md` |
+| Generación de matrices de precios | `tools/generar_matriz_precios_reino_unido.py`, `tools/generar_matriz_precios_irlanda.py` |
+| Coste empresa de la mano de obra | `tools/coste_empresa_reino_unido.py`, `tools/coste_empresa_irlanda.py` |
+| Metodología e investigación de precios | `docs/METODOLOGIA_PRECIOS_REFERENCIA_REINO_UNIDO.md`, `docs/INVESTIGACION_PRECIOS_REINO_UNIDO.md`, `docs/METODOLOGIA_PRECIOS_REFERENCIA_IRLANDA.md`, `docs/INVESTIGACION_PRECIOS_IRLANDA.md` |
 | Análisis de mercado | `docs/ANALISIS_MERCADO_REINO_UNIDO.md` |
 | Fiscalidad británica | `app/services/fiscalidad_reino_unido.py` |
 | Importador y validación | `app/services/importador_precios_mercado.py` |
@@ -378,6 +389,7 @@ Ficheros que concentran el trabajo:
 | Carga desde el panel | `app/routers/admin.py`, `app/routers/admin_paginas.py` |
 | SEO de Reino Unido | `app/seo_reino_unido.py`, `docs/SEO_REINO_UNIDO.md`, `tests/test_seo_reino_unido.py` |
 | Presencia de los mercados ingleses | `app/seo_mercados_en.py`, `docs/SEO_MERCADOS_INGLESES.md`, `tests/test_presencia_mercados_angloparlantes.py` |
+| Matriz y coste empresa de Irlanda | `basedatos_partidas/salida/precios_recursos_irlanda.csv`, `docs/cargar_precios_referencia_irlanda_2026-10-18.sql`, `tests/test_matriz_precios_irlanda.py` |
 
 **Al añadir una migración**, se rompen cinco tests a la vez: hay que actualizar
 los cuatro parches de la cadena de heads, añadir `docs/staging_upgrade_<rev>.sql`
