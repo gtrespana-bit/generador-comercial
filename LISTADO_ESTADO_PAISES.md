@@ -90,7 +90,7 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada, verificada y cargada en producción (19-10-2026)** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
 | Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
 | Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
-| Estados Unidos | US | USD | «Sales tax» estatal+local, sin tipo nacional (media combinada 7,53 %) | EIN | Base inglesa (en-US) | 388 `precios_recursos_estados_unidos.csv` — 52 anclas investigadas (13 %) + ~83 derivados explícitos, **generada y verificada (19-10-2026), pendiente de carga** | 1.0 (la base ya es USD) | `/en-us/` | **FASES 0 Y 1 HECHAS (19-10-2026)** |
+| Estados Unidos | US | USD | «Sales tax» estatal+local, sin tipo nacional (media combinada 7,53 %) | EIN | Base inglesa (en-US) | 388 `precios_recursos_estados_unidos.csv` — 52 anclas investigadas (13 %) + ~83 derivados explícitos, **generada y verificada (19-10-2026), pendiente de carga** | 1.0 (la base ya es USD) | `/en-us/` | **FASES 0, 1 Y 2 HECHAS (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -236,9 +236,22 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   restaurada. Interior del APU y CRUD de catálogo en métrico (superficie del operador).
   Detalle y límites deliberados en §9 de `docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`;
   19 tests (`tests/test_unidades_imperiales.py`).
-- **Producción: pendiente la carga del SQL** (`docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`,
-  fila 19 de `docs/PENDIENTES_OPERATIVOS.md`). Queda la **Fase 2 (motor fiscal por estado:
-  estado de obra con default de empresa, modo de base y defaults investigados)**, aprobada.
+- **Fase 2 — fiscalidad por estado. Hecha (19-10-2026).** Selector del **estado de la obra**
+  (default de empresa en Configuración, editable por documento) con **modo de base** por
+  estado: sin cobrar al cliente (la mayoría: el contratista paga el impuesto en los
+  materiales), solo materiales, solo mano de obra (Kansas comercial), importe completo
+  (Washington) o ingresos brutos con fracción (Arizona 65 %, GET de Hawái, GRT de Nuevo
+  México, «excise» de Dakota del Sur). 51 defaults investigados (modo + tipo combinado medio
+  Tax Foundation midyear 2026 como punto de partida) en
+  `docs/INVESTIGACION_FISCALIDAD_ESTADOS_UNIDOS.md`; el impuesto correcto entra en el motor
+  de totales (no es un adorno del PDF) y el reparto materiales/mano de obra se estima con
+  los costes del presupuesto. Migración `n9f2a5b8c3d6`. 41 tests
+  (`tests/test_fiscalidad_estados_unidos.py`).
+- **Producción: pendientes DOS ejecuciones** — la carga de la matriz
+  (`docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql`, fila 19 de
+  `docs/PENDIENTES_OPERATIVOS.md`) y la **migración** (`docs/staging_upgrade_n9f2a5b8c3d6.sql`,
+  fila 20, **antes de desplegar** el código: el runtime exige el nuevo head). Con las tres
+  fases construidas, Estados Unidos queda completo a falta de esas dos ejecuciones.
 
 **Orden de apertura:** GB → IE → AU → CA → US, los cinco con su Fase 0 hecha a 19-10-2026.
 El Reino Unido es métrico, así que no requiere conversión de unidades; el sistema imperial

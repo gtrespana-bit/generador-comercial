@@ -19,6 +19,7 @@ from migrations.versions import (
     k6c9f2d5b8a3_fiscalidad_reino_unido as fiscalidad_migration,
     l7d0e3f6a9c4_lectura_operador_catalogo_recursos as lectura_operador_migration,
     m8e1f4a7b2c5_fiscalidad_irlanda_rct as fiscalidad_ie_migration,
+    n9f2a5b8c3d6_fiscalidad_estados_unidos as fiscalidad_us_migration,
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
     a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
@@ -195,10 +196,12 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert fiscalidad_migration.down_revision == alembic_rls_migration.revision
     assert lectura_operador_migration.down_revision == fiscalidad_migration.revision
     # Sobre esa cabeza cuelga la fiscalidad irlandesa (RCT + inversión del
-    # sujeto pasivo, que reutiliza `iva_tratamiento` de la británica): es la
-    # cabeza vigente que el runtime exige.
+    # sujeto pasivo, que reutiliza `iva_tratamiento` de la británica) y sobre
+    # ella la estadounidense («sales tax» por estado): es la cabeza vigente
+    # que el runtime exige.
     assert fiscalidad_ie_migration.down_revision == lectura_operador_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == fiscalidad_ie_migration.revision
+    assert fiscalidad_us_migration.down_revision == fiscalidad_ie_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == fiscalidad_us_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

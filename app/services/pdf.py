@@ -938,7 +938,15 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # se imprime cerrado.
     fiscalidad = _fiscalidad_gb(presupuesto, tot, mercado)
     fiscalidad_ie = _fiscalidad_ie(presupuesto, tot, mercado)
-    ctx_efectivo = None if (fiscalidad is not None or fiscalidad_ie is not None) else ctx
+    fiscalidad_us = _fiscalidad_eeuu(presupuesto, tot, mercado)
+    # El motor JS tampoco modela una base estadounidense parcial (solo
+    # materiales, solo mano de obra, fracción de brutos o «no se cobra»):
+    # recalcularía «base × %» y el total dejaría de cuadrar con la
+    # leyenda. En modo «completa» sí coincide y el PDF sigue interactivo.
+    ctx_efectivo = None if (
+        fiscalidad is not None or fiscalidad_ie is not None
+        or (fiscalidad_us is not None and fiscalidad_us.modo != "full")
+    ) else ctx
 
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
@@ -973,7 +981,25 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
     _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
                 else mercado["etiqueta_impuesto"])
-    if (
+    if fiscalidad_us is not None:
+        # La fila dice el tributo, el estado y la base que grava; la
+        # leyenda completa va debajo del bloque, como la del «reverse
+        # charge». El importe ya lo calculó el motor de totales.
+        _sufijos_us = {
+            "none": _rot(' — no se cobra al cliente', ' — not charged to the customer', lang),
+            "materials": _rot(' — solo materiales', ' — materials only', lang),
+            "labor": _rot(' — solo mano de obra', ' — labor only', lang),
+            "gross_receipts": _rot(' — ingresos brutos', ' — gross receipts', lang),
+        }
+        filas.append([
+            Paragraph(
+                f"{fiscalidad_us.nombre_impuesto} ({fiscalidad_us.estado_codigo} "
+                f"{fmt_pct(presupuesto.impuesto_pct)} %)"
+                f"{_sufijos_us.get(fiscalidad_us.modo, '')}",
+                st["tot_lab_s"]),
+            valor("impuesto", tot.impuesto_monto, "tot_lab_s"), "",
+        ])
+    elif (
         (fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo)
         or (fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo)
     ):
@@ -1073,9 +1099,40 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # de IVA del subcontratista— la inversión no queda acreditada.
     if fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo:
         notas.append(Paragraph(_esc(fiscalidad_ie.leyenda_iva), st["desg_nota"]))
+    # EE. UU.: la leyenda explica qué se está cobrando (o por qué no se
+    # cobra nada) sin que el cliente tenga que conocer el marco estatal.
+    if fiscalidad_us is not None:
+        notas.append(Paragraph(_esc(fiscalidad_us.leyenda), st["desg_nota"]))
     if not notas:
         return t
     return [t] + notas
+
+
+def _fiscalidad_eeuu(presupuesto, tot, mercado):
+    """Fiscalidad estadounidense del documento, o ``None`` si no le afecta.
+
+    Espejo de la británica con una diferencia de fondo: el «sales tax» no
+    es una retención que se reste de lo cobrado, es el impuesto del
+    documento y ya viene sumado por el motor de totales. Aquí solo se
+    resuelven su etiqueta (el tributo se llama distinto en Hawái o Nuevo
+    México), su leyenda y la base que se declara. La factura lee su base
+    gravada congelada; el presupuesto, la que acaba de calcular.
+    """
+    from .fiscalidad_eeuu import calcular_fiscalidad_eeuu
+
+    f = calcular_fiscalidad_eeuu(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        venta_materiales=getattr(tot, "venta_materiales", 0) or 0,
+        base_gravada=getattr(presupuesto, "us_base_gravada", None),
+        tipo_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+    )
+    if not f.aplica:
+        return None
+    return f
 
 
 def _fiscalidad_ie(presupuesto, tot, mercado):
@@ -1921,11 +1978,14 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     # El motor de JavaScript del PDF interactivo no modela ni el CIS ni el
     # RCT ni la inversión del sujeto pasivo: recalcula «base + IVA» y
     # dejaría el bloque fiscal diciendo una cosa y el resumen otra. En esos
-    # documentos el presupuesto sale cerrado.
+    # documentos el presupuesto sale cerrado. Con la base estadounidense
+    # ocurre igual salvo en modo «completa», donde «base × %» es justo lo
+    # que el JS recalcula.
     if ctx is not None and (
         getattr(presupuesto, "cis_tipo", None) is not None
         or getattr(presupuesto, "rct_tipo", None) is not None
         or (getattr(presupuesto, "iva_tratamiento", "") or "") == "inversion_sujeto_pasivo"
+        or (getattr(presupuesto, "us_tax_base", "") or "") not in ("", "full")
     ):
         ctx = None
 

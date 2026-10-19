@@ -288,6 +288,9 @@
     var totalGral = 0, totalOpcional = 0, totalAlternativas = 0;
     var costeTotal = 0, hayCostes = false;
     var totalProductos = 0, costeProductos = 0, subtotalObra = 0, costeObra = 0;
+    // Coste de materiales separado (réplica de ``coste_materiales`` del
+    // servidor): solo lo usa el modo de base estadounidense con reparto.
+    var costeMaterialesTotal = 0;
 
     var avanzado = !!(document.getElementById("usar-funciones-avanzadas") && document.getElementById("usar-funciones-avanzadas").checked);
 
@@ -459,6 +462,7 @@
           if (hayCostesPartida) {
             costeTotal += coste;
             costeObra += costeObraLinea;
+            costeMaterialesTotal += FMT.redondear2(cant * costeMat * (esCype ? 1 : (1 + desperd / 100)));
             // No considerar 0 como coste real del producto cuando el campo
             // está vacío; así su venta no aparece como beneficio íntegro.
             if (hayProducto && costeProducto > 0) costeProductos += costeProductoLinea;
@@ -480,7 +484,7 @@
     // Cada paso económico se redondea igual que en el servidor:
     //  base_partidas = money(subtotal) · adicionales = money(cada uno) ·
     //  bruto = money(base + adicionales) · descuento = money(bruto × %/100) ·
-    //  base = money(bruto - descuento) · iva = money(base × %/100) ·
+    //  base = money(bruto - descuento) · iva = money(baseGravada × %/100) ·
     //  total = money(base + iva)
     var basePartidas = FMT.redondear2(totalGral);
     totalProductos = FMT.redondear2(totalProductos);
@@ -496,8 +500,6 @@
     var bruto = FMT.redondear2(basePartidas + adicionales);
     var descuento = FMT.redondear2(bruto * dto / 100);
     var base = FMT.redondear2(bruto - descuento);
-    var iva = FMT.redondear2(base * ivaPct / 100);
-    var totalFinal = FMT.redondear2(base + iva);
     // Beneficio real de la obra = lo que queda para la empresa después de
     // descontar TODOS los gastos (materiales, mano de obra, complementarios,
     // otros, imprevistos, transporte…). El IVA NO es beneficio: es un impuesto
@@ -512,6 +514,30 @@
     descuentoObra = FMT.redondear2(descuentoObra + diferenciaDescuento);
     var baseObra = FMT.redondear2(brutoObra - descuentoObra);
     var baseProductos = FMT.redondear2(brutoProductos - descuentoProductos);
+    // EE. UU.: con un modo de base elegido, el tipo no cae sobre la base
+    // completa (réplica de calculations.py + fiscalidad_eeuu.py). El
+    // precio de venta de los materiales se estima con el mismo reparto
+    // de costes que usa el servidor. Sin bloque 🇺🇸 o sin modo, el
+    // impuesto es el de siempre.
+    costeMaterialesTotal = FMT.redondear2(costeMaterialesTotal);
+    var baseGravada = base;
+    var usBaseSel = document.getElementById("us-base");
+    if (usBaseSel && usBaseSel.value) {
+      var ventaMateriales = FMT.redondear2(baseProductos + (costeObra > 0 && costeMaterialesTotal > 0 && baseObra > 0 ? baseObra * costeMaterialesTotal / costeObra : 0));
+      if (ventaMateriales > base) ventaMateriales = base;
+      if (ventaMateriales < 0) ventaMateriales = 0;
+      if (usBaseSel.value === "none") baseGravada = 0;
+      else if (usBaseSel.value === "materials") baseGravada = ventaMateriales;
+      else if (usBaseSel.value === "labor") baseGravada = FMT.redondear2(base - ventaMateriales);
+      else if (usBaseSel.value === "gross_receipts") {
+        var frEl = document.getElementById("us-fraccion");
+        var fr = frEl ? FMT.parseNum(frEl.value) : 100;
+        if (!(fr >= 0 && fr <= 100)) fr = 100;
+        baseGravada = FMT.redondear2(base * fr / 100);
+      }
+    }
+    var iva = FMT.redondear2(baseGravada * ivaPct / 100);
+    var totalFinal = FMT.redondear2(base + iva);
     var beneficioObra = FMT.redondear2(baseObra - costeObra - adicionales);
     var beneficioProductos = costeProductos > 0 ? FMT.redondear2(baseProductos - costeProductos) : 0;
     var beneficioTotal = FMT.redondear2(beneficioObra + beneficioProductos);
@@ -1097,7 +1123,7 @@
 
     // Listener para campos de totales
     document.addEventListener("input", function (e) {
-      if (["impuesto_pct", "descuento_pct", "gastos_indirectos_pct", "imprevistos_pct", "transporte_monto", "otros_cargos_monto"].indexOf(e.target.name) !== -1) {
+      if (["impuesto_pct", "descuento_pct", "gastos_indirectos_pct", "imprevistos_pct", "transporte_monto", "otros_cargos_monto", "us_tax_fraccion_pct"].indexOf(e.target.name) !== -1) {
         recalcular();
         marcarCambio();
       }
@@ -1120,6 +1146,36 @@
         renumerar();
         recalcular();
       });
+    }
+
+    // Bloque 🇺🇸 (sales tax por estado): al cambiar el estado se proponen
+    // el modo de base, el tipo combinado medio y la fracción investigados,
+    // y se enseña la nota del estado. En un presupuesto NUEVO la propuesta
+    // se aplica al abrir (con el estado habitual de la empresa); en uno ya
+    // guardado no se toca nada que el usuario no cambie: un documento
+    // emitido no puede cambiar de impuesto solo por abrirlo.
+    var usEstadoSel = document.getElementById("us-estado");
+    if (usEstadoSel) {
+      var usBaseSel2 = document.getElementById("us-base");
+      var usFraccionInp = document.getElementById("us-fraccion");
+      var usNotaEl = document.getElementById("us-nota");
+      var aplicarEstadoUS = function (conPropuesta) {
+        var op = usEstadoSel.options[usEstadoSel.selectedIndex];
+        if (usNotaEl) usNotaEl.textContent = op && op.dataset.nota ? op.dataset.nota : "";
+        if (!conPropuesta || !op || !op.value) return;
+        if (usBaseSel2 && op.dataset.base) usBaseSel2.value = op.dataset.base;
+        if (usFraccionInp && op.dataset.fraccion) usFraccionInp.value = op.dataset.fraccion;
+        var impInputUS = document.querySelector('input[name="impuesto_pct"]');
+        if (impInputUS && op.dataset.tipo) impInputUS.value = op.dataset.tipo;
+      };
+      usEstadoSel.addEventListener("change", function () {
+        aplicarEstadoUS(true);
+        recalcular();
+        marcarCambio();
+      });
+      if (usBaseSel2) usBaseSel2.addEventListener("change", function () { recalcular(); marcarCambio(); });
+      aplicarEstadoUS(!window.BUDGET_ID);
+      if (!window.BUDGET_ID) recalcular();
     }
 
     cargarCatalogoDiferido();

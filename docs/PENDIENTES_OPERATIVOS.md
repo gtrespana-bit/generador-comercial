@@ -34,6 +34,7 @@ Estado al escribir esta guía:
 | 17 | **SQL — carga de precios de Australia (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_australia_2026-10-19.sql`; la matriz AU está en producción. Detalle en §16 |
 | 18 | **SQL — carga de precios de Canadá (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_canada_2026-10-19.sql`; la matriz CA está en producción. Detalle en §17 |
 | 19 | **SQL — carga de precios de Estados Unidos (388 recursos)** | ⏳ **pendiente de ejecutar** (generado 19/10/2026, Fase 0 de Estados Unidos). `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` en el SQL Editor de Supabase, o el CSV por el panel («Validar sin escribir» primero: 388 filas · 0 errores). Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar con una consulta puntual (p. ej. que `MT-CEMENTO/US` existe a 0,446 USD). Detalle en §18 |
+| 20 | **SQL — migración `n9f2a5b8c3d6` (sales tax por estado, Fase 2 de EE. UU.)** | ⏳ **pendiente de ejecutar — ANTES de desplegar el código de la Fase 2** (el runtime exige el head `n9f2a5b8c3d6`). `docs/staging_upgrade_n9f2a5b8c3d6.sql` en el SQL Editor de Supabase, con la versión actual en `m8e1f4a7b2c5`. Es independiente de la fila 19 (una es esquema, la otra datos) y **no** hay que re-ejecutar ningún `staging_upgrade` anterior. Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar `/readyz` (debe reportar head `n9f2a5b8c3d6`). Detalle en §19 |
 
 ---
 
@@ -621,5 +622,25 @@ Al ejecutarse: reemplazar la celda de estado de la fila 19 por
 no deja ningún paso operativo**: no hay migración (la conversión se deriva
 del país de la empresa y el almacenamiento no cambia), no hay SQL que
 ejecutar ni datos que cargar. Llega con el despliegue normal del código.
-Lo único pendiente de Estados Unidos en este documento sigue siendo esta
-carga de la fila 19.
+
+## 19. SQL de la Fase 2 de Estados Unidos (19/10/2026) ⏳ pendiente de ejecutar
+
+La Fase 2 (motor fiscal por estado) sí cambia el esquema, así que deja un
+paso operativo **previo al despliegue**, como la migración del RCT:
+
+- **Migración `n9f2a5b8c3d6`** — `docs/staging_upgrade_n9f2a5b8c3d6.sql`,
+  con la versión actual en `m8e1f4a7b2c5`. Añade `estado_codigo`,
+  `us_tax_base` y `us_tax_fraccion` a `presupuestos` y `facturas`,
+  `us_base_gravada` a `facturas` y `empresa_estado_eeuu` a
+  `configuracion`. Nacen vacías: ningún documento ya emitido cambia.
+- **Orden**: ejecutar el SQL y **después** desplegar el código. El runtime
+  comprueba el head (`EXPECTED_ALEMBIC_HEAD = n9f2a5b8c3d6`): desplegar
+  primero dejaría `/readyz` en falso y los SELECT de presupuestos
+  fallando por columnas inexistentes.
+- Es independiente de la carga de la fila 19: pueden ejecutarse en
+  cualquier orden entre sí, pero esta va antes que el despliegue sí o sí.
+
+Al ejecutarse: reemplazar la celda de estado de la fila 20 por
+«✅ ejecutado» con la fecha, comprobar `/readyz` y hacer la prueba
+funcional que trae el propio SQL (empresa EE. UU. con estado Texas →
+presupuesto nuevo → PDF en inglés sin línea de impuesto).

@@ -83,6 +83,16 @@
         </select>
       </div>
       <div class="field">
+        <label>Job state (U.S. only)</label>
+        <select name="empresa_estado_eeuu" id="select-estado-eeuu">
+          <option value="" {{ 'selected' if not cfg.empresa_estado_eeuu else '' }}>— No usual state —</option>
+          {% for e in estados_eeuu %}
+          <option value="{{ e.codigo }}" {{ 'selected' if cfg.empresa_estado_eeuu == e.codigo else '' }}>{{ e.nombre }} ({{ e.codigo }})</option>
+          {% endfor %}
+        </select>
+        <small>The state where you usually work: sales tax follows the job location. Each estimate can change it.</small>
+      </div>
+      <div class="field">
         <label>City</label>
         <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="e.g. {{ _pais_form.ciudad_ejemplo or 'Your City' }}" id="input-ciudad">
       </div>

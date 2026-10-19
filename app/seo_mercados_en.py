@@ -40,18 +40,26 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
         (
-            "Sales tax is local, and labour is not taxed the same everywhere",
+            "Sales tax follows the job, and most states never charge it to the customer",
             [
-                "There is no national sales tax. Each state sets its own rate, and "
-                "counties and cities add theirs on top. Many states tax construction "
-                "materials but not the labour to install them, some tax the finished "
-                "improvement, and a few treat a contractor as the final consumer of "
-                "the materials it buys. That is why the app asks you for the rate "
-                "instead of inventing a national one.",
-                "The tax treatment is set per estimate, so a job in Austin and a job "
-                "in Miami do not come out looking the same. CotizaT does not decide "
-                "your sales tax and does not issue a tax invoice: it produces the "
-                "commercial proposal that leads to the contract.",
+                "There is no national sales tax, and the rate is only half the "
+                "story: in most states a contractor is the final consumer of the "
+                "materials — tax is paid at the store, labour on real property is "
+                "not taxed, and the correct estimate carries no tax line at all. "
+                "Others tax by the kind of job (a capital improvement in New York "
+                "is not a repair; a Texas home is not a Texas storefront), a few "
+                "tax materials or labour only, Washington taxes the full contract "
+                "price, and Hawaii, New Mexico and South Dakota tax the "
+                "contractor's gross receipts.",
+                "So the app asks where the job is before it asks for a rate. Pick "
+                "the job state and CotizaT proposes how that state taxes a "
+                "remodel — nothing charged to the customer, materials only, "
+                "labour only, the full amount or gross receipts — with the "
+                "state's average combined rate filled in as a starting point to "
+                "adjust to the job address. Your usual state lives on the "
+                "company; every estimate can override it. CotizaT proposes and "
+                "shows its working on the PDF; it does not file your sales tax "
+                "and does not issue a tax invoice.",
             ],
         ),
         (
@@ -335,12 +343,16 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
 FAQ: dict[str, list[dict[str, str]]] = {
     "US": [
         {
-            "q": "Which sales tax rate should I apply?",
+            "q": "Should I charge sales tax on a remodel in my state?",
             "a": (
-                "You configure it: there is no national rate, and states, counties "
-                "and cities set their own. Some states tax materials but not the "
-                "labour to install them, and some treat the contractor as the final "
-                "consumer. CotizaT applies the rate you set per estimate."
+                "In most states, no: the contractor pays tax on the materials at "
+                "purchase and labour on real property is not taxed, so the "
+                "estimate has no tax line. Some states tax materials only, labour "
+                "only or the full amount, and a few tax the contractor's gross "
+                "receipts. CotizaT asks for the job state and proposes that "
+                "state's treatment for a remodel, with the average combined rate "
+                "as an editable starting point — you confirm it for the job "
+                "address, and can change it per estimate."
             ),
         },
         {

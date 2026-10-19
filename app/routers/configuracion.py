@@ -33,6 +33,15 @@ def _slug_organizacion_unico(db: Session, nombre: str, organizacion_id: int) -> 
         contador += 1
     return candidato
 
+def _estados_eeuu_cfg():
+    try:
+        from ..services.fiscalidad_eeuu import ESTADOS_EEUU
+
+        return ESTADOS_EEUU
+    except Exception:
+        return ()
+
+
 @router.get("/configuracion", response_class=HTMLResponse)
 def ver_configuracion(request: Request, db: Session = Depends(get_db)):
     org = db.get(Organizacion, int(db.info.get("organizacion_id") or 0))
@@ -68,6 +77,8 @@ def ver_configuracion(request: Request, db: Session = Depends(get_db)):
             "paises": lista_paises(),
             "pais_generico": PAIS_GENERICO,
             "tasas": TASAS_SUGERIDAS,
+            # Selector de estado de obra habitual (solo EE. UU.)
+            "estados_eeuu": _estados_eeuu_cfg(),
         },
     )
 
@@ -109,6 +120,16 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
     cfg.empresa_legal = str(form.get("empresa_legal", "")).strip()
     cfg.empresa_rif = str(form.get("empresa_rif", "")).strip()
     cfg.empresa_pais = str(form.get("empresa_pais", "Venezuela")).strip() or "Venezuela"
+    # Estado de obra habitual (solo EE. UU.): valida contra los 51 códigos
+    # para que el selector del presupuesto nunca nazca con un valor que el
+    # motor fiscal no conoce.
+    _estado_eeuu = str(form.get("empresa_estado_eeuu", "") or "").strip().upper()
+    try:
+        from ..services.fiscalidad_eeuu import CODIGOS_ESTADO_EEUU
+
+        cfg.empresa_estado_eeuu = _estado_eeuu if _estado_eeuu in CODIGOS_ESTADO_EEUU else ""
+    except Exception:
+        cfg.empresa_estado_eeuu = ""
     cfg.empresa_ciudad = str(form.get("empresa_ciudad", "")).strip()
     cfg.empresa_direccion = str(form.get("empresa_direccion", "")).strip()
     cfg.empresa_telefono = str(form.get("empresa_telefono", "")).strip()

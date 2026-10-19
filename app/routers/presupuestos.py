@@ -1486,7 +1486,20 @@ def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
         # pintan en ft/sq ft/cu yd/gal/lb; el guardado normaliza a métrico
         # guiándose por la propia unidad (servicios.unidades_precio).
         "es_imperial": _es_imperial_cfg(cfg),
+        # Bloque 🇺🇸 del editor: defaults investigados por estado (modo de
+        # base + tipo combinado medio) y el estado habitual de la empresa.
+        "estados_eeuu": _estados_eeuu(),
+        "estado_eeuu_defecto": getattr(cfg, "empresa_estado_eeuu", "") or "",
     }
+
+
+def _estados_eeuu():
+    try:
+        from ..services.fiscalidad_eeuu import ESTADOS_EEUU
+
+        return ESTADOS_EEUU
+    except Exception:
+        return ()
 
 
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
@@ -2205,6 +2218,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         mostrar_desglose_precio=bool(form.get("mostrar_desglose_precio")),
         numero_control=str(form.get("numero_control", "")).strip(), fecha_tipo_cambio=fecha_tipo_cambio, retencion_pct=_f(form.get("retencion_pct")), operacion_exenta=bool(form.get("operacion_exenta")), clausula_cambiaria=str(form.get("clausula_cambiaria", "")).strip(),
         iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0], rct_tipo=_fiscalidad_ie_desde_form(form)[0],
+        estado_codigo=_fiscalidad_eeuu_desde_form(form)[0], us_tax_base=_fiscalidad_eeuu_desde_form(form)[1], us_tax_fraccion=_fiscalidad_eeuu_desde_form(form)[2],
         client_id=cliente.id,
     )
     # Imágenes de producto subidas
@@ -3060,6 +3074,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF.
             "fiscalidad_gb": _fiscalidad_gb_documento(presupuesto, cfg),
             "fiscalidad_ie": _fiscalidad_ie_documento(presupuesto, cfg),
+            "fiscalidad_us": _fiscalidad_eeuu_documento(presupuesto, cfg),
             "es_imperial": _es_imperial_cfg(cfg),
         },
     )
@@ -3401,6 +3416,82 @@ def _fiscalidad_ie_documento(presupuesto, cfg):
     return f
 
 
+def _fiscalidad_eeuu_desde_form(form) -> tuple[str, str, float]:
+    """Lee del formulario el estado de la obra y el modo de base (EE. UU.).
+
+    El estado se valida contra los 51 códigos y el modo contra los cinco
+    que el motor conoce: un valor inventado haría que el PDF dijera que
+    aplica una regla que ningún estado tiene. La fracción (65 % en
+    Arizona) se acota a [0, 1]; fuera de rango vuelve a 1.0, que es el
+    comportamiento inocuo (base íntegra).
+    """
+    from ..services.fiscalidad_eeuu import BASES_US, CODIGOS_ESTADO_EEUU
+
+    estado = str(form.get("estado_codigo", "") or "").strip().upper()
+    if estado not in CODIGOS_ESTADO_EEUU:
+        estado = ""
+    modo = str(form.get("us_tax_base", "") or "").strip()
+    if modo not in BASES_US:
+        modo = ""
+    try:
+        fraccion = float(str(form.get("us_tax_fraccion_pct", "") or "").replace(",", "."))
+        fraccion = fraccion / 100.0
+    except (TypeError, ValueError):
+        fraccion = 1.0
+    if not (0.0 <= fraccion <= 1.0):
+        fraccion = 1.0
+    return estado, modo, fraccion
+
+
+def _aplicar_fiscalidad_eeuu(presupuesto, form) -> None:
+    presupuesto.estado_codigo, presupuesto.us_tax_base, presupuesto.us_tax_fraccion = (
+        _fiscalidad_eeuu_desde_form(form)
+    )
+
+
+def _fiscalidad_eeuu_documento(presupuesto, cfg):
+    """Fiscalidad estadounidense del documento, o ``None`` si no le afecta.
+
+    A diferencia del CIS/RCT, aquí el impuesto ya viene calculado por el
+    motor de totales (es el impuesto del documento, no una retención):
+    este objeto aporta la etiqueta, la leyenda y los avisos. Se devuelve
+    siempre que el motor esté activo —también en modo «ninguna», porque
+    la leyenda («no se cobra sales tax») es parte del documento—.
+
+    La factura no recalcula: su base gravada quedó congelada al emitir.
+    """
+    from ..services.fiscalidad_eeuu import calcular_fiscalidad_eeuu
+
+    try:
+        from ..services.traduccion import codigo_desde_pais
+
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+    except Exception:
+        pais = ""
+    totales = getattr(presupuesto, "_totales", None)
+    if totales is not None:
+        base = totales.base
+        venta_materiales = totales.venta_materiales
+        base_gravada = None
+    else:
+        base = getattr(presupuesto, "base", 0) or 0
+        venta_materiales = 0
+        base_gravada = getattr(presupuesto, "us_base_gravada", None)
+    f = calcular_fiscalidad_eeuu(
+        pais_codigo=pais,
+        base_imponible=base,
+        venta_materiales=venta_materiales,
+        base_gravada=base_gravada,
+        tipo_pct=presupuesto.impuesto_pct,
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+    )
+    if not f.aplica:
+        return None
+    return f
+
+
 def _codigo_pais_descompuesto(db, cfg) -> str:
     """Mercado de la empresa, para traducir los textos del descompuesto.
 
@@ -3713,6 +3804,17 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
         cis_tipo=getattr(presupuesto, "cis_tipo", None),
         rct_tipo=getattr(presupuesto, "rct_tipo", None),
+        # Fiscalidad estadounidense: se hereda igual, con la base gravada
+        # congelada (el reparto materiales/mano de obra se estimó con los
+        # costes del presupuesto y la factura no debe recalcular otro
+        # impuesto distinto del aprobado).
+        estado_codigo=getattr(presupuesto, "estado_codigo", "") or "",
+        us_tax_base=getattr(presupuesto, "us_tax_base", "") or "",
+        us_tax_fraccion=getattr(presupuesto, "us_tax_fraccion", 1.0),
+        us_base_gravada=(
+            float(presupuesto._totales.us_base_gravada)
+            if (getattr(presupuesto, "us_tax_base", "") or "") else None
+        ),
         coste_materiales=float(presupuesto._totales.coste_materiales),
         notas=presupuesto.notas,
         condiciones=presupuesto.condiciones,
@@ -3794,6 +3896,7 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
         # la autorización de deducción de Revenue en ROS).
         "fiscalidad_gb": _fiscalidad_gb_documento(factura, _config(db)),
         "fiscalidad_ie": _fiscalidad_ie_documento(factura, _config(db)),
+        "fiscalidad_us": _fiscalidad_eeuu_documento(factura, _config(db)),
         "es_imperial": _es_imperial_cfg(_config(db)),
     })
 
@@ -4033,6 +4136,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.numero_control = str(form.get("numero_control", "")).strip(); presupuesto.retencion_pct = _f(form.get("retencion_pct")); presupuesto.operacion_exenta = bool(form.get("operacion_exenta")); presupuesto.clausula_cambiaria = str(form.get("clausula_cambiaria", "")).strip()
     _aplicar_fiscalidad_gb(presupuesto, form)
     _aplicar_fiscalidad_ie(presupuesto, form)
+    _aplicar_fiscalidad_eeuu(presupuesto, form)
     try: presupuesto.fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError: presupuesto.fecha_tipo_cambio = None
 
@@ -4202,6 +4306,9 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         # bajo el CIS y que la copia saliera sin retención es un error que se
         # paga en la declaración mensual.
         iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo, rct_tipo=original.rct_tipo,
+        # Y la estadounidense: la copia de una obra en Texas no puede nacer
+        # cobrando un «sales tax» que el original no cobraba.
+        estado_codigo=original.estado_codigo, us_tax_base=original.us_tax_base, us_tax_fraccion=original.us_tax_fraccion,
         client_id=original.client_id,
     )
 

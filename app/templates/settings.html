@@ -83,6 +83,16 @@
         </select>
       </div>
       <div class="field">
+        <label>Estado de la obra (solo EE. UU.)</label>
+        <select name="empresa_estado_eeuu" id="select-estado-eeuu">
+          <option value="" {{ 'selected' if not cfg.empresa_estado_eeuu else '' }}>— Sin estado habitual —</option>
+          {% for e in estados_eeuu %}
+          <option value="{{ e.codigo }}" {{ 'selected' if cfg.empresa_estado_eeuu == e.codigo else '' }}>{{ e.nombre }} ({{ e.codigo }})</option>
+          {% endfor %}
+        </select>
+        <small>El estado donde sueles trabajar: el «sales tax» sigue al lugar de la obra. Cada presupuesto podrá cambiarlo.</small>
+      </div>
+      <div class="field">
         <label>Ciudad</label>
         <input type="text" name="empresa_ciudad" value="{{ cfg.empresa_ciudad }}" placeholder="p. ej. {{ _pais_form.ciudad_ejemplo or 'Tu Ciudad' }}" id="input-ciudad">
       </div>

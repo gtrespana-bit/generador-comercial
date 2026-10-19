@@ -273,7 +273,7 @@ etiqueta del estado y parecería correcto.
 | **0 — Matriz USD** | `tools/coste_empresa_eeuu.py` (OEWS + FICA/FUTA/SUTA/workers' comp), generador, 388 filas, verificador, tests, SQL de carga, docs (investigación + metodología) | Solo datos | Clon del pipeline IE/AU/CA; sin código de app ni migración. Cierra el hueco de precios. |
 | **0.1 — Corrección SEO** | La landing/FAQ deja de afirmar conversión de cantidades hasta que la Fase 1 la haga cierta | Textos | Inmediata si la Fase 1 no es inmediata. Sin esto, la página miente hoy. |
 | **1 — Cantidades imperiales** ✅ *hecha (19-10-2026, ver §9)* | Capa de conversión en editor/detalle/PDF(s) según `sistema_unidades`; conversor de cantidades (ambos sentidos); tests | Código | Sin migración (derivado del mercado). Hace usable el producto US. |
-| **2 — Fiscalidad por estado** | `fiscalidad_eeuu.py`, campos `estado_codigo`/`us_tax_base` (+ default empresa), tabla de defaults por estado, bloque de formulario, PDF, migración + staging SQL, tests | Código + migración | Patrón CIS/RCT. Investigación de los 51 defaults apoyada en guías estatales/Avalara. |
+| **2 — Fiscalidad por estado** ✅ *hecha (19-10-2026, ver §9)* | `fiscalidad_eeuu.py`, campos `estado_codigo`/`us_tax_base` (+ default empresa), tabla de defaults por estado, bloque de formulario, PDF, migración + staging SQL, tests | Código + migración | Patrón CIS/RCT. Investigación de los 51 defaults apoyada en guías estatales/Avalara. |
 
 Fuera de alcance en las tres: tipos exactos por ZIP/condado (servicio
 externo), certificados ST-124/ST-8 como documentos, «prevailing wage»
@@ -372,7 +372,40 @@ generan líneas rotuladas en métrico que se guardan correctamente y se
 enseñan convertidas al reabrir. La afirmación SEO de cantidades
 queda restaurada (ahora es cierta). 19 tests nuevos
 (`tests/test_unidades_imperiales.py`); suite **1974 passed, 9
-skipped**. Pendiente: Fase 2 (motor fiscal por estado).
+skipped**.
+
+**Fase 2 ejecutada (19-10-2026):** el motor fiscal por estado está
+construido el mismo día, tal como se diseñó en §4.
+`app/services/fiscalidad_eeuu.py` (gemelo de los de GB/IE) trae los
+**51 defaults investigados** (`docs/INVESTIGACION_FISCALIDAD_ESTADOS_UNIDOS.md`:
+marco por estado verificado contra guías oficiales y tipo combinado
+medio de Tax Foundation midyear 2026 como punto de partida editable) y
+cinco modos de base —los cuatro del diseño más `labor`, que la
+investigación añadió por Kansas (su reforma comercial grava solo la
+mano de obra)—. A diferencia del CIS/RCT, aquí el resultado **entra en
+`calcular_totales`**: es el impuesto del documento, no una retención en
+paralelo, y dejarlo fuera habría mantenido un impuesto fantasma en
+listados, panel y `total_calculado` en 46 de los 51 estados. El reparto
+materiales/mano de obra se estima con el coste del propio presupuesto
+elevado a precio de venta (la segunda pasada que ya alimentaba el
+CIS). Persistencia: `estado_codigo`/`us_tax_base`/`us_tax_fraccion` en
+presupuesto y factura, `us_base_gravada` congelada en la factura y
+`empresa_estado_eeuu` como estado habitual de la empresa — migración
+`n9f2a5b8c3d6` + `docs/staging_upgrade_n9f2a5b8c3d6.sql` **pendiente de
+ejecutar antes de desplegar** (fila 20 de `PENDIENTES_OPERATIVOS.md`).
+Bloque 🇺🇸 en el editor con la propuesta del estado (modo + tipo +
+fracción + nota) y totales en vivo con la misma base; PDF con
+etiqueta y leyenda del estado, cerrado cuando la base es parcial
+(solo `full` sigue interactivo, porque «base × %» es lo que el JS
+recalcularía). El ejemplo de la landing (empresa en Miami) ya no
+cobra sales tax y el texto SEO dice lo que el motor hace. Default =
+reforma de inmueble para su propietario; las bifurcaciones (reparación
+vs mejora capital, residencial vs comercial) viajan como nota del
+estado y aviso en el detalle. 41 tests nuevos
+(`tests/test_fiscalidad_estados_unidos.py`); suite **2015 passed, 9
+skipped**. Con esto, Estados Unidos
+tiene las tres fases construidas; en producción faltan las dos
+ejecuciones de SQL (filas 19 y 20 de PENDIENTES).
 
 ## Fuentes (consultadas el 19-10-2026)
 

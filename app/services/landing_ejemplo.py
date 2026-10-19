@@ -414,6 +414,13 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
     margen_pct = int(round(100 * beneficio / coste_interno)) if coste_interno else 35
     iva_monto = round(subtotal * iva / 100, dec)
     total = round(subtotal + iva_monto, dec)
+    if codigo == "US":
+        # La empresa del ejemplo está en Miami (Florida): el contratista
+        # paga el impuesto al comprar los materiales y en una reforma no
+        # cobra «sales tax» al cliente. Mostrar un porcentaje sobre el
+        # total sería enseñar el error que el motor por estado corrige.
+        iva_monto = 0.0
+        total = subtotal
 
     # ---- APU real del catálogo ---------------------------------------------------
     apu: dict = {"disponible": False}
@@ -519,7 +526,9 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         "tasa_fecha": fecha_tasa,
         "iva": iva,
         "iva_txt": (
-            f"{etiqueta_impuesto} ({iva:g} %)"
+            ("Sales tax (FL) — not charged" if en else "Sales tax (FL) — no se cobra")
+            if codigo == "US"
+            else f"{etiqueta_impuesto} ({iva:g} %)"
         ),
         "margen_txt": f"+{margen_pct} %",
         "empresa": _ETIQUETAS_EN["empresa"] if en else empresa,
