@@ -8,6 +8,7 @@ mercado no obligue a duplicar 180 líneas de SQL.
 Uso:
     python3 tools/generar_sql_precios_pais.py ES
     python3 tools/generar_sql_precios_pais.py GB
+    python3 tools/generar_sql_precios_pais.py IE
 
 La salida se pega en el editor SQL de Supabase. Sustituye únicamente las
 referencias nacionales del mercado indicado; no toca precios propios de
@@ -33,6 +34,7 @@ COLUMNAS = (
 MERCADOS = {
     "ES": ("España", "espana"),
     "GB": ("Reino Unido", "reino_unido"),
+    "IE": ("Irlanda", "irlanda"),
 }
 
 
