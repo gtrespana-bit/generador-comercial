@@ -23,8 +23,8 @@ como residuo daría una cifra falsa.
 Uso:
     python tools/auditar_calidad_traduccion.py                 # mercado EN
     python tools/auditar_calidad_traduccion.py MX
-    python tools/auditar_calidad_traduccion.py EN --capitulo Instalaciones
-    python tools/auditar_calidad_traduccion.py EN --detalle 30
+    python tools/auditar_calidad_traduccion.py GB --capitulo Instalaciones
+    python tools/auditar_calidad_traduccion.py GB --detalle 30
 """
 from __future__ import annotations
 
@@ -38,7 +38,9 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
+from app.paises import resolver_mercado  # noqa: E402
 from app.services.traduccion import SALIDA_TRADUCCIONES  # noqa: E402
+from app.services.variante_ingles import aplicar_variante  # noqa: E402
 
 CATALOGO = RAIZ / "basedatos_partidas" / "salida" / "catalogo_partidas.json"
 GLOSARIOS = RAIZ / "basedatos_partidas" / "glosarios"
@@ -70,8 +72,12 @@ def _norm(w: str) -> str:
             .replace("ó", "o").replace("ú", "u").replace("ñ", "n").replace("ü", "u"))
 
 
-def _cargar(codigo: str) -> tuple[dict, dict, dict]:
-    """Devuelve (por_capitulo, glosario_palabras, tabla)."""
+def _cargar(codigo: str) -> tuple[dict, dict, dict, dict]:
+    """Devuelve (por_capitulo, glosario_palabras, tabla, mercado).
+
+    Los mercados anglófonos comparten la tabla EN; la variante (GB, IE, AU o
+    CA) se aplica después, igual que en ``traducir`` en tiempo de ejecución.
+    """
     catalogo = json.loads(CATALOGO.read_text(encoding="utf-8"))
     por_capitulo: dict[str, set[str]] = defaultdict(set)
     for p in catalogo:
@@ -81,14 +87,16 @@ def _cargar(codigo: str) -> tuple[dict, dict, dict]:
             if isinstance(v, str) and v.strip():
                 por_capitulo[cap].add(v)
 
+    mercado = resolver_mercado(codigo)
+    glosario = "EN" if mercado["idioma"] == "en" else str(mercado["codigo"])
     try:
-        cambios = json.loads((GLOSARIOS / f"{codigo}.json").read_text(encoding="utf-8"))["cambios"]
+        cambios = json.loads((GLOSARIOS / f"{glosario}.json").read_text(encoding="utf-8"))["cambios"]
     except FileNotFoundError:
         cambios = []
     wmap = {c["de"]: c["a"] for c in cambios if " " not in c["de"]}
 
-    tabla = json.loads((SALIDA_TRADUCCIONES / f"{codigo}.json").read_text(encoding="utf-8"))["cadenas"]
-    return por_capitulo, wmap, tabla
+    tabla = json.loads((SALIDA_TRADUCCIONES / f"{glosario}.json").read_text(encoding="utf-8"))["cadenas"]
+    return por_capitulo, wmap, tabla, mercado
 
 
 def _residuo(es: str, en: str) -> list[str]:
@@ -131,7 +139,7 @@ def main() -> int:
     ap.add_argument("--detalle", type=int, default=12,
                     help="cuántas palabrasproblemáticas mostrar por capítulo")
     args = ap.parse_args()
-    por_capitulo, wmap, tabla = _cargar(args.mercado)
+    por_capitulo, wmap, tabla, mercado = _cargar(args.mercado)
     if not tabla:
         print(f"No hay tabla para {args.mercado}.", file=sys.stderr)
         return 1
@@ -145,6 +153,8 @@ def main() -> int:
         n = 0
         for s in cadenas:
             t = tabla.get(s, s)
+            if mercado["idioma"] == "en":
+                t = aplicar_variante(t, mercado)
             n += 1
             for w in _residuo(s, t):
                 residuo[w] += 1

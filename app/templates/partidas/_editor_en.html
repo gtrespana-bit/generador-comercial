@@ -1,5 +1,5 @@
 {% macro editor_partida_catalogo(partida=None, mostrar_imagen=True) %}
-<div class="partida-catalogo-editor" data-partida-catalogo-editor>
+<div class="partida-catalogo-editor" data-partida-catalogo-editor data-moneda="{{ moneda_local | default('USD') }}">
   <section class="catalog-editor-section catalog-editor-main">
     <div class="catalog-editor-section-head">
       <div><span class="section-kicker">Technical sheet</span><h3>Line item identification</h3></div>
@@ -10,7 +10,7 @@
       <div class="field"><label>Section</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else '99 Custom line items' }}" placeholder="99 Custom line items"></div>
       <div class="field"><label>Subsection</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="e.g. 99.01 General"></div>
       <div class="field"><label>Subheading</label><input name="apartado" value="{{ partida.apartado if partida else '' }}" placeholder="e.g. 99.01.01 Miscellaneous work"></div>
-      <div class="field"><label>Unit of the line item</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, ea…"></div>
+      <div class="field"><label>Unit of the line item</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, each…"></div>
       <div class="field"><label>Line item code</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
       <div class="field field-full">
         <div class="card-head">
@@ -37,19 +37,19 @@
     </div>
     <div class="table-wrap catalog-breakdown-table-wrap">
       <table class="table tabla-descomposicion-catalogo" data-role="tabla-descomposicion-catalogo">
-        <thead><tr><th>Group</th><th>Code</th><th>Unit</th><th>Description</th><th class="right">Productivity</th><th class="right">Output %</th><th class="right">Unit price</th><th class="right">Amount</th><th class="right">% of cost</th><th></th></tr></thead>
+        <thead><tr><th>Group</th><th>Code</th><th>Unit</th><th>Description</th><th class="right">Productivity</th><th class="right">Output %</th><th class="right">Unit price ({{ moneda_local | default('USD') }})</th><th class="right">Amount ({{ moneda_local | default('USD') }})</th><th class="right">% of cost</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
-    <div class="breakdown-empty" data-role="breakdown-empty"><span>🧮</span><strong>No resources yet</strong><small>Add materials, labor, equipment or complementary costs.</small></div>
+    <div class="breakdown-empty" data-role="breakdown-empty"><span>🧮</span><strong>No resources yet</strong><small>Add materials, labour, equipment or complementary costs.</small></div>
     <div class="breakdown-totals" data-role="breakdown-totals">
       <span>Materials <strong data-total="materiales">0.00</strong></span>
-      <span>Labor <strong data-total="mano_obra">0.00</strong></span>
-      <span>Equipment and other <strong data-total="otros">0.00</strong></span>
-      <span>Complementary <strong data-total="complementarios">0.00</strong></span>
+      <span>Labour <strong data-total="mano_obra">0.00</strong></span>
+      <span>Other costs <strong data-total="otros">0.00</strong></span>
+      <span>Ancillary costs <strong data-total="complementarios">0.00</strong></span>
       <span class="direct-cost">Direct cost <strong data-total="directo">0.00</strong></span>
     </div>
-    <p class="hint breakdown-help">For complementary direct costs, add a row with the group “Costes complementarios”, unit <code>%</code> and the percentage as the productivity. The base is calculated for you.</p>
+    <p class="hint breakdown-help">For ancillary direct costs, add a row in the “Ancillary costs” group, set the unit to <code>%</code> and enter the percentage as the productivity. The base is calculated automatically.</p>
   </section>
 
   <details class="catalog-advanced-fields">
@@ -58,11 +58,11 @@
       <div class="field"><label>Internal code</label><input name="codigo_interno" value="{{ partida.codigo_interno if partida else '' }}"></div>
       <div class="field"><label>Usual supplier</label><input name="proveedor" value="{{ partida.proveedor if partida else '' }}"></div>
       <div class="field"><label>Total estimated time (h/unit)</label><input type="number" step="any" min="0" name="tiempo_estimado_horas" value="{{ partida.tiempo_estimado_horas if partida and partida.tiempo_estimado_horas is not none else '' }}" placeholder="1.00"><small class="hint">Total hours per unit (split 60/40 if you do not break it down)</small></div>
-      <div class="field"><label>⏱ Journeyman h/unit</label><input type="number" step="any" min="0" name="tiempo_oficial_horas" value="{{ partida.tiempo_oficial_horas if partida and partida.tiempo_oficial_horas is not none else '' }}" placeholder="0.60"><small class="hint">Journeyman hours per unit</small></div>
-      <div class="field"><label>⏱ Helper h/unit</label><input type="number" step="any" min="0" name="tiempo_ayudante_horas" value="{{ partida.tiempo_ayudante_horas if partida and partida.tiempo_ayudante_horas is not none else '' }}" placeholder="0.40"><small class="hint">Helper / labourer hours per unit</small></div>
-      <div class="field"><label>⏱ Equipment h/unit</label><input type="number" step="any" min="0" name="tiempo_equipo_horas" value="{{ partida.tiempo_equipo_horas if partida and partida.tiempo_equipo_horas is not none else '' }}" placeholder="0.00"><small class="hint">Machinery / equipment hours per unit</small></div>
+      <div class="field"><label>⏱ {{ 'Skilled tradesperson' if codigo_pais == 'GB' else 'Journeyman' }} h/unit</label><input type="number" step="any" min="0" name="tiempo_oficial_horas" value="{{ partida.tiempo_oficial_horas if partida and partida.tiempo_oficial_horas is not none else '' }}" placeholder="0.60"><small class="hint">{{ 'Skilled tradesperson' if codigo_pais == 'GB' else 'Journeyman' }} hours per unit</small></div>
+      <div class="field"><label>⏱ {{ 'Labourer' if codigo_pais == 'GB' else 'Helper' }} h/unit</label><input type="number" step="any" min="0" name="tiempo_ayudante_horas" value="{{ partida.tiempo_ayudante_horas if partida and partida.tiempo_ayudante_horas is not none else '' }}" placeholder="0.40"><small class="hint">{{ 'Labourer' if codigo_pais == 'GB' else 'Helper / labourer' }} hours per unit</small></div>
+      <div class="field"><label>⏱ {{ 'Plant and equipment' if codigo_pais == 'GB' else 'Equipment' }} h/unit</label><input type="number" step="any" min="0" name="tiempo_equipo_horas" value="{{ partida.tiempo_equipo_horas if partida and partida.tiempo_equipo_horas is not none else '' }}" placeholder="0.00"><small class="hint">{{ 'Plant and equipment' if codigo_pais == 'GB' else 'Machinery / equipment' }} hours per unit</small></div>
       <div class="field"><label>Informational output</label><input name="rendimiento" value="{{ partida.rendimiento if partida else '' }}"></div>
-      <div class="field"><label>Recommended waste (%)</label><input type="number" name="desperdicio_recomendado_pct" step="0.01" min="0" max="100" value="{{ partida.desperdicio_recomendado_pct if partida else 0 }}"></div>
+      <div class="field"><label>Recommended {{ 'wastage' if codigo_pais == 'GB' else 'waste' }} (%)</label><input type="number" name="desperdicio_recomendado_pct" step="0.01" min="0" max="100" value="{{ partida.desperdicio_recomendado_pct if partida else 0 }}"></div>
       {% if mostrar_imagen %}
       <div class="field field-full"><label>Reference image</label>
         <div class="catalog-image-preview {{ '' if partida and partida.imagen else 'cotizat-hidden' }}" data-role="catalog-image-preview">

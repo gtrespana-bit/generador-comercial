@@ -31,22 +31,26 @@
 
   window.FMT.decimales = decimales;
 
+  function locale() {
+    var lang = String(document.documentElement.lang || "es").toLowerCase();
+    return lang.indexOf("en") === 0 ? "en-GB" : "es-VE";
+  }
+
   function fmt(valor, moneda) {
     var cod = codigo(moneda);
     var places = decimales(cod);
-    if (valor == null || isNaN(valor)) return (0).toFixed(places).replace(".", ",") + " " + cod;
-    var s = Math.abs(Number(valor)).toFixed(places);
-    var partes = s.split(".");
-    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    var signo = valor < 0 ? "-" : "";
-    return signo + partes.join(",") + " " + cod;
+    var numero = valor == null || isNaN(valor) ? 0 : Number(valor);
+    return numero.toLocaleString(locale(), {
+      minimumFractionDigits: places,
+      maximumFractionDigits: places
+    }) + " " + cod;
   }
 
   window.FMT.fmt = fmt;
 
   function fmtNum(valor) {
-    if (valor == null || isNaN(valor)) return "0,00";
-    return Number(valor).toLocaleString("es-VE", {
+    var numero = valor == null || isNaN(valor) ? 0 : Number(valor);
+    return numero.toLocaleString(locale(), {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });

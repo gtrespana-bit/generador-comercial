@@ -47,9 +47,9 @@ def listar_presupuestos(
     por_pagina = 25
     paginas = max(1, (total + por_pagina - 1) // por_pagina)
     pagina = max(1, min(pagina, paginas))
-    # Carga temprana de cliente y del grafo de partidas: la plantilla pinta
-    # ``p.cliente.nombre`` y ``p.total`` en cada fila y, sin ella, cada fila
-    # lanzaba sus propias consultas perezosas (N+1).
+    # El listado usa el cliente y el total congelado. Los presupuestos antiguos
+    # sin total_calculado necesitan el cálculo real; carga su grafo en lote para
+    # no hacer una consulta perezosa por cada presupuesto/partida.
     presupuestos = (
         query.options(joinedload(Presupuesto.cliente))
         .order_by(Presupuesto.id.desc())
@@ -57,6 +57,13 @@ def listar_presupuestos(
         .limit(por_pagina)
         .all()
     )
+    ids_sin_total = [p.id for p in presupuestos if p.total_calculado is None]
+    if ids_sin_total:
+        # El total puede depender de mediciones, opciones de producto y filas
+        # CYPE: reutiliza el grafo completo del cálculo, cargado en select-in.
+        db.query(Presupuesto).options(*_opciones_pdf_presupuesto()).filter(
+            Presupuesto.id.in_(ids_sin_total)
+        ).all()
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/list.html",
@@ -979,6 +986,33 @@ def _datos_bc3_desde_payload(payload, db: Session):
     }, destino
 
 
+def _localizar_respuesta_importacion(request: Request, respuesta: dict) -> dict:
+    """Traduce los mensajes de interfaz de la API de importación al inglés.
+
+    Los nombres, descripciones y datos del archivo importado se conservan tal
+    cual: solo se localizan errores y avisos generados por la aplicación.
+    """
+    salida = dict(respuesta)
+    for clave in ("error", "mensaje"):
+        if salida.get(clave):
+            salida[clave] = mensaje_request(request, salida[clave])
+    for clave in ("errores", "advertencias"):
+        filas = salida.get(clave)
+        if not isinstance(filas, list):
+            continue
+        localizadas = []
+        for fila in filas:
+            if not isinstance(fila, dict):
+                localizadas.append(fila)
+                continue
+            aviso = dict(fila)
+            if aviso.get("mensaje"):
+                aviso["mensaje"] = mensaje_request(request, aviso["mensaje"])
+            localizadas.append(aviso)
+        salida[clave] = localizadas
+    return salida
+
+
 @router.post("/presupuestos/importar/analizar")
 async def analizar_importacion_presupuesto(
     request: Request, db: Session = Depends(get_db)
@@ -1010,7 +1044,7 @@ async def analizar_importacion_presupuesto(
                 if not es_formato_bc3(contenido):
                     raise ErrorImportacion("El archivo no parece un BC3 válido (faltan registros ~C/~D).")
                 resultado = _guardar_importacion_bc3(nombre, contenido, db)
-                return {"ok": True, **resultado}
+                return _localizar_respuesta_importacion(request, {"ok": True, **resultado})
 
             # Varios .xlsx CYPE equivalen a varias partidas. Todos se detectan
             # antes de guardarse: nunca se mezcla una importación parcial con
@@ -1019,7 +1053,7 @@ async def analizar_importacion_presupuesto(
                 resultado = _guardar_importacion_cype(
                     [(nombre, contenido) for nombre, _, contenido in archivos], db
                 )
-                return {"ok": True, **resultado}
+                return _localizar_respuesta_importacion(request, {"ok": True, **resultado})
             if len(archivos) > 1:
                 raise ErrorImportacion("Solo se pueden cargar varios archivos cuando todos usan el mismo formato de descompuesto Excel.")
 
@@ -1053,16 +1087,16 @@ async def analizar_importacion_presupuesto(
                         exact_filename=f"{token}.json",
                     )
                     db.commit()
-                    return {"ok": True, "importacion_id": token, **manifiesto}
+                    return _localizar_respuesta_importacion(request, {"ok": True, "importacion_id": token, **manifiesto})
                 except ErrorBC3 as e:
                     raise ErrorImportacion(str(e)) from e
             matriz = leer_texto(texto)
         else:
             raise ErrorImportacion("Carga un archivo CSV/XLSX/BC3 o pega las filas desde Excel.")
         resultado = analizar_matriz(matriz, tiene_encabezados)
-        return {"ok": True, "formato": "tabular", **resultado, "primera_fila": 2 if tiene_encabezados else 1}
+        return _localizar_respuesta_importacion(request, {"ok": True, "formato": "tabular", **resultado, "primera_fila": 2 if tiene_encabezados else 1})
     except (ErrorImportacion, ErrorBC3) as exc:
-        return {"ok": False, "error": str(exc)}
+        return _localizar_respuesta_importacion(request, {"ok": False, "error": str(exc)})
 
 
 @router.post("/presupuestos/importar/validar")
@@ -1070,9 +1104,9 @@ async def validar_importacion_presupuesto(request: Request, db: Session = Depend
     try:
         payload = await request.json()
         resultado, _ = _datos_importacion_desde_payload(payload, db)
-        return {"ok": True, **resultado}
+        return _localizar_respuesta_importacion(request, {"ok": True, **resultado})
     except (ValueError, TypeError, ErrorImportacion) as exc:
-        return {"ok": False, "error": str(exc)}
+        return _localizar_respuesta_importacion(request, {"ok": False, "error": str(exc)})
 
 
 @router.post("/presupuestos/importar/confirmar")
@@ -1081,11 +1115,11 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
         payload = await request.json()
         resultado, destino = _datos_importacion_desde_payload(payload, db)
     except (ValueError, TypeError, ErrorImportacion) as exc:
-        return {"ok": False, "error": str(exc)}
+        return _localizar_respuesta_importacion(request, {"ok": False, "error": str(exc)})
     if resultado["errores"]:
-        return {"ok": False, "error": mensaje_request(request, "Corrige los errores de validación antes de importar."), "errores": resultado["errores"]}
+        return _localizar_respuesta_importacion(request, {"ok": False, "error": "Corrige los errores de validación antes de importar.", "errores": resultado["errores"]})
     if not resultado["filas"]:
-        return {"ok": False, "error": mensaje_request(request, "No hay filas válidas para importar.")}
+        return _localizar_respuesta_importacion(request, {"ok": False, "error": "No hay filas válidas para importar."})
 
     modo = str(payload.get("modo", "")).strip().lower()
     formato = str(payload.get("formato", ""))
@@ -1103,12 +1137,12 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
         mensaje = f"Se importaron {creadas} partida(s) al catálogo."
         if omitidas:
             mensaje += f" {omitidas} ya existían y no se duplicaron."
-        return {
+        return _localizar_respuesta_importacion(request, {
             "ok": True,
             "url": f"/partidas?msg={quote(mensaje)}",
             "importadas": creadas,
             "advertencias": resultado["advertencias"],
-        }
+        })
 
     # En un presupuesto todavía nuevo no existe id al que anexar. El modo
     # embebido guarda las partidas en el catálogo ahora mismo y devuelve su
@@ -1129,7 +1163,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
             f"{len(resultado['filas'])} partida(s) añadida(s) al presupuesto. "
             "Ya están guardadas en el catálogo; guarda el presupuesto cuando termines."
         )
-        return {
+        return _localizar_respuesta_importacion(request, {
             "ok": True,
             "permanecer_en_editor": True,
             "presupuesto_guardado": False,
@@ -1140,7 +1174,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
             "catalogo": catalogo_editor,
             "mensaje": mensaje,
             "advertencias": resultado["advertencias"],
-        }
+        })
 
     if destino is None:
         cliente = db.get(Cliente, int(_f(payload.get("client_id"), 0)))
@@ -1205,7 +1239,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     )
 
     if modo == "editor_inline":
-        return {
+        return _localizar_respuesta_importacion(request, {
             "ok": True,
             "permanecer_en_editor": True,
             "presupuesto_guardado": True,
@@ -1220,7 +1254,7 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
                 "en el presupuesto y en el catálogo."
             ),
             "advertencias": resultado["advertencias"],
-        }
+        })
 
     redirect_url = f"/presupuestos/{destino.id}?msg={quote(mensaje_final)}"
     # Para CYPE (subidas de uno en uno habitualmente): abre directamente la
@@ -1231,12 +1265,12 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
         if getattr(last_item, "descomposicion_cype", None):
             redirect_url = f"/presupuestos/{destino.id}/partidas/{last_item.id}/descomposicion?msg={quote(mensaje_final)}"
 
-    return {
+    return _localizar_respuesta_importacion(request, {
         "ok": True,
         "url": redirect_url,
         "importadas": len(resultado["filas"]),
         "advertencias": resultado["advertencias"],
-    }
+    })
 
 
 def _recursos_editor_mercado(db, recursos, cfg, moneda, tasa):

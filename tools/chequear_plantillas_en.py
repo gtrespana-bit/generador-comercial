@@ -100,9 +100,13 @@ def _equivalente(referencia: str | None) -> str | None:
     return referencia
 
 
-def _referencias(env: Environment, nombre: str) -> set[str]:
+def _referencias(env: Environment, nombre: str, *, normalizar_es: bool = True) -> set[str]:
     ast = env.parse((TEMPLATES / nombre).read_text(encoding="utf-8"))
-    return {_equivalente(r) for r in meta.find_referenced_templates(ast) if r}
+    refs = {r for r in meta.find_referenced_templates(ast) if r}
+    # En el original en español, base.html debe compararse con base_en.html.
+    # En el archivo inglés se inspecciona la referencia real: normalizarla
+    # también aquí ocultaría errores como `extends "base.html"`.
+    return {_equivalente(r) for r in refs} if normalizar_es else refs
 
 
 def _variables(env: Environment, nombre: str) -> set[str]:
@@ -117,6 +121,11 @@ DIFERENCIAS_ACEPTADAS: dict[str, set[str]] = {
     "landing.html": {"jsonld_bloques", "seo"},
     "seo_guia.html": {"guias"},
     "seo_hub.html": {"guias"},
+    # El listado inglés traduce por el código de mercado; el español no lo
+    # necesita porque su catálogo de origen ya está en español.
+    "partidas/list.html": {"mercado_codigo"},
+    # En inglés el grupo se localiza por recurso antes de pintarlo.
+    "recursos/list.html": {"grupos_vista"},
 }
 
 
@@ -139,7 +148,7 @@ def main() -> int:
             continue
 
         ref_es = _referencias(env, original)
-        ref_en = _referencias(env, traducida)
+        ref_en = _referencias(env, traducida, normalizar_es=False)
         if ref_es != ref_en:
             print(
                 f"✗ {traducida}: parciales distintos\n"

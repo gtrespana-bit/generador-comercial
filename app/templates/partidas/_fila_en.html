@@ -13,7 +13,7 @@
   <td class="col-nombre">
     <div class="partida-main">
       <span class="partida-nombre" title="{{ p.nombre }}">{{ p.nombre }}</span>
-      {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Usada {{ p.usos }} veces">🔥{{ p.usos }}</span>{% endif %}
+      {% if p.usos and p.usos > 0 %}<span class="usos-mini" title="Used {{ p.usos }} times">🔥{{ p.usos }}</span>{% endif %}
     </div>
     <div class="partida-sub">
       {% if p.apartado %}<span class="apartado-mini" title="Catalog path">{{ p.apartado }}</span>{% endif %}
@@ -27,7 +27,7 @@
     </div>
   </td>
   <td class="col-und"><span class="und-badge">{{ p.unidad }}</span></td>
-  <td class="col-coste right" data-coste="{{ coste }}" title="Materiales {{ (p.coste_materiales or 0)|money_iso(moneda_vista) }} · Mano {{ (p.coste_mano_obra or 0)|money_iso(moneda_vista) }} · Compl. {{ (p.coste_complementarios or 0)|money_iso(moneda_vista) }} · Otros {{ (p.coste_otros or 0)|money_iso(moneda_vista) }}">
+  <td class="col-coste right" data-coste="{{ coste }}" title="Materials {{ (p.coste_materiales or 0)|money_iso(moneda_vista) }} · Labour {{ (p.coste_mano_obra or 0)|money_iso(moneda_vista) }} · Complementary {{ (p.coste_complementarios or 0)|money_iso(moneda_vista) }} · Other {{ (p.coste_otros or 0)|money_iso(moneda_vista) }}">
     <span class="coste-val">{{ coste | money_iso(moneda_vista) if coste>0 else "—" }}</span>
   </td>
   <td class="col-precio right" data-precio="{{ p.precio_unitario }}"><strong class="precio-val">{{ p.precio_unitario | money_iso(moneda_vista) }}</strong></td>
@@ -35,7 +35,7 @@
     {% if coste>0 %}
       {% set markup = ((p.precio_unitario - coste) / coste * 100) if coste else 0 %}
       {% set margen_pct = ((p.precio_unitario - coste) / p.precio_unitario * 100) if p.precio_unitario else 0 %}
-      {% if margen>=0 %}<span class="margen-pos" title="Beneficio {{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}% s/coste, {{ margen_pct|round(1) }}% margen">+{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% s/coste">{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% endif %}
+      {% if margen>=0 %}<span class="margen-pos" title="Profit {{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}% markup on cost, {{ margen_pct|round(1) }}% margin">+{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% else %}<span class="margen-neg" title="{{ markup|round(1) }}% markup on cost">{{ margen|money_iso(moneda_vista) }} · {{ markup|round(1) }}%</span>{% endif %}
     {% else %}
       <span class="margen-na">—</span>
     {% endif %}
@@ -49,8 +49,8 @@
       </form>
       {% else %}
       <a href="/partidas/{{ p.id }}/editar" class="btn btn-sm btn-ghost" title="Edit">✏️</a>
-      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="{% if p.es_oficial %}¿Ocultar «{{ p.nombre }}» para esta organización? Podrás restaurarla después.{% else %}¿Eliminar definitivamente «{{ p.nombre }}»?{% endif %}">
-        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="{{ 'Ocultar' if p.es_oficial else 'Eliminar' }}">{{ '◉' if p.es_oficial else '✕' }}</button>
+      <form method="post" action="/partidas/{{ p.id }}/eliminar" class="csp-s-a91548c594" data-confirm="{% if p.es_oficial %}Hide “{{ p.nombre }}” for this organisation? You can restore it later.{% else %}Permanently delete “{{ p.nombre }}”?{% endif %}">
+        <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="{{ 'Hide' if p.es_oficial else 'Delete' }}">{{ '◉' if p.es_oficial else '✕' }}</button>
       </form>
       {% endif %}
     </div>
@@ -60,7 +60,7 @@
 <tr class="descomp-row" data-parent="{{ p.id }}">
   <td colspan="9" class="csp-s-1305fa8339">
     <details class="descomp-details" data-descomp="{{ p.id }}">
-      <summary><span class="descomp-summary-label">▾ Descomposición ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} recursos)</span> <span class="hint csp-s-a7d39f24f0">Click to view</span></summary>
+      <summary><span class="descomp-summary-label">▾ Breakdown ({{ recursos|selectattr('tipo','equalto','recurso')|list|length }} resources)</span> <span class="hint csp-s-a7d39f24f0">Click to view</span></summary>
       <div class="table-wrap descomp-holder csp-s-abe228aee0"></div>
     </details>
   </td>

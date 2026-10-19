@@ -476,3 +476,41 @@ def test_catalogo_no_disponible_no_se_marca_ni_finaliza(monkeypatch):
     finally:
         db.close()
         engine.dispose()
+
+
+def test_normalizar_nombres_patron_hace_dos_consultas_en_lote():
+    from sqlalchemy import event
+
+    from app.services.catalogo_propio import _normalizar_nombres_patron
+
+    engine, db = _session()
+    try:
+        partida = Partida(
+            nombre="Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+            descripcion="Alicatado de paramento interior con pieza cerámica o porcelanato, en capa fina.",
+            precio_unitario=10,
+        )
+        recurso = Recurso(descripcion="Oficial de 1ª alicatador.", unidad="h")
+        db.add_all([partida, recurso])
+        db.commit()
+
+        select_count = 0
+
+        def contar_select(_conn, _cursor, statement, _parameters, _context, _executemany):
+            nonlocal select_count
+            if statement.lstrip().upper().startswith("SELECT"):
+                select_count += 1
+
+        event.listen(engine, "before_cursor_execute", contar_select)
+        try:
+            actualizadas = _normalizar_nombres_patron(db)
+        finally:
+            event.remove(engine, "before_cursor_execute", contar_select)
+
+        assert actualizadas == 2
+        assert select_count == 2
+        assert partida.nombre == "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina."
+        assert recurso.descripcion == "Oficial de 1ª enchapador."
+    finally:
+        db.close()
+        engine.dispose()

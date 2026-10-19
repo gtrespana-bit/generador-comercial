@@ -258,3 +258,70 @@ def test_importador_no_escribe_parcialmente_si_un_rango_es_invalido(entorno, tmp
         assert resultado["errores"]
         assert resultado["creadas_o_actualizadas"] == 0
         assert db.query(PrecioRecursoMercado).filter_by(recurso_id=recurso.id).count() == 0
+
+
+def test_recalcular_partidas_mercado_resuelve_lote_sin_consultas_n_mas_uno(entorno):
+    """El precio de mercado de una lista se resuelve con un número fijo de SELECT."""
+    import json
+
+    from sqlalchemy import event
+
+    from app.models import Partida
+    from app.services.precios_partidas import recalcular_partidas_mercado
+
+    Session, ids, _ = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        recurso = Recurso(
+            organizacion_id=ids[0], codigo="MO-PERF-01",
+            descripcion="Oficial de obra", unidad="h",
+            categoria="mano_obra", precio=8, moneda="EUR",
+        )
+        db.add(recurso)
+        db.flush()
+        guardar_precio(db, recurso.id, "ES", 24, "EUR")
+
+        descomposicion = json.dumps({"filas": [{
+            "tipo": "recurso", "codigo": "MO-PERF-01",
+            "descripcion": "Oficial de obra", "unidad": "h",
+            "categoria": "mano_obra", "grupo": "Mano de obra",
+            "rendimiento": 1, "precio": 8, "precio_unitario": 8,
+        }]})
+        partidas = [
+            Partida(
+                organizacion_id=ids[0],
+                nombre=f"Partida de rendimiento {indice:03d}",
+                precio_unitario=12,
+                coste_mano_obra=8,
+                unidad="ud",
+                categoria="Pruebas",
+                descomposicion_json=descomposicion,
+            )
+            for indice in range(40)
+        ]
+        db.add_all(partidas)
+        db.flush()
+
+        select_count = 0
+        bind = db.get_bind()
+
+        def contar_select(_conn, _cursor, statement, _parameters, _context, _executemany):
+            nonlocal select_count
+            if statement.lstrip().upper().startswith("SELECT"):
+                select_count += 1
+
+        event.listen(bind, "before_cursor_execute", contar_select)
+        try:
+            resultados = recalcular_partidas_mercado(
+                db, partidas, "ES", ids[0], "EUR", 1.0,
+            )
+        finally:
+            event.remove(bind, "before_cursor_execute", contar_select)
+
+        assert len(resultados) == len(partidas)
+        assert select_count <= 2
+        for partida in partidas:
+            resultado = resultados[partida.id]
+            assert resultado.filas[0]["precio"] == 24
+            assert resultado.coste_mano_obra == 24
+            assert resultado.precio_unitario == 36

@@ -5,10 +5,10 @@
   <div>
     <p class="crumb"><a href="/presupuestos">Estimates</a> › Price optimisation</p>
     <h1>Price optimisation</h1>
-    <p class="subtitle">Real analysis of your line item catalog (/partidas). It does not use the internet or any external market database: it only compares the selling price against the cost you loaded yourself.</p>
+    <p class="subtitle">Review of your line item catalogue (/partidas). It does not use the internet or any external market database; it compares each selling price with the costs you have recorded.</p>
   </div>
   <div class="actions">
-    <a class="btn" href="/partidas">View line item catalog</a>
+    <a class="btn" href="/partidas">View line item catalogue</a>
     <a class="btn btn-primary" href="/presupuestos">← Back to estimates</a>
   </div>
 </div>
@@ -16,11 +16,11 @@
 <div class="cards csp-s-e12e213489">
   <div class="card-stat">
     <div class="stat-num">{{ analisis.total_partidas }}</div>
-    <div class="stat-label">Line items in your catalog</div>
+    <div class="stat-label">Line items in your catalogue</div>
   </div>
   <div class="card-stat">
     <div class="stat-num">{{ analisis.evaluadas }}</div>
-    <div class="stat-label">With internal cost loaded (assessable)</div>
+    <div class="stat-label">With internal costs recorded (assessable)</div>
   </div>
   <div class="card-stat">
     <div class="stat-num {{ 'text-rose' if analisis.alertas else 'text-accent' }}">{{ analisis.alertas | length }}</div>
@@ -34,15 +34,15 @@
 
 {% if analisis.sin_datos_costo %}
 <p class="hint csp-s-68227a9129">
-  ℹ️ {{ analisis.sin_datos_costo }} partida(s) no tienen costo de materiales/mano de obra cargado, así que no se puede calcular su margen todavía.
-  Complétalo en <a class="link" href="/partidas">the line item catalog</a> to include them in this analysis.
+  ℹ️ {{ analisis.sin_datos_costo }} {{ 'line item' if analisis.sin_datos_costo == 1 else 'line items' }} {{ 'has' if analisis.sin_datos_costo == 1 else 'have' }} no material or labour costs recorded, so {{ 'its margin cannot' if analisis.sin_datos_costo == 1 else 'their margins cannot' }} yet be calculated.
+  Add the costs in the <a class="link" href="/partidas">line item catalogue</a> to include them in this analysis.
 </p>
 {% endif %}
 
 <div class="card">
   <div class="card-head csp-s-05e74ce48a">
     <h2 class="csp-s-768bda7dd9">Line items to review</h2>
-    <span class="hint">Reference margin: {{ analisis.margen_minimo | int }}% · It is flagged as out of date after {{ analisis.dias_desactualizado }} days without touching the price</span>
+    <span class="hint">Target margin: {{ analisis.margen_minimo | int }}% · Flagged for review if the price has not been updated for {{ analisis.dias_desactualizado }} days</span>
   </div>
   {% if analisis.alertas %}
   <table class="table">
@@ -65,7 +65,7 @@
         <td class="right">{{ a.precio_unitario | money_iso(moneda_vista) }}</td>
         <td class="right">{{ a.coste_unitario | money_iso(moneda_vista) }}</td>
         <td class="right {{ 'text-rose' if a.margen_pct < analisis.margen_minimo else 'text-default' }}"><strong>{{ a.margen_pct }}%</strong></td>
-        <td class="csp-s-f25d241cb3">{{ a.motivos | join(' · ') }}</td>
+        <td class="csp-s-f25d241cb3">{{ a.motivos | map('mensaje', _idioma) | join(' · ') }}</td>
         <td class="right"><a class="btn btn-sm" href="/partidas/{{ a.id }}/editar" target="_blank">Adjust price</a></td>
       </tr>
       {% endfor %}
@@ -73,7 +73,7 @@
   </table>
   {% else %}
   <div class="empty">
-    <p>{{ 'No hay partidas con costo interno cargado todavía. Complétalo en the line item catalog para poder analizarlas.' if not analisis.evaluadas else 'Sin alertas: todas las partidas evaluadas tienen margen saludable y precio actualizado. 👍' }}</p>
+    <p>{{ 'No line items have internal costs recorded yet. Add costs in the line item catalogue to include them in the analysis.' if not analisis.evaluadas else 'No alerts: all assessed line items have a healthy margin and up-to-date prices. 👍' }}</p>
   </div>
   {% endif %}
 </div>

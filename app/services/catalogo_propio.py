@@ -990,29 +990,45 @@ def _normalizar_nombres_patron(db: Session) -> int:
     hay algo que cambiar. No toca precios ni descomposiciones.
     """
     total = 0
-    # Partidas
-    for viejo, nuevo in _RENOMBRADOS_PATRON.items():
-        filas = db.query(Partida).filter(Partida.nombre == viejo).all()
-        for p in filas:
-            p.nombre = nuevo
-            # También corrige la descripción si empieza igual (Alicatado -> Enchapado)
-            if p.descripcion and viejo.split(" con ")[0].lower() in p.descripcion.lower()[:80]:
-                # Reemplazo simple preservando el resto
-                if "Alicatado de paramento" in p.descripcion:
-                    p.descripcion = p.descripcion.replace("Alicatado de paramento", "Enchapado de paramento").replace("alicatado", "enchapado")
-                elif "Revestimiento del frente" in p.descripcion:
-                    p.descripcion = p.descripcion.replace("Revestimiento del frente", "Enchapado del frente")
-                elif "Revestimiento de columna" in p.descripcion:
-                    p.descripcion = p.descripcion.replace("Revestimiento de columna", "Enchapado de columna")
-                elif "zócalo cerámico" in p.descripcion.lower():
-                    p.descripcion = p.descripcion.replace("zócalo cerámico", "rodapié cerámico").replace("Zócalo cerámico", "Rodapié cerámico")
-            total += 1
-    # Recursos
-    for viejo, nuevo in _RECURSOS_RENOMBRADOS.items():
-        filas = db.query(Recurso).filter(Recurso.descripcion == viejo).all()
-        for r in filas:
-            r.descripcion = nuevo
-            total += 1
+    # Partidas: una consulta para todos los títulos antiguos, no una ida a la
+    # base por cada entrada del mapa (hay despliegues con PostgreSQL remoto).
+    nombres_viejos = tuple(_RENOMBRADOS_PATRON)
+    partidas = (
+        db.query(Partida)
+        .filter(Partida.nombre.in_(nombres_viejos))
+        .all()
+    ) if nombres_viejos else []
+    for partida in partidas:
+        viejo = partida.nombre
+        nuevo = _RENOMBRADOS_PATRON.get(viejo)
+        if not nuevo:
+            continue
+        partida.nombre = nuevo
+        # También corrige la descripción si empieza igual (Alicatado -> Enchapado)
+        if partida.descripcion and viejo.split(" con ")[0].lower() in partida.descripcion.lower()[:80]:
+            # Reemplazo simple preservando el resto
+            if "Alicatado de paramento" in partida.descripcion:
+                partida.descripcion = partida.descripcion.replace("Alicatado de paramento", "Enchapado de paramento").replace("alicatado", "enchapado")
+            elif "Revestimiento del frente" in partida.descripcion:
+                partida.descripcion = partida.descripcion.replace("Revestimiento del frente", "Enchapado del frente")
+            elif "Revestimiento de columna" in partida.descripcion:
+                partida.descripcion = partida.descripcion.replace("Revestimiento de columna", "Enchapado de columna")
+            elif "zócalo cerámico" in partida.descripcion.lower():
+                partida.descripcion = partida.descripcion.replace("zócalo cerámico", "rodapié cerámico").replace("Zócalo cerámico", "Rodapié cerámico")
+        total += 1
+    # Recursos: el mapa crece poco, pero se consulta también de forma agrupada.
+    descripciones_viejas = tuple(_RECURSOS_RENOMBRADOS)
+    recursos = (
+        db.query(Recurso)
+        .filter(Recurso.descripcion.in_(descripciones_viejas))
+        .all()
+    ) if descripciones_viejas else []
+    for recurso in recursos:
+        nuevo = _RECURSOS_RENOMBRADOS.get(recurso.descripcion)
+        if not nuevo:
+            continue
+        recurso.descripcion = nuevo
+        total += 1
     if total:
         db.commit()
         log.info("Normalizados %s nombres de patrón (Alicatado->Enchapado, Zócalo->Rodapié...).", total)

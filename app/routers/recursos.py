@@ -4,6 +4,13 @@ from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..services import auditoria
+from ..services.recursos import (
+    CATEGORIAS_RECURSO,
+    ETIQUETAS_RECURSO,
+    ETIQUETAS_RECURSO_EN,
+    etiqueta_categoria_recurso,
+    etiqueta_grupo_recurso,
+)
 from ..services.tasa import tasa_convertir_precio
 from ..services.vigencia_precios import CADUCADA, evaluar_vigencia
 
@@ -12,14 +19,6 @@ router = APIRouter()
 # ---------------------------------------------------------------------------
 # Recursos / Precios Unitarios (catálogo central)
 # ---------------------------------------------------------------------------
-
-CATEGORIAS_RECURSO = ["mano_obra", "materiales", "complementarios", "otros"]
-ETIQUETAS_RECURSO = {
-    "mano_obra": "Mano de obra",
-    "materiales": "Materiales",
-    "complementarios": "Costes complementarios",
-    "otros": "Equipos y otros",
-}
 
 def _norm_recurso(v: str) -> str:
     t = unicodedata.normalize("NFD", str(v or "").strip().lower())
@@ -134,13 +133,20 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
             totales_categoria[r.categoria] = (
                 totales_categoria.get(r.categoria, 0.0) + mercado_vista
             )
-    # Agrupar por categoria
+    idioma = _idioma(request)
+    etiquetas_vista = _etiquetas_vista(request)
+    grupos_vista = {
+        r.id: etiqueta_grupo_recurso(r.grupo, r.categoria, idioma)
+        for r in recursos
+    }
+    # Agrupar por categoría; las claves internas no se traducen ni se guardan.
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
         "q": q,
         "categoria": categoria,
         "categorias": CATEGORIAS_RECURSO,
-        "etiquetas": ETIQUETAS_RECURSO,
+        "etiquetas": etiquetas_vista,
+        "grupos_vista": grupos_vista,
         "precios_vista": precios_vista,
         "totales_categoria": totales_categoria,
         "moneda_vista": moneda_vista,
@@ -149,7 +155,7 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     })
 
 @router.get("/recursos/api/buscar")
-def api_buscar_recursos(q: str = "", db: Session = Depends(get_db)):
+def api_buscar_recursos(request: Request, q: str = "", db: Session = Depends(get_db)):
     """Sugerencias de recursos para el autocompletado de la ficha de partida.
 
     Misma conversión de moneda que la pestaña Recursos: el usuario elige un
@@ -175,6 +181,7 @@ def api_buscar_recursos(q: str = "", db: Session = Depends(get_db)):
 
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    idioma = _idioma(request)
     org_id = int(db.info.get("organizacion_id") or 0)
     moneda_vista, factor_vista = _contexto_moneda(db)
     try:
@@ -188,20 +195,26 @@ def api_buscar_recursos(q: str = "", db: Session = Depends(get_db)):
     for r in recursos:
         precio = tasa_convertir_precio(r.precio or 0, factor_vista)
         moneda = moneda_vista
-        origen, aviso = "base", "Verifica el precio con tu proveedor"
+        origen, aviso = "base", ("Check with your supplier" if idioma.startswith("en") else "Verifica el precio con tu proveedor")
         efectivo = efectivos.get(r.id) or {}
         if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
             precio = float(efectivo["precio"])
             moneda = efectivo.get("moneda") or moneda
             origen = efectivo.get("origen", "base")
             aviso = efectivo.get("aviso", "")
+        if idioma.startswith("en"):
+            from ..services.traduccion import traducir_recurso_por_codigo
+            descripcion_vista = traducir_recurso_por_codigo(r.descripcion, r.codigo, pais)
+        else:
+            descripcion_vista = r.descripcion
         salida.append({
             "id": r.id,
             "codigo": r.codigo,
-            "descripcion": r.descripcion,
+            "descripcion": descripcion_vista,
             "unidad": r.unidad,
             "categoria": r.categoria,
-            "grupo": r.grupo,
+            "categoria_etiqueta": etiqueta_categoria_recurso(r.categoria, idioma),
+            "grupo": etiqueta_grupo_recurso(r.grupo, r.categoria, idioma),
             "precio": round(float(precio or 0), 2),
             "moneda": moneda,
             "proveedor": r.proveedor,
@@ -226,6 +239,17 @@ def _idioma(request) -> str:
     decide la lengua del libro exportado es la lengua, no el país.
     """
     return str(getattr(getattr(request, "state", None), "lang", "es") or "es")
+
+
+def _etiquetas_vista(request):
+    return ETIQUETAS_RECURSO_EN if _idioma(request).lower().startswith("en") else ETIQUETAS_RECURSO
+
+
+def _texto_recurso_vista(texto, codigo, pais, idioma):
+    if str(idioma or "").lower().startswith("en"):
+        from ..services.traduccion import traducir_recurso_para_edicion
+        return traducir_recurso_para_edicion(texto, codigo, pais)
+    return texto or ""
 
 
 @router.get("/recursos/exportar")
@@ -263,10 +287,11 @@ def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depe
             return float(ef["precio"])
         return None
 
+    etiquetas_export = _etiquetas_vista(request)
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_recursos_excel
         buf = exportar_catalogo_recursos_excel(
-            recursos, ETIQUETAS_RECURSO, moneda=_moneda_x, factor=1.0,
+            recursos, etiquetas_export, moneda=_moneda_x, factor=1.0,
             precios_efectivos={r.id: _precio_export(r) for r in recursos},
             idioma=_idioma(request),
         )
@@ -287,8 +312,8 @@ def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depe
             r.codigo or "",
             r.descripcion or "",
             r.unidad or "",
-            ETIQUETAS_RECURSO.get(r.categoria, r.categoria),
-            r.grupo or "",
+            etiquetas_export.get(r.categoria, r.categoria),
+            etiqueta_grupo_recurso(r.grupo, r.categoria, _idioma(request)),
             (f"{_precio_export(r):.2f}".replace(".", ",") if _precio_export(r) is not None else ""),
             _moneda_x,
             r.usos or 0,
@@ -316,7 +341,7 @@ def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
         "recurso": None,
         "categorias": CATEGORIAS_RECURSO,
-        "etiquetas": ETIQUETAS_RECURSO,
+        "etiquetas": _etiquetas_vista(request),
         "mercado_codigo": pais,
         "mercado_moneda": cfg.moneda_default or "USD",
         "moneda_vista": moneda_vista,
@@ -328,6 +353,7 @@ def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
 
 @router.post("/recursos/nuevo")
 def crear_recurso(
+    request: Request,
     codigo: str = Form(""),
     descripcion: str = Form(...),
     unidad: str = Form("ud"),
@@ -346,7 +372,8 @@ def crear_recurso(
     db: Session = Depends(get_db),
 ):
     if not descripcion.strip():
-        return _redirect("/recursos/nuevo", error="La descripción es obligatoria.")
+        error = "Description is required." if _idioma(request).startswith("en") else "La descripción es obligatoria."
+        return _redirect("/recursos/nuevo", error=error)
     if categoria not in CATEGORIAS_RECURSO:
         categoria = "otros"
     # El formulario edita en la moneda de la organización; el catálogo guarda
@@ -359,7 +386,8 @@ def crear_recurso(
     clave = clave_recurso(codigo, descripcion, unidad, categoria)
     for existente in db.query(Recurso).all():
         if existente.clave == clave:
-            return _redirect("/recursos/nuevo", error="Ya existe un recurso con ese código/descripción.")
+            error = "A resource with this code/description already exists." if _idioma(request).startswith("en") else "Ya existe un recurso con ese código/descripción."
+            return _redirect("/recursos/nuevo", error=error)
     recurso = Recurso(
         codigo=codigo.strip(),
         descripcion=descripcion.strip(),
@@ -456,10 +484,19 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     precio_referencia_nacional_vista = (
         _a_vista(nacional_edit) if nacional_edit and nacional_edit.origen != "base" else None
     )
+    from copy import copy
+    recurso_vista = copy(recurso)
+    idioma = _idioma(request)
+    recurso_vista.descripcion = _texto_recurso_vista(
+        recurso.descripcion, recurso.codigo, pais, idioma
+    )
+    recurso_vista.grupo = etiqueta_grupo_recurso(
+        recurso.grupo, recurso.categoria, idioma
+    )
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
-        "recurso": recurso,
+        "recurso": recurso_vista,
         "categorias": CATEGORIAS_RECURSO,
-        "etiquetas": ETIQUETAS_RECURSO,
+        "etiquetas": _etiquetas_vista(request),
         "mercado_codigo": pais,
         "mercado_moneda": cfg.moneda_default or "USD",
         "moneda_vista": moneda_vista,
@@ -474,6 +511,7 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
 @router.post("/recursos/{recurso_id}/editar")
 def actualizar_recurso(
     recurso_id: int,
+    request: Request,
     codigo: str = Form(""),
     descripcion: str = Form(...),
     unidad: str = Form("ud"),
@@ -495,7 +533,8 @@ def actualizar_recurso(
     if recurso is None:
         return _redirect("/recursos", error="Recurso no encontrado.")
     if not descripcion.strip():
-        return _redirect(f"/recursos/{recurso_id}/editar", error="La descripción es obligatoria.")
+        error = "Description is required." if _idioma(request).startswith("en") else "La descripción es obligatoria."
+        return _redirect(f"/recursos/{recurso_id}/editar", error=error)
     if categoria not in CATEGORIAS_RECURSO:
         categoria = "otros"
     # El formulario ya no edita el precio base del catálogo: es el precio de
@@ -507,15 +546,32 @@ def actualizar_recurso(
     nuevo_precio = precio_anterior
     # Verificar duplicado si cambia clave
     from ..services.recursos import clave_recurso
-    nueva_clave = clave_recurso(codigo, descripcion, unidad, categoria)
+    from ..services.traduccion import codigo_desde_pais
+    cfg = _config(db)
+    pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
+    descripcion_guardada = descripcion.strip()
+    grupo_guardado = grupo.strip()
+    if _idioma(request).startswith("en"):
+        descripcion_visible = _texto_recurso_vista(
+            recurso.descripcion, recurso.codigo, pais, _idioma(request)
+        )
+        if descripcion_guardada == str(descripcion_visible or "").strip():
+            descripcion_guardada = recurso.descripcion
+        grupo_visible = etiqueta_grupo_recurso(
+            recurso.grupo, recurso.categoria, _idioma(request)
+        )
+        if grupo_guardado == str(grupo_visible or "").strip():
+            grupo_guardado = recurso.grupo or ""
+    nueva_clave = clave_recurso(codigo, descripcion_guardada, unidad, categoria)
     for existente in db.query(Recurso).filter(Recurso.id != recurso_id).all():
         if existente.clave == nueva_clave:
-            return _redirect(f"/recursos/{recurso_id}/editar", error="Ya existe otro recurso con ese código/descripción.")
+            error = "Another resource with this code/description already exists." if _idioma(request).startswith("en") else "Ya existe otro recurso con ese código/descripción."
+            return _redirect(f"/recursos/{recurso_id}/editar", error=error)
     recurso.codigo = codigo.strip()
-    recurso.descripcion = descripcion.strip()
+    recurso.descripcion = descripcion_guardada
     recurso.unidad = unidad.strip() or "ud"
     recurso.categoria = categoria
-    recurso.grupo = grupo.strip()
+    recurso.grupo = grupo_guardado
     recurso.precio = nuevo_precio
     recurso.proveedor = proveedor.strip()
     recurso.subtipo = subtipo.strip(); recurso.capacidad = capacidad.strip(); recurso.modalidad_tarifa = modalidad_tarifa.strip() or "hora"

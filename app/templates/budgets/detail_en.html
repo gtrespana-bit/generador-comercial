@@ -194,7 +194,7 @@
         {% if _mon_tasa in ('', 'USD', 'PAB') %}{% set _mon_tasa = 'VES' %}{% endif %}
         <span class="hint">(1 USD = {{ p.tipo_cambio | num }} {{ _mon_tasa }})</span>{% endif %}</p>
       <p class="muted">VAT: <strong>{{ p.impuesto_pct | round(2) }}%</strong> · Discount: <strong>{{ p.descuento_pct | round(2) }}%</strong></p>
-      <p><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></p>
+      <p><span class="badge badge-{{ p.estado }}">{{ p.estado | mensaje(_idioma) }}</span></p>
     </div>
   </div>
 </div>
@@ -205,7 +205,7 @@
     <form method="post" action="/presupuestos/{{ p.id }}/estado" class="inline">
       <select name="estado" class="select-inline">
         {% for e in estados %}
-        <option value="{{ e }}" {{ 'selected' if p.estado == e else '' }}>{{ e | capitalize }}</option>
+        <option value="{{ e }}" {{ 'selected' if p.estado == e else '' }}>{{ e | mensaje(_idioma) }}</option>
         {% endfor %}
       </select>
       <button class="btn btn-sm" type="submit">Change status</button>
@@ -374,7 +374,7 @@
     <div class="field csp-s-6253876a64"><label>Reason (optional)</label><input name="motivo" maxlength="500" placeholder="e.g. Sales proposal sent to the client"></div><button class="btn" type="submit">❄️ Freeze version</button>
   </form>
   {% if versiones %}
-  <table class="table table-mobile-cards"><thead><tr><th>Version</th><th>Date</th><th>Status</th><th>Reason</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td data-label="Date">{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td data-label="Status">{{ v.estado | replace('_',' ') | capitalize }}</td><td data-label="Reason">{{ v.motivo or '—' }}</td><td class="right" data-label="Total">{{ v.total | money_iso(p.moneda) }}</td><td data-label="Document"><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">View</a>{% if v.pdf_snapshot %} · <a class="link" href="{{ v.pdf_snapshot | archivo_url(true) }}" target="_blank">PDF sent</a>{% endif %}</td></tr>{% endfor %}</tbody></table>
+  <table class="table table-mobile-cards"><thead><tr><th>Version</th><th>Date</th><th>Status</th><th>Reason</th><th class="right">Total</th><th></th></tr></thead><tbody>{% for v in versiones %}<tr><td><strong>V{{ v.numero_version }}</strong></td><td data-label="Date">{{ v.fecha.strftime('%d/%m/%Y %H:%M') if v.fecha else '' }}</td><td data-label="Status">{{ v.estado | mensaje(_idioma) }}</td><td data-label="Reason">{{ v.motivo or '—' }}</td><td class="right" data-label="Total">{{ v.total | money_iso(p.moneda) }}</td><td data-label="Document"><a class="link" href="/presupuestos/{{ p.id }}/versiones/{{ v.id }}">View</a>{% if v.pdf_snapshot %} · <a class="link" href="{{ v.pdf_snapshot | archivo_url(true) }}" target="_blank">PDF sent</a>{% endif %}</td></tr>{% endfor %}</tbody></table>
   {% if versiones|length > 1 %}<form method="get" action="/presupuestos/{{ p.id }}/versiones/comparar" class="inline csp-s-726e8b317f"><label>Compare</label><select name="a">{% for v in versiones %}<option value="{{ v.id }}">V{{ v.numero_version }}</option>{% endfor %}</select><span>with</span><select name="b">{% for v in versiones %}<option value="{{ v.id }}" {{ 'selected' if loop.index == 2 else '' }}>V{{ v.numero_version }}</option>{% endfor %}</select><button class="btn btn-sm" type="submit">Compare</button></form>{% endif %}
   {% else %}<p class="empty">No versions yet. One is created automatically when the estimate is sent or approved.</p>{% endif %}
 </div>

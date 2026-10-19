@@ -45,7 +45,7 @@
       <p class="muted">Issue date: <strong>{{ f.fecha | fecha }}</strong></p>
       {% if f.direccion_obra %}<p class="muted">Job site: <strong>{{ f.direccion_obra }}</strong></p>{% endif %}
       <p class="muted">Currency: <strong>{{ f.moneda }}</strong> · VAT: <strong>{{ f.impuesto_pct | round(2) }}%</strong></p>
-      <p><span class="badge badge-{{ f.estado }}">{{ f.estado | capitalize }}</span></p>
+      <p><span class="badge badge-{{ f.estado }}">{{ f.estado | mensaje(_idioma) }}</span></p>
     </div>
   </div>
 </div>

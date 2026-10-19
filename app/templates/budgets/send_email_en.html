@@ -5,7 +5,7 @@
   <div>
     <p class="crumb">📄 <a href="/presupuestos">Estimates</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Send by email</p>
     <h1>Send estimate by email</h1>
-    <p class="subtitle">The PDF is generated, attached to the email and the version sent stays frozen.</p>
+    <p class="subtitle">The PDF is generated and attached to the email. A copy of the version sent is kept unchanged.</p>
   </div>
   <div class="actions">
     <a class="btn" href="/presupuestos/{{ p.id }}">← Back to the estimate</a>
@@ -13,21 +13,21 @@
   </div>
 </div>
 
-{% if error_envio %}<div class="alert alert-error" role="alert">{{ error_envio }}</div>{% endif %}
+{% if error_envio %}<div class="alert alert-error" role="alert">{{ error_envio | mensaje(_idioma) }}</div>{% endif %}
 
 <div class="card">
   <div class="form-grid">
     <div>
       <h2>Document</h2>
       <p><strong>{{ p.numero }}</strong>{% if p.titulo %} · {{ p.titulo }}{% endif %}</p>
-      <p class="muted">Cliente: {{ p.cliente.nombre }}</p>
+      <p class="muted">Client: {{ p.cliente.nombre }}</p>
       <p class="muted">Total: {{ p.total | money_iso(p.moneda) }}</p>
-      <p class="muted">Current status: <span class="badge badge-{{ p.estado }}">{{ p.estado | replace('_', ' ') | capitalize }}</span></p>
+      <p class="muted">Current status: <span class="badge badge-{{ p.estado }}">{{ p.estado | mensaje(_idioma) }}</span></p>
     </div>
     <div>
       <h2>What will happen</h2>
-      <p class="muted">The client receives a PDF attached. Only if Resend confirms delivery does CotizaT change the status to sent or resent, create an immutable version and keep an internal record.</p>
-      {% if not cfg.empresa_email %}<p class="hint">Set up the company email if you want the client to be able to reply directly to the message.</p>{% endif %}
+      <p class="muted">The client will receive the PDF as an attachment. CotizaT marks the estimate as sent or resent and keeps an immutable version and audit record only after Resend confirms delivery.</p>
+      {% if not cfg.empresa_email %}<p class="hint">Add a company email address so the client can reply directly to the message.</p>{% endif %}
     </div>
   </div>
 </div>
@@ -35,22 +35,22 @@
 <div class="card">
   <form method="post" action="/presupuestos/{{ p.id }}/enviar-email">
     <div class="field">
-      <label for="destinatario">Email del destinatario</label>
+      <label for="destinatario">Recipient email address</label>
       <input id="destinatario" name="destinatario" type="email" value="{{ datos.destinatario }}" maxlength="254" autocomplete="email" required>
       <span class="hint">Taken from the client; you can correct it before sending.</span>
     </div>
     <div class="field">
-      <label for="asunto">Asunto</label>
+      <label for="asunto">Subject</label>
       <input id="asunto" name="asunto" type="text" value="{{ datos.asunto }}" maxlength="200" required>
     </div>
     <div class="field">
-      <label for="mensaje">Mensaje</label>
+      <label for="mensaje">Message</label>
       <textarea id="mensaje" name="mensaje" rows="10" maxlength="5000" required>{{ datos.mensaje }}</textarea>
       <span class="hint">The PDF will include the scope, the amounts, the validity and the full terms.</span>
     </div>
     <div class="form-actions">
-      <button class="btn btn-primary" type="submit">✉️ Generar PDF y enviar</button>
-      <a class="btn" href="/presupuestos/{{ p.id }}">Cancelar</a>
+      <button class="btn btn-primary" type="submit">✉️ Generate PDF and send</button>
+      <a class="btn" href="/presupuestos/{{ p.id }}">Cancel</a>
     </div>
   </form>
 </div>

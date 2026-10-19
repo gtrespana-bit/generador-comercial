@@ -15,10 +15,64 @@ from sqlalchemy.orm import Session
 from ..models import DescomposicionFila, DescomposicionPartida, Partida, Recurso
 
 
+# Identificadores internos estables; las etiquetas visibles dependen del idioma
+# de la interfaz. Mantenerlas aquí evita que routers y JavaScript serialicen los
+# nombres españoles del modelo en pantallas inglesas.
+CATEGORIAS_RECURSO = ["mano_obra", "materiales", "complementarios", "otros"]
+ETIQUETAS_RECURSO = {
+    "mano_obra": "Mano de obra",
+    "materiales": "Materiales",
+    "complementarios": "Costes complementarios",
+    "otros": "Equipos y otros",
+}
+ETIQUETAS_RECURSO_EN = {
+    "mano_obra": "Labour",
+    "materiales": "Materials",
+    "complementarios": "Ancillary costs",
+    "otros": "Other costs",
+}
+
+
 def normalizar(texto: str) -> str:
     t = unicodedata.normalize("NFD", str(texto or "").strip().lower())
     t = "".join(c for c in t if unicodedata.category(c) != "Mn")
     return re.sub(r"[^a-z0-9]+", "", t)
+
+
+def etiqueta_categoria_recurso(categoria: str | None, idioma: str = "es") -> str:
+    """Etiqueta visible para una categoría interna o heredada del APU."""
+    clave = normalizar(categoria or "")
+    ingles = str(idioma or "").lower().startswith("en")
+    etiquetas = ETIQUETAS_RECURSO_EN if ingles else ETIQUETAS_RECURSO
+    for codigo, etiqueta_es in ETIQUETAS_RECURSO.items():
+        # Los descompuestos antiguos pueden guardar la clave, el rótulo en
+        # español o el rótulo ya localizado en vez del identificador interno.
+        if clave in {
+            normalizar(codigo),
+            normalizar(etiqueta_es),
+            normalizar(ETIQUETAS_RECURSO_EN[codigo]),
+        }:
+            return etiquetas[codigo]
+    if clave in {
+        normalizar("Costes directos complementarios"),
+        normalizar("Complementary costs"),  # etiqueta inglesa anterior
+    }:
+        return etiquetas["complementarios"]
+    if clave == normalizar("Equipment and other"):  # etiqueta inglesa anterior
+        return etiquetas["otros"]
+    return str(categoria or "")
+
+
+def etiqueta_grupo_recurso(grupo: str | None, categoria: str | None = None,
+                            idioma: str = "es") -> str:
+    """Traduce solo rótulos de familia conocidos, nunca texto libre del usuario."""
+    valor = str(grupo or "").strip()
+    if not valor:
+        return etiqueta_categoria_recurso(categoria, idioma)
+    etiqueta = etiqueta_categoria_recurso(valor, idioma)
+    if etiqueta != valor:
+        return etiqueta
+    return valor
 
 
 def clave_recurso(codigo: str, descripcion: str, unidad: str, categoria: str) -> str:

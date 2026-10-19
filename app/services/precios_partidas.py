@@ -96,6 +96,49 @@ def _buscar_recursos(db: Session, filas: list[dict]) -> list[Recurso]:
     return salida
 
 
+def _precios_filas_desde_efectivos(
+    filas: list[dict], recursos: list[Recurso], efectivos: dict[int, dict],
+) -> dict[str, float]:
+    """Proyecta precios de mercado a las claves de las filas de un APU."""
+    por_id = {r.id: r for r in recursos}
+    salida: dict[str, float] = {}
+    for recurso in por_id.values():
+        efectivo = efectivos.get(recurso.id)
+        # Solo se consideran precios reales de este país: referencia nacional
+        # o precio fijado por la organización. El precio base de la partida
+        # original (Venezuela convertida) no debe alimentar el APU mostrado.
+        if (
+            efectivo is not None
+            and efectivo.get("precio") is not None
+            and not efectivo.get("requiere_tasa")
+            and (efectivo.get("origen") or "base") in ("nacional", "organizacion")
+        ):
+            salida[normalizar(recurso.codigo)] = float(efectivo["precio"])
+    # Filas sin código: match por descripción, unidad y categoría. Solo se
+    # guardan las que tienen una referencia nacional real; las demás vuelven
+    # al precio base.
+    for fila in filas:
+        codigo = normalizar(fila.get("codigo"))
+        if codigo and codigo in salida:
+            continue
+        clave = (
+            f"desc:{normalizar(fila.get('descripcion'))}|"
+            f"{normalizar(fila.get('unidad'))}|{normalizar(fila.get('categoria'))}"
+        )
+        for recurso in por_id.values():
+            if _recurso_de_fila(recurso, fila):
+                efectivo = efectivos.get(recurso.id)
+                if (
+                    efectivo is not None
+                    and efectivo.get("precio") is not None
+                    and not efectivo.get("requiere_tasa")
+                    and (efectivo.get("origen") or "base") in ("nacional", "organizacion")
+                ):
+                    salida.setdefault(clave, float(efectivo["precio"]))
+                break
+    return salida
+
+
 def _resolver_precios_filas(
     db: Session, filas: list[dict], pais: str, org_id: int | None,
     moneda: str, factor: float,
@@ -113,75 +156,27 @@ def _resolver_precios_filas(
     efectivos = resolver_precios_para_presupuesto_lote(
         db, recursos, pais, org_id, moneda, tasa_usd_presupuesto=factor,
     )
-    if not efectivos:
-        return {}
-    por_id = {r.id: r for r in recursos}
-    salida: dict[str, float] = {}
-    for r in por_id.values():
-        ef = efectivos.get(r.id)
-        # Solo se consideran precios reales de este país: referencia nacional
-        # o precio fijado por la organización. El precio base de la partida
-        # original (Venezuela convertida) no es un precio de mercado y no debe
-        # alimentar el APU mostrado.
-        if (
-            ef is not None
-            and ef.get("precio") is not None
-            and not ef.get("requiere_tasa")
-            and (ef.get("origen") or "base") in ("nacional", "organizacion")
-        ):
-            salida[normalizar(r.codigo)] = float(ef["precio"])
-    # Filas sin código: match por descripción. Solo se guardan cuando hay
-    # referencia nacional real; si no, la fila usará su precio base.
-    for fila in filas:
-        cod = normalizar(fila.get("codigo"))
-        if cod and cod in salida:
-            continue
-        clave = f"desc:{normalizar(fila.get('descripcion'))}|{normalizar(fila.get('unidad'))}|{normalizar(fila.get('categoria'))}"
-        for r in por_id.values():
-            if _recurso_de_fila(r, fila):
-                ef = efectivos.get(r.id)
-                if (
-                    ef is not None
-                    and ef.get("precio") is not None
-                    and not ef.get("requiere_tasa")
-                    and (ef.get("origen") or "base") in ("nacional", "organizacion")
-                ):
-                    salida.setdefault(clave, float(ef["precio"]))
-                break
-    return salida
+    return _precios_filas_desde_efectivos(filas, recursos, efectivos)
 
 
-def recalcular_partida_mercado(
-    db: Session,
-    partida: Partida,
-    pais: str,
-    org_id: int | None,
-    moneda: str,
-    factor: float,
+def _resultado_partida_mercado(
+    partida: Partida, filas: list[dict], precios: dict[str, float], factor: float,
 ) -> ResultadoPartidaMercado | None:
-    """Recalcula una partida con los precios de mercado de su país.
-
-    Devuelve ``None`` cuando la partida no tiene descomposición utilizable: en
-    ese caso la vista debe mantener el precio base convertido (no hay nada que
-    recalcular).
-    """
-    filas = _filas_partida(partida)
-    filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
-    if not filas:
-        return None
-
-    precios = _resolver_precios_filas(db, filas, pais, org_id, moneda, factor)
-    if not precios:
+    """Aplica precios ya resueltos y recalcula costes con las reglas CYPE."""
+    if not filas or not precios:
         return None
 
     desde_mercado = False
     nuevas_filas: list[dict] = []
     for fila in filas:
         nueva = dict(fila)
-        cod = fila.get("codigo")
-        clave = normalizar(cod) if cod else ""
+        codigo = fila.get("codigo")
+        clave = normalizar(codigo) if codigo else ""
         if not clave or clave not in precios:
-            clave = f"desc:{normalizar(fila.get('descripcion'))}|{normalizar(fila.get('unidad'))}|{normalizar(fila.get('categoria'))}"
+            clave = (
+                f"desc:{normalizar(fila.get('descripcion'))}|"
+                f"{normalizar(fila.get('unidad'))}|{normalizar(fila.get('categoria'))}"
+            )
         precio = precios.get(clave)
         if precio is None:
             precio = _fila_precio_base(fila, factor)
@@ -193,10 +188,10 @@ def recalcular_partida_mercado(
         if clave in precios:
             desde_mercado = True
 
-    from .importer import recalcular_descompuesto_cype
-
     if not desde_mercado:
         return None
+    from .importer import recalcular_descompuesto_cype
+
     resultado = recalcular_descompuesto_cype(nuevas_filas)
     costes = resultado.get("costes", {})
     coste_directo = float(resultado.get("coste_directo", 0) or 0)
@@ -235,6 +230,90 @@ def recalcular_partida_mercado(
     )
 
 
+def recalcular_partida_mercado(
+    db: Session,
+    partida: Partida,
+    pais: str,
+    org_id: int | None,
+    moneda: str,
+    factor: float,
+) -> ResultadoPartidaMercado | None:
+    """Recalcula una partida con los precios de mercado de su país."""
+    filas = [
+        fila for fila in _filas_partida(partida)
+        if isinstance(fila, dict) and fila.get("tipo") == "recurso"
+    ]
+    if not filas:
+        return None
+    precios = _resolver_precios_filas(db, filas, pais, org_id, moneda, factor)
+    return _resultado_partida_mercado(partida, filas, precios, factor)
+
+
+def _indice_recursos(recursos: list[Recurso]) -> dict:
+    """Índice en memoria para no volver a recorrer recursos por cada fila."""
+    por_codigo: dict[str, list[Recurso]] = {}
+    por_descripcion: dict[tuple[str, str, str], list[Recurso]] = {}
+    por_descripcion_sin_codigo: dict[tuple[str, str, str], list[Recurso]] = {}
+    posicion: dict[int, int] = {}
+    for indice, recurso in enumerate(recursos):
+        posicion[recurso.id] = indice
+        codigo = normalizar(recurso.codigo)
+        clave = (
+            normalizar(recurso.descripcion),
+            normalizar(recurso.unidad),
+            normalizar(recurso.categoria),
+        )
+        if codigo:
+            por_codigo.setdefault(codigo, []).append(recurso)
+        else:
+            por_descripcion_sin_codigo.setdefault(clave, []).append(recurso)
+        por_descripcion.setdefault(clave, []).append(recurso)
+    return {
+        "por_codigo": por_codigo,
+        "por_descripcion": por_descripcion,
+        "por_descripcion_sin_codigo": por_descripcion_sin_codigo,
+        "posicion": posicion,
+    }
+
+
+def _buscar_recursos_en_indice(filas: list[dict], recursos: list[Recurso], indice: dict) -> list[Recurso]:
+    """Equivalente en memoria de ``_buscar_recursos``, conservando su orden."""
+    codigos = {normalizar(fila.get("codigo")) for fila in filas if fila.get("codigo")}
+    filas_sin_codigo = [
+        fila for fila in filas if not (fila.get("codigo") or "").strip()
+    ]
+    if codigos and not filas_sin_codigo:
+        return [
+            recurso for recurso in recursos
+            if recurso.codigo is not None
+            and recurso.codigo != ""
+            and normalizar(recurso.codigo) in codigos
+        ]
+
+    salida: list[Recurso] = []
+    vistos: set[int] = set()
+    for fila in filas:
+        codigo = normalizar(fila.get("codigo"))
+        clave = (
+            normalizar(fila.get("descripcion")),
+            normalizar(fila.get("unidad")),
+            normalizar(fila.get("categoria")),
+        )
+        if codigo:
+            candidatos = list(indice["por_codigo"].get(codigo, ()))
+            candidatos.extend(indice["por_descripcion_sin_codigo"].get(clave, ()))
+            candidatos.sort(key=lambda recurso: indice["posicion"][recurso.id])
+        else:
+            candidatos = indice["por_descripcion"].get(clave, ())
+        for recurso in candidatos:
+            if recurso.id in vistos:
+                continue
+            salida.append(recurso)
+            vistos.add(recurso.id)
+            break
+    return salida
+
+
 def recalcular_partidas_mercado(
     db: Session,
     partidas: list[Partida],
@@ -243,13 +322,88 @@ def recalcular_partidas_mercado(
     moneda: str,
     factor: float,
 ) -> dict[int, ResultadoPartidaMercado]:
-    """Versión por lote para las listas del catálogo (una consulta por fila no)."""
-    salida: dict[int, ResultadoPartidaMercado] = {}
-    for partida in partidas:
+    """Recalcula un conjunto de partidas con dos lecturas, no N+1 consultas.
+
+    La lista de recursos se consulta una vez; las referencias del mercado de
+    todos ellos se resuelven en lote en otra consulta. Los precios y el APU se
+    calculan en memoria por partida.
+    """
+    partidas_con_filas: list[tuple[Partida, list[dict]]] = []
+    for partida in partidas or []:
+        filas = [
+            fila for fila in _filas_partida(partida)
+            if isinstance(fila, dict) and fila.get("tipo") == "recurso"
+        ]
+        if filas:
+            partidas_con_filas.append((partida, filas))
+    if not partidas_con_filas:
+        return {}
+
+    try:
+        from sqlalchemy.orm import load_only
+
+        query = db.query(Recurso)
+        solo_codigos = not any(
+            not (fila.get("codigo") or "").strip()
+            for _, filas in partidas_con_filas
+            for fila in filas
+        )
+        if solo_codigos:
+            query = query.filter(Recurso.codigo != "")
         try:
-            resultado = recalcular_partida_mercado(
-                db, partida, pais, org_id, moneda, factor,
-            )
+            query = query.options(load_only(
+                Recurso.id,
+                Recurso.codigo,
+                Recurso.descripcion,
+                Recurso.unidad,
+                Recurso.categoria,
+                Recurso.precio,
+                Recurso.moneda,
+            ))
+        except (AttributeError, TypeError):
+            pass
+        recursos_disponibles = query.all()
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return {}
+
+    indice = _indice_recursos(recursos_disponibles)
+    recursos_por_partida: list[tuple[Partida, list[dict], list[Recurso]]] = []
+    recursos_unicos: dict[int, Recurso] = {}
+    for partida, filas in partidas_con_filas:
+        recursos = _buscar_recursos_en_indice(filas, recursos_disponibles, indice)
+        recursos_por_partida.append((partida, filas, recursos))
+        for recurso in recursos:
+            recursos_unicos.setdefault(recurso.id, recurso)
+    if not recursos_unicos:
+        return {}
+
+    from .precios_mercado import resolver_precios_para_presupuesto_lote
+
+    try:
+        efectivos = resolver_precios_para_presupuesto_lote(
+            db,
+            list(recursos_unicos.values()),
+            pais,
+            org_id,
+            moneda,
+            tasa_usd_presupuesto=factor,
+        )
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return {}
+
+    salida: dict[int, ResultadoPartidaMercado] = {}
+    for partida, filas, recursos in recursos_por_partida:
+        try:
+            precios = _precios_filas_desde_efectivos(filas, recursos, efectivos)
+            resultado = _resultado_partida_mercado(partida, filas, precios, factor)
             if resultado is not None:
                 salida[partida.id] = resultado
         except Exception:

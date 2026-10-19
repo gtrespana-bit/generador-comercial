@@ -4,9 +4,9 @@
 <div class="page-head">
   <div>
     <h1>Import line items</h1>
-    <p class="subtitle">Import Excel tables, breakdown matrices (.xlsx) or BC3 estimates (FIEBDC-3). BC3 keeps sections, line items, takeoffs and prices.</p>
+    <p class="subtitle">Import Excel spreadsheets, cost breakdowns (.xlsx) or BC3 estimates (FIEBDC-3). BC3 retains sections, line items, take-offs and prices.</p>
   </div>
-  <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Volver a {{ 'partidas' if modo_catalogo else 'presupuestos' }}</a>
+  <a class="btn" href="{{ '/partidas' if modo_catalogo else '/presupuestos' }}">← Back to {{ 'the line item catalogue' if modo_catalogo else 'estimates' }}</a>
 </div>
 
 <div class="import-steps" aria-label="Import steps">
@@ -15,7 +15,7 @@
 
 <div class="card" id="import-source-card">
   <h2>1. Upload the data</h2>
-  <p class="hint">If you have a breakdown matrix in <strong>.xlsx</strong>, select one or more files: each line item, row, cell and formula is detected without flattening it into a plain table. Tabular CSV/Excel and <strong>BC3 (FIEBDC-3)</strong>.</p>
+  <p class="hint">For a cost breakdown in <strong>.xlsx</strong>, select one or more files. Line items, rows, cells and formulas are detected without flattening the data into a plain table. Tabular CSV/Excel and <strong>BC3 (FIEBDC-3)</strong> files are also supported.</p>
   <div class="form-grid">
     <div class="field">
       <label>CSV, Excel or BC3 file</label>
@@ -30,7 +30,7 @@
     <div class="field field-full">
       <label>Or paste tabular rows here</label>
       <textarea id="import-text" rows="6" placeholder="Section	Line item	Description	Unit	Quantity	Price&#10;FLOORING	Porcelain tile 36×36	Supply and installation	m2	84.6	68"></textarea>
-      <p class="hint">Pasting accepts tabs, commas or semicolons. If you choose a file, this field is ignored. You can also paste the contents of a .bc3.</p>
+      <p class="hint">Pasting accepts tabs, commas or semicolons. If you select a file, this field is ignored. You can also paste the contents of a .bc3 file.</p>
     </div>
   </div>
   <div class="form-actions">
@@ -64,11 +64,11 @@
 </div>
 
 <div class="card import-hidden" id="import-destination-card">
-  <h2>3. {% if modo_catalogo %}Destino: catálogo de partidas{% else %}Elige el destino{% endif %}</h2>
+  <h2>3. {% if modo_catalogo %}Destination: line item catalogue{% else %}Choose a destination{% endif %}</h2>
   {% if modo_catalogo %}
   <div class="csp-s-1442e8ce92">
     <span class="csp-s-9c527edffc">📦</span>
-    <span class="csp-s-63affd90a4">The line items detected are saved in the <strong>Line Item Catalog</strong> with their code, unit, description and costs (labor, materials…), ready to be reused on any estimate. No estimate is created or modified.</span>
+    <span class="csp-s-63affd90a4">Detected line items are saved to the <strong>Line Item Catalogue</strong>, including their code, unit, description and costs (labour, materials and more), ready to reuse in any estimate. No estimate is created or changed.</span>
   </div>
   <input type="hidden" id="modo-catalogo" value="1">
   {% else %}
@@ -79,19 +79,19 @@
       <select id="import-destination">
         <option value="">Create a new estimate</option>
         {% for p in presupuestos %}
-        <option value="{{ p.id }}">Añadir a {{ p.numero }} · {{ p.cliente.nombre }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</option>
+        <option value="{{ p.id }}">Add to {{ p.numero }} · {{ p.cliente.nombre }}{% if p.titulo %} · {{ p.titulo }}{% endif %}</option>
         {% endfor %}
       </select>
     </div>
     <div class="field import-cype-only import-hidden" id="import-cype-chapter-field">
       <label>Section for the line items</label>
-      <input type="text" id="import-cype-chapter" value="PARTIDAS IMPORTADAS" maxlength="200">
-      <p class="hint">Each sheet/file detected becomes a line item and keeps its full breakdown inside this section.</p>
+      <input type="text" id="import-cype-chapter" value="IMPORTED LINE ITEMS" maxlength="200">
+      <p class="hint">Each detected worksheet or file becomes a line item, with its full cost breakdown retained in this section.</p>
     </div>
     <div class="field import-bc3-only import-hidden" id="import-bc3-chapter-field">
-      <label>Section (BC3) - optional</label>
+      <label>Section (BC3) — optional</label>
       <input type="text" id="import-bc3-chapter" value="" maxlength="200" placeholder="Leave empty to keep the BC3 sections">
-      <p class="hint">If you state a section, all the BC3 line items go there. If you leave it empty, the original sections of the .bc3 are kept.</p>
+      <p class="hint">Enter a section to place all BC3 line items there. Leave this blank to retain the sections from the .bc3 file.</p>
     </div>
     <div class="field import-new-only">
       <label>Client *</label>
@@ -99,7 +99,7 @@
         <option value="">— Select a client —</option>
         {% for cliente in clientes %}<option value="{{ cliente.id }}">{{ cliente.nombre }}</option>{% endfor %}
       </select>
-      {% if not clientes %}<p class="hint">First <a class="link" href="/clientes/nuevo" target="_blank">create a client</a>.</p>{% endif %}
+      {% if not clientes %}<p class="hint">Please <a class="link" href="/clientes/nuevo" target="_blank">create a client first</a>.</p>{% endif %}
     </div>
     <div class="field import-new-only">
       <label>Project title <span class="hint">(optional)</span></label>
@@ -125,7 +125,17 @@
 (function () {
   'use strict';
   var CAMPOS = {{ campos_importables | tojson }};
+  var CAMPOS_EN = {
+    codigo: 'Code', codigo_legacy: 'Previous code', capitulo: 'Section',
+    partida: 'Line item', descripcion: 'Description', unidad: 'Unit',
+    cantidad: 'Quantity', precio: 'Unit price', categoria: 'Category',
+    subcategoria: 'Subcategory', apartado: 'Subsection', tipo_partida: 'Line item type'
+  };
   var estado = { formato: 'tabular', encabezados: [], filas: [], mapeo: {}, primeraFila: 2, validacion: null, importacionId: '', cypePartidas: [], bc3Filas: [], bc3Capitulos: [] };
+
+  function cantidad(n, singular, plural) {
+    return n + ' ' + (n === 1 ? singular : plural);
+  }
   var fileInput = document.getElementById('import-file');
   var textInput = document.getElementById('import-text');
   var headerInput = document.getElementById('import-header');
@@ -201,8 +211,8 @@
     if (bc3Preview) CotizatStyles.set(bc3Preview, "display", 'none');
     if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
     if (activo) {
-      document.getElementById('import-review-title').textContent = '2. Revisa las partidas y filas detectadas';
-      document.getElementById('import-review-hint').textContent = 'Cada fila y columna se conserva con su número original. Los resultados de fórmula y las fórmulas se guardan, junto con el archivo .xlsx original.';
+      document.getElementById('import-review-title').textContent = '2. Review detected line items and rows';
+      document.getElementById('import-review-hint').textContent = 'Rows and columns retain their original numbering. Formula results and formulas are saved alongside the original .xlsx file.';
     }
   }
   function setModoBc3(activo) {
@@ -218,8 +228,8 @@
     var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
     if (bc3ChapterField) bc3ChapterField.classList.toggle('import-hidden', !activo);
     if (activo) {
-      document.getElementById('import-review-title').textContent = '2. Revisa las partidas BC3 detectadas';
-      document.getElementById('import-review-hint').textContent = 'Se han detectado capítulos y partidas del .bc3. Se conservarán código, unidad, precio, descripción larga y mediciones.';
+      document.getElementById('import-review-title').textContent = '2. Review detected BC3 line items';
+      document.getElementById('import-review-hint').textContent = 'Sections and line items were found in the .bc3 file. Their codes, units, prices, full descriptions and take-offs will be retained.';
     }
   }
   function setModoTabular() {
@@ -235,7 +245,7 @@
     var bc3ChapterField = document.getElementById('import-bc3-chapter-field');
     if (bc3ChapterField) bc3ChapterField.classList.add('import-hidden');
     document.getElementById('import-review-title').textContent = '2. Review column detection';
-    document.getElementById('import-review-hint').textContent = 'The system proposes a mapping. Only Partida is required; adjust any column before validating.';
+    document.getElementById('import-review-hint').textContent = 'The system suggests a column mapping. Only Line item is required; adjust any column before validating.';
   }
   function renderMapeo() {
     var body = document.getElementById('import-mapping-body');
@@ -244,12 +254,12 @@
       var tr = document.createElement('tr');
       var label = document.createElement('td');
       var strong = document.createElement('strong');
-      strong.textContent = CAMPOS[campo] + (campo === 'partida' ? ' *' : '');
+      strong.textContent = (CAMPOS_EN[campo] || CAMPOS[campo] || campo) + (campo === 'partida' ? ' *' : '');
       label.appendChild(strong);
       var td = document.createElement('td');
       var select = document.createElement('select');
       select.dataset.importField = campo;
-      var empty = document.createElement('option'); empty.value = ''; empty.textContent = '— No importar —'; select.appendChild(empty);
+      var empty = document.createElement('option'); empty.value = ''; empty.textContent = '— Do not import —'; select.appendChild(empty);
       estado.encabezados.forEach(function (encabezado, indice) {
         var option = document.createElement('option'); option.value = indice; option.textContent = encabezado;
         if (estado.mapeo[campo] === indice) option.selected = true;
@@ -271,7 +281,7 @@
       estado.encabezados.forEach(function (_, index) { var td = document.createElement('td'); td.textContent = fila[index] || ''; tr.appendChild(td); });
       tbody.appendChild(tr);
     });
-    document.getElementById('import-preview-count').textContent = '· mostrando 8 de ' + estado.filas.length + ' filas';
+    document.getElementById('import-preview-count').textContent = '· showing 8 of ' + estado.filas.length + ' rows';
   }
   function appendCelda(td, valor, formula) {
     td.textContent = valor || '';
@@ -289,16 +299,16 @@
     estado.cypePartidas.forEach(function (partida) {
       totalFilas += (partida.filas || []).length;
       var ficha = document.createElement('div'); ficha.className = 'cype-partida-summary';
-      var title = document.createElement('strong'); title.textContent = (partida.codigo || 'Sin código') + ' · ' + (partida.nombre || 'Sin nombre'); ficha.appendChild(title);
+      var title = document.createElement('strong'); title.textContent = (partida.codigo || 'No code') + ' · ' + (partida.nombre || 'No name'); ficha.appendChild(title);
       var meta = document.createElement('span');
-      meta.textContent = (partida.unidad || '—') + ' · coste directo unitario: ' + Number(partida.coste_directo_unitario || 0).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' · ' + (partida.filas || []).length + ' filas · hoja: ' + (partida.hoja || '—');
+      meta.textContent = (partida.unidad || '—') + ' · direct unit cost: ' + Number(partida.coste_directo_unitario || 0).toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' · ' + cantidad((partida.filas || []).length, 'row', 'rows') + ' · worksheet: ' + (partida.hoja || '—');
       ficha.appendChild(meta); summary.appendChild(ficha);
 
       var bloque = document.createElement('section'); bloque.className = 'cype-sheet-preview';
-      var h4 = document.createElement('h4'); h4.textContent = 'Partida ' + (partida.codigo || '') + ' · matriz original'; bloque.appendChild(h4);
+      var h4 = document.createElement('h4'); h4.textContent = 'Line item ' + (partida.codigo || '') + ' · original matrix'; bloque.appendChild(h4);
       var table = document.createElement('table'); table.className = 'table cype-table';
       var thead = document.createElement('thead'); var hrow = document.createElement('tr');
-      var thRow = document.createElement('th'); thRow.textContent = 'Fila'; hrow.appendChild(thRow);
+      var thRow = document.createElement('th'); thRow.textContent = 'Row'; hrow.appendChild(thRow);
       (partida.columnas || []).forEach(function (col) { var th = document.createElement('th'); th.textContent = col; hrow.appendChild(th); });
       thead.appendChild(hrow); table.appendChild(thead);
       var tbody = document.createElement('tbody');
@@ -313,7 +323,7 @@
       });
       table.appendChild(tbody); bloque.appendChild(table); preview.appendChild(bloque);
     });
-    document.getElementById('import-preview-count').textContent = '· ' + estado.cypePartidas.length + ' partida(s), ' + totalFilas + ' fila(s) conservadas';
+    document.getElementById('import-preview-count').textContent = '· ' + cantidad(estado.cypePartidas.length, 'line item', 'line items') + ', ' + cantidad(totalFilas, 'row', 'rows') + ' retained';
   }
   function renderPreviewBc3() {
     var summary = document.getElementById('bc3-summary');
@@ -321,16 +331,16 @@
     summary.replaceChildren(); preview.replaceChildren();
     var info = document.createElement('div'); info.className = 'cype-partida-summary';
     var title = document.createElement('strong');
-    title.textContent = 'BC3 detectado · ' + (estado.bc3Capitulos.length || 0) + ' capítulo(s) · ' + (estado.bc3Filas.length || 0) + ' partida(s)';
+    title.textContent = 'BC3 file detected · ' + cantidad(estado.bc3Capitulos.length || 0, 'section', 'sections') + ' · ' + cantidad(estado.bc3Filas.length || 0, 'line item', 'line items');
     info.appendChild(title);
     var meta = document.createElement('span');
-    meta.textContent = 'Se respetan capítulos originales y mediciones. Código BC3 se guarda como código externo.';
+    meta.textContent = 'Original sections and take-offs are retained. BC3 codes are saved as external codes.';
     info.appendChild(meta); summary.appendChild(info);
 
     var table = document.createElement('table'); table.className = 'table';
     var thead = document.createElement('thead');
     var hrow = document.createElement('tr');
-    ['Capítulo','Código','Partida','Ud','Cant','Precio'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; hrow.appendChild(th); });
+    ['Section','Code','Line item','Unit','Qty.','Price'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; hrow.appendChild(th); });
     thead.appendChild(hrow); table.appendChild(thead);
     var tbody = document.createElement('tbody');
     estado.bc3Filas.slice(0, 20).forEach(function(fila){
@@ -344,12 +354,12 @@
       tbody.appendChild(tr);
     });
     table.appendChild(tbody); preview.appendChild(table);
-    document.getElementById('import-preview-count').textContent = '· ' + estado.bc3Filas.length + ' partida(s) BC3 · mostrando 20';
+    document.getElementById('import-preview-count').textContent = '· ' + cantidad(estado.bc3Filas.length, 'BC3 line item', 'BC3 line items') + ' · showing 20';
   }
   function issueLine(issue, type) {
     var div = document.createElement('div');
     div.className = type === 'error' ? 'import-issue error' : 'import-issue warning';
-    div.textContent = (issue.fila ? 'Fila ' + issue.fila + ': ' : '') + issue.mensaje;
+    div.textContent = (issue.fila ? 'Row ' + issue.fila + ': ' : '') + issue.mensaje;
     return div;
   }
   function renderValidation(data) {
@@ -357,16 +367,16 @@
     var issues = document.getElementById('import-issues');
     issues.replaceChildren();
     if (!data.ok) {
-      summary.textContent = data.error || 'No se pudo validar la importación.';
+      summary.textContent = data.error || 'Could not validate the import.';
       summary.className = 'import-summary error'; validationCard.classList.remove('import-hidden'); return;
     }
     var errors = data.errores || [], warnings = data.advertencias || [];
-    var etiqueta = esCype() ? 'partida(s) de descompuesto' : esBc3() ? 'partida(s) BC3' : 'partida(s)';
-    summary.textContent = data.filas.length + ' ' + etiqueta + ' lista(s) · ' + errors.length + ' error(es) · ' + warnings.length + ' advertencia(s)';
+    var tipoFila = esCype() ? 'CYPE ' : esBc3() ? 'BC3 ' : '';
+    summary.textContent = cantidad(data.filas.length, tipoFila + 'line item', tipoFila + 'line items') + ' ready · ' + cantidad(errors.length, 'error', 'errors') + ' · ' + cantidad(warnings.length, 'warning', 'warnings');
     summary.className = 'import-summary ' + (errors.length ? 'error' : warnings.length ? 'warning' : 'ok');
     errors.forEach(function (issue) { issues.appendChild(issueLine(issue, 'error')); });
     warnings.slice(0, 40).forEach(function (issue) { issues.appendChild(issueLine(issue, 'warning')); });
-    if (warnings.length > 40) { var more = document.createElement('p'); more.className = 'hint'; more.textContent = 'Se ocultaron ' + (warnings.length - 40) + ' advertencias adicionales.'; issues.appendChild(more); }
+    if (warnings.length > 40) { var more = document.createElement('p'); more.className = 'hint'; more.textContent = ' ' + (warnings.length - 40) + ' additional warning(s) hidden.'; issues.appendChild(more); }
     confirmBtn.disabled = Boolean(errors.length) || !data.filas.length;
     validationCard.classList.remove('import-hidden');
   }
@@ -380,11 +390,11 @@
     var form = new FormData();
     Array.prototype.forEach.call(fileInput.files || [], function (file) { form.append('archivo', file); });
     form.append('texto', textInput.value || ''); form.append('tiene_encabezados', headerInput.checked ? '1' : '0');
-    var button = this; button.disabled = true; button.textContent = 'Analizando…';
+    var button = this; button.disabled = true; button.textContent = 'Analysing…';
     try {
       var response = await fetch('/presupuestos/importar/analizar', {method: 'POST', body: form});
       var data = await response.json();
-      if (!data.ok) { mostrarError(data.error || 'No se pudieron analizar los datos.'); return; }
+      if (!data.ok) { mostrarError(data.error || 'Could not analyse the data.'); return; }
       estado.formato = data.formato || 'tabular';
       estado.importacionId = data.importacion_id || '';
       estado.cypePartidas = data.partidas || [];
@@ -396,11 +406,11 @@
       else { setModoTabular(); renderMapeo(); renderPreviewTabular(); }
       mappingCard.classList.remove('import-hidden'); destinationCard.classList.remove('import-hidden'); ocultarValidacion();
       mappingCard.scrollIntoView({behavior: 'smooth', block: 'start'});
-    } catch (error) { mostrarError('No se pudo conectar con el analizador. Inténtalo otra vez.'); }
+    } catch (error) { mostrarError('Could not connect to the analyser. Please try again.'); }
     finally { button.disabled = false; button.textContent = 'Analyse data →'; }
   });
-  document.getElementById('btn-validate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
-  document.getElementById('btn-revalidate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('No se pudo validar la importación.'); }); });
+  document.getElementById('btn-validate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('Could not validate the import.'); }); });
+  document.getElementById('btn-revalidate-import').addEventListener('click', function () { validar().catch(function () { mostrarError('Could not validate the import.'); }); });
   if (destination) destination.addEventListener('change', actualizarDestino);
   var importClient = document.getElementById('import-client');
   var importTitle = document.getElementById('import-title');
@@ -414,14 +424,14 @@
 
   confirmBtn.addEventListener('click', async function () {
     if (!estado.validacion || !estado.validacion.ok || (estado.validacion.errores || []).length) return;
-    if (!MODO_CATALOGO && !destination.value && !document.getElementById('import-client').value) { mostrarError('Selecciona un cliente antes de crear el presupuesto.'); destinationCard.scrollIntoView({behavior: 'smooth'}); return; }
-    var button = this; button.disabled = true; button.textContent = 'Importando…';
+    if (!MODO_CATALOGO && !destination.value && !document.getElementById('import-client').value) { mostrarError('Select a client before creating the estimate.'); destinationCard.scrollIntoView({behavior: 'smooth'}); return; }
+    var button = this; button.disabled = true; button.textContent = 'Importing…';
     try {
       var response = await fetch('/presupuestos/importar/confirmar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload()) });
       var data = await response.json();
       if (data.ok && data.url) { window.location.assign(data.url); return; }
-      renderValidation(data); mostrarError(data.error || 'No se pudo confirmar la importación.');
-    } catch (error) { mostrarError('No se pudo confirmar la importación.'); }
+      renderValidation(data); mostrarError(data.error || 'Could not confirm the import.');
+    } catch (error) { mostrarError('Could not confirm the import.'); }
     finally { button.disabled = false; button.textContent = '✓ Confirm import'; }
   });
 })();

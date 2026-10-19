@@ -114,6 +114,23 @@ def _recurso_en_por_codigo() -> Mapping[str, str]:
 
 
 @lru_cache(maxsize=None)
+def _recurso_es_por_codigo() -> Mapping[str, str]:
+    """Índice del texto original español por código de recurso."""
+    try:
+        datos = json.loads((BASE_RECURSOS / "recursos.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return MappingProxyType({})
+    salida: dict[str, str] = {}
+    for categoria, pares in datos.items():
+        if isinstance(pares, dict) and not str(categoria).startswith("_"):
+            for codigo, recurso in pares.items():
+                texto = recurso.get("descripcion") if isinstance(recurso, dict) else None
+                if isinstance(texto, str) and texto.strip():
+                    salida[str(codigo).strip()] = texto
+    return MappingProxyType(salida)
+
+
+@lru_cache(maxsize=None)
 def _excepciones_recursos(codigo: str) -> Mapping[str, str]:
     """Traducciones de los recursos del catálogo, como excepciones de cadena completa.
 
@@ -598,6 +615,26 @@ def traducir_recurso_por_codigo(
     if not base:
         return texto
     return aplicar_variante(base, mercado)
+
+
+def traducir_recurso_para_edicion(
+    texto: str | None, codigo_recurso: str | None, pais_codigo: str | None
+) -> str:
+    """Localiza recursos de catálogo en formularios sin pisar cambios propios.
+
+    La traducción por código es deliberadamente autoritativa para las filas de
+    un APU. En un formulario editable, en cambio, solo se sustituye la
+    descripción si sigue siendo exactamente la fuente española del catálogo;
+    una descripción personalizada (incluida una ya escrita en inglés) se
+    conserva para que el usuario pueda guardarla sin pérdidas.
+    """
+    if not texto:
+        return texto or ""
+    codigo = str(codigo_recurso or "").strip()
+    original = _recurso_es_por_codigo().get(codigo)
+    if original and str(texto).strip() == original.strip():
+        return traducir_recurso_por_codigo(texto, codigo, pais_codigo)
+    return texto
 
 
 def traducir_partida(partida, pais_codigo: str | None):
