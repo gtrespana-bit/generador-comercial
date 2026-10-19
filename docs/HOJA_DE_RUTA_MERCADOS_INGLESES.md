@@ -37,7 +37,7 @@ una estimación o un juicio, se dice expresamente.
 | EE. UU. · análisis de mercado (imperial + sales tax por estado) | **Hecho** | esta rama (`docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`) |
 | EE. UU. · Fase 0 — estudio de precios y matriz USD | **Hecho** | esta rama (`docs/INVESTIGACION_PRECIOS_ESTADOS_UNIDOS.md`) |
 | EE. UU. · carga de la matriz en producción | Pendiente | `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` (fila 19 de PENDIENTES) |
-| EE. UU. · Fase 1 — cantidades imperiales en la interfaz | Pendiente (aprobada) | capa de entrada/lectura; almacenamiento métrico |
+| EE. UU. · Fase 1 — cantidades imperiales en la interfaz | **Hecha** | capa de entrada/lectura; almacenamiento métrico («la unidad es la marca») |
 | EE. UU. · Fase 2 — fiscalidad por estado | Pendiente (aprobada) | estado de obra + modo de base, patrón CIS/RCT |
 
 **Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
@@ -49,10 +49,10 @@ Lo que queda ya no es un bloqueo técnico: Irlanda tiene su estudio de precios,
 su Fase 1 fiscal (RCT) hecha, la migración `m8e1f4a7b2c5` aplicada y su
 matriz cargada en producción (19-10-2026); Australia y Canadá tienen su
 estudio de precios hecho y su matriz cargada (19-10-2026), a falta solo de
-su Fase 1 fiscal, y Estados Unidos —el imperial— tiene su análisis y su
-Fase 0 (matriz USD) hechos, pendiente de cargar la matriz y de construir
-su Fase 1 (cantidades imperiales) y su Fase 2 (fiscalidad por estado),
-ambas aprobadas el 19-10-2026. Lo único de Reino Unido que sigue pendiente es
+su Fase 1 fiscal, y Estados Unidos —el imperial— tiene su análisis, su
+Fase 0 (matriz USD) y su Fase 1 (cantidades imperiales) hechos, pendiente
+de cargar la matriz y de construir su Fase 2 (fiscalidad por estado),
+aprobada el 19-10-2026. Lo único de Reino Unido que sigue pendiente es
 **conseguir enlaces entrantes y medir** en Search Console: el contenido está,
 la autoridad de dominio se construye fuera del código.
 
@@ -300,7 +300,7 @@ abre un mercado sin él.
 | **Irlanda** | métrico | EUR | **Estudio, Fase 1 (RCT), migración y carga hechos (19-10-2026)**; queda el SEO de cola larga |
 | **Australia** | métrico | AUD | **Estudio hecho y matriz cargada (19-10-2026)**; falta la Fase 1 fiscal (ABN/TPAR) |
 | **Canadá** | métrico | CAD | **Estudio hecho y matriz cargada (19-10-2026)**; falta la Fase 1 fiscal (GST/HST, T5018) |
-| **Estados Unidos** | **imperial** | USD | **Análisis y Fase 0 (matriz USD) hechos (19-10-2026)**; faltan la Fase 1 (cantidades imperiales en la interfaz) y la Fase 2 (fiscalidad por estado), aprobadas; carga de la matriz pendiente |
+| **Estados Unidos** | **imperial** | USD | **Análisis, Fase 0 (matriz USD) y Fase 1 (cantidades imperiales) hechos (19-10-2026)**; falta la Fase 2 (fiscalidad por estado), aprobada; carga de la matriz pendiente |
 
 Estados Unidos es el que más trabajo lleva: es el único imperial, así que las
 cotizaciones llegan en libras, galones, pies y yardas mientras el catálogo

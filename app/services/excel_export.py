@@ -20,6 +20,12 @@ from openpyxl.styles import (
 )
 from openpyxl.utils import get_column_letter
 from ..paises import es_ingles, resolver_mercado
+from .unidades_precio import (
+    cantidad_mostrada,
+    es_imperial_config,
+    precio_mostrado,
+    unidad_mostrada,
+)
 from .variante_ingles import aplicar_variante
 
 # ---------------------------------------------------------------------------
@@ -265,6 +271,11 @@ def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
       3. Costes — desglose de costes internos (si existen)
     """
     hoja_costes = _t("Costes Internos", idioma)
+    # Mercado imperial: las hojas del documento hablan en sq ft/ft/cu yd
+    # igual que el PDF (cantidad ×factor, precio ÷factor, importes intactos).
+    # Los volcado de catálogo de más abajo son datos internos y quedan en
+    # métrico, que es como vive el catálogo.
+    imperial = es_imperial_config(cfg)
     wb = Workbook()
 
     # --- Hoja 1: Resumen ---
@@ -277,7 +288,7 @@ def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
     # --- Hoja 2: Detalle ---
     ws_detalle = wb.create_sheet(_t("Detalle", idioma))
     ws_detalle.sheet_view.showGridLines = False
-    _write_detalle_sheet(ws_detalle, presupuesto, idioma)
+    _write_detalle_sheet(ws_detalle, presupuesto, idioma, imperial=imperial)
 
     # --- Hoja 3: Costes (si corresponde) ---
     if hasattr(presupuesto, "todas_partidas"):
@@ -289,7 +300,7 @@ def exportar_presupuesto_excel(presupuesto, cfg=None, idioma: str = "es"):
         if tiene_costes:
             ws_costes = wb.create_sheet(hoja_costes)
             ws_costes.sheet_view.showGridLines = False
-            _write_costes_sheet(ws_costes, presupuesto, idioma)
+            _write_costes_sheet(ws_costes, presupuesto, idioma, imperial=imperial)
 
     # Ajustar anchos
     for ws in [ws_resumen, ws_detalle]:
@@ -454,7 +465,7 @@ def _coste_partida_excel(p):
     return _money_round(cantidad * (subtotal * (1 + desperdicio / 100) + producto_coste))
 
 
-def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
+def _write_detalle_sheet(ws, presupuesto, idioma: str = "es", imperial: bool = False):
     """Hoja de detalle con capítulos y partidas."""
     ws["A1"] = f"{_t('Detalle del Presupuesto', idioma)} {getattr(presupuesto, 'numero', '')}"
     ws["A1"].font = _TITLE_FONT
@@ -517,9 +528,9 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
             ws.cell(row=row, column=1, value=cap_nombre)
             ws.cell(row=row, column=2, value=p.nombre or "")
             ws.cell(row=row, column=3, value=p.descripcion or "")
-            ws.cell(row=row, column=4, value=p.unidad or "ud")
-            ws.cell(row=row, column=5, value=cantidad)
-            ws.cell(row=row, column=6, value=precio)
+            ws.cell(row=row, column=4, value=unidad_mostrada(p.unidad or "ud", imperial))
+            ws.cell(row=row, column=5, value=cantidad_mostrada(cantidad, p.unidad, imperial))
+            ws.cell(row=row, column=6, value=precio_mostrado(precio, p.unidad, imperial))
             ws.cell(row=row, column=7, value=importe)
             ws.cell(row=row, column=8, value=coste if coste_base > 0 else None)
             ws.cell(row=row, column=9, value=beneficio if coste_base > 0 else None)
@@ -570,7 +581,7 @@ def _write_detalle_sheet(ws, presupuesto, idioma: str = "es"):
     _style_total_row(ws, row, len(headers))
 
 
-def _write_costes_sheet(ws, presupuesto, idioma: str = "es"):
+def _write_costes_sheet(ws, presupuesto, idioma: str = "es", imperial: bool = False):
     """Hoja de desglose de costes internos por partida."""
     ws["A1"] = (
         f"{_t('Costes Internos — Presupuesto', idioma)} "
@@ -603,6 +614,15 @@ def _write_costes_sheet(ws, presupuesto, idioma: str = "es"):
             coste_comp = getattr(p, "coste_complementarios", 0) or 0
             coste_otros = getattr(p, "coste_otros", 0) or 0
             desperdicio = getattr(p, "desperdicio_pct", 0) or 0
+
+            if imperial:
+                # Los costes de esta hoja son por unidad: se muestran por
+                # sq ft igual que el precio de la hoja Detalle (el coste
+                # total de la columna 8 es dinero y no se toca).
+                coste_mat = precio_mostrado(coste_mat, p.unidad, True)
+                coste_mo = precio_mostrado(coste_mo, p.unidad, True)
+                coste_comp = precio_mostrado(coste_comp, p.unidad, True)
+                coste_otros = precio_mostrado(coste_otros, p.unidad, True)
 
             coste_base = coste_mat + coste_mo + coste_comp + coste_otros
             # Mismo coste que el motor (incluye producto y respeta CYPE).

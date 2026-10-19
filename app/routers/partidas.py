@@ -662,6 +662,16 @@ def buscar_partidas_catalogo_api(
             for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
                 _idx[_k] = tasa_convertir_precio(_idx.get(_k, 0), _factor_b)
         resultados.append(_idx)
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            ficha_catalogo_a_mostrada,
+        )
+
+        if es_imperial_codigo(_codigo_b):
+            resultados = [ficha_catalogo_a_mostrada(r, True) for r in resultados]
+    except Exception:
+        pass
     return {
         "ok": True,
         "q": consulta,
@@ -750,6 +760,19 @@ def ficha_partida_catalogo(
         pass
     if not _j_mercado:
         _j = _ficha_en_moneda(_j, _moneda_f, _factor_f)
+    try:
+        # Mercado imperial: la ficha entra en el editor con el precio por
+        # sq ft/ft/cu yd y los rendimientos reescalados; el catálogo en la
+        # base no se toca (sigue en métrico).
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            ficha_catalogo_a_mostrada,
+        )
+
+        if es_imperial_codigo(_codigo_f):
+            _j = ficha_catalogo_a_mostrada(_j, True)
+    except Exception:
+        pass
     return {"ok": True, "partida": _j, "moneda": _moneda_f}
 
 
@@ -1051,6 +1074,21 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
     # si fueran dólares y multiplicaba el precio por la tasa.
     _moneda_p, _factor_p = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))
     nuevo_precio = _a_moneda_base(nuevo_precio, _factor_p)
+    # Misma idea con la unidad: en un mercado imperial el editor muestra (y
+    # envía) el precio por sq ft, pero el catálogo se guarda por m². Sin
+    # este paso, «actualizar el catálogo» desde un presupuesto estadounidense
+    # dividía el precio maestro entre 10,76 en cada edición.
+    _imperial_p = False
+    try:
+        from ..services.unidades_precio import es_imperial_config, factor_cantidad
+
+        _imperial_p = es_imperial_config(_config(db))
+        if _imperial_p:
+            _factor_u_p = factor_cantidad(partida.unidad)
+            if _factor_u_p:
+                nuevo_precio = float(nuevo_precio) * _factor_u_p
+    except Exception:
+        _imperial_p = False
     if abs((partida.precio_unitario or 0.0) - nuevo_precio) > 1e-9:
         precio_anterior = partida.precio_unitario or 0.0
         partida.precio_unitario = nuevo_precio
@@ -1066,9 +1104,17 @@ async def actualizar_precio_partida_desde_presupuesto(partida_id: int, request: 
         )
     # La respuesta vuelve al editor: se devuelve en su misma moneda para que
     # la línea no se repinte con el importe en dólares.
+    _ficha_p = _ficha_en_moneda(_partida_catalogo_json(partida), _moneda_p, _factor_p)
+    if _imperial_p:
+        try:
+            from ..services.unidades_precio import ficha_catalogo_a_mostrada
+
+            _ficha_p = ficha_catalogo_a_mostrada(_ficha_p, True)
+        except Exception:
+            pass
     return {
         "ok": True,
-        "partida": _ficha_en_moneda(_partida_catalogo_json(partida), _moneda_p, _factor_p),
+        "partida": _ficha_p,
         "moneda": _moneda_p,
     }
 
@@ -1112,6 +1158,17 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
         costes_calculados = {
             k: _a_moneda_base(v, _factor_u) for k, v in costes_calculados.items()
         }
+    # Unidad: la ficha imperial llega en «sq ft» y el catálogo guarda en
+    # métrico (la unidad es la marca; ver unidades_precio).
+    _imperial_u = False
+    try:
+        from ..services.unidades_precio import normalizar_ficha_catalogo_a_metrico
+
+        _imperial_u = normalizar_ficha_catalogo_a_metrico(
+            datos, filas_catalogo, costes_calculados
+        )
+    except Exception:
+        _imperial_u = False
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
     datos["descomposicion_json"] = json.dumps({
@@ -1151,9 +1208,17 @@ async def guardar_partida_desde_presupuesto(request: Request, db: Session = Depe
     db.commit()
     db.refresh(partida)
     _sincronizar_recursos(db)
+    _ficha_u = _ficha_en_moneda(_partida_catalogo_json(partida), _mon_u, _factor_u)
+    if _imperial_u:
+        try:
+            from ..services.unidades_precio import ficha_catalogo_a_mostrada
+
+            _ficha_u = ficha_catalogo_a_mostrada(_ficha_u, True)
+        except Exception:
+            pass
     return {
         "ok": True,
-        "partida": _ficha_en_moneda(_partida_catalogo_json(partida), _mon_u, _factor_u),
+        "partida": _ficha_u,
         "moneda": _mon_u,
     }
 
@@ -1203,6 +1268,13 @@ async def crear_partida(request: Request, db: Session = Depends(get_db)):
         }
     if filas_catalogo:
         datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
+    try:
+        from ..services.unidades_precio import normalizar_ficha_catalogo_a_metrico
+
+        if normalizar_ficha_catalogo_a_metrico(datos, filas_catalogo, costes_calculados) and filas_catalogo:
+            datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
+    except Exception:
+        pass
     datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
     datos["codigo_externo"] = str(form.get("codigo_externo", "")).strip()
     imagen = ""

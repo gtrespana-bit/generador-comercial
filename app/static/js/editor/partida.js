@@ -1801,7 +1801,9 @@
       var undSelect = document.createElement("select");
       undSelect.className = "partida-unidad-select";
       undSelect.dataset.f = "p_unidad";
-      var unidades = ["ud", "m2", "m²", "m", "ml", "m3", "m³", "glb", "juego", "kg", "h", "hora"];
+      var unidades = window.COTIZAT_UNIDADES_IMPERIALES
+        ? ["ud", "sq ft", "ft", "cu yd", "lb", "gal", "glb", "juego", "h", "hora"]
+        : ["ud", "m2", "m²", "m", "ml", "m3", "m³", "glb", "juego", "kg", "h", "hora"];
       var unidadActual = datos.unidad || "ud";
       if (unidades.indexOf(unidadActual) === -1) unidades.push(unidadActual);
       unidades.forEach(function (u) {

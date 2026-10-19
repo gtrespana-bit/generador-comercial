@@ -272,7 +272,7 @@ etiqueta del estado y parecería correcto.
 | --- | --- | --- | --- |
 | **0 — Matriz USD** | `tools/coste_empresa_eeuu.py` (OEWS + FICA/FUTA/SUTA/workers' comp), generador, 388 filas, verificador, tests, SQL de carga, docs (investigación + metodología) | Solo datos | Clon del pipeline IE/AU/CA; sin código de app ni migración. Cierra el hueco de precios. |
 | **0.1 — Corrección SEO** | La landing/FAQ deja de afirmar conversión de cantidades hasta que la Fase 1 la haga cierta | Textos | Inmediata si la Fase 1 no es inmediata. Sin esto, la página miente hoy. |
-| **1 — Cantidades imperiales** | Capa de conversión en editor/detalle/PDF(s) según `sistema_unidades`; conversor de cantidades (ambos sentidos); tests | Código | Sin migración (derivado del mercado). Hace usable el producto US. |
+| **1 — Cantidades imperiales** ✅ *hecha (19-10-2026, ver §9)* | Capa de conversión en editor/detalle/PDF(s) según `sistema_unidades`; conversor de cantidades (ambos sentidos); tests | Código | Sin migración (derivado del mercado). Hace usable el producto US. |
 | **2 — Fiscalidad por estado** | `fiscalidad_eeuu.py`, campos `estado_codigo`/`us_tax_base` (+ default empresa), tabla de defaults por estado, bloque de formulario, PDF, migración + staging SQL, tests | Código + migración | Patrón CIS/RCT. Investigación de los 51 defaults apoyada en guías estatales/Avalara. |
 
 Fuera de alcance en las tres: tipos exactos por ZIP/condado (servicio
@@ -329,8 +329,50 @@ documentos de investigación y metodología. La matriz se publica en la
 unidad métrica del recurso, como recomienda §2 (trampa de la ruta
 SQL). La corrección SEO 0.1 también está aplicada: la landing y la
 FAQ ya no afirman conversión de cantidades («Prices yes, quantities
-not yet»). Pendientes de construir: Fase 1 (cantidades imperiales) y
-Fase 2 (motor fiscal por estado).
+not yet»). Pendiente de construir entonces: Fase 1 (cantidades
+imperiales) y Fase 2 (motor fiscal por estado).
+
+**Fase 1 ejecutada (19-10-2026):** la capa de cantidades imperiales
+está construida el mismo día. Diseño adoptado —**la unidad es la
+marca**—: el editor muestra y acepta la unidad de pantalla (`sq ft`,
+`ft`, `cu yd`, `gal`, `lb`) como texto libre, con la cantidad
+multiplicada por el factor y el precio dividido por él (el importe de
+cada línea no cambia); al guardar, el servidor normaliza a métrico
+guiándose por la propia cadena de unidad, sin banderas en el
+formulario, el borrador del autoguardado ni los packs. El JS del
+editor no cambia su lógica (solo la lista de unidades ofrecidas).
+Núcleo en `app/services/unidades_precio.py`
+(`unidad_mostrada/cantidad_mostrada/precio_mostrado/
+rendimiento_mostrado`, `normalizar_partida_a_metrico`,
+`ficha_catalogo_a_mostrada`, `receta_a_mostrada/
+normalizar_pack_a_metrico`, `es_imperial_config` con la misma puerta
+de país que GB/IE). Superficies cubiertas: datos iniciales del editor
+y su guardado (crear/editar), índice diferido, hojas del árbol,
+buscador y ficha (incl. precios de mercado), «actualizar precio» y
+«guardar en catálogo» desde el editor, packs/recetas (coeficientes
+reescalados), plantillas, selector de mediciones de plano,
+importaciones (un Excel en sq ft no deja el catálogo ni el
+presupuesto en imperial; CYPE/BC3 son métricos por formato), detalle
+de presupuesto y de factura, versiones, PDF estático **e interactivo**
+(la tabla del JavaScript se construye ya en pies: el P.U. se cotiza a
+céntimos por sq ft y el documento multiplica exacto consigo mismo),
+CSV/Excel del documento y el ejemplo de la landing. Reglas finas: el
+precio de cada recurso del APU no se convierte (sigue en $/kg, $/h):
+convierte el rendimiento, que es por unidad de partida; las horas por
+unidad se mueven igual; la fila «%» no trata su rendimiento como
+cantidad pero sí su precio-base; las etiquetas de producto solo
+acompañan si eran la unidad de la partida. **Límites deliberados**:
+el CRUD de Partidas/Productos/Recursos y la página de descompuesto
+siguen en métrico (superficies internas del operador, como el
+interior del APU); el BC3 exportado queda en métrico (FIEBDC es un
+estándar entre herramientas métricas); los cambios de alcance no
+tienen unidad (nada que convertir: cantidad × precio tal cual se
+escriben); el copiloto/IA y el pegado de Excel en el navegador
+generan líneas rotuladas en métrico que se guardan correctamente y se
+enseñan convertidas al reabrir. La afirmación SEO de cantidades
+queda restaurada (ahora es cierta). 19 tests nuevos
+(`tests/test_unidades_imperiales.py`); suite **1974 passed, 9
+skipped**. Pendiente: Fase 2 (motor fiscal por estado).
 
 ## Fuentes (consultadas el 19-10-2026)
 

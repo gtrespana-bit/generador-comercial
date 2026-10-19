@@ -57,15 +57,16 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
         (
             "Feet, inches and gallons — and CSI divisions",
             [
-                "The United States is the only imperial market in the product. The "
-                "US price library is researched in the units the market actually "
-                "sells — cubic yards of ready-mix, 94-lb cement bags, 4x8 sheets, "
-                "gallons of paint — and kept with its low-high range, so the number "
-                "behind a line item is an American price, not a foreign one "
-                "converted. Entering quantities in feet and inches is in "
-                "development; until it lands, estimates are measured in the "
-                "catalog's metric units, and we'd rather tell you that here than "
-                "in the small print.",
+                "The United States is the only imperial market in the product, and "
+                "it is worked the way the market works: you measure and price in "
+                "feet, square feet, cubic yards, gallons and pounds, and the "
+                "estimate, the client PDF and the exports all speak imperial — "
+                "the rate on the page is a real rate per square foot, not a metric "
+                "one relabelled. The US price library behind it is researched in "
+                "the units the market actually sells — cubic yards of ready-mix, "
+                "94-lb cement bags, 4x8 sheets, gallons of paint — and kept with "
+                "its low-high range, so the number behind a line item is an "
+                "American price, not a foreign one converted.",
                 "The catalog is organised in sections that map onto the CSI "
                 "MasterFormat divisions a general contractor already uses: concrete, "
                 "masonry, metals, thermal and moisture protection, finishes, "
@@ -345,11 +346,12 @@ FAQ: dict[str, list[dict[str, str]]] = {
         {
             "q": "Does it handle imperial measurements?",
             "a": (
-                "Prices yes, quantities not yet. The US price library is built from "
-                "American sources in their own units (cubic yards, square feet, "
-                "gallons, pounds) with the price range kept. Feet-and-inches "
-                "quantity entry is in development; today quantities are worked in "
-                "the catalog's metric units."
+                "Yes. The United States is the only imperial market in the product: "
+                "quantities are entered and shown in feet, square feet, cubic "
+                "yards, gallons and pounds, with unit prices per those same units, "
+                "in the editor, the client PDF and the exports. The US price "
+                "library is built from American sources in their own units with "
+                "the price range kept."
             ),
         },
     ],

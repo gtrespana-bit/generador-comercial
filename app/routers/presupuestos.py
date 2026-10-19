@@ -398,12 +398,31 @@ def _anexar_filas_importadas(presupuesto: Presupuesto, filas: list[dict]) -> lis
         tipo = fila.get("tipo_partida", "included")
         if tipo != "included":
             usa_avanzado = True
+        # Un Excel puede venir medido en imperial («sq ft»): lo que se
+        # persiste es métrico, sea cual sea el mercado (la unidad es la
+        # marca). CYPE/BC3 no pasan por aquí y ya son métricos por formato.
+        unidad_fila = fila.get("unidad", "ud") or "ud"
+        cantidad_fila = fila.get("cantidad", 1.0)
+        precio_fila = fila.get("precio", 0.0)
+        try:
+            from ..services.unidades_precio import metrica_desde_mostrada as _mdm_fila
+
+            _destino_fila = _mdm_fila(unidad_fila)
+        except Exception:
+            _destino_fila = None
+        if _destino_fila is not None:
+            unidad_fila, _factor_fila = _destino_fila
+            try:
+                cantidad_fila = float(cantidad_fila or 0) / _factor_fila
+                precio_fila = float(precio_fila or 0) * _factor_fila
+            except (TypeError, ValueError):
+                pass
         item = PresupuestoItem(
             nombre=fila["nombre"],
             descripcion=fila.get("descripcion", ""),
-            unidad=fila.get("unidad", "ud") or "ud",
-            cantidad=fila.get("cantidad", 1.0),
-            precio_unitario=fila.get("precio", 0.0),
+            unidad=unidad_fila,
+            cantidad=cantidad_fila,
+            precio_unitario=precio_fila,
             moneda=presupuesto.moneda or "USD",
             orden=ordenes_partidas[clave_orden],
             tipo_partida=tipo,
@@ -825,11 +844,41 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
                 }) if isinstance(f, dict) else f
                 for f in filas_descompuestas
             ]
+        # Unidad: misma regla que con la moneda. Un Excel en «sq ft» trae el
+        # precio por pie cuadrado y los rendimientos por pie cuadrado; el
+        # catálogo guarda por m². (CYPE/BC3 son métricos: no se tocan. El
+        # precio de cada recurso es por SU unidad y tampoco se toca.)
+        unidad_catalogo = str(item.get("unidad", "ud")).strip() or "ud"
+        try:
+            from ..services.unidades_precio import metrica_desde_mostrada as _mdm_cat
+
+            _destino_cat = _mdm_cat(unidad_catalogo)
+        except Exception:
+            _destino_cat = None
+        if _destino_cat is not None:
+            unidad_catalogo, _factor_cant = _destino_cat
+            precio = precio * _factor_cant
+            costes = {k: _f(v, 0) * _factor_cant for k, v in costes.items()}
+            if isinstance(filas_descompuestas, list):
+                _filas_u = []
+                for _fdesc in filas_descompuestas:
+                    if isinstance(_fdesc, dict):
+                        _fdesc = dict(_fdesc)
+                        if str(_fdesc.get("unidad") or "").strip() == "%":
+                            for _campo_p in ("precio", "precio_unitario"):
+                                if isinstance(_fdesc.get(_campo_p), (int, float)):
+                                    _fdesc[_campo_p] = _fdesc[_campo_p] * _factor_cant
+                        elif isinstance(_fdesc.get("rendimiento"), (int, float)):
+                            _fdesc["rendimiento"] = _fdesc["rendimiento"] * _factor_cant
+                        if isinstance(_fdesc.get("importe"), (int, float)):
+                            _fdesc["importe"] = _fdesc["importe"] * _factor_cant
+                    _filas_u.append(_fdesc)
+                filas_descompuestas = _filas_u
         db.add(Partida(
             nombre=nombre,
             descripcion=str(item.get("descripcion", "")).strip(),
             precio_unitario=_base(precio),
-            unidad=str(item.get("unidad", "ud")).strip() or "ud",
+            unidad=unidad_catalogo,
             categoria=categoria,
             subcategoria=subcategoria[:80],
             apartado=apartado[:120],
@@ -842,7 +891,7 @@ def _importar_a_catalogo(db: Session, filas: list[dict], formato: str,
                 "origen": "cype" if es_cype else "manual",
                 "codigo": codigo,
                 "codigo_legacy": codigo_legacy,
-                "unidad": str(item.get("unidad") or "ud"),
+                "unidad": unidad_catalogo,
                 "filas": filas_descompuestas,
             }, ensure_ascii=False),
             coste_materiales=_base(max(0.0, _f(costes.get("materiales"), 0))),
@@ -1157,6 +1206,14 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
             if (partida := db.query(Partida).filter(Partida.nombre == str(fila.get("nombre", "")).strip()).first())
         ]
         capitulos_editor = _capitulos_importados_para_editor(resultado, formato)
+        if _es_imperial_cfg(_config(db)):
+            from ..services.unidades_precio import (
+                capitulos_editor_a_mostrada as _caps_imp,
+                ficha_catalogo_a_mostrada as _ficha_imp,
+            )
+
+            catalogo_editor = [_ficha_imp(c, True) for c in catalogo_editor]
+            capitulos_editor = _caps_imp(capitulos_editor, True)
         db.commit()
         _sincronizar_recursos(db)
         mensaje = (
@@ -1228,6 +1285,14 @@ async def confirmar_importacion_presupuesto(request: Request, db: Session = Depe
     ]
     _registrar_usos(db, resultado["filas"])
     capitulos_editor = _capitulos_importados_para_editor(resultado, formato, items_importados)
+    if _es_imperial_cfg(_config(db)):
+        from ..services.unidades_precio import (
+            capitulos_editor_a_mostrada as _caps_imp2,
+            ficha_catalogo_a_mostrada as _ficha_imp2,
+        )
+
+        catalogo_editor = [_ficha_imp2(c, True) for c in catalogo_editor]
+        capitulos_editor = _caps_imp2(capitulos_editor, True)
     mensaje_final = f"{mensaje}: {len(resultado['filas'])} partida(s)."
     db.commit()
     _sincronizar_recursos(db)
@@ -1380,6 +1445,16 @@ def _url_datos_editor(moneda, tasa) -> str:
     return "/presupuestos/editor/datos" + (("?" + urlencode(params)) if params else "")
 
 
+def _es_imperial_cfg(cfg) -> bool:
+    """¿La empresa mide en imperial? (EE. UU.; ver unidades_precio)."""
+    try:
+        from ..services.unidades_precio import es_imperial_config
+
+        return es_imperial_config(cfg)
+    except Exception:
+        return False
+
+
 def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
     """Datos baratos del formulario: el catálogo viaja en otra petición.
 
@@ -1407,6 +1482,10 @@ def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
         # irlandés, con sus inversiones del sujeto pasivo— sin enseñar a un constructor de Perth una
         # casilla que no le concierne.
         "codigo_pais": _codigo_pais_descompuesto(db, cfg),
+        # Mercado imperial (EE. UU.): los datos iniciales del editor se
+        # pintan en ft/sq ft/cu yd/gal/lb; el guardado normaliza a métrico
+        # guiándose por la propia unidad (servicios.unidades_precio).
+        "es_imperial": _es_imperial_cfg(cfg),
     }
 
 
@@ -1471,6 +1550,19 @@ def datos_editor_catalogo(
             .all()
         )
         recursos = _recursos_editor_mercado(db, recursos_base, cfg, moneda_doc, tasa_doc)
+    if _es_imperial_cfg(cfg):
+        # El catálogo vive en métrico; el editor imperial recibe precio por
+        # sq ft/ft/cu yd con su etiqueta, para que insertar una partida no
+        # cotice «$/m²» en una línea rotulada en pies. Los recursos NO se
+        # convierten: el APU sigue costando en $/kg, $/h… y es el
+        # rendimiento (por unidad de partida) el que absorbe el cambio.
+        from ..services.unidades_precio import (
+            ficha_catalogo_a_mostrada,
+            producto_catalogo_a_mostrado,
+        )
+
+        partidas = [ficha_catalogo_a_mostrada(p, True) for p in partidas]
+        productos = [producto_catalogo_a_mostrado(p, True) for p in productos]
     return {
         "ok": True,
         "partidas": partidas,
@@ -1506,6 +1598,10 @@ def hojas_editor_catalogo(
     except (TypeError, ValueError):
         tasa_doc = cfg.tasa_cambio
     hojas = _hojas_catalogo_editor(db, categoria, subcategoria, apartado, moneda_doc, tasa_doc)
+    if _es_imperial_cfg(cfg):
+        from ..services.unidades_precio import ficha_catalogo_a_mostrada
+
+        hojas = [ficha_catalogo_a_mostrada(h, True) for h in hojas]
     return {"ok": True, "partidas": hojas}
 
 
@@ -2030,6 +2126,12 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     if cliente is None:
         return _redirect("/presupuestos/nuevo", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    # Capa imperial: una partida que llega en «sq ft» trae sus cantidades en
+    # pies cuadrados; el almacenamiento es siempre métrico (la conversión se
+    # guía por la propia unidad, sin banderas en el formulario).
+    from ..services.unidades_precio import normalizar_partidas_a_metrico
+
+    normalizar_partidas_a_metrico(partidas)
     capitulos = [c for c in capitulos if c["nombre"]]
     if not capitulos:
         return _redirect("/presupuestos/nuevo", error="Agrega al menos un capítulo con nombre.")
@@ -2958,6 +3060,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF.
             "fiscalidad_gb": _fiscalidad_gb_documento(presupuesto, cfg),
             "fiscalidad_ie": _fiscalidad_ie_documento(presupuesto, cfg),
+            "es_imperial": _es_imperial_cfg(cfg),
         },
     )
 
@@ -3465,7 +3568,7 @@ def comparar_versiones(presupuesto_id: int, a: int, b: int, request: Request, db
     va, vb = versiones.get(a), versiones.get(b)
     if not va or not vb:
         return _redirect(f"/presupuestos/{presupuesto_id}#versiones", error="Selecciona dos versiones válidas.")
-    return TEMPLATES.TemplateResponse(request, "budgets/compare_versions.html", {"p": va.presupuesto, "a": va, "b": vb, "sa": leer_snapshot(va), "sb": leer_snapshot(vb)})
+    return TEMPLATES.TemplateResponse(request, "budgets/compare_versions.html", {"p": va.presupuesto, "a": va, "b": vb, "sa": leer_snapshot(va), "sb": leer_snapshot(vb), "es_imperial": _es_imperial_cfg(_config(db))})
 
 
 @router.get("/presupuestos/{presupuesto_id}/versiones/{version_id}", response_class=HTMLResponse)
@@ -3473,7 +3576,7 @@ def ver_version(presupuesto_id: int, version_id: int, request: Request, db: Sess
     version = db.get(PresupuestoVersion, version_id)
     if version is None or version.presupuesto_id != presupuesto_id:
         return _redirect(f"/presupuestos/{presupuesto_id}", error="Versión no encontrada.")
-    return TEMPLATES.TemplateResponse(request, "budgets/version.html", {"p": version.presupuesto, "version": version, "snapshot": leer_snapshot(version)})
+    return TEMPLATES.TemplateResponse(request, "budgets/version.html", {"p": version.presupuesto, "version": version, "snapshot": leer_snapshot(version), "es_imperial": _es_imperial_cfg(_config(db))})
 
 
 @router.get("/presupuestos/{presupuesto_id}/exportar")
@@ -3516,11 +3619,24 @@ def exportar_presupuesto(presupuesto_id: int, request: Request, formato: str = "
         ["Capítulo", "Partida", "Descripción", "Unidad", "Cantidad",
          "Precio unitario", "Importe"], _idioma(request),
     )]
+    # La hoja habla en la unidad del usuario (sq ft en EE. UU.); el importe
+    # no cambia. El BC3 de arriba queda en métrico: FIEBDC es un estándar de
+    # intercambio entre herramientas métricas y su unidad es parte del formato.
+    from ..services.unidades_precio import (
+        cantidad_mostrada as _cant_mostrada,
+        precio_mostrado as _precio_mostrada,
+        unidad_mostrada as _unidad_mostrada,
+    )
+
+    _imp_csv = _es_imperial_cfg(_config(db))
     for cap in p.capitulos:
         for part in cap.partidas:
             filas.append([
-                cap.nombre, part.nombre, part.descripcion, part.unidad,
-                num(part.cantidad_total), num(part.precio_unitario), num(part.importe),
+                cap.nombre, part.nombre, part.descripcion,
+                _unidad_mostrada(part.unidad, _imp_csv),
+                num(_cant_mostrada(part.cantidad_total, part.unidad, _imp_csv)),
+                num(_precio_mostrada(part.precio_unitario, part.unidad, _imp_csv)),
+                num(part.importe),
             ])
     filas.append([])
     # Al final, las mismas etiquetas que el resto del documento.
@@ -3678,6 +3794,7 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
         # la autorización de deducción de Revenue en ROS).
         "fiscalidad_gb": _fiscalidad_gb_documento(factura, _config(db)),
         "fiscalidad_ie": _fiscalidad_ie_documento(factura, _config(db)),
+        "es_imperial": _es_imperial_cfg(_config(db)),
     })
 
 
@@ -3853,6 +3970,11 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     if cliente is None:
         return _redirect(f"/presupuestos/{presupuesto_id}/editar", error="Selecciona un cliente válido.")
     capitulos, partidas = _leer_formulario_presupuesto(form, db)
+    # Capa imperial (ver crear_presupuesto): normalizar a métrico antes de
+    # cualquier conversión de moneda o validación de importes.
+    from ..services.unidades_precio import normalizar_partidas_a_metrico
+
+    normalizar_partidas_a_metrico(partidas)
     if cambio_moneda:
         tasa_origen = presupuesto.tipo_cambio if moneda_anterior != "USD" else 1
         tasa_destino = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None

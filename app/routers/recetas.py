@@ -196,17 +196,27 @@ def _items_en_moneda(items, factor):
         salida.append(copia)
     return salida
 
+def _imperial_recetas(db) -> bool:
+    try:
+        from ..services.unidades_precio import es_imperial_config
+
+        return es_imperial_config(_config(db))
+    except Exception:
+        return False
+
+
 @router.get("/recetas/api/list")
 def api_listar_recetas(moneda: str = "", tasa: str = "", db: Session = Depends(get_db)):
     recetas = db.query(RecetaEstancia).order_by(RecetaEstancia.categoria, RecetaEstancia.nombre).all()
     _mon, _factor = _contexto_moneda(db, moneda, tasa)
+    _imp = _imperial_recetas(db)
     res = []
     for r in recetas:
         try:
             items = json.loads(r.datos or "[]")
         except Exception:
             items = []
-        res.append({
+        datos_receta = {
             "id": r.id,
             "nombre": r.nombre,
             "descripcion": r.descripcion or "",
@@ -215,7 +225,14 @@ def api_listar_recetas(moneda: str = "", tasa: str = "", db: Session = Depends(g
             "cantidad_base_default": r.cantidad_base_default or 10.0,
             "items": _items_en_moneda(items, _factor),
             "moneda": _mon,
-        })
+        }
+        if _imp:
+            # La medida de la estancia se pide en sq ft y los coeficientes
+            # llegan reescalados: el pack se inserta ya en pies.
+            from ..services.unidades_precio import receta_a_mostrada
+
+            datos_receta = receta_a_mostrada(datos_receta, True)
+        res.append(datos_receta)
     return {"ok": True, "recetas": res, "moneda": _mon}
 
 
@@ -229,18 +246,23 @@ def api_detalle_receta(request: Request, receta_id: int, moneda: str = "", tasa:
     except Exception:
         items = []
     _mon, _factor = _contexto_moneda(db, moneda, tasa)
+    receta = {
+        "id": r.id,
+        "nombre": r.nombre,
+        "descripcion": r.descripcion or "",
+        "categoria": r.categoria or "Otros",
+        "unidad_base": r.unidad_base or "m²",
+        "cantidad_base_default": r.cantidad_base_default or 10.0,
+        "items": _items_en_moneda(items, _factor),
+        "moneda": _mon,
+    }
+    if _imperial_recetas(db):
+        from ..services.unidades_precio import receta_a_mostrada
+
+        receta = receta_a_mostrada(receta, True)
     return {
         "ok": True,
-        "receta": {
-            "id": r.id,
-            "nombre": r.nombre,
-            "descripcion": r.descripcion or "",
-            "categoria": r.categoria or "Otros",
-            "unidad_base": r.unidad_base or "m²",
-            "cantidad_base_default": r.cantidad_base_default or 10.0,
-            "items": _items_en_moneda(items, _factor),
-            "moneda": _mon,
-        }
+        "receta": receta,
     }
 
 
@@ -262,6 +284,18 @@ async def api_guardar_receta_capitulo(request: Request, db: Session = Depends(ge
     items_in = payload.get("items", [])
     if not items_in:
         return {"ok": False, "error": mensaje_request(request, "El capítulo no tiene partidas.")}
+    # El capítulo también llega en la unidad del editor: si la base viene en
+    # «sq ft», cantidades y precios se normalizan a métrico ANTES de calcular
+    # coeficientes, para que el pack almacenado sea el mismo en cualquier
+    # mercado que lo inserte después.
+    try:
+        from ..services.unidades_precio import normalizar_pack_a_metrico
+
+        unidad_base, cantidad_base = normalizar_pack_a_metrico(
+            items_in, unidad_base, cantidad_base
+        )
+    except Exception:
+        pass
     # El capítulo llega en la moneda del presupuesto: se normaliza a la moneda
     # base antes de guardar el pack, que es reutilizable en cualquier moneda.
     _mon_g, _factor_g = _contexto_moneda(db, payload.get("moneda"), payload.get("tasa"))

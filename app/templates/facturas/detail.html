@@ -66,8 +66,8 @@
           <div class="doc-p-nombre">{{ part.nombre }}</div>
           {% if part.descripcion %}<div class="doc-p-desc">{{ part.descripcion }}</div>{% endif %}
         </td>
-        <td class="right csp-s-463c663c8c">{{ part.cantidad | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad }}</td>
+        <td class="right csp-s-463c663c8c">{{ (part.cantidad | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | num }} {{ f.moneda | replace('USD','$') | replace('Bs','Bs') }}/{{ part.unidad | unidad_mostrada(es_imperial) }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(f.moneda) }}</td>
       </tr>
     </table>

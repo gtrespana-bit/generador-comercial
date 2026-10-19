@@ -233,8 +233,8 @@
           {% endif %}
           {% endif %}
         </td>
-        <td class="right csp-s-463c663c8c">{{ part.cantidad_total | cant(part.unidad) }}</td>
-        <td class="right csp-s-0dfe35f39a">{{ part.precio_unitario | money_iso(p.moneda) }}/{{ part.unidad }}</td>
+        <td class="right csp-s-463c663c8c">{{ (part.cantidad_total | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
+        <td class="right csp-s-0dfe35f39a">{{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }}/{{ part.unidad | unidad_mostrada(es_imperial) }}</td>
         <td class="right csp-s-6ef849732a">{{ part.importe | money_iso(p.moneda) }}</td>
         <td class="right csp-s-0231bd7a8a">
           {% set tp = tiempos_por_partida.get(part.id) if tiempos_por_partida else none %}
@@ -258,7 +258,7 @@
       {% for m in part.mediciones %}
       <tr>
         <td class="csp-s-9908383064">{{ m.concepto or '–' }}</td>
-        <td class="right csp-s-71f9841409">{{ m.cantidad | cant(part.unidad) }}</td>
+        <td class="right csp-s-71f9841409">{{ (m.cantidad | cant_mostrada(part.unidad, es_imperial)) | cant(part.unidad | unidad_mostrada(es_imperial)) }}</td>
         <td class="right csp-s-0dfe35f39a">—</td>
         <td class="right csp-s-0dfe35f39a">{{ (m.cantidad * part.precio_unitario) | money_iso(p.moneda) }}</td>
       </tr>
@@ -282,7 +282,7 @@
             {% set op_precio = op.precio if op.precio is defined and op.precio is not none else op.producto_precio %}
             {% set op_unidad = op.unidad if op.unidad is defined and op.unidad else (op.producto_unidad or part.unidad) %}
             {% if op_precio is not none %}
-            <strong class="csp-s-d5d7f32738">{{ op_precio | money_iso(p.moneda) }} / {{ op_unidad }}</strong>
+            <strong class="csp-s-d5d7f32738">{{ (op_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ op_unidad | etiqueta_mostrada(part.unidad, es_imperial) }}</strong>
             {% endif %}
           </div>
           {% set op_nombre = op.nombre if op.nombre is defined and op.nombre else op.producto_nombre %}
@@ -303,16 +303,16 @@
         {% endfor %}
       </div>
       {% if part.producto_precio is not none %}
-      <small class="hint doc-prod-desglose">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      <small class="hint doc-prod-desglose">Desglose del P.U.: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · producto {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
       {% endif %}
     </div>
     {% else %}
     <div class="doc-prod">
       <strong>Producto presupuestado:</strong>
-      {% if part.producto_precio is not none %}<strong>{{ part.producto_precio | money_iso(p.moneda) }} / {{ part.producto_unidad or part.unidad }}</strong>&nbsp;&nbsp;{% endif %}
+      {% if part.producto_precio is not none %}<strong>{{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ (part.producto_unidad or part.unidad) | etiqueta_mostrada(part.unidad, es_imperial) }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
       {% if part.producto_precio is not none %}
-      <br><small class="hint">Desglose del P.U.: base {{ (part.precio_unitario - part.producto_precio) | money_iso(p.moneda) }} · producto {{ part.producto_precio | money_iso(p.moneda) }} · total {{ part.precio_unitario | money_iso(p.moneda) }} / {{ part.unidad }}</small>
+      <br><small class="hint">Desglose del P.U.: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · producto {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
       {% endif %}
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Producto" loading="lazy" decoding="async">{% endif %}
     </div>
@@ -322,7 +322,7 @@
     <div class="hint csp-s-d703051526">
       Coste: {{ part.coste | money_iso(p.moneda) }} · Beneficio: {{ part.beneficio | money_iso(p.moneda) }} ({{ "%.1f"|format((part.beneficio/part.coste*100) if part.coste else 0) | replace(".", ",") }}% s/coste, {{ part.margen_beneficio_pct | num }}% margen)
       {% if part.producto_coste_pendiente %}
-      <br><strong>⚠ Falta el coste de compra del producto</strong>: el beneficio contado es solo el de la mano de obra y los recursos (base de {{ (part.precio_unitario - (part.producto_precio or 0)) | money_iso(p.moneda) }} / {{ part.unidad }}). Indícalo en la partida para ver el beneficio real del material.
+      <br><strong>⚠ Falta el coste de compra del producto</strong>: el beneficio contado es solo el de la mano de obra y los recursos (base de {{ ((part.precio_unitario - (part.producto_precio or 0)) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}). Indícalo en la partida para ver el beneficio real del material.
       {% endif %}
     </div>
     {% elif part.producto_coste_pendiente %}

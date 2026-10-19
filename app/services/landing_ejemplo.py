@@ -29,6 +29,12 @@ from pathlib import Path
 from ..utils import decimales_moneda, fmt_num, simbolo_moneda, unir_precio_u
 from .tasa import tasa_fecha_verificacion, tasa_sugerida
 from .traduccion import traducir
+from .unidades_precio import (
+    cantidad_mostrada,
+    factor_cantidad,
+    precio_mostrado,
+    unidad_mostrada,
+)
 from ..paises import es_ingles
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -316,6 +322,10 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         else (resolver_mercado(idioma) if en else PAIS_GENERICO)
     )
     codigo = pais.get("codigo") or ""
+    # El sistema de medida sigue al mercado de formato: con país real es el
+    # suyo; en el genérico en inglés resuelve a EE. UU., así que el ejemplo
+    # se enseña en sq ft igual que la app lo haría para esa empresa.
+    imperial = (mercado_fmt.get("sistema_unidades") or "") == "imperial"
 
     moneda = pais.get("moneda") or "USD"
     tasa = 1.0 if moneda == "USD" else (tasa_sugerida(moneda) or 1.0)
@@ -351,11 +361,14 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
             sub += importe
             sub_coste += coste
             sub_ben += ben
+            # Los importes se calculan en métrico; solo lo ESCRITO (cantidad
+            # y precio unitario) pasa a sq ft en el mercado imperial.
+            unidad_disp = _unidad_rotulo(unidad_mostrada(unidad, imperial), en=en)
             filas.append(
                 {
                     "nombre": _rotulo(nombre, en=en, codigo=codigo),
-                    "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
-                    "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
+                    "cant": f"{_fmt_cant(cantidad_mostrada(cantidad, unidad, imperial), mercado_fmt)} {unidad_disp}",
+                    "precio": precio_u(precio_mostrado(precio, unidad, imperial), unidad_disp),
                     "importe": monto(importe),
                     "coste": monto(coste),
                     "beneficio": monto(ben),
@@ -384,12 +397,13 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         coste = round(importe / (1 + _MARGEN_ILUSTRATIVO), dec)
         total_prod = round(total_prod + importe, dec)
         coste_prod = round(coste_prod + coste, dec)
+        unidad_disp = _unidad_rotulo(unidad_mostrada(unidad, imperial), en=en)
         productos.append(
             {
                 "nombre": _rotulo(nombre, en=en, codigo=codigo),
                 "img": img,
-                "cant": f"{_fmt_cant(cantidad, mercado_fmt)} {_unidad_rotulo(unidad, en=en)}",
-                "precio": precio_u(precio, _unidad_rotulo(unidad, en=en)),
+                "cant": f"{_fmt_cant(cantidad_mostrada(cantidad, unidad, imperial), mercado_fmt)} {unidad_disp}",
+                "precio": precio_u(precio_mostrado(precio, unidad, imperial), unidad_disp),
                 "importe": monto(importe),
             }
         )
@@ -407,9 +421,16 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
     if base and base["filas"]:
         filas = []
         grupos = {"materiales": 0.0, "mano_obra": 0.0, "maquinaria": 0.0}
+        # Mercado imperial: el APU se enseña por sq ft —los rendimientos se
+        # dividen por el factor y el precio de cada recurso (por kg, por h)
+        # no se toca—, así el coste directo sale en $/sq ft como en la app.
+        factor_apu = factor_cantidad(base["unidad"]) if imperial else None
         for f in base["filas"]:
             precio = round(f["precio_usd"] * tasa, 2)
-            importe = round(precio * f["rendimiento"], dec)
+            rendimiento = (
+                f["rendimiento"] / factor_apu if factor_apu else f["rendimiento"]
+            )
+            importe = round(precio * rendimiento, dec)
             grupos[f["grupo"]] = round(grupos[f["grupo"]] + importe, dec)
             filas.append(
                 {
@@ -418,7 +439,7 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
                     ),
                     "nombre": _rotulo(f["nombre"], en=en, codigo=codigo),
                     "rend": (
-                        f"{fmt_num(f['rendimiento'], 2, mercado=mercado_fmt)} "
+                        f"{fmt_num(rendimiento, 4 if factor_apu else 2, mercado=mercado_fmt)} "
                         f"{_unidad_rotulo(f['unidad_rend'], en=en)}"
                     ),
                     "precio": precio_u(precio, _unidad_rotulo(f["unidad_rend"], en=en)),
@@ -433,11 +454,14 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
         horas_mo = sum(
             f["rendimiento"] for f in base["filas"] if f["grupo"] == "mano_obra"
         )
+        if factor_apu:
+            horas_mo = horas_mo / factor_apu
+        unidad_apu = unidad_mostrada(base["unidad"], imperial)
         apu = {
             "disponible": True,
             "codigo": base["codigo"],
             "titulo": _rotulo(base["titulo"], en=en, codigo=codigo),
-            "unidad": base["unidad"],
+            "unidad": unidad_apu,
             "descripcion": (
                 _DESCRIPCION_APU_EN.get(base["codigo"]) or base["descripcion"]
             )
@@ -452,13 +476,13 @@ def contexto_ejemplo(codigo_pais: str | None, idioma: str = "es") -> dict:
             "comp": monto(comp),
             "coste": monto(coste),
             "margen": f"+{int(round(margen_apu * 100))} %",
-            "precio": precio_u(pv, base["unidad"]),
+            "precio": precio_u(pv, unidad_apu),
             "horas_mo": (
                 _ETIQUETAS_EN["horas_mo"].format(
-                    h=fmt_num(horas_mo, 2, mercado=mercado_fmt), unidad=base["unidad"]
+                    h=fmt_num(horas_mo, 4 if factor_apu else 2, mercado=mercado_fmt), unidad=unidad_apu
                 )
                 if en
-                else f"{fmt_num(horas_mo, 2, mercado=mercado_fmt)} h-hombre/{base['unidad']}"
+                else f"{fmt_num(horas_mo, 4 if factor_apu else 2, mercado=mercado_fmt)} h-hombre/{unidad_apu}"
             ),
         }
 

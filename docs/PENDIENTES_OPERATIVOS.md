@@ -616,3 +616,10 @@ ejecutados de las filas 15–18:
 Al ejecutarse: reemplazar la celda de estado de la fila 19 por
 «✅ ejecutado» con la fecha y comprobar una fila puntual (p. ej.
 `MT-CEMENTO` / `US` = 0,446 USD o `MO-OF1` / `US` ≈ 39,07 USD).
+
+**La Fase 1 de Estados Unidos (cantidades imperiales, hecha el 19/10/2026)
+no deja ningún paso operativo**: no hay migración (la conversión se deriva
+del país de la empresa y el almacenamiento no cambia), no hay SQL que
+ejecutar ni datos que cargar. Llega con el despliegue normal del código.
+Lo único pendiente de Estados Unidos en este documento sigue siendo esta
+carga de la fila 19.

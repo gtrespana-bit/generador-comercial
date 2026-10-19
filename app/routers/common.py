@@ -341,6 +341,27 @@ TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
 TEMPLATES.env.filters["archivo_url"] = file_url
 
+# Capa imperial de documento (EE. UU.): los valores guardados son métricos y
+# las plantillas los pintan en la unidad del mercado cuando el contexto trae
+# ``es_imperial``. Sin esa clave (o en falso) cada filtro devuelve el valor
+# tal cual, así que las pantallas de los otros 22 mercados no cambian.
+try:
+    from ..services.unidades_precio import (
+        cantidad_mostrada as _cantidad_mostrada,
+        etiqueta_mostrada as _etiqueta_mostrada,
+        precio_mostrado as _precio_mostrado,
+        rendimiento_mostrado as _rendimiento_mostrado,
+        unidad_mostrada as _unidad_mostrada,
+    )
+
+    TEMPLATES.env.filters["unidad_mostrada"] = _unidad_mostrada
+    TEMPLATES.env.filters["etiqueta_mostrada"] = _etiqueta_mostrada
+    TEMPLATES.env.filters["cant_mostrada"] = _cantidad_mostrada
+    TEMPLATES.env.filters["precio_mostrado"] = _precio_mostrado
+    TEMPLATES.env.filters["rend_mostrado"] = _rendimiento_mostrado
+except Exception:  # pragma: no cover
+    pass
+
 
 def _static_version() -> str:
     """Huella corta y estable para cachear los estáticos con URLs versionadas.

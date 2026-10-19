@@ -64,6 +64,14 @@ from ..utils import (
 from .traduccion import codigo_desde_pais, traducir
 from . import pdf_anexos, pdf_planos
 from .pdf_interactivo import ContextoInteractivo
+from .unidades_precio import (
+    cantidad_mostrada,
+    es_imperial_codigo,
+    es_imperial_config,
+    etiqueta_mostrada,
+    precio_mostrado,
+    unidad_mostrada,
+)
 
 # Código de país activo para traducir terminología al vuelo (VE base -> CO/MX/EC/PE)
 _CODIGO_PAIS_ACTUAL = ""
@@ -479,7 +487,7 @@ def _marco_imagen(ruta_rel, azul_color, ancho=140, max_w=132, max_h=148):
     return marco
 
 
-def _datos_opcion(op, partida):
+def _datos_opcion(op, partida, imperial=False):
     """Normaliza una opción de producto (o el propio primario de la partida).
 
     Ojo: cuando `op` **es** la partida, sus atributos `nombre`/`unidad` son
@@ -512,6 +520,12 @@ def _datos_opcion(op, partida):
         descripcion = str(getattr(op, "descripcion", "") or "")
 
     unidad = unidad or str(getattr(partida, "unidad", "") or "ud")
+    if imperial:
+        # El precio del producto ya está sumado por unidad de partida: se
+        # muestra por sq ft con el factor de la partida, y su etiqueta solo
+        # acompaña si era la misma unidad.
+        precio = precio_mostrado(precio, getattr(partida, "unidad", ""), True)
+        unidad = etiqueta_mostrada(unidad, getattr(partida, "unidad", ""), True)
     detalle_items = [v for v in (marca, modelo, color, acabado) if v]
     detalle = " · ".join(detalle_items) if detalle_items else ""
 
@@ -531,7 +545,7 @@ def _datos_opcion(op, partida):
 
 
 def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
-                      ctx, interactiva, pid, lang="es"):
+                      ctx, interactiva, pid, lang="es", imperial=False):
     """Filas del bloque «producto(s)» de una partida.
 
     Con una sola opción se conserva el formato clásico («Producto
@@ -574,7 +588,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
 
     # ---- Un solo producto: formato clásico ------------------------------
     if len(opciones) == 1:
-        datos = _datos_opcion(opciones[0], partida)
+        datos = _datos_opcion(opciones[0], partida, imperial=imperial)
         fila_ancho_completo(Paragraph(_rot('Producto presupuestado:', 'Quoted product:', lang), st["prod_lab"]), arriba=6, abajo=1)
         linea = ""
         if datos["precio"] is not None:
@@ -603,7 +617,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     ancho_texto = _ANCHO - ancho_foto - 24
 
     for i, op in enumerate(opciones):
-        datos = _datos_opcion(op, partida)
+        datos = _datos_opcion(op, partida, imperial=imperial)
         marcado = (i == elegido)
 
         # Cabecera de la tarjeta con badge de Opción
@@ -711,7 +725,7 @@ def _bloque_productos(partida, filas, estilos, st, moneda, mon_simb, azul_color,
     return filas, estilos
 
 
-def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None, lang="es"):
+def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=None, lang="es", imperial=False):
     """Una partida: fila principal + mediciones + producto presupuestado.
 
     Si `num` (p. ej. "1.2") no es None, se antepone al nombre de la partida
@@ -726,6 +740,13 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     filas = []
     interactiva = ctx is not None and ctx.es_interactiva(partida)
     pid = ctx.id_partida(partida) if interactiva else ""
+    # Capa imperial: los importes se siguen calculando en métrico (cantidad
+    # × precio guardados); solo cambian la cantidad y el precio unitario que
+    # se ESCRIBEN, convertidos el uno contra el otro para que el importe
+    # impreso siga siendo su producto exacto.
+    unidad_txt = _esc(unidad_mostrada(partida.unidad or "ud", imperial))
+    precio_txt_val = precio_mostrado(partida.precio_unitario, partida.unidad, imperial)
+    cantidad_txt_val = cantidad_mostrada(partida.cantidad_total, partida.unidad, imperial)
 
     tipo = (getattr(partida, "tipo_partida", "included") or "included").lower()
     if _en(lang):
@@ -774,12 +795,12 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
             COLS[3],
         )
     else:
-        celda_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["tot_c"])
+        celda_precio = Paragraph(fmt_precio_u(precio_txt_val, moneda, unidad_txt, mercado=mercado), st["tot_c"])
         celda_importe = Paragraph(fmt_monto(partida.importe, moneda, mercado=mercado), st["tot_c"])
 
     filas.append([
         celda_texto,
-        Paragraph(fmt_cantidad(partida.cantidad_total, _esc(partida.unidad or "ud")), st["tot_c"]),
+        Paragraph(fmt_cantidad(cantidad_txt_val, unidad_txt), st["tot_c"]),
         celda_precio,
         celda_importe,
     ])
@@ -803,11 +824,11 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
                 COLS[3], alto=10, tam=8.25, fuente="Helvetica",
             )
         else:
-            celda_med_precio = Paragraph(fmt_precio_u(partida.precio_unitario, moneda, _esc(partida.unidad or "ud"), mercado=mercado), st["med_c"])
+            celda_med_precio = Paragraph(fmt_precio_u(precio_txt_val, moneda, unidad_txt, mercado=mercado), st["med_c"])
             celda_med_importe = Paragraph(fmt_monto(importe_medicion, moneda, mercado=mercado), st["med_c"])
         filas.append([
             Paragraph(_esc(m.concepto.strip()) or "-", st["med_d"]),
-            Paragraph(fmt_cantidad(m.cantidad, _esc(partida.unidad or "ud")), st["med_c"]),
+            Paragraph(fmt_cantidad(cantidad_mostrada(m.cantidad, partida.unidad, imperial), unidad_txt), st["med_c"]),
             celda_med_precio,
             celda_med_importe,
         ])
@@ -828,7 +849,8 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     # -- Productos presupuestados -----------------------------------------
     if partida.tiene_producto:
         filas, estilos = _bloque_productos(
-            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid, lang=lang
+            partida, filas, estilos, st, moneda, mon_simb, azul_color, ctx, interactiva, pid, lang=lang,
+            imperial=imperial,
         )
 
     idx_ultima = len(filas) - 1
@@ -841,13 +863,13 @@ def _tabla_partida(partida, st, moneda, ultima: bool, azul_color, num=None, ctx=
     return t
 
 
-def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None, lang="es"):
+def _capitulo_flujo(cap, st, moneda, azul_color, cap_index=0, ctx=None, lang="es", imperial=False):
     banda = _banda(azul_color)
     titulo = _fila_capitulo(cap, st, moneda, azul_color, ctx=ctx, lang=lang)
     columnas = _fila_columnas(st, lang=lang)
     partidas = [
         _tabla_partida(p, st, moneda, i == len(cap.partidas) - 1, azul_color,
-                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx, lang=lang)
+                       num=f"{cap_index + 1}.{i + 1}", ctx=ctx, lang=lang, imperial=imperial)
         for i, p in enumerate(cap.partidas)
     ]
     flujo = []
@@ -1883,13 +1905,17 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         _CODIGO_PAIS_ACTUAL = codigo_desde_pais(getattr(config, "empresa_pais", "") or "")
     except Exception:
         _CODIGO_PAIS_ACTUAL = ""
+    # El sistema de medida lo manda el país de la empresa (como la fecha o
+    # los separadores), no la lengua del documento: un PDF en inglés para un
+    # cliente británico sigue en m² y uno en español para Miami, en sq ft.
+    imperial = es_imperial_codigo(_CODIGO_PAIS_ACTUAL)
 
     # Capa interactiva. `preparar()` decide si hay algo que hacer: sin
     # partidas de varios productos devuelve False y el PDF sale exactamente
     # igual que antes, sin formulario ni JavaScript.
     ctx = ContextoInteractivo(presupuesto, moneda, TEXTO, azul_color,
                               etiqueta_total=_rot('PRESUPUESTO TOTAL', 'ESTIMATE TOTAL', lang),
-                              lang=lang)
+                              lang=lang, imperial=imperial)
     if not ctx.preparar():
         ctx = None
     # El motor de JavaScript del PDF interactivo no modela ni el CIS ni el
@@ -1940,7 +1966,7 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
     for i, cap in enumerate(presupuesto.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx, lang=lang)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, ctx=ctx, lang=lang, imperial=imperial)
 
     # Totales (en página nueva si no caben las ~160 pt)
     story.append(Spacer(1, 22))
@@ -2054,10 +2080,11 @@ def generar_factura_pdf(factura, config, lang: str = "es"):
         t("cobro_alcance"), t("cobro_alcance_txt"), st, azul_color, lang=lang,
     ))
     story.append(Spacer(1, 14))
+    imperial = es_imperial_config(config)
     for i, cap in enumerate(factura.capitulos):
         if i > 0:
             story.append(Spacer(1, 26))
-        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang)
+        story += _capitulo_flujo(cap, st, moneda, azul_color, cap_index=i, lang=lang, imperial=imperial)
 
     story.append(Spacer(1, 22))
     story.append(KeepTogether(_totales(
