@@ -2,7 +2,7 @@
 
 **Rama:** `arena/76b3d95f-generador-comercial` sobre `main` (`cbb5e99`, que ya
 incluye el trabajo inglés fusionado en la PR #124 y la PR #128)
-**Última verificación:** 19 de octubre de 2026 · suite **1879 pasan, 9 omitidos**
+**Última verificación:** 19 de octubre de 2026 · suite **1933 pasan, 9 omitidos**
 
 Este documento existe para poder retomar el trabajo sin tener que reconstruir
 el contexto. Dice qué está terminado, qué queda, en qué orden conviene
@@ -28,7 +28,8 @@ una estimación o un juicio, se dice expresamente.
 | Cargar la matriz de Reino Unido en producción | **Hecho** | 18-10-2026, SQL Editor |
 | Reino Unido · Fase 3 — SEO de cola larga | **Hecho** | esta rama (`docs/SEO_REINO_UNIDO.md`) |
 | Irlanda · Fase 0 — estudio de precios y matriz EUR | **Hecho** | esta rama (`docs/INVESTIGACION_PRECIOS_IRLANDA.md`) |
-| Irlanda · carga en producción y Fase 1 — RCT | Pendiente | la landing ya promete RCT: hay que implementarlo |
+| Irlanda · Fase 1 — RCT e inversión del sujeto pasivo | **Hecho** | esta rama (`app/services/fiscalidad_irlanda.py`) |
+| Irlanda · carga de la matriz y migración en producción | Pendiente | SQL ya generado (`docs/staging_upgrade_m8e1f4a7b2c5.sql`) |
 | Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
 
 **Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
@@ -36,10 +37,11 @@ SEO. La matriz de 388 recursos está cargada, la migración `l7d0e3f6a9c4` está
 desplegada (`/readyz` la confirma) y el mercado tiene landing, tres hubs y
 cuatro artículos con URL propia (`docs/SEO_REINO_UNIDO.md`).
 
-Lo que queda ya no es un bloqueo técnico: Irlanda tiene su estudio de precios
-y su matriz generada y verificada (19-10-2026) a falta de cargarla en
-producción y de su Fase 1 fiscal (RCT), y Australia, Canadá y Estados Unidos
-necesitan cada uno su estudio de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
+Lo que queda ya no es un bloqueo técnico: Irlanda tiene su estudio de precios,
+su matriz generada y verificada y su Fase 1 fiscal (RCT) hecha (19-10-2026),
+a falta solo de cargar la matriz y aplicar la migración `m8e1f4a7b2c5` en
+producción, y Australia, Canadá y Estados Unidos necesitan cada uno su
+estudio de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
 **conseguir enlaces entrantes y medir** en Search Console: el contenido está,
 la autoridad de dominio se construye fuera del código.
 
@@ -99,7 +101,7 @@ Motor CIS e inversión del sujeto pasivo en
 verificado), **30 %** (no registrado) o **0 %** (bruto), aplicada sobre la mano
 de obra **descontando el coste de materiales**. Inversión del sujeto pasivo
 cuando procede (VATA 1994 s. 55A), con la nota obligatoria en la factura.
-Migración `k6c9f2d5b8a3`; el head de Alembic actual es `l7d0e3f6a9c4` (§2.5).
+Migración `k6c9f2d5b8a3`; el head de Alembic pasó después a `l7d0e3f6a9c4` (§2.5) y hoy es `m8e1f4a7b2c5` (RCT irlandés, §3.6).
 
 **Fase 2 — divisa y vigencia (`7cdd1c2`).**
 Los 23 mercados tienen moneda y tasa verificada; sin conversión posible la
@@ -284,7 +286,7 @@ abre un mercado sin él.
 
 | Mercado | Unidades | Moneda | Situación |
 |---|---|---|---|
-| **Irlanda** | métrico | EUR | **Estudio de precios hecho (19-10-2026)**; falta carga en producción y Fase 1 (RCT) |
+| **Irlanda** | métrico | EUR | **Estudio de precios y Fase 1 (RCT) hechos (19-10-2026)**; falta cargar la matriz y migrar en producción |
 | **Australia** | métrico | AUD | Conducto listo; falta estudio de precios |
 | **Canadá** | métrico | CAD | Conducto listo; falta estudio de precios |
 | **Estados Unidos** | **imperial** | USD | Conversión de unidades hecha; falta estudio de precios |
@@ -308,23 +310,42 @@ estudio de precios, y sin él no se abren a clientes.
 | Canadá | `/en-ca/` | Sí | Sí | Pendiente |
 | Irlanda | `/en-ie/` | Sí | Sí | **Generada y verificada**; pendiente de carga |
 
+**Irlanda · Fase 1 fiscal — RCT (hecho, 19-10-2026).** Motor propio en
+`app/services/fiscalidad_irlanda.py`, espejo del británico pero con la base
+contraria: el RCT retiene el 0/20/35 % que fija Revenue sobre **el importe
+íntegro sin IVA, materiales incluidos** («overall contract rule»), mientras
+que el CIS solo retiene sobre la mano de obra. Inversión del sujeto pasivo
+(s. 16(3) VATCA 2010) con la leyenda literal de Revenue y aviso de la regla
+de los dos tercios (s. 16(5)): con IVA normal al 13,5 %, si los materiales
+superan dos tercios del importe, todo tributa al 23 % — se avisa, no se
+cambia el tipo por la espalda. Columna `rct_tipo` en presupuestos y facturas
+(migración `m8e1f4a7b2c5`, head vigente), bloque 🇮🇪 en el editor y filas en
+detalle y PDF; la retención se hereda al convertir a factura y al duplicar.
+La landing irlandesa describía el RCT «sobre el elemento de mano de obra» —
+la regla británica — y se ha corregido el texto a la vez que se hacía el
+motor. De paso se reparó una regresión de la Fase 1 británica: el decorador
+de la ruta de la descomposición de partida quedó pegado a
+`_fiscalidad_gb_desde_form` y la pantalla llevaba sin registrarse desde
+entonces.
+
 ---
 
 ## 4. Orden recomendado
 
 1. **Publicar esta rama** (PR → merge → desplegar) y comprobar en producción
-   `/readyz` (`l7d0e3f6a9c4`) y `/sitemap.xml` (cuatro URLs `/en-gb/guia/...`,
+   `/readyz` (`m8e1f4a7b2c5`) y `/sitemap.xml` (cuatro URLs `/en-gb/guia/...`,
    ninguna `/gb/` ni `/en/`).
 2. **Search Console**: reenviar el sitemap e inspeccionar `/en-gb/` y un
    artículo para confirmar «Página indexable». Empezar a medir impresiones.
 3. **Enlaces entrantes** para Reino Unido: directorios de oficio, FMB,
    TrustMark y prensa del sector. Es lo único que separa el contenido de las
    primeras posiciones.
-4. **Irlanda**: estudio de precios **hecho** (19-10-2026) y tasa EUR
-   reverificada. Siguiente paso: cargar la matriz en producción (panel de
-   operador o `docs/cargar_precios_referencia_irlanda_2026-10-19.sql` en el
-   SQL Editor, ya generado) y hacer la Fase 1 fiscal (motor RCT 0/20/35 %,
-   que la FAQ de la landing ya describe).
+4. **Irlanda**: estudio de precios y Fase 1 fiscal (RCT) **hechos**
+   (19-10-2026) y tasa EUR reverificada. Siguiente paso, ya solo operativo:
+   cargar la matriz en producción (panel de operador o
+   `docs/cargar_precios_referencia_irlanda_2026-10-19.sql` en el SQL Editor,
+   ya generado) y aplicar la migración `m8e1f4a7b2c5`
+   (`docs/staging_upgrade_m8e1f4a7b2c5.sql`).
 5. **Australia y Canadá** después, cada uno con su matriz.
 6. **Estados Unidos** al final: imperial y el que más exige.
 
@@ -401,6 +422,6 @@ y subir `EXPECTED_ALEMBIC_HEAD` en `app/database.py`.
 | Resto de español en el catálogo inglés | 0 |
 | Pares de plantillas EN sin problemas | 92 / 92 |
 | Tests | 1872 pasan, 9 omitidos (34 de SEO británico + 34 de presencia de mercados) |
-| Head de Alembic | `l7d0e3f6a9c4` |
+| Head de Alembic | `m8e1f4a7b2c5` |
 | Recargo empresarial británico | 19,8 % sobre 1.751,9 h facturables |
 | Tasa adoptada | 1 USD = 0,7502 GBP |

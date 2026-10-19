@@ -270,15 +270,18 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
             [
                 "Relevant Contracts Tax works like the British CIS but is not the "
                 "same. A principal contractor deducts from payments to a "
-                "subcontractor: 0 % where the subcontractor is registered and the "
-                "relevant contract has been notified with a deduction authorisation, "
-                "20 % for a registered subcontractor without that authorisation, and "
-                "35 % for one who is not registered at all.",
-                "The deduction applies to the payment for the construction "
-                "operation, and the principal files the return electronically. "
-                "CotizaT models the three rates on the labour element of the line "
-                "item, keeps materials outside the base and reflects the result in "
-                "the document.",
+                "subcontractor at a rate Revenue sets from the subcontractor's own "
+                "tax record —0 % for three years clean, 20 % as the registered "
+                "standard, 35 % where the record is poor or there is no "
+                "registration— and confirms in the deduction authorisation it "
+                "issues for every single payment in ROS.",
+                "And here is the part the UK-trained builder misses: the base is "
+                "the whole VAT-exclusive payment, materials included. CIS strips "
+                "the materials out and deducts on labour only; RCT does not. "
+                "CotizaT applies the rate you were authorised to the full payment "
+                "and shows the deduction and the net on the document; the ROS "
+                "notifications and the return stay where they belong, with the "
+                "principal.",
             ],
         ),
         (
@@ -385,9 +388,11 @@ FAQ: dict[str, list[dict[str, str]]] = {
         {
             "q": "Does it apply RCT deductions?",
             "a": (
-                "Yes. The three rates —0 % with notification and authorisation, 20 % "
-                "registered, 35 % unregistered— are applied to the labour element, "
-                "after materials. The return to Revenue remains yours to file."
+                "Yes. The three rates Revenue sets —0 %, 20 % and 35 %— are "
+                "applied to the full VAT-exclusive payment, materials included: "
+                "unlike the British CIS, RCT is not a labour-only deduction. The "
+                "contract and payment notifications in ROS, and the return, "
+                "remain yours to file."
             ),
         },
         {

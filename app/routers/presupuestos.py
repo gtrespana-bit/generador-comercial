@@ -1403,8 +1403,8 @@ def _contexto_cascaron_editor(db: Session, cfg, moneda, tasa) -> dict:
         "url_datos_editor": _url_datos_editor(moneda, tasa),
         "tarifa_hora_editor": _tarifa_hora_en_moneda(db, cfg, moneda, tasa),
         # Código ISO del mercado de la empresa. El editor lo usa para abrir
-        # bloques que solo existen en un país —hoy, el CIS y la inversión del
-        # sujeto pasivo británicos— sin enseñar a un constructor de Perth una
+        # bloques que solo existen en un país —hoy, el CIS británico y el RCT
+        # irlandés, con sus inversiones del sujeto pasivo— sin enseñar a un constructor de Perth una
         # casilla que no le concierne.
         "codigo_pais": _codigo_pais_descompuesto(db, cfg),
     }
@@ -2102,7 +2102,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         mostrar_ahorro=bool(form.get("mostrar_ahorro")), incluir_anexos=bool(form.get("incluir_anexos")),
         mostrar_desglose_precio=bool(form.get("mostrar_desglose_precio")),
         numero_control=str(form.get("numero_control", "")).strip(), fecha_tipo_cambio=fecha_tipo_cambio, retencion_pct=_f(form.get("retencion_pct")), operacion_exenta=bool(form.get("operacion_exenta")), clausula_cambiaria=str(form.get("clausula_cambiaria", "")).strip(),
-        iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0],
+        iva_tratamiento=_fiscalidad_gb_desde_form(form)[1], cis_tipo=_fiscalidad_gb_desde_form(form)[0], rct_tipo=_fiscalidad_ie_desde_form(form)[0],
         client_id=cliente.id,
     )
     # Imágenes de producto subidas
@@ -2955,8 +2955,9 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "tiempos_por_partida": tiempos_por_partida,
             "revision_envio": revision_envio,
             "cambios_reenvio": cambios_reenvio,
-            # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF.
+            # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF.
             "fiscalidad_gb": _fiscalidad_gb_documento(presupuesto, cfg),
+            "fiscalidad_ie": _fiscalidad_ie_documento(presupuesto, cfg),
         },
     )
 
@@ -3147,7 +3148,6 @@ async def guardar_tiempos_bulk(presupuesto_id: int, request: Request, db: Sessio
     return {"ok": True, "actualizadas": updated, "tiempos": t}
 
 
-@router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
 def _fiscalidad_gb_desde_form(form) -> tuple[float | None, str]:
     """Lee del formulario el tipo de CIS y el tratamiento del IVA.
 
@@ -3220,6 +3220,83 @@ def _fiscalidad_gb_documento(presupuesto, cfg):
         return None
     return f
 
+def _fiscalidad_ie_desde_form(form) -> tuple[float | None, str]:
+    """Lee del formulario el tipo de RCT y el tratamiento del IVA irlandés.
+
+    Igual que el CIS: ``None`` cuando el documento no está bajo RCT y 0 cuando
+    sí lo está pero Revenue retiene al 0 % por el historial del
+    subcontratista. Un valor que no sea 0, 20 o 35 se descarta: no existe
+    ninguna autorización de deducción con otro tipo, y guardar uno inventado
+    retendría una cifra que Revenue no va a reconocer.
+    """
+    from ..services.fiscalidad_irlanda import TIPOS_RCT, TRATAMIENTOS_IVA_IE
+
+    crudo = str(form.get("rct_tipo", "") or "").strip()
+    rct = None
+    if crudo:
+        try:
+            valor = float(crudo)
+        except (TypeError, ValueError):
+            valor = None
+        if valor is not None and any(valor == float(t) for t in TIPOS_RCT):
+            rct = valor
+
+    tratamiento = str(form.get("iva_tratamiento", "") or "").strip()
+    if tratamiento not in TRATAMIENTOS_IVA_IE:
+        tratamiento = ""
+    return rct, tratamiento
+
+
+def _aplicar_fiscalidad_ie(presupuesto, form) -> None:
+    # El tratamiento comparte campo con el británico y _aplicar_fiscalidad_gb
+    # ya lo escribió con el mismo saneado; asignarlo también aquí deja claro
+    # que el bloque irlandés del editor gobierna las dos cosas.
+    presupuesto.rct_tipo, presupuesto.iva_tratamiento = _fiscalidad_ie_desde_form(form)
+
+
+def _fiscalidad_ie_documento(presupuesto, cfg):
+    """Fiscalidad irlandesa del documento, o ``None`` si no le afecta.
+
+    Dos diferencias con la británica. La base del RCT es el importe íntegro
+    sin IVA, así que el coste de materiales no interviene en la retención;
+    pero sí en la regla de los dos tercios, que puede obligar a subir el IVA
+    del 13,5 % al 23 % en un documento sin ninguna retención. Por eso el
+    coste se calcula siempre en Irlanda —aunque ``_totales`` no lo reparta
+    sin RCT— y por eso el objeto se devuelve también cuando solo hay avisos:
+    un presupuesto irlandés corriente puede estar mal de tipo sin saberlo.
+    """
+    from ..services.fiscalidad_irlanda import calcular_fiscalidad_ie
+
+    try:
+        from ..services.traduccion import codigo_desde_pais
+
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+    except Exception:
+        pais = ""
+    totales = getattr(presupuesto, "_totales", None)
+    if totales is not None:
+        base, coste_materiales = totales.base, totales.coste_materiales
+        if pais == "IE" and not coste_materiales and getattr(presupuesto, "capitulos", None):
+            from ..services.calculations import calcular_totales
+
+            coste_materiales = calcular_totales(
+                presupuesto, con_costes_categoria=True
+            ).coste_materiales
+    else:
+        base = getattr(presupuesto, "base", 0) or 0
+        coste_materiales = getattr(presupuesto, "coste_materiales", 0) or 0
+    f = calcular_fiscalidad_ie(
+        pais_codigo=pais,
+        base_imponible=base,
+        coste_materiales=coste_materiales,
+        iva_pct=presupuesto.impuesto_pct,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
+    )
+    if not (f.aplica and (f.con_inversion_sujeto_pasivo or f.rct_aplica or f.avisos)):
+        return None
+    return f
+
 
 def _codigo_pais_descompuesto(db, cfg) -> str:
     """Mercado de la empresa, para traducir los textos del descompuesto.
@@ -3235,6 +3312,7 @@ def _codigo_pais_descompuesto(db, cfg) -> str:
         return "VE"
 
 
+@router.get("/presupuestos/{presupuesto_id}/partidas/{partida_id}/descomposicion", response_class=HTMLResponse)
 def ver_descomposicion_partida(presupuesto_id: int, partida_id: int, request: Request, db: Session = Depends(get_db)):
     """Muestra la matriz CYPE guardada sin volver a transformar el Excel."""
     presupuesto = db.get(Presupuesto, presupuesto_id)
@@ -3512,12 +3590,13 @@ def crear_factura(presupuesto_id: int, db: Session = Depends(get_db)):
         fuente_tipo_cambio=getattr(presupuesto, "fuente_tipo_cambio", "") or "",
         impuesto_pct=presupuesto.impuesto_pct,
         descuento_pct=presupuesto.descuento_pct,
-        # Fiscalidad británica: la factura es la que se declara, así que la
-        # retención se hereda del presupuesto aprobado. El coste de materiales
+        # Fiscalidad británico-irlandesa: la factura es la que se declara, así
+        # que la retención se hereda del presupuesto aprobado. El coste de materiales
         # se congela aquí porque ``FacturaItem`` no guarda costes y la factura
         # no debe recalcularse si el presupuesto cambia después.
         iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
         cis_tipo=getattr(presupuesto, "cis_tipo", None),
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
         coste_materiales=float(presupuesto._totales.coste_materiales),
         notas=presupuesto.notas,
         condiciones=presupuesto.condiciones,
@@ -3594,9 +3673,11 @@ def ver_factura(factura_id: int, request: Request, db: Session = Depends(get_db)
         return _redirect("/facturas", error="Documento de cobro no encontrado.")
     return TEMPLATES.TemplateResponse(request, "facturas/detail.html", {
         "f": factura,
-        # CIS e inversión del sujeto pasivo: las mismas cifras que el PDF, que
-        # es el documento que se declara en el CIS300.
+        # CIS/RCT e inversión del sujeto pasivo: las mismas cifras que el PDF,
+        # que es el documento que se declara (el CIS300 británico; en Irlanda,
+        # la autorización de deducción de Revenue en ROS).
         "fiscalidad_gb": _fiscalidad_gb_documento(factura, _config(db)),
+        "fiscalidad_ie": _fiscalidad_ie_documento(factura, _config(db)),
     })
 
 
@@ -3829,6 +3910,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.mostrar_desglose_precio = bool(form.get("mostrar_desglose_precio"))
     presupuesto.numero_control = str(form.get("numero_control", "")).strip(); presupuesto.retencion_pct = _f(form.get("retencion_pct")); presupuesto.operacion_exenta = bool(form.get("operacion_exenta")); presupuesto.clausula_cambiaria = str(form.get("clausula_cambiaria", "")).strip()
     _aplicar_fiscalidad_gb(presupuesto, form)
+    _aplicar_fiscalidad_ie(presupuesto, form)
     try: presupuesto.fecha_tipo_cambio = date.fromisoformat(form.get("fecha_tipo_cambio")) if form.get("fecha_tipo_cambio") else None
     except ValueError: presupuesto.fecha_tipo_cambio = None
 
@@ -3997,7 +4079,7 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         # La fiscalidad británica se hereda al duplicar: copiar un presupuesto
         # bajo el CIS y que la copia saliera sin retención es un error que se
         # paga en la declaración mensual.
-        iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo,
+        iva_tratamiento=original.iva_tratamiento, cis_tipo=original.cis_tipo, rct_tipo=original.rct_tipo,
         client_id=original.client_id,
     )
 

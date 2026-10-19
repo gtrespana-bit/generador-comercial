@@ -915,7 +915,8 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # una cosa distinta que las líneas de encima. En esos documentos el bloque
     # se imprime cerrado.
     fiscalidad = _fiscalidad_gb(presupuesto, tot, mercado)
-    ctx_efectivo = None if fiscalidad is not None else ctx
+    fiscalidad_ie = _fiscalidad_ie(presupuesto, tot, mercado)
+    ctx_efectivo = None if (fiscalidad is not None or fiscalidad_ie is not None) else ctx
 
     def valor(clave, importe, estilo, prefijo=""):
         """Celda de importe: campo recalculable si el PDF es interactivo."""
@@ -950,7 +951,10 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # Australia, I.V.A. en España, IGV en Perú, ITBMS en Panamá.
     _iva_lbl = (mercado["etiqueta_impuesto_en"] if _en(lang)
                 else mercado["etiqueta_impuesto"])
-    if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
+    if (
+        (fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo)
+        or (fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo)
+    ):
         # El impuesto no se cobra: lo declara el cliente. La fila se imprime
         # igualmente, con el tipo y a cero, porque es la que le dice al cliente
         # cuánto tiene que ingresar él.
@@ -987,7 +991,27 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
         etiqueta_total = _rot('TOTAL A COBRAR (tras retención CIS)',
                               'TOTAL PAYABLE (after CIS deduction)', lang)
 
-    _total_final = fiscalidad.total_a_cobrar if fiscalidad is not None else tot.total
+    # ── Retención del RCT ──────────────────────────────────────────────────
+    # A diferencia del CIS no hay fila de base: el RCT retiene sobre el
+    # importe íntegro sin IVA, materiales incluidos («overall contract
+    # rule»), y esa cifra ya es la BASE IMPONIBLE de encima. Mostrar una
+    # base menor sería aplicar la regla británica en Irlanda.
+    if fiscalidad_ie is not None and fiscalidad_ie.rct_aplica:
+        filas.append([
+            Paragraph(
+                f"{_rot('RETENCIÓN RCT', 'RCT DEDUCTION', lang)} "
+                f"({fmt_pct(fiscalidad_ie.rct_tipo)} %)", st["tot_lab_s"]),
+            valor("retencion_rct", fiscalidad_ie.retencion_rct, "tot_lab_s", prefijo="- "), "",
+        ])
+        etiqueta_total = _rot('TOTAL A COBRAR (tras retención RCT)',
+                              'TOTAL PAYABLE (after RCT deduction)', lang)
+
+    if fiscalidad_ie is not None:
+        _total_final = fiscalidad_ie.total_a_cobrar
+    elif fiscalidad is not None:
+        _total_final = fiscalidad.total_a_cobrar
+    else:
+        _total_final = tot.total
     filas.append([
         Paragraph(etiqueta_total, st["tot_lab_g"]),
         valor("total", _total_final, "tot_lab_g"), "",
@@ -1022,9 +1046,39 @@ def _totales(presupuesto, st, moneda, azul_color, etiqueta_total="PRESUPUESTO TO
     # puede saber que el impuesto lo declara él.
     if fiscalidad is not None and fiscalidad.con_inversion_sujeto_pasivo:
         notas.append(Paragraph(_esc(fiscalidad.leyenda_iva), st["desg_nota"]))
+    # En Irlanda la leyenda la dicta Revenue («VAT on this supply to be
+    # accounted for by the Principal Contractor»): sin ella —y sin el número
+    # de IVA del subcontratista— la inversión no queda acreditada.
+    if fiscalidad_ie is not None and fiscalidad_ie.con_inversion_sujeto_pasivo:
+        notas.append(Paragraph(_esc(fiscalidad_ie.leyenda_iva), st["desg_nota"]))
     if not notas:
         return t
     return [t] + notas
+
+
+def _fiscalidad_ie(presupuesto, tot, mercado):
+    """Fiscalidad irlandesa del documento, o ``None`` si no le afecta.
+
+    Espejo de la británica, con la diferencia que define al RCT: la retención
+    cae sobre el importe íntegro sin IVA, así que el coste de materiales no
+    forma parte del cálculo (solo alimenta el aviso de la regla de los dos
+    tercios, que en el PDF no se imprime: es un problema del emisor, no algo
+    que el cliente tenga que leer). Por eso una factura irlandesa retiene
+    bien sin ninguna instantánea de costes.
+    """
+    from .fiscalidad_irlanda import calcular_fiscalidad_ie
+
+    f = calcular_fiscalidad_ie(
+        pais_codigo=mercado.get("codigo"),
+        base_imponible=getattr(tot, "base", 0) or 0,
+        coste_materiales=getattr(tot, "coste_materiales", 0) or 0,
+        iva_pct=getattr(presupuesto, "impuesto_pct", 0) or 0,
+        iva_tratamiento=getattr(presupuesto, "iva_tratamiento", "") or "",
+        rct_tipo=getattr(presupuesto, "rct_tipo", None),
+    )
+    if not (f.aplica and (f.con_inversion_sujeto_pasivo or f.rct_aplica)):
+        return None
+    return f
 
 
 def _fiscalidad_gb(presupuesto, tot, mercado):
@@ -1838,12 +1892,13 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
                               lang=lang)
     if not ctx.preparar():
         ctx = None
-    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni la
-    # inversión del sujeto pasivo: recalcula los totales como «base + IVA» y
+    # El motor de JavaScript del PDF interactivo no modela ni el CIS ni el
+    # RCT ni la inversión del sujeto pasivo: recalcula «base + IVA» y
     # dejaría el bloque fiscal diciendo una cosa y el resumen otra. En esos
     # documentos el presupuesto sale cerrado.
     if ctx is not None and (
         getattr(presupuesto, "cis_tipo", None) is not None
+        or getattr(presupuesto, "rct_tipo", None) is not None
         or (getattr(presupuesto, "iva_tratamiento", "") or "") == "inversion_sujeto_pasivo"
     ):
         ctx = None

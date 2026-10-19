@@ -25,6 +25,7 @@ from migrations.versions import (
     j5b8e1c4a9f2_alembic_version_con_rls as rls_alembic_migracion,
     k6c9f2d5b8a3_fiscalidad_reino_unido as fiscalidad_migracion,
     l7d0e3f6a9c4_lectura_operador_catalogo_recursos as lectura_operador_migracion,
+    m8e1f4a7b2c5_fiscalidad_irlanda_rct as fiscalidad_ie_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -240,14 +241,15 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [lectura_operador_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({lectura_operador_migracion.revision}); "
+    assert cabezas == [fiscalidad_ie_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({fiscalidad_ie_migracion.revision}); "
         f"hay: {cabezas}"
     )
-    # La cabeza es la lectura de operador sobre el catálogo de recursos
-    # (panel de matrices de precios); detrás quedan la fiscalidad británica
-    # (CIS + inversión del sujeto pasivo) y el endurecimiento de
-    # `alembic_version`.
+    # La cabeza es la fiscalidad irlandesa (RCT); detrás quedan la lectura de
+    # operador sobre el catálogo de recursos (panel de matrices de precios),
+    # la fiscalidad británica (CIS + inversión del sujeto pasivo) y el
+    # endurecimiento de `alembic_version`.
+    assert fiscalidad_ie_migracion.down_revision == lectura_operador_migracion.revision
     assert lectura_operador_migracion.down_revision == fiscalidad_migracion.revision
     assert fiscalidad_migracion.down_revision == rls_alembic_migracion.revision
     assert rls_alembic_migracion.down_revision == soporte_migracion.revision
