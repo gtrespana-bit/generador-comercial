@@ -87,9 +87,9 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | País | Código | Moneda | IVA | ID Fiscal | Terminología | Recursos nacionales | Tasa verificada | SEO | Estado |
 |---|---|---|---|---|---|---|---|---|---|
 | Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
-| Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada y verificada; pendiente de carga** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
-| Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada y verificada; pendiente de carga** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
-| Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada y verificada; pendiente de carga** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
+| Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada, verificada y cargada en producción (19-10-2026)** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
+| Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
+| Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada, verificada y cargada en producción (19-10-2026)** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -144,11 +144,10 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   en detalle y PDF. La landing describía el RCT sobre la mano de obra —
   estilo CIS — y se ha corregido el texto el mismo día: ahora dice lo que
   hace el motor y lo que manda Revenue.
-- **Pendiente (producción):** cargar la matriz de precios (panel de operador
-  o `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`, ya generado) y
-  aplicar la migración `m8e1f4a7b2c5`
-  (`docs/staging_upgrade_m8e1f4a7b2c5.sql`). Con eso Irlanda queda como Reino
-  Unido salvo el SEO de cola larga.
+- **Producción: hecho (19-10-2026).** Migración `m8e1f4a7b2c5` aplicada y
+  matriz cargada en Supabase (confirmado por el titular; registro en
+  `docs/PENDIENTES_OPERATIVOS.md` §15). Irlanda queda como Reino Unido
+  salvo el SEO de cola larga.
 
 **Australia — estado real (2026-10-19).**
 
@@ -170,10 +169,9 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   (13 RDO al año) → oficial 48,06 $/h coste empresa (`tools/coste_empresa_australia.py`).
   Payroll tax excluido (umbral NSW 1,2 M$). Perfil NSW para seguros y residuos
   (waste levy 180,20 $/t).
-- **Pendiente (producción):** cargar la matriz
-  (`docs/cargar_precios_referencia_australia_2026-10-19.sql`, ya generado, o el
-  CSV por el panel de operador) y la futura Fase 1 (retención por falta de ABN
-  47 %, *taxable payments annual report* TPAR, GST), análoga a CIS/RCT.
+- **Producción: matriz cargada (19-10-2026).** Queda la futura Fase 1
+  (retención por falta de ABN 47 %, *taxable payments annual report* TPAR,
+  GST), análoga a CIS/RCT.
 
 **Canadá — estado real (2026-10-19).**
 
@@ -196,10 +194,9 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   El cabillero (rodworker, suboficio del ironworker) es el más caro: 50,66.
   Rango −10 %/+25 % (base mediana); el paquete sindical ICI del GTA queda por
   encima, documentado. EHT excluido (exención 1 M$).
-- **Pendiente (producción):** cargar la matriz
-  (`docs/cargar_precios_referencia_canada_2026-10-19.sql`, ya generado, o el
-  CSV por el panel de operador) y la futura Fase 1 fiscal (GST/HST y la
-  declaración T5018 de pagos a subcontratistas de construcción).
+- **Producción: matriz cargada (19-10-2026).** Queda la futura Fase 1
+  fiscal (GST/HST y la declaración T5018 de pagos a subcontratistas de
+  construcción).
 
 **Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
 requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.
