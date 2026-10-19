@@ -35,7 +35,25 @@
   <section class="hub-bloque">
     <h2>{{ titulo }}</h2>
     {% for p in pars %}
+    {% if p is mapping and p.tabla %}
+    <div class="guia-tabla-wrap">
+      <table class="guia-tabla">
+        {% if p.tabla.cabecera %}
+        <thead>
+          <tr>{% for col in p.tabla.cabecera %}<th scope="col">{{ col }}</th>{% endfor %}</tr>
+        </thead>
+        {% endif %}
+        <tbody>
+          {% for fila in p.tabla.filas %}
+          <tr>{% for celda in fila %}<td>{{ celda }}</td>{% endfor %}</tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if p.tabla.nota %}<p class="guia-tabla-nota">{{ p.tabla.nota }}</p>{% endif %}
+    {% else %}
     <p>{{ p }}</p>
+    {% endif %}
     {% endfor %}
   </section>
   {% endfor %}

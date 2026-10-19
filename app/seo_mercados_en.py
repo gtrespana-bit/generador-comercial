@@ -27,7 +27,7 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
             [
                 "In the United States the three words describe three different "
                 "documents. An estimate is your internal number: what the work "
-                "costs with your labour, material and equipment. A proposal is what "
+                "costs with your labor, material and equipment. A proposal is what "
                 "you send the client: scope, inclusions, exclusions, assumptions, "
                 "validity. A bid is a fixed offer against someone else's "
                 "specification, usually with alternates and unit prices for work "
@@ -44,17 +44,17 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
             [
                 "There is no national sales tax, and the rate is only half the "
                 "story: in most states a contractor is the final consumer of the "
-                "materials — tax is paid at the store, labour on real property is "
+                "materials — tax is paid at the store, labor on real property is "
                 "not taxed, and the correct estimate carries no tax line at all. "
                 "Others tax by the kind of job (a capital improvement in New York "
                 "is not a repair; a Texas home is not a Texas storefront), a few "
-                "tax materials or labour only, Washington taxes the full contract "
+                "tax materials or labor only, Washington taxes the full contract "
                 "price, and Hawaii, New Mexico and South Dakota tax the "
                 "contractor's gross receipts.",
                 "So the app asks where the job is before it asks for a rate. Pick "
                 "the job state and CotizaT proposes how that state taxes a "
                 "remodel — nothing charged to the customer, materials only, "
-                "labour only, the full amount or gross receipts — with the "
+                "labor only, the full amount or gross receipts — with the "
                 "state's average combined rate filled in as a starting point to "
                 "adjust to the job address. Your usual state lives on the "
                 "company; every estimate can override it. CotizaT proposes and "
@@ -98,17 +98,30 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
             ],
         ),
         (
-            "What an hour of labour really costs",
+            "What an hour of labor really costs",
             [
-                "A carpenter's wage is not the labour cost. Payroll taxes, workers' "
+                "A carpenter's wage is not the labor cost. Payroll taxes, workers' "
                 "compensation, general liability and the cost of keeping a crew "
                 "employed between jobs sit on top of the hourly rate. That burdened "
                 "rate —not the wage— is what has to be in the unit price analysis.",
-                "Each line item arrives broken down into materials with waste, labour "
+                "Each line item arrives broken down into materials with waste, labor "
                 "with its productivity rate and equipment where there is equipment. "
                 "Change the price of lumber or the crew's hourly cost once and every "
                 "line item that uses it recalculates, while estimates already sent "
                 "stay frozen in their version.",
+            ],
+        ),
+        (
+            "2026 prices behind the catalog",
+            [
+                "The library is researched in US trade sources, not converted from "
+                "another country: a plumber at the BLS median wage of $30.67/h "
+                "enters at $40.21/h of employer cost, an electrician at $39.76, a "
+                "journeyman carpenter at $39.07 and a laborer at $30.68; 94-lb "
+                "Portland cement bags around $19, 4×8 drywall sheets at $18–19, "
+                "contractor latex paint near $40 a gallon. Each of the 388 "
+                "resources keeps its source, its research date and a low–high "
+                "range, and the full trade-by-trade table is in our guides.",
             ],
         ),
     ],
@@ -183,6 +196,19 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
                 "waste, labour at the employer cost of the trade with its "
                 "productivity rate, and plant where plant is needed. That breakdown "
                 "is what turns a rate per square metre into a price you can defend.",
+            ],
+        ),
+        (
+            "2026 prices behind the catalog",
+            [
+                "Labour starts from the awards, not from a guess: a CW3 "
+                "tradesperson at A$31.22/h enters the library at A$48.06/h of "
+                "employer cost (12 % super, portable long service leave, workers "
+                "comp and leave loaded), a plumber at A$48.65, an electrician at "
+                "A$47.94. Materials are researched ex-GST from Australian trade "
+                "sources —20 kg GP cement bags around A$8–10 ex-GST, Dulux "
+                "Wash&Wear 10 l near A$239 incl. GST— each with its source, date "
+                "and range. The full trade-by-trade table is in our guides.",
             ],
         ),
     ],
@@ -260,22 +286,38 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
                 "PDF can be defended.",
             ],
         ),
+        (
+            "2026 prices behind the catalog",
+            [
+                "Labour comes from the Government of Canada's own wage data: "
+                "Job Bank medians such as a bricklayer at C$38.00/h, an "
+                "electrician at C$34.00 and a plumber at C$32.50, loaded with "
+                "CPP, EI and WSIB premiums to employer costs of C$49.96, "
+                "C$44.30 and C$42.47 per billable hour. Materials were priced "
+                "from Canadian trade sources in October 2026 —40 kg Portland "
+                "GU cement at C$19.99–24.68 a bag, 50-lb thinset near C$19.98— "
+                "and every one of the 388 resources keeps its source, date "
+                "and range. The full table is in our guides.",
+            ],
+        ),
     ],
     # ── Irlanda ──────────────────────────────────────────────────────────
     "IE": [
         (
-            "VAT at 13.5 % on construction services, 23 % on materials",
+            "VAT at 13.5 % on construction services — and when 23 % takes the whole job",
             [
                 "Ireland charges the reduced 13.5 % rate on construction services "
                 "and the standard 23 % on most goods, which is why an Irish "
                 "contractor has to be careful with a job that mixes both. When the "
-                "value of the goods in a supply reaches two thirds or more of the "
-                "total, the whole supply can be standard-rated —a rule that changes "
-                "the tax of the entire invoice, not just the materials line.",
-                "The treatment is configured per estimate. CotizaT prints the "
-                "treatment it was priced with and does not decide your VAT; the "
-                "document is commercial and the VAT invoice comes from your "
-                "accounting system.",
+                "value of the goods supplied exceeds two thirds of the "
+                "VAT-exclusive price, the whole supply is standard-rated at 23 % "
+                "—a rule that changes the tax of the entire invoice, not just the "
+                "materials line.",
+                "That used to be a judgement call; the estimate now computes its "
+                "own materials share from the cost breakdown and applies 13.5 % "
+                "or 23 % accordingly, showing the treatment on the document. "
+                "CotizaT does not file your VAT; the document is commercial and "
+                "the VAT invoice comes from your accounting system.",
             ],
         ),
         (
@@ -335,6 +377,20 @@ CUERPO: dict[str, list[tuple[str, list[str]]]] = {
                 "waste, labour at the employer cost of the trade with productivity, "
                 "plant where it exists— and that breakdown stays in the workspace. "
                 "The client receives a document, not a login.",
+            ],
+        ),
+        (
+            "2026 prices behind the catalog",
+            [
+                "Labour starts from the statutory scales: the SEO craft wage of "
+                "€23.74/h enters the library at €32.67/h of employer cost, a "
+                "Connect plumber (€29.12) at €39.62 and an AECI electrician "
+                "(€27.60) at €37.66 — employer PRSI, CWPS pension and paid "
+                "non-working hours included. Materials are researched ex-VAT "
+                "from Irish merchants —25 kg cement bags at €7.72–8.46, a "
+                "2700×1200 Gyproc board at €22.72— with source, date and range "
+                "on every one of the 388 lines. The full trade-by-trade table "
+                "is in our guides.",
             ],
         ),
     ],

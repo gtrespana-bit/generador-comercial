@@ -20,7 +20,7 @@ from .i18n import normalizar_idioma
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
 OG_IMAGE = "/static/og-cotizat.png"
-SITEMAP_LASTMOD = "2026-10-18"
+SITEMAP_LASTMOD = "2026-10-19"
 
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
 TEMAS = ("software-presupuestos", "apu", "remodelacion")
@@ -315,6 +315,27 @@ def _aplicar_prueba(ficha: dict, lang: str = "es", incluir_prueba: bool = True) 
     return ficha
 
 
+# Palabras que no pueden quedar colgando al final de una descripción
+# recortada: «…, sales.» (corte tras un nombre a mitad de sintagma) o
+# «Unit price analysis and.» son el fallo que se evita aquí.
+_CONECTORES_FINALES = frozenset(
+    "and or the a an with for to in of on at by from "
+    "y e o u con de en el la los las un una para por que del al su".split()
+)
+
+
+def _sin_conector_final(t: str) -> str:
+    t = t.rstrip(" ,;·.")
+    while True:
+        ultimo = t.rfind(" ")
+        if ultimo <= 0:
+            return t
+        palabra = t[ultimo + 1 :].strip(" ,;·.").lower()
+        if palabra not in _CONECTORES_FINALES:
+            return t
+        t = t[:ultimo].rstrip(" ,;·.")
+
+
 def _recortar_a_palabra(texto: str, maximo: int) -> str:
     """Recorta sin dejar palabras partidas y sin añadir puntos suspensivos.
 
@@ -328,7 +349,7 @@ def _recortar_a_palabra(texto: str, maximo: int) -> str:
     ultimo = corte.rfind(" ")
     if ultimo > maximo * 0.5:
         corte = corte[:ultimo]
-    return corte.rstrip(" ,;·.")
+    return _sin_conector_final(corte.rstrip(" ,;·."))
 
 
 def _recortar_meta(texto: str, maximo: int = 160) -> str:
@@ -340,7 +361,7 @@ def _recortar_meta(texto: str, maximo: int = 160) -> str:
     ultimo = max(corte.rfind(" "), corte.rfind(","))
     if ultimo > maximo * 0.6:
         corte = corte[:ultimo]
-    return corte.rstrip(" ,;·").rstrip() + "…"
+    return _sin_conector_final(corte.rstrip(" ,;·").rstrip()) + "…"
 
 
 def titulo_publico(oficio: str, donde: str = "") -> str:
@@ -1321,9 +1342,16 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
         else:
             # Estados Unidos, Australia, Canadá e Irlanda: sin cuerpo propio
             # sus landings eran la misma página con el nombre cambiado.
+            # También tienen artículos de cola larga con URL propia, como
+            # Reino Unido (seo_articulos_mercados_en).
             from .seo_mercados_en import cuerpo_landing as _cuerpo_mercado
+            from .seo_articulos_mercados_en import guias_de, ruta_articulo
 
             cuerpo = _cuerpo_mercado(codigo)
+            articulos = [
+                {"h1": a["h1"], "ruta": ruta_articulo(codigo, a["slug"])}
+                for a in guias_de(codigo)
+            ]
         return _aplicar_prueba(
             {
                 **base,
@@ -1781,11 +1809,22 @@ def _ruta_guia(slug: str, lang: str = "es") -> str:
     return f"/en/guia/{slug}"
 
 
-def _articulos_en_para_enlazar() -> list[dict]:
-    """Artículos en inglés que se enlazan al pie de una guía en inglés."""
+def _articulos_en_para_enlazar(pais: str = "") -> list[dict]:
+    """Artículos en inglés que se enlazan al pie de una guía en inglés.
+
+    Con cinco mercados publicando artículos, enlazar los dieciséis al pie de
+    cada guía sería una granja de enlaces: se enlazan los del propio
+    mercado (máximo seis) y, si la guía no es de mercado, los genéricos.
+    """
     from .seo_articulos import lista_articulos_en
 
-    return lista_articulos_en()
+    pais = str(pais or "").strip().upper()
+    todos = lista_articulos_en()
+    if pais:
+        propios = [a for a in todos if str(a.get("pais") or "").upper() == pais]
+        if propios:
+            return propios[:6]
+    return todos[:6]
 
 
 def jsonld_articulo(guia: dict, request: Request | None = None, lang: str = "es") -> dict:
@@ -1898,7 +1937,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         "guias_en": (
             [
                 {"h1": a["h1"], "ruta": _ruta_guia(a["slug"], "en")}
-                for a in _articulos_en_para_enlazar()
+                for a in _articulos_en_para_enlazar(pais_guia)
                 if a.get("slug") != guia.get("slug")
             ]
             if en
@@ -2233,7 +2272,12 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         from .seo_articulos import lista_articulos_en
 
         for articulo in lista_articulos_en():
-            if str(articulo.get("pais") or "").upper() != "GB":
+            # Solo artículos de mercado anglófono (GB/US/IE/AU/CA): son los
+            # que tienen URL propia bajo su prefijo (/en-gb/guia/...). Las
+            # traducciones de artículos hispanos se anuncian por la vía de
+            # /en/guia/, no duplicadas aquí.
+            _pais_art = PAISES.get(str(articulo.get("pais") or "").upper()) or {}
+            if _pais_art.get("idioma") != "en":
                 continue
             ruta = _ruta_guia(articulo["slug"], "en")
             if any(o["loc"] == base + ruta for o in out):

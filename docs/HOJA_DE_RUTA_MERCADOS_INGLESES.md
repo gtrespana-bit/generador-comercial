@@ -298,7 +298,7 @@ abre un mercado sin él.
 
 | Mercado | Unidades | Moneda | Situación |
 |---|---|---|---|
-| **Irlanda** | métrico | EUR | **Estudio, Fase 1 (RCT), migración y carga hechos (19-10-2026)**; queda el SEO de cola larga |
+| **Irlanda** | métrico | EUR | **Estudio, Fase 1 (RCT), migración y carga hechos (19-10-2026)**; SEO de cola larga hecho (19-10-2026) |
 | **Australia** | métrico | AUD | **Estudio hecho y matriz cargada (19-10-2026)**; falta la Fase 1 fiscal (ABN/TPAR) |
 | **Canadá** | métrico | CAD | **Estudio hecho y matriz cargada (19-10-2026)**; falta la Fase 1 fiscal (GST/HST, T5018) |
 | **Estados Unidos** | **imperial** | USD | **Análisis y Fases 0, 1 y 2 hechos (19-10-2026)** — matriz USD, cantidades imperiales y fiscalidad por estado; pendientes las dos ejecuciones de producción (matriz + migración `n9f2a5b8c3d6`) |
@@ -317,8 +317,10 @@ selector — está en `docs/ANALISIS_MERCADO_ESTADOS_UNIDOS.md`.
 contenido de mercado —no plantilla con el país cambiado—, FAQ de su
 fiscalidad y su sitio en la portada: accesos directos en el hero, bloque
 propio en la tabla de los 23 mercados y mención explícita en el copy genérico.
-Detalle en `docs/SEO_MERCADOS_INGLESES.md`. Lo que sigue faltando es el
-estudio de precios, y sin él no se abren a clientes.
+Detalle en `docs/SEO_MERCADOS_INGLESES.md`. Los estudios de precios de
+los cuatro mercados están hechos (19-10-2026) y el SEO de cola larga
+también (§2.5 de ese documento): 12 guías con las cifras investigadas,
+titulares por mercado y guías cruzadas cerradas a 404.
 
 | Mercado | Landing | Cuerpo de mercado | FAQ propia | Matriz de precios |
 |---|---|---|---|---|
@@ -360,7 +362,8 @@ entonces.
    primeras posiciones.
 4. **Irlanda**: estudio de precios, Fase 1 fiscal (RCT), migración
    `m8e1f4a7b2c5` y carga de la matriz **hechos** (19-10-2026; SQL ejecutados
-   en Supabase). Queda el SEO de cola larga, como en Reino Unido.
+   en Supabase). SEO de cola larga hecho el 19-10-2026, como en Reino Unido
+   (junto con US/AU/CA; ver `docs/SEO_MERCADOS_INGLESES.md` §2.5).
 5. **Australia** (Fase 0 hecha y matriz cargada el 19-10-2026): Fase 1 fiscal
    — retención del 47 % por falta de ABN, *taxable payments annual report*
    (TPAR) y GST al 10 %. **Canadá** (Fase 0 hecha y matriz cargada el
@@ -423,6 +426,7 @@ Ficheros que concentran el trabajo:
 | Carga desde el panel | `app/routers/admin.py`, `app/routers/admin_paginas.py` |
 | SEO de Reino Unido | `app/seo_reino_unido.py`, `docs/SEO_REINO_UNIDO.md`, `tests/test_seo_reino_unido.py` |
 | Presencia de los mercados ingleses | `app/seo_mercados_en.py`, `docs/SEO_MERCADOS_INGLESES.md`, `tests/test_presencia_mercados_angloparlantes.py` |
+| Guías long-tail US/IE/AU/CA | `app/seo_articulos_mercados_en.py`, `tests/test_seo_guias_mercados_en.py` |
 
 **Al añadir una migración**, se rompen cinco tests a la vez: hay que actualizar
 los cuatro parches de la cadena de heads, añadir `docs/staging_upgrade_<rev>.sql`

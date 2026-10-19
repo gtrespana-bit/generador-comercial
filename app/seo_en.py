@@ -66,6 +66,24 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "Sales tax in the United States is set by each state, county and "
             "city, so the rate is the one you configure, not a national one."
         ),
+        # Titular propio: landing y hub con el mismo <title> competían entre
+        # sí por el término principal, y la descripción genérica se recortaba
+        # a mitad de frase («…, sales.»). Cada mercado anglófono declara los
+        # suyos, cortos para que quepa la coletilla de la prueba (≤137).
+        "area_txt": "square feet",
+        "canal_txt": "email or text",
+        "titulo_landing": "CotizaT: construction estimating software for US contractors",
+        "h1_landing": "Construction estimating software for US contractors",
+        "desc_landing": (
+            "Estimating software for US contractors: researched 2026 prices, "
+            "feet & square feet, sales tax by state, margin-checked PDFs."
+        ),
+        "titulo_hub": "CotizaT: construction estimating software with US prices built in",
+        "h1_hub": "Construction estimating software for the United States",
+        "desc_hub": (
+            "Construction estimating software with a researched US price library, "
+            "imperial units and per-state sales-tax handling."
+        ),
     },
     "GB": {
         "nombre": "the United Kingdom",
@@ -98,6 +116,20 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
         "ciudad": "Sydney",
         "precios": "",
         "nota": "",
+        "area_txt": "square metres",
+        "canal_txt": "WhatsApp",
+        "titulo_landing": "CotizaT: quoting software for Aussie builders and tradies",
+        "h1_landing": "Quoting and estimating software for Australian builders and tradies",
+        "desc_landing": (
+            "Quoting software for Aussie builders and tradies: award-based "
+            "labour costs, researched 2026 prices in AUD, GST-inclusive PDFs."
+        ),
+        "titulo_hub": "CotizaT: construction estimating software for Australia (GST-ready)",
+        "h1_hub": "Construction estimating software for Australia",
+        "desc_hub": (
+            "Estimating software for Australia: MA000020 award costing with "
+            "12 % super, 10 % GST handled, ABN on every PDF quote."
+        ),
     },
     "CA": {
         "nombre": "Canada",
@@ -115,6 +147,20 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "In Canada the federal GST and the provincial sales taxes combine "
             "into GST or HST depending on the province, so you set the rate "
             "that applies where you work."
+        ),
+        "area_txt": "square metres",
+        "canal_txt": "email or text",
+        "titulo_landing": "CotizaT: estimating software for Canadian contractors",
+        "h1_landing": "Construction estimating software for Canadian contractors",
+        "desc_landing": (
+            "Estimating software for Canadian contractors: Job Bank-based "
+            "labour costs, researched 2026 prices in CAD, GST/HST by province."
+        ),
+        "titulo_hub": "CotizaT: construction estimating software for Canada (GST/HST)",
+        "h1_hub": "Construction estimating software for Canada",
+        "desc_hub": (
+            "Construction estimating software for Canada: unit price analysis, "
+            "provincial GST/HST and professional estimate PDFs in CAD."
         ),
     },
     "IE": {
@@ -134,6 +180,20 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "rate, but a job where materials come to more than two thirds of "
             "the VAT-exclusive price is standard-rated at 23% on the whole "
             "amount, so you set the one that fits each estimate."
+        ),
+        "area_txt": "square metres",
+        "canal_txt": "WhatsApp",
+        "titulo_landing": "CotizaT: estimating software for Irish builders",
+        "h1_landing": "Construction estimating software for builders in Ireland",
+        "desc_landing": (
+            "Estimating software for Irish builders: researched 2026 prices in "
+            "EUR, 13.5 % VAT with the two-thirds rule checked, RCT splits."
+        ),
+        "titulo_hub": "CotizaT: construction estimating software for Ireland (13.5 % VAT)",
+        "h1_hub": "Construction estimating software for Ireland",
+        "desc_hub": (
+            "Construction estimating software for Ireland: SEO-based labour "
+            "costs, 13.5 %/23 % VAT logic and unit price analysis per item."
         ),
     },
     "ES": {
@@ -525,6 +585,15 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
             f"PDF with your logo on it."
         )
         kicker = f"Commercial system for {nombre} · Construction and remodeling"
+        # Los mercados anglófonos declaran titular y descripción propios:
+        # el genérico («software for <país>: price catalog in…») repetía la
+        # misma frase en los cinco y en EE. UU. se recortaba en «sales.».
+        if d.get("titulo_landing"):
+            title = d["titulo_landing"]
+        if d.get("h1_landing"):
+            h1 = d["h1_landing"]
+        if d.get("desc_landing"):
+            description = d["desc_landing"]
     else:
         title = "CotizaT: construction estimating software"
         description = (
@@ -598,10 +667,18 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
     if tema == "software-presupuestos":
         title = f"CotizaT: construction estimating software{' for ' + nombre if codigo else ''}"
         h1 = f"Construction estimating software for {nombre}"
+        # Landing y hub compartían <title> y H1 en los cuatro mercados
+        # (GB se salvaba por su titular propio): el hub tiene intención y
+        # titular propios, declarados en _PAISES_EN.
+        if d.get("titulo_hub"):
+            title = d["titulo_hub"]
+        if d.get("h1_hub"):
+            h1 = d["h1_hub"]
         lead = (
             f"CotizaT is the estimating and remodeling software for small building "
             f"companies in {nombre}. Price catalog with unit price analysis, "
-            f"{fiscal}, {iva} and {moneda}. Professional PDF ready for WhatsApp."
+            f"{fiscal}, {iva} and {moneda}. Professional PDF ready for "
+            f"{d.get('canal_txt') or 'WhatsApp'}."
         )
         body = [
             (
@@ -623,8 +700,8 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
                 "What you get on day one",
                 "More than 3,000 broken-down line items and hundreds of priced "
                 f"resources. Trade terms of {nombre}: {vocab}. Room packages (bathroom, "
-                "kitchen) scaled to the actual square meters. Import from Excel "
-                "(.xlsx) and BC3.",
+                f"kitchen) scaled to the actual {d.get('area_txt') or 'square metres'}. "
+                "Import from Excel (.xlsx) and BC3.",
             ),
             (
                 "Price",
@@ -637,6 +714,8 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
             f"Construction estimating software for {nombre}: unit price analysis, "
             f"{fiscal}, {iva} and professional PDF."
         )
+        if d.get("desc_hub"):
+            description = d["desc_hub"]
         related = [
             ("Unit price analysis", _ruta_en(codigo, "apu")),
             ("Remodeling estimates", _ruta_en(codigo, "remodelacion")),
@@ -764,6 +843,22 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
             ("What a UK quote must include", ruta_articulo("construction-quote-template-uk")),
             ("CIS deductions explained", ruta_articulo("cis-deduction-subcontractors")),
         ]
+    elif codigo:
+        # Mismo tratamiento para Estados Unidos, Irlanda, Australia y
+        # Canadá (seo_articulos_mercados_en): bloque de mercado, FAQ
+        # propia y enlace a sus artículos. Sin cuerpo, devuelve vacío.
+        try:
+            from .seo_articulos_mercados_en import (
+                extra_hub as _extra_mercados,
+                faq_hub as _faq_mercados,
+                relacionados_hub,
+            )
+
+            body = list(body) + list(_extra_mercados(codigo, tema))
+            faq = list(faq) + list(_faq_mercados(codigo, tema))
+            related = list(related) + relacionados_hub(codigo)[:2]
+        except Exception:
+            pass
     return {
         "title": title,
         "description": description,

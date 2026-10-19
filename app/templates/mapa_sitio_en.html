@@ -62,6 +62,16 @@
       {% endfor %}
     </ul>
   </section>
+  {% if guias_mercado_en is defined and guias_mercado_en %}
+  <section class="hub-bloque">
+    <h2>Market guides (United States, United Kingdom, Ireland, Australia, Canada)</h2>
+    <ul>
+      {% for g in guias_mercado_en %}
+      <li><a href="{{ g.ruta }}">{{ g.h1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
   {% if articulos is defined and articulos %}
   <section class="hub-bloque">
     <h2>By trade and country</h2>

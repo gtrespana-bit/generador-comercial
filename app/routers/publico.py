@@ -294,6 +294,21 @@ def mapa_del_sitio(request: Request):
     ctx["paises"] = lista_paises()
     ctx["guias"] = lista_guias()
     ctx["articulos"] = lista_articulos()
+    # Guías de los mercados anglófonos (GB + US/IE/AU/CA): el mapa es un
+    # enlace interno más hacia los artículos long-tail; la plantilla en
+    # inglés los pinta y la española los ignora.
+    from ..seo_articulos_mercados_en import guias_de, ruta_articulo
+    from ..seo_reino_unido import guias as _guias_uk
+
+    mercado_en = [
+        {"h1": a["h1"], "ruta": f"/en-gb/guia/{a['slug']}"} for a in _guias_uk()
+    ]
+    for codigo in ("US", "IE", "AU", "CA"):
+        mercado_en.extend(
+            {"h1": a["h1"], "ruta": ruta_articulo(codigo, a["slug"])}
+            for a in guias_de(codigo)
+        )
+    ctx["guias_mercado_en"] = mercado_en
     ctx["temas_seo"] = TEMAS
     return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
 
@@ -333,10 +348,19 @@ def guia_de_mercado(cc: str, slug: str, request: Request):
     página y no debe competir consigo misma en Google.
     """
     from ..paises import PAISES
+    from ..seo_contenido import ficha_guia
 
     codigo = str(cc or "").strip().upper()
     pais = PAISES.get(codigo)
     if not pais or pais.get("idioma") != "en":
+        return Response("Página no encontrada.", status_code=404)
+    # Un artículo vive solo bajo su mercado: /en-us/guia/<artículo-GB>
+    # devolvía 200 con la canónica a /en-gb/ (cinco URLs rastreables para
+    # el mismo documento). Si la guía existe pero es de otro país —o es
+    # genérica, cuya URL es /en/guia/…—, aquí es un 404 y Google deja de
+    # perder presupuesto de rastreo en copias.
+    ficha = ficha_guia(slug, lang="en")
+    if ficha is not None and str(ficha.get("pais") or "").strip().upper() != codigo:
         return Response("Página no encontrada.", status_code=404)
     original = str(getattr(request.state, "ruta_original", "") or "")
     if not original.lower().startswith(f"/en-{codigo.lower()}"):
