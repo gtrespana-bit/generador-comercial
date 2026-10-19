@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ seo.lang or 'en' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,7 @@
 {% include "_nav_en.html" %}
 <article class="hub-hero-int guia-articulo">
   <nav class="hub-crumbs" aria-label="Breadcrumb">
-    <a href="/en/">Home</a>
+    <a href="{% if guia.pais_path is defined %}{{ guia.pais_path }}{% else %}/en/{% endif %}">Home</a>
     <span aria-hidden="true">/</span>
     <a href="/en/mapa-del-sitio">Guides</a>
     <span aria-hidden="true">/</span>
@@ -58,6 +58,9 @@
       <li><a href="{{ ruta }}">{{ nombre }}</a></li>
       {% endfor %}
       {% endif %}
+      {% for g in guias_en | default([]) %}
+      <li><a href="{{ g.ruta }}">{{ g.h1 }}</a></li>
+      {% endfor %}
       <li><a href="/en/como-funciona">How {{ product_name }} works</a></li>
       <li><a href="/en/mapa-del-sitio">Site map</a></li>
     </ul>

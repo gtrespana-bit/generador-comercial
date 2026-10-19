@@ -86,29 +86,31 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 
 | País | Código | Moneda | IVA | ID Fiscal | Terminología | Recursos nacionales | Tasa verificada | SEO | Estado |
 |---|---|---|---|---|---|---|---|---|---|
-| Reino Unido | GB | GBP | 20% | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %) | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/gb/` ruta activa | **FASE 0 CIERRE** |
+| Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
 
-**Reino Unido — detalle de la Fase 0 (2026-10-18).**
-- Matriz de precios: 388 recursos en GBP, base coste empresa, sin IVA (`precios_recursos_reino_unido.csv`).
-- Cobertura de anclas: mano de obra 17/17 y maquinaria 44/44 (100 %), materiales 106/327 (32 %).
-  Frente al 17 % de España y el 3 % de LatAm.
-- SQL de carga: `docs/cargar_precios_referencia_reino_unido_2026-10-18.sql`, generado por
-  `tools/generar_sql_precios_pais.py GB` e idempotente (solo referencias nacionales GB).
-- Validado: 0 errores al pasar la matriz por el importador real
-  (`tools/verificar_matriz_importable.py GB`).
-- Carga en producción (2026-10-18): el primer intento desde el panel de operador
-  rechazó las 388 filas como «recurso no encontrado» — el RLS de tenant ocultaba
-  `recursos` a la sesión de operador, que no lleva organización activa. Arreglado
-  con la migración `l7d0e3f6a9c4` (pendiente de desplegar). Vía inmediata: pegar
-  el SQL de carga de arriba en el SQL Editor de Supabase, igual que se cargaron
-  España y LatAm. Detalle en `docs/HOJA_DE_RUTA_MERCADOS_INGLESES.md` §2.5.
+**Reino Unido — estado real (2026-10-18).**
 
-**Pendiente para que GB sea LISTO (fases siguientes):**
-1. **Fase 1 — cumplimiento:** CIS (retenciones 0/20/30 % sobre mano de obra, declaración mensual
-   antes del día 19) e inversión del sujeto pasivo en el IVA nacional (VATA 1994 s.55A).
-2. **Fase 2 — precios y divisa:** vigencia de la matriz, recargo y moneda en el presupuesto.
-3. **Fase 3 — SEO cola larga:** contenido propio para `/gb/` en `seo_articulos.py` y
-   `seo_contenido.py` (hoy 0 entradas GB).
+- **Fase 0 — matriz de precios.** 388 recursos en GBP, base coste empresa, sin IVA.
+  Cobertura de anclas: mano de obra 17/17 y maquinaria 44/44 (100 %), materiales
+  106/327 (32 %), frente al 17 % de España y el 3 % de LatAm. Validada con el
+  importador real: 388 filas, 0 errores.
+- **Carga en producción.** Hecha el 18-10-2026. El primer intento por el panel
+  falló con 388 «recurso no encontrado» porque el RLS de tenant ocultaba
+  `recursos` a la sesión de operador; se resolvió con la migración
+  `l7d0e3f6a9c4`, ya desplegada (`/readyz` = head), y la carga se completó por
+  el SQL Editor. Detalle en `docs/HOJA_DE_RUTA_MERCADOS_INGLESES.md` §2.5.
+- **Fase 1 — cumplimiento.** CIS 20/30/0 % sobre la mano de obra descontando
+  materiales, aviso de declaración mensual (día 19, o 22 si es telemática) e
+  inversión del sujeto pasivo (VATA 1994 s. 55A).
+- **Fase 2 — precios y divisa.** Vigencia de la matriz con estados
+  (vigente / por revisar / obsoleta / caducada / sin fecha), moneda y recargo
+  en el presupuesto.
+- **Fase 3 — SEO de mercado.** Hecha: cuerpo largo propio en `/en-gb/`, tres
+  hubs con bloques británicos y cuatro artículos con URL canónica
+  (`/en-gb/guia/...`). Se corrigieron además el sitemap con redirecciones, el
+  hreflang `en`, el `inLanguage` del schema y los hubs ingleses que pintaban el
+  cuerpo en español. Detalle en `docs/SEO_REINO_UNIDO.md`.
+- **Pendiente (no es código):** enlaces entrantes y medición en Search Console.
 
 **Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
 requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.

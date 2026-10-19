@@ -185,7 +185,11 @@
       <div class="fl-ico" aria-hidden="true">📚</div>
       <div class="fl-body">
         <h3>You arrive with the price base ready</h3>
+        {% if pais_actual %}
+        <p>{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} priced resources, priced for {{ pais_actual.nombre_en }} in {{ ej.moneda }}.</p>
+        {% else %}
         <p>{{ catalogo().partidas_txt }} decomposed line items and {{ catalogo().recursos_txt }} priced resources. In Spain in EUR, in each country with its own market.</p>
+        {% endif %}
       </div>
       <span class="fl-proof">{{ catalogo().lineas_descomp_txt }} breakdown lines · catalog by country</span>
     </article>
@@ -231,7 +235,11 @@
 <section class="mercados" id="catalogo-paises" aria-label="Price catalog by country">
   <div class="mercados-intro">
     <span class="section-kicker">Catalog by country, not generic</span>
+    {% if pais_actual %}
+    <h2>Quoting in {{ pais_actual.nombre_en }} is not quoting anywhere else. Each country has its own catalog.</h2>
+    {% else %}
     <h2>Spain does not quote like Mexico. Each country has its own catalog.</h2>
+    {% endif %}
     <p class="intro">{{ product_name }} is not a single price list with a flag on top. Each market carries its reference prices, currency, VAT, tax ID and construction terminology. That is why the country is chosen <strong>on entry</strong>: so you see the prices of your project, not someone else's.</p>
   </div>
 
@@ -746,6 +754,27 @@
   </div>
 </section>
 
+{# Cuerpo largo por mercado. Solo los mercados con contenido propio lo
+   traen (hoy Reino Unido); el resto sigue con esta plantilla. Es lo que
+   evita que /en-gb/ sea /en-us/ con el nombre del país cambiado. #}
+{% if seo.cuerpo %}
+<section class="seo-cuerpo" id="for-your-market">
+  {% for titulo, pars in seo.cuerpo %}
+  <h2>{{ titulo }}</h2>
+  {% for parrafo in pars %}
+  <p>{{ parrafo }}</p>
+  {% endfor %}
+  {% endfor %}
+  {% if seo.guias %}
+  <p class="intro">
+    {% for guia in seo.guias %}
+    <a href="{{ guia.ruta }}">{{ guia.h1 }}</a>{% if not loop.last %} · {% endif %}
+    {% endfor %}
+  </p>
+  {% endif %}
+</section>
+{% endif %}
+
 {% if seo.faq %}
 <section class="seo-faq" id="preguntas-seo">
   <span class="section-kicker">Frequently asked questions</span>
@@ -761,7 +790,7 @@
 
 <section class="franja cta-final" id="pago">
   <h2>Ready to stop estimating by hand?</h2>
-  <p class="intro">{{ product_name }} turns your country's catalog, your prices and your crew into estimates with your profit margin, your project time, your PDF with your logo and clear changes to resend. In Spain, in euros and with tax ID. Without Excel, without copy and paste.</p>
+  <p class="intro">{{ product_name }} turns your country's catalog, your prices and your crew into estimates with your profit margin, your project time, your PDF with your logo and clear changes to resend.{% if pais_actual %} Priced in {{ ej.moneda }}, with a catalog built for {{ pais_actual.nombre_en }}.{% else %} In Spain, in euros and with tax ID.{% endif %} Without Excel, without copy and paste.</p>
   <div class="acciones mt-3">
     {% if hay_prueba_gratuita() %}
     <a class="btn btn-primary" href="/acceso">Start my {{ dias_de_prueba() }} free days</a>

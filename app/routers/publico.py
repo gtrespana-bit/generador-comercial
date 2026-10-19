@@ -304,6 +304,27 @@ def guia_publica(slug: str, request: Request):
     return TEMPLATES.TemplateResponse(request, "seo_guia.html", ctx)
 
 
+@router.get("/{cc}/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
+def guia_de_mercado(cc: str, slug: str, request: Request):
+    """Artículo de un mercado anglófono: /en-gb/guia/<slug>.
+
+    El middleware de idioma reescribe ``/en-gb/guia/x`` a ``/gb/guia/x``
+    antes de enrutar, así que hace falta esta ruta para no devolver 404.
+    La URL sin prefijo (``/gb/guia/x``) redirige a la canónica: es la misma
+    página y no debe competir consigo misma en Google.
+    """
+    from ..paises import PAISES
+
+    codigo = str(cc or "").strip().upper()
+    pais = PAISES.get(codigo)
+    if not pais or pais.get("idioma") != "en":
+        return Response("Página no encontrada.", status_code=404)
+    original = str(getattr(request.state, "ruta_original", "") or "")
+    if not original.lower().startswith(f"/en-{codigo.lower()}"):
+        return RedirectResponse(f"/en-{codigo.lower()}/guia/{slug}", status_code=301)
+    return guia_publica(slug, request)
+
+
 @router.get("/como-funciona", response_class=HTMLResponse, include_in_schema=False)
 def como_funciona(request: Request):
     """Guía pública de funciones: catálogo, editor, margen, PDF y cobro."""
@@ -432,7 +453,11 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
         return Response("Página no encontrada.", status_code=404)
     if codigo and codigo not in ORDEN_SELECTOR:
         return Response("Página no encontrada.", status_code=404)
-    ficha = ficha_tema(codigo, tema)
+    # El copy se pide en el idioma de la petición. Antes se pedía siempre en
+    # español y la plantilla inglesa pintaba un H1 en inglés con un cuerpo y
+    # un FAQ en español debajo: /en-gb/apu era media página en cada idioma.
+    lang = _idioma_de(request)
+    ficha = ficha_tema(codigo, tema, lang=lang)
     if ficha is None:
         return Response("Página no encontrada.", status_code=404)
     ctx = contexto_seo(request, codigo=codigo, tema=tema)

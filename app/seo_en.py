@@ -72,7 +72,7 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
         "en": "the United Kingdom",
         "moneda_txt": "pounds sterling (GBP)",
         "fiscal_txt": "VAT registration number",
-        "iva_txt": "20% VAT",
+        "iva_txt": "20% VAT on standard-rated work",
         "vocabulario": (
             "concrete, plasterboard, suspended ceiling, skirting and plumbing"
         ),
@@ -542,7 +542,7 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
         )
         kicker = "Commercial system for Spain and Latin America · Construction and remodeling"
 
-    return {
+    ficha = {
         "title": title,
         "description": description,
         "h1": h1,
@@ -551,6 +551,18 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
         "kicker": kicker,
         "faq": _faq_landing(codigo),
     }
+    if codigo == "GB":
+        # Reino Unido es el único mercado inglés con contenido propio: el
+        # título y la descripción genéricos anunciaban «20% VAT» como si la
+        # obra británica tuviera una sola alícuota, y el FAQ no mencionaba
+        # CIS ni la inversión del sujeto pasivo, que es lo que busca un
+        # contratista británico antes de pagar.
+        from .seo_reino_unido import LANDING_DESCRIPTION, LANDING_FAQ, LANDING_TITLE
+
+        ficha["title"] = LANDING_TITLE
+        ficha["description"] = LANDING_DESCRIPTION
+        ficha["faq"] = list(ficha["faq"]) + [LANDING_FAQ[0], LANDING_FAQ[1], LANDING_FAQ[2]]
+    return ficha
 
 
 # ---------------------------------------------------------------------------
@@ -733,6 +745,19 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
             ),
         },
     ]
+    if codigo == "GB":
+        # Bloques y preguntas propios del mercado británico. Sin esto los
+        # tres hubs de /en-gb/ son el mismo texto que /en-us/ con el nombre
+        # del país cambiado, que es exactamente el patrón que Google
+        # considera duplicado.
+        from .seo_reino_unido import extra_hub, faq_hub, ruta_articulo
+
+        body = list(body) + list(extra_hub(tema))
+        faq = list(faq) + list(faq_hub(tema))
+        related = list(related) + [
+            ("What a UK quote must include", ruta_articulo("construction-quote-template-uk")),
+            ("CIS deductions explained", ruta_articulo("cis-deduction-subcontractors")),
+        ]
     return {
         "title": title,
         "description": description,

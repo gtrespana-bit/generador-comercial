@@ -372,7 +372,12 @@ class WebSecurityMiddleware:
                     additions[b"strict-transport-security"] = (
                         b"max-age=31536000; includeSubDomains; preload"
                     )
-                path = str(scope.get("path") or "")
+                # La ruta original, no la reescrita: IdiomaMiddleware sustituye
+                # scope["path"] (/en-gb/guia/x -> /gb/guia/x) antes de que la
+                # respuesta pase por aquí, y con la ruta reescrita una página
+                # indexable salía marcada como noindex.
+                estado = scope.get("state") or {}
+                path = str(estado.get("ruta_original") or scope.get("path") or "")
                 try:
                     from .seo import es_indexable
 

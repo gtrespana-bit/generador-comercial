@@ -119,13 +119,16 @@ def _variables(env: Environment, nombre: str) -> set[str]:
 # todavía están en español.
 DIFERENCIAS_ACEPTADAS: dict[str, set[str]] = {
     "landing.html": {"jsonld_bloques", "seo"},
-    "seo_guia.html": {"guias"},
+    "seo_guia.html": {"guias", "guias_en", "seo"},
     "seo_hub.html": {"guias"},
     # El listado inglés traduce por el código de mercado; el español no lo
     # necesita porque su catálogo de origen ya está en español.
     "partidas/list.html": {"mercado_codigo"},
     # En inglés el grupo se localiza por recurso antes de pintarlo.
     "recursos/list.html": {"grupos_vista"},
+    # El editor inglés elige el término del oficio según el mercado
+    # («labourer» en GB, «helper» en EE. UU.).
+    "partidas/_editor.html": {"codigo_pais"},
 }
 
 
@@ -160,7 +163,8 @@ def main() -> int:
         vars_es = _variables(env, original)
         vars_en = _variables(env, traducida)
         aceptadas = DIFERENCIAS_ACEPTADAS.get(original, set())
-        faltan, sobran = (vars_es - vars_en) - aceptadas, vars_en - vars_es
+        faltan = (vars_es - vars_en) - aceptadas
+        sobran = (vars_en - vars_es) - aceptadas
         if faltan or sobran:
             print(
                 f"✗ {traducida}: variables distintas\n"
