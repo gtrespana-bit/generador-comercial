@@ -89,6 +89,7 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
 | Reino Unido | GB | GBP | 20 % estándar · 5 % reducido · 0 % obra nueva | VAT reg. no. / UTR | Base inglesa + variante GB (221 claves) | 388 `precios_recursos_reino_unido.csv` — 167 anclas investigadas (43 %), **cargadas en producción** | 0.7502 GBP (GBP/USD 1,3330 16/10) | `/en-gb/` + 3 hubs + 4 artículos | **LISTO (18-10-2026)** |
 | Irlanda | IE | EUR | 13,5 % construcción (23 % general; regla de los dos tercios) | VAT number | Base inglesa + variante GB reutilizada | 388 `precios_recursos_irlanda.csv` — 106 anclas investigadas (27 %) + 22 por analogía, **generada y verificada; pendiente de carga** | 0.8886 EUR (EUR/USD 1,1253, BCE 16/10) | `/en-ie/` con FAQ fiscal | **FASE 0 Y FASE 1 FISCAL HECHAS (19-10-2026)** |
 | Australia | AU | AUD | GST 10 % | ABN | Base inglesa (en-AU) | 388 `precios_recursos_australia.csv` — 56 anclas investigadas (14 %) + ~75 derivados explícitos, **generada y verificada; pendiente de carga** | 1.4395 AUD (AUD/USD 0,6947, RBA 16/10) | `/en-au/` | **FASE 0 HECHA (19-10-2026)** |
+| Canadá | CA | CAD | GST 5 % (+ provincial: HST 13 % ON) | BN | Base inglesa (en-CA) | 388 `precios_recursos_canada.csv` — 52 anclas investigadas (13 %) + ~80 derivados explícitos, **generada y verificada; pendiente de carga** | 1.4154 CAD (BoC 16/10) | `/en-ca/` | **FASE 0 HECHA (19-10-2026)** |
 
 **Reino Unido — estado real (2026-10-18).**
 
@@ -173,6 +174,32 @@ glosario JSON por mercado. El estado se mide con el mismo rasero, pero por fases
   (`docs/cargar_precios_referencia_australia_2026-10-19.sql`, ya generado, o el
   CSV por el panel de operador) y la futura Fase 1 (retención por falta de ABN
   47 %, *taxable payments annual report* TPAR, GST), análoga a CIS/RCT.
+
+**Canadá — estado real (2026-10-19).**
+
+- **Fase 0 — matriz de precios. Hecha.** 388 recursos en CAD, base coste empresa,
+  sin GST/HST. Cobertura: mano de obra 17/17; total 52 anclas `referencia` (13 %)
+  y ~80 precios explícitos por analogía declarada. Canadá es el caso inverso a
+  Australia: el retail publica precio y **sin impuestos** («+ taxes»), dos
+  productores dan lista de planta del hormigón (CBM/Ontario Redi-Mix 2026) y
+  Hamilton Builders' Supply publica su guía mayorista completa; a cambio no hay
+  escala salarial legal del sector. Validada con el importador real
+  (`tools/verificar_matriz_importable.py CA`): 388 filas, 0 errores. Detalle en
+  `docs/INVESTIGACION_PRECIOS_CANADA.md` y
+  `docs/METODOLOGIA_PRECIOS_REFERENCIA_CANADA.md`.
+- **Mano de obra.** Medianas Job Bank de **Ontario** (19/11/2025, referencia
+  2023-24) elevadas un 5 % a oct-2026 — el mismo enfoque que GB con la ONS, no
+  un suelo legal como IE/AU —. CPP empresa 5,95 % con techo YMPE 74.600 $ +
+  CPP2 4 %, EI 2,282 % con techo 68.900 $, WSIB por clase (G1 2,18 / G3 3,55 /
+  G4 1,54 / G5 2,15 %), vacation pay 4 %, divisor de 1.904 h (solo 2 semanas
+  ESA de vacaciones) → oficial 42,09 $/h, peón 35,84 (`tools/coste_empresa_canada.py`).
+  El cabillero (rodworker, suboficio del ironworker) es el más caro: 50,66.
+  Rango −10 %/+25 % (base mediana); el paquete sindical ICI del GTA queda por
+  encima, documentado. EHT excluido (exención 1 M$).
+- **Pendiente (producción):** cargar la matriz
+  (`docs/cargar_precios_referencia_canada_2026-10-19.sql`, ya generado, o el
+  CSV por el panel de operador) y la futura Fase 1 fiscal (GST/HST y la
+  declaración T5018 de pagos a subcontratistas de construcción).
 
 **Orden previsto de apertura:** GB → IE → AU → CA → US. El Reino Unido es métrico, así que no
 requiere conversión de unidades; el sistema imperial queda como necesidad exclusiva de EE. UU.

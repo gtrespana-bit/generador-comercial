@@ -32,6 +32,7 @@ Estado al escribir esta guía:
 | 15 | **SQL PENDIENTE — migración `m8e1f4a7b2c5` (RCT Irlanda)** | ⏳ **pendiente de ejecutar** (marcado 19/10/2026 por petición del titular). Ejecutar `docs/staging_upgrade_m8e1f4a7b2c5.sql` en el SQL Editor de Supabase (rol administrativo) **antes** de desplegar el PR #131: el runtime exige el head `m8e1f4a7b2c5` y `/readyz` dará 503 hasta aplicarlo. Comprobar antes `SELECT version_num FROM public.alembic_version` (= `l7d0e3f6a9c4`). Detalle en §15 |
 | 16 | **SQL PENDIENTE — carga de precios de Irlanda (388 recursos)** | ⏳ **pendiente de ejecutar** (marcado 19/10/2026 por petición del titular). Ejecutar `docs/cargar_precios_referencia_irlanda_2026-10-19.sql` en Supabase (o subir `basedatos_partidas/salida/precios_recursos_irlanda.csv` por el panel de operador › Matrices de precios). Sin esta carga, Irlanda queda sin matriz en producción. Detalle en §15 |
 | 17 | **SQL PENDIENTE — carga de precios de Australia (388 recursos)** | ⏳ **pendiente de ejecutar** (generado 19/10/2026, Fase 0 AU). Ejecutar `docs/cargar_precios_referencia_australia_2026-10-19.sql` en Supabase (o subir `basedatos_partidas/salida/precios_recursos_australia.csv` por el panel de operador › Matrices de precios; verificar antes con `tools/verificar_matriz_importable.py AU`: 388 filas · 0 errores). Sin esta carga, Australia queda sin matriz en producción. Detalle en §16 |
+| 18 | **SQL PENDIENTE — carga de precios de Canadá (388 recursos)** | ⏳ **pendiente de ejecutar** (generado 19/10/2026, Fase 0 CA). Ejecutar `docs/cargar_precios_referencia_canada_2026-10-19.sql` en Supabase (o subir `basedatos_partidas/salida/precios_recursos_canada.csv` por el panel de operador › Matrices de precios; verificar antes con `tools/verificar_matriz_importable.py CA`: 388 filas · 0 errores). Sin esta carga, Canadá queda sin matriz en producción. Detalle en §17 |
 
 ---
 
@@ -560,4 +561,27 @@ tercer SQL generado pero **no ejecutado**, igual que el de Irlanda:
 
 **Orden de ejecución antes de desplegar el PR #131:** (1) migración
 `m8e1f4a7b2c5` (§15.1, bloquea `/readyz`), (2) matriz IE (§15.2), (3) matriz
-AU (aquí). Cuando se ejecute, anotar la fecha y pasar la fila 17 a ✅.
+AU (aquí), (4) matriz CA (§17). Cuando se ejecute, anotar la fecha y pasar
+la fila 17 a ✅.
+
+## 17. SQL pendiente de Canadá (19/10/2026)
+
+La Fase 0 de Canadá (estudio de precios y matriz CAD, 19/10/2026) deja un
+cuarto SQL generado pero **no ejecutado**, igual que los de Irlanda y
+Australia. A petición del titular, los cuatro se ejecutarán juntos cuando
+termine el trabajo pendiente del PR:
+
+- **Matriz de precios de Canadá (388 recursos)** —
+  `docs/cargar_precios_referencia_canada_2026-10-19.sql`, o el CSV
+  `basedatos_partidas/salida/precios_recursos_canada.csv` por el panel de
+  operador (Sistema › Matrices de precios, «Validar sin escribir» primero:
+  deben salir 388 filas · 0 errores). La matriz deriva de
+  `docs/INVESTIGACION_PRECIOS_CANADA.md`; sin esta carga Canadá queda sin
+  precios nacionales en producción.
+
+**Resumen de los SQL pendientes (orden de ejecución):** (1) migración
+`m8e1f4a7b2c5` — `docs/staging_upgrade_m8e1f4a7b2c5.sql`, ANTES de desplegar
+o `/readyz` dará 503 —; (2) `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`;
+(3) `docs/cargar_precios_referencia_australia_2026-10-19.sql`;
+(4) `docs/cargar_precios_referencia_canada_2026-10-19.sql`. Cuando se
+ejecuten, anotar las fechas y pasar las filas 15–18 a ✅.
