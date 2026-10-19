@@ -33,8 +33,8 @@ Estado al escribir esta guía:
 | 16 | **SQL — carga de precios de Irlanda (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_irlanda_2026-10-19.sql`; la matriz IE está en producción. Detalle en §15 |
 | 17 | **SQL — carga de precios de Australia (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_australia_2026-10-19.sql`; la matriz AU está en producción. Detalle en §16 |
 | 18 | **SQL — carga de precios de Canadá (388 recursos)** | ✅ **ejecutado 19/10/2026** (confirmado por el titular). `docs/cargar_precios_referencia_canada_2026-10-19.sql`; la matriz CA está en producción. Detalle en §17 |
-| 19 | **SQL — carga de precios de Estados Unidos (388 recursos)** | ⏳ **pendiente de ejecutar** (generado 19/10/2026, Fase 0 de Estados Unidos). `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` en el SQL Editor de Supabase, o el CSV por el panel («Validar sin escribir» primero: 388 filas · 0 errores). Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar con una consulta puntual (p. ej. que `MT-CEMENTO/US` existe a 0,446 USD). Detalle en §18 |
-| 20 | **SQL — migración `n9f2a5b8c3d6` (sales tax por estado, Fase 2 de EE. UU.)** | ⏳ **pendiente de ejecutar — ANTES de desplegar el código de la Fase 2** (el runtime exige el head `n9f2a5b8c3d6`). `docs/staging_upgrade_n9f2a5b8c3d6.sql` en el SQL Editor de Supabase, con la versión actual en `m8e1f4a7b2c5`. Es independiente de la fila 19 (una es esquema, la otra datos) y **no** hay que re-ejecutar ningún `staging_upgrade` anterior. Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar `/readyz` (debe reportar head `n9f2a5b8c3d6`). Detalle en §19 |
+| 19 | **SQL — carga de precios de Estados Unidos (388 recursos)** | ✅ **ejecutado el 19/10/2026** (confirmado por el titular; generado 19/10/2026, Fase 0 de Estados Unidos). `docs/cargar_precios_referencia_estados_unidos_2026-10-19.sql` en el SQL Editor de Supabase, o el CSV por el panel («Validar sin escribir» primero: 388 filas · 0 errores). Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar con una consulta puntual (p. ej. que `MT-CEMENTO/US` existe a 0,446 USD). Detalle en §18 |
+| 20 | **SQL — migración `n9f2a5b8c3d6` (sales tax por estado, Fase 2 de EE. UU.)** | ✅ **ejecutado el 19/10/2026** — antes de desplegar el código de la Fase 2 (así se hizo) (el runtime exige el head `n9f2a5b8c3d6`). `docs/staging_upgrade_n9f2a5b8c3d6.sql` en el SQL Editor de Supabase, con la versión actual en `m8e1f4a7b2c5`. Es independiente de la fila 19 (una es esquema, la otra datos) y **no** hay que re-ejecutar ningún `staging_upgrade` anterior. Al terminar: **reemplazar esta celda por «✅ ejecutado» con la fecha** y verificar `/readyz` (debe reportar head `n9f2a5b8c3d6`). Detalle en §19 |
 
 ---
 
@@ -594,7 +594,7 @@ aplicados y **no** deben volver a ejecutarse);
 cerradas ✅. Con esto el despliegue del PR #131 ya no dejará `/readyz` en
 503 por esquema: `public.alembic_version` debe decir `m8e1f4a7b2c5`.
 
-## 18. SQL de Estados Unidos (19/10/2026) ⏳ pendiente de ejecutar
+## 18. SQL de Estados Unidos (19/10/2026) ✅ ejecutado el 19/10/2026
 
 La Fase 0 de Estados Unidos (análisis + estudio de precios y matriz USD,
 19/10/2026) deja un **quinto** SQL generado, posterior a los cuatro ya
@@ -623,7 +623,7 @@ no deja ningún paso operativo**: no hay migración (la conversión se deriva
 del país de la empresa y el almacenamiento no cambia), no hay SQL que
 ejecutar ni datos que cargar. Llega con el despliegue normal del código.
 
-## 19. SQL de la Fase 2 de Estados Unidos (19/10/2026) ⏳ pendiente de ejecutar
+## 19. SQL de la Fase 2 de Estados Unidos (19/10/2026) ✅ ejecutado el 19/10/2026
 
 La Fase 2 (motor fiscal por estado) sí cambia el esquema, así que deja un
 paso operativo **previo al despliegue**, como la migración del RCT:
