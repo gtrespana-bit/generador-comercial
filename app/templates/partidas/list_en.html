@@ -4,7 +4,7 @@
 <div class="page-head csp-s-5d6e5a9c91">
   <div>
     <h1 class="csp-s-93f4d4c3fe">Line Item Catalog <span class="csp-s-20db78cd99">{{ total_partidas }}</span></h1>
-    <p class="subtitle">{% if vista == 'ocultas' %}Partidas apartadas de la navegación de esta organización{% else %}Reutilizables para tus presupuestos · capítulo, subcapítulo y apartado numéricos{% endif %}</p>
+    <p class="subtitle">{% if vista == 'ocultas' %}Line items hidden from this organisation's catalogue navigation{% else %}Reusable in estimates · numbered section, subsection and subheading{% endif %}</p>
   </div>
   <div class="csp-s-33ff8b3e89">
     {% if vista == 'ocultas' %}
@@ -20,10 +20,10 @@
 {% if vista != 'ocultas' and salud_catalogo %}
 <div class="card salud-catalogo salud-{{ salud_catalogo.estado }}">
   <div class="salud-main">
-    <div class="salud-score"><strong>{{ salud_catalogo.score }}%</strong><span>health</span></div>
+    <div class="salud-score"><strong>{{ salud_catalogo.score }}%</strong><span>catalogue health</span></div>
     <div class="salud-copy">
-      <h2>{{ salud_catalogo.titulo }}</h2>
-      <p class="hint">{{ salud_catalogo.total }} partidas activas · {{ salud_catalogo.con_precio }} con precio · {{ salud_catalogo.con_coste }} con coste · {{ salud_catalogo.con_tiempo }} con tiempo.</p>
+      <h2>{{ salud_catalogo.titulo | traducir(mercado_codigo) }}</h2>
+      <p class="hint">{{ salud_catalogo.total }} active line items · {{ salud_catalogo.con_precio }} with a price · {{ salud_catalogo.con_coste }} with a cost · {{ salud_catalogo.con_tiempo }} with time data.</p>
     </div>
     <div class="salud-actions">
       <a class="btn btn-sm {{ 'btn-primary' if salud == 'margen_bajo' else '' }}" href="/partidas?salud=margen_bajo">Low margin <span class="badge">{{ salud_catalogo.margen_bajo }}</span></a>
@@ -39,7 +39,7 @@
   {% if salud_catalogo.problemas_visibles %}
   <div class="salud-problemas">
     {% for p in salud_catalogo.problemas_visibles[:4] %}
-    <a href="{{ p.url }}" class="salud-chip {{ 'active' if salud == p.clave else '' }}">⚠ {{ p.label }}: <strong>{{ p.count }}</strong></a>
+    <a href="{{ p.url }}" class="salud-chip {{ 'active' if salud == p.clave else '' }}">⚠ {{ p.label | traducir(mercado_codigo) }}: <strong>{{ p.count }}</strong></a>
     {% endfor %}
   </div>
   {% endif %}
@@ -59,7 +59,7 @@
 </div>
 {% endif %}
 
-<!-- TOOLBAR SUPERIOR COMPACTA -->
+<!-- Compact toolbar -->
 <div class="partidas-toolbar card csp-s-0d510e3476">
   <div class="toolbar-row">
     <form class="toolbar-search" method="get" action="/partidas">
@@ -85,7 +85,7 @@
     </div>
   </div>
 
-  <!-- Bulk bar (aparece al seleccionar) -->
+  <!-- Bulk selection bar -->
   <div id="bulk-bar-partidas" class="bulk-bar">
     <div class="bulk-left">
       <span class="bulk-count"><strong id="sel-count-partidas">0</strong> selected</span>
@@ -104,7 +104,7 @@
       {% endif %}
     </div>
     <div class="bulk-right">
-      <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-visible">Sel. visible</button>
+      <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-visible">Select visible</button>
       <button type="button" class="btn btn-sm" data-cotizat-click="partidas-select-none">Clear</button>
       {% if vista != 'ocultas' %}<button type="button" class="btn btn-sm btn-danger" data-cotizat-click="partidas-delete-visible" title="Hides official items and deletes visible custom ones">Process visible</button>{% endif %}
       <button type="button" class="btn btn-ghost btn-sm" data-cotizat-click="partidas-select-none" title="Close">✕</button>
@@ -113,12 +113,12 @@
 </div>
 
 <div class="catalog-layout" id="catalogLayout">
-  <!-- SIDEBAR CATEGORÍAS -->
+  <!-- Category sidebar -->
   <aside class="cat-sidebar card" id="catSidebar">
     <div class="cat-sidebar-head">
       <div>
         <h3>Categories</h3>
-        <span class="cat-sidebar-subtitle">{{ total_partidas }} partidas · {{ arbol_categorias|length }} capítulos</span>
+        <span class="cat-sidebar-subtitle">{{ total_partidas }} line items · {{ arbol_categorias|length }} sections</span>
       </div>
       <button class="btn-icon" id="btnCollapseSidebar" data-cotizat-click="partidas-toggle-sidebar" title="Collapse panel">⟨</button>
     </div>
@@ -149,12 +149,12 @@
           <span class="cat-count">{{ cap.total }}</span>
         </summary>
         <div class="subcat-list">
-          <a class="subcat-btn {% if categoria_actual == cap.categoria and not subcategoria_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="Ver todas las partidas de {{ cap.categoria_display }}">
-            <span class="subcat-name">Todas ({{ cap.total }})</span>
+          <a class="subcat-btn {% if categoria_actual == cap.categoria and not subcategoria_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="View all line items in {{ cap.categoria_display }}">
+            <span class="subcat-name">All ({{ cap.total }})</span>
           </a>
           {% for sub in cap.subcapitulos %}
           <div class="subcat-with-apartados">
-            <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria and not apartado_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria_display }} · {{ sub.total }} partidas">
+            <a class="subcat-btn drop-subcategory {% if subcategoria_actual == sub.subcategoria and not apartado_actual %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ sub.subcategoria_display }} · {{ sub.total }} line items">
               <span class="subcat-name">{{ sub.subcategoria_display }}</span>
               <span class="subcat-count">{{ sub.total }}</span>
             </a>
@@ -162,7 +162,7 @@
             <div class="apartado-list">
               {% for ap in sub.apartados %}
               {% if ap.total > 0 or apartado_actual == ap.apartado %}
-              <a class="apartado-btn {% if apartado_actual == ap.apartado %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}&apartado={{ ap.apartado|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ ap.apartado_display }} · {{ ap.total }} partidas">
+              <a class="apartado-btn {% if apartado_actual == ap.apartado %}active{% endif %}" href="/partidas?categoria={{ cap.categoria|urlencode }}&subcategoria={{ sub.subcategoria|urlencode }}&apartado={{ ap.apartado|urlencode }}{% if vista == 'ocultas' %}&vista=ocultas{% endif %}" title="{{ ap.apartado_display }} · {{ ap.total }} line items">
                 <span class="apartado-name">{{ ap.nombre_display or ap.apartado_display }}</span>
                 <span class="apartado-count">{{ ap.total }}</span>
               </a>
@@ -176,17 +176,17 @@
       </details>
       {% endfor %}
       <div class="sidebar-help">
-        <span class="hint">💡 Browse section → subsection → subheading. The subsection “Pisos, pavimentos y sus bases” now breaks down into subheadings (01 Bases, 03 Pisos cerámicos…) instead of a single block. Click any of them to filter.</span>
+        <span class="hint">💡 Browse section → subsection → subheading. For example, a flooring subsection can be split into separate subheadings instead of one block. Select any of them to filter.</span>
       </div>
     </div>
   </aside>
 
-  <!-- BOTÓN PARA RE-EXPANDIR CUANDO ESTÁ COLAPSADO -->
+  <!-- Reopen the collapsed sidebar -->
   <button id="catSidebarExpand" class="cat-sidebar-expand cotizat-hidden" data-cotizat-click="partidas-toggle-sidebar" title="Show categories">
     <span>☰</span> <span>Categories</span> <span class="badge csp-s-451d13ae38">{{ total_partidas }}</span>
   </button>
 
-  <!-- CONTENIDO PRINCIPAL -->
+  <!-- Main content -->
   <div class="catalog-main" id="catalogMain">
     {% if q or subcategoria_actual or apartado_actual %}
     {# Vista directa: búsqueda o filtro por subcapítulo/apartado. Agrupa por capítulo → subcapítulo → apartado. #}
@@ -197,7 +197,7 @@
         <button class="cat-toggle" aria-label="Collapse">▼</button>
         <div class="cat-title-wrap">
           <h2 class="cat-title"><span class="cat-dot"></span> {{ cat }}</h2>
-          <span class="cat-meta">{{ cat_partidas|length }} partidas{% if sub_groups|length > 1 %} · {{ sub_groups|length }} subcapítulos{% endif %}</span>
+          <span class="cat-meta">{{ cat_partidas|length }} line items{% if sub_groups|length > 1 %} · {{ sub_groups|length }} subsections{% endif %}</span>
         </div>
         <span class="cat-badge">{{ cat_partidas|length }}</span>
       </header>
@@ -206,9 +206,9 @@
         <div class="subcat-section" data-categoria="{{ cat }}" data-subcategoria="{{ subcat }}">
           <header class="subcat-head drop-subcategory" data-cotizat-click="partidas-toggle-subcategory">
             <span class="subcat-toggle">▼</span>
-            <span class="subcat-label">{{ subcat if (subcat|string).strip() != "" else "Sin subcapítulo" }}</span>
+            <span class="subcat-label">{{ subcat if (subcat|string).strip() != "" else "No subsection" }}</span>
             <span class="subcat-count-badge">{{ sub_partidas|length }}</span>
-            <span class="subcat-hint">{{ sub_partidas|length }} partidas</span>
+            <span class="subcat-hint">{{ sub_partidas|length }} line items</span>
           </header>
           <div class="subcat-body">
             {% set apartado_groups = sub_partidas|groupby('apartado') %}
@@ -216,9 +216,9 @@
             <div class="apartado-section" data-apartado="{{ apartado_val }}">
               <header class="apartado-head" data-cotizat-click="partidas-toggle-apartado">
                 <span class="apartado-toggle">▼</span>
-                <span class="apartado-label">{{ apartado_val if apartado_val and apartado_val.strip() != "" else "Sin apartado" }}</span>
+                <span class="apartado-label">{{ apartado_val if apartado_val and apartado_val.strip() != "" else "No subheading" }}</span>
                 <span class="apartado-count-badge">{{ apartado_partidas|length }}</span>
-                <span class="apartado-hint">{{ apartado_partidas|length }} partidas</span>
+                <span class="apartado-hint">{{ apartado_partidas|length }} line items</span>
               </header>
               <div class="apartado-body">
                 <table class="partidas-table">
@@ -241,7 +241,7 @@
     <div class="card empty csp-s-d6e98c0fe2">
       <div class="csp-s-c7d3ba0dcc">📋</div>
       <h3 class="csp-s-261f301f5a">No results</h3>
-      <p class="hint csp-s-ff35838023">No encontramos «{{ q or apartado_actual or subcategoria_actual }}» en esta vista. Prueba otro término o código.</p>
+      <p class="hint csp-s-ff35838023">No results for “{{ q or apartado_actual or subcategoria_actual }}”. Try another search term or code.</p>
       <div class="csp-s-eb1a6b0356">
         <a href="/partidas{% if vista == 'ocultas' %}?vista=ocultas{% endif %}" class="btn btn-primary">Back to the catalog</a>
       </div>
@@ -256,7 +256,7 @@
         <button class="cat-toggle" aria-label="Collapse">{{ '▼' if categoria_actual == cap.categoria else '▶' }}</button>
         <div class="cat-title-wrap">
           <h2 class="cat-title"><span class="cat-dot"></span> {{ cap.categoria_display }}</h2>
-          <span class="cat-meta">{{ cap.total }} partidas · {{ cap.subcapitulos|length }} subcategorías</span>
+          <span class="cat-meta">{{ cap.total }} line items · {{ cap.subcapitulos|length }} subsections</span>
         </div>
         <span class="cat-badge">{{ cap.total }}</span>
       </header>
@@ -267,7 +267,7 @@
             <span class="subcat-toggle">▼</span>
             <span class="subcat-label">{{ sub.subcategoria_display }}</span>
             <span class="subcat-count-badge">{{ sub.total }}</span>
-            <span class="subcat-hint">{{ sub.total }} partidas</span>
+            <span class="subcat-hint">{{ sub.total }} line items</span>
           </header>
           <div class="subcat-body" data-lazy="1">
             <div class="subcat-placeholder">Loading line items…</div>
@@ -431,7 +431,7 @@ async function cargarFilas(subsec) {
     body.replaceChildren();
     const hint = document.createElement('div');
     hint.className = 'hint';
-    hint.textContent = 'No se pudieron cargar las partidas. Cierra y vuelve a abrir para reintentar.';
+    hint.textContent = 'Could not load line items. Close and reopen this subsection to try again.';
     body.appendChild(hint);
   } finally {
     delete body.dataset.loading;
@@ -457,7 +457,7 @@ function aplicarDisclosure(conBusqueda) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn btn-sm';
-    btn.textContent = `Mostrar ${filas.length - PARTIDAS_POR_TRAMO} partidas más`;
+    btn.textContent = `Show ${filas.length - PARTIDAS_POR_TRAMO} more line items`;
     btn.addEventListener('click', () => {
       filas.forEach(r => CotizatStyles.set(r, "display", ''));
       tr.remove();
@@ -538,25 +538,25 @@ async function deleteAllVisiblePartidas() {
     const ch=row.querySelector('.row-check');
     if (ch) visibleChecks.push(ch.dataset.id);
   });
-  if (!visibleChecks.length) return alert('No hay partidas visibles.');
-  if (!confirm(`¿Procesar las ${visibleChecks.length} partidas visibles? Las oficiales se ocultarán y las personalizadas se eliminarán.`)) return;
+  if (!visibleChecks.length) return alert('There are no visible line items.');
+  if (!confirm(`Process ${visibleChecks.length} visible line items? Official items will be hidden and custom items will be deleted.`)) return;
   const fd = new FormData();
   visibleChecks.forEach(id => fd.append('ids', id));
   const res = await fetch('/partidas/bulk-delete', {method:'POST', body: fd});
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('Error al eliminar');
+  else alert('Could not process the visible line items.');
 }
 async function bulkDeletePartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
   if (!ids.length) return;
-  if (!confirm(`¿Procesar ${ids.length} partidas? Las oficiales se ocultarán y las personalizadas se eliminarán.`)) return;
+  if (!confirm(`Process ${ids.length} line items? Official items will be hidden and custom items will be deleted.`)) return;
   const fd = new FormData();
   ids.forEach(id => fd.append('ids', id));
   const res = await fetch('/partidas/bulk-delete', { method: 'POST', body: fd });
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('No se pudo procesar la selección.');
+  else alert('Could not process the selection.');
 }
 async function bulkRestorePartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
@@ -566,11 +566,11 @@ async function bulkRestorePartidas() {
   const res = await fetch('/partidas/bulk-restore', { method: 'POST', body: fd });
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('No se pudo restaurar la selección.');
+  else alert('Could not restore the selection.');
 }
 async function bulkExportSelectedPartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
-  if (!ids.length) return alert('Selecciona al menos una partida.');
+  if (!ids.length) return alert('Select at least one line item.');
   const fd = new FormData();
   ids.forEach(id => fd.append('ids', id));
   const res = await fetch('/partidas/bulk-export-selected', { method: 'POST', body: fd });
@@ -583,27 +583,27 @@ async function bulkExportSelectedPartidas() {
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   } else {
-    alert('Error al exportar');
+    alert('Could not export the selection.');
   }
 }
 async function bulkMoveCategoryPartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
   const newCat = (document.getElementById('move-cat-partidas') || {}).value || '';
-  if (!ids.length || !newCat.trim()) return alert('Selecciona partidas y escribe una categoría destino.');
+  if (!ids.length || !newCat.trim()) return alert('Select line items and enter a destination category.');
   const fd = new FormData();
   ids.forEach(id => fd.append('ids', id));
   fd.append('new_category', newCat.trim());
   const res = await fetch('/partidas/bulk-move-category', { method: 'POST', body: fd });
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('Error al mover');
+  else alert('Could not move the line items.');
 }
 async function bulkMoveSubcategoryPartidas() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.dataset.id);
   const subcategoria = (document.getElementById('move-subcat-partidas') || {}).value || '';
   const categorias = [...new Set(Array.from(document.querySelectorAll('.row-check:checked')).map(c => c.closest('.partida-tr')?.dataset.categoria).filter(Boolean))];
-  if (!ids.length || !subcategoria.trim()) return alert('Selecciona partidas y escribe una subcategoría destino.');
-  if (categorias.length !== 1) return alert('Para mover a una subcategoría, selecciona partidas de una única categoría.');
+  if (!ids.length || !subcategoria.trim()) return alert('Select line items and enter a destination subsection.');
+  if (categorias.length !== 1) return alert('To move to a subsection, select line items from a single category.');
   await movePartidas(ids, categorias[0], subcategoria.trim());
 }
 async function movePartidas(ids, categoria, subcategoria = null) {
@@ -613,7 +613,7 @@ async function movePartidas(ids, categoria, subcategoria = null) {
   const res = await fetch(subcategoria === null ? '/partidas/bulk-move-category' : '/partidas/bulk-move-subcategory', {method:'POST', body:fd});
   if (res.redirected) window.location = res.url;
   else if (res.ok) window.location.reload();
-  else alert('No se pudo mover la selección.');
+  else alert('Could not move the selection.');
 }
 
 // Drag & drop delegado: funciona también con filas cargadas bajo demanda.
@@ -654,7 +654,7 @@ function initDragAndDropPartidas() {
     const subcategoria = isSub ? (target.dataset.subcat ?? target.dataset.subcategoria ?? target.closest('.subcat-section')?.dataset.subcategoria ?? '') : null;
     if (isSub) {
       const sourceCats=[...new Set(ids.map(id => document.querySelector(`.partida-tr[data-id="${id}"]`)?.dataset.categoria).filter(Boolean))];
-      if (sourceCats.length !== 1 || sourceCats[0] !== categoria) return alert('Una partida solo puede moverse a una subcategoría de su misma categoría. Muévela primero a la categoría destino.');
+      if (sourceCats.length !== 1 || sourceCats[0] !== categoria) return alert('A line item can only be moved to a subsection within its current category. Move it to the destination category first.');
     }
     await movePartidas(ids, categoria, subcategoria);
   });
@@ -675,7 +675,7 @@ function makeTableSortable(container) {
       if (!th.classList.contains('sortable')) return;
       let asc = true;
       CotizatStyles.set(th, "cursor", 'pointer');
-      th.title = 'Clic para ordenar';
+      th.title = 'Click to sort';
       th.addEventListener('click', () => {
         sortTable(table, idx, asc);
         asc = !asc;

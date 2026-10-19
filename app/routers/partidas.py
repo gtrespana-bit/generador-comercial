@@ -10,6 +10,7 @@ from ..i18n import mensaje_request
 from ..services import auditoria
 from ..services.tasa import factor_conversion_local, tasa_convertir_precio
 from ..services.traduccion import codigo_desde_pais, traducir
+from ..services.recursos import etiqueta_categoria_recurso, etiqueta_grupo_recurso
 from ..services.salud_catalogo import analizar_salud_catalogo, MARGEN_MINIMO_CATALOGO, DIAS_SIN_REVISION
 
 router = APIRouter()
@@ -91,6 +92,64 @@ def _descomposicion_en_moneda(partida: Partida, factor: float):
             if isinstance(fila.get(campo), (int, float)):
                 fila[campo] = tasa_convertir_precio(fila[campo], factor)
     return json.dumps(dict(valor, filas=filas), ensure_ascii=False)
+
+
+def _filas_descomposicion_vista(
+    filas, pais_codigo: str, idioma: str, *, preservar_personalizadas: bool = False,
+):
+    """Copia/localiza filas para presentar, sin modificar el JSON persistido.
+
+    En el resumen del catálogo manda el código del recurso. En la ficha
+    editable solo se traduce una descripción que siga siendo la original del
+    recurso; el texto personalizado de esa partida se conserva.
+    """
+    from ..services.traduccion import (
+        traducir_recurso_para_edicion,
+        traducir_recurso_por_codigo,
+    )
+
+    salida = []
+    para_ingles = str(idioma or "").lower().startswith("en")
+    for fila in filas or []:
+        if not isinstance(fila, dict):
+            continue
+        vista = dict(fila)
+        if para_ingles:
+            traducir_fila = (
+                traducir_recurso_para_edicion
+                if preservar_personalizadas
+                else traducir_recurso_por_codigo
+            )
+            vista["descripcion"] = traducir_fila(
+                vista.get("descripcion"), vista.get("codigo"), pais_codigo
+            )
+        vista["categoria_etiqueta"] = etiqueta_categoria_recurso(
+            vista.get("categoria") or vista.get("grupo"), idioma
+        )
+        vista["grupo"] = etiqueta_grupo_recurso(
+            vista.get("grupo"), vista.get("categoria"), idioma
+        )
+        salida.append(vista)
+    return salida
+
+
+def _restaurar_valor_catalogo(db, campo, valor, original, pais_codigo, idioma):
+    """Vuelve a la cadena base si el valor enviado es solo su traducción visible."""
+    texto = str(valor or "").strip()
+    if not str(idioma or "").lower().startswith("en") or not pais_codigo:
+        return texto
+    if original and texto == traducir(original, pais_codigo):
+        return original
+    columna = getattr(Partida, campo, None)
+    if columna is not None and campo in {"nombre", "descripcion", "categoria", "subcategoria", "apartado"}:
+        try:
+            candidatos = db.query(columna).filter(columna.isnot(None)).distinct().all()
+        except Exception:
+            candidatos = []
+        for (candidato,) in candidatos:
+            if candidato and texto == traducir(candidato, pais_codigo):
+                return candidato
+    return texto
 
 
 def _datos_partida_catalogo(form):
@@ -390,26 +449,14 @@ def listar_partidas(
                 for _ap in _sub.get("apartados", []):
                     _ap["apartado_display"] = _ap.get("apartado", "")
                     _ap["nombre_display"] = _ap.get("nombre", "")
-    # Conversión USD->local de TODOS los importes de la vista (precio y
-    # costes) con el MISMO factor: el margen/beneficio de las filas se
-    # calcula en _fila.html como precio - coste y nunca debe mezclar
-    # moneda local con USD.
+    # El cálculo de margen/precio de mercado debe partir SIEMPRE de los
+    # importes base sin redondear. Convertir primero a la vista (p. ej. USD →
+    # GBP) redondeaba costes y precio por separado y alteraba el margen antes
+    # de reconstruir el precio de mercado; la lista acababa discrepando del
+    # editor. Primero calculamos mercado; después convertimos solo los
+    # fallbacks que no tienen referencia local.
     _mon_cfg, _factor = _contexto_moneda(db)
-    try:
-        if _factor != 1.0:
-            for _p in partidas:
-                _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, _factor)
-                _p.coste_materiales = tasa_convertir_precio(_p.coste_materiales or 0, _factor)
-                _p.coste_mano_obra = tasa_convertir_precio(_p.coste_mano_obra or 0, _factor)
-                _p.coste_complementarios = tasa_convertir_precio(_p.coste_complementarios or 0, _factor)
-                _p.coste_otros = tasa_convertir_precio(_p.coste_otros or 0, _factor)
-    except Exception:
-        pass
-    # Si el país tiene referencias de mercado para los recursos de la
-    # descomposición, el precio de la partida debe usar esas referencias y no
-    # el precio base convertido (que procede de la partida original de
-    # Venezuela). Se recalcula el APU con la cascada CYPE y se reemplazan los
-    # costes/importes del listado y de las tablas de descomposición.
+    _precios_mk = {}
     try:
         from ..services.precios_partidas import recalcular_partidas_mercado
         _cfg_pm = _config(db)
@@ -418,10 +465,12 @@ def listar_partidas(
         _precios_mk = recalcular_partidas_mercado(
             db, partidas, _pais_pm, _org_pm, _mon_cfg, _factor,
         )
-        for _p in partidas:
-            _mk = _precios_mk.get(_p.id)
-            if _mk is None:
-                continue
+    except Exception:
+        _precios_mk = {}
+
+    for _p in partidas:
+        _mk = _precios_mk.get(_p.id)
+        if _mk is not None:
             _p.precio_unitario = _mk.precio_unitario
             _p.coste_materiales = _mk.coste_materiales
             _p.coste_mano_obra = _mk.coste_mano_obra
@@ -430,8 +479,14 @@ def listar_partidas(
             # Las tablas de descomposición del listado también usan las
             # referencias nacionales, no el base convertido.
             catalogo_descompuestos[_p.id] = _mk.filas
-    except Exception:
-        pass
+        elif _factor != 1.0:
+            # Sin precio de mercado, la ficha base y sus costes se convierten
+            # juntos a la moneda visible, una sola vez.
+            _p.precio_unitario = tasa_convertir_precio(_p.precio_unitario or 0, _factor)
+            _p.coste_materiales = tasa_convertir_precio(_p.coste_materiales or 0, _factor)
+            _p.coste_mano_obra = tasa_convertir_precio(_p.coste_mano_obra or 0, _factor)
+            _p.coste_complementarios = tasa_convertir_precio(_p.coste_complementarios or 0, _factor)
+            _p.coste_otros = tasa_convertir_precio(_p.coste_otros or 0, _factor)
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         # Los importes de la lista ya están convertidos: la vista los etiqueta
@@ -721,20 +776,27 @@ def descomposicion_partida(
     filas = valor.get("filas", []) if isinstance(valor, dict) else valor
     filas = [f for f in filas if isinstance(f, dict) and f.get("tipo") == "recurso"]
     _mon_d, _factor_d = _contexto_moneda(db, moneda, tasa)
+    _idioma_d = _idioma(request)
     _filas_mercado = False
+    try:
+        _pais_d = codigo_desde_pais(getattr(_config(db), "empresa_pais", "") or "") or "VE"
+    except Exception:
+        _pais_d = "VE"
     # Referencias nacionales primero: si el país tiene precio de mercado para
     # los recursos, la descomposición debe mostrar la referencia real y no el
     # base convertido de la partida original.
     try:
         from ..services.precios_partidas import recalcular_partida_mercado
-        _pais_d = codigo_desde_pais(getattr(_config(db), "empresa_pais", "") or "") or "VE"
         _org_d = int(db.info.get("organizacion_id") or 0) or None
         mk = recalcular_partida_mercado(db, partida, _pais_d, _org_d, _mon_d, _factor_d)
         if mk is not None and mk.con_precio_mercado:
             filas = mk.filas
             _filas_mercado = True
     except Exception:
-        pass
+        try:
+            db.rollback()
+        except Exception:
+            pass
     # Si no hay referencia nacional (o el recálculo falla), las filas se
     # convierten al contexto monetario de la vista con el mismo factor que el
     # resto de importes.
@@ -744,6 +806,7 @@ def descomposicion_partida(
                 _f["precio"] = tasa_convertir_precio(_f["precio"], _factor_d)
             if isinstance(_f.get("importe"), (int, float)):
                 _f["importe"] = tasa_convertir_precio(_f["importe"], _factor_d)
+    filas = _filas_descomposicion_vista(filas, _pais_d, _idioma_d)
     return {"ok": True, "filas": filas, "moneda": _mon_d}
 
 
@@ -1158,40 +1221,116 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
     partida = db.get(Partida, partida_id)
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
-    # Conversión USD->local para la edición, igual que en la visualización.
+
+    from copy import copy
+
+    # Todo se prepara sobre una copia: el editor nunca muta la ficha base ni
+    # guarda traducciones/precios de mercado en la moneda del catálogo.
+    partida_vista = copy(partida)
     try:
-        _cfg_e = _config(db)
-        _mon_e = str(getattr(_cfg_e, "moneda_default", "USD") or "USD").strip().upper()
-        _tasa_e = getattr(_cfg_e, "tasa_cambio", None)
-        _factor_e = factor_conversion_local(_mon_e, _tasa_e)
-        if _factor_e != 1.0:
-            partida.precio_unitario = tasa_convertir_precio(partida.precio_unitario or 0, _factor_e)
-            partida.coste_materiales = tasa_convertir_precio(partida.coste_materiales or 0, _factor_e)
-            partida.coste_mano_obra = tasa_convertir_precio(partida.coste_mano_obra or 0, _factor_e)
-            partida.coste_complementarios = tasa_convertir_precio(partida.coste_complementarios or 0, _factor_e)
-            partida.coste_otros = tasa_convertir_precio(partida.coste_otros or 0, _factor_e)
-            # El análisis de precios unitarios se edita en la misma moneda que
-            # el precio de venta: sin convertir los precios de las filas, la
-            # tabla mostraba dólares junto a un precio en moneda local y el
-            # «Coste directo»/beneficio mezclaba monedas.
-            _descomp_e = _descomposicion_en_moneda(partida, _factor_e)
-            if _descomp_e is not None:
-                partida.descomposicion_json = _descomp_e
+        cfg = _config(db)
+        pais_codigo = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
     except Exception:
-        pass
+        cfg = None
+        pais_codigo = "VE"
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    idioma = _idioma(request)
+
+    mercado = None
+    try:
+        from ..services.precios_partidas import recalcular_partida_mercado
+        mercado = recalcular_partida_mercado(
+            db,
+            partida,
+            pais_codigo,
+            int(db.info.get("organizacion_id") or 0) or None,
+            moneda_vista,
+            factor_vista,
+        )
+    except Exception:
+        # La ficha original sigue siendo utilizable como fallback si no hay
+        # referencias disponibles o falla la consulta de mercado.
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        mercado = None
+
+    if mercado is not None and mercado.con_precio_mercado:
+        # Debe coincidir con la fila y el editor del catálogo: mismas
+        # referencias nacionales, moneda y recálculo de costes/cascada.
+        partida_vista.precio_unitario = mercado.precio_unitario
+        partida_vista.coste_materiales = mercado.coste_materiales
+        partida_vista.coste_mano_obra = mercado.coste_mano_obra
+        partida_vista.coste_complementarios = mercado.coste_complementarios
+        partida_vista.coste_otros = mercado.coste_otros
+        try:
+            descomp_vista = json.loads(partida.descomposicion_json or "[]")
+        except (TypeError, ValueError):
+            descomp_vista = {}
+        if isinstance(descomp_vista, list):
+            descomp_vista = {"origen": "manual", "filas": descomp_vista}
+        if not isinstance(descomp_vista, dict):
+            descomp_vista = {}
+        descomp_vista = dict(descomp_vista)
+        descomp_vista["filas"] = mercado.filas
+        partida_vista.descomposicion_json = json.dumps(descomp_vista, ensure_ascii=False)
+    else:
+        # Fallback de catálogo: convierte precio, costes y filas con el mismo
+        # factor; nunca etiqueta importes USD como GBP si falta la tasa.
+        for campo in (
+            "precio_unitario", "coste_materiales", "coste_mano_obra",
+            "coste_complementarios", "coste_otros",
+        ):
+            setattr(
+                partida_vista,
+                campo,
+                tasa_convertir_precio(getattr(partida, campo, 0) or 0, factor_vista),
+            )
+        descomp_local = _descomposicion_en_moneda(partida, factor_vista)
+        if descomp_local is not None:
+            partida_vista.descomposicion_json = descomp_local
+
+    # Traducciones y rótulos son una capa de vista. Las claves de categoría y
+    # los textos originales permanecen intactos en la fila ORM.
+    try:
+        descomp_vista = json.loads(partida_vista.descomposicion_json or "[]")
+    except (TypeError, ValueError):
+        descomp_vista = []
+    if isinstance(descomp_vista, list):
+        descomp_vista = {"origen": "manual", "filas": descomp_vista}
+    if isinstance(descomp_vista, dict):
+        descomp_vista = dict(descomp_vista)
+        descomp_vista["filas"] = _filas_descomposicion_vista(
+            descomp_vista.get("filas", []), pais_codigo, idioma,
+            preservar_personalizadas=True,
+        )
+        partida_vista.descomposicion_json = json.dumps(descomp_vista, ensure_ascii=False)
+
+    categorias = _categorias(db)
+    if idioma.lower().startswith("en") and pais_codigo:
+        partida_vista.nombre = traducir(partida.nombre or "", pais_codigo)
+        partida_vista.descripcion = traducir(partida.descripcion or "", pais_codigo)
+        for campo in ("categoria", "subcategoria", "apartado"):
+            setattr(
+                partida_vista,
+                campo,
+                traducir(getattr(partida, campo, "") or "", pais_codigo),
+            )
+        categorias = [traducir(categoria, pais_codigo) for categoria in categorias]
+
     try:
         from ..services.monedas import simbolo as _simbolo_iso
-        _simbolo_local = _simbolo_iso(_mon_e) if '_mon_e' in locals() else ""
+        simbolo_local = _simbolo_iso(moneda_vista)
     except Exception:
-        _simbolo_local = ""
+        simbolo_local = ""
     return TEMPLATES.TemplateResponse(request, "partidas/form.html", {
-        "partida": partida,
-        "categorias": _categorias(db),
-        "moneda_local": getattr(_cfg_e, "moneda_default", "USD") if '_cfg_e' in locals() else "USD",
-        "simbolo_local": _simbolo_local,
+        "partida": partida_vista,
+        "categorias": categorias,
+        "moneda_local": moneda_vista,
+        "simbolo_local": simbolo_local,
         "error": request.query_params.get("error", ""),
     })
-
 
 @router.post("/partidas/{partida_id}/editar")
 async def actualizar_partida(partida_id: int, request: Request, db: Session = Depends(get_db)):
@@ -1199,30 +1338,202 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
     if partida is None:
         return _redirect("/partidas", error="Partida no encontrada.")
     form = await request.form()
-    nombre = str(form.get("nombre", "")).strip()
+    idioma = _idioma(request)
+    try:
+        cfg = _config(db)
+        pais_codigo = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+    except Exception:
+        pais_codigo = "VE"
+    moneda_vista, factor_vista = _contexto_moneda(db)
+
+    # El mismo cálculo de mercado que usa la lista y el GET del editor. Así se
+    # puede distinguir un importe de GBP mostrado del precio base realmente
+    # almacenado, y un guardado sin cambios no contamina el catálogo USD.
+    mercado = None
+    try:
+        from ..services.precios_partidas import recalcular_partida_mercado
+        mercado = recalcular_partida_mercado(
+            db,
+            partida,
+            pais_codigo,
+            int(db.info.get("organizacion_id") or 0) or None,
+            moneda_vista,
+            factor_vista,
+        )
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        mercado = None
+    mercado_visible = mercado if mercado is not None and mercado.con_precio_mercado else None
+
+    nombre_enviado = str(form.get("nombre", "")).strip()
+    nombre = _restaurar_valor_catalogo(
+        db, "nombre", nombre_enviado, partida.nombre, pais_codigo, idioma
+    )
     if not nombre:
         return _redirect(f"/partidas/{partida_id}/editar", error="El nombre es obligatorio.")
     if db.query(Partida).filter(Partida.nombre == nombre, Partida.id != partida_id).first():
         return _redirect(f"/partidas/{partida_id}/editar", error="Ya existe otra partida con ese nombre.")
+
     datos = _datos_partida_catalogo(form)
-    filas_catalogo, costes_calculados = _descomposicion_catalogo(form)
-    # El formulario se edita en la moneda de la organización y el catálogo se
-    # guarda en la base: se deshace la conversión antes de persistir. Los
-    # costes recalculados desde las filas también, o el precio quedaría en
-    # dólares y sus costes en moneda local.
-    _mon_u, _factor_u = _contexto_moneda(db)
-    if _factor_u != 1.0:
-        datos["precio_unitario"] = _a_moneda_base(datos.get("precio_unitario", 0), _factor_u)
-        for k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
-            datos[k] = _a_moneda_base(datos.get(k, 0), _factor_u)
-        for fila in filas_catalogo:
-            fila["precio"] = _a_moneda_base(fila.get("precio", 0), _factor_u)
-        costes_calculados = {
-            k: _a_moneda_base(v, _factor_u) for k, v in costes_calculados.items()
-        }
+    for campo in ("descripcion", "categoria", "subcategoria", "apartado"):
+        datos[campo] = _restaurar_valor_catalogo(
+            db, campo, datos.get(campo), getattr(partida, campo, ""), pais_codigo, idioma
+        )
+
+    filas_catalogo, _costes_formulario = _descomposicion_catalogo(form)
+    try:
+        valor_original = json.loads(partida.descomposicion_json or "[]")
+    except (TypeError, ValueError):
+        valor_original = []
+    originales = valor_original.get("filas", []) if isinstance(valor_original, dict) else valor_original
+    originales = [
+        fila for fila in originales
+        if isinstance(fila, dict) and fila.get("tipo") == "recurso"
+    ]
+    filas_mercado = mercado_visible.filas if mercado_visible else []
+
+    def _codigo_fila(fila):
+        return str((fila or {}).get("codigo") or "").strip().casefold()
+
+    def _misma_fila(a, b):
+        if not isinstance(a, dict) or not isinstance(b, dict):
+            return False
+        codigo_a, codigo_b = _codigo_fila(a), _codigo_fila(b)
+        if codigo_a or codigo_b:
+            return bool(codigo_a and codigo_a == codigo_b)
+        return (
+            str(a.get("unidad") or "").strip().casefold() == str(b.get("unidad") or "").strip().casefold()
+            and str(a.get("categoria") or "").strip().casefold() == str(b.get("categoria") or "").strip().casefold()
+            and str(a.get("descripcion") or "").strip().casefold() == str(b.get("descripcion") or "").strip().casefold()
+        )
+
+    def _buscar_fila(fila, candidatas, usadas):
+        indice = len(usadas)
+        if indice < len(candidatas) and indice not in usadas and _misma_fila(fila, candidatas[indice]):
+            usadas.add(indice)
+            return candidatas[indice]
+        for i, candidata in enumerate(candidatas):
+            if i not in usadas and _misma_fila(fila, candidata):
+                usadas.add(i)
+                return candidata
+        return None
+
+    indices_originales_usados = set()
+    indices_mercado_usados = set()
+    from ..services.traduccion import traducir_recurso_por_codigo
+    for indice, fila in enumerate(filas_catalogo):
+        original = _buscar_fila(fila, originales, indices_originales_usados)
+        fila_mercado = _buscar_fila(fila, filas_mercado, indices_mercado_usados) if filas_mercado else None
+        if original is not None and idioma.lower().startswith("en"):
+            descripcion_original = str(original.get("descripcion") or "")
+            descripcion_visible = traducir_recurso_por_codigo(
+                descripcion_original, original.get("codigo"), pais_codigo
+            )
+            if str(fila.get("descripcion") or "").strip() == str(descripcion_visible or "").strip():
+                fila["descripcion"] = descripcion_original
+
+        unidad = str(fila.get("unidad") or "").strip()
+        if unidad == "%":
+            # El precio de la fila porcentual es derivado y lo recalcula la
+            # cascada desde las filas base de coste.
+            fila["precio"] = 0.0
+            fila["precio_unitario"] = 0.0
+            continue
+
+        precio_enviado = float(fila.get("precio") or 0.0)
+        precio_original = None
+        if original is not None:
+            try:
+                precio_original = float(
+                    original.get("precio") if original.get("precio") is not None
+                    else original.get("precio_unitario") or 0.0
+                )
+            except (TypeError, ValueError):
+                precio_original = 0.0
+        precio_mostrado = None
+        if fila_mercado is not None:
+            try:
+                precio_mostrado = float(
+                    fila_mercado.get("precio") if fila_mercado.get("precio") is not None
+                    else fila_mercado.get("precio_unitario") or 0.0
+                )
+            except (TypeError, ValueError):
+                precio_mostrado = None
+        elif precio_original is not None:
+            precio_mostrado = tasa_convertir_precio(precio_original, factor_vista)
+
+        sin_cambios = (
+            precio_original is not None
+            and precio_mostrado is not None
+            and abs(precio_enviado - precio_mostrado) <= max(1e-6, abs(precio_mostrado) * 1e-8)
+        )
+        precio_base = precio_original if sin_cambios else _a_moneda_base(precio_enviado, factor_vista)
+        fila["precio"] = max(0.0, float(precio_base or 0.0))
+        fila["precio_unitario"] = fila["precio"]
+
+    # Recalcula y guarda únicamente importes/costes en moneda base. Las filas
+    # visibles de mercado no se escriben como si fueran USD; al volver a abrir
+    # la lista el mercado las resolverá de nuevo desde los recursos.
+    resultado_base = recalcular_descompuesto_cype(filas_catalogo)
+    for indice, fila in enumerate(filas_catalogo):
+        fila["importe"] = resultado_base.get("importes", {}).get(indice, 0.0)
+        if indice in resultado_base.get("precios_complementarios", {}):
+            fila["precio"] = resultado_base["precios_complementarios"][indice]
+            fila["precio_unitario"] = fila["precio"]
     if filas_catalogo:
-        datos.update({f"coste_{k}": v for k, v in costes_calculados.items()})
-    datos["descomposicion_json"] = json.dumps({"origen": "manual", "codigo": str(form.get("codigo_externo", "")), "unidad": datos["unidad"], "filas": filas_catalogo}, ensure_ascii=False)
+        datos.update({f"coste_{k}": v for k, v in resultado_base.get("costes", {}).items()})
+    elif originales:
+        # El usuario eliminó todas las filas de una descomposición existente.
+        datos.update({
+            "coste_materiales": 0.0,
+            "coste_mano_obra": 0.0,
+            "coste_complementarios": 0.0,
+            "coste_otros": 0.0,
+        })
+    else:
+        # Las fichas antiguas sin filas pueden tener costes manuales que no se
+        # editan en este formulario: conservarlos si no hay tabla que recalcular.
+        for campo in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
+            datos[campo] = float(getattr(partida, campo, 0) or 0)
+
+    precio_enviado = max(0.0, _f(form.get("precio_unitario")))
+    precio_base_original = float(partida.precio_unitario or 0.0)
+    if mercado_visible is not None:
+        precio_mostrado = float(mercado_visible.precio_unitario or 0.0)
+        if abs(precio_enviado - precio_mostrado) <= max(0.005, abs(precio_mostrado) * 1e-8):
+            # No convertir el precio GB mostrado en una sustitución del precio
+            # base solo porque el usuario abrió/guardó la ficha.
+            datos["precio_unitario"] = precio_base_original
+        else:
+            coste_base = sum(float(getattr(partida, campo, 0) or 0) for campo in (
+                "coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"
+            ))
+            coste_mercado = sum(float(getattr(mercado_visible, campo, 0) or 0) for campo in (
+                "coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"
+            ))
+            # Conserva la intención de precio/margen en el mercado y guarda un
+            # valor base coherente, no el número GBP etiquetado como USD.
+            datos["precio_unitario"] = (
+                coste_base * precio_enviado / coste_mercado
+                if coste_base > 0 and coste_mercado > 0
+                else _a_moneda_base(precio_enviado, factor_vista)
+            )
+    else:
+        precio_base_mostrado = tasa_convertir_precio(precio_base_original, factor_vista)
+        if abs(precio_enviado - precio_base_mostrado) <= max(0.005, abs(precio_base_mostrado) * 1e-8):
+            datos["precio_unitario"] = precio_base_original
+        else:
+            datos["precio_unitario"] = _a_moneda_base(precio_enviado, factor_vista)
+
+    datos["descomposicion_json"] = json.dumps({
+        "origen": "manual",
+        "codigo": str(form.get("codigo_externo", "")),
+        "unidad": datos["unidad"],
+        "filas": filas_catalogo,
+    }, ensure_ascii=False)
     datos["codigo_externo"] = str(form.get("codigo_externo", "")).strip()
     precio_anterior = partida.precio_unitario or 0
     _desvincular_clasificacion_si_cambio(partida, datos)

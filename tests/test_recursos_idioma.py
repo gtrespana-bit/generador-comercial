@@ -23,6 +23,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 RECURSOS = RAIZ / "basedatos_partidas" / "datos" / "recursos.json"
 RECURSOS_EN = RAIZ / "basedatos_partidas" / "datos" / "recursos_en.json"
 
+from app.services.recursos import etiqueta_categoria_recurso  # noqa: E402
 from app.services.traduccion import traducir  # noqa: E402
 
 
@@ -223,3 +224,11 @@ def test_las_designaciones_de_norma_se_conservan():
         assert marca in traducido, (
             f"{codigo}: se perdió la designación «{marca}» en «{traducido}»"
         )
+
+
+def test_etiquetas_de_grupo_de_recursos_suenan_naturales_en_ingles():
+    assert etiqueta_categoria_recurso("complementarios", "en") == "Ancillary costs"
+    assert etiqueta_categoria_recurso("otros", "en") == "Other costs"
+    # Acepta etiquetas antiguas ya persistidas y las muestra con la redacción actual.
+    assert etiqueta_categoria_recurso("Complementary costs", "en") == "Ancillary costs"
+    assert etiqueta_categoria_recurso("Equipment and other", "en") == "Other costs"

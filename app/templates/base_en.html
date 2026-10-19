@@ -105,9 +105,9 @@
     </a>
 
     <div class="nav-section">Catalog</div>
-    <a href="/partidas" data-label="Line items" class="{{ 'active' if request.url.path.startswith('/partidas') else '' }}">
+    <a href="/partidas" data-label="Catalog" class="{{ 'active' if request.url.path.startswith('/partidas') else '' }}">
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
-      <span>Line items</span>
+      <span>Catalog</span>
     </a>
     <a href="/recursos" data-label="Resources" class="{{ 'active' if request.url.path.startswith('/recursos') else '' }}">
       <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
@@ -217,7 +217,7 @@
   </a>
   <a href="/partidas" class="{{ 'active' if request.url.path.startswith('/partidas') else '' }}">
     <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h10"/></svg>
-    <span>Line items</span>
+    <span>Catalog</span>
   </a>
   <button type="button" id="boton-menu-movil" class="bottom-nav-menu" aria-haspopup="dialog" aria-controls="menu-movil" aria-expanded="false">
     <svg viewBox="0 0 18 18" fill="currentColor" stroke="none" aria-hidden="true"><circle cx="4" cy="4" r="1.7"/><circle cx="9" cy="4" r="1.7"/><circle cx="14" cy="4" r="1.7"/><circle cx="4" cy="9" r="1.7"/><circle cx="9" cy="9" r="1.7"/><circle cx="14" cy="9" r="1.7"/><circle cx="4" cy="14" r="1.7"/><circle cx="9" cy="14" r="1.7"/><circle cx="14" cy="14" r="1.7"/></svg>

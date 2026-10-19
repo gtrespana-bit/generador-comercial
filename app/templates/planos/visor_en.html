@@ -1,10 +1,10 @@
 {% extends "base_en.html" %}
-{% block title %}Visor de planos{% endblock %}
+{% block title %}Drawing Viewer{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1>📐 Drawing viewer</h1>
-    <p class="subtitle">All the drawings of your estimates in one place: calibrate the scale, measure on the drawing and apply the takeoffs to your line items.</p>
+    <p class="subtitle">View all your estimate drawings in one place. Calibrate the scale, measure from a drawing and apply the take-offs to your line items.</p>
   </div>
   <div class="actions">
     <a class="btn" href="/presupuestos">Go to estimates</a>
@@ -23,7 +23,7 @@
 <div class="cards planos-stats">
   <div class="card card-stat">
     <strong class="planos-stat-num">{{ total_planos }}</strong>
-    <span class="planos-stat-label">plano{{ 's' if total_planos != 1 }}</span>
+    <span class="planos-stat-label">drawing{{ 's' if total_planos != 1 }}</span>
   </div>
   <div class="card card-stat">
     <strong class="planos-stat-num">{{ planos_calibrados }}<span class="planos-stat-total">/{{ total_planos }}</span></strong>
@@ -31,11 +31,11 @@
   </div>
   <div class="card card-stat">
     <strong class="planos-stat-num">{{ total_mediciones }}</strong>
-    <span class="planos-stat-label">takeoffs saved</span>
+    <span class="planos-stat-label">take-offs saved</span>
   </div>
   <div class="card card-stat">
     <strong class="planos-stat-num">{{ grupos|length }}</strong>
-    <span class="planos-stat-label">presupuesto{{ 's' if grupos|length != 1 }} con planos</span>
+    <span class="planos-stat-label">estimate{{ 's' if grupos|length != 1 }} with drawings</span>
   </div>
 </div>
 
@@ -49,32 +49,32 @@
         {% if presupuesto.titulo %}<span class="planos-grupo-titulo-extra">· {{ presupuesto.titulo }}</span>{% endif %}
       </h2>
       <p class="hint">
-        {{ presupuesto.cliente.nombre if presupuesto.cliente else 'Sin cliente' }} ·
-        {{ grupo.planos|length }} plano{{ 's' if grupo.planos|length != 1 }} ·
-        {{ grupo.n_mediciones }} medición(es)
+        {{ presupuesto.cliente.nombre if presupuesto.cliente else 'No client' }} ·
+        {{ grupo.planos|length }} drawing{{ 's' if grupo.planos|length != 1 }} ·
+        {{ grupo.n_mediciones }} take-off{{ 's' if grupo.n_mediciones != 1 }}
       </p>
     </div>
     <div class="planos-grupo-accesos">
-      <a class="btn" href="/presupuestos/{{ presupuesto.id }}/planos/exportar?formato=csv" title="Download CSV with all the quantity takeoffs of the estimate">⬇ CSV</a>
-      <a class="btn btn-primary" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Open takeoff</a>
+      <a class="btn" href="/presupuestos/{{ presupuesto.id }}/planos/exportar?formato=csv" title="Download a CSV of all take-offs in the estimate">⬇ CSV</a>
+      <a class="btn btn-primary" href="/presupuestos/{{ presupuesto.id }}/planos">📐 Open take-off editor</a>
     </div>
   </div>
   <div class="planos-thumb-grid">
     {% for plano in grupo.planos %}
-    <a class="planos-thumb" href="/presupuestos/{{ presupuesto.id }}/planos?plano={{ plano.id }}" title="Abrir «{{ plano.nombre }}» en el área de medición">
+    <a class="planos-thumb" href="/presupuestos/{{ presupuesto.id }}/planos?plano={{ plano.id }}" title="Open “{{ plano.nombre }}” in the take-off workspace">
       {% if plano.content_type and plano.content_type.startswith('image/') %}
-      <span class="planos-thumb-img"><img src="/planos/{{ plano.id }}/archivo" alt="Plano {{ plano.nombre }}" loading="lazy" decoding="async"></span>
+      <span class="planos-thumb-img"><img src="/planos/{{ plano.id }}/archivo" alt="Drawing {{ plano.nombre }}" loading="lazy" decoding="async"></span>
       {% else %}
       <span class="planos-thumb-img planos-thumb-pdf">📄<small>PDF</small></span>
       {% endif %}
       <span class="planos-thumb-nombre" title="{{ plano.nombre }}">{{ plano.nombre }}</span>
       <span class="planos-thumb-meta">
         {% if plano.calibrado %}
-        <span class="badge badge-ok">✓ True scale ready</span>
+        <span class="badge badge-ok">✓ Calibrated</span>
         {% else %}
         <span class="badge badge-warn">Not calibrated</span>
         {% endif %}
-        <span class="badge">{{ plano.mediciones|length }} med.</span>
+        <span class="badge">{{ plano.mediciones|length }} take-off{{ 's' if plano.mediciones|length != 1 }}</span>
       </span>
     </a>
     {% endfor %}
@@ -86,11 +86,11 @@
 <div class="card planos-empty">
   <span class="planos-empty-icon" aria-hidden="true">📐</span>
   <h2>No drawings uploaded yet</h2>
-  <p class="hint">The drawing viewer lets you measure on your client’s floor plans with no AI and no per-use cost.</p>
+  <p class="hint">The drawing viewer lets you measure from your client’s plans without AI or per-use fees.</p>
   <div class="planos-empty-pasos">
     <div class="planos-empty-paso"><strong>1 · Upload</strong><p>Open an estimate and go to <a class="link" href="/presupuestos">📐 Drawings</a>. Accepts PNG, JPG, WEBP or PDF.</p></div>
-    <div class="planos-empty-paso"><strong>2 · Calibrate</strong><p>Draw a line over a known dimension (a door, a hallway) and tell it how many metres it is.</p></div>
-    <div class="planos-empty-paso"><strong>3 · Measure and apply</strong><p>Measure lengths, areas and counts, and send them as a takeoff to the matching line item.</p></div>
+    <div class="planos-empty-paso"><strong>2 · Calibrate</strong><p>Draw a line along a known dimension (such as a doorway or corridor) and enter its actual length.</p></div>
+    <div class="planos-empty-paso"><strong>3 · Measure and apply</strong><p>Measure lengths, areas and quantities, then apply them to the matching line item.</p></div>
   </div>
   <div class="form-actions">
     <a class="btn btn-primary" href="/presupuestos">Choose an estimate</a>

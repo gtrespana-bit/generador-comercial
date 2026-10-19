@@ -4,14 +4,14 @@
 <div class="page-head">
   <div>
     <p class="crumb">📄 <a href="/presupuestos">Estimates</a> › <a href="/presupuestos/{{ p.id }}">{{ p.numero }}</a> › Public link</p>
-    <h1>Public link of the proposal</h1>
-    <p class="subtitle">Share a frozen version without giving access to the organization, clients, catalogs or other files.</p>
+    <h1>Public proposal link</h1>
+    <p class="subtitle">Share a frozen version without granting access to your organisation, clients, catalogue or other files.</p>
   </div>
   <div class="actions"><a class="btn" href="/presupuestos/{{ p.id }}">← Back to the estimate</a></div>
 </div>
 
-{% if error_enlace %}<div class="alert alert-error" role="alert">{{ error_enlace }}</div>{% endif %}
-{% if mensaje_enlace %}<div class="alert alert-ok" role="status">{{ mensaje_enlace }}</div>{% endif %}
+{% if error_enlace %}<div class="alert alert-error" role="alert">{{ error_enlace | mensaje(_idioma) }}</div>{% endif %}
+{% if mensaje_enlace %}<div class="alert alert-ok" role="status">{{ mensaje_enlace | mensaje(_idioma) }}</div>{% endif %}
 {% if revision_envio and (revision_envio.criticos or revision_envio.recomendaciones) %}
 <div class="card revision-envio revision-{{ revision_envio.estado }}">
   <div class="revision-head">
@@ -19,7 +19,7 @@
     <div class="revision-copy">
       <span class="section-kicker">Review before creating the link</span>
       <h2>{{ revision_envio.titulo }}</h2>
-      <p class="hint">{{ revision_envio.resumen }} Puedes crear el enlace de todos modos, pero conviene revisar estos puntos.</p>
+      <p class="hint">{{ revision_envio.resumen }} You can still create the link, but review these points first.</p>
     </div>
     <div class="revision-actions"><a class="btn" href="/presupuestos/{{ p.id }}#revision-envio">See the full review</a></div>
   </div>
@@ -42,7 +42,7 @@
   <form method="post" action="/presupuestos/{{ p.id }}/enlace-publico" class="form-actions">
     <label for="duracion_dias">Expiry</label>
     <select id="duracion_dias" name="duracion_dias">
-      {% for dias in duraciones %}<option value="{{ dias }}" {{ 'selected' if dias == 30 else '' }}>{{ dias }} días</option>{% endfor %}
+      {% for dias in duraciones %}<option value="{{ dias }}" {{ 'selected' if dias == 30 else '' }}>{{ dias }} day{{ 's' if dias != 1 }}</option>{% endfor %}
     </select>
     <button class="btn btn-primary" type="submit">🔗 Create secure link</button>
   </form>
@@ -66,7 +66,7 @@
           {% else %}<span class="badge badge-aprobado">Active</span>{% endif %}
         </td>
         <td>{% if enlace.respuesta == 'aceptada' %}<span class="badge badge-aprobado">Accepted</span>{% elif enlace.respuesta == 'rechazada' %}<span class="badge badge-rechazado">Rejected</span>{% else %}<span class="badge">Pending</span>{% endif %}{% if enlace.responded_at %}<br><small>{{ enlace.respondido_por_nombre }} · {{ enlace.responded_at.strftime('%d/%m/%Y %H:%M') }}</small>{% endif %}</td>
-        <td>{% if enlace.notificacion_enviada_at %}<span class="badge badge-aprobado">Sent</span><br><small>{{ enlace.notificacion_destinatarios }}</small>{% elif enlace.notificacion_error %}<span class="badge badge-rechazado">Failed</span><br><small>{{ enlace.notificacion_error }}</small>{% else %}—{% endif %}{% if enlace.respuesta != 'pendiente' and not enlace.notificacion_enviada_at %}<form method="post" action="/presupuestos/{{ p.id }}/enlaces/{{ enlace.id }}/notificar" class="inline"><button class="btn btn-sm" type="submit">Retry notice</button></form>{% endif %}</td>
+        <td>{% if enlace.notificacion_enviada_at %}<span class="badge badge-aprobado">Sent</span><br><small>{{ enlace.notificacion_destinatarios }}</small>{% elif enlace.notificacion_error %}<span class="badge badge-rechazado">Failed</span><br><small>{{ enlace.notificacion_error | mensaje(_idioma) }}</small>{% else %}—{% endif %}{% if enlace.respuesta != 'pendiente' and not enlace.notificacion_enviada_at %}<form method="post" action="/presupuestos/{{ p.id }}/enlaces/{{ enlace.id }}/notificar" class="inline"><button class="btn btn-sm" type="submit">Retry notice</button></form>{% endif %}</td>
         <td>{% if not enlace.revoked_at and enlace.expires_at > ahora %}<form method="post" action="/presupuestos/{{ p.id }}/enlaces/{{ enlace.id }}/revocar" class="inline" data-confirm="Revoke this link? It will stop working immediately."><button class="btn btn-sm btn-danger" type="submit">Revoke</button></form>{% endif %}</td>
       </tr>
       {% endfor %}

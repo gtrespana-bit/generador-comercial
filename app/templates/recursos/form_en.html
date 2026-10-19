@@ -1,11 +1,11 @@
 {% extends "base_en.html" %}
 {% block title %}{{ 'Edit Resource' if recurso else 'New Resource' }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ 'Edit Resource' if recurso else 'New Resource' }}</h1><p class="subtitle">Reusable unit price (labor, material or equipment). Changing the price propagates automatically to every line item that uses it.</p></div></div>
+<div class="page-head"><div><h1>{{ 'Edit Resource' if recurso else 'New Resource' }}</h1><p class="subtitle">Reusable unit price (labour, material or equipment). Changing the price propagates automatically to every line item that uses it.</p></div></div>
 <div class="card">
 <form method="post" action="{{ '/recursos/' ~ recurso.id ~ '/editar' if recurso else '/recursos/nuevo' }}">
   <div class="form-grid">
-    <div class="field"><label>Code (optional) *</label><input name="codigo" value="{{ recurso.codigo if recurso else '' }}" placeholder="la001, mt01..."><span class="hint">With a code, matching is by code. Without one, by description.</span></div>
+    <div class="field"><label>Code (optional)</label><input name="codigo" value="{{ recurso.codigo if recurso else '' }}" placeholder="la001, mt01..."><span class="hint">With a code, matching is by code. Without one, by description.</span></div>
     <div class="field"><label>Unit *</label><input name="unidad" value="{{ recurso.unidad if recurso else 'h' }}" placeholder="h, kg, m3, ea..." required></div>
     <div class="field field-full"><label>Description *</label><input name="descripcion" required value="{{ recurso.descripcion if recurso else '' }}" placeholder="Journeyman, general construction"></div>
     <div class="field"><label>Category *</label>
@@ -34,7 +34,7 @@
         {% endif %}
       {% endif %}
     </div>
-    <div class="field"><label>Group (optional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Labor, Materials..."></div>
+    <div class="field"><label>Group (optional)</label><input name="grupo" value="{{ recurso.grupo if recurso else '' }}" placeholder="Labour, Materials..."></div>
     <div class="field"><label>Supplier (optional)</label><input name="proveedor" value="{{ recurso.proveedor if recurso else '' }}"></div>
     <div class="field"><label>Subtype</label><input name="subtipo" value="{{ recurso.subtipo if recurso else '' }}" placeholder="journeyman, equipment, hauling"></div>
     <div class="field"><label>Capacity / specification</label><input name="capacidad" value="{{ recurso.capacidad if recurso else '' }}" placeholder="10 t, 70 HP, 8 m3"></div>

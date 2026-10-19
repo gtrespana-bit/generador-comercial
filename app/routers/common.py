@@ -35,6 +35,7 @@ from starlette.datastructures import UploadFile as UploadFileStarlette
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from jinja2 import pass_context
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload, load_only, selectinload
 from starlette.middleware.gzip import GZipMiddleware
@@ -323,9 +324,18 @@ except Exception:
 TEMPLATES.env.filters["money"] = fmt_monto
 try:
     from ..services.monedas import formato_iso as _formato_iso
-    TEMPLATES.env.filters["money_iso"] = _formato_iso
 except Exception:  # pragma: no cover
-    TEMPLATES.env.filters["money_iso"] = fmt_monto_iso
+    _formato_iso = fmt_monto_iso
+
+
+@pass_context
+def _money_iso(context, valor, moneda="USD", idioma=None, mercado=None):
+    """Formato monetario ISO con el locale de la interfaz si no se indica."""
+    idioma_vista = idioma or context.get("_idioma") or "es"
+    return _formato_iso(valor, moneda, idioma_vista, mercado)
+
+
+TEMPLATES.env.filters["money_iso"] = _money_iso
 TEMPLATES.env.filters["num"] = fmt_num
 TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
@@ -614,6 +624,9 @@ def _respuesta_auth_json(request: Request) -> bool:
         or request.headers.get("content-type", "").startswith("application/json")
     )
 
+_CONFIG_CACHE_KEY = "_cotizat_config_cache"
+
+
 def _config(db: Session) -> Configuracion:
     """Configuración del tenant con fallback si la columna del último merge falta.
 
@@ -631,12 +644,26 @@ def _config(db: Session) -> Configuracion:
     """
     from sqlalchemy.exc import DBAPIError, OperationalError, ProgrammingError
 
+    # _config se invoca varias veces durante una misma petición (moneda,
+    # mercado, etiquetas y plantilla). Reutiliza el objeto gestionado por la
+    # sesión en vez de repetir el mismo SELECT; la clave por organización
+    # mantiene aislados los recorridos administrativos que cambian de tenant.
+    cache = db.info.get(_CONFIG_CACHE_KEY)
+    cache_key = db.info.get("organizacion_id")
+    if isinstance(cache, dict) and cache_key in cache:
+        return cache[cache_key]
+
+    def guardar_en_cache(cfg):
+        if cfg is not None:
+            db.info.setdefault(_CONFIG_CACHE_KEY, {})[cache_key] = cfg
+        return cfg
+
     try:
         cfg = db.query(Configuracion).first()
         if cfg is None:
             asegurar_config(db)
             cfg = db.query(Configuracion).first()
-        return cfg
+        return guardar_en_cache(cfg)
     except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc:
         msg = str(exc).lower()
         is_missing = (
@@ -666,7 +693,7 @@ def _config(db: Session) -> Configuracion:
             if cfg is None:
                 asegurar_config(db)
                 cfg = db.query(Configuracion).first()
-            return cfg
+            return guardar_en_cache(cfg)
         except Exception:
             try:
                 db.rollback()
@@ -722,7 +749,7 @@ def _config(db: Session) -> Configuracion:
                     cfg.__dict__["recorrido_inicial_oculto"] = False
                 elif cfg.__dict__.get("recorrido_inicial_oculto") is None:
                     cfg.__dict__["recorrido_inicial_oculto"] = False
-                return cfg
+                return guardar_en_cache(cfg)
         except Exception as fallback_exc:
             log.error("Fallback _config también falló: %s", fallback_exc)
             raise exc from fallback_exc

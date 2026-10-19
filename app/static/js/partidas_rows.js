@@ -14,6 +14,7 @@
  */
 (function () {
   "use strict";
+  var ENGLISH = String(document.documentElement.lang || "").toLowerCase().indexOf("en") === 0;
 
   function crear(tag, clase, texto) {
     var el = document.createElement(tag);
@@ -24,18 +25,11 @@
 
   function fmtNum(valor, decimales) {
     var dec = decimales === undefined ? 2 : decimales;
-    var s = Number(valor || 0).toFixed(dec);
-    var partes = s.split(".");
-    var entera = partes[0];
-    var frac = partes[1] || "";
-    var neg = entera.indexOf("-") === 0;
-    if (neg) entera = entera.slice(1);
-    var out = "";
-    for (var i = 0; i < entera.length; i++) {
-      if (i > 0 && (entera.length - i) % 3 === 0) out += ".";
-      out += entera[i];
-    }
-    return (neg ? "-" : "") + out + (frac ? "," + frac : "");
+    var numero = Number(valor || 0);
+    return numero.toLocaleString(ENGLISH ? "en-GB" : "es-VE", {
+      minimumFractionDigits: dec,
+      maximumFractionDigits: dec
+    });
   }
 
   function monto(valor) {
@@ -71,7 +65,7 @@
     main.appendChild(nombre);
     if (partida.usos > 0) {
       var usosMini = crear("span", "usos-mini", "🔥" + partida.usos);
-      usosMini.title = "Usada " + partida.usos + " veces";
+      usosMini.title = ENGLISH ? "Used " + partida.usos + " times" : "Usada " + partida.usos + " veces";
       main.appendChild(usosMini);
     }
     td.appendChild(main);
@@ -79,7 +73,7 @@
     var sub = crear("div", "partida-sub");
     if (partida.apartado) {
       var apartado = crear("span", "apartado-mini", partida.apartado);
-      apartado.title = "Ruta del catálogo";
+      apartado.title = ENGLISH ? "Catalogue path" : "Ruta del catálogo";
       sub.appendChild(apartado);
     }
     if (partida.descripcion) {
@@ -87,7 +81,7 @@
       desc.title = partida.descripcion;
       sub.appendChild(desc);
     } else {
-      sub.appendChild(crear("span", "desc empty", "Sin descripción"));
+      sub.appendChild(crear("span", "desc empty", ENGLISH ? "No description" : "Sin descripción"));
     }
     if (partida.proveedor) {
       var prov = crear("span", "prov", "· " + partida.proveedor);
@@ -96,7 +90,7 @@
     }
     if (partida.imagen) {
       var img = crear("span", "has-img", "🖼️");
-      img.title = "Con imagen";
+      img.title = ENGLISH ? "With image" : "Con imagen";
       sub.appendChild(img);
     }
     td.appendChild(sub);
@@ -108,8 +102,9 @@
       (partida.coste_complementarios || 0) + (partida.coste_otros || 0);
     var td = cell("td", "col-coste right");
     td.dataset.coste = String(coste);
-    td.title = "Materiales " + monto(partida.coste_materiales) + " · Mano " + monto(partida.coste_mano_obra) +
-      " · Compl. " + monto(partida.coste_complementarios) + " · Otros " + monto(partida.coste_otros);
+    td.title = ENGLISH
+      ? "Materials " + monto(partida.coste_materiales) + " · Labour " + monto(partida.coste_mano_obra) + " · Complementary " + monto(partida.coste_complementarios) + " · Other " + monto(partida.coste_otros)
+      : "Materiales " + monto(partida.coste_materiales) + " · Mano " + monto(partida.coste_mano_obra) + " · Compl. " + monto(partida.coste_complementarios) + " · Otros " + monto(partida.coste_otros);
     td.appendChild(crear("span", "coste-val", coste > 0 ? monto(coste) : "—"));
     return td;
   }
@@ -131,11 +126,13 @@
       var margenPct = partida.precio ? (margen / partida.precio) * 100 : 0;
       var span;
       if (margen >= 0) {
-        span = crear("span", "margen-pos", "+" + monto(margen) + " · " + markup.toFixed(1) + "%");
-        span.title = "Beneficio " + monto(margen) + " · " + markup.toFixed(1) + "% s/coste, " + margenPct.toFixed(1) + "% margen";
+        span = crear("span", "margen-pos", "+" + monto(margen) + " · " + fmtNum(markup, 1) + "%");
+        span.title = ENGLISH
+          ? "Profit " + monto(margen) + " · " + fmtNum(markup, 1) + "% markup on cost, " + fmtNum(margenPct, 1) + "% margin"
+          : "Beneficio " + monto(margen) + " · " + fmtNum(markup, 1) + "% s/coste, " + fmtNum(margenPct, 1) + "% margen";
       } else {
-        span = crear("span", "margen-neg", monto(margen) + " · " + markup.toFixed(1) + "%");
-        span.title = markup.toFixed(1) + "% s/coste";
+        span = crear("span", "margen-neg", monto(margen) + " · " + fmtNum(markup, 1) + "%");
+        span.title = fmtNum(markup, 1) + (ENGLISH ? "% markup on cost" : "% s/coste");
       }
       td.appendChild(span);
     } else {
@@ -151,26 +148,26 @@
       var formR = crear("form");
       formR.method = "post";
       formR.action = "/partidas/" + partida.id + "/restaurar";
-      var btnR = crear("button", "btn btn-sm btn-primary", "↩ Restaurar");
+      var btnR = crear("button", "btn btn-sm btn-primary", ENGLISH ? "↩ Restore" : "↩ Restaurar");
       btnR.type = "submit";
-      btnR.title = "Restaurar en el catálogo";
+      btnR.title = ENGLISH ? "Restore in the catalogue" : "Restaurar en el catálogo";
       formR.appendChild(btnR);
       actions.appendChild(formR);
     } else {
       var editar = crear("a", "btn btn-sm btn-ghost", "✏️");
       editar.href = "/partidas/" + partida.id + "/editar";
-      editar.title = "Editar";
+      editar.title = ENGLISH ? "Edit" : "Editar";
       actions.appendChild(editar);
 
       var formD = crear("form");
       formD.method = "post";
       formD.action = "/partidas/" + partida.id + "/eliminar";
-      formD.setAttribute("data-confirm", partida.es_oficial
-        ? "¿Ocultar «" + partida.nombre + "» para esta organización? Podrás restaurarla después."
-        : "¿Eliminar definitivamente «" + partida.nombre + "»?");
+      formD.setAttribute("data-confirm", ENGLISH
+        ? (partida.es_oficial ? "Hide “" + partida.nombre + "” for this organisation? You can restore it later." : "Permanently delete “" + partida.nombre + "”?")
+        : (partida.es_oficial ? "¿Ocultar «" + partida.nombre + "» para esta organización? Podrás restaurarla después." : "¿Eliminar definitivamente «" + partida.nombre + "»?"));
       var btnD = crear("button", "btn btn-sm btn-ghost", partida.es_oficial ? "◉" : "✕");
       btnD.type = "submit";
-      btnD.title = partida.es_oficial ? "Ocultar" : "Eliminar";
+      btnD.title = partida.es_oficial ? (ENGLISH ? "Hide" : "Ocultar") : (ENGLISH ? "Delete" : "Eliminar");
       formD.appendChild(btnD);
       actions.appendChild(formD);
     }
@@ -221,9 +218,11 @@
     var details = crear("details", "descomp-details");
     details.dataset.descomp = String(partida.id);
     var summary = crear("summary");
-    var label = crear("span", "descomp-summary-label", "▾ Descomposición (" + partida.recursos + " recursos)");
+    var label = crear("span", "descomp-summary-label", ENGLISH
+      ? "▾ Breakdown (" + partida.recursos + " resources)"
+      : "▾ Descomposición (" + partida.recursos + " recursos)");
     summary.appendChild(label);
-    summary.appendChild(crear("span", "hint", "Clic para ver"));
+    summary.appendChild(crear("span", "hint", ENGLISH ? "Click to view" : "Clic para ver"));
     details.appendChild(summary);
     details.appendChild(crear("div", "table-wrap descomp-holder"));
     td.appendChild(details);
@@ -233,7 +232,17 @@
 
   function thead() {
     var tr = crear("tr");
-    var cabeceras = [
+    var cabeceras = ENGLISH ? [
+      { clase: "col-check", titulo: "Select subsection", esCheck: true },
+      { clase: "col-code sortable", titulo: "Internal code", texto: "Code" },
+      { clase: "col-nombre sortable", titulo: "", texto: "Line item" },
+      { clase: "col-und", titulo: "", texto: "Unit" },
+      { clase: "col-coste right sortable", titulo: "Direct cost (materials + labour + complementary costs + other)", texto: "Cost" },
+      { clase: "col-precio right sortable", titulo: "", texto: "Price" },
+      { clase: "col-margen right", titulo: "Profit = price − cost · % on cost", texto: "Profit" },
+      { clase: "col-usos right sortable", titulo: "", texto: "Uses" },
+      { clase: "col-actions right", titulo: "", texto: "Actions" },
+    ] : [
       { clase: "col-check", titulo: "Seleccionar subcategoría", esCheck: true },
       { clase: "col-code sortable", titulo: "Código interno", texto: "Código" },
       { clase: "col-nombre sortable", titulo: "", texto: "Partida" },
@@ -301,9 +310,9 @@
     var head = crear("header", "apartado-head");
     head.setAttribute("data-cotizat-click", "partidas-toggle-apartado");
     var toggle = crear("span", "apartado-toggle", "▼");
-    var label = crear("span", "apartado-label", grupo.apartado);
+    var label = crear("span", "apartado-label", grupo.apartado === "Sin apartado" && ENGLISH ? "No heading" : grupo.apartado);
     var badge = crear("span", "apartado-count-badge", String(grupo.partidas.length));
-    var hint = crear("span", "apartado-hint", grupo.partidas.length + " partidas");
+    var hint = crear("span", "apartado-hint", grupo.partidas.length + (ENGLISH ? " line items" : " partidas"));
     head.appendChild(toggle);
     head.appendChild(label);
     head.appendChild(badge);
@@ -323,7 +332,7 @@
     contenedor.replaceChildren();
     if (!grupos.length) {
       var empty = crear("div", "subcat-placeholder");
-      empty.textContent = "No hay partidas en este subcapítulo.";
+      empty.textContent = ENGLISH ? "No line items in this subsection." : "No hay partidas en este subcapítulo.";
       contenedor.appendChild(empty);
       return;
     }

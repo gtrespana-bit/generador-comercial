@@ -40,19 +40,20 @@
     </thead>
     <tbody>
       {% for p in presupuestos %}
+      {% set total_lista = p.total_listado %}
       <tr>
         <td data-label="N.º"><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
         <td data-label="Fecha">{{ p.fecha | fecha }}</td>
         <td data-label="Cliente">{{ p.cliente.nombre }}</td>
         <td data-label="Estado"><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-        <td class="right" data-label="Total"><strong>{{ p.total_listado | money_iso(p.moneda) }}</strong></td>
+        <td class="right" data-label="Total"><strong>{{ total_lista | money_iso(p.moneda) }}</strong></td>
         <td class="actions-cell" data-label="Acciones">
           <div class="row-actions list-row-actions">
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">Ver</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Editar</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/planos" title="Medición manual sobre planos">📐 Planos</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/tiempos" title="Tiempo estimado de obra">Tiempos</a>
-            {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (p.total | money_iso(p.moneda)) ~ '.') %}
+            {% set wa = p.cliente.telefono | whatsapp('Hola ' ~ p.cliente.nombre ~ ', te comparto el presupuesto ' ~ p.numero ~ ' por un total de ' ~ (total_lista | money_iso(p.moneda)) ~ '.') %}
             {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Enviar por WhatsApp">WhatsApp</a>{% endif %}
             <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="csp-s-a91548c594">
               <button class="btn btn-sm btn-ghost" type="submit" title="Duplicar">Duplicar</button>

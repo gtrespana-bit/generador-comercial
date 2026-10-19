@@ -105,6 +105,13 @@ _VOCABULARIO_GB: dict[str, str] = {
     # Instalaciones
     "receptacles": "socket outlets",
     "receptacle": "socket outlet",
+    # Nombres de obra contra incendios y electricidad según uso británico:
+    # «manual call point» y «socket outlet» son los términos de las normas.
+    "pull station": "call point",
+    "electrical outlet": "socket outlet",
+    # Esta partida se refiere al aparato de cocina empotrado completo, no solo
+    # a la placa: en este título británico debe decir «built-in cooker».
+    "Removal of a built-in cooktop": "Removal of a built-in cooker",
     "breaker panel": "consumer unit",
     "piping": "pipework",
     "shutoff valves": "isolating valves",

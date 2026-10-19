@@ -20,7 +20,7 @@
   <select name="estado" aria-label="Status">
     <option value="">All statuses</option>
     {% for e in estados %}
-    <option value="{{ e }}" {{ 'selected' if estado == e else '' }}>{{ e | capitalize }}</option>
+    <option value="{{ e }}" {{ 'selected' if estado == e else '' }}>{{ e | mensaje(_idioma) }}</option>
     {% endfor %}
   </select>
   <input type="date" name="desde" value="{{ desde }}" title="From" aria-label="From">
@@ -40,19 +40,20 @@
     </thead>
     <tbody>
       {% for p in presupuestos %}
+      {% set total_lista = p.total_listado %}
       <tr>
         <td data-label="No."><a class="link" href="/presupuestos/{{ p.id }}">{{ p.numero }}</a>{% if p.es_demo %} <span class="badge">Demo</span>{% endif %}</td>
         <td data-label="Date">{{ p.fecha | fecha }}</td>
         <td data-label="Client">{{ p.cliente.nombre }}</td>
-        <td data-label="Status"><span class="badge badge-{{ p.estado }}">{{ p.estado | capitalize }}</span></td>
-        <td class="right" data-label="Total"><strong>{{ p.total_listado | money_iso(p.moneda) }}</strong></td>
+        <td data-label="Status"><span class="badge badge-{{ p.estado }}">{{ p.estado | mensaje(_idioma) }}</span></td>
+        <td class="right" data-label="Total"><strong>{{ total_lista | money_iso(p.moneda) }}</strong></td>
         <td class="actions-cell" data-label="Actions">
           <div class="row-actions list-row-actions">
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}">View</a>
             <a class="btn btn-sm" href="/presupuestos/{{ p.id }}/editar">Edit</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/planos" title="Manual measurement on plans">📐 Plans</a>
             <a class="btn btn-sm btn-ghost" href="/presupuestos/{{ p.id }}/tiempos" title="Estimated construction time">Times</a>
-            {% set wa = p.cliente.telefono | whatsapp('Hello ' ~ p.cliente.nombre ~ ', I am sharing estimate ' ~ p.numero ~ ' for a total of ' ~ (p.total | money_iso(p.moneda)) ~ '.') %}
+            {% set wa = p.cliente.telefono | whatsapp('Hello ' ~ p.cliente.nombre ~ ', I am sharing estimate ' ~ p.numero ~ ' for a total of ' ~ (total_lista | money_iso(p.moneda)) ~ '.') %}
             {% if wa %}<a class="btn btn-sm btn-whatsapp" href="{{ wa }}" target="_blank" title="Send via WhatsApp">WhatsApp</a>{% endif %}
             <form method="post" action="/presupuestos/{{ p.id }}/duplicar" class="csp-s-a91548c594">
               <button class="btn btn-sm btn-ghost" type="submit" title="Duplicate">Duplicate</button>

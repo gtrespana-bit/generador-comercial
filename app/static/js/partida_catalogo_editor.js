@@ -3,7 +3,13 @@
 (function () {
   "use strict";
 
-  var OPTIONS = [
+  var ENGLISH = String(document.documentElement.lang || "").toLowerCase().indexOf("en") === 0;
+  var OPTIONS = ENGLISH ? [
+    ["materiales", "Materials"],
+    ["mano_obra", "Labour"],
+    ["otros", "Equipment and other"],
+    ["complementarios", "Complementary costs"]
+  ] : [
     ["materiales", "Materiales"],
     ["mano_obra", "Mano de obra"],
     ["otros", "Equipos y otros"],
@@ -29,8 +35,22 @@
     return Math.round((v + Number.EPSILON) * 100) / 100;
   }
 
+  function localeNumero() {
+    return ENGLISH ? "en-GB" : "es-VE";
+  }
+
   function formato(valor) {
-    return numero(valor).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return numero(valor).toLocaleString(localeNumero(), {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function formatoDecimal(valor, decimales) {
+    return numero(valor).toLocaleString(localeNumero(), {
+      minimumFractionDigits: decimales,
+      maximumFractionDigits: decimales
+    });
   }
 
   // Fuente de recursos para el autocompletado: el editor de presupuestos ya
@@ -86,6 +106,11 @@
     var body = root.querySelector('[data-role="tabla-descomposicion-catalogo"] tbody');
     var empty = root.querySelector('[data-role="breakdown-empty"]');
     if (!body) return null;
+    var moneda = String(root.getAttribute("data-moneda") || "USD").toUpperCase();
+
+    function formatoMoneda(valor) {
+      return formato(valor) + " " + moneda;
+    }
 
     function calcular() {
       var sums = { materiales: 0, mano_obra: 0, otros: 0, complementarios: 0 };
@@ -102,7 +127,7 @@
         // Mismo redondeo que el servidor: importe = ROUND_HALF_UP(rend × precio)
         var importe = redondear2(rend * precio);
         tr._importe = importe;
-        tr.querySelector(".importe-cat").textContent = formato(importe);
+        tr.querySelector(".importe-cat").textContent = formatoMoneda(importe);
         sums[cat] = redondear2((sums[cat] || 0) + importe);
         totalRend += rend;
         totalCoste = redondear2(totalCoste + importe);
@@ -122,7 +147,7 @@
         precio.classList.add("input-derivado");
         var importe = redondear2(numero(tr.querySelector('[name="d_rendimiento"]').value) * base / 100);
         tr._importe = importe;
-        tr.querySelector(".importe-cat").textContent = formato(importe);
+        tr.querySelector(".importe-cat").textContent = formatoMoneda(importe);
         sums.complementarios = redondear2((sums.complementarios || 0) + importe);
         totalCoste = redondear2(totalCoste + importe);
       });
@@ -131,16 +156,16 @@
         var und = tr.querySelector('[name="d_unidad"]').value.trim();
         var rend = numero(tr.querySelector('[name="d_rendimiento"]').value);
         var pctRend = tr.querySelector(".pct-rend");
-        pctRend.textContent = und === "%" ? "—" : ((totalRend ? rend / totalRend * 100 : 0).toFixed(1) + "%");
-        tr.querySelector(".pct-coste").textContent = ((totalCoste ? (tr._importe || 0) / totalCoste * 100 : 0).toFixed(1) + "%");
+        pctRend.textContent = und === "%" ? "—" : (formatoDecimal(totalRend ? rend / totalRend * 100 : 0, 1) + "%");
+        tr.querySelector(".pct-coste").textContent = formatoDecimal(totalCoste ? (tr._importe || 0) / totalCoste * 100 : 0, 1) + "%";
       });
 
       Object.keys(sums).forEach(function (key) {
         var el = root.querySelector('[data-total="' + key + '"]');
-        if (el) el.textContent = formato(sums[key]);
+        if (el) el.textContent = formatoMoneda(sums[key]);
       });
       var directo = root.querySelector('[data-total="directo"]');
-      if (directo) directo.textContent = formato(totalCoste);
+      if (directo) directo.textContent = formatoMoneda(totalCoste);
       if (empty) CotizatStyles.set(empty, "display", rows.length ? "none" : "flex");
       root.dispatchEvent(new CustomEvent("partida-editor:recalculated", {
         bubbles: true,
@@ -164,23 +189,23 @@
         if (directoEl) coste = numero(directoEl.textContent);
       }
       if (coste <= 0) {
-        hint.textContent = 'Añade recursos para ver el beneficio';
+        hint.textContent = ENGLISH ? "Add resources to see profit" : "Añade recursos para ver el beneficio";
         CotizatStyles.set(hint, "color", 'var(--text-muted)');
         return;
       }
       var beneficio = precio - coste;
       var markup = beneficio / coste * 100;
       var margen = precio > 0 ? beneficio / precio *100 : 0;
-      hint.textContent = 'Coste: ';
+      hint.textContent = ENGLISH ? "Cost: " : "Coste: ";
       var costeStrong = document.createElement('strong');
-      costeStrong.textContent = formato(coste);
+      costeStrong.textContent = formatoMoneda(coste);
       hint.appendChild(costeStrong);
-      hint.appendChild(document.createTextNode(' · Beneficio: '));
+      hint.appendChild(document.createTextNode(ENGLISH ? " · Profit: " : " · Beneficio: "));
       var beneficioStrong = document.createElement('strong');
       CotizatStyles.set(beneficioStrong, "color", beneficio >= 0 ? 'var(--green)' : 'var(--rose)');
-      beneficioStrong.textContent = formato(beneficio) + ' (' + markup.toFixed(1).replace(".",",") + '% s/coste, ' + margen.toFixed(1).replace(".",",") + '% margen)';
+      beneficioStrong.textContent = formatoMoneda(beneficio) + " (" + formatoDecimal(markup, 1) + (ENGLISH ? "% markup on cost, " : "% s/coste, ") + formatoDecimal(margen, 1) + (ENGLISH ? "% margin)" : "% margen)");
       hint.appendChild(beneficioStrong);
-      hint.title = 'Markup ' + markup.toFixed(2) + '% sobre coste | Margen ' + margen.toFixed(2) + '% sobre precio';
+      hint.title = ENGLISH ? "Markup " + formatoDecimal(markup, 2) + "% on cost | Margin " + formatoDecimal(margen, 2) + "% on selling price" : "Markup " + formatoDecimal(markup, 2) + "% sobre coste | Margen " + formatoDecimal(margen, 2) + "% sobre precio";
     }
 
     function input(nombre, tipo, valor, attrs) {
@@ -274,8 +299,8 @@
           sug.title = item.aviso_precio;
         } else if (item.origen_precio === "nacional" || item.origen_precio === "organizacion") {
           right.title = item.origen_precio === "organizacion"
-            ? "Precio propio de tu empresa para este mercado"
-            : "Precio nacional de referencia";
+            ? (ENGLISH ? "Your company price for this market" : "Precio propio de tu empresa para este mercado")
+            : (ENGLISH ? "National reference price" : "Precio nacional de referencia");
         }
         sug.appendChild(right);
         sug.addEventListener("mousedown", function (e) { e.preventDefault(); });
@@ -368,7 +393,7 @@
       tr.appendChild(tdCat);
 
       var tdCodigo = document.createElement("td");
-      tdCodigo.appendChild(input("d_codigo", "text", datos.codigo || "", { placeholder: "Código" }));
+      tdCodigo.appendChild(input("d_codigo", "text", datos.codigo || "", { placeholder: ENGLISH ? "Code" : "Código" }));
       tr.appendChild(tdCodigo);
       var tdUnidad = document.createElement("td");
       tdUnidad.appendChild(input("d_unidad", "text", datos.unidad || ((datos.categoria || "") === "mano_obra" ? "h" : "ud"), { placeholder: "ud" }));
@@ -376,7 +401,7 @@
       var tdDesc = document.createElement("td");
       var descWrap = document.createElement("div");
       CotizatStyles.setCssText(descWrap, "position:relative; display:flex; width:100%; min-width:0;");
-      var descInput = input("d_descripcion", "text", datos.descripcion || "", { placeholder: "Descripción del recurso (escribe para buscar en tus recursos…)" });
+      var descInput = input("d_descripcion", "text", datos.descripcion || "", { placeholder: ENGLISH ? "Resource description (type to search your resources…)" : "Descripción del recurso (escribe para buscar en tus recursos…)" });
       CotizatStyles.set(descInput, "flex", "1");
       descInput.setAttribute("autocomplete", "off");
       descWrap.appendChild(descInput);
@@ -385,20 +410,20 @@
       tr.appendChild(tdDesc);
       var tdRend = document.createElement("td");
       tdRend.className = "right";
-      tdRend.appendChild(input("d_rendimiento", "number", datos.rendimiento == null ? "" : datos.rendimiento, { step: "any", min: "0", placeholder: "0,00" }));
+      tdRend.appendChild(input("d_rendimiento", "number", datos.rendimiento == null ? "" : datos.rendimiento, { step: "any", min: "0", placeholder: ENGLISH ? "0.00" : "0,00" }));
       tr.appendChild(tdRend);
       var tdPctR = document.createElement("td"); tdPctR.className = "right pct-rend"; tdPctR.textContent = "0%"; tr.appendChild(tdPctR);
       var tdPrecio = document.createElement("td");
       tdPrecio.className = "right";
-      tdPrecio.appendChild(input("d_precio", "number", datos.precio == null ? (datos.precio_unitario == null ? "" : datos.precio_unitario) : datos.precio, { step: "any", min: "0", placeholder: "0,00" }));
+      tdPrecio.appendChild(input("d_precio", "number", datos.precio == null ? (datos.precio_unitario == null ? "" : datos.precio_unitario) : datos.precio, { step: "any", min: "0", placeholder: ENGLISH ? "0.00" : "0,00" }));
       tr.appendChild(tdPrecio);
-      var tdImporte = document.createElement("td"); tdImporte.className = "right importe-cat"; tdImporte.textContent = "0,00"; tr.appendChild(tdImporte);
+      var tdImporte = document.createElement("td"); tdImporte.className = "right importe-cat"; tdImporte.textContent = formatoMoneda(0); tr.appendChild(tdImporte);
       var tdPctC = document.createElement("td"); tdPctC.className = "right pct-coste"; tdPctC.textContent = "0%"; tr.appendChild(tdPctC);
       var tdAcciones = document.createElement("td");
       var quitar = document.createElement("button");
       quitar.type = "button";
       quitar.className = "btn btn-sm btn-ghost resource-remove";
-      quitar.title = "Eliminar recurso";
+      quitar.title = ENGLISH ? "Remove resource" : "Eliminar recurso";
       quitar.textContent = "✕";
       quitar.addEventListener("click", function () { tr.remove(); calcular(); });
       tdAcciones.appendChild(quitar);
