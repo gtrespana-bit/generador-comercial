@@ -37,6 +37,14 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
                 "El resto de mercados hispanos sigue siendo el foco: Venezuela, Colombia, México, Ecuador, Perú, Chile y Argentina. Todo corre en una sola aplicación, sin duplicar catálogos.",
             ],
         ),
+        (
+            "Reino Unido, Estados Unidos, Australia, Irlanda y Canadá",
+            [
+                "El producto no se queda en el mundo hispano. Reino Unido trabaja en libras con 388 recursos investigados uno a uno en el mercado británico, retención CIS del 20 %, 30 % o 0 % sobre la mano de obra y un IVA que cambia con la obra: 20 % estándar, 5 % en reforma residencial que cumple condiciones, 0 % en obra nueva e inversión del sujeto pasivo entre empresas. El vocabulario también es suyo: skirting, worktop, plasterboard, socket outlet, consumer unit.",
+                "Estados Unidos, Australia, Irlanda y Canadá tienen su propio bloque: moneda, impuesto (sales tax por estado, GST australiano, GST/HST canadiense, VAT irlandés al 13,5 % en servicios de construcción), ID fiscal y terminología de obra. Estados Unidos es además el único mercado imperial: las mediciones llegan en pies, pulgadas y galones y el catálogo las convierte.",
+                "No es la misma página con la bandera cambiada: cada mercado anglófono tiene su URL (/en-gb/, /en-us/, /en-au/, /en-ie/, /en-ca/), su fiscalidad y su redacción. El presupuesto de un contratista de Manchester no se lee como el de uno de Texas.",
+            ],
+        ),
     ],
     "VE": [
         (

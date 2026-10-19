@@ -20,7 +20,7 @@ from .i18n import normalizar_idioma
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
 OG_IMAGE = "/static/og-cotizat.png"
-SITEMAP_LASTMOD = "2026-08-25"
+SITEMAP_LASTMOD = "2026-10-18"
 
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
 TEMAS = ("software-presupuestos", "apu", "remodelacion")
@@ -145,7 +145,13 @@ def _es_indexable_en(p: str) -> bool:
         resto = (m.group(2) or "").strip("/")
         if not resto:
             return True
-        return resto in TEMAS
+        if resto in TEMAS:
+            return True
+        # Guías y artículos del mercado: /en-gb/guia/... es la URL canónica
+        # de los artículos británicos y sin esta rama quedarían en noindex.
+        if re.match(r"^guia/[a-z0-9-]+$", resto):
+            return True
+        return False
     return False
 
 
@@ -194,10 +200,13 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
     se anunciaban variantes inexistentes como «es-US».
     """
     base = origen_canonico(request)
+    # «en» apunta a la URL que de verdad se sirve, no a /en/, que es un 301 a
+    # /en-us/. Un hreflang que resuelve en redirección se descarta en Search
+    # Console y reparte la señal entre dos URLs.
     out = [
         {"hreflang": "x-default", "href": base + ruta_pais("", tema)},
         {"hreflang": "es", "href": base + ruta_pais("", tema)},
-        {"hreflang": "en", "href": base + ruta_en("", tema)},
+        {"hreflang": "en", "href": base + ruta_en("US", tema)},
     ]
     for pais in lista_paises():
         out.append(
@@ -250,18 +259,32 @@ _RE_PRUEBA_EN = re.compile(
 )
 
 
-def _aplicar_prueba(ficha: dict, lang: str = "es") -> dict:
-    """Ajusta description y FAQ al estado real de la prueba."""
+def _aplicar_prueba(ficha: dict, lang: str = "es", incluir_prueba: bool = True) -> dict:
+    """Ajusta description y FAQ al estado real de la prueba.
+
+    ``incluir_prueba=False`` deja la descripción sin la coletilla
+    comercial: en una guía o un artículo solo sirve para que Google
+    corte la frase a mitad.
+    """
     en = normalizar_idioma(lang) == "en"
     n = _dias_prueba_publicos()
     patron = _RE_PRUEBA_EN if en else _RE_PRUEBA
     desc = patron.sub("", str(ficha.get("description") or "")).strip()
     desc = re.sub(r"\s{2,}", " ", desc).rstrip(" .")
-    if n:
-        desc = f"{desc}. {n} days free, no card." if en else f"{desc}. {n} días gratis, sin tarjeta."
+    # 160 y no 170: Google corta el snippet alrededor de los 155-160
+    # caracteres en escritorio, y con la coletilla de la prueba una
+    # descripción de 145 acababa en 168 y se veía partida.
+    maximo = 160
+    sufijo = ""
+    if incluir_prueba is not False and n:
+        sufijo = f". {n} days free, no card." if en else f". {n} días gratis, sin tarjeta."
+    if sufijo:
+        # Se recorta la base, no la coletilla: antes se cortaba el texto ya
+        # unido y el snippet acababa en «7 días gratis, sin…».
+        base = _recortar_a_palabra(desc, maximo - len(sufijo))
+        ficha["description"] = base + sufijo
     else:
-        desc = desc + "."
-    ficha["description"] = _recortar_meta(desc, 170)
+        ficha["description"] = _recortar_meta(desc + ".", maximo)
 
     faqs = []
     for item in ficha.get("faq") or []:
@@ -292,7 +315,23 @@ def _aplicar_prueba(ficha: dict, lang: str = "es") -> dict:
     return ficha
 
 
-def _recortar_meta(texto: str, maximo: int = 170) -> str:
+def _recortar_a_palabra(texto: str, maximo: int) -> str:
+    """Recorta sin dejar palabras partidas y sin añadir puntos suspensivos.
+
+    Se usa para la parte descriptiva cuando después va una coletilla fija:
+    el resultado se une con ella y el conjunto cabe en el límite.
+    """
+    t = re.sub(r"\s{2,}", " ", str(texto or "").strip())
+    if len(t) <= maximo:
+        return t
+    corte = t[:maximo]
+    ultimo = corte.rfind(" ")
+    if ultimo > maximo * 0.5:
+        corte = corte[:ultimo]
+    return corte.rstrip(" ,;·.")
+
+
+def _recortar_meta(texto: str, maximo: int = 160) -> str:
     """Recorta una meta description sin dejar palabras partidas."""
     t = re.sub(r"\s{2,}", " ", str(texto or "").strip())
     if len(t) <= maximo:
@@ -325,19 +364,26 @@ _LANDING: dict[str, dict] = {
     "": {
         "title": "CotizaT: software de presupuestos de construcción",
         "description": (
-            "Software de presupuestos de construcción y reformas para España y "
-            "Latinoamérica. Cada país con su catálogo de precios, IVA y NIF/RIF/RFC. "
-            "APU, margen y PDF profesional. 7 días gratis."
+            "Presupuestos de construcción para España, Latinoamérica y mercados "
+            "de habla inglesa. Catálogo y fiscalidad por país, APU y PDF."
         ),
-        "h1": "Software de presupuestos de obra para España y Latinoamérica",
+        "h1": (
+            "Software de presupuestos de obra para España, Latinoamérica y "
+            "mercados de habla inglesa"
+        ),
         "h1_resalte": "margen, tiempos y cierre",
         "sub": (
             "CotizaT convierte tu catálogo y tus precios en presupuestos de obra "
-            "claros, con coste interno, beneficio y horas de cuadrilla. España con "
-            "precios en EUR, NIF e IVA 21 %; Latinoamérica con su moneda y fiscalidad. "
-            "PDF con tu logo, listo para WhatsApp."
+            "claros, con coste interno, beneficio y horas de cuadrilla. España en "
+            "EUR con NIF e IVA 21 %; Latinoamérica con su moneda y su fiscalidad; "
+            "Reino Unido en libras con CIS e IVA por tipo de obra; Estados Unidos, "
+            "Australia, Irlanda y Canadá con su impuesto, su ID fiscal y su "
+            "terminología. PDF con tu logo, listo para WhatsApp."
         ),
-        "kicker": "Sistema comercial para España y Latinoamérica · Construcción y reformas",
+        "kicker": (
+            "Sistema comercial para España, Latinoamérica, Reino Unido, Estados "
+            "Unidos, Australia, Irlanda y Canadá · Construcción y reformas"
+        ),
         "faq": [
             {
                 "q": "¿CotizaT sirve para presupuestos de construcción en España y Latinoamérica?",
@@ -346,6 +392,17 @@ _LANDING: dict[str, dict] = {
                     "contratistas de España, Venezuela, Colombia, México, Ecuador y Perú. "
                     "Cada país tiene su catálogo de precios, su moneda, su IVA y su ID fiscal "
                     "(NIF, RIF, NIT, RFC, RUC) y se elige al entrar."
+                ),
+            },
+            {
+                "q": "¿CotizaT sirve también para Reino Unido o Estados Unidos?",
+                "a": (
+                    "Sí. Reino Unido tiene catálogo en libras, retenciones CIS "
+                    "(20 %, 30 % o 0 %) e IVA según el tipo de obra, incluida la "
+                    "inversión del sujeto pasivo. Estados Unidos, Australia, Irlanda "
+                    "y Canadá tienen su moneda, su impuesto (sales tax, GST/HST, VAT "
+                    "irlandés) y el vocabulario de obra de cada país. Eliges mercado "
+                    "al entrar y el documento sale con su moneda y su fiscalidad."
                 ),
             },
             {
@@ -1247,8 +1304,26 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
 
     if lang == "en":
         from .seo_en import landing_en as _landing_en
+        from .seo_articulos import articulo_de_pais as _articulo_de_pais
 
         base = _landing_en(codigo)
+        cuerpo: list = []
+        articulos: list = []
+        if codigo == "GB":
+            # Reino Unido tiene además artículos de cola larga con URL propia.
+            from .seo_reino_unido import cuerpo_landing, guias as _guias_uk
+
+            cuerpo = cuerpo_landing()
+            articulos = [
+                {"h1": a["h1"], "ruta": f"/en-gb/guia/{a['slug']}"}
+                for a in _guias_uk()
+            ]
+        else:
+            # Estados Unidos, Australia, Canadá e Irlanda: sin cuerpo propio
+            # sus landings eran la misma página con el nombre cambiado.
+            from .seo_mercados_en import cuerpo_landing as _cuerpo_mercado
+
+            cuerpo = _cuerpo_mercado(codigo)
         return _aplicar_prueba(
             {
                 **base,
@@ -1257,9 +1332,9 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
                 "nombre_pais": nombre_pais,
                 "tema": "",
                 "canonical_path": ruta_en(codigo),
-                "cuerpo": [],
-                "guias": [],
-                "articulo": None,
+                "cuerpo": cuerpo,
+                "guias": articulos,
+                "articulo": _articulo_de_pais(codigo, lang="en") if codigo else None,
             },
             lang="en",
         )
@@ -1558,10 +1633,13 @@ def jsonld_software(request: Request | None = None, codigo: str = "", lang: str 
     lang = normalizar_idioma(lang)
     en = lang == "en"
     pais = PAISES.get(str(codigo or "").upper())
-    area = {
-        "@type": "Country",
-        "name": pais["nombre"] if pais else ("Latin America" if en else "Latinoamérica"),
-    }
+    # El país se nombra en el idioma de la página: un schema en inglés que
+    # anuncia «Reino Unido» delata que el dato viene del registro español.
+    if pais:
+        nombre_area = (pais.get("nombre_en") or pais["nombre"]) if en else pais["nombre"]
+    else:
+        nombre_area = "Latin America" if en else "Latinoamérica"
+    area = {"@type": "Country", "name": nombre_area}
     if en:
         url_app = origen + ruta_en(codigo)
         url_precio = origen + "/en/pago"
@@ -1685,20 +1763,45 @@ def jsonld_howto(guia: dict, request: Request | None = None, lang: str = "es") -
 
 
 def _ruta_guia(slug: str, lang: str = "es") -> str:
-    """Ruta canónica de una guía: /guia/x en español, /en/guia/x en inglés."""
-    return f"/en/guia/{slug}" if normalizar_idioma(lang) == "en" else f"/guia/{slug}"
+    """Ruta canónica de una guía.
+
+    ``/guia/x`` en español y ``/en/guia/x`` en inglés. Un artículo escrito
+    para un mercado concreto vive bajo su prefijo (``/en-gb/guia/x``): la
+    URL dice de qué mercado habla el texto, y no compite con la guía
+    genérica en inglés ni crea una segunda URL del mismo documento.
+    """
+    if normalizar_idioma(lang) != "en":
+        return f"/guia/{slug}"
+    from .seo_articulos import ficha_articulo
+
+    articulo = ficha_articulo(slug, "en") or {}
+    pais = str(articulo.get("pais") or "").strip().upper()
+    if pais in PAISES and PAISES[pais].get("idioma") == "en":
+        return f"/en-{pais.lower()}/guia/{slug}"
+    return f"/en/guia/{slug}"
+
+
+def _articulos_en_para_enlazar() -> list[dict]:
+    """Artículos en inglés que se enlazan al pie de una guía en inglés."""
+    from .seo_articulos import lista_articulos_en
+
+    return lista_articulos_en()
 
 
 def jsonld_articulo(guia: dict, request: Request | None = None, lang: str = "es") -> dict:
     origen = origen_canonico(request)
     lang = normalizar_idioma(lang)
     path = _ruta_guia(guia["slug"], lang)
+    locale = lang
+    pais_articulo = str(guia.get("pais") or "").strip().upper()
+    if pais_articulo in PAISES and PAISES[pais_articulo].get("idioma") == "en":
+        locale = hreflang_pais(pais_articulo)
     return {
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": guia["h1"],
         "description": guia["description"],
-        "inLanguage": lang,
+        "inLanguage": locale,
         "url": origen + path,
         "mainEntityOfPage": origen + path,
         "datePublished": SITEMAP_LASTMOD,
@@ -1729,45 +1832,78 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         return None
     origen = origen_canonico(request)
     path = _ruta_guia(guia["slug"], lang)
+    en = lang == "en"
+    pais_guia = str(guia.get("pais") or "").strip().upper()
+    mercado_guia = PAISES.get(pais_guia) if pais_guia else None
+    # Un artículo escrito para un mercado anglófono (hoy, Reino Unido) se
+    # anuncia con su locale (en-GB) y no con «en» a secas, y no inventa una
+    # versión en español que no existe.
+    en_mercado = bool(mercado_guia and mercado_guia.get("idioma") == "en")
+    locale = hreflang_pais(pais_guia) if en_mercado else ("en" if en else "es")
+    prefijo = f"/en-{pais_guia.lower()}" if en_mercado else ("/en" if en else "")
     seo = _aplicar_prueba(
         {
             "title": guia["title"],
             "description": guia["description"],
-            "lang": lang,
+            # El locale del mercado (en-GB) y no el idioma a secas: la
+            # plantilla lo usa en <html lang> y en og:locale.
+            "lang": locale,
             "h1": guia["h1"],
             "canonical_path": path,
             "faq": list(guia.get("faq") or []),
         },
         lang=lang,
+        incluir_prueba=False,
     )
-    en = lang == "en"
     if en:
-        crumbs = [("Home", ruta_en("")), ("Guides", ruta_en("", "mapa-del-sitio")), (guia["h1"], path)]
+        crumbs = [
+            ("Home", prefijo + "/"),
+            ("Guides", "/en/mapa-del-sitio"),
+            (guia["h1"], path),
+        ]
     else:
         crumbs = [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]
     bloques = [
         jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
-        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=lang),
+        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=locale),
         jsonld_articulo(guia, request, lang=lang),
-        jsonld_howto(guia, request, lang=lang),
         jsonld_breadcrumb(request, crumbs),
     ]
+    # HowTo solo donde el documento es un procedimiento paso a paso. Las
+    # guías pilar lo son; un artículo de fiscalidad CIS no, y anunciarlo como
+    # tutoriales es schema que no se corresponde con la página.
+    if not en_mercado:
+        bloques.append(jsonld_howto(guia, request, lang=lang))
     if seo["faq"]:
         bloques.append(jsonld_faq(seo["faq"]))
-    ruta_es = _ruta_guia(guia["slug"], "es")
-    hreflang = [{"hreflang": "es", "href": origen + ruta_es}]
-    try:
-        from .seo_contenido import GUIAS_EN
+    if en_mercado:
+        hreflang = [
+            {"hreflang": locale, "href": origen + path},
+            {"hreflang": "x-default", "href": origen + path},
+        ]
+    else:
+        hreflang = [{"hreflang": "es", "href": origen + _ruta_guia(guia["slug"], "es")}]
+        try:
+            from .seo_contenido import GUIAS_EN
 
-        if en or slug in GUIAS_EN:
-            hreflang.append({"hreflang": "en", "href": origen + _ruta_guia(guia["slug"], "en")})
-    except Exception:
-        pass
+            if en or slug in GUIAS_EN:
+                hreflang.append({"hreflang": "en", "href": origen + _ruta_guia(guia["slug"], "en")})
+        except Exception:
+            pass
     return {
         "seo": seo,
         "guia": guia,
         "guias": lista_guias(),
+        "guias_en": (
+            [
+                {"h1": a["h1"], "ruta": _ruta_guia(a["slug"], "en")}
+                for a in _articulos_en_para_enlazar()
+                if a.get("slug") != guia.get("slug")
+            ]
+            if en
+            else []
+        ),
         "articulos": lista_articulos(),
         "paises": lista_paises(),
         "origen_seo": origen,
@@ -1776,6 +1912,9 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         "og_image": origen + OG_IMAGE,
         "jsonld_bloques": bloques,
         "seo_temas": TEMAS,
+        # Prefijo de idioma del artículo. La plantilla no puede deducirlo de
+        # la URL porque el middleware ya la ha reescrito.
+        "prefijo_guia": prefijo or "/en",
         "og_type": "article",
     }
 
@@ -1809,7 +1948,15 @@ def contexto_seo(
     bloques_ld = [
         jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
-        jsonld_webpage(request, ficha["canonical_path"], ficha["h1"], ficha.get("description", ""), lang=lang),
+        # inLanguage con el locale del mercado (en-GB, es-MX), no con el
+        # idioma a secas: es lo que declara la página en <html lang>.
+        jsonld_webpage(
+            request,
+            ficha["canonical_path"],
+            ficha["h1"],
+            ficha.get("description", ""),
+            lang=ficha.get("lang") or lang,
+        ),
         jsonld_software(request, codigo, lang=lang),
     ]
     if ficha.get("faq"):
@@ -2028,17 +2175,17 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         )
 
     add("/", "1.0", "weekly")
-    # Variantes en inglés (locale en) para las landings de país.
-    add("/en/", "0.9", "weekly")
+    # Una sola URL por mercado: la canónica. /gb/ y /en/ son redirecciones
+    # 301 a /en-gb/ y /en-us/, y un sitemap no debe anunciar redirecciones
+    # (Search Console las marca como «página con redirección» y la autoridad
+    # se reparte entre dos URLs).
     for codigo in ORDEN_SELECTOR:
-        add(ruta_pais(codigo), "0.9", "weekly")
-        add(f"/en-{codigo.lower()}/", "0.8", "weekly")
+        add(ruta_mercado(codigo), "0.9", "weekly")
     for tema in TEMAS:
         add(ruta_pais("", tema), "0.8", "monthly", tema)
         add(f"/en/{tema}", "0.8", "monthly", tema)
         for codigo in ORDEN_SELECTOR:
-            add(ruta_pais(codigo, tema), "0.8", "monthly", tema)
-            add(f"/en-{codigo.lower()}/{tema}", "0.7", "monthly", tema)
+            add(ruta_mercado(codigo, tema), "0.8", "monthly", tema)
     # Páginas sueltas con traducción: par es/en explícito.
     for ruta, prio, freq in (
         ("como-funciona", "0.7", "monthly"),
@@ -2077,6 +2224,26 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
                     for o in out:
                         if o["loc"] == base + ruta:
                             o["alternates"] = pares
+    except Exception:
+        pass
+    # Artículos de mercado con URL propia (/en-gb/guia/...). No tienen
+    # versión en español, así que se declaran con su locale y x-default, no
+    # como par es/en.
+    try:
+        from .seo_articulos import lista_articulos_en
+
+        for articulo in lista_articulos_en():
+            if str(articulo.get("pais") or "").upper() != "GB":
+                continue
+            ruta = _ruta_guia(articulo["slug"], "en")
+            if any(o["loc"] == base + ruta for o in out):
+                continue
+            locale_art = hreflang_pais(articulo["pais"])
+            alts = [
+                {"hreflang": locale_art, "href": base + ruta},
+                {"hreflang": "x-default", "href": base + ruta},
+            ]
+            add(ruta, "0.7", "monthly", alts=alts)
     except Exception:
         pass
     for legal in ("preguntas", "terminos", "privacidad", "soporte", "licencias"):

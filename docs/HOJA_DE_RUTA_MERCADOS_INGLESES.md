@@ -1,8 +1,8 @@
 # Hoja de ruta: inglés por mercado y apertura del Reino Unido
 
-**Rama:** `arena/62a38633-generador-comercial` sobre `main` (`2619b09`, que ya
-incluye el trabajo inglés fusionado en la PR #124)
-**Última verificación:** 18 de octubre de 2026 · suite **1747 pasan, 9 omitidos**
+**Rama:** `arena/76b3d95f-generador-comercial` sobre `main` (`cbb5e99`, que ya
+incluye el trabajo inglés fusionado en la PR #124 y la PR #128)
+**Última verificación:** 18 de octubre de 2026 · suite **1872 pasan, 9 omitidos**
 
 Este documento existe para poder retomar el trabajo sin tener que reconstruir
 el contexto. Dice qué está terminado, qué queda, en qué orden conviene
@@ -24,27 +24,21 @@ una estimación o un juicio, se dice expresamente.
 | Reino Unido · Fase 1 — CIS e inversión del sujeto pasivo | **Hecho** | `2c614cd` |
 | Reino Unido · Fase 2 — divisa y vigencia de precios | **Hecho** | `7cdd1c2` |
 | Carga de matrices desde el panel de operador | **Hecho** | `883b42a`, `508daaf` |
-| Lectura RLS de operador sobre `recursos` (sin esto el panel no puede cargar ninguna matriz) | **Hecho — falta desplegar** | `l7d0e3f6a9c4` |
-| **Cargar la matriz de Reino Unido en producción** | **Pendiente** | — es el bloqueo |
-| Reino Unido · Fase 3 — SEO de cola larga | Pendiente | — |
+| Lectura RLS de operador sobre `recursos` | **Hecho y desplegado** | `l7d0e3f6a9c4` (`/readyz` = head) |
+| Cargar la matriz de Reino Unido en producción | **Hecho** | 18-10-2026, SQL Editor |
+| Reino Unido · Fase 3 — SEO de cola larga | **Hecho** | esta rama (`docs/SEO_REINO_UNIDO.md`) |
 | Irlanda, Australia, Canadá, Estados Unidos | Pendiente | cada uno necesita estudio de precios |
 
-**Conclusión:** el producto está listo para Reino Unido **salvo una cosa**:
-la matriz de precios de 388 recursos está generada y validada, pero **no está
-cargada en la base de datos**. Sin ella, un presupuesto británico sale a
-aproximadamente la mitad del coste real, y la mano de obra unas seis veces por
-debajo. Es exactamente el escenario que se descartó desde el principio.
+**Conclusión:** Reino Unido está **abierto y completo** en producto, datos y
+SEO. La matriz de 388 recursos está cargada, la migración `l7d0e3f6a9c4` está
+desplegada (`/readyz` la confirma) y el mercado tiene landing, tres hubs y
+cuatro artículos con URL propia (`docs/SEO_REINO_UNIDO.md`).
 
-**Por qué todavía no está cargada (2026-10-18).** El primer intento real se
-hizo por el camino previsto —subir el CSV al panel de producción— y falló con
-388 «recurso no encontrado»: la sesión de operador no tiene organización
-activa y el RLS de tenant sobre `recursos` le devolvía **cero filas**, así que
-el importador no podía resolver ningún código aunque el catálogo está sembrado
-en la base. No es que los recursos no existan: es que el panel no podía
-verlos. El detalle completo y el arreglo (migración `l7d0e3f6a9c4`) están en
-§2.5. Mientras se despliega, la matriz puede cargarse **hoy mismo** con el
-SQL de `docs/cargar_precios_referencia_reino_unido_2026-10-18.sql` en el SQL
-Editor de Supabase, que es como se cargaron España y LatAm (§3.2).
+Lo que queda ya no es un bloqueo técnico: son los otros cuatro mercados
+(Irlanda, Australia, Canadá y Estados Unidos), y cada uno necesita su estudio
+de precios antes de abrirse. Lo único de Reino Unido que sigue pendiente es
+**conseguir enlaces entrantes y medir** en Search Console: el contenido está,
+la autoridad de dominio se construye fuera del código.
 
 ---
 
@@ -184,86 +178,45 @@ El head de Alembic pasa a ser **`l7d0e3f6a9c4`**.
 
 ## 3. Qué queda pendiente
 
-### 3.1 Antes de poder usar nada: desplegar
+### 3.1 Despliegue y esquema: hecho
 
-La matriz se carga **desde el panel de producción**, así que primero hay que
-llevar el código a `main` y desplegar.
+La base de producción está en **`l7d0e3f6a9c4`**, que es el head que exige el
+código, y `/readyz` responde `ok: true` (comprobado el 18-10-2026). Las dos
+migraciones que bloqueaban el panel están aplicadas:
 
-**Incidente del 2026-10-18 (resuelto en operativo, no en código).** El merge
-de la PR #124 se desplegó con la base remota **en `j5b8e1c4a9f2`**, y el
-código fusionado exige `k6c9f2d5b8a3` (columnas `iva_tratamiento`/`cis_tipo`
-en `presupuestos` y `facturas`, `coste_materiales` en `facturas`). Resultado:
-`GET /inicio` respondía **500** (el panel hidrata `Presupuesto` completo y el
-ORM hacía SELECT de columnas inexistentes) y `/readyz` cantaba el diagnóstico:
-«Esquema en j5b8e1c4a9f2; se espera k6c9f2d5b8a3». La reparación es pegar
-`docs/staging_upgrade_k6c9f2d5b8a3.sql` en el SQL Editor de Supabase (rol
-administrativo); el script aborta solo si la versión no es `j5b8e1c4a9f2`.
-**Lección:** Vercel no mira `/readyz` al desplegar — hay que aplicar el SQL
-de la migración **antes o en el mismo momento** del merge, y comprobar
-`/readyz` después. Si `/readyz` está en rojo, la app ya está rota aunque el
-despliegue diga «Listo».
+- `k6c9f2d5b8a3` — columnas de fiscalidad británica (`iva_tratamiento`,
+  `cis_tipo`, `coste_materiales`).
+- `l7d0e3f6a9c4` — política `cotizat_operador_select_recursos`, que es lo que
+  deja al panel de operador **ver** el catálogo para resolver los códigos.
 
-Orden:
+**Lo que hay que recordar si vuelve a pasar.** Vercel no mira `/readyz` al
+desplegar: si el código exige una revisión que la base no tiene, la app
+responde 500 en `/inicio` y el despliegue sigue diciendo «Listo». El orden
+correcto es aplicar el SQL de la migración **antes o en el mismo momento** del
+merge, y comprobar `/readyz` después. Los scripts de
+`docs/staging_upgrade_<rev>.sql` abortan solos si la versión no es la
+esperada, así que no hay riesgo de aplicarlos dos veces.
 
-0. **Comprobar `https://www.cotizat.online/readyz`** y dejar la base en el
-   head que exige el código desplegado (si dice `j5b8e1c4a9f2`, aplicar
-   `staging_upgrade_k6c9f2d5b8a3.sql` primero).
-1. Abrir la PR de esta rama → `main`.
-2. Hacer merge.
-3. Desplegar.
-4. **Aplicar la migración `l7d0e3f6a9c4`** en el SQL Editor de Supabase con
-   `docs/staging_upgrade_l7d0e3f6a9c4.sql` (el despliegue no ejecuta Alembic).
-   Sin este paso el panel sigue sin ver el catálogo y toda matriz se rechaza
-   con «recurso no encontrado» (§2.5). El head de Alembic que exige el código
-   es ahora `l7d0e3f6a9c4`; `/readyz` responde 503 hasta que la base lo
-   alcance, que es justo el aviso de que falta este paso.
+### 3.2 Carga de la matriz de Reino Unido: hecha
 
-### 3.2 Bloqueo: cargar la matriz de Reino Unido
+La matriz está cargada en producción (18-10-2026). Fichero de origen:
+`basedatos_partidas/salida/precios_recursos_reino_unido.csv`, 388 filas,
+país `GB`, moneda `GBP`, 167 `referencia` + 221 `derivado`, validada con el
+importador real: **388 filas, 0 errores**.
 
-**Reino Unido no debe abrirse a clientes reales antes de este paso.**
+Queda como referencia para las próximas matrices, porque las dos vías siguen
+abiertas y son idempotentes:
 
-Fichero: `basedatos_partidas/salida/precios_recursos_reino_unido.csv`
-388 filas · país `GB` · moneda `GBP` · separador `;` · `fecha_consulta`
-completa en las 388 filas (2026-10-18) · 167 `referencia` + 221 `derivado`.
+- **Panel de operador** → *Sistema › Matrices de precios* → validar sin
+  escribir y luego escribir. Solo funciona con la migración `l7d0e3f6a9c4`
+  desplegada.
+- **SQL Editor de Supabase** con el rol administrativo, pegando
+  `docs/cargar_precios_referencia_reino_unido_2026-10-18.sql`. La verificación
+  final del script debe devolver **388**.
 
-Verificado con el validador real: **388 filas, 0 errores**.
-
-Hay **dos vías** para cargarla; las dos son idempotentes y solo tocan las
-referencias nacionales de GB:
-
-**Vía A — panel de operador (la prevista; exige §3.1 completo).**
-
-1. Panel → **Sistema** → **Matrices de precios**.
-2. Subir el CSV y pulsar **«Validar sin escribir»**.
-3. Debe decir: *388 filas · 388 nuevas · 0 errores*. Si dice otra cosa, **no
-   escribir** y revisar el motivo en pantalla. Si el primer error es «Esta
-   sesión no ve ningún recurso del catálogo», falta la migración
-   `l7d0e3f6a9c4` en la base (§2.5).
-4. Pulsar **«Escribir 388 referencias»**.
-
-**Vía B — SQL Editor de Supabase (inmediata; no necesita desplegar).**
-
-1. Abrir el SQL Editor de Supabase con el rol administrativo (nunca
-   `cotizat_runtime` ni `cotizat_app`).
-2. Pegar `docs/cargar_precios_referencia_reino_unido_2026-10-18.sql` y
-   ejecutar. El script comprueba sus precondiciones y aborta solo si falta
-   algo: si dice «Hay N códigos de recurso que aún no existen en
-   public.recursos», ninguna organización ha sembrado el catálogo todavía —
-   se arregla abriendo una vez la sección **Recursos** o **Partidas** de la
-   app con la organización activa.
-3. La verificación final del script debe devolver **388**.
-
-Si se carga por la vía B, el panel quedará en sync (muestra el estado desde
-la misma tabla) y futuras actualizaciones de la matriz pueden seguir por
-cualquiera de las dos vías.
-
-Comprobación después de cargar: abrir un presupuesto con país Reino Unido y
-confirmar que la mano de obra ronda las cifras de la tabla de arriba, no la
-mitad.
-
-**Magnitud del error si se abre sin cargar** (388 recursos comparables,
-1 USD = 0,7502 GBP): mediana **1,84×** por debajo del coste real; rango entre
-0,53× y 17,14×.
+Qué se habría perdido sin cargarla (388 recursos comparables,
+1 USD = 0,7502 GBP): mediana **1,84×** por debajo del coste real, con un rango
+entre 0,53× y 17,14×.
 
 | Recurso | Base USD | Convertido | Real GB |
 |---|---|---|---|
@@ -271,36 +224,55 @@ mitad.
 | Peón | 3,50 | £2,63 | **£18,71** |
 | Arena | 22,00 | £16,50 | **£54,00** |
 
-### 3.3 Tres defectos de inglés localizados
+### 3.3 Los tres defectos de inglés: cerrados
 
-Encontrados revisando las 3.006 cadenas en inglés. Están identificados con su
-código, así que son de arreglo directo:
+Los tres siguen corregidos en `app/services/variante_ingles.py` y hay una
+prueba que impide que vuelvan (`tests/test_catalogo_recursos_gb.py`):
 
-| Código | Nombre | dice ahora | debe decir |
+| Código | Nombre | decía | dice |
 |---|---|---|---|
 | `09.10.01.090` | Instalación de pulsador de alarma | *pull station* | **call point** |
 | `09.17.02.020` | Reparación de punto eléctrico | *electrical outlet* | **socket outlet** |
 | `02.07.08.050` | Desmontaje de cocina empotrada | *built-in hob* | **built-in cooker** |
 
-Los dos primeros son vocabulario de Estados Unidos colándose en el mercado
-británico. El tercero es un error de significado: su propia descripción dice
-«cocina **o estufa** empotrada», así que *hob* (solo la placa) se queda corto.
-
-Nota: el catálogo ya usa *socket outlet* correctamente en otras partidas; hay
-44 apariciones de «outlet» y solo esta es incorrecta.
+Comprobado ejecutando el traductor real con mercado `GB`: los tres devuelven
+el término británico.
 
 ### 3.4 Deuda técnica menor
 
 - `app/services/landing_ejemplo.py:321` hace
-  `tasa_sugerida(moneda) or 1.0`. Una moneda sin tasa se presenta como si
-  una unidad valiera un dólar. Debería avisar en vez de inventar.
-- Las tasas se verificaron de una en una para **GBP, AUD y CAD**. Las demás
-  siguen con las que había; conviene repasarlas antes de abrir cada mercado.
+  `tasa_sugerida(moneda) or 1.0`. El `1.0` ya no se muestra (justo debajo hay
+  una guarda que cae a USD en vez de inventar la conversión), pero queda como
+  código muerto que conviene limpiar.
+- Las tasas se verificaron de una en una para **GBP, AUD, CAD y USD**. El
+  **euro sigue con la tasa del 25-08-2026** y es el que necesita Irlanda:
+  conviene reverificarlo antes de abrir ese mercado.
+- El resto de monedas del selector siguen con las tasas de agosto.
 
-### 3.5 Fase 3: SEO de cola larga en Reino Unido
+### 3.5 Fase 3 — SEO de cola larga: hecha
 
-Sin empezar. `app/seo_articulos.py` y `app/seo_contenido.py` no mencionan
-ningún código de mercado: hoy el SEO inglés es genérico, no por país.
+Reino Unido ya tiene contenido propio de mercado, no plantilla:
+
+| URL | Qué cubre |
+|---|---|
+| `/en-gb/` | Landing con cuerpo largo británico (CIS, IVA, vocabulario, APU) |
+| `/en-gb/software-presupuestos` | Hub con bloques de preliminares, Excel y CIS/IVA |
+| `/en-gb/apu` | Hub con coste empresa, residuos y plant |
+| `/en-gb/remodelacion` | Hub con strip-out, making good y snagging |
+| `/en-gb/guia/construction-quote-template-uk` | Qué lleva una *quotation* británica |
+| `/en-gb/guia/cis-deduction-subcontractors` | Las tres retenciones CIS |
+| `/en-gb/guia/vat-domestic-reverse-charge-construction` | Inversión del sujeto pasivo |
+| `/en-gb/guia/unit-price-analysis-uk` | Análisis de precios unitarios en libras |
+
+Además se corrigieron los defectos técnicos que hacían que ese contenido no
+puntuara: sitemap sin redirecciones, hreflang `en` a una URL que responde 200,
+`inLanguage` con locale, hubs ingleses que pintaban el cuerpo en español y
+`X-Robots-Tag` calculado sobre la ruta reescrita. El detalle está en
+`docs/SEO_REINO_UNIDO.md`.
+
+**Lo que queda de SEO no es código:** enlaces entrantes (directorios de
+oficio, FMB, TrustMark, prensa del sector) y medición en Search Console. Sin
+autoridad de dominio, ocho páginas bien escritas siguen sin tráfico.
 
 ### 3.6 Los otros cuatro mercados
 
@@ -318,22 +290,38 @@ Estados Unidos es el que más trabajo lleva: es el único imperial, así que las
 cotizaciones llegan en libras, galones, pies y yardas mientras el catálogo
 cuenta en kilos, litros y metros.
 
+**Presencia web (hecho, 2026-10-18).** Los cuatro tienen ya landing con
+contenido de mercado —no plantilla con el país cambiado—, FAQ de su
+fiscalidad y su sitio en la portada: accesos directos en el hero, bloque
+propio en la tabla de los 23 mercados y mención explícita en el copy genérico.
+Detalle en `docs/SEO_MERCADOS_INGLESES.md`. Lo que sigue faltando es el
+estudio de precios, y sin él no se abren a clientes.
+
+| Mercado | Landing | Cuerpo de mercado | FAQ propia | Matriz de precios |
+|---|---|---|---|---|
+| Reino Unido | `/en-gb/` | Sí (+ 4 artículos) | Sí | **Cargada** |
+| Estados Unidos | `/en-us/` | Sí | Sí | Pendiente |
+| Australia | `/en-au/` | Sí | Sí | Pendiente |
+| Canadá | `/en-ca/` | Sí | Sí | Pendiente |
+| Irlanda | `/en-ie/` | Sí | Sí | Pendiente (y revisar tasa EUR) |
+
 ---
 
 ## 4. Orden recomendado
 
-1. **PR → merge → desplegar → aplicar `l7d0e3f6a9c4` en Supabase** (SQL de
-   `docs/staging_upgrade_l7d0e3f6a9c4.sql`). Sin esto el panel no ve el
-   catálogo (§2.5). Si hay prisa, la vía B del §3.2 carga la matriz sin
-   esperar al despliegue.
-2. **Cargar la matriz del Reino Unido** y verificar un presupuesto de punta a
-   punta. Es lo único entre el código actual y un Reino Unido utilizable.
-3. **Los tres defectos de inglés.** Son tres cadenas; mejor dejarlas cerradas
-   antes de que haya clientes delante.
-4. **Fase 3 de SEO** para Reino Unido, ya con el mercado funcionando.
-5. **Irlanda**: es el siguiente más barato (métrico, y comparte el euro y
-   buena parte del vocabulario británico). Australia y Canadá después.
-6. **Estados Unidos** al final: imperial, y es el mercado que más exige.
+1. **Publicar esta rama** (PR → merge → desplegar) y comprobar en producción
+   `/readyz` (`l7d0e3f6a9c4`) y `/sitemap.xml` (cuatro URLs `/en-gb/guia/...`,
+   ninguna `/gb/` ni `/en/`).
+2. **Search Console**: reenviar el sitemap e inspeccionar `/en-gb/` y un
+   artículo para confirmar «Página indexable». Empezar a medir impresiones.
+3. **Enlaces entrantes** para Reino Unido: directorios de oficio, FMB,
+   TrustMark y prensa del sector. Es lo único que separa el contenido de las
+   primeras posiciones.
+4. **Irlanda**: el siguiente más barato (métrico, euro, vocabulario británico).
+   Antes de abrirlo, reverificar la tasa EUR (sigue en 25-08-2026) y hacer su
+   estudio de precios.
+5. **Australia y Canadá** después, cada uno con su matriz.
+6. **Estados Unidos** al final: imperial y el que más exige.
 
 ---
 
@@ -388,6 +376,8 @@ Ficheros que concentran el trabajo:
 | Variantes de inglés por mercado | `app/services/variante_ingles.py` |
 | Divisa y vigencia | `app/services/tasa.py`, `app/services/vigencia_precios.py` |
 | Carga desde el panel | `app/routers/admin.py`, `app/routers/admin_paginas.py` |
+| SEO de Reino Unido | `app/seo_reino_unido.py`, `docs/SEO_REINO_UNIDO.md`, `tests/test_seo_reino_unido.py` |
+| Presencia de los mercados ingleses | `app/seo_mercados_en.py`, `docs/SEO_MERCADOS_INGLESES.md`, `tests/test_presencia_mercados_angloparlantes.py` |
 
 **Al añadir una migración**, se rompen cinco tests a la vez: hay que actualizar
 los cuatro parches de la cadena de heads, añadir `docs/staging_upgrade_<rev>.sql`
@@ -405,7 +395,7 @@ y subir `EXPECTED_ALEMBIC_HEAD` en `app/database.py`.
 | Referencias de la matriz británica | 388 (167 investigadas + 221 derivadas) |
 | Resto de español en el catálogo inglés | 0 |
 | Pares de plantillas EN sin problemas | 92 / 92 |
-| Tests | 1747 pasan, 9 omitidos |
+| Tests | 1872 pasan, 9 omitidos (34 de SEO británico + 34 de presencia de mercados) |
 | Head de Alembic | `l7d0e3f6a9c4` |
 | Recargo empresarial británico | 19,8 % sobre 1.751,9 h facturables |
 | Tasa adoptada | 1 USD = 0,7502 GBP |

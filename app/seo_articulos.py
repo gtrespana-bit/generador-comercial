@@ -357,6 +357,14 @@ def ficha_articulo(slug: str, lang: str = "es") -> dict | None:
     slug = str(slug or "").strip()
     if lang == "en" and slug in ARTICULOS_EN:
         return ARTICULOS_EN[slug]
+    # Los artículos británicos solo existen en inglés: pedirlos en español
+    # devolvería un texto que no está traducido.
+    if lang == "en":
+        from .seo_reino_unido import articulo as _articulo_uk
+
+        uk = _articulo_uk(slug)
+        if uk:
+            return uk
     return ARTICULOS.get(slug)
 
 
@@ -364,10 +372,21 @@ def lista_articulos() -> list[dict]:
     return [ARTICULOS[k] for k in ORDEN_ARTICULOS]
 
 
-def articulo_de_pais(codigo: str) -> dict | None:
+def lista_articulos_en() -> list[dict]:
+    """Artículos en inglés, incluidos los de mercado británico."""
+    from .seo_reino_unido import ORDEN_ARTICULOS as ORDEN_UK
+    from .seo_reino_unido import articulo as _articulo_uk
+
+    out = [ARTICULOS_EN[k] for k in ORDEN_ARTICULOS if k in ARTICULOS_EN]
+    out.extend(_articulo_uk(slug) for slug in ORDEN_UK)
+    return [a for a in out if a]
+
+
+def articulo_de_pais(codigo: str, lang: str = "es") -> dict | None:
     codigo = str(codigo or "").strip().upper()
-    for item in lista_articulos():
-        if item["pais"] == codigo:
+    fuente = lista_articulos_en() if lang == "en" else lista_articulos()
+    for item in fuente:
+        if item.get("pais") == codigo:
             return item
     return None
 # This file is appended to seo_articulos.py

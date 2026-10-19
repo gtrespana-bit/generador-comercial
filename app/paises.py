@@ -910,6 +910,94 @@ def es_codigo_valido(codigo: str | None) -> bool:
     return str(codigo).strip().upper() in PAISES
 
 
+# ---------------------------------------------------------------------------
+# Orden de presentación en la web pública
+# ---------------------------------------------------------------------------
+# ``ORDEN_SELECTOR`` sigue siendo el orden de validación y del selector (España
+# primero y después Latinoamérica), pero no sirve para pintar la portada: los
+# tres primeros mercados de la lista son España, Venezuela y Colombia, así que
+# en el hero y en la tabla solo aparecían mercados hispanos y Reino Unido,
+# Estados Unidos, Australia, Irlanda y Canadá quedaban al final, fuera de la
+# vista. Un mercado que no se ve, no existe.
+#
+# Este orden es solo de presentación: no valida nada ni se guarda en la base.
+
+MERCADOS_ANGLOPARLANTES: tuple[str, ...] = ("GB", "US", "IE", "AU", "CA")
+
+# Los mercados que abren la portada. España primero por ser el mercado de
+# referencia, y a continuación los dos bloques que más pesan: México y
+# Colombia cierran el bloque hispano y los cinco anglófonos van intercalados
+# para que ninguno quede enterrado.
+MERCADOS_DESTACADOS_ES: tuple[str, ...] = (
+    "ES", "MX", "US", "GB", "CO", "IE", "AU", "CA",
+)
+# En una página en inglés manda el mercado al que pertenece el visitante.
+MERCADOS_DESTACADOS_EN: tuple[str, ...] = (
+    "US", "GB", "IE", "AU", "CA", "ES", "MX", "CO",
+)
+
+# Orden dentro de cada bloque de la tabla de mercados de la portada.
+_ORDEN_BLOQUE_ES: tuple[str, ...] = (
+    "ES", "MX", "CO", "AR", "CL", "PE", "EC", "VE",
+    "DO", "UY", "PY", "BO", "PA", "CR", "GT", "HN", "SV", "NI",
+)
+_ORDEN_BLOQUE_EN: tuple[str, ...] = ("GB", "US", "IE", "AU", "CA")
+
+
+def _por_codigos(codigos: tuple[str, ...], idioma: str = "es") -> list[dict]:
+    """Países del listado, en el orden pedido y con sus campos resueltos."""
+    indice = {p["codigo"]: p for p in lista_paises()}
+    return [indice[c] for c in codigos if c in indice]
+
+
+def mercados_destacados(
+    idioma: str = "es",
+    actual: str | None = None,
+    limite: int | None = None,
+) -> list[dict]:
+    """Mercados que se pintan como accesos directos en el hero.
+
+    Devuelve ocho por defecto: España y tres del bloque hispano junto con los
+    cinco mercados de habla inglesa. Antes se hacía ``paises[:6]`` en la
+    plantilla y eso dejaba fuera a los cinco anglófonos en todas las páginas.
+
+    ``actual`` es el mercado de la página; si está entre los destacados va
+    primero, para que el visitante de /en-gb/ vea Reino Unido antes que nadie.
+    """
+    orden = list(
+        MERCADOS_DESTACADOS_EN
+        if str(idioma or "es").lower().startswith("en")
+        else MERCADOS_DESTACADOS_ES
+    )
+    actual = str(actual or "").strip().upper()
+    if actual and actual in orden:
+        orden.remove(actual)
+        orden.insert(0, actual)
+    seleccion = _por_codigos(tuple(orden), idioma)
+    return seleccion[:limite] if limite else seleccion
+
+
+def mercados_por_bloque(idioma: str = "es") -> list[tuple[str, list[dict]]]:
+    """Los 23 mercados en dos bloques, con el rótulo ya en el idioma de la página.
+
+    La tabla de la portada los muestra todos: un enlace por mercado ayuda al
+    rastreo y, sobre todo, deja claro que el producto no es solo para España y
+    Latinoamérica. En una página en inglés, el bloque anglófono va primero.
+    """
+    en = str(idioma or "es").lower().startswith("en")
+    hispanos = _por_codigos(_ORDEN_BLOQUE_ES, idioma)
+    anglofonos = _por_codigos(_ORDEN_BLOQUE_EN, idioma)
+    if en:
+        return [
+            ("English-speaking markets", anglofonos),
+            ("Spain and Latin America", hispanos),
+        ]
+    return [
+        ("España y Latinoamérica", hispanos),
+        ("Mercados de habla inglesa (precios en GBP, USD, AUD, CAD y EUR)", anglofonos),
+    ]
+
+
 # ---- Helpers para Semana 2 — Bloque B/C (auto-config) -----------------------
 
 def defaults_para_pais(codigo: str | None) -> dict:

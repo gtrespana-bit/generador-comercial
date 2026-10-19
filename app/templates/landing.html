@@ -50,7 +50,7 @@
       {% endfor %}
     </select>
     <span class="pais-bar-badge">✨ precios de tu mercado</span>
-    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catálogo de {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo) }}{% else %}Elige tu país para ver su catálogo de precios (España · LatAm){% endif %}</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} Catálogo de {{ pais_actual.nombre }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo) }}{% else %}Elige tu país para ver su catálogo de precios (España · LatAm · Reino Unido · Estados Unidos · Australia){% endif %}</span>
   </div>
 </div>
 {% include "_nav.html" %}
@@ -70,7 +70,7 @@
       {% if pais_actual %}
       <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} Sistema comercial para {{ pais_actual.nombre }} · Construcción y reformas · catálogo de precios propio</span>
       {% else %}
-      <span class="hero-kicker" id="hero-kicker">🇪🇸 España · 🌎 Latinoamérica — Sistema comercial de obra y reformas · catálogo de precios por país</span>
+      <span class="hero-kicker" id="hero-kicker">🇪🇸 España · 🌎 Latinoamérica · 🇬🇧🇺🇸 Mercados de habla inglesa — Sistema comercial de obra y reformas · catálogo de precios por país</span>
       {% endif %}
       {% if hay_prueba_gratuita() %}
       <span class="hero-prueba">✨ {{ dias_de_prueba() }} días gratis · sin tarjeta de crédito</span>
@@ -78,14 +78,16 @@
       <h1>{{ seo.h1 }}: <span class="hero-hl">{{ seo.h1_resalte }}</span>.</h1>
       <p class="sub">{{ seo.sub }}</p>
       <div class="hero-mercados" aria-label="Mercados disponibles">
-        {% set destacados = paises[:6] %}
-        {% for p in destacados %}
+        {# Los ochos mercados de portada los decide el servidor: España, los
+           grandes de LatAm y los cinco de habla inglesa. #}
+        {% set accesos = destacados | default(paises[:6]) %}
+        {% for p in accesos %}
         <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}>
           <span>{{ p.bandera }}</span>{{ p.nombre }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo) }}</small>
         </a>
         {% endfor %}
-        {% if paises|length > destacados|length %}
-        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - destacados|length }} mercados</span>
+        {% if paises|length > accesos|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - accesos|length }} mercados</span>
         {% endif %}
       </div>
       <div class="acciones">
@@ -233,29 +235,31 @@
 <section class="mercados" id="catalogo-paises" aria-label="Catálogo de precios por país">
   <div class="mercados-intro">
     <span class="section-kicker">Catálogo por país, no genérico</span>
-    <h2>España no cotiza igual que México. Cada país tiene su catálogo.</h2>
-    <p class="intro">CotizaT no es una sola lista de precios con una bandera encima. Cada mercado lleva sus precios de referencia, su moneda, su IVA, su ID fiscal y su terminología de obra. Por eso el país se elige <strong>al entrar</strong>: para que veas los precios de tu obra, no los de otra.</p>
+    <h2>España no cotiza igual que México ni que Reino Unido. Cada país tiene su catálogo.</h2>
+    <p class="intro">CotizaT no es una sola lista de precios con una bandera encima. Cada mercado lleva sus precios de referencia, su moneda, su IVA, su ID fiscal y su terminología de obra. En Reino Unido, Estados Unidos, Australia, Irlanda y Canadá cambia hasta el nombre del material —plasterboard, drywall, skirting, baseboard— y el impuesto no se calcula igual. Por eso el país se elige <strong>al entrar</strong>: para que veas los precios de tu obra, no los de otra.</p>
   </div>
 
-  <div class="mercado-grid" role="table" aria-label="Ejemplo de catálogos por país">
+  {# Todos los mercados, no solo los seis primeros: un enlace por mercado y
+     el bloque anglófono con el mismo peso visual que el hispano. #}
+  {% for rotulo, lista in (mercados_bloques | default([])) %}
+  <h3 class="mercado-bloque-titulo">{{ rotulo }}</h3>
+  <div class="mercado-grid" role="table" aria-label="Catálogos por país: {{ rotulo }}">
     <div class="mercado-cab" role="row">
       <span role="columnheader">Mercado</span>
       <span role="columnheader">Moneda</span>
       <span role="columnheader">Fiscal</span>
       <span role="columnheader">Habla tu obra</span>
     </div>
-    {% for p in paises[:6] %}
+    {% for p in lista %}
     <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}">
       <span role="cell" class="mercado-nombre">{{ p.bandera }} {{ p.nombre }}</span>
-      <span role="cell" class="mercado-moneda">{{ p.moneda }}{% if p.moneda_local and p.moneda_local != p.moneda %} · {{ p.simbolo_local }}{% endif %} · {{ texto_impuesto(p.codigo) }}</span>
+      <span role="cell" class="mercado-moneda">{{ p.moneda }} · {{ texto_impuesto(p.codigo) }}</span>
       <span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span>
       <span role="cell" class="mercado-vocab">{{ p.vocab }}</span>
     </a>
     {% endfor %}
   </div>
-  {% if paises|length > 6 %}
-  <p class="mercados-mas">+ {{ paises|length - 6 }} países con catálogo, moneda, IVA y terminología propios. Elige el tuyo en la parte superior de la página.</p>
-  {% endif %}
+  {% endfor %}
 </section>
 
 <section class="flujo-real" id="flujo-real">

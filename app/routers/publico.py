@@ -138,9 +138,24 @@ def _idioma_de(request: Request | None) -> str:
 
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
-    from ..paises import PAIS_GENERICO, PAISES, lista_paises
+    from ..paises import (
+        PAIS_GENERICO,
+        PAISES,
+        lista_paises,
+        mercados_destacados,
+        mercados_por_bloque,
+    )
     from ..seo import contexto_seo
     from ..services.landing_ejemplo import contexto_ejemplo
+
+    idioma = _idioma_de(request)
+    # Qué mercados se pintan y en qué orden. La plantilla no puede decidirlo
+    # con un ``paises[:6]``: el orden de validación deja fuera a los cinco
+    # mercados de habla inglesa en todas las páginas. El mercado de la propia
+    # página va primero entre los accesos directos.
+    codigo_actual = str(pais_forzado or "").strip().upper() or _resolver_pais_landing(request)[1]
+    destacados = mercados_destacados(idioma, codigo_actual)
+    bloques_mercados = mercados_por_bloque(idioma)
 
     if pais_forzado:
         codigo = str(pais_forzado).strip().upper()
@@ -150,7 +165,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "pais_codigo": codigo,
                 "pais_generico": PAIS_GENERICO,
                 "paises": lista_paises(),
-                "ej": contexto_ejemplo(codigo, _idioma_de(request)),
+                "destacados": destacados,
+                "mercados_bloques": bloques_mercados,
+                "ej": contexto_ejemplo(codigo, idioma),
                 # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
                 # final del body para no retrasar el descubrimiento del CSS.
                 "seo_skip_fonts": True,
@@ -167,7 +184,9 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "pais_codigo": pais_codigo,
         "pais_generico": PAIS_GENERICO,
         "paises": lista_paises(),
-        "ej": contexto_ejemplo(pais_codigo, _idioma_de(request)),
+        "destacados": destacados,
+        "mercados_bloques": bloques_mercados,
+        "ej": contexto_ejemplo(pais_codigo, idioma),
         # Sin Inter: el hero usa la fuente del sistema. JSON-LD al
         # final del body para no retrasar el descubrimiento del CSS.
         "seo_skip_fonts": True,
@@ -304,6 +323,27 @@ def guia_publica(slug: str, request: Request):
     return TEMPLATES.TemplateResponse(request, "seo_guia.html", ctx)
 
 
+@router.get("/{cc}/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
+def guia_de_mercado(cc: str, slug: str, request: Request):
+    """Artículo de un mercado anglófono: /en-gb/guia/<slug>.
+
+    El middleware de idioma reescribe ``/en-gb/guia/x`` a ``/gb/guia/x``
+    antes de enrutar, así que hace falta esta ruta para no devolver 404.
+    La URL sin prefijo (``/gb/guia/x``) redirige a la canónica: es la misma
+    página y no debe competir consigo misma en Google.
+    """
+    from ..paises import PAISES
+
+    codigo = str(cc or "").strip().upper()
+    pais = PAISES.get(codigo)
+    if not pais or pais.get("idioma") != "en":
+        return Response("Página no encontrada.", status_code=404)
+    original = str(getattr(request.state, "ruta_original", "") or "")
+    if not original.lower().startswith(f"/en-{codigo.lower()}"):
+        return RedirectResponse(f"/en-{codigo.lower()}/guia/{slug}", status_code=301)
+    return guia_publica(slug, request)
+
+
 @router.get("/como-funciona", response_class=HTMLResponse, include_in_schema=False)
 def como_funciona(request: Request):
     """Guía pública de funciones: catálogo, editor, margen, PDF y cobro."""
@@ -432,7 +472,11 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
         return Response("Página no encontrada.", status_code=404)
     if codigo and codigo not in ORDEN_SELECTOR:
         return Response("Página no encontrada.", status_code=404)
-    ficha = ficha_tema(codigo, tema)
+    # El copy se pide en el idioma de la petición. Antes se pedía siempre en
+    # español y la plantilla inglesa pintaba un H1 en inglés con un cuerpo y
+    # un FAQ en español debajo: /en-gb/apu era media página en cada idioma.
+    lang = _idioma_de(request)
+    ficha = ficha_tema(codigo, tema, lang=lang)
     if ficha is None:
         return Response("Página no encontrada.", status_code=404)
     ctx = contexto_seo(request, codigo=codigo, tema=tema)

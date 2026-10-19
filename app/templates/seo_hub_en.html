@@ -74,7 +74,7 @@
   <ul class="hub-paises-lista">
     <li><a href="/en/{{ ficha.tema }}/">All countries</a></li>
     {% for p in paises %}
-    <li><a href="{{ ruta_mercado(p.codigo, ficha.tema) }}/">{{ p.bandera }} {{ p.nombre }}</a></li>
+    <li><a href="{{ ruta_mercado(p.codigo, ficha.tema) }}">{{ p.bandera }} {{ p.nombre_en or p.nombre }}</a></li>
     {% endfor %}
   </ul>
 </section>
