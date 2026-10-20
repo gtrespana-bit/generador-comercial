@@ -87,6 +87,14 @@ actual). Desde entonces `/readyz` debe responder en el dominio nuevo y
 Canonical: se usa el apex (`https://cotizat.online`) como dirección oficial.
 En Vercel → Domains, marca `cotizat.online` como principal; `www` redirige.
 
+> ⚠️ **Verificado el 20/10/2026: en producción estaba al revés** (el borde
+> redirigía el apex a `www` y servía la app bajo `www`). **Corregido el
+> mismo 20/10/2026** en Vercel → Domains y verificado desde fuera:
+> `www.cotizat.online/<ruta>` redirige a `cotizat.online/<ruta>` y el
+> apex sirve directo. Si alguna vez vuelve a invertirse, `/readyz` lo
+> delata con `"host_es_canonico": "no…"`. Detalle en
+> `docs/SEO_VERIFICACION_PRODUCCION_2026-10-20.md`.
+
 ## Paso 5 — Resend: verificar el dominio para correo
 
 1. [resend.com/domains](https://resend.com/domains) → **Add Domain** →
@@ -126,6 +134,9 @@ Redeploy. Verificar en `https://cotizat.online/readyz`:
 
 1. `https://cotizat.online/healthz` y `/readyz` → 200.
 2. `https://www.cotizat.online` → redirige a `https://cotizat.online`.
+   *(El 20/10/2026 se comprobó que ocurría lo contrario; ver la nota del
+   Paso 4. Cuando este punto se cumpla, `/readyz` mostrará
+   `host_es_canonico: si`.)*
 3. Crear una invitación en `/equipo` con un email real → debe llegar el correo
    desde `no-responder@cotizat.online` con el enlace.
 4. Recuperación de contraseña → el email llega y el enlace aterriza en

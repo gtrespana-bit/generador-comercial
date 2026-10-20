@@ -218,6 +218,69 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
     return results
 
 
+def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
+    """Estado SEO del DESPLIEGUE, informativo: nunca tumba el readiness.
+
+    Cubre lo que una revisión externa sin cabeceras no puede certificar:
+    que el corpus de artículos y el sitemap del código desplegado estén
+    completos, que los artefactos de precios viajen dentro de la función
+    (sin el CSV las guías de mano de obra salen con la tabla vacía) y que
+    la petición haya llegado por el host canónico. Esto último delata el
+    20/10/2026 el conflicto apex↔www: Vercel servía ``www`` mientras
+    canónicas, sitemap y robots declaraban el apex.
+    """
+    checks: dict[str, str] = {}
+    try:
+        from urllib.parse import urlparse
+
+        from .seo import origen_canonico, urls_sitemap
+        from .seo_articulos import lista_articulos
+        from .seo_latam import _base_venezuela, _matriz
+
+        canonico = origen_canonico(None)
+        checks["dominio_canonico"] = canonico
+        host_canonico = urlparse(canonico).hostname or ""
+        if host:
+            checks["host_recibido"] = host
+            checks["host_es_canonico"] = (
+                "si"
+                if host.lower() == host_canonico.lower()
+                else "no: el borde debe redirigir a " + (host_canonico or canonico)
+            )
+        else:
+            checks["host_es_canonico"] = "no evaluado (sin peticion)"
+        checks["seo_sitemap_urls"] = str(len(urls_sitemap(None)))
+        checks["seo_articulos_es"] = str(len(lista_articulos()))
+        matriz = _matriz()
+        checks["seo_matriz_latam"] = (
+            f"{len(matriz)} paises con filas" if matriz else "CSV ausente o vacio en el despliegue"
+        )
+        checks["seo_base_venezuela"] = (
+            f"{len(_base_venezuela())} oficios" if _base_venezuela() else "recursos.json ausente o vacio"
+        )
+    except Exception as exc:  # diagnóstico, no condición de salud
+        checks["seo"] = f"no evaluado: {_safe_error(exc)}"
+        return checks
+    # Referencias nacionales cargadas en la base (no los overrides de
+    # empresa). Una sola agregación; si la tabla no existe aún, se informa.
+    try:
+        motor = engine or default_engine
+        with motor.connect() as conn:
+            filas = conn.execute(
+                text(
+                    "SELECT pais_codigo, COUNT(*) FROM precios_recursos_mercado "
+                    "WHERE organizacion_id IS NULL AND (activo = 1 OR activo IS TRUE) "
+                    "AND codigo_recurso <> '' GROUP BY pais_codigo ORDER BY pais_codigo"
+                )
+            ).fetchall()
+        total = sum(int(f[1]) for f in filas)
+        checks["precios_bd"] = f"{total} referencias nacionales en {len(filas)} paises"
+        checks["precios_bd_paises"] = ",".join(str(f[0]) for f in filas) or "ninguno"
+    except Exception as exc:
+        checks["precios_bd"] = f"no evaluado: {_safe_error(exc)}"
+    return checks
+
+
 def _check_sqlite() -> dict[str, object]:
     return {"database": "sqlite-local", "alembic": "no-aplica", "rol_runtime": "no-aplica"}
 
@@ -230,8 +293,12 @@ def _safe_error(exc: Exception) -> str:
     return text[:200] or exc.__class__.__name__
 
 
-def readiness(engine: Engine | None = None) -> HealthStatus:
-    """Configuración y dependencias listas para servir tráfico real."""
+def readiness(engine: Engine | None = None, host: str | None = None) -> HealthStatus:
+    """Configuración y dependencias listas para servir tráfico real.
+
+    ``host`` es el Host de la petición a /readyz cuando lo hay: permite
+    contrastarlo con el dominio canónico sin acceder al panel de Vercel.
+    """
     checks: dict[str, str] = {}
     errors: list[str] = []
 
@@ -305,6 +372,10 @@ def readiness(engine: Engine | None = None) -> HealthStatus:
         checks.update({k: str(v) for k, v in db_results.items()})
         errors.extend(db_errors)  # type: ignore[arg-type]
 
+    # Informativo (nunca añade errores): corpus SEO, artefactos de precios
+    # dentro de la función, referencias nacionales en BD y host canónico.
+    checks.update(_check_seo(engine, host))
+
     return HealthStatus(ok=not errors, checks=checks, errors=errors)
 
 
@@ -318,7 +389,7 @@ def set_readiness_override(fn: Callable[[], HealthStatus] | None) -> None:
     _readiness_override = fn
 
 
-def run_readiness() -> HealthStatus:
+def run_readiness(host: str | None = None) -> HealthStatus:
     if _readiness_override is not None:
         return _readiness_override()
-    return readiness()
+    return readiness(host=host)
