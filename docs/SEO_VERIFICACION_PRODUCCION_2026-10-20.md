@@ -98,7 +98,10 @@ Chequeos informativos (nunca tumban el readiness), en `app/health.py`:
   `seo_base_venezuela`
 - `precios_bd` + `precios_bd_paises`: referencias nacionales cargadas en
   la base (esto responde el «¿están cargadas las matrices?» con solo abrir
-  `/readyz`).
+  `/readyz`). *(Errata del mismo 20/10: la primera versión salía «no
+  evaluado» en PostgreSQL — la condición de `activo` mezclaba boolean con
+  entero y Postgres la rechazaba; corregida con `app.health._condicion_activo`
+  y pasando `tools/verificar_matrices_bd.py` al ORM.)*
 
 ## Lo que queda (en orden)
 

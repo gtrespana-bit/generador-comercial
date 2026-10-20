@@ -58,7 +58,47 @@
 | cambio de alcance | change order | |
 | cuadrilla | crew | |
 
-## 4. Próximos pasos técnicos
+## 4. Capítulos del catálogo (títulos del árbol)
+
+Los 445 títulos (capítulos, subcapítulos y apartados) se tradujeron a
+mano en `tools/lotes/lote_76_titulos_del_arbol.py` (20/10/2026); viven
+como excepciones y ganan siempre a la máquina de reglas. Antes salían
+palabra por palabra: «Works priors», «Conditioning of the ground»,
+«protection plot» por protección solar, con residuos sin traducir
+(«salud», «urbanismo», «firmes»). `tests/test_titulos_arbol_en.py`
+impide que vuelvan.
+
+Referencia de los capítulos de nivel 1 (base US; `variante_ingles`
+localiza GB/IE/AU/CA):
+
+| Español | Inglés |
+|---|---|
+| 01 Actuaciones previas | Preliminary work |
+| 02 Demoliciones y desmontajes | Demolition and dismantling |
+| 03 Acondicionamiento del terreno | Earthwork and site preparation |
+| 04 Fundaciones | Foundations |
+| 05 Estructuras | Structures |
+| 06 Fachadas y particiones | Facades and partitions |
+| 07 Carpintería, herrería, vidrios y protección solar | Carpentry, metalwork, glazing and solar shading |
+| 08 Remates y ayudas | Trim work and builder's work |
+| 09 Instalaciones | Building services (MEP) |
+| 10 Aislamientos e impermeabilizaciones | Insulation and waterproofing |
+| 11 Techos y cubiertas | Roofs and roofing |
+| 12 Revestimientos y acabados | Coatings and finishes |
+| 13 Equipamiento, mobiliario y señalización | Equipment, furniture and signage |
+| 14 Obras exteriores y urbanismo | Exterior and site works |
+| 15 Gestión de residuos y limpieza | Waste management and cleaning |
+| 16 Control de calidad y ensayos | Quality control and testing |
+| 17 Seguridad y salud en obra | Construction health and safety |
+| 18 Rehabilitación energética | Energy retrofit |
+
+Léxico fijo del árbol: remate = *trim* (en cubierta, *flashing*),
+ayudas de albañilería = *builder's work*, protección solar = *solar
+shading*, respaldo eléctrico = *backup*, pasos de instalaciones =
+*penetrations*, aislamiento de servicios = *isolation* (el térmico sigue
+siendo *insulation*).
+
+## 5. Próximos pasos técnicos
 
 1. Introducir i18n real (Jinja2 + archivos de idioma) para UI y PDF.
 2. Añadir ruta `/en/` con landing en inglés (copy propio, no traducción literal).

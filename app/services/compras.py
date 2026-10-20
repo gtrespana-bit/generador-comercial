@@ -235,6 +235,24 @@ def resumen_compras(db: Session) -> list[dict]:
     return filas
 
 
+def compras_de_organizacion(
+    db: Session, organizacion_id: int, *, limite: int = 24
+) -> list[CompraPlan]:
+    """Historial de compras de la organización, para «Mi plan».
+
+    ``compras_plan`` es tabla tenant: la propia organización lo lee sin
+    tocar ``licencias``. Se devuelven las más recientes primero (cada
+    renovación de Stripe es una compra propia, con su recibo).
+    """
+    return (
+        db.query(CompraPlan)
+        .filter(CompraPlan.organizacion_id == int(organizacion_id))
+        .order_by(CompraPlan.created_at.desc(), CompraPlan.id.desc())
+        .limit(max(int(limite), 1))
+        .all()
+    )
+
+
 def ultima_compra_con_recibo(db: Session, organizacion_id: int) -> CompraPlan | None:
     """Última compra activada de una organización, o ``None`` si no hay.
 

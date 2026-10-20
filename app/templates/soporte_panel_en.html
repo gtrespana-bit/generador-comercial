@@ -1,0 +1,76 @@
+{% extends "base_en.html" %}
+{% block title %}Support{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🏠 Home › Support</p>
+    <h1>Support</h1>
+    <p class="subtitle">Questions, problems, complaints or ideas: write to us and we reply by email. You stay in your account; sending does not take you out of the app.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{{ desde or '/inicio' }}">← Back</a>
+  </div>
+</div>
+
+{% if enviado %}
+<div class="alert alert-ok" role="status">
+  <b>Your message has reached us{% if referencia %} (no. {{ referencia }}){% endif %}.</b>
+  We will reply to the address you provided, normally in less than 24 business hours.
+</div>
+{% endif %}
+{% if error_soporte %}
+<div class="alert alert-error" role="alert">
+  <b>We could not send the message.</b> {{ error_soporte }}
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Tell us what's going on</h2>
+  <form method="post" action="/soporte">
+    <input type="hidden" name="desde" value="{{ desde or '/soporte' }}">
+    {# Bot trap: invisible to a person (see the public page). #}
+    <div hidden aria-hidden="true">
+      <label for="soporte-web-panel">Do not fill this field</label>
+      <input id="soporte-web-panel" type="text" name="web" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="soporte-nombre-panel">Your name</label>
+      <input id="soporte-nombre-panel" type="text" name="nombre" maxlength="200" autocomplete="name" placeholder="Your name" value="{{ nombre_previo or '' }}">
+    </div>
+    <div class="field">
+      <label for="soporte-email-panel">Your email *</label>
+      <input id="soporte-email-panel" type="email" name="email" maxlength="254" autocomplete="email" required placeholder="name@company.com" value="{{ email_previo or '' }}">
+      <p class="hint">That's where we reply. It is used for nothing else.</p>
+    </div>
+    <div class="field">
+      <label for="soporte-tipo-panel">Reason *</label>
+      <select id="soporte-tipo-panel" name="tipo" required>
+        {% for valor, etiqueta in tipos_soporte %}
+        <option value="{{ valor }}">{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="soporte-asunto-panel">Subject</label>
+      <input id="soporte-asunto-panel" type="text" name="asunto" maxlength="200" placeholder="One-line summary (optional)">
+    </div>
+    <div class="field">
+      <label for="soporte-mensaje-panel">Message *</label>
+      <textarea id="soporte-mensaje-panel" name="mensaje" rows="8" maxlength="8000" required placeholder="What you expected to happen, what happened instead and on which screen. The more specific, the faster we fix it."></textarea>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Send to support</button>
+    <p class="hint">The message is saved and reaches us by email. If you prefer your own mail client: <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+  </form>
+</div>
+
+<div class="card">
+  <h2>What to expect</h2>
+  <ul>
+    <li><b>A reply by email</b> to the address you provide, normally in less than 24 business hours.</li>
+    <li><b>Suggestions:</b> we read them all; many end up as product features.</li>
+    <li><b>If something is broken</b>, tell us what you were doing, what you expected and what you saw (screen and, if it applies, the estimate number).</li>
+  </ul>
+</div>
+{% endblock %}

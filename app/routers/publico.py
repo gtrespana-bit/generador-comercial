@@ -681,15 +681,47 @@ def _contexto_soporte(request: Request, **extra) -> dict:
     return contexto
 
 
+def _soporte_con_sesion(request: Request) -> bool:
+    """¿Quien pide ``/soporte`` está dentro de la aplicación?
+
+    El enlace «Soporte» y el botón flotante viven en el panel, pero hasta
+    ahora llevaban a la página pública, con su barra de marketing y su botón
+    de «Acceder»: alguien con la sesión abierta creía que se la habían
+    cerrado. Con sesión se sirve la misma página dentro del marco de la
+    aplicación; sin sesión, la pública indexable de siempre. En SQLite
+    (escritorio) no hay cuentas web: siempre es el panel.
+    """
+    from ..database import DATABASE_IS_SQLITE
+
+    if DATABASE_IS_SQLITE:
+        return True
+    try:
+        from ..auth import identity_for_request
+
+        identity_for_request(request)
+        return True
+    except Exception:
+        return False
+
+
 @router.get("/soporte", response_class=HTMLResponse, include_in_schema=False)
 def pagina_soporte(request: Request):
-    """Página pública de soporte: el formulario del botón de ayuda.
+    """Página de soporte: el formulario del botón de ayuda.
 
     Tiene URL propia (se puede guardar en favoritos y enlazar desde un correo)
     y funciona con o sin sesión: quien todavía no es cliente también puede
     escribir. El mensaje se guarda en el panel y se avisa al buzón de soporte.
+    Con la sesión abierta se pinta dentro de la aplicación (misma URL y mismo
+    formulario); sin sesión, la página pública indexable.
     """
     ctx = _contexto_soporte(request)
+    if _soporte_con_sesion(request):
+        identidad = getattr(request.state, "supabase_identity", None)
+        if identidad is not None:
+            # Nombre y correo ya sabidos: que no tenga que teclearlos otra vez.
+            ctx.setdefault("nombre_previo", getattr(identidad, "name", "") or "")
+            ctx.setdefault("email_previo", getattr(identidad, "email", "") or "")
+        return TEMPLATES.TemplateResponse(request, "soporte_panel.html", ctx)
     return TEMPLATES.TemplateResponse(request, "soporte.html", ctx)
 
 

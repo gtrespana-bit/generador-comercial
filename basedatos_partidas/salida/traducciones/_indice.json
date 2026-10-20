@@ -1,11 +1,11 @@
 {
- "_generado": "2026-10-18",
+ "_generado": "2026-10-20",
  "_cadenas_origen": 6834,
  "_glosarios": {
   "EN": {
    "cadenas": 7220,
-   "bytes": 1724105,
-   "huella": "50b83cb1f5539be4"
+   "bytes": 1723188,
+   "huella": "bf737c3afb707852"
   },
   "AR": {
    "cadenas": 1401,

@@ -277,6 +277,61 @@ def obtener_sesion(session_id: str) -> dict:
     return _llamar_stripe("GET", f"checkout/sessions/{session_id}")
 
 
+def obtener_suscripcion(subscription_id: str) -> dict:
+    """Lee una suscripción por su id (estado real en Stripe)."""
+    subscription_id = str(subscription_id or "").strip()
+    if not subscription_id.startswith("sub_"):
+        raise StripeError("La suscripción de Stripe no es válida.")
+    return _llamar_stripe("GET", f"subscriptions/{subscription_id}")
+
+
+def fijar_cancelacion_al_vencer(subscription_id: str, cancelar: bool) -> dict:
+    """Programa (o deshace) la cancelación al final del período pagado.
+
+    Cancelar así no corta el acceso ya pagado: la suscripción sigue viva
+    hasta el fin del período y simplemente no vuelve a cobrar. Es la vía
+    que «Mi plan» ofrece para dejar de renovar o para cambiar de período
+    sin acabar con dos suscripciones cobrando a la vez.
+    """
+    subscription_id = str(subscription_id or "").strip()
+    if not subscription_id.startswith("sub_"):
+        raise StripeError("La suscripción de Stripe no es válida.")
+    return _llamar_stripe(
+        "POST",
+        f"subscriptions/{subscription_id}",
+        {"cancel_at_period_end": "true" if cancelar else "false"},
+    )
+
+
+def resumen_suscripcion(suscripcion: dict) -> dict:
+    """Lo que «Mi plan» necesita de una suscripción, ya digerido.
+
+    Devuelve ``{estado, cancela_al_vencer, fin_periodo}``. La fecha de fin
+    de período vive en la raíz en la versión de API fijada y dentro del
+    primer item en las recientes: se miran los dos sitios.
+    """
+    from datetime import datetime, timezone
+
+    fin = suscripcion.get("current_period_end")
+    if not fin:
+        items = ((suscripcion.get("items") or {}).get("data")) or []
+        if items:
+            fin = items[0].get("current_period_end")
+    fin_periodo = None
+    try:
+        if fin:
+            fin_periodo = datetime.fromtimestamp(
+                int(fin), tz=timezone.utc
+            ).date()
+    except (TypeError, ValueError, OSError, OverflowError):
+        fin_periodo = None
+    return {
+        "estado": str(suscripcion.get("status") or ""),
+        "cancela_al_vencer": bool(suscripcion.get("cancel_at_period_end")),
+        "fin_periodo": fin_periodo,
+    }
+
+
 def verificar_firma_webhook(payload: bytes, firma_header: str) -> dict:
     """Valida Stripe-Signature y devuelve el evento.
 

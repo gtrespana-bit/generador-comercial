@@ -75,27 +75,31 @@ def esperado_csv(ruta: Path) -> dict[tuple[str, str], dict]:
 
 
 def cargado_bd() -> dict[tuple[str, str], dict]:
-    from sqlalchemy import text
+    # ORM y no SQL escrito a mano: «activo» es 1/0 en SQLite y boolean en
+    # PostgreSQL, y una condición que mezcle ambas formas («= 1 OR IS
+    # TRUE») la rechaza el analizador de Postgres. El ORM emite la forma
+    # correcta en cada motor.
+    from app.database import SessionLocal
+    from app.models import PrecioRecursoMercado
 
-    from app.database import engine
-
-    with engine.connect() as conn:
-        filas = conn.execute(
-            text(
-                "SELECT pais_codigo, codigo_recurso, precio, precio_min, "
-                "precio_max, moneda FROM precios_recursos_mercado "
-                "WHERE organizacion_id IS NULL AND (activo = 1 OR activo IS TRUE) "
-                "AND codigo_recurso <> ''"
-            )
-        ).fetchall()
     cargado: dict[tuple[str, str], dict] = {}
-    for pais, codigo, precio, precio_min, precio_max, moneda in filas:
-        cargado[(str(pais).upper(), str(codigo))] = {
-            "precio": Decimal(str(precio)) if precio is not None else None,
-            "min": Decimal(str(precio_min)) if precio_min is not None else None,
-            "max": Decimal(str(precio_max)) if precio_max is not None else None,
-            "moneda": str(moneda or ""),
-        }
+    with SessionLocal() as db:
+        filas = (
+            db.query(PrecioRecursoMercado)
+            .filter(
+                PrecioRecursoMercado.organizacion_id.is_(None),
+                PrecioRecursoMercado.activo.is_(True),
+                PrecioRecursoMercado.codigo_recurso != "",
+            )
+            .all()
+        )
+        for fila in filas:
+            cargado[(str(fila.pais_codigo).upper(), str(fila.codigo_recurso))] = {
+                "precio": Decimal(str(fila.precio)) if fila.precio is not None else None,
+                "min": Decimal(str(fila.precio_min)) if fila.precio_min is not None else None,
+                "max": Decimal(str(fila.precio_max)) if fila.precio_max is not None else None,
+                "moneda": str(fila.moneda or ""),
+            }
     return cargado
 
 

@@ -109,6 +109,24 @@ def _check_email_configuration() -> tuple[str, str | None]:
     return estado_configuracion_email()
 
 
+def _check_avisos_destino() -> dict[str, str]:
+    """Informativo: adónde van los avisos del negocio y de soporte.
+
+    Sin ``COTIZAT_AVISOS_EMAIL`` van a ``soporte@cotizat.online``, que hoy no
+    tiene buzón (sin registros MX): el correo «sale» y rebota en silencio.
+    Publicado el 2026-10-20, cuando los mensajes de soporte daban error y
+    ningún aviso llegó nunca. No se revela la dirección desviada.
+    """
+    import os
+
+    desviado = bool((os.environ.get("COTIZAT_AVISOS_EMAIL") or "").strip())
+    return {
+        "avisos_destino": (
+            "desviado (COTIZAT_AVISOS_EMAIL)" if desviado else "buzon de soporte por defecto"
+        )
+    }
+
+
 def _check_cron_configuration() -> dict[str, str]:
     """Informativo: el trabajo programado de Vercel y su secreto.
 
@@ -269,7 +287,7 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
             filas = conn.execute(
                 text(
                     "SELECT pais_codigo, COUNT(*) FROM precios_recursos_mercado "
-                    "WHERE organizacion_id IS NULL AND (activo = 1 OR activo IS TRUE) "
+                    f"WHERE organizacion_id IS NULL AND {_condicion_activo()} "
                     "AND codigo_recurso <> '' GROUP BY pais_codigo ORDER BY pais_codigo"
                 )
             ).fetchall()
@@ -279,6 +297,17 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     except Exception as exc:
         checks["precios_bd"] = f"no evaluado: {_safe_error(exc)}"
     return checks
+
+
+def _condicion_activo() -> str:
+    """Condición SQL de «activo» para el motor en uso.
+
+    ``activo`` es 1/0 en SQLite y boolean en PostgreSQL. La condición
+    «portable» ``activo = 1 OR activo IS TRUE`` no lo es: Postgres la
+    rechaza al analizarla (``boolean = integer`` no existe) y el 20/10/2026
+    dejó ``precios_bd`` en «no evaluado» en producción. Hay que elegir.
+    """
+    return "activo = 1" if DATABASE_IS_SQLITE else "activo IS TRUE"
 
 
 def _check_sqlite() -> dict[str, object]:
@@ -375,6 +404,9 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     # Informativo (nunca añade errores): corpus SEO, artefactos de precios
     # dentro de la función, referencias nacionales en BD y host canónico.
     checks.update(_check_seo(engine, host))
+
+    # Informativo: destino de los avisos internos (sin revelar la dirección).
+    checks.update(_check_avisos_destino())
 
     return HealthStatus(ok=not errors, checks=checks, errors=errors)
 

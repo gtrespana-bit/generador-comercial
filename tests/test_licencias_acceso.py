@@ -955,5 +955,7 @@ def test_la_pantalla_de_suspension_ofrece_renovar(dependencia_suspendida):
         respuesta = client.get("/inicio")
 
     assert respuesta.status_code == 403
-    assert 'href="/pago"' in respuesta.text
+    # Desde 2026-10-20 el destino es «Mi plan» (misma puerta sin corte que el
+    # checkout, pero aterriza en el estado y el historial, no en la pública).
+    assert 'href="/mi-plan"' in respuesta.text
     assert "Renovar" in respuesta.text

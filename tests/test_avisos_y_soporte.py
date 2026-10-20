@@ -9,8 +9,10 @@ Tres huecos que esta suite fija como contrato:
 2. **Un alta tampoco.** El registro y la empresa nueva (con su prueba) avisan
    al mismo buzón.
 3. **El cliente tiene un botón de soporte.** ``/soporte`` guarda el mensaje en
-   ``mensajes_soporte`` antes de intentar el correo, funciona sin sesión y el
-   panel lo lee, lo marca y lo audita.
+   ``mensajes_soporte`` con un único INSERT (el correo se intenta primero y
+   su marca viaja en la fila: el UPDATE está reservado al operador por RLS y
+   marcar después tiraba el registro en PostgreSQL, 2026-10-20), funciona sin
+   sesión y el panel lo lee, lo marca y lo audita.
 
 Los envíos de correo se prueban con el mismo doble que el resto de la suite:
 se sustituye ``urlopen`` de ``app.services.email`` y se inspecciona el JSON
@@ -368,7 +370,8 @@ def test_la_pagina_de_soporte_figura_en_el_mapa_y_en_el_sitemap():
 
 
 def test_el_mensaje_del_formulario_queda_guardado_y_avisa(resend):
-    """El mensaje se guarda ANTES de intentar el correo (orden del contrato)."""
+    """El correo se intenta primero y su marca viaja en el INSERT único
+    (contrato desde 2026-10-20: sin UPDATE posterior, vedado por RLS)."""
     email = "boton-soporte@example.com"
     _limpiar_mensajes(email)
     try:
@@ -707,3 +710,82 @@ def test_el_registro_avisa_al_buzon_del_titular(resend, monkeypatch):
     assert email in aviso["subject"] or "Persona Nueva" in aviso["subject"]
     assert aviso["reply_to"] == email
     assert "ES" in aviso["text"]
+
+
+# ---------------------------------------------------------------------------
+# 2026-10-20: el registro no puede emitir UPDATE ni la página «expulsa».
+# ---------------------------------------------------------------------------
+
+
+def test_registrar_mensaje_no_emite_ningun_update(resend):
+    """El registro público es un único INSERT, sin UPDATE posterior.
+
+    La política RLS de ``mensajes_soporte`` solo permite el INSERT público;
+    con FORCE RLS, marcar ``aviso_enviado`` tras enviar el correo emitía un
+    UPDATE que PostgreSQL reducía a 0 filas → ``StaleDataError`` → rollback
+    del mensaje y banner de error (producción, 2026-10-20). Los tests corren
+    en SQLite sin RLS, así que el contrato se fija contando las sentencias.
+    """
+    from sqlalchemy import event
+
+    from app.database import SessionLocal
+    from app.services import soporte as soporte_service
+
+    sentencias = []
+
+    def _contar(_conn, _cursor, sentencia, _params, _context, _executemany):
+        sentencias.append(sentencia.strip().upper())
+
+    email = "sin-update@example.com"
+    _limpiar_mensajes(email)
+    try:
+        with SessionLocal() as db:
+            motor = db.get_bind()
+            event.listen(motor, "before_cursor_execute", _contar)
+            try:
+                fila, aviso_id = soporte_service.registrar_mensaje(
+                    db,
+                    nombre="Sin Update",
+                    email=email,
+                    tipo="consulta",
+                    mensaje="¿Funciona sin UPDATE?",
+                    pagina="/inicio",
+                )
+            finally:
+                event.remove(motor, "before_cursor_execute", _contar)
+
+        assert aviso_id, "El doble de Resend devuelve un identificador: el aviso «salió»"
+        assert fila.aviso_enviado is True
+        actualizaciones = [s for s in sentencias if s.startswith("UPDATE")]
+        assert not actualizaciones, actualizaciones
+        inserciones = [s for s in sentencias if s.startswith("INSERT INTO MENSAJES_SOPORTE")]
+        assert len(inserciones) == 1
+    finally:
+        _limpiar_mensajes(email)
+
+
+def test_soporte_con_sesion_se_ve_dentro_de_la_aplicacion():
+    """Quien está dentro no cae en la página de marketing con «Acceder».
+
+    En SQLite (escritorio y tests) siempre hay sesión: ``/soporte`` se pinta
+    con la estructura del panel. Sin sesión (forzado aquí) sigue la pública
+    indexable, que es la que enlaza el sitemap.
+    """
+    with TestClient(app, base_url="https://cotizat.test") as client:
+        respuesta = client.get("/soporte")
+
+    assert respuesta.status_code == 200
+    assert 'href="/inicio"' in respuesta.text  # barra lateral de la aplicación
+    assert "hub-hero-int" not in respuesta.text  # nada de marco público
+
+
+def test_soporte_sin_sesion_sigue_siendo_la_publica(monkeypatch):
+    from app.routers import publico
+
+    monkeypatch.setattr(publico, "_soporte_con_sesion", lambda _request: False)
+    with TestClient(app, base_url="https://cotizat.test") as client:
+        respuesta = client.get("/soporte")
+
+    assert respuesta.status_code == 200
+    assert "hub-hero-int soporte-main" in respuesta.text
+    assert 'rel="canonical"' in respuesta.text

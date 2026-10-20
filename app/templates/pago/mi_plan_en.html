@@ -1,0 +1,169 @@
+{% extends "base_en.html" %}
+{% block title %}My plan{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🏠 Home › My plan</p>
+    <h1>My plan</h1>
+    <p class="subtitle">The plan for <strong>{{ organizacion_nombre or "your organization" }}</strong>: what you have, when it renews and how to switch without losing days.</p>
+  </div>
+</div>
+
+{% if msg %}
+<div class="alert alert-ok" role="status">{{ msg }}</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-error" role="alert">{{ error }}</div>
+{% endif %}
+{% if compra_pendiente %}
+<div class="alert alert-warn" role="status">
+  <b>We are verifying a payment.</b>
+  Your purchase from {{ compra_pendiente.created_at.strftime("%m/%d/%Y") if compra_pendiente.created_at }} is under review: as soon as it is confirmed, the period activates and shows up here. You do not need to pay again.
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Your current plan</h2>
+  {% if licencia.activo %}
+  <div class="plan-activo">
+    <div class="plan-activo-badge">✓</div>
+    <div>
+      <strong>{{ licencia.plan_label or "Active plan" }}</strong> active
+      {% if licencia.vence %}
+      <p class="subtitle">
+        Access until {{ licencia.vence.strftime("%m/%d/%Y") }} · {{ licencia.dias_restantes }} day{{ "s" if licencia.dias_restantes != 1 }} left
+        {% if licencia.metodo_cobro %} · paid by {{ licencia.metodo_cobro }}{% endif %}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if hay_suscripcion_stripe %}
+    {% if suscripcion and suscripcion.estado == "canceled" %}
+    <p class="subtitle">Your card subscription has already ended in Stripe, so it <b>will not renew</b>. You keep access through the last paid day{% if licencia.vence %} ({{ licencia.vence.strftime("%m/%d/%Y") }}){% endif %}; to continue after that, buy a period below.</p>
+    {% elif suscripcion and suscripcion.cancela_al_vencer %}
+    <p class="subtitle">Auto-renewal is <b>off</b>: your card will not be charged again and access ends on {{ (suscripcion.fin_periodo or licencia.vence).strftime("%m/%d/%Y") if (suscripcion.fin_periodo or licencia.vence) }}. You can turn it back on, or buy another period below (it chains on).</p>
+    {% if puede_gestionar_plan %}
+    <div class="miplan-acciones">
+      <form method="post" action="/mi-plan/reactivar-renovacion">
+        <button class="btn" type="submit">Turn auto-renewal back on</button>
+      </form>
+    </div>
+    {% endif %}
+    {% elif suscripcion %}
+    <p class="subtitle">You pay by card (Stripe) and the plan <b>renews automatically</b>{% if suscripcion.fin_periodo %} on {{ suscripcion.fin_periodo.strftime("%m/%d/%Y") }}{% endif %}: nothing to do to keep going. To stop or switch period one day, turn auto-renewal off here; access continues through the last paid day.</p>
+    {% if puede_gestionar_plan %}
+    <div class="miplan-acciones">
+      <form method="post" action="/mi-plan/cancelar-renovacion" data-confirm="Your card will stop being charged at the end of the current period. Access continues through the last paid day. Continue?">
+        <button class="btn" type="submit">Turn off auto-renewal</button>
+      </form>
+    </div>
+    {% endif %}
+    {% else %}
+    <p class="subtitle">You pay by card (Stripe): while your subscription stays active in Stripe, the plan renews itself at each expiry. We could not check its live status just now; to stop it or switch period, write to us from <a href="/soporte">Support</a>.</p>
+    {% endif %}
+  {% else %}
+  <p class="subtitle">This plan <b>does not renew automatically</b>. To keep access, renew before it expires: the new period chains right after the current one, and you lose no days.</p>
+  {% endif %}
+  {% else %}
+  <div class="plan-sin">
+    <p class="subtitle">You have no active plan. Get one below to unlock every feature; access starts as soon as the payment is confirmed.</p>
+  </div>
+  {% endif %}
+  {% if not puede_gestionar_plan %}
+  <p class="hint">Only the owner or an administrator of the organization can change card auto-renewal.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Renew or switch plan</h2>
+  {% if hay_suscripcion_stripe and suscripcion and not suscripcion.cancela_al_vencer and suscripcion.estado != "canceled" %}
+  <div class="alert alert-warn">
+    You already have a card subscription that <b>renews on its own</b>. Buying another period now would add access, but the subscription would still charge on its date and you could end up paying twice for the same time. To switch period, first turn off auto-renewal in the card above.
+  </div>
+  {% elif hay_suscripcion_stripe and suscripcion and suscripcion.cancela_al_vencer %}
+  <div class="alert alert-ok">
+    Your auto-renewal is off. Any period you buy now chains right after the current one: this is the clean moment to switch between monthly and annual.
+  </div>
+  {% endif %}
+  <div class="miplan-grid">
+    {% for plan in planes %}
+    <div class="miplan-plan{{ ' actual' if plan.es_actual else '' }}">
+      {% if plan.ficha.etiqueta %}<span class="miplan-etiqueta">{{ plan.ficha.etiqueta }}</span>{% endif %}
+      <h3>{{ plan.ficha.nombre }}{% if plan.es_actual %} · your plan{% endif %}</h3>
+      <div>
+        <span class="miplan-precio">{{ "%.2f"|format(plan.ficha.importe) }} US$ <small>{% if plan.clave == 'anual' %}/ year{% else %}/ month{% endif %}</small></span>
+        {% if plan.ficha.precio_antes %}<span class="miplan-antes">{{ "%.2f"|format(plan.ficha.precio_antes) }} US$</span>{% endif %}
+      </div>
+      <ul class="miplan-ventajas">
+        {% for ventaja in plan.ficha.ventajas %}
+        <li>{{ ventaja }}</li>
+        {% endfor %}
+      </ul>
+      {% if licencia.activo %}
+      <p class="miplan-encadena">Buy it today and it starts on <b>{{ plan.inicio_si_compra.strftime("%m/%d/%Y") }}</b> (when your current period ends), taking your access to <b>{{ plan.vence_si_compra.strftime("%m/%d/%Y") }}</b>. You lose no paid days.</p>
+      {% else %}
+      <p class="miplan-encadena">Access from payment confirmation until <b>{{ plan.vence_si_compra.strftime("%m/%d/%Y") }}</b>.</p>
+      {% endif %}
+      {% if plan.es_actual %}
+      <a class="btn btn-primary" href="/pago/comprar?plan={{ plan.clave }}">Renew {{ plan.ficha.nombre|lower }}</a>
+      {% elif plan_actual %}
+      <a class="btn" href="/pago/comprar?plan={{ plan.clave }}">Switch to {{ plan.ficha.nombre|lower }}</a>
+      {% else %}
+      <a class="btn btn-primary" href="/pago/comprar?plan={{ plan.clave }}">Get {{ plan.ficha.nombre|lower }}</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <p class="hint">Pay by card or with the manual methods for your country. With a manual payment, activation follows proof-of-payment review; the period counts from activation, chained after your current access.</p>
+</div>
+
+<div class="card">
+  <h2>Purchase history</h2>
+  {% if historial %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Plan</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Period granted</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for compra in historial %}
+      <tr>
+        <td>{{ compra.fecha.strftime("%m/%d/%Y") if compra.fecha }}</td>
+        <td>{{ compra.plan_nombre }}</td>
+        <td>{{ "%.2f"|format(compra.importe) }} {{ compra.moneda }}</td>
+        <td>{{ compra.metodo_nombre }}</td>
+        <td>
+          {% if compra.licencia_inicio and compra.licencia_vence %}
+          {{ compra.licencia_inicio.strftime("%m/%d/%Y") }} → {{ compra.licencia_vence.strftime("%m/%d/%Y") }}
+          {% else %}—{% endif %}
+        </td>
+        <td><span class="miplan-estado {{ compra.estado }}">{{ compra.etiqueta_estado }}</span></td>
+        <td>{% if compra.recibo_url %}<a href="{{ compra.recibo_url }}">Receipt (PDF)</a>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="subtitle">No purchases recorded for this organization yet.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>How renewals and switches work</h2>
+  <ul>
+    <li><b>Renewing never eats days:</b> the new period always chains after the access you already have, whether you buy today or on the last day.</li>
+    <li><b>Switching between monthly and annual</b> means buying the other period: it starts when the current one ends, with the exact dates shown on each card.</li>
+    <li><b>With a card (Stripe)</b> renewal is automatic; turn it off above any time and access continues through the last paid day.</li>
+    <li><b>With a manual payment</b> there are no automatic charges: if you do not renew, access ends on the expiry date and your data is kept for when you come back.</li>
+    <li>Problem with a charge? Write to us from <a href="/soporte">Support</a> with the purchase date.</li>
+  </ul>
+</div>
+{% endblock %}

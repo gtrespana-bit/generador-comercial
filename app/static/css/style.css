@@ -5937,6 +5937,55 @@ body {
 .plan-recibo { margin: 6px 0 0; font-size: .85rem; }
 .plan-recibo a { color: var(--accent); font-weight: 600; }
 .plan-sin .subtitle { margin: 0 0 12px; }
+
+/* ───────────────────── Mi plan (/mi-plan) ───────────────────── */
+.miplan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.miplan-plan {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-alt);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.miplan-plan.actual { border-color: var(--accent); }
+.miplan-plan h3 { margin: 0; }
+.miplan-etiqueta {
+  align-self: flex-start;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--accent);
+  background: var(--accent-soft, rgba(18, 63, 120, .08));
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.miplan-precio { font-size: 1.7rem; font-weight: 800; line-height: 1.1; }
+.miplan-precio small { font-size: .9rem; font-weight: 600; color: var(--muted, #64748b); }
+.miplan-antes { color: var(--muted, #64748b); text-decoration: line-through; font-size: .9rem; }
+.miplan-ventajas { margin: 4px 0 8px; padding-left: 1.1em; }
+.miplan-ventajas li { margin: 3px 0; }
+.miplan-encadena { font-size: .88rem; color: var(--muted, #475569); margin: 0 0 4px; }
+.miplan-plan .btn { margin-top: auto; text-align: center; }
+.miplan-estado {
+  display: inline-block;
+  font-size: .78rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 2px 9px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+.miplan-estado.activa { background: var(--success-soft, #e6f2ec); color: var(--success, #0b5b38); border-color: transparent; }
+.miplan-estado.pendiente { background: #fdf3e3; color: #8a5a00; border-color: transparent; }
+.miplan-estado.rechazada { background: #fdecec; color: #9b2226; border-color: transparent; }
+.miplan-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.miplan-acciones form { margin: 0; }
 .rol-notice {
   background: var(--accent-soft, rgba(18, 63, 120, .08));
   border: 1px solid var(--accent-light, #b9cce7);
