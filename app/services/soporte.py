@@ -8,7 +8,10 @@ servicio cierra el circuito:
 - **Escribir**: ``registrar_mensaje`` guarda el mensaje en
   ``mensajes_soporte`` y dispara el aviso por correo al buzón de soporte. El
   correo lleva ``reply_to`` del cliente, así que responder desde el buzón
-  contesta a la persona correcta.
+  contesta a la persona correcta. El guardado es **un único INSERT** con la
+  marca del aviso ya puesta (el correo se intenta primero): la política RLS
+  de la tabla reserva el UPDATE al operador y marcar ``aviso_enviado``
+  después tiraba el registro entero — no «optimizar» este orden.
 - **Atender**: el panel lo lee, lo marca y anota la gestión
   (``marcar_estado``). Cada cambio queda en la auditoría del panel.
 
@@ -85,7 +88,9 @@ def registrar_mensaje(
     Lanza :class:`SoporteError` si falta el correo, el mensaje o si algún campo
     pasa del límite. El aviso por correo es *best effort*: si Resend no está
     configurado o falla, el mensaje queda guardado igualmente y se devuelve
-    cadena vacía en el segundo valor.
+    cadena vacía en el segundo valor. Todo el guardado es un único INSERT
+    con la marca del aviso ya puesta (ver el comentario junto a ``_avisar``:
+    el UPDATE está reservado al operador por RLS).
     """
     nombre = str(nombre or "").strip()[:MAX_NOMBRE]
     email = str(email or "").strip().lower()
@@ -130,23 +135,32 @@ def registrar_mensaje(
         estado="nuevo",
         ip_hash=str(ip_hash or "")[:64],
     )
-    db.add(fila)
-    db.flush()
 
+    # El aviso sale ANTES del INSERT y su marca viaja en la propia fila.
+    # No es un capricho de orden: la política RLS de ``mensajes_soporte``
+    # admite el INSERT público pero reserva el UPDATE al operador, y el
+    # orden anterior (insertar, avisar, marcar ``aviso_enviado`` con un
+    # UPDATE del ORM) reventaba en PostgreSQL con StaleDataError justo
+    # cuando el correo SÍ había salido — rollback del mensaje y error
+    # visible para quien escribía (visto en producción el 20/10/2026).
+    # El aviso lleva el mensaje completo, así que ningún orden puede
+    # perderlo del todo: o queda en la base, o queda en el buzón.
     aviso_id = ""
     if notificar:
         aviso_id = _avisar(
             fila, organizacion_nombre=organizacion_nombre, panel_url=panel_url, idioma=idioma
         )
-        fila.aviso_enviado = bool(aviso_id)
-        db.flush()
+    fila.aviso_enviado = bool(aviso_id)
+    db.add(fila)
+    db.flush()
     return fila, aviso_id
 
 
 def _avisar(
     fila: MensajeSoporte, *, organizacion_nombre: str, panel_url: str, idioma: str = "es"
 ) -> str:
-    """Avisa al buzón de soporte. Nunca lanza: el mensaje ya está guardado."""
+    """Avisa al buzón de soporte. Nunca lanza: si falla, el mensaje se
+    guarda igual y la marca ``aviso_enviado`` queda a falso."""
     from .email import (
         EmailNotConfigured,
         EmailSendError,
@@ -167,9 +181,9 @@ def _avisar(
             idioma=idioma,
         )
     except (EmailNotConfigured, EmailValidationError, EmailSendError) as exc:
-        log.warning("Mensaje de soporte #%s guardado sin aviso por correo (%s).", fila.id, exc)
+        log.warning("Mensaje de soporte de %s guardado sin aviso por correo (%s).", fila.email, exc)
     except Exception:
-        log.exception("Error avisando del mensaje de soporte #%s.", fila.id)
+        log.exception("Error avisando del mensaje de soporte de %s.", fila.email)
     return ""
 
 

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Soporte{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🏠 Inicio › Soporte</p>
+    <h1>Soporte</h1>
+    <p class="subtitle">Dudas, problemas, quejas o ideas: escríbenos y te contestamos por correo. Sigues dentro de tu cuenta; al enviar no sales de la aplicación.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{{ desde or '/inicio' }}">← Volver</a>
+  </div>
+</div>
+
+{% if enviado %}
+<div class="alert alert-ok" role="status">
+  <b>Tu mensaje ya nos ha llegado{% if referencia %} (nº {{ referencia }}){% endif %}.</b>
+  Te responderemos a la dirección indicada, normalmente en menos de 24 horas laborables.
+</div>
+{% endif %}
+{% if error_soporte %}
+<div class="alert alert-error" role="alert">
+  <b>No hemos podido enviar el mensaje.</b> {{ error_soporte }}
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Cuéntanos qué pasa</h2>
+  <form method="post" action="/soporte">
+    <input type="hidden" name="desde" value="{{ desde or '/soporte' }}">
+    {# Trampa para bots: invisible para una persona (ver la página pública). #}
+    <div hidden aria-hidden="true">
+      <label for="soporte-web-panel">No rellenes este campo</label>
+      <input id="soporte-web-panel" type="text" name="web" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="soporte-nombre-panel">Tu nombre</label>
+      <input id="soporte-nombre-panel" type="text" name="nombre" maxlength="200" autocomplete="name" placeholder="Cómo te llamas" value="{{ nombre_previo or '' }}">
+    </div>
+    <div class="field">
+      <label for="soporte-email-panel">Tu correo *</label>
+      <input id="soporte-email-panel" type="email" name="email" maxlength="254" autocomplete="email" required placeholder="nombre@empresa.com" value="{{ email_previo or '' }}">
+      <p class="hint">Ahí te contestamos. No se usa para nada más.</p>
+    </div>
+    <div class="field">
+      <label for="soporte-tipo-panel">Motivo *</label>
+      <select id="soporte-tipo-panel" name="tipo" required>
+        {% for valor, etiqueta in tipos_soporte %}
+        <option value="{{ valor }}">{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="soporte-asunto-panel">Asunto</label>
+      <input id="soporte-asunto-panel" type="text" name="asunto" maxlength="200" placeholder="Resumen en una línea (opcional)">
+    </div>
+    <div class="field">
+      <label for="soporte-mensaje-panel">Mensaje *</label>
+      <textarea id="soporte-mensaje-panel" name="mensaje" rows="8" maxlength="8000" required placeholder="Qué esperabas que pasara, qué pasó y en qué pantalla. Cuanto más concreto, antes lo resolvemos."></textarea>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Enviar a soporte</button>
+    <p class="hint">El mensaje queda guardado y nos llega por correo. Si prefieres tu cliente de correo: <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Qué puedes esperar</h2>
+  <ul>
+    <li><b>Respuesta por correo</b> a la dirección que escribas, normalmente en menos de 24 horas laborables.</li>
+    <li><b>Sugerencias:</b> se leen todas; muchas acaban siendo funciones del producto.</li>
+    <li><b>Si es un problema</b>, cuéntanos qué hacías, qué esperabas y qué viste (pantalla y, si aplica, número de presupuesto).</li>
+    <li>Las <a href="/legal/preguntas">preguntas frecuentes</a> resuelven lo más habitual: precios, datos, impuestos y facturación.</li>
+  </ul>
+</div>
+{% endblock %}

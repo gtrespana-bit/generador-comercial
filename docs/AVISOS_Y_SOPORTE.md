@@ -74,9 +74,14 @@ prueba. `reply_to` es la persona que se registró.
 - Enlace **Soporte** en la barra lateral de la aplicación y botón flotante
   (`.soporte-flotante`) que convive con el lanzador del asistente y pasa
   `?desde=<pantalla>` para que el titular sepa dónde estaba la persona.
-- Página pública `/soporte` (indexable, en el mapa del sitio y en el sitemap):
-  formulario con motivo (duda, problema, queja, sugerencia, facturación, otro),
-  asunto y mensaje; funciona **sin sesión** y muestra los plazos de respuesta.
+- Página `/soporte` con **dos marcos** sobre la misma URL (2026-10-20): sin
+  sesión se sirve la página pública indexable (sitemap y SEO intactos); con
+  sesión, la variante del panel (`soporte_panel*.html`, barra lateral y nombre
+  y correo ya rellenos). Enlazar al cliente logueado a la página de marketing,
+  con su botón de «Acceder», le hacía creer que había perdido la sesión.
+- El formulario (idéntico en ambas): motivo (duda, problema, queja,
+  sugerencia, facturación, otro), asunto y mensaje; muestra los plazos de
+  respuesta.
 - Antispam: límite de 5 envíos/5 min por IP (`app/security.py`
   `DEFAULT_LIMITS`) y campo trampa invisible.
 
@@ -89,8 +94,23 @@ prueba. `reply_to` es la persona que se registró.
 - El aviso por correo lleva `reply_to` del cliente: responder desde el buzón
   contesta directamente.
 
-**Orden de garantías:** el mensaje se guarda en `mensajes_soporte` **antes** de
-intentar el correo. Si Resend falla, el mensaje sigue en el panel.
+**Orden de garantías (corregido el 2026-10-20):** el correo de aviso se
+intenta **primero** y su marca (`aviso_enviado`) viaja en la fila del propio
+INSERT: si Resend falla, el mensaje se guarda igual y queda en el panel.
+Antes el mensaje se guardaba, se avisaba y la marca se ponía con un UPDATE,
+pero la política RLS de `mensajes_soporte` solo permite el INSERT público
+(el UPDATE es del operador): **precisamente cuando el correo salía**,
+PostgreSQL reducía el UPDATE a 0 filas, el ORM lanzaba `StaleDataError` y el
+registro entero hacía rollback — el cliente veía «no hemos podido registrar
+tu mensaje» y el mensaje no quedaba ni en el panel. Contratos fijados por
+test: ningún UPDATE durante el registro y `/soporte` dentro de la aplicación
+con sesión.
+
+**Destino de los avisos:** `COTIZAT_AVISOS_EMAIL` si está fijado; si no,
+`soporte@cotizat.online`, que **aún no tiene buzón** (dominio sin registros
+MX): hasta crear el buzón o fijar la variable en Vercel, los avisos rebotan
+en silencio y solo queda rastro en el panel. `/readyz` publica
+`avisos_destino` para comprobarlo sin entrar en Vercel.
 
 ---
 

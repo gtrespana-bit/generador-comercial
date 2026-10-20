@@ -109,6 +109,24 @@ def _check_email_configuration() -> tuple[str, str | None]:
     return estado_configuracion_email()
 
 
+def _check_avisos_destino() -> dict[str, str]:
+    """Informativo: adónde van los avisos del negocio y de soporte.
+
+    Sin ``COTIZAT_AVISOS_EMAIL`` van a ``soporte@cotizat.online``, que hoy no
+    tiene buzón (sin registros MX): el correo «sale» y rebota en silencio.
+    Publicado el 2026-10-20, cuando los mensajes de soporte daban error y
+    ningún aviso llegó nunca. No se revela la dirección desviada.
+    """
+    import os
+
+    desviado = bool((os.environ.get("COTIZAT_AVISOS_EMAIL") or "").strip())
+    return {
+        "avisos_destino": (
+            "desviado (COTIZAT_AVISOS_EMAIL)" if desviado else "buzon de soporte por defecto"
+        )
+    }
+
+
 def _check_cron_configuration() -> dict[str, str]:
     """Informativo: el trabajo programado de Vercel y su secreto.
 
@@ -386,6 +404,9 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     # Informativo (nunca añade errores): corpus SEO, artefactos de precios
     # dentro de la función, referencias nacionales en BD y host canónico.
     checks.update(_check_seo(engine, host))
+
+    # Informativo: destino de los avisos internos (sin revelar la dirección).
+    checks.update(_check_avisos_destino())
 
     return HealthStatus(ok=not errors, checks=checks, errors=errors)
 
