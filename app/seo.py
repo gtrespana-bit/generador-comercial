@@ -102,6 +102,11 @@ def es_indexable(path: str) -> bool:
             return True
         if len(partes) == 2 and partes[1] in TEMAS:
             return True
+        # Los artículos de mercados hispanos viven en su silo canónico:
+        # /es/guia/x, /co/guia/x… La ruta se valida además en el router para
+        # que un artículo español bajo /mx/ devuelva 404.
+        if len(partes) == 3 and partes[1] == "guia" and re.fullmatch(r"[a-z0-9-]+", partes[2]):
+            return True
         return False
     return False
 
@@ -1309,7 +1314,7 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
     Con ``lang='en'`` devuelve el copy en inglés y la canónica en ``/en/``
     (o ``/en-xx/``), que es la URL que realmente se está sirviendo.
     """
-    from .seo_articulos import articulo_de_pais
+    from .seo_articulos import articulo_de_pais, articulos_de_pais
     from .seo_contenido import cuerpo_pais, lista_guias
 
     codigo = str(codigo or "").strip().upper()
@@ -1378,6 +1383,12 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
             "canonical_path": ruta_pais(codigo),
             "cuerpo": cuerpo_pais(codigo),
             "guias": lista_guias(),
+            # Todos los artículos del silo, no solo el primero. España abre
+            # la estrategia profunda con tres intenciones distintas.
+            "articulos_mercado": [
+                {**articulo, "ruta": f"/{codigo.lower()}/guia/{articulo['slug']}"}
+                for articulo in articulos_de_pais(codigo)
+            ],
             "articulo": articulo_de_pais(codigo),
         }
     )
@@ -1536,13 +1547,14 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ("Análisis de precios unitarios", ruta_pais(codigo, "apu")),
         ]
 
-    from .seo_articulos import articulo_de_pais
+    from .seo_articulos import articulos_de_pais
     from .seo_contenido import extra_hub, faq_hub
 
     body = list(body) + extra_hub(codigo, tema)
-    art = articulo_de_pais(codigo)
-    if art:
-        related = list(related) + [(art["h1"], "/guia/" + art["slug"])]
+    for art in articulos_de_pais(codigo):
+        related = list(related) + [
+            (art["h1"], f"/{codigo.lower()}/guia/{art['slug']}")
+        ]
     faq_local = faq_hub(codigo, tema)
     faq = [
         {
@@ -1771,10 +1783,16 @@ def jsonld_webpage(
 
 def jsonld_howto(guia: dict, request: Request | None = None, lang: str = "es") -> dict:
     origen = origen_canonico(request)
-    lang = normalizar_idioma(lang)
+    idioma = normalizar_idioma(lang)
+    pais_guia = str(guia.get("pais") or "").strip().upper()
+    mercado = PAISES.get(pais_guia) or {}
+    locale = hreflang_pais(pais_guia) if mercado.get("idioma") == idioma else idioma
     pasos = []
     for i, (titulo, pars) in enumerate(guia.get("secciones") or [], start=1):
-        texto = " ".join(str(p) for p in (pars or []) if p).strip()
+        # Las tablas ya son visibles en el HTML, pero serializar su dict como
+        # texto produciría un HowToStep ilegible y distinto de lo que ve el
+        # usuario. El schema conserva solo los párrafos narrativos.
+        texto = " ".join(p for p in (pars or []) if isinstance(p, str) and p).strip()
         paso: dict = {"@type": "HowToStep", "position": i, "name": titulo}
         if texto:
             paso["text"] = texto
@@ -1784,29 +1802,37 @@ def jsonld_howto(guia: dict, request: Request | None = None, lang: str = "es") -
         "@type": "HowTo",
         "name": guia["h1"],
         "description": guia["description"],
-        "url": origen + _ruta_guia(guia["slug"], lang),
-        "inLanguage": lang,
+        "url": origen + _ruta_guia(guia["slug"], idioma),
+        "inLanguage": locale,
         "step": pasos,
     }
 
 
 def _ruta_guia(slug: str, lang: str = "es") -> str:
-    """Ruta canónica de una guía.
+    """Ruta canónica de una guía genérica o de mercado.
 
-    ``/guia/x`` en español y ``/en/guia/x`` en inglés. Un artículo escrito
-    para un mercado concreto vive bajo su prefijo (``/en-gb/guia/x``): la
-    URL dice de qué mercado habla el texto, y no compite con la guía
-    genérica en inglés ni crea una segunda URL del mismo documento.
+    Las guías de método viven en ``/guia/x`` o ``/en/guia/x``. Un artículo
+    de país vive dentro de su silo: ``/es/guia/x`` o ``/en-gb/guia/x``. Así
+    la URL, las migas, los enlaces y el sitemap expresan la misma entidad.
     """
-    if normalizar_idioma(lang) != "en":
-        return f"/guia/{slug}"
+    idioma = normalizar_idioma(lang)
     from .seo_articulos import ficha_articulo
 
-    articulo = ficha_articulo(slug, "en") or {}
+    articulo = ficha_articulo(slug, idioma) or {}
     pais = str(articulo.get("pais") or "").strip().upper()
-    if pais in PAISES and PAISES[pais].get("idioma") == "en":
-        return f"/en-{pais.lower()}/guia/{slug}"
-    return f"/en/guia/{slug}"
+    mercado = PAISES.get(pais) or {}
+    if pais and mercado.get("idioma") == idioma:
+        if idioma == "en":
+            return f"/en-{pais.lower()}/guia/{slug}"
+        return f"/{pais.lower()}/guia/{slug}"
+    if idioma == "en":
+        return f"/en/guia/{slug}"
+    return f"/guia/{slug}"
+
+
+def ruta_guia(slug: str, lang: str = "es") -> str:
+    """API pública para enlazado interno y pruebas."""
+    return _ruta_guia(slug, lang)
 
 
 def _articulos_en_para_enlazar(pais: str = "") -> list[dict]:
@@ -1833,7 +1859,8 @@ def jsonld_articulo(guia: dict, request: Request | None = None, lang: str = "es"
     path = _ruta_guia(guia["slug"], lang)
     locale = lang
     pais_articulo = str(guia.get("pais") or "").strip().upper()
-    if pais_articulo in PAISES and PAISES[pais_articulo].get("idioma") == "en":
+    mercado_articulo = PAISES.get(pais_articulo) or {}
+    if pais_articulo and mercado_articulo.get("idioma") == lang:
         locale = hreflang_pais(pais_articulo)
     return {
         "@context": "https://schema.org",
@@ -1874,12 +1901,16 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     en = lang == "en"
     pais_guia = str(guia.get("pais") or "").strip().upper()
     mercado_guia = PAISES.get(pais_guia) if pais_guia else None
-    # Un artículo escrito para un mercado anglófono (hoy, Reino Unido) se
-    # anuncia con su locale (en-GB) y no con «en» a secas, y no inventa una
-    # versión en español que no existe.
-    en_mercado = bool(mercado_guia and mercado_guia.get("idioma") == "en")
-    locale = hreflang_pais(pais_guia) if en_mercado else ("en" if en else "es")
-    prefijo = f"/en-{pais_guia.lower()}" if en_mercado else ("/en" if en else "")
+    # Un artículo de mercado se anuncia con su locale exacto (es-ES, en-GB)
+    # y no inventa traducciones. Solo es de mercado en el idioma nativo de
+    # ese país; la traducción histórica de un artículo colombiano sigue en
+    # el hub inglés genérico y no suplanta una URL en-CO.
+    mercado_especifico = bool(mercado_guia and mercado_guia.get("idioma") == lang)
+    locale = hreflang_pais(pais_guia) if mercado_especifico else ("en" if en else "es")
+    if mercado_especifico:
+        prefijo = f"/en-{pais_guia.lower()}" if en else f"/{pais_guia.lower()}"
+    else:
+        prefijo = "/en" if en else ""
     seo = _aplicar_prueba(
         {
             "title": guia["title"],
@@ -1895,13 +1926,15 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         incluir_prueba=False,
     )
     if en:
-        crumbs = [
-            ("Home", prefijo + "/"),
-            ("Guides", "/en/mapa-del-sitio"),
-            (guia["h1"], path),
-        ]
+        crumbs = [("Home", ruta_en("US"))]
+        if mercado_especifico:
+            crumbs.append((str(guia.get("pais_nombre") or pais_guia), prefijo + "/"))
+        crumbs.extend([("Guides", "/en/mapa-del-sitio"), (guia["h1"], path)])
     else:
-        crumbs = [("Inicio", "/"), ("Guías", "/mapa-del-sitio"), (guia["h1"], path)]
+        crumbs = [("Inicio", "/")]
+        if mercado_especifico:
+            crumbs.append((str(guia.get("pais_nombre") or pais_guia), prefijo + "/"))
+        crumbs.extend([("Guías", "/mapa-del-sitio"), (guia["h1"], path)])
     bloques = [
         jsonld_organizacion(request, lang=lang),
         jsonld_website(request),
@@ -1909,14 +1942,13 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         jsonld_articulo(guia, request, lang=lang),
         jsonld_breadcrumb(request, crumbs),
     ]
-    # HowTo solo donde el documento es un procedimiento paso a paso. Las
-    # guías pilar lo son; un artículo de fiscalidad CIS no, y anunciarlo como
-    # tutoriales es schema que no se corresponde con la página.
-    if not en_mercado:
+    # HowTo solo donde el documento es realmente un procedimiento. Las guías
+    # pilar lo son; los artículos de mercado deben declararlo explícitamente.
+    if (not mercado_especifico) or bool(guia.get("schema_howto")):
         bloques.append(jsonld_howto(guia, request, lang=lang))
     if seo["faq"]:
         bloques.append(jsonld_faq(seo["faq"]))
-    if en_mercado:
+    if mercado_especifico:
         hreflang = [
             {"hreflang": locale, "href": origen + path},
             {"hreflang": "x-default", "href": origen + path},
@@ -1953,7 +1985,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         "seo_temas": TEMAS,
         # Prefijo de idioma del artículo. La plantilla no puede deducirlo de
         # la URL porque el middleware ya la ha reescrito.
-        "prefijo_guia": prefijo or "/en",
+        "prefijo_guia": prefijo or ("/en" if en else ""),
         "og_type": "article",
     }
 
@@ -2240,11 +2272,32 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         ]
         add(ruta_es, prio, freq, alts=pares)
         add(ruta_en, prio, freq, alts=pares)
-    from .seo_contenido import lista_todas_guias
+    # Guías pilar (sin país) y artículos de mercado (dentro de su silo) son
+    # dos arquitecturas distintas. No se publican artículos españoles bajo
+    # /guia/: esa URL histórica redirige a /es/guia/… y no entra al sitemap.
+    from .seo_contenido import lista_guias
 
-    for guia in lista_todas_guias():
-        ruta_es = f"/guia/{guia['slug']}"
-        add(ruta_es, "0.7", "monthly")
+    for guia in lista_guias():
+        add(f"/guia/{guia['slug']}", "0.7", "monthly")
+
+    from .seo_articulos import lista_articulos
+
+    for articulo in lista_articulos():
+        pais_articulo = str(articulo.get("pais") or "").strip().upper()
+        mercado = PAISES.get(pais_articulo) or {}
+        if mercado.get("idioma") != "es":
+            continue
+        ruta = _ruta_guia(articulo["slug"], "es")
+        locale_art = hreflang_pais(pais_articulo)
+        add(
+            ruta,
+            "0.7",
+            "monthly",
+            alts=[
+                {"hreflang": locale_art, "href": base + ruta},
+                {"hreflang": "x-default", "href": base + ruta},
+            ],
+        )
     # Guías en inglés (solo las traducidas): se declaran como par es/en.
     try:
         from .seo_contenido import GUIAS_EN

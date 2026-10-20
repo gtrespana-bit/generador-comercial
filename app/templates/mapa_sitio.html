@@ -67,7 +67,7 @@
     <h2>Por oficio y país</h2>
     <ul>
       {% for g in articulos %}
-      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
+      <li><a href="{{ g.ruta }}">{{ g.h1 }}</a></li>
       {% endfor %}
     </ul>
   </section>

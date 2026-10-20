@@ -372,11 +372,23 @@ def ficha_articulo(slug: str, lang: str = "es") -> dict | None:
         mercado = _articulo_mercados_en(slug)
         if mercado:
             return mercado
+    else:
+        # España es el primer silo hispano profundo. Vive en un módulo propio
+        # porque sus guías usan la matriz EUR y el flujo BC3 del producto, no
+        # un texto regional al que se cambia el nombre del país.
+        from .seo_espana import articulo as _articulo_espana
+
+        espana = _articulo_espana(slug)
+        if espana:
+            return espana
     return ARTICULOS.get(slug)
 
 
 def lista_articulos() -> list[dict]:
-    return [ARTICULOS[k] for k in ORDEN_ARTICULOS]
+    """Todos los artículos de mercados hispanos, en orden editorial."""
+    from .seo_espana import guias as _guias_espana
+
+    return [ARTICULOS[k] for k in ORDEN_ARTICULOS] + _guias_espana()
 
 
 def lista_articulos_en() -> list[dict]:
@@ -392,13 +404,16 @@ def lista_articulos_en() -> list[dict]:
     return [a for a in out if a]
 
 
-def articulo_de_pais(codigo: str, lang: str = "es") -> dict | None:
+def articulos_de_pais(codigo: str, lang: str = "es") -> list[dict]:
+    """Corpus propio de un mercado; nunca mezcla artículos de otros países."""
     codigo = str(codigo or "").strip().upper()
     fuente = lista_articulos_en() if lang == "en" else lista_articulos()
-    for item in fuente:
-        if item.get("pais") == codigo:
-            return item
-    return None
+    return [item for item in fuente if item.get("pais") == codigo]
+
+
+def articulo_de_pais(codigo: str, lang: str = "es") -> dict | None:
+    propios = articulos_de_pais(codigo, lang=lang)
+    return propios[0] if propios else None
 # This file is appended to seo_articulos.py
 ARTICULOS_EN.update({
     "apu-panete-colombia": {

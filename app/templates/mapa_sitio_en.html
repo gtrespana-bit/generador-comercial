@@ -72,16 +72,6 @@
     </ul>
   </section>
   {% endif %}
-  {% if articulos is defined and articulos %}
-  <section class="hub-bloque">
-    <h2>By trade and country</h2>
-    <ul>
-      {% for g in articulos %}
-      <li><a href="/guia/{{ g.slug }}">{{ g.h1 }}</a></li>
-      {% endfor %}
-    </ul>
-  </section>
-  {% endif %}
   <section class="hub-bloque">
     <h2>Legal</h2>
     <ul>
