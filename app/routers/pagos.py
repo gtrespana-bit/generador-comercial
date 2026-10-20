@@ -744,3 +744,229 @@ async def stripe_webhook(
             headers={"Cache-Control": "no-store"},
         )
     return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
+
+
+# ---------------------------------------------------------------------------
+# Mi plan: ver el plan activo, renovarlo y cambiar de período
+# ---------------------------------------------------------------------------
+#
+# Hasta 2026-10-20 el cliente que pagaba no tenía ninguna pantalla con su
+# plan: solo una tarjeta enterrada en Configuración y un indicador de texto
+# en la barra lateral. Ni sabía cuándo vencía sin ir a buscarlo, ni podía
+# renovar o pasar de mensual a anual sin conocer de memoria /pago. Esta
+# página reúne estado, acciones e historial. Usa ``get_db_renovacion``
+# (como el checkout y el recibo) para que una organización con la licencia
+# vencida pueda entrar a renovar sin pasar por soporte.
+
+
+def _plan_actual(licencia: dict, compras: list) -> str:
+    """``anual``/``mensual``/``""``: el período que da acceso hoy.
+
+    La etiqueta del resumen sale de la licencia vigente; si no distingue el
+    período (p. ej. «Plan de pago» por un importe con descuento), manda la
+    última compra activada, que guarda el plan exacto.
+    """
+    etiqueta = str(licencia.get("plan_label") or "").casefold()
+    if "anual" in etiqueta:
+        return "anual"
+    if "mensual" in etiqueta:
+        return "mensual"
+    for compra in compras:
+        if compra.estado == "activa":
+            return compra.plan
+    return ""
+
+
+def _periodo_si_compra_hoy(licencia: dict, ficha: dict, hoy: date):
+    """(inicio, vence) de una compra hecha hoy, ya encadenada.
+
+    Replica el cálculo de ``crear_licencia``: si ya hay acceso vigente, el
+    período nuevo empieza al día siguiente del fin de la cadena, de modo
+    que renovar antes de tiempo no regala ni quita días.
+    """
+    from datetime import timedelta
+
+    from ..services.licencias import DURACIONES
+
+    delta = DURACIONES[ficha["duracion_licencia"]][1]
+    vence = licencia.get("vence")
+    if licencia.get("activo") and vence is not None and vence >= hoy:
+        inicio = vence + timedelta(days=1)
+    else:
+        inicio = hoy
+    return inicio, inicio + delta - timedelta(days=1)
+
+
+def _compra_con_suscripcion(compras: list):
+    """La compra activada más reciente con suscripción de Stripe, o None."""
+    for compra in compras:
+        if (
+            compra.metodo_pago == METODO_STRIPE
+            and compra.estado == "activa"
+            and compra.stripe_subscription_id
+        ):
+            return compra
+    return None
+
+
+def _suscripcion_en_vivo(compra) -> dict | None:
+    """Estado real de la suscripción en Stripe; None si no se pudo leer.
+
+    Nunca tumba la página: sin red o sin claves, «Mi plan» sigue enseñando
+    los datos locales con un texto prudente.
+    """
+    if compra is None:
+        return None
+    from ..services.stripe import (
+        StripeError,
+        obtener_suscripcion,
+        resumen_suscripcion,
+        stripe_configurado,
+    )
+
+    if not stripe_configurado():
+        return None
+    try:
+        return resumen_suscripcion(obtener_suscripcion(compra.stripe_subscription_id))
+    except StripeError as exc:
+        log.warning("No se pudo leer la suscripción de Stripe: %s", exc)
+        return None
+
+
+@router.get("/mi-plan", response_class=HTMLResponse, include_in_schema=False)
+def mi_plan(request: Request, db: Session = Depends(get_db_renovacion)):
+    """El plan de la organización: estado, renovación e historial."""
+    from ..database import DATABASE_IS_SQLITE, _resumen_licencia_para_request
+    from ..services.compras import compras_de_organizacion
+
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    organizacion = db.get(Organizacion, organizacion_id)
+    licencia = getattr(request.state, "licencia_resumen", None)
+    if licencia is None:
+        licencia = _resumen_licencia_para_request(db, organizacion_id)
+
+    compras = compras_de_organizacion(db, organizacion_id)
+    plan_actual = _plan_actual(licencia, compras)
+    hoy = date.today()
+
+    planes = []
+    for clave, ficha in PLANES.items():
+        inicio, vence = _periodo_si_compra_hoy(licencia, ficha, hoy)
+        planes.append(
+            {
+                "clave": clave,
+                "ficha": ficha,
+                "es_actual": clave == plan_actual,
+                "inicio_si_compra": inicio,
+                "vence_si_compra": vence,
+            }
+        )
+
+    historial = []
+    for compra in compras:
+        try:
+            metodo_nombre = metodo_info(compra.metodo_pago)["nombre"]
+        except KeyError:
+            metodo_nombre = compra.metodo_pago
+        historial.append(
+            {
+                "fecha": compra.created_at,
+                "plan_nombre": PLANES.get(compra.plan, {}).get("nombre", compra.plan),
+                "importe": compra.importe,
+                "moneda": compra.moneda,
+                "metodo_nombre": metodo_nombre,
+                "estado": compra.estado,
+                "etiqueta_estado": compra.etiqueta_estado,
+                "licencia_inicio": compra.licencia_inicio,
+                "licencia_vence": compra.licencia_vence,
+                # Misma condición que `ultima_compra_con_recibo`: sin período
+                # copiado en la compra no hay recibo que emitir.
+                "recibo_url": (
+                    f"/pago/recibo/{compra.id}.pdf"
+                    if compra.estado == "activa"
+                    and compra.licencia_id is not None
+                    and compra.licencia_vence is not None
+                    else ""
+                ),
+            }
+        )
+
+    compra_stripe = _compra_con_suscripcion(compras)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "pago/mi_plan.html",
+        {
+            "organizacion_nombre": organizacion.nombre if organizacion else "",
+            "licencia": licencia,
+            "plan_actual": plan_actual,
+            "planes": planes,
+            "historial": historial,
+            "compra_pendiente": next(
+                (c for c in compras if c.estado == "pendiente"), None
+            ),
+            "hay_suscripcion_stripe": compra_stripe is not None,
+            "suscripcion": _suscripcion_en_vivo(compra_stripe),
+            "puede_gestionar_plan": DATABASE_IS_SQLITE or puede_gestionar(db),
+            "msg": request.query_params.get("msg", ""),
+            "error": request.query_params.get("error", ""),
+        },
+    )
+
+
+def _cambiar_renovacion_stripe(request: Request, db: Session, *, cancelar: bool):
+    """Programa o deshace la cancelación de la suscripción con tarjeta.
+
+    Solo propietario/administrador: dejar de renovar afecta al acceso de
+    toda la organización. El acceso ya pagado no se toca; la suscripción
+    simplemente no vuelve a cobrar al vencer el período.
+    """
+    from ..database import DATABASE_IS_SQLITE
+    from ..services.compras import compras_de_organizacion
+    from ..services.stripe import StripeError, fijar_cancelacion_al_vencer
+
+    if not DATABASE_IS_SQLITE and not puede_gestionar(db):
+        return _redirect(
+            "/mi-plan",
+            error="Solo el propietario o un administrador puede cambiar la renovación del plan.",
+        )
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    compra = _compra_con_suscripcion(compras_de_organizacion(db, organizacion_id))
+    if compra is None:
+        return _redirect(
+            "/mi-plan",
+            error="Tu plan no se renueva con tarjeta: no hay ninguna suscripción que cambiar.",
+        )
+    try:
+        fijar_cancelacion_al_vencer(compra.stripe_subscription_id, cancelar)
+    except StripeError as exc:
+        log.warning("Stripe rechazó el cambio de renovación: %s", exc)
+        return _redirect(
+            "/mi-plan",
+            error="Stripe no aceptó el cambio. Inténtalo de nuevo o escribe a soporte.",
+        )
+    auditoria.registrar_evento(
+        db,
+        "plan.renovacion_cancelada" if cancelar else "plan.renovacion_reactivada",
+        entidad="compra",
+        entidad_id=compra.id,
+        detalle={"suscripcion": compra.stripe_subscription_id},
+    )
+    db.commit()
+    if cancelar:
+        mensaje = (
+            "Renovación automática desactivada. Tu acceso continúa hasta el "
+            "último día ya pagado y tu tarjeta no volverá a cobrarse."
+        )
+    else:
+        mensaje = "Renovación automática activada de nuevo. Tu tarjeta se cobrará al vencer el período."
+    return _redirect("/mi-plan", msg=mensaje)
+
+
+@router.post("/mi-plan/cancelar-renovacion", include_in_schema=False)
+def cancelar_renovacion(request: Request, db: Session = Depends(get_db_renovacion)):
+    return _cambiar_renovacion_stripe(request, db, cancelar=True)
+
+
+@router.post("/mi-plan/reactivar-renovacion", include_in_schema=False)
+def reactivar_renovacion(request: Request, db: Session = Depends(get_db_renovacion)):
+    return _cambiar_renovacion_stripe(request, db, cancelar=False)

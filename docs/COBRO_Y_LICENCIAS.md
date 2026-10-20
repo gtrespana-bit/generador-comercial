@@ -198,6 +198,31 @@ Que esas rutas —y solo esas— usen la puerta sin corte no se deja a la memori
 la aplicación, de modo que añadir mañana una ruta de compra bajo `get_db`, o
 colar la puerta sin corte en una ruta que no sea de pago, rompe la suite.
 
+**«Mi plan» (20/10/2026).** El cliente que pagaba no tenía pantalla de plan:
+solo la tarjeta de `/configuracion` y un indicador de texto en la barra
+lateral. No podía renovar ni pasar de mensual a anual sin conocer `/pago` de
+memoria, ni ver cuándo se le cobraría la tarjeta. `GET /mi-plan`
+(`app/routers/pagos.py`, misma puerta sin corte que el checkout) reúne ahora
+todo: plan y vencimiento actuales, estado de la renovación automática,
+tarjetas de renovar/cambiar con **las fechas encadenadas exactas** (el
+período nuevo empieza al terminar el actual; renovar pronto no quita días,
+es el cálculo de `crear_licencia`), aviso de compra pendiente de verificación
+e historial de compras con recibos (`compras_plan`, tabla tenant: no se abre
+ni un resquicio en la RLS de `licencias`). Se llega desde el menú lateral,
+desde el indicador de plan del pie de la barra (ahora clicable), desde la
+tarjeta de Configuración y desde la pantalla de acceso suspendido.
+
+Para quien paga con tarjeta, «cambiar de plan» sin que Stripe cobre el nuevo
+en paralelo exige gobernar la suscripción: la página la consulta en directo
+(`obtener_suscripcion`) y permite **desactivar/reactivar la renovación
+automática** (`cancel_at_period_end`, solo propietario/administrador): el
+acceso sigue hasta el último día pagado y el período nuevo se encadena tras
+él. El cambio de precio *dentro* de la suscripción queda pendiente a
+propósito: el checkout usa `price_data` en línea (sin Price IDs de catálogo),
+así que un cambio «de verdad» pediría publicar los precios en Stripe y usar
+su portal de cliente; mientras tanto el flujo honesto es dejar de renovar +
+contratar el otro período encadenado.
+
 **Recordatorio automático (18/08/2026, noche).** El aviso de vencimiento dejó
 de depender de un botón manual: un cron de Vercel (`vercel.json` → `crons`,
 ruta `/api/cron/recordatorios-vencimiento` protegida con `CRON_SECRET`) envía
