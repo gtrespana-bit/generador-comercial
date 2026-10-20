@@ -204,7 +204,11 @@ def test_la_web_publica_lleva_el_conmutador(cliente, ruta):
     "ruta,cookies,activo",
     [
         ("/", {}, "ES"),
-        ("/apu", {"cotizat_lang": "en"}, "EN"),
+        # Fase 1.2: en la superficie pública cacheable (/, /apu...) el
+        # idioma sale SOLO de la URL para que el CDN pueda servirla; la
+        # cookie ya no cambia el contenido de esas páginas. Fuera de ella
+        # (/acceso, panel...) la cookie sigue mandando como siempre.
+        ("/apu", {"cotizat_lang": "en"}, "ES"),
         ("/en/apu", {}, "EN"),
         ("/en-mx/apu", {}, "EN"),
         ("/acceso", {"cotizat_lang": "en"}, "EN"),

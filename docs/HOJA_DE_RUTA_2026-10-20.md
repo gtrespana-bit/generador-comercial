@@ -88,20 +88,26 @@ la fuente de datos definitiva.*
   optimización.
   - *Titular:* confirmarnos la región (está en el host de la `DATABASE_URL`:
     `aws-0-<region>.pooler.supabase.com`).
-- **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* Landing,
-  homes de país, temas y guías con `s-maxage` + `stale-while-revalidate`.
-  Hoy no llevan `Cache-Control` compartido: cada visita y cada pasada de
-  Googlebot ejecuta la función (la home además hace 7 consultas y pesa
-  138 KB de HTML). El contenido gobernado desde el panel admite TTL de
-  minutos con SWR: publicar no exige purga inmediata.
-- **1.3 Artefactos mínimos de runtime** *(punto 7).* Inventario de qué lee
-  realmente la app de `basedatos_partidas/` (62 MB en el repo), conjunto
-  mínimo junto al código y `.vercelignore` para el resto (generación y
-  herramientas quedan fuera del despliegue). Los contadores de la landing
-  («16.127 líneas») se precalculan en la generación a un JSON diminuto: hoy
-  cada instancia fría recorre miles de ficheros para contarlos. Los checks
-  `seo_*` de `/readyz` ya detectan un artefacto ausente: son la red de esta
-  fase.
+- **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* ✅ HECHA
+  (2026-10-20). Landing, homes de país, temas, guías, legal, sitemap y robots
+  con `s-maxage=300` + `stale-while-revalidate`/`stale-if-error` de un día.
+  Como Vercel considera no-cacheable cualquier `Vary: Cookie`, el idioma de
+  la superficie pública sale solo de la URL (prefijo `/en`); la cookie sigue
+  mandando fuera (panel, `/soporte`, `/pago`). `app/cache_publico.py` pone
+  la lista blanca de rutas y un middleware fail-open con guardas estrictas
+  (GET 200, sin query, sin cookies de sesión, sin `Set-Cookie` en la
+  respuesta); las cookies de preferencia solo se fijan si cambian el valor.
+  Excepciones a propósito: `/pago` (varía por cookie de país y `?msg=`) y
+  `/soporte` (formulario con idioma por cookie).
+- **1.3 Artefactos mínimos de runtime** *(punto 7).* ✅ HECHA (2026-10-20).
+  De `basedatos_partidas/` (62 MB en el repo) solo viaja a Vercel lo que la
+  app lee en caliente (~27 MB): `.vercelignore` deja fuera salidas de
+  generación, auditorías, matrices (el panel las carga por subida), scripts
+  y también `tests/`, `docs/` y `tools/`. Los contadores de la landing se
+  leen de `datos/cifras_catalogo.json`, precalculado por
+  `tools/generar_cifras_catalogo.py`. Verificado por simulación local (con
+  todo lo excluido fuera, la app arranca y 290 tests de los lectores pasan)
+  porque la CI clona el repo completo y no caza una sobre-exclusión.
 
 **Hecho cuando:** la home y una guía responden con cabecera de caché
 compartida y el segundo hit no toca la función; `/readyz` sigue en verde con

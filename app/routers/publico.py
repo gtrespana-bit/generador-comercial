@@ -219,14 +219,17 @@ def _landing_con_pais(request: Request, codigo: str):
     # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request, pais_forzado=codigo)
     resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
-    resp.set_cookie(
-        "cotizat_pais",
-        codigo,
-        max_age=365 * 24 * 3600,
-        path="/",
-        samesite="lax",
-        httponly=False,
-    )
+    # Solo si cambia el valor: un Set-Cookie innecesario en cada visita
+    # impediría que el CDN sirviera la copia cacheada (Fase 1.2).
+    if request.cookies.get("cotizat_pais") != codigo:
+        resp.set_cookie(
+            "cotizat_pais",
+            codigo,
+            max_age=365 * 24 * 3600,
+            path="/",
+            samesite="lax",
+            httponly=False,
+        )
     return resp
 
 
@@ -533,7 +536,9 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
         }
     )
     resp = TEMPLATES.TemplateResponse(request, "seo_hub.html", ctx)
-    if codigo:
+    # Solo si cambia el valor: un Set-Cookie innecesario en cada visita
+    # impediría que el CDN sirviera la copia cacheada (Fase 1.2).
+    if codigo and request.cookies.get("cotizat_pais") != codigo:
         resp.set_cookie(
             "cotizat_pais",
             codigo,

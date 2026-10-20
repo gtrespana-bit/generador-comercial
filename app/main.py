@@ -205,6 +205,15 @@ class IdiomaMiddleware:
         reescribir = False
         import re as _re
 
+        from .cache_publico import es_ruta_publica_cacheable
+
+        # Superficie pública cacheable en el CDN (Fase 1.2): el contenido
+        # debe depender solo de la URL, así que el idioma sale del prefijo
+        # /en y se ignora la cookie (en Vercel, variar por cookie significa
+        # respuesta no cacheable). Fuera de esta superficie (panel,
+        # /soporte, /pago...) la cookie manda como siempre.
+        publica_cacheable = es_ruta_publica_cacheable(path)
+
         # /en/ y /en-us/ serían la misma página en dos sitios: «en» a secas
         # resuelve a Estados Unidos en el registro de mercados. Se consolida
         # aquí porque el propio middleware reescribe /en/ a / antes de
@@ -249,12 +258,16 @@ class IdiomaMiddleware:
             # /idioma/... manda esa, no la que implicaba el prefijo.
             if nuevo == "/idioma" or nuevo.startswith("/idioma/"):
                 reescribir = False
-        # cookie
+        # cookie: solo manda fuera de la superficie pública cacheable
         if lang is None:
-            headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
-            cookie = headers.get("cookie", "")
-            from .i18n import idioma_desde_cookie
-            lang = idioma_desde_cookie(cookie)
+            if publica_cacheable:
+                # Sin prefijo /en, la URL pública es la versión en español.
+                lang = "es"
+            else:
+                headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
+                cookie = headers.get("cookie", "")
+                from .i18n import idioma_desde_cookie
+                lang = idioma_desde_cookie(cookie)
         state = scope.setdefault("state", {})
         state["lang"] = lang
         # Tras reescribir, la ruta interna (/us/) ya no dice si el visitante
@@ -263,10 +276,30 @@ class IdiomaMiddleware:
         state["ruta_original"] = path
         state["prefijo_idioma"] = "en" if reescribir else ""
         if reescribir:
+            # La cookie de idioma solo se fija si cambia el valor: re-fijarla
+            # en cada visita ensucia la respuesta con un Set-Cookie que
+            # impide que el CDN la sirva cacheada (Fase 1.2). La preferencia
+            # ya quedó guardada la primera vez.
+            from .i18n import COOKIE_IDIOMA
+
+            _cabeceras = {
+                k.decode("latin-1").lower(): v.decode("latin-1")
+                for k, v in scope.get("headers", [])
+            }
+            _idioma_actual = None
+            for par in _cabeceras.get("cookie", "").split(";"):
+                if "=" in par:
+                    _nombre, _valor = par.split("=", 1)
+                    if _nombre.strip() == COOKIE_IDIOMA:
+                        _idioma_actual = _valor.strip()
+            if _idioma_actual == lang:
+                await self.app(scope, receive, send)
+                return
+
             async def send_wrap(message):
                 if message.get("type") == "http.response.start":
                     hs = list(message.get("headers", []))
-                    from .i18n import COOKIE_IDIOMA, COOKIE_IDIOMA_MAX_AGE
+                    from .i18n import COOKIE_IDIOMA_MAX_AGE
 
                     hs.append(
                         (
@@ -295,6 +328,15 @@ app.add_middleware(WebSecurityMiddleware, enforce_csrf=not DATABASE_IS_SQLITE)
 # Añadido el último para quedar en la capa exterior: así ve cualquier
 # excepción no manejada de las rutas y del resto de middlewares (E3-024).
 app.add_middleware(RegistroErroresMiddleware)
+# Caché CDN de la superficie pública (Fase 1.2): queda por fuera de
+# IdiomaMiddleware para ver la ruta original (con su prefijo /en) y el
+# Set-Cookie definitivo de la respuesta; solo sella Cache-Control en
+# respuestas públicas anónimas (ver app/cache_publico.py). Las excepciones
+# de las rutas siguen llegando antes a RegistroErroresMiddleware, que es
+# más interno.
+from .cache_publico import CachePublicoMiddleware  # noqa: E402
+
+app.add_middleware(CachePublicoMiddleware)
 # Compresión gzip de HTML/CSS/JS/JSON: la página de partidas (~5 MB sin
 # comprimir) viaja a una fracción de su tamaño y la carga se percibe mucho
 # más rápida. Queda en la capa más exterior para envolver el resto.
