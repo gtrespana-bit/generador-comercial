@@ -7,7 +7,11 @@
    El flujo es «validar y luego cargar»: el primer paso no toca la base y
    enseña exactamente qué pasaría. Enviar el CSV codificado en el formulario de
    confirmación evita guardarlo en un temporal, que en un despliegue sin
-   estado no sobrevive entre dos peticiones. #}
+   estado no sobrevive entre dos peticiones.
+
+   «Confirmar hoy» es la vía del mes sin cambios: el operador reconsultó sus
+   fuentes, los precios se mantienen y la fecha de consulta pasa a hoy sin
+   re-subir la matriz (ver `confirmar_revision_precios`). #}
 
 <div class="card">
   <div class="card-header">
@@ -35,6 +39,7 @@
           <th class="tabla-num">Referencias</th>
           <th>Última consulta</th>
           <th class="tabla-num">Por revisar</th>
+          {% if es_superadmin %}<th>Revisión</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -64,11 +69,40 @@
             <span class="muted">0</span>
             {% endif %}
           </td>
+          {% if es_superadmin %}
+          <td>
+            {% if mercado.estado.referencias %}
+            <form method="post" action="/admin/matriz-precios/confirmar-revision" class="form-inline">
+              <input type="hidden" name="pais" value="{{ mercado.codigo }}">
+              <button class="btn btn-sm btn-secondary" type="submit"
+                      title="Confirmar que hoy revisaste este mercado y sus precios siguen vigentes">Confirmar hoy</button>
+            </form>
+            {% else %}
+            <span class="muted">—</span>
+            {% endif %}
+          </td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+  {% if es_superadmin %}
+  <div class="card-body">
+    <form method="post" action="/admin/matriz-precios/confirmar-revision" class="form-inline">
+      <input type="hidden" name="pais" value="TODOS">
+      <div class="form-acciones">
+        <button class="btn btn-secondary" type="submit">Confirmar revisión de todos los mercados a hoy</button>
+      </div>
+    </form>
+    <p class="muted-note">
+      «Confirmar» atestigua que has vuelto a consultar tus fuentes y los precios
+      se mantienen: pone la fecha de consulta a hoy sin cambiar ningún precio y
+      queda auditado. Las guías públicas seguirán mostrando el mes de la matriz
+      CSV; si los precios cambian, toca actualizar y cargar la matriz.
+    </p>
+  </div>
+  {% endif %}
 </div>
 
 <div class="card">

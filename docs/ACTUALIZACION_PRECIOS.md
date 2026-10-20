@@ -18,6 +18,28 @@ Las fuentes de verdad son las 7 matrices de `basedatos_partidas/salida/`:
 | `precios_recursos_irlanda.csv` | IE |
 | `precios_recursos_australia.csv` | AU |
 
+## Si este mes los precios no cambian: confirmar la revisión
+
+Hay meses en que consultas tus fuentes y todos los precios se mantienen.
+Para ese caso no hace falta re-subir ningún CSV: en el panel
+**Sistema › Precios** (`/admin/sistema?tab=precios`), la tabla de mercados
+tiene **«Confirmar hoy»** por mercado y **«Confirmar revisión de todos los
+mercados a hoy»** al pie. Confirmar atestigua que has reconsultado y que
+los precios siguen correctos a día de hoy: pone `fecha_consulta` y
+`fecha_actualizacion` a hoy sin tocar ningún precio, queda auditado (con
+la fecha anterior guardada en la auditoría) y `/readyz` pasa a «hoy».
+
+Dos avisos:
+
+- Las **guías públicas** seguirán mostrando el mes de la matriz CSV (su
+  fecha sale del fichero, no de la BD). Si quieres que también digan el mes
+  nuevo, actualiza `fecha_consulta` en el CSV y cárgalo (pasos 1–4).
+- Si tras confirmar cargas el CSV viejo sin haber actualizado su
+  `fecha_consulta`, la fecha en BD volverá a la del fichero: al cargar,
+  manda el CSV.
+
+Cuando algún precio sí cambie, toca el proceso completo:
+
 ## Paso 1 — Preparar la matriz con precios consultados
 
 Consulta las fuentes de mercado y actualiza en el CSV `precio_referencia`,
@@ -48,9 +70,9 @@ avisa, corrige el CSV y repite.
 
 ## Paso 3 — Cargar en la BD
 
-Vía recomendada en producción: panel de operador
-`/admin/matriz-precios` (subir el CSV; muestra el resumen antes de
-aplicar).
+Vía recomendada en producción: panel de operador, **Sistema › pestaña
+«Precios»** (`/admin/sistema?tab=precios`), tarjeta «Cargar una matriz»
+(subir el CSV; valida y muestra el resumen antes de escribir).
 
 Vía CLI (con la `DATABASE_URL` de producción en el entorno):
 

@@ -370,3 +370,56 @@ def resumen_matriz_por_pais(db: Session, paises: list[str] | None = None) -> dic
             bloque["obsoletas"] + bloque["caducadas"] + bloque["sin_fecha"]
         )
     return salida
+
+
+def confirmar_revision_precios(db: Session, paises: list[str] | None = None) -> dict:
+    """Atestigua que las referencias nacionales se revisaron hoy y siguen vigentes.
+
+    Es el botón «Confirmar revisión a hoy» del panel: el operador ha vuelto a
+    consultar sus fuentes y los precios se mantienen, así que la consulta de
+    hoy merece la fecha de hoy sin re-subir la matriz. Sella ``fecha_consulta``
+    y ``fecha_actualizacion`` en las referencias nacionales activas del
+    alcance —los países dados o, sin ``paises``, todos— y no toca ningún
+    precio ni el historial.
+
+    Devuelve la foto para el mensaje del panel y la auditoría: países
+    sellados, cuántas referencias y la última consulta que había en cada país
+    antes del sello, para que no se pierda el rastro de cuándo se fijaron los
+    precios. No hace ``commit``: quien llama (la ruta) audita y confirma en la
+    misma transacción, igual que la carga de matrices.
+    """
+    hoy = date.today()
+    codigos: list[str] | None = None
+    if paises:
+        codigos = sorted({str(p).strip().upper() for p in paises if str(p).strip()})
+
+    # Foto previa: la última consulta por país, tal como la ve el panel.
+    previa = resumen_matriz_por_pais(db, codigos)
+    consulta_anterior = {
+        pais: (
+            bloque["ultima_consulta"].isoformat()
+            if bloque["ultima_consulta"]
+            else None
+        )
+        for pais, bloque in sorted(previa.items())
+    }
+
+    consulta = db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.organizacion_id.is_(None),
+        PrecioRecursoMercado.activo.is_(True),
+    )
+    if codigos:
+        consulta = consulta.filter(PrecioRecursoMercado.pais_codigo.in_(codigos))
+    selladas = consulta.update(
+        {
+            PrecioRecursoMercado.fecha_consulta: hoy,
+            PrecioRecursoMercado.fecha_actualizacion: hoy,
+        },
+        synchronize_session=False,
+    )
+    return {
+        "paises": sorted(previa),
+        "referencias": int(selladas or 0),
+        "fecha": hoy,
+        "consulta_anterior": consulta_anterior,
+    }
