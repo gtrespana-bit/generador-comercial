@@ -5,6 +5,10 @@
 **Mercados:** 23 (18 hispanohablantes + 5 anglófonos)  
 **Decisión:** dejar de tratar «país» como una sustitución de nombre y construir un silo editorial completo por mercado.
 
+**Actualización de implementación (19/10/2026):** por petición de ejecutar los mercados restantes en un lote, se han preparado en código los paquetes iniciales de los otros 17 mercados hispanos: **46 recursos nuevos, 54 recursos hispanos en total, tres por país**. Se conservan las cinco URLs históricas y el paquete español. Los cinco mercados anglófonos mantienen sus paquetes existentes. El inventario y los límites están en `docs/SEO_PAQUETES_HISPANOS_2026-10-19.md`.
+
+**Esto no declara los países «SEO completo v1»:** despliegue, GSC/SERP, revisión profesional, PDFs locales, distribución y medición siguen pendientes. La implementación por lote adelanta la parte técnica/editorial; no simula haber ejecutado la investigación ni las seis semanas de cada país. Las secciones de auditoría y planificación originales que siguen son la fotografía previa a esta ampliación.
+
 ## 1. Respuesta corta
 
 Sí: para mejorar el SEO de forma sustancial hay que trabajar **un país cada vez**. Una landing con moneda, impuesto y vocabulario local es necesaria, pero no basta. Para que Google y una empresa local perciban autoridad, cada mercado necesita:
@@ -466,10 +470,13 @@ No mezclar todos los países en una media. Diez registros de Colombia y ninguno 
 9. **No cambiar una URL indexada sin 301.**
 10. **No abrir el siguiente mercado hasta que el paquete del actual esté publicado, distribuido y medido.**
 
-## 10. Próximo paso concreto
+## 10. Próximo paso concreto — actualizado tras la ampliación por lote
 
-1. Desplegar el paquete de España y reenviar `sitemap.xml` en Search Console.
-2. Inspeccionar las tres URLs `/es/guia/...` y verificar canonical `es-ES` sin `noindex`.
-3. Crear el PDF español de ejemplo y conseguir revisión de un reformista real.
-4. Iniciar el sprint de **México**, empezando por GSC/SERP y la tabla de coste de mano de obra; no redactar las tres piezas hasta validar las consultas.
-5. Revisar España a los 28 y 56 días. Si una de las tres páginas recibe impresiones, mejorar esa antes de añadir una cuarta.
+1. Revisar y desplegar el código de los paquetes hispanos; el trabajo local no prueba que estén publicados ni que las matrices estén cargadas en producción.
+2. Reenviar `sitemap.xml` en Search Console e inspeccionar las canónicas por país. Mantener **México → Colombia → Perú → Chile → Argentina → Venezuela → Ecuador → República Dominicana → Panamá → Costa Rica → Guatemala → Honduras → El Salvador → Nicaragua → Uruguay → Paraguay → Bolivia** como orden de validación y distribución.
+3. Contrastar las hipótesis editoriales con GSC/SERP. No se han inventado volúmenes, consultas ni resultados de indexación. Antes de ampliar otro cluster, corregir o consolidar las piezas existentes según datos.
+4. Confirmar los costes locales y conseguir revisión técnica/laboral/fiscal. Atención especial a AR (vigencia), UY (BPS de obra), BO (tratamiento tributario), DO (cubicación/ITBIS) y VE (tarifa interna, no matriz de coste empresa comparable).
+5. Generar y comprobar un PDF local por mercado, empezando por España y México; conseguir casos o revisiones reales. Las tablas de revisión de las guías no se presentan como PDFs descargables.
+6. Distribuir, medir registros → primer presupuesto → pago y revisar a los 28 y 56 días desde el despliegue efectivo, no desde la fecha del archivo.
+
+La instrucción posterior de ejecución rápida adelanta el código/editorial en un lote, como excepción operativa a la secuencia original. No elimina las puertas de calidad de las secciones 3, 7 y 9, ni marca investigación, distribución o medición como completadas.
