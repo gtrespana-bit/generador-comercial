@@ -1767,3 +1767,68 @@ async def matriz_precios_cargar(request: Request, db: Session = Depends(get_oper
                if resultado["eliminadas"] else "")
         ),
     )
+
+
+@router.post("/admin/matriz-precios/confirmar-revision", include_in_schema=False)
+async def matriz_precios_confirmar_revision(request: Request, db: Session = Depends(get_operator_db)):
+    """«Revisado hoy y sigue vigente» sin re-subir la matriz.
+
+    El operador ha vuelto a consultar sus fuentes y los precios se mantienen:
+    la consulta de hoy merece la fecha de hoy. Sella ``fecha_consulta`` y
+    ``fecha_actualizacion`` (un país o ``TODOS``) sin tocar ningún precio.
+    Las guías públicas leen el CSV del repo, así que su mes no cambia con
+    esto: cambia cuando la matriz se carga de nuevo.
+    """
+    from ..paises import PAISES
+    from ..services.precios_mercado import confirmar_revision_precios
+
+    form = await request.form()
+    try:
+        _exigir_superadmin_para(db, "confirmar la revisión de precios")
+        alcance = str(form.get("pais") or "").strip().upper()
+        if alcance in {"", "TODOS"}:
+            paises = None
+        elif alcance in PAISES:
+            paises = [alcance]
+        else:
+            return _redirect(VOLVER_PRECIOS, error=f"Mercado no reconocido: {alcance}.")
+        resultado = confirmar_revision_precios(db, paises)
+        if not resultado["referencias"]:
+            db.rollback()
+            return _redirect(
+                VOLVER_PRECIOS,
+                error="Ese alcance no tiene referencias nacionales cargadas; "
+                "nada que confirmar.",
+            )
+    except (GestionEquipoError, ValueError) as exc:
+        db.rollback()
+        return _redirect(VOLVER_PRECIOS, error=str(exc))
+    except Exception:
+        db.rollback()
+        log.error("No se pudo confirmar la revisión de precios:\n%s", traceback.format_exc())
+        return _redirect(
+            VOLVER_PRECIOS,
+            error="No se pudo confirmar la revisión. No se escribió nada.",
+        )
+
+    _auditar_admin(
+        db, request,
+        accion="matriz_precios.revision_confirmada",
+        entidad="precios_recursos_mercado",
+        detalle={
+            "paises": resultado["paises"],
+            "referencias": resultado["referencias"],
+            "fecha_consulta_nueva": resultado["fecha"].isoformat(),
+            "consulta_anterior": resultado["consulta_anterior"],
+        },
+    )
+    db.commit()
+    mercados = ", ".join(resultado["paises"])
+    return _redirect(
+        VOLVER_PRECIOS,
+        msg=(
+            f"Revisión confirmada a hoy ({resultado['fecha'].strftime('%d/%m/%Y')}): "
+            f"{resultado['referencias']} referencias en {mercados} siguen vigentes, "
+            "sin cambios de precio."
+        ),
+    )

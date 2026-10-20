@@ -49,6 +49,7 @@ ACCIONES_LECIBLES = {
     "api_key.creada": "Clave de API creada",
     "api_key.revocada": "Clave de API revocada",
     "matriz_precios.cargada": "Matriz nacional de precios cargada",
+    "matriz_precios.revision_confirmada": "Revisión de precios confirmada sin cambios",
     "analitica.chats_listado_visto": "Listado de conversaciones visto",
     "analitica.chat_detalle_visto": "Detalle de conversación visto",
     "analitica.chats_exportado": "Conversaciones exportadas",
