@@ -59,19 +59,23 @@ una anterior.
   - *Titular (pendiente):* monitor externo de disponibilidad (UptimeRobot
     o similar, gratuito) contra `/readyz` y la home: es lo único que avisa
     si cae Vercel entero.
-- **0.3 Migraciones automáticas** *(punto 3).* Workflow que ejecuta
-  `alembic upgrade head` sobre producción al fusionar a `main` (secreto de
-  GitHub con la URL administrativa), para que código y esquema dejen de
-  depender de la memoria. Con la norma expand/contract (principio 4), la
-  ventana entre migrar y desplegar es inocua en ambos sentidos.
+- **0.3 Migraciones automáticas** *(punto 3).* ❌ **DESCARTADA por decisión
+  del titular (20/10/2026).** Prefiere aplicar las migraciones a mano en el
+  SQL Editor de Supabase para llevar él mismo el control de cuáles se han
+  aplicado y cuáles no. El flujo manual queda como norma: cada migración
+  trae su `docs/staging_upgrade_<rev>.sql` transaccional con guarda de
+  versión (CI lo exige), las migraciones son aditivas (expand/contract,
+  principio 4) para que la ventana código↔esquema sea inocua, y `/readyz`
+  muestra el head real frente al esperado. No re-proponer la automatización
+  salvo que el titular cambie de criterio.
 - **0.4 CI en dos velocidades** *(punto 10, primera parte).* "Humo"
   (<2 min) en cada push de rama y suite completa en PR a `main`. Sin tocar
   ningún test todavía: es solo organización del workflow.
 
 **Hecho cuando:** un error forzado en una preview aparece en el panel y llega
-por correo; una migración de prueba se aplica sola al fusionar; el job PG
-detecta a propósito un INSERT con RETURNING (se comprueba rompiéndolo en una
-rama desechable).
+por correo; el job PG detecta a propósito un INSERT con RETURNING (se
+comprueba rompiéndolo en una rama desechable). *(La 0.3 salió de esta
+definición al descartarse; con 0.1, 0.2 y 0.4 la fase queda cerrada.)*
 
 ## Fase 1 — Rendimiento y peso del despliegue
 
