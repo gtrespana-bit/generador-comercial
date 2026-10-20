@@ -1,9 +1,9 @@
 """Artículos de país: un oficio, un mercado, un texto.
 
-No son un blog. Cinco URLs, una por país de lanzamiento, escritas para
-consultas que una landing no cubre del todo. Cifras del catálogo (más de
-3.000 partidas, APU editable). Sin precios de mercado, sin factura fiscal,
-sin IA.
+Las guías históricas se conservan, junto a los paquetes editoriales de
+España y los otros 17 mercados hispanos. El registro común alimenta rutas,
+landings, hubs y sitemap. Las tablas nacionales viven en sus módulos y no
+prometen facturación fiscal ni investigación de mercado en tiempo real.
 """
 from __future__ import annotations
 
@@ -381,6 +381,20 @@ def ficha_articulo(slug: str, lang: str = "es") -> dict | None:
         espana = _articulo_espana(slug)
         if espana:
             return espana
+        from .seo_latam import articulo as _articulo_latam, guias as _guias_latam
+
+        latam = _articulo_latam(slug)
+        if latam:
+            return latam
+        historico = ARTICULOS.get(slug)
+        if historico:
+            # Enlace de vuelta desde la URL conservada al nuevo corpus local.
+            related = list(historico.get("related") or [])
+            related.extend(
+                (a["h1"], f"{a['pais_path']}guia/{a['slug']}")
+                for a in _guias_latam() if a["pais"] == historico["pais"]
+            )
+            return {**historico, "related": list(dict.fromkeys(related))}
     return ARTICULOS.get(slug)
 
 
@@ -388,7 +402,9 @@ def lista_articulos() -> list[dict]:
     """Todos los artículos de mercados hispanos, en orden editorial."""
     from .seo_espana import guias as _guias_espana
 
-    return [ARTICULOS[k] for k in ORDEN_ARTICULOS] + _guias_espana()
+    from .seo_latam import guias as _guias_latam
+
+    return [ARTICULOS[k] for k in ORDEN_ARTICULOS] + _guias_espana() + _guias_latam()
 
 
 def lista_articulos_en() -> list[dict]:

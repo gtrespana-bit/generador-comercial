@@ -511,7 +511,9 @@ GUIAS: dict[str, dict] = {
 
 def cuerpo_pais(codigo: str) -> list[tuple[str, list[str]]]:
     codigo = str(codigo or "").strip().upper()
-    return CUERPO_PAIS.get(codigo) or CUERPO_PAIS[""]
+    from .seo_latam import contexto_local
+
+    return list(CUERPO_PAIS.get(codigo) or CUERPO_PAIS[""]) + contexto_local(codigo)
 
 
 # Traducciones en inglés de las guías (incremental). Si una guía no está
@@ -1299,7 +1301,13 @@ FAQ_LEGAL: list[dict] = [
 
 
 def extra_hub(codigo: str, tema: str) -> list[tuple[str, str]]:
-    return list(HUB_EXTRA.get((str(codigo or "").strip().upper(), str(tema or "").strip().lower()), ()))
+    from .seo_latam import contexto_local
+
+    codigo = str(codigo or "").strip().upper()
+    tema = str(tema or "").strip().lower()
+    bloques = list(HUB_EXTRA.get((codigo, tema), ()))
+    bloques.extend((titulo, " ".join(parrafos)) for titulo, parrafos in contexto_local(codigo, tema))
+    return bloques
 
 
 def faq_hub(codigo: str, tema: str) -> list[dict]:

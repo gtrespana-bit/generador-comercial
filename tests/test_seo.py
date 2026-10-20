@@ -216,8 +216,8 @@ def test_faq_legal_publica_schema_propio():
 def test_articulos_de_pais_son_unicos_y_estan_en_sitemap():
     from app.seo_articulos import ORDEN_ARTICULOS, lista_articulos
 
-    # Cinco mercados de lanzamiento + tres guías profundas de España.
-    assert len(lista_articulos()) == 8
+    # 18 mercados hispanos con tres recursos iniciales, sin duplicar las guías históricas.
+    assert len(lista_articulos()) == 54
     with _cliente() as client:
         sm = client.get("/sitemap.xml").text
         co = client.get("/guia/apu-panete-colombia")
