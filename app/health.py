@@ -236,6 +236,73 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
     return results
 
 
+#: Alarma blanda de frescura de precios: el titular fijó una cadencia
+#: mensual de actualización de matrices (Fase 2, 2026-10-20); con el
+#: colchón, /readyz avisa cuando la carga más antigua por país supera este
+#: umbral. El proceso completo vive en docs/ACTUALIZACION_PRECIOS.md; si la
+#: cadencia cambia, se cambia aquí y allí.
+_UMBRAL_FRESCURA_PRECIOS_DIAS = 40
+
+
+def _como_fecha(valor) -> date | None:
+    """Normaliza una fecha leída de la BD (datetime, date o texto ISO)."""
+    from datetime import date, datetime
+
+    if valor is None:
+        return None
+    if isinstance(valor, datetime):
+        return valor.date()
+    if isinstance(valor, date):
+        return valor
+    try:
+        return date.fromisoformat(str(valor)[:10])
+    except ValueError:
+        return None
+
+
+def _texto_frescura_precios(
+    ultima_por_pais: dict,
+    hoy: date,
+    umbral_dias: int = _UMBRAL_FRESCURA_PRECIOS_DIAS,
+) -> str:
+    """Frase de /readyz sobre cuándo se cargaron los precios nacionales.
+
+    ``guardar_precio`` sella ``fecha_actualizacion`` en cada carga,
+    incluidas las filas sin cambios, así que el máximo por país delata la
+    última vez que su matriz pasó por el importador: tras una actualización
+    completa la frase pasa a «hoy» sin necesitar una tabla de constancias.
+    Es una alarma blanda: si el país más atrasado supera la cadencia, la
+    frase lo dice, pero el readiness no se tumba por ello.
+    """
+    try:
+        fechas: dict[str, date] = {}
+        for pais, valor in ultima_por_pais.items():
+            fecha = _como_fecha(valor)
+            if fecha is not None:
+                fechas[str(pais)] = fecha
+        if not fechas:
+            return "sin fechas de carga registradas"
+        ultima = max(fechas.values())
+        dias_ultima = (hoy - ultima).days
+        if dias_ultima <= 0:
+            texto = f"hoy ({ultima.isoformat()})"
+        else:
+            texto = (
+                f"hace {dias_ultima} {'día' if dias_ultima == 1 else 'días'}"
+                f" ({ultima.isoformat()})"
+            )
+        pais_atrasado, fecha_atrasada = min(fechas.items(), key=lambda par: par[1])
+        dias_atrasado = (hoy - fecha_atrasada).days
+        if dias_atrasado > umbral_dias:
+            texto += (
+                f"; REVISAR: {pais_atrasado} hace {dias_atrasado} días"
+                f" (cadencia mensual, umbral {umbral_dias})"
+            )
+        return texto
+    except Exception:
+        return "no evaluado"
+
+
 def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     """Estado SEO del DESPLIEGUE, informativo: nunca tumba el readiness.
 
@@ -282,11 +349,14 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     # Referencias nacionales cargadas en la base (no los overrides de
     # empresa). Una sola agregación; si la tabla no existe aún, se informa.
     try:
+        from datetime import date
+
         motor = engine or default_engine
         with motor.connect() as conn:
             filas = conn.execute(
                 text(
-                    "SELECT pais_codigo, COUNT(*) FROM precios_recursos_mercado "
+                    "SELECT pais_codigo, COUNT(*), MAX(fecha_actualizacion) "
+                    "FROM precios_recursos_mercado "
                     f"WHERE organizacion_id IS NULL AND {_condicion_activo(conn.dialect.name)} "
                     "AND codigo_recurso <> '' GROUP BY pais_codigo ORDER BY pais_codigo"
                 )
@@ -294,8 +364,14 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
         total = sum(int(f[1]) for f in filas)
         checks["precios_bd"] = f"{total} referencias nacionales en {len(filas)} paises"
         checks["precios_bd_paises"] = ",".join(str(f[0]) for f in filas) or "ninguno"
+        # Frescura (Fase 2): la misma agregación trae la última carga de
+        # cada matriz; la frase pasa a «hoy» tras una actualización.
+        checks["precios_actualizados"] = _texto_frescura_precios(
+            {str(f[0]): f[2] for f in filas}, date.today()
+        )
     except Exception as exc:
         checks["precios_bd"] = f"no evaluado: {_safe_error(exc)}"
+        checks["precios_actualizados"] = "no evaluado"
     return checks
 
 

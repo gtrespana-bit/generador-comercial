@@ -231,3 +231,82 @@ def test_readyz_falla_si_se_exige_contador_compartido_y_falta(monkeypatch):
     assert estado.ok is False
     assert any("Rate limit" in e for e in estado.errors)
     assert estado.checks["rate_limit"] == "memoria"
+
+
+# ---------------------------------------------------------------------------
+# Frescura de precios (Fase 2): la alarma blanda de /readyz
+# ---------------------------------------------------------------------------
+
+
+def test_frescura_precios_pasa_a_hoy_tras_la_carga():
+    from datetime import date
+
+    from app.health import _texto_frescura_precios
+
+    hoy = date(2026, 10, 20)
+    assert (
+        _texto_frescura_precios({"ES": hoy, "CO": hoy}, hoy) == "hoy (2026-10-20)"
+    )
+
+
+def test_frescura_precios_delata_al_pais_que_supera_la_cadencia():
+    from datetime import date
+
+    from app.health import _texto_frescura_precios
+
+    hoy = date(2026, 10, 20)
+    texto = _texto_frescura_precios({"ES": date(2026, 8, 1), "CO": hoy}, hoy)
+    assert texto.startswith("hoy (2026-10-20);")
+    assert "REVISAR: ES hace 80 días" in texto  # 80 > 40 de cadencia mensual
+
+
+def test_frescura_precios_sin_alarma_dentro_de_la_cadencia():
+    from datetime import date
+
+    from app.health import _texto_frescura_precios
+
+    hoy = date(2026, 10, 20)
+    # ES cargó hace 20 días: dentro de la cadencia mensual, sin aviso.
+    assert _texto_frescura_precios(
+        {"ES": date(2026, 9, 30), "CO": hoy}, hoy
+    ) == "hoy (2026-10-20)"
+
+
+def test_frescura_precios_cuenta_dias_y_cuida_el_singular():
+    from datetime import date
+
+    from app.health import _texto_frescura_precios
+
+    hoy = date(2026, 10, 20)
+    assert _texto_frescura_precios({"ES": date(2026, 10, 5)}, hoy) == (
+        "hace 15 días (2026-10-05)"
+    )
+    # En SQLite el MAX de un DATETIME vuelve como texto ISO: debe normalizarse.
+    assert _texto_frescura_precios({"ES": "2026-10-19 00:00:00"}, hoy) == (
+        "hace 1 día (2026-10-19)"
+    )
+
+
+def test_frescura_precios_sin_fechas_registradas():
+    from datetime import date
+
+    from app.health import _texto_frescura_precios
+
+    hoy = date(2026, 10, 20)
+    assert _texto_frescura_precios({}, hoy) == "sin fechas de carga registradas"
+    assert (
+        _texto_frescura_precios({"ES": None}, hoy)
+        == "sin fechas de carga registradas"
+    )
+
+
+def test_readyz_publica_la_frescura_de_precios(monkeypatch):
+    monkeypatch.setenv("SUPABASE_URL", "https://placeholder.supabase.co")
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "sb_publishable_placeholder")
+    monkeypatch.setenv("COTIZAT_PUBLIC_URL", "https://cotizat.example.com")
+    with TestClient(app) as client:
+        r = client.get("/readyz")
+    assert r.status_code == 200, r.text
+    checks = r.json()["checks"]
+    # La clave existe siempre y nunca vacía: hoy, hace N días o el aviso.
+    assert checks.get("precios_actualizados")
