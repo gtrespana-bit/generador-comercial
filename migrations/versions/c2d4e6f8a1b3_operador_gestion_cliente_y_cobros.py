@@ -215,6 +215,16 @@ def upgrade() -> None:
     # ------------------------------------------------------------------
     # Funciones SECURITY DEFINER para el panel (agregados y cobros del cliente)
     # ------------------------------------------------------------------
+    # Reparada el 2026-10-20 para que la cadena corra desde una base vacía
+    # (CI con PostgreSQL real, hoja de ruta fase 0.1): las funciones leen
+    # presupuestos.total_calculado, una columna que en su época nació por
+    # create_all al arrancar y ninguna migración añadió; el CREATE FUNCTION
+    # en SQL la exige al validar el cuerpo. En producción la columna ya
+    # existe (y esta migración ya se aplicó): el IF NOT EXISTS no hace nada.
+    op.execute(
+        "ALTER TABLE public.presupuestos "
+        "ADD COLUMN IF NOT EXISTS total_calculado DOUBLE PRECISION"
+    )
     op.execute(RESUMEN_CLIENTE_FUNCTION_SQL)
     op.execute(COBROS_CLIENTE_FUNCTION_SQL)
     for signature in _FUNCTION_SIGNATURES:

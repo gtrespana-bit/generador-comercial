@@ -1,0 +1,203 @@
+# Hoja de ruta tras el análisis completo (2026-10-20)
+
+Origen: auditoría de estructura, rendimiento y SEO pedida por el titular el
+20/10/2026, con mediciones sobre el código (queries por página, pesos,
+similitud de contenido entre países, inventario real del sitemap). Este
+documento ordena el trabajo aprobado. **El orden es la decisión importante**:
+cada fase deja el terreno listo para la siguiente y ninguna obliga a rehacer
+una anterior.
+
+## Principios (no negociables: hay usuarios de pago dentro)
+
+1. **Redes antes que cambios.** Primero se refuerza la capacidad de detectar
+   un problema (tests contra PostgreSQL real, registro de errores), y solo
+   después se tocan cosas con riesgo.
+2. **PR pequeños y revertibles.** Nunca dos cambios con riesgo en el mismo
+   despliegue. Cada merge se verifica antes de dar el siguiente paso:
+   `/readyz` en verde + smoke manual del flujo tocado.
+3. **Todo lo que toca dinero o acceso, detrás de un interruptor** (flag por
+   variable de entorno), desplegado apagado y encendido después de verificar.
+4. **Migraciones expand/contract:** primero se añade (compatible con el
+   código viejo), se despliega, y lo obsoleto se retira en otra PR posterior.
+   Así el orden exacto entre migrar y desplegar deja de ser crítico.
+5. **Rollback ensayado:** revertir el merge o redesplegar el commit anterior
+   en Vercel debe ser siempre posible en minutos. Nada de cambios de datos
+   irreversibles sin respaldo previo verificado.
+6. **Sin big-bang.** Lo que puede migrar por tandas (plantillas en inglés),
+   migra por tandas conviviendo con lo viejo.
+
+---
+
+## Fase 0 — Redes de seguridad
+
+*No toca lógica de negocio. Sin esta fase, todo lo demás es a ciegas.*
+
+- **0.1 CI contra PostgreSQL real** *(punto 1 del análisis).* Job nuevo de
+  GitHub Actions con servicio PostgreSQL: aplica las migraciones y corre
+  primero la batería sensible (pagos, licencias, soporte, aislamiento
+  multi-tenant/RLS) contra PG; ampliación progresiva después. Es la respuesta
+  estructural a los tres incidentes del 20/10 (boolean=integer, UPDATE,
+  RETURNING), invisibles en SQLite.
+- **0.2 Registro interno de errores** *(punto 2).* Tabla propia con huella
+  de deduplicación (conteo, primera/última vez, ruta, traza), captura en el
+  middleware **solo cuando ya hay un 500** (coste cero en el camino feliz y
+  *best-effort*: si el registro falla, la respuesta no se rompe, como el
+  resto de avisos de la casa). Aviso por correo al titular solo ante huella
+  nueva (y resumen diario en el cron de mantenimiento), vista en el panel de
+  operador. Sin SDK de terceros: ni coste por petición ni datos de clientes
+  saliendo fuera. Detrás de flag, aunque nazca encendido.
+  - *Titular:* monitor externo de disponibilidad (UptimeRobot o similar,
+    gratuito) contra `/readyz` y la home: es lo único que avisa si cae
+    Vercel entero.
+- **0.3 Migraciones automáticas** *(punto 3).* Workflow que ejecuta
+  `alembic upgrade head` sobre producción al fusionar a `main` (secreto de
+  GitHub con la URL administrativa), para que código y esquema dejen de
+  depender de la memoria. Con la norma expand/contract (principio 4), la
+  ventana entre migrar y desplegar es inocua en ambos sentidos.
+- **0.4 CI en dos velocidades** *(punto 10, primera parte).* "Humo"
+  (<2 min) en cada push de rama y suite completa en PR a `main`. Sin tocar
+  ningún test todavía: es solo organización del workflow.
+
+**Hecho cuando:** un error forzado en una preview aparece en el panel y llega
+por correo; una migración de prueba se aplica sola al fusionar; el job PG
+detecta a propósito un INSERT con RETURNING (se comprueba rompiéndolo en una
+rama desechable).
+
+## Fase 1 — Rendimiento y peso del despliegue
+
+*Antes que el SEO nuevo: las URLs que vengan deben nacer cacheadas y leyendo
+la fuente de datos definitiva.*
+
+- **1.1 Región de las funciones = región de Supabase** *(punto 5).*
+  `vercel.json` no fija `regions` hoy. Con 4–18 consultas secuenciales por
+  página de panel, la distancia función↔BD manda sobre cualquier otra
+  optimización.
+  - *Titular:* confirmarnos la región (está en el host de la `DATABASE_URL`:
+    `aws-0-<region>.pooler.supabase.com`).
+- **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* Landing,
+  homes de país, temas y guías con `s-maxage` + `stale-while-revalidate`.
+  Hoy no llevan `Cache-Control` compartido: cada visita y cada pasada de
+  Googlebot ejecuta la función (la home además hace 7 consultas y pesa
+  138 KB de HTML). El contenido gobernado desde el panel admite TTL de
+  minutos con SWR: publicar no exige purga inmediata.
+- **1.3 Artefactos mínimos de runtime** *(punto 7).* Inventario de qué lee
+  realmente la app de `basedatos_partidas/` (62 MB en el repo), conjunto
+  mínimo junto al código y `.vercelignore` para el resto (generación y
+  herramientas quedan fuera del despliegue). Los contadores de la landing
+  («16.127 líneas») se precalculan en la generación a un JSON diminuto: hoy
+  cada instancia fría recorre miles de ficheros para contarlos. Los checks
+  `seo_*` de `/readyz` ya detectan un artefacto ausente: son la red de esta
+  fase.
+
+**Hecho cuando:** la home y una guía responden con cabecera de caché
+compartida y el segundo hit no toca la función; `/readyz` sigue en verde con
+el paquete reducido; el panel se nota igual o más rápido (misma región).
+
+## Fase 2 — Precios con pipeline (antes del SEO programático)
+
+*Publicar miles de URLs apoyadas en precios que caducan en silencio sería
+construir sobre arena (punto 12).*
+
+- Proceso único y documentado de actualización: fuente → carga →
+  verificación automática CSV↔BD (la herramienta ya existe;
+  `tools/verificar_matrices_bd.py`) → constancia de fecha.
+- `precios_actualizados` en `/readyz` con antigüedad en días (alarma blanda
+  visible sin entrar en ningún panel) y fecha de actualización visible en
+  las guías («precios actualizados a …»: también es señal de frescura SEO).
+- Cadencia a fijar por el titular según sus fuentes (sugerencia: trimestral).
+
+**Hecho cuando:** actualizar precios es ejecutar un comando documentado y
+ver el check pasar a «hoy».
+
+## Fase 3 — i18n: mecanismo único (antes de crear superficies nuevas)
+
+*Hay 94 plantillas `*_en.html` (40% del total): cada pantalla cuesta el
+doble (punto 8). No se migra todo ahora: se instala el mecanismo para que
+nada nuevo nazca duplicado.*
+
+- Sistema único de plantilla + catálogo de mensajes, conviviendo con el
+  sufijo `_en` actual (el resolvedor de plantillas prefiere la vía nueva
+  página a página). Piloto con 2–3 pantallas y tests de paridad ES/EN.
+- **Regla a partir de aquí:** toda plantilla nueva (fases 4 y 5) nace en el
+  sistema único. La migración del resto, por tandas en PRs que ya toquen
+  esas pantallas (fase 6), sin proyecto dedicado.
+
+**Hecho cuando:** las pantallas piloto sirven ES/EN desde una sola plantilla
+y la suite de idiomas lo cubre.
+
+## Fase 4 — Stripe completo
+
+*Dinero: máximo cuidado, todo con interruptor y convivencia de mundos
+(punto 6).*
+
+- **4.1** *Titular:* crear Product/Prices (mensual y anual) en el dashboard
+  de Stripe y pasar los IDs como variables de entorno. Sin tocar código.
+- **4.2** Checkout con Price IDs detrás de flag. El webhook acepta en
+  paralelo las suscripciones actuales (creadas con `price_data`) y las
+  nuevas: **los clientes que ya pagan no notan nada** ni se les toca la
+  suscripción.
+- **4.3** Customer Portal desde «Mi plan»: actualizar tarjeta (hoy imposible:
+  es la fuente de churn silencioso cuando una tarjeta caduca), facturas de
+  Stripe y cancelación. La cancelación por API ya existente se mantiene para
+  las suscripciones heredadas hasta que el portal las cubra a todas.
+- **4.4** *Solo si el gestor del titular lo confirma:* factura formal (hoy se
+  emite recibo propio). Es una decisión de negocio/fiscal, no técnica.
+
+**Hecho cuando:** un alta nueva paga contra el Price de catálogo, el portal
+permite cambiar la tarjeta de una suscripción de prueba en modo test, y las
+renovaciones heredadas siguen activando licencias igual que hoy.
+
+## Fase 5 — SEO programático sobre el catálogo
+
+*La palanca de crecimiento (punto 4), deliberadamente después de 1, 2 y 3.*
+
+- **5.1 Piloto:** un país (MX) y un nivel (subcapítulos/partidas con precio
+  real del país y descompuesto resumido), enlazado desde las guías
+  existentes. Hoy el sitemap son 195 URLs (76 guías, 75 temas × país con
+  69–84% de texto compartido) frente a 8.536 referencias de precio en
+  22 países sin ninguna URL.
+- **Guardia anti-contenido-fino:** no se publica combinación sin dato
+  diferencial del país (precio real, no plantilla con el nombre cambiado).
+  Canonical, breadcrumbs y schema desde el primer día; sitemap por secciones
+  si el volumen lo pide.
+- **5.2** Extensión por países/niveles **según indexación real en Search
+  Console tras 2–4 semanas del piloto**, no por intuición.
+
+**Hecho cuando (piloto):** las URLs nuevas aparecen indexadas en GSC y el
+tráfico orgánico a esas rutas es medible; la extensión se decide con esos
+datos.
+
+## Fase 6 — Velocidad de desarrollo (continua, sin fecha de cierre)
+
+- **Paralelizar la suite** (`pytest-xdist`) aislando la BD por worker
+  *(punto 10, segunda parte).* Hoy: 12–16 min por CI. Se hace cuando la
+  fase 0 ya da señal fiable, para distinguir un fallo real de uno de
+  concurrencia.
+- **Migración de plantillas `_en` por tandas** (continuación de la fase 3).
+- **Monolitos** *(punto 9)*: sin proyecto dedicado. `routers/presupuestos.py`
+  (4.543 líneas), `models.py` (4.120) y `seo.py` (2.432) se parten por
+  dominio **cuando una funcionalidad los abra por otro motivo**; hacerlo
+  como obra aislada es exactamente el cambio que no se nota y sí puede
+  romper.
+
+## Lo que NO entra (decidido)
+
+- **Correo (ex punto 11):** `soporte@cotizat.online` es un buzón activo y
+  atendido; no hay nada que arreglar. Queda a criterio del titular retirar
+  `COTIZAT_AVISOS_EMAIL` para que los avisos internos vayan también directos
+  a ese buzón.
+- **Reescribir el frontend o migrar de stack:** el SSR actual es el activo
+  SEO; no se toca.
+- **Micro-optimizaciones** sin medición que las pida.
+
+## Tareas que solo puede hacer el titular (con guía nuestra)
+
+1. Monitor externo de `/readyz` (fase 0.2).
+2. Confirmar la región de Supabase (fase 1.1).
+3. Comprobar plan y copias (backups/PITR) de Supabase: la base de datos es
+   el negocio de los clientes; la ventana de recuperación debe ser una
+   decisión consciente, no un default.
+4. Crear los Prices en Stripe (fase 4.1) y validar la factura formal con su
+   gestor (4.4).
+5. Enviar/confirmar el sitemap `https://cotizat.online/sitemap.xml` en
+   Search Console y Bing (pendiente anterior; la fase 5.1 se mide desde ahí).

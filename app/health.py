@@ -287,7 +287,7 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
             filas = conn.execute(
                 text(
                     "SELECT pais_codigo, COUNT(*) FROM precios_recursos_mercado "
-                    f"WHERE organizacion_id IS NULL AND {_condicion_activo()} "
+                    f"WHERE organizacion_id IS NULL AND {_condicion_activo(conn.dialect.name)} "
                     "AND codigo_recurso <> '' GROUP BY pais_codigo ORDER BY pais_codigo"
                 )
             ).fetchall()
@@ -299,14 +299,21 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     return checks
 
 
-def _condicion_activo() -> str:
+def _condicion_activo(dialecto: str | None = None) -> str:
     """Condición SQL de «activo» para el motor en uso.
 
     ``activo`` es 1/0 en SQLite y boolean en PostgreSQL. La condición
     «portable» ``activo = 1 OR activo IS TRUE`` no lo es: Postgres la
     rechaza al analizarla (``boolean = integer`` no existe) y el 20/10/2026
     dejó ``precios_bd`` en «no evaluado» en producción. Hay que elegir.
+
+    Manda el dialecto de la conexión que va a ejecutar la sentencia, no el
+    motor global del proceso: la batería PostgreSQL (fase 0.1) demostró que
+    decidir por el global miente en cuanto conviven dos motores en el mismo
+    proceso. Sin argumento se mantiene el comportamiento histórico.
     """
+    if dialecto is not None:
+        return "activo = 1" if dialecto == "sqlite" else "activo IS TRUE"
     return "activo = 1" if DATABASE_IS_SQLITE else "activo IS TRUE"
 
 
