@@ -487,6 +487,37 @@ def listar_partidas(
             _p.coste_mano_obra = tasa_convertir_precio(_p.coste_mano_obra or 0, _factor)
             _p.coste_complementarios = tasa_convertir_precio(_p.coste_complementarios or 0, _factor)
             _p.coste_otros = tasa_convertir_precio(_p.coste_otros or 0, _factor)
+
+    # La conversión de unidades es la última capa: primero se resuelven país y
+    # moneda, después precio/coste por unidad métrica pasan juntos a la unidad
+    # estadounidense. Se hace también en el modo de búsqueda, que renderiza
+    # filas en servidor en vez de pedirlas a /api/filas.
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            ficha_catalogo_a_mostrada,
+            filas_descomposicion_a_mostrada,
+        )
+
+        if es_imperial_codigo(_codigo_trad):
+            for _p in partidas:
+                _unidad_metrica = _p.unidad
+                _vista_imp = ficha_catalogo_a_mostrada({
+                    "unidad": _p.unidad,
+                    "precio_unitario": _p.precio_unitario,
+                    "coste_materiales": _p.coste_materiales,
+                    "coste_mano_obra": _p.coste_mano_obra,
+                    "coste_complementarios": _p.coste_complementarios,
+                    "coste_otros": _p.coste_otros,
+                }, True)
+                for _campo, _valor in _vista_imp.items():
+                    setattr(_p, _campo, _valor)
+                if _p.id in catalogo_descompuestos:
+                    catalogo_descompuestos[_p.id] = filas_descomposicion_a_mostrada(
+                        catalogo_descompuestos[_p.id], _unidad_metrica, True
+                    )
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "partidas/list.html", {
         "partidas": partidas,
         # Los importes de la lista ya están convertidos: la vista los etiqueta
@@ -583,7 +614,7 @@ def filas_subcategoria_catalogo(
             _coste_mo_api = tasa_convertir_precio(_coste_mo_api, _factor_api)
             _coste_comp_api = tasa_convertir_precio(_coste_comp_api, _factor_api)
             _coste_otros_api = tasa_convertir_precio(_coste_otros_api, _factor_api)
-        partidas.append({
+        _fila_api = {
             "id": p.id,
             "nombre": traducir(p.nombre or "", _codigo_api) if _codigo_api else (p.nombre or ""),
             "descripcion": traducir(p.descripcion or "", _codigo_api) if _codigo_api else (p.descripcion or ""),
@@ -602,7 +633,18 @@ def filas_subcategoria_catalogo(
             "coste_complementarios": _coste_comp_api,
             "coste_otros": _coste_otros_api,
             "recursos": n_recursos,
-        })
+        }
+        try:
+            from ..services.unidades_precio import (
+                es_imperial_codigo,
+                ficha_catalogo_a_mostrada,
+            )
+
+            if es_imperial_codigo(_codigo_api):
+                _fila_api = ficha_catalogo_a_mostrada(_fila_api, True)
+        except Exception:
+            pass
+        partidas.append(_fila_api)
     return {"ok": True, "partidas": partidas}
 
 
@@ -830,6 +872,21 @@ def descomposicion_partida(
             if isinstance(_f.get("importe"), (int, float)):
                 _f["importe"] = tasa_convertir_precio(_f["importe"], _factor_d)
     filas = _filas_descomposicion_vista(filas, _pais_d, _idioma_d)
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            filas_descomposicion_a_mostrada,
+        )
+
+        if es_imperial_codigo(_pais_d):
+            # Cada rendimiento tiene dimensión recurso / unidad de partida:
+            # además de pasar el denominador m²→sq ft, kg/l/m de las filas se
+            # presentan como lb/gal/ft con su precio unitario reescalado.
+            filas = filas_descomposicion_a_mostrada(
+                filas, partida.unidad or "ud", True
+            )
+    except Exception:
+        pass
     return {"ok": True, "filas": filas, "moneda": _mon_d}
 
 
@@ -869,24 +926,69 @@ def exportar_partidas(
     # Las exportaciones deben reflejar el mercado del país igual que la lista:
     # se recalcula el APU con las referencias nacionales y se sobreescriben los
     # importes en los objetos antes de escribirlos (la exportación no guarda).
+    _moneda_exp, _factor_exp = _contexto_moneda(db)
+    try:
+        _cfg_exp = _config(db)
+        _pais_exp = codigo_desde_pais(
+            getattr(_cfg_exp, "empresa_pais", "") or ""
+        ) or "VE"
+    except Exception:
+        _pais_exp = ""
     try:
         from ..services.precios_partidas import recalcular_partidas_mercado
-        _moneda_exp, _factor_exp = _contexto_moneda(db)
-        _cfg_exp = _config(db)
-        _pais_exp = codigo_desde_pais(getattr(_cfg_exp, "empresa_pais", "") or "") or "VE"
+
         _org_exp = int(db.info.get("organizacion_id") or 0) or None
         _precios_exp = recalcular_partidas_mercado(
-            db, partidas, _pais_exp, _org_exp, _moneda_exp, _factor_exp,
+            db, partidas, _pais_exp or "VE", _org_exp, _moneda_exp, _factor_exp,
         )
         for _p in partidas:
             _mk_exp = _precios_exp.get(_p.id)
             if _mk_exp is None:
+                if _factor_exp != 1.0:
+                    for _campo_moneda in (
+                        "precio_unitario", "coste_materiales", "coste_mano_obra",
+                        "coste_complementarios", "coste_otros",
+                    ):
+                        setattr(
+                            _p, _campo_moneda,
+                            tasa_convertir_precio(
+                                getattr(_p, _campo_moneda, 0) or 0, _factor_exp
+                            ),
+                        )
                 continue
             _p.precio_unitario = _mk_exp.precio_unitario
             _p.coste_materiales = _mk_exp.coste_materiales
             _p.coste_mano_obra = _mk_exp.coste_mano_obra
             _p.coste_complementarios = _mk_exp.coste_complementarios
             _p.coste_otros = _mk_exp.coste_otros
+    except Exception:
+        pass
+
+    # CSV/XLSX son una salida visible del catálogo: mantienen el almacén
+    # métrico, pero para una organización US exportan unidad, precio, costes y
+    # horas por la misma unidad imperial que la tabla y el editor.
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            ficha_catalogo_a_mostrada,
+        )
+
+        if es_imperial_codigo(_pais_exp):
+            for _p in partidas:
+                _vista_exp = ficha_catalogo_a_mostrada({
+                    "unidad": _p.unidad,
+                    "precio_unitario": _p.precio_unitario,
+                    "coste_materiales": _p.coste_materiales,
+                    "coste_mano_obra": _p.coste_mano_obra,
+                    "coste_complementarios": _p.coste_complementarios,
+                    "coste_otros": _p.coste_otros,
+                    "tiempo_estimado_horas": _p.tiempo_estimado_horas,
+                    "tiempo_oficial_horas": getattr(_p, "tiempo_oficial_horas", None),
+                    "tiempo_ayudante_horas": getattr(_p, "tiempo_ayudante_horas", None),
+                    "tiempo_equipo_horas": getattr(_p, "tiempo_equipo_horas", None),
+                }, True)
+                for _campo_exp, _valor_exp in _vista_exp.items():
+                    setattr(_p, _campo_exp, _valor_exp)
     except Exception:
         pass
 
@@ -1233,11 +1335,17 @@ def nueva_partida_form(request: Request, db: Session = Depends(get_db)):
         _simbolo_n = _simbolo_iso(_moneda_n)
     except Exception:
         _moneda_n, _simbolo_n = "USD", "$"
+    try:
+        from ..services.unidades_precio import es_imperial_config
+        _imperial_n = es_imperial_config(_config(db))
+    except Exception:
+        _imperial_n = False
     return TEMPLATES.TemplateResponse(request, "partidas/form.html", {
         "partida": None,
         "categorias": _categorias(db),
         "moneda_local": _moneda_n,
         "simbolo_local": _simbolo_n,
+        "unidades_imperiales": _imperial_n,
         "error": request.query_params.get("error", ""),
     })
 
@@ -1379,6 +1487,34 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
         )
         partida_vista.descomposicion_json = json.dumps(descomp_vista, ensure_ascii=False)
 
+    # El CRUD del catálogo es también una superficie de trabajo: una empresa
+    # estadounidense debe editar sq ft/lb/gal, no abrir una ficha imperial en
+    # el buscador y volver de pronto a m²/kg al pulsar el lápiz. La copia se
+    # convierte al final, después de mercado, moneda y traducción.
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            ficha_catalogo_a_mostrada,
+        )
+
+        if es_imperial_codigo(pais_codigo):
+            _ficha_vista = ficha_catalogo_a_mostrada(
+                _partida_catalogo_json(partida_vista), True
+            )
+            for _campo_imp in (
+                "unidad", "precio_unitario", "coste_materiales",
+                "coste_mano_obra", "coste_complementarios", "coste_otros",
+                "tiempo_estimado_horas", "tiempo_oficial_horas",
+                "tiempo_ayudante_horas", "tiempo_equipo_horas",
+            ):
+                if _campo_imp in _ficha_vista:
+                    setattr(partida_vista, _campo_imp, _ficha_vista[_campo_imp])
+            partida_vista.descomposicion_json = json.dumps(
+                _ficha_vista.get("descomposicion") or {}, ensure_ascii=False
+            )
+    except Exception:
+        pass
+
     categorias = _categorias(db)
     if idioma.lower().startswith("en") and pais_codigo:
         partida_vista.nombre = traducir(partida.nombre or "", pais_codigo)
@@ -1401,6 +1537,7 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
         "categorias": categorias,
         "moneda_local": moneda_vista,
         "simbolo_local": simbolo_local,
+        "unidades_imperiales": pais_codigo == "US",
         "error": request.query_params.get("error", ""),
     })
 
@@ -1456,6 +1593,18 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
         )
 
     filas_catalogo, _costes_formulario = _descomposicion_catalogo(form)
+    # El formulario estadounidense envía la partida por sq ft y sus recursos
+    # por lb/gal/ft. Normalizamos antes de comparar con las referencias de
+    # mercado y con la ficha original, que siempre viven en métrico. Unidad y
+    # moneda son factores independientes y sus conversiones conmutan.
+    try:
+        from ..services.unidades_precio import normalizar_ficha_catalogo_a_metrico
+
+        normalizar_ficha_catalogo_a_metrico(
+            datos, filas_catalogo, _costes_formulario
+        )
+    except Exception:
+        pass
     try:
         valor_original = json.loads(partida.descomposicion_json or "[]")
     except (TypeError, ValueError):
@@ -1571,7 +1720,9 @@ async def actualizar_partida(partida_id: int, request: Request, db: Session = De
         for campo in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
             datos[campo] = float(getattr(partida, campo, 0) or 0)
 
-    precio_enviado = max(0.0, _f(form.get("precio_unitario")))
+    # ``datos`` ya está normalizado a precio por unidad métrica; leer de nuevo
+    # el valor crudo del formulario reintroduciría el precio por sq ft.
+    precio_enviado = max(0.0, float(datos.get("precio_unitario") or 0.0))
     precio_base_original = float(partida.precio_unitario or 0.0)
     if mercado_visible is not None:
         precio_mostrado = float(mercado_visible.precio_unitario or 0.0)

@@ -10,7 +10,7 @@
       <div class="field"><label>Section</label><input name="categoria" list="categorias-disponibles" value="{{ partida.categoria if partida else '99 Custom line items' }}" placeholder="99 Custom line items"></div>
       <div class="field"><label>Subsection</label><input name="subcategoria" value="{{ partida.subcategoria if partida else '' }}" placeholder="e.g. 99.01 General"></div>
       <div class="field"><label>Subheading</label><input name="apartado" value="{{ partida.apartado if partida else '' }}" placeholder="e.g. 99.01.01 Miscellaneous work"></div>
-      <div class="field"><label>Unit of the line item</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="m², m³, each…"></div>
+      <div class="field"><label>Unit of the line item</label><input name="unidad" value="{{ partida.unidad if partida else 'ud' }}" placeholder="{{ 'sq ft, cu yd, ea…' if (unidades_imperiales or es_imperial) else 'm², m³, each…' }}"></div>
       <div class="field"><label>Line item code</label><input name="codigo_externo" value="{{ partida.codigo_externo if partida else '' }}" placeholder="RBE030"></div>
       <div class="field field-full">
         <div class="card-head">

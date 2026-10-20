@@ -299,14 +299,7 @@ def precio_mostrado(valor, unidad: str | None, imperial: bool):
 
 
 def rendimiento_mostrado(valor, unidad_partida: str | None, imperial: bool):
-    """Recursos por unidad de partida, en la unidad de pantalla.
-
-    El rendimiento es «por unidad de partida»: si la partida se enseña en
-    sq ft, el rendimiento por sq ft es el de por m² dividido por el factor.
-    El precio del recurso no se toca (sigue siendo $/kg, $/h… en el APU), así
-    el coste directo recalculado en pantalla sale en $/sq ft y cuadra con el
-    precio enseñado.
-    """
+    """Rendimiento cuando la unidad del recurso no cambia (h, ud...)."""
     if valor is None:
         return None
     numero = _numero(valor)
@@ -316,6 +309,32 @@ def rendimiento_mostrado(valor, unidad_partida: str | None, imperial: bool):
         return numero
     factor = factor_cantidad(unidad_partida)
     return round(numero / factor, 6) if factor else numero
+
+
+def rendimiento_recurso_mostrado(
+    valor,
+    unidad_recurso: str | None,
+    unidad_partida: str | None,
+    imperial: bool,
+):
+    """Cantidad de recurso imperial por unidad imperial de partida.
+
+    Ejemplo: ``5 kg/m²`` se convierte en ``1.02408 lb/sq ft``. Esta función
+    existe además de :func:`rendimiento_mostrado` para las plantillas que
+    serializan filas ORM una a una y necesitan considerar ambos factores.
+    """
+    if valor is None:
+        return None
+    numero = _numero(valor)
+    if numero is None:
+        return valor
+    if not imperial:
+        return numero
+    factor_partida = factor_cantidad(unidad_partida)
+    if not factor_partida:
+        return numero
+    factor_recurso = factor_cantidad(unidad_recurso) or 1.0
+    return round(numero * factor_recurso / factor_partida, 6)
 
 
 def etiqueta_mostrada(etiqueta: str | None, unidad_partida: str | None, imperial: bool) -> str:
@@ -341,33 +360,30 @@ def _es_fila_porcentaje(fila: dict) -> bool:
 
 
 def _convertir_filas(filas, factor: float, *, a_metrico: bool) -> None:
-    """Convierte rendimientos/importes de un descompuesto (in situ).
+    """Convierte unidades, rendimientos e importes de un APU (in situ).
 
-    - Fila de recurso: el rendimiento es por unidad de partida -> convierte
-      como una cantidad inversa (a pantalla ÷, a métrico ×). El precio es
-      por unidad DEL RECURSO (kg, h…) y nunca se toca.
-    - Fila «%»: el rendimiento es un porcentaje (no convierte); su «precio»
-      es la base en dinero por unidad de partida -> convierte como precio.
-    - El importe (dinero por unidad de partida) convierte como precio en
-      cualquier fila que lo traiga.
-    - «celdas»/«formulas» son el espejo crudo de la matriz Excel importada:
-      se preservan tal cual, el editor recalcula desde rendimiento×precio.
+    ``factor`` es el factor de la unidad de la partida. Una fila de recurso
+    tiene dos dimensiones distintas: cantidad de recurso / unidad de partida.
+    Por eso, si el recurso también es convertible (kg, l, m...), su
+    rendimiento usa ``factor_recurso / factor_partida`` hacia pantalla y su
+    precio usa ``1 / factor_recurso``. El producto rendimiento × precio queda
+    así expresado por la unidad imperial de la partida sin cambiar el importe.
+
+    Las unidades no convertibles (h, ud...) conservan el comportamiento
+    anterior: solo cambia el denominador de la partida. Las filas porcentuales
+    no son cantidades; su base monetaria sí se reescala por la partida.
+    ``celdas``/``formulas`` se preservan como espejo crudo de la importación.
     """
     if not isinstance(filas, list):
         return
     for fila in filas:
         if not isinstance(fila, dict):
             continue
-        # «importe» es dinero por unidad de partida. («coste_unitario» no se
-        # toca: su semántica por fila no es única entre productores y tanto
-        # el editor como el recálculo CYPE lo derivan de rendimiento×precio.)
+        # «importe» siempre es dinero por unidad de partida.
         importe = _numero(fila.get("importe"))
         if importe is not None:
             fila["importe"] = round(importe * factor, 6) if a_metrico else round(importe / factor, 4)
         if _es_fila_porcentaje(fila):
-            # En la fila % el «precio» es la base monetaria por unidad de
-            # partida; viaja duplicado en «precio_unitario» en las filas del
-            # catálogo y hay que mover los dos o la fila se contradice.
             for campo_precio in ("precio", "precio_unitario"):
                 precio = _numero(fila.get(campo_precio))
                 if precio is not None:
@@ -375,11 +391,38 @@ def _convertir_filas(filas, factor: float, *, a_metrico: bool) -> None:
                         round(precio * factor, 6) if a_metrico else round(precio / factor, 4)
                     )
         elif str(fila.get("tipo") or "recurso") == "recurso":
+            unidad_recurso = fila.get("unidad")
+            factor_recurso = None
+            unidad_destino = None
+            if a_metrico:
+                destino = metrica_desde_mostrada(unidad_recurso)
+                if destino is not None:
+                    unidad_destino, factor_recurso = destino
+            else:
+                factor_recurso = factor_cantidad(unidad_recurso)
+                if factor_recurso:
+                    unidad_destino = unidad_mostrada(unidad_recurso, True)
+
             rendimiento = _numero(fila.get("rendimiento"))
             if rendimiento is not None:
-                fila["rendimiento"] = (
-                    round(rendimiento * factor, 6) if a_metrico else round(rendimiento / factor, 6)
-                )
+                if a_metrico:
+                    # recurso_imperial/partida_imperial -> recurso_métrico/partida_métrica
+                    divisor = factor_recurso or 1.0
+                    fila["rendimiento"] = round(rendimiento * factor / divisor, 6)
+                else:
+                    # recurso_métrico/partida_métrica -> recurso_imperial/partida_imperial
+                    multiplicador = factor_recurso or 1.0
+                    fila["rendimiento"] = round(rendimiento * multiplicador / factor, 6)
+
+            if factor_recurso:
+                for campo_precio in ("precio", "precio_unitario"):
+                    precio = _numero(fila.get(campo_precio))
+                    if precio is not None:
+                        fila[campo_precio] = (
+                            round(precio * factor_recurso, 6)
+                            if a_metrico else round(precio / factor_recurso, 4)
+                        )
+                fila["unidad"] = unidad_destino
 
 
 # -- payloads del editor: normalizar a métrico al guardar ----------------------

@@ -245,16 +245,23 @@ def resolver_precio_para_presupuesto(db: Session, recurso_id: int, pais_codigo: 
                                      tasa_mercado_a_usd: float | None = None,
                                      tasa_usd_presupuesto: float | None = None) -> dict:
     """Devuelve precio efectivo listo para una nueva descomposición."""
-    from .monedas import convertir
+    from .monedas import codigo_iso, convertir
     res = resolver_precio(db, recurso_id, pais_codigo, organizacion_id)
     if res.precio is None:
         return {"precio": None, "moneda": None, "origen": res.origen, "confianza": res.confianza, "aviso": res.aviso, "requiere_tasa": False}
     origen = res.moneda or "USD"
     destino = str(moneda_presupuesto or "USD").upper()
     try:
-        convertido = convertir(res.precio, origen, destino,
-                               tasa_usd_destino=tasa_usd_presupuesto,
-                               tasa_usd_origen=tasa_mercado_a_usd)
+        # Un precio unitario puede necesitar cuatro o más decimales (p. ej.
+        # USD/lb). Si no cambia la moneda, cuantizarlo a céntimos antes de
+        # convertir la unidad introduce una deriva visible al guardar/abrir.
+        convertido = (
+            res.precio
+            if codigo_iso(origen) == codigo_iso(destino)
+            else convertir(res.precio, origen, destino,
+                            tasa_usd_destino=tasa_usd_presupuesto,
+                            tasa_usd_origen=tasa_mercado_a_usd)
+        )
         return {"precio": float(convertido), "moneda": destino, "origen": res.origen, "confianza": res.confianza, "aviso": res.aviso, "requiere_tasa": False}
     except ValueError:
         return {"precio": res.precio, "moneda": origen, "origen": res.origen, "confianza": res.confianza, "aviso": "Falta tasa para convertir el precio al presupuesto", "requiere_tasa": True}
@@ -270,7 +277,7 @@ def resolver_precios_para_presupuesto_lote(db: Session, recursos, pais_codigo: s
     conversión de moneda es cálculo puro y se hace en memoria. Mismas claves
     y valores que la versión individual, indexados por ``recurso.id``.
     """
-    from .monedas import convertir
+    from .monedas import codigo_iso, convertir
     resueltos = resolver_precios_lote(db, recursos, pais_codigo, organizacion_id)
     salida: dict[int, dict] = {}
     for recurso in recursos:
@@ -283,9 +290,13 @@ def resolver_precios_para_presupuesto_lote(db: Session, recursos, pais_codigo: s
         origen = res.moneda or "USD"
         destino = str(moneda_presupuesto or "USD").upper()
         try:
-            convertido = convertir(res.precio, origen, destino,
-                                   tasa_usd_destino=tasa_usd_presupuesto,
-                                   tasa_usd_origen=None)
+            convertido = (
+                res.precio
+                if codigo_iso(origen) == codigo_iso(destino)
+                else convertir(res.precio, origen, destino,
+                               tasa_usd_destino=tasa_usd_presupuesto,
+                               tasa_usd_origen=None)
+            )
             salida[recurso.id] = {"precio": float(convertido), "moneda": destino, "origen": res.origen, "confianza": res.confianza, "aviso": res.aviso, "requiere_tasa": False}
         except ValueError:
             salida[recurso.id] = {"precio": res.precio, "moneda": origen, "origen": res.origen, "confianza": res.confianza, "aviso": "Falta tasa para convertir el precio al presupuesto", "requiere_tasa": True}
