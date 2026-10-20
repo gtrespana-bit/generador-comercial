@@ -35,6 +35,31 @@ def test_cifras_catalogo_cuentan_partidas_y_recursos():
     assert c["packs"] >= 1 and c["packs_partidas"] >= c["packs"]
 
 
+def test_cifras_catalogo_sin_deriva():
+    """El JSON precalculado coincide con el cálculo en vivo.
+
+    ``cifras_catalogo()`` lee ``basedatos_partidas/datos/cifras_catalogo.json``
+    para no recorrer miles de descompuestos en cada instancia. Si este test
+    falla, se cambió el catálogo o las ``RECETAS_DEMO`` sin regenerar:
+    ``python tools/generar_cifras_catalogo.py``.
+    """
+    import json as _json
+
+    from app.routers.common import (
+        _RUTA_CIFRAS_PRECALCULADAS,
+        _calcular_cifras_catalogo,
+    )
+
+    assert _RUTA_CIFRAS_PRECALCULADAS.is_file(), (
+        "Falta cifras_catalogo.json: ejecútalo con "
+        "python tools/generar_cifras_catalogo.py"
+    )
+    en_disco = _json.loads(_RUTA_CIFRAS_PRECALCULADAS.read_text(encoding="utf-8"))
+    assert en_disco == _calcular_cifras_catalogo()
+    # Y es lo que sirve la app (no la red de cálculo en vivo ni las fijas).
+    assert cifras_catalogo() == en_disco
+
+
 # ---------------------------------------------------------------------------
 # Formato por moneda
 # ---------------------------------------------------------------------------
