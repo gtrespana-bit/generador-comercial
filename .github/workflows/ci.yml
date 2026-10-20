@@ -138,3 +138,49 @@ jobs:
 
       - name: Ejecutar la suite automatizada
         run: pytest -q
+
+  pruebas-postgresql:
+    name: Pruebas PostgreSQL (RLS real)
+    # Fase 0.1 de la hoja de ruta 2026-10-20. La suite general corre en
+    # SQLite, donde no hay RLS ni booleanos estrictos: tres incidentes de
+    # producción del 20/10/2026 fueron invisibles para ella. Este job
+    # reconstruye el esquema con la cadena de migraciones desde una base
+    # vacía y ejercita los servicios como el rol real (cotizat_runtime).
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.lock
+
+      - name: Instalar dependencias fijadas
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+
+      - name: Ejecutar la batería PostgreSQL/RLS
+        # Incluye test_rls_postgres.py, la batería del bootstrap que llevaba
+        # escrita y saltándose desde siempre por falta de este servicio.
+        env:
+          COTIZAT_TEST_ADMIN_DATABASE_URL: postgresql+psycopg://postgres@localhost:5432/postgres
+        run: pytest -q tests/test_postgresql_rls.py tests/test_rls_postgres.py
