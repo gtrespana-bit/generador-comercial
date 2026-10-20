@@ -729,10 +729,12 @@ def pagina_soporte(request: Request):
 async def enviar_soporte(request: Request):
     """Recibe el mensaje: lo guarda en el panel y avisa al buzón de soporte.
 
-    Sin autenticación (lo usa también quien no tiene cuenta). El mensaje se
-    guarda ANTES de intentar el correo: si Resend falla, el mensaje no se
-    pierde. El ``reply_to`` del aviso es el del remitente, así que responder
-    desde el buzón contesta directamente.
+    Sin autenticación (lo usa también quien no tiene cuenta). El aviso por
+    correo se intenta primero y el mensaje se guarda en un único INSERT con
+    la marca ya puesta: la RLS de la tabla no admite UPDATE ni RETURNING en
+    la sesión pública (detalle y garantías en ``app/services/soporte.py``).
+    El ``reply_to`` del aviso es el del remitente, así que responder desde
+    el buzón contesta directamente.
     """
     from urllib.parse import urlencode
 

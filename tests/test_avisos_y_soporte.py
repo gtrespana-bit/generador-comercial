@@ -764,6 +764,55 @@ def test_registrar_mensaje_no_emite_ningun_update(resend):
         _limpiar_mensajes(email)
 
 
+def test_la_fila_devuelta_no_emite_sql_tras_el_commit(resend):
+    """La fila devuelta se lee sin tocar la base (segundo muro de la RLS).
+
+    El handler lee ``fila.id`` DESPUÉS del commit para construir la
+    redirección de éxito. Con ``expire_on_commit`` ese acceso dispara un
+    SELECT de refresco que en PostgreSQL la política de operador reduce a
+    cero filas → ObjectDeletedError con el mensaje ya guardado y el correo
+    ya enviado: el usuario vería el error de un envío que sí funcionó.
+    El servicio expulsa la instancia antes de devolverla; este test caza
+    la regresión en SQLite contando las sentencias tras el commit.
+    """
+    from sqlalchemy import event
+
+    from app.database import SessionLocal
+    from app.services import soporte as soporte_service
+
+    email = "sin-refresco@example.com"
+    _limpiar_mensajes(email)
+    try:
+        with SessionLocal() as db:
+            fila, _aviso_id = soporte_service.registrar_mensaje(
+                db,
+                nombre="Sin Refresco",
+                email=email,
+                tipo="consulta",
+                mensaje="¿Se lee sin SQL?",
+                pagina="/inicio",
+            )
+            db.commit()
+
+            sentencias = []
+
+            def _contar(_conn, _cursor, sentencia, _p, _c, _e):
+                sentencias.append(sentencia)
+
+            motor = db.get_bind()
+            event.listen(motor, "before_cursor_execute", _contar)
+            try:
+                numero = fila.id
+                assert numero
+                assert fila.email == email
+                assert fila.aviso_enviado is True
+            finally:
+                event.remove(motor, "before_cursor_execute", _contar)
+            assert not sentencias, f"Leer la fila tras el commit emitió SQL: {sentencias}"
+    finally:
+        _limpiar_mensajes(email)
+
+
 def test_soporte_con_sesion_se_ve_dentro_de_la_aplicacion():
     """Quien está dentro no cae en la página de marketing con «Acceder».
 

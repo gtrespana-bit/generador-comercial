@@ -24,6 +24,8 @@ from __future__ import annotations
 import logging
 import re
 
+from sqlalchemy import text
+
 from ..models import (
     ESTADOS_SOPORTE,
     ESTADOS_SOPORTE_ETIQUETA,
@@ -151,8 +153,29 @@ def registrar_mensaje(
             fila, organizacion_nombre=organizacion_nombre, panel_url=panel_url, idioma=idioma
         )
     fila.aviso_enviado = bool(aviso_id)
+    if db.get_bind().dialect.name == "postgresql":
+        # La RLS muerde dos veces más en esta tabla, y las dos se esquivan
+        # aquí (reproducido con PostgreSQL real el 20/10/2026):
+        #
+        # 1. El flush del ORM emite ``INSERT ... RETURNING id`` para
+        #    rellenar la clave, y PostgreSQL exige que la fila devuelta
+        #    pase también la política SELECT — reservada al operador.
+        #    Resultado: «new row violates row-level security policy» con
+        #    el correo ya enviado y el mensaje sin guardar. Asignando el
+        #    id desde la secuencia (las secuencias no tienen RLS y el
+        #    GRANT de la migración lo cubre) el INSERT no pide nada de
+        #    vuelta y pasa el WITH CHECK público.
+        fila.id = db.execute(
+            text("SELECT nextval(pg_get_serial_sequence('mensajes_soporte', 'id'))")
+        ).scalar_one()
     db.add(fila)
     db.flush()
+    # 2. La instancia sale de la sesión con todo ya cargado: quien llama
+    #    lee ``fila.id`` tras el commit, y con ``expire_on_commit`` ese
+    #    acceso dispararía un SELECT de refresco que la política reduce
+    #    a cero filas (ObjectDeletedError con el mensaje ya guardado y
+    #    el correo ya en el buzón).
+    db.expunge(fila)
     return fila, aviso_id
 
 
