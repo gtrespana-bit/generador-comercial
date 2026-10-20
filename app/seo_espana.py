@@ -12,6 +12,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from .fechas_texto import consulta_es
+
 _PAIS_PATH = "/es/"
 _CSV_PRECIOS = (
     Path(__file__).resolve().parents[1]
@@ -72,12 +74,28 @@ def _tabla_mano_obra() -> dict[str, Any]:
                 f"{_euros(fila.get('precio_min', minimo))}–{_euros(fila.get('precio_max', maximo))}/h",
             ]
         )
+    # La nota deriva su fecha de las filas reales de la matriz (Fase 2):
+    # cuando el CSV se reconsulte, la guía dirá el mes nuevo sin tocar
+    # código; y si solo hay respaldo, no inventa ninguna fecha.
+    fechas = [
+        precios[codigo].get("fecha_consulta")
+        for codigo, _nombre in oficios
+        if precios.get(codigo)
+    ]
+    consulta = consulta_es(fechas)
+    encabezado = (
+        f"Precios consultados {consulta}. Referencia CotizaT sin IVA y "
+        "antes del margen comercial. "
+        if consulta
+        else "Referencia CotizaT sin fecha de consulta documentada, sin IVA "
+        "y antes del margen comercial. "
+    )
     return {
         "cabecera": ["Oficio", "Coste empresa de referencia", "Rango nacional"],
         "filas": filas,
         "nota": (
-            "Referencia CotizaT de agosto de 2026, sin IVA y antes del margen comercial. "
-            "Es coste empresa por hora facturable, no la tarifa final que se cobra al cliente."
+            encabezado
+            + "Es coste empresa por hora facturable, no la tarifa final que se cobra al cliente."
         ),
     }
 

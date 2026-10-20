@@ -141,6 +141,17 @@ def test_cifras_fechas_y_calidad_son_las_del_csv_importado_por_producto(codigo):
     assert "no un intervalo estadístico" in tabla["nota"]
 
 
+@pytest.mark.parametrize("codigo", [c for c in MERCADOS if c != "VE"])
+def test_nota_resume_las_fechas_de_consulta_publicadas(codigo):
+    """Fase 2: el resumen de frescura resume las fechas que la tabla muestra."""
+    from app.fechas_texto import consulta_es
+
+    tabla = tabla_mano_obra(codigo)
+    esperado = consulta_es([fila[5] for fila in tabla["filas"]])
+    assert esperado
+    assert f"Precios consultados {esperado}." in tabla["nota"]
+
+
 def test_venezuela_no_se_presenta_como_coste_empresa_nacional():
     with RECURSOS_VE.open(encoding="utf-8") as archivo:
         base = json.load(archivo)["mano_obra"]
@@ -151,6 +162,19 @@ def test_venezuela_no_se_presenta_como_coste_empresa_nacional():
         assert rango == "No documentado"
         assert "no coste empresa validado" in calidad
     assert "No es una encuesta salarial" in tabla["nota"]
+
+
+def test_venezuela_deriva_su_revision_de_recursos_json():
+    """Fase 2: el mes de revisión sale de la clave `_revision`, no del código."""
+    from app.fechas_texto import mes_anio_es
+
+    with RECURSOS_VE.open(encoding="utf-8") as archivo:
+        revision = mes_anio_es(str(json.load(archivo).get("_revision") or ""))
+    tabla = tabla_mano_obra("VE")
+    assert revision
+    for *_, fecha in tabla["filas"]:
+        assert fecha == f"Revisión del cuadro: {revision}"
+    assert f"revisión declarada de {revision}" in tabla["nota"]
 
 
 def test_ausencia_de_artefactos_no_inventa_referencias(monkeypatch):

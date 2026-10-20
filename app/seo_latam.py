@@ -13,6 +13,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from functools import lru_cache
 from pathlib import Path
 
+from .fechas_texto import consulta_es, mes_anio_es
 from .paises import PAISES
 from .seo_latam_contenido import MERCADOS
 
@@ -76,7 +77,26 @@ def _base_venezuela() -> dict[str, dict]:
         return {}
 
 
+@lru_cache(maxsize=1)
+def _revision_venezuela() -> str:
+    """Mes de la revisión declarada del cuadro base VE («agosto de 2026»).
+
+    Vive en la clave ``_revision`` de recursos.json («2026-08 · segunda
+    ronda…»): la tabla lo deriva de los datos en vez de llevar el mes
+    escrito a mano en dos sitios (Fase 2). Cadena vacía si no se puede
+    leer o no se entiende: la guía no inventa la fecha.
+    """
+    try:
+        with RECURSOS_VE.open(encoding="utf-8") as archivo:
+            datos = json.load(archivo)
+        return mes_anio_es(str(datos.get("_revision") or ""))
+    except (OSError, ValueError, AttributeError):
+        return ""
+
+
 def tabla_mano_obra(codigo: str) -> dict:
+    revision_ve = _revision_venezuela() if codigo == "VE" else ""
+    fechas: list[str] = []
     filas = []
     for recurso in OFICIOS:
         if codigo == "VE":
@@ -86,12 +106,14 @@ def tabla_mano_obra(codigo: str) -> dict:
                     recurso, _nombre_oficio(recurso, codigo),
                     importe(str(fila["precio"]), codigo) + "/h",
                     "No documentado", "Tarifa interna, no coste empresa validado",
-                    "Revisión del cuadro: 2026-08",
+                    f"Revisión del cuadro: {revision_ve}" if revision_ve
+                    else "Revisión del cuadro sin fecha documentada",
                 ])
         else:
             fila = _matriz().get(codigo, {}).get(recurso)
             if not fila:
                 continue
+            fechas.append(fila.get("fecha_consulta") or "")
             minimo, maximo = _numero(fila.get("precio_min", "")), _numero(fila.get("precio_max", ""))
             central = Decimal(fila["precio_referencia"])
             rango = "Sin rango documentado"
@@ -103,18 +125,34 @@ def tabla_mano_obra(codigo: str) -> dict:
                 "Derivado de otro oficio" if fila["confianza"] == "derivado" else "Referencia del modelo",
                 fila.get("fecha_consulta") or "Sin fecha documentada",
             ])
+    # La nota deriva su fecha de los datos (Fase 2): cuando la matriz se
+    # reconsulte, la guía dirá el mes nuevo sin tocar código.
+    if not filas:
+        nota = ("Datos no disponibles en este despliegue. Confirma los costes "
+                "con tu empresa; no se publican cifras de respaldo.")
+    elif codigo == "VE":
+        declarada = (
+            f"revisión declarada de {revision_ve}" if revision_ve
+            else "sin fecha de revisión declarada"
+        )
+        nota = (
+            f"Cuadro base USD de Venezuela, {declarada}. No es una encuesta "
+            "salarial ni una referencia validada de coste empresa. No hay "
+            "rango nacional documentado."
+        )
+    else:
+        consulta = consulta_es(fechas)
+        nota = (
+            (f"Precios consultados {consulta}. " if consulta else "")
+            + "Fuente: matriz nacional CotizaT, investigación de jornales y revisión de coste empresa (ronda 7). "
+            "El rango es el del catálogo, no un intervalo estadístico ni una tarifa por ciudad. "
+            "Las fechas de consulta se conservan: publicar en octubre no actualiza esos precios."
+        )
     return {
         "cabecera": ["Código", "Oficio", "Tarifa interna" if codigo == "VE" else "Coste empresa modelado",
                      "Rango de referencia", "Naturaleza del dato", "Consulta de la fuente"],
         "filas": filas,
-        "nota": (
-            "Cuadro base USD de Venezuela, revisión declarada 2026-08. No es una encuesta salarial ni "
-            "una referencia validada de coste empresa. No hay rango nacional documentado."
-            if codigo == "VE" else
-            "Fuente: matriz nacional CotizaT, investigación de jornales y revisión de coste empresa (ronda 7). "
-            "El rango es el del catálogo, no un intervalo estadístico ni una tarifa por ciudad. "
-            "Las fechas de consulta se conservan: publicar en octubre no actualiza esos precios."
-        ) if filas else "Datos no disponibles en este despliegue. Confirma los costes con tu empresa; no se publican cifras de respaldo.",
+        "nota": nota,
     }
 
 
