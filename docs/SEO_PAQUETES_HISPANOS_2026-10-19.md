@@ -202,11 +202,15 @@ publica una tasa de cambio de hoy.
 
 ## Pendientes que no se dan por hechos
 
+> Actualizado el 20/10/2026 (`docs/SEO_VERIFICACION_PRODUCCION_2026-10-20.md`).
+
 | Trabajo | Estado |
 |---|---|
-| Código y contenido inicial de los 18 silos hispanos | Preparado en esta rama |
-| Confirmación de matrices cargadas en producción | Pendiente |
-| Despliegue de las nuevas páginas | Pendiente |
+| Código y contenido inicial de los 18 silos hispanos | Fusionado en el PR #133 |
+| Despliegue de las nuevas páginas | **Confirmado el 20/10**: despliegue *Production* de `48a372cc` y contenido real servido; auditoría local del mismo código 195/195 |
+| Canónica/hreflang/robots con cabeceras en el dominio | Certificadas en código; queda correr `tools/auditar_seo_produccion.py` contra el dominio (y corregir antes el host `www`) |
+| Dominio preferido apex vs `www` | **Conflicto confirmado**: el borde sirve `www` y todo lo demás declara el apex; pendiente invertir en Vercel Domains |
+| Confirmación de matrices cargadas en producción | Artefactos dentro de la función, confirmados; filas en BD: `tools/verificar_matrices_bd.py` listo y `/readyz` publica el conteo; falta ejecutarlo contra Supabase |
 | GSC, SERP y validación de intención/competencia | Pendiente; no hay datos de estas fuentes en esta sesión |
 | Comprobación y actualización local de las referencias históricas | Pendiente |
 | Revisión de profesionales locales | Pendiente, especialmente fiscal/laboral |

@@ -528,16 +528,19 @@ def healthz() -> JSONResponse:
 
 
 @app.get("/readyz", include_in_schema=False)
-def readyz() -> JSONResponse:
+def readyz(request: Request) -> JSONResponse:
     """Readiness: configuración, base de datos y rol runtime están listos.
 
     Devuelve 503 si el despliegue no debe recibir tráfico (esquema
     desactualizado, rol runtime privilegiado, Auth/Storage sin configurar).
-    No imprime secretos: los mensajes se sanean en ``app.health``.
+    No imprime secretos: los mensajes se sanean en ``app.health``. El Host
+    de la petición se contrasta con el dominio canónico (chequeo SEO
+    informativo): pedir /readyz por cada host del dominio dice si el
+    borde está sirviendo un host que no es el canónico.
     """
     from .health import run_readiness
 
-    status = run_readiness()
+    status = run_readiness(host=request.url.hostname)
     return JSONResponse(
         status.to_dict(),
         status_code=200 if status.ok else 503,
