@@ -106,6 +106,23 @@ tu mensaje» y el mensaje no quedaba ni en el panel. Contratos fijados por
 test: ningún UPDATE durante el registro y `/soporte` dentro de la aplicación
 con sesión.
 
+**Segunda vuelta (también 2026-10-20, tras desplegar lo anterior).** Con el
+orden corregido el correo ya salía, pero el usuario *seguía* viendo el error
+y el mensaje no quedaba en el panel: la RLS opone dos muros más al INSERT
+público, invisibles en SQLite y reproducidos con PostgreSQL real
+(`pgserver`). El flush del ORM emite `INSERT … RETURNING id`, y PostgreSQL
+exige que la fila devuelta pase también la política SELECT — reservada al
+operador—: «new row violates row-level security policy». Arreglo: el id se
+pide antes a la secuencia (`nextval`, sin RLS) y el INSERT no devuelve nada.
+Y como el handler lee `fila.id` tras el commit, el servicio expulsa la
+instancia de la sesión antes de devolverla: con `expire_on_commit` esa
+lectura dispararía un SELECT de refresco que la política reduce a cero
+filas, con el mensaje ya guardado. Red de seguridad: tests que cuentan
+sentencias (cero UPDATE y cero SQL al leer tras el commit) y
+`tests/test_soporte_postgresql.py`, que ejercita el servicio contra un
+PostgreSQL efímero con las políticas de la migración (se salta sin
+`pgserver`).
+
 **Destino de los avisos:** `COTIZAT_AVISOS_EMAIL` si está fijado; si no,
 `soporte@cotizat.online`, que **aún no tiene buzón** (dominio sin registros
 MX): hasta crear el buzón o fijar la variable en Vercel, los avisos rebotan
