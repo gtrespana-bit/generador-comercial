@@ -269,7 +269,7 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
             filas = conn.execute(
                 text(
                     "SELECT pais_codigo, COUNT(*) FROM precios_recursos_mercado "
-                    "WHERE organizacion_id IS NULL AND (activo = 1 OR activo IS TRUE) "
+                    f"WHERE organizacion_id IS NULL AND {_condicion_activo()} "
                     "AND codigo_recurso <> '' GROUP BY pais_codigo ORDER BY pais_codigo"
                 )
             ).fetchall()
@@ -279,6 +279,17 @@ def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     except Exception as exc:
         checks["precios_bd"] = f"no evaluado: {_safe_error(exc)}"
     return checks
+
+
+def _condicion_activo() -> str:
+    """Condición SQL de «activo» para el motor en uso.
+
+    ``activo`` es 1/0 en SQLite y boolean en PostgreSQL. La condición
+    «portable» ``activo = 1 OR activo IS TRUE`` no lo es: Postgres la
+    rechaza al analizarla (``boolean = integer`` no existe) y el 20/10/2026
+    dejó ``precios_bd`` en «no evaluado» en producción. Hay que elegir.
+    """
+    return "activo = 1" if DATABASE_IS_SQLITE else "activo IS TRUE"
 
 
 def _check_sqlite() -> dict[str, object]:
