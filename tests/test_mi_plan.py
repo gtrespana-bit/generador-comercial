@@ -308,7 +308,10 @@ def test_la_pagina_ensenya_la_renovacion_automatica_de_stripe(entorno, monkeypat
         }
 
     monkeypatch.setattr("app.services.stripe._llamar_stripe", _doble_stripe)
-    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_doble")
+    # «Configurado» sin fingir una clave en el entorno: la guarda E4-030
+    # (detect-secrets con baseline) trata cualquier cadena tipo sk_ como
+    # secreto nuevo y tumba el CI.
+    monkeypatch.setattr("app.services.stripe.stripe_configurado", lambda: True)
 
     with Session() as db:
         _preparar_sesion(db, ids)
