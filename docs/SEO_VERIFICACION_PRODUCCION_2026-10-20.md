@@ -12,7 +12,7 @@ hispanos nuevos): código HTTP/cabeceras, matrices de precios y el conflicto
 | Las 46 páginas nuevas en producción | **Confirmadas**: despliegue *Production* del merge `48a372cc` (20/10 01:14Z) y contenido real servido, tablas de mano de obra incluidas. |
 | HTTP 200, canónica, hreflang, meta robots, `X-Robots-Tag` | **Certificados contra el código de `main`** (el mismo commit desplegado) con la app real: 195/195 URLs del sitemap sin fallos. Queda la confirmación con cabeceras sobre el dominio en cuanto el titular ejecute la herramienta remota (este entorno no tiene red hacia `cotizat.online`). |
 | Matrices en la base de producción | Artefactos dentro de la función: **confirmados** (las guías renderizan valores del CSV). Contenido de `precios_recursos_mercado` en Supabase: herramienta lista y probada (`tools/verificar_matrices_bd.py`); su ejecución contra producción requiere las credenciales, no disponibles aquí. `/readyz` ya publica el conteo. |
-| Dominio preferido | **Conflicto confirmado**: el borde redirige apex → `www`, pero canónicas, sitemap, robots, correos y Supabase usan el apex. Corrección: un ajuste en Vercel Domains (pasos abajo). Sin cambio de código. |
+| Dominio preferido | **Conflicto confirmado y corregido el 20/10/2026**: el borde redirigía apex → `www`; tras invertirlo en Vercel Domains, `www` redirige al apex conservando la ruta y el apex sirve directo (verificado desde fuera en guías, `robots.txt` y `/readyz`). |
 
 ## Hallazgo previo: los «404» eran la caché de la herramienta de lectura
 
@@ -102,8 +102,10 @@ Chequeos informativos (nunca tumban el readiness), en `app/health.py`:
 
 ## Lo que queda (en orden)
 
-1. **Vercel Domains**: invertir apex/www (pasos arriba) y verificar con
-   `/readyz` por ambos hosts.
+1. ~~**Vercel Domains**: invertir apex/www.~~ **Hecho por el titular el
+   20/10/2026** y verificado desde fuera: `www` → apex con ruta, apex
+   directo, host servido = host del sitemap/robots. Al fusionar el PR,
+   `/readyz` dirá `"host_es_canonico": "si"` como control permanente.
 2. **Auditoría remota con cabeceras**: desde cualquier máquina con red,
    `python tools/auditar_seo_produccion.py https://cotizat.online`
    (idealmente tras el paso 1; antes reportará la redirección por URL).

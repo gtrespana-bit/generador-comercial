@@ -87,14 +87,13 @@ actual). Desde entonces `/readyz` debe responder en el dominio nuevo y
 Canonical: se usa el apex (`https://cotizat.online`) como dirección oficial.
 En Vercel → Domains, marca `cotizat.online` como principal; `www` redirige.
 
-> ⚠️ **Verificado el 20/10/2026: en producción está al revés.** El borde
-> redirige el apex a `www.cotizat.online` y sirve la app bajo `www`,
-> mientras canónicas, sitemap, robots, correos y Supabase usan el apex.
-> Hay que invertirlo en Vercel → Domains (editar `www.cotizat.online` →
-> **Redirect to** `cotizat.online`, y dejar el apex como dominio servido).
-> Sin tocar DNS ni variables. Verificación: `/readyz` por el apex debe
-> decir `"host_es_canonico": "si"` y el host `www` debe redirigir.
-> Detalle e impacto SEO en `docs/SEO_VERIFICACION_PRODUCCION_2026-10-20.md`.
+> ⚠️ **Verificado el 20/10/2026: en producción estaba al revés** (el borde
+> redirigía el apex a `www` y servía la app bajo `www`). **Corregido el
+> mismo 20/10/2026** en Vercel → Domains y verificado desde fuera:
+> `www.cotizat.online/<ruta>` redirige a `cotizat.online/<ruta>` y el
+> apex sirve directo. Si alguna vez vuelve a invertirse, `/readyz` lo
+> delata con `"host_es_canonico": "no…"`. Detalle en
+> `docs/SEO_VERIFICACION_PRODUCCION_2026-10-20.md`.
 
 ## Paso 5 — Resend: verificar el dominio para correo
 
