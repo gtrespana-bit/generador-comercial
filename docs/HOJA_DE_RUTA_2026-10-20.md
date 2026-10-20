@@ -59,19 +59,23 @@ una anterior.
   - *Titular (pendiente):* monitor externo de disponibilidad (UptimeRobot
     o similar, gratuito) contra `/readyz` y la home: es lo único que avisa
     si cae Vercel entero.
-- **0.3 Migraciones automáticas** *(punto 3).* Workflow que ejecuta
-  `alembic upgrade head` sobre producción al fusionar a `main` (secreto de
-  GitHub con la URL administrativa), para que código y esquema dejen de
-  depender de la memoria. Con la norma expand/contract (principio 4), la
-  ventana entre migrar y desplegar es inocua en ambos sentidos.
+- **0.3 Migraciones automáticas** *(punto 3).* ❌ **DESCARTADA por decisión
+  del titular (20/10/2026).** Prefiere aplicar las migraciones a mano en el
+  SQL Editor de Supabase para llevar él mismo el control de cuáles se han
+  aplicado y cuáles no. El flujo manual queda como norma: cada migración
+  trae su `docs/staging_upgrade_<rev>.sql` transaccional con guarda de
+  versión (CI lo exige), las migraciones son aditivas (expand/contract,
+  principio 4) para que la ventana código↔esquema sea inocua, y `/readyz`
+  muestra el head real frente al esperado. No re-proponer la automatización
+  salvo que el titular cambie de criterio.
 - **0.4 CI en dos velocidades** *(punto 10, primera parte).* "Humo"
   (<2 min) en cada push de rama y suite completa en PR a `main`. Sin tocar
   ningún test todavía: es solo organización del workflow.
 
 **Hecho cuando:** un error forzado en una preview aparece en el panel y llega
-por correo; una migración de prueba se aplica sola al fusionar; el job PG
-detecta a propósito un INSERT con RETURNING (se comprueba rompiéndolo en una
-rama desechable).
+por correo; el job PG detecta a propósito un INSERT con RETURNING (se
+comprueba rompiéndolo en una rama desechable). *(La 0.3 salió de esta
+definición al descartarse; con 0.1, 0.2 y 0.4 la fase queda cerrada.)*
 
 ## Fase 1 — Rendimiento y peso del despliegue
 
@@ -84,20 +88,26 @@ la fuente de datos definitiva.*
   optimización.
   - *Titular:* confirmarnos la región (está en el host de la `DATABASE_URL`:
     `aws-0-<region>.pooler.supabase.com`).
-- **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* Landing,
-  homes de país, temas y guías con `s-maxage` + `stale-while-revalidate`.
-  Hoy no llevan `Cache-Control` compartido: cada visita y cada pasada de
-  Googlebot ejecuta la función (la home además hace 7 consultas y pesa
-  138 KB de HTML). El contenido gobernado desde el panel admite TTL de
-  minutos con SWR: publicar no exige purga inmediata.
-- **1.3 Artefactos mínimos de runtime** *(punto 7).* Inventario de qué lee
-  realmente la app de `basedatos_partidas/` (62 MB en el repo), conjunto
-  mínimo junto al código y `.vercelignore` para el resto (generación y
-  herramientas quedan fuera del despliegue). Los contadores de la landing
-  («16.127 líneas») se precalculan en la generación a un JSON diminuto: hoy
-  cada instancia fría recorre miles de ficheros para contarlos. Los checks
-  `seo_*` de `/readyz` ya detectan un artefacto ausente: son la red de esta
-  fase.
+- **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* ✅ HECHA
+  (2026-10-20). Landing, homes de país, temas, guías, legal, sitemap y robots
+  con `s-maxage=300` + `stale-while-revalidate`/`stale-if-error` de un día.
+  Como Vercel considera no-cacheable cualquier `Vary: Cookie`, el idioma de
+  la superficie pública sale solo de la URL (prefijo `/en`); la cookie sigue
+  mandando fuera (panel, `/soporte`, `/pago`). `app/cache_publico.py` pone
+  la lista blanca de rutas y un middleware fail-open con guardas estrictas
+  (GET 200, sin query, sin cookies de sesión, sin `Set-Cookie` en la
+  respuesta); las cookies de preferencia solo se fijan si cambian el valor.
+  Excepciones a propósito: `/pago` (varía por cookie de país y `?msg=`) y
+  `/soporte` (formulario con idioma por cookie).
+- **1.3 Artefactos mínimos de runtime** *(punto 7).* ✅ HECHA (2026-10-20).
+  De `basedatos_partidas/` (62 MB en el repo) solo viaja a Vercel lo que la
+  app lee en caliente (~27 MB): `.vercelignore` deja fuera salidas de
+  generación, auditorías, matrices (el panel las carga por subida), scripts
+  y también `tests/`, `docs/` y `tools/`. Los contadores de la landing se
+  leen de `datos/cifras_catalogo.json`, precalculado por
+  `tools/generar_cifras_catalogo.py`. Verificado por simulación local (con
+  todo lo excluido fuera, la app arranca y 290 tests de los lectores pasan)
+  porque la CI clona el repo completo y no caza una sobre-exclusión.
 
 **Hecho cuando:** la home y una guía responden con cabecera de caché
 compartida y el segundo hit no toca la función; `/readyz` sigue en verde con

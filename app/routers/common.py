@@ -398,12 +398,128 @@ def _asset_url(path: str) -> str:
     return f"/static/{p}?v={STATIC_VERSION}"
 
 
+# Cifras del catálogo precalculadas con ``tools/generar_cifras_catalogo.py``.
+# Recorrer los miles de descompuestos en el primer render de cada instancia
+# era un coste innecesario: el JSON viaja con el código y la lectura es
+# inmediata. Si falta o está dañado, se calcula en vivo (red de seguridad).
+_RUTA_CIFRAS_PRECALCULADAS = (
+    Path(__file__).resolve().parents[2]
+    / "basedatos_partidas"
+    / "datos"
+    / "cifras_catalogo.json"
+)
+
+
+def _cifras_catalogo_fijas() -> dict:
+    # Nunca romper la aplicación por un recuento de marketing.
+    return {
+        "partidas": 3000,
+        "partidas_txt": "3.000",
+        "capitulos": 18,
+        "subcapitulos": 172,
+        "subcapitulos_txt": "172",
+        "apartados": 0,
+        "recursos": 392,
+        "recursos_txt": "392",
+        "materiales": 331,
+        "mano_obra": 17,
+        "equipo": 44,
+        "lineas_descomp": 16127,
+        "lineas_descomp_txt": "16.127",
+        "lineas_precio": 3392,
+        "lineas_precio_txt": "3.392",
+        "packs": 0,
+        "packs_partidas": 0,
+    }
+
+
+def _calcular_cifras_catalogo() -> dict:
+    """Calcula las cifras recorriendo ``basedatos_partidas`` en vivo.
+
+    Es el cálculo de referencia: lo usa ``tools/generar_cifras_catalogo.py``
+    para generar el JSON precalculado y ``cifras_catalogo()`` como red si
+    ese JSON falta. Lanza si los datos no están o no se pueden leer: quien
+    llame decide si prefiere las cifras fijas de ``_cifras_catalogo_fijas()``.
+    """
+    base = Path(__file__).resolve().parents[2] / "basedatos_partidas"
+    descompuestos = base / "datos" / "descompuestos"
+    clasif = json.loads(
+        (base / "datos" / "clasificacion.json").read_text(encoding="utf-8")
+    )
+    capitulos = clasif.get("capitulos", {})
+    subcapitulos = sum(len(c.get("subcapitulos", {})) for c in capitulos.values())
+    apartados = sum(
+        len(s.get("apartados", {}))
+        for c in capitulos.values()
+        for s in c.get("subcapitulos", {}).values()
+    )
+    if not descompuestos.is_dir():
+        raise FileNotFoundError(f"Sin descompuestos en {descompuestos}")
+    n_partidas = 0
+    lineas = 0
+    for archivo in descompuestos.glob("*.json"):
+        try:
+            n_partidas += 1
+            lineas += len(
+                json.loads(archivo.read_text(encoding="utf-8")).get("recursos", [])
+            )
+        except Exception:
+            continue
+    cuadro = json.loads(
+        (base / "datos" / "recursos.json").read_text(encoding="utf-8")
+    )
+    grupos = {
+        clave: len(cuadro.get(clave) or {})
+        for clave in ("materiales", "mano_obra", "maquinaria")
+    }
+    n_recursos = sum(grupos.values())
+    # Packs de estancia de serie (presets del modo demostración).
+    packs = packs_partidas = 0
+    try:
+        from .. import seeds as _seeds
+
+        recetas = list(getattr(_seeds, "RECETAS_DEMO", []) or [])
+        packs = len(recetas)
+        packs_partidas = sum(
+            len(json.loads(r.get("datos") or "[]")) for r in recetas
+        )
+    except Exception:
+        pass
+    lineas_precio = n_partidas + n_recursos
+
+    def _txt(n: int) -> str:
+        return f"{n:,}".replace(",", ".")
+
+    return {
+        "partidas": n_partidas,
+        "partidas_txt": _txt(n_partidas),
+        "capitulos": len(capitulos),
+        "subcapitulos": subcapitulos,
+        "subcapitulos_txt": _txt(subcapitulos),
+        "apartados": apartados,
+        "recursos": n_recursos,
+        "recursos_txt": _txt(n_recursos),
+        "materiales": grupos["materiales"],
+        "mano_obra": grupos["mano_obra"],
+        "equipo": grupos["maquinaria"],
+        "lineas_descomp": lineas,
+        "lineas_descomp_txt": _txt(lineas),
+        "lineas_precio": lineas_precio,
+        "lineas_precio_txt": _txt(lineas_precio),
+        "packs": packs,
+        "packs_partidas": packs_partidas,
+    }
+
+
 def cifras_catalogo() -> dict:
     """Cifras del catálogo propio para la landing y el marketing.
 
-    Se leen de ``basedatos_partidas`` (clasificación, descompuestos y cuadro
-    de recursos) sin tocar la base de datos ni la sesión, y se cachean: son
-    estáticas entre regeneraciones del catálogo.
+    Se leen del JSON precalculado por ``tools/generar_cifras_catalogo.py``.
+    Si el JSON falta o no es válido, se calculan en vivo de
+    ``basedatos_partidas`` con ``_calcular_cifras_catalogo()``, y si eso
+    también falla se sirven cifras fijas: un recuento de marketing nunca
+    debe romper la aplicación. Sin tocar la base de datos ni la sesión, y
+    cacheadas: son estáticas entre regeneraciones del catálogo.
 
     El catálogo no son solo partidas: cada partida llega descompuesta en
     recursos con precio (materiales, mano de obra y equipo), así que el
@@ -415,108 +531,18 @@ def cifras_catalogo() -> dict:
 
     @lru_cache(maxsize=1)
     def _leer() -> dict:
-        def _fallback() -> dict:
-            # Nunca romper la aplicación por un recuento de marketing.
-            return {
-                "partidas": 3000,
-                "partidas_txt": "3.000",
-                "capitulos": 18,
-                "subcapitulos": 172,
-                "subcapitulos_txt": "172",
-                "apartados": 0,
-                "recursos": 392,
-                "recursos_txt": "392",
-                "materiales": 331,
-                "mano_obra": 17,
-                "equipo": 44,
-                "lineas_descomp": 16127,
-                "lineas_descomp_txt": "16.127",
-                "lineas_precio": 3392,
-                "lineas_precio_txt": "3.392",
-                "packs": 0,
-                "packs_partidas": 0,
-            }
-
         try:
-            base = Path(__file__).resolve().parents[2] / "basedatos_partidas"
-            descompuestos = base / "datos" / "descompuestos"
-            clasif = json.loads(
-                (base / "datos" / "clasificacion.json").read_text(encoding="utf-8")
+            datos = json.loads(
+                _RUTA_CIFRAS_PRECALCULADAS.read_text(encoding="utf-8")
             )
-            capitulos = clasif.get("capitulos", {})
-            subcapitulos = sum(len(c.get("subcapitulos", {})) for c in capitulos.values())
-            apartados = sum(
-                len(s.get("apartados", {}))
-                for c in capitulos.values()
-                for s in c.get("subcapitulos", {}).values()
-            )
-            n_partidas = 0
-            lineas = 0
-            if descompuestos.is_dir():
-                for archivo in descompuestos.glob("*.json"):
-                    try:
-                        n_partidas += 1
-                        lineas += len(
-                            json.loads(archivo.read_text(encoding="utf-8")).get(
-                                "recursos", []
-                            )
-                        )
-                    except Exception:
-                        continue
-            else:
-                return _fallback()
-            grupos = {"materiales": 0, "mano_obra": 0, "maquinaria": 0}
-            try:
-                cuadro = json.loads(
-                    (base / "datos" / "recursos.json").read_text(encoding="utf-8")
-                )
-                for clave, n in (
-                    (k, len(cuadro.get(k) or {})) for k in grupos
-                ):
-                    grupos[clave] = n
-            except Exception:
-                if not n_partidas:
-                    return _fallback()
-                grupos = {"materiales": 0, "mano_obra": 0, "maquinaria": 0}
-            n_recursos = sum(grupos.values())
-            # Packs de estancia de serie (presets del modo demostración).
-            packs = packs_partidas = 0
-            try:
-                from .. import seeds as _seeds
-
-                recetas = list(getattr(_seeds, "RECETAS_DEMO", []) or [])
-                packs = len(recetas)
-                packs_partidas = sum(
-                    len(json.loads(r.get("datos") or "[]")) for r in recetas
-                )
-            except Exception:
-                pass
-            lineas_precio = n_partidas + n_recursos
-
-            def _txt(n: int) -> str:
-                return f"{n:,}".replace(",", ".")
-
-            return {
-                "partidas": n_partidas,
-                "partidas_txt": _txt(n_partidas),
-                "capitulos": len(capitulos),
-                "subcapitulos": subcapitulos,
-                "subcapitulos_txt": _txt(subcapitulos),
-                "apartados": apartados,
-                "recursos": n_recursos,
-                "recursos_txt": _txt(n_recursos),
-                "materiales": grupos["materiales"],
-                "mano_obra": grupos["mano_obra"],
-                "equipo": grupos["maquinaria"],
-                "lineas_descomp": lineas,
-                "lineas_descomp_txt": _txt(lineas),
-                "lineas_precio": lineas_precio,
-                "lineas_precio_txt": _txt(lineas_precio),
-                "packs": packs,
-                "packs_partidas": packs_partidas,
-            }
+            if isinstance(datos, dict) and set(_cifras_catalogo_fijas()) <= set(datos):
+                return datos
         except Exception:
-            return _fallback()
+            pass
+        try:
+            return _calcular_cifras_catalogo()
+        except Exception:
+            return _cifras_catalogo_fijas()
 
     return _leer()
 

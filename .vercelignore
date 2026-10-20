@@ -1,0 +1,68 @@
+# Artefactos que NO viajan a Vercel (Fase 1.3 de la hoja de ruta, 2026-10-20).
+#
+# Criterio: solo viaja lo que la aplicación lee en caliente. De
+# basedatos_partidas/ se quedan: descompuestos.py, datos/descompuestos/,
+# datos/{recursos,recursos_en,clasificacion,sinonimos_busqueda,
+# cifras_catalogo}.json, glosarios/ y salida/{precios_recursos_espana.csv,
+# precios_recursos_latam.csv,traducciones/}. Todo lo demás son salidas de
+# generación, auditorías o fuentes intermedias que ningún código de app/
+# lee (verificado por inventario de lectores y simulación local moviéndolos
+# fuera y corriendo los tests). Las matrices de precios del panel se cargan
+# por subida de fichero, no desde disco, así que tampoco viajan.
+#
+# Si añades un lector nuevo de algo de esta lista, quítalo de aquí a la vez:
+# la CI no puede cazarlo porque clona el repo completo.
+#
+# Nota: algunos tests usan ficheros de salida/ como datos de entrada
+# (tests/test_catalogo_propio.py lee catalogo_partidas.csv y un xlsx de
+# descompuestos/). Es correcto que no viajen: en CI el repo está completo.
+# Si repites la simulación moviéndolos fuera, esos tests fallarán allí.
+
+# Repositorio: tests, documentación y herramientas de desarrollo
+tests/
+docs/
+tools/
+
+# basedatos_partidas: documentación y scripts de generación
+# (descompuestos.py SÍ viaja: lo carga catalogo_propio en caliente)
+basedatos_partidas/*.md
+basedatos_partidas/auditar_lanzamiento.py
+basedatos_partidas/cobertura.py
+basedatos_partidas/construir.py
+basedatos_partidas/contraste.py
+basedatos_partidas/equidad.py
+basedatos_partidas/planificar_cobertura.py
+basedatos_partidas/precio.py
+basedatos_partidas/precios.py
+basedatos_partidas/terminologia.py
+
+# basedatos_partidas/datos: fuentes sin lector en runtime
+basedatos_partidas/datos/contraste_mercado_2026-08.json
+basedatos_partidas/datos/contraste_mercado_2026-08b.json
+basedatos_partidas/datos/contraste_mercado_2026-08c.json
+basedatos_partidas/datos/contraste_mercado_2026-08d.json
+basedatos_partidas/datos/glosario.json
+basedatos_partidas/datos/mapa_migracion.json
+basedatos_partidas/datos/mapa_migracion_v2.json
+basedatos_partidas/datos/objetivos_cobertura.json
+basedatos_partidas/datos/partidas.csv
+
+# basedatos_partidas/salida: salidas de generación y auditorías.
+# Se quedan solo precios_recursos_espana.csv, precios_recursos_latam.csv
+# y traducciones/ (únicos con lector en app/).
+basedatos_partidas/salida/descompuestos/
+basedatos_partidas/salida/RESUMEN_COBERTURA.md
+basedatos_partidas/salida/arbol_catalogo.json
+basedatos_partidas/salida/auditoria_partidas.csv
+basedatos_partidas/salida/catalogo_partidas.csv
+basedatos_partidas/salida/catalogo_partidas.json
+basedatos_partidas/salida/catalogo_partidas.xlsx
+basedatos_partidas/salida/matriz_cobertura.csv
+basedatos_partidas/salida/matriz_cobertura.json
+basedatos_partidas/salida/precios_para_revisar.csv
+basedatos_partidas/salida/precios_recursos_australia.csv
+basedatos_partidas/salida/precios_recursos_canada.csv
+basedatos_partidas/salida/precios_recursos_estados_unidos.csv
+basedatos_partidas/salida/precios_recursos_irlanda.csv
+basedatos_partidas/salida/precios_recursos_latam_completa.csv
+basedatos_partidas/salida/precios_recursos_reino_unido.csv
