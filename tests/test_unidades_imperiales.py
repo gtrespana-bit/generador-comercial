@@ -12,9 +12,9 @@ servidor lo normaliza a m² al guardar, sin banderas en el formulario.
 Estas pruebas fijan:
 
 * la invariancia del importe en la ida y la vuelta;
-* que los precios de recurso del APU NO se convierten (solo el rendimiento,
-  que es «por unidad de partida») y que la fila «%» no trata su rendimiento
-  como una cantidad;
+* que los recursos convertibles del APU pasan de kg/l/m a lb/gal/ft y que
+  unidad, rendimiento y precio conservan el importe por unidad de partida;
+  la fila «%» no trata su rendimiento como una cantidad;
 * que un presupuesto estadounidense se crea en sq ft, se guarda en m² y se
   vuelve a abrir en sq ft, y que el PDF y el detalle hablan en pies;
 * que el catálogo (ficha, «actualizar precio», guardar desde el editor) y
@@ -38,6 +38,7 @@ from app.models import (
     PresupuestoItem,
     PresupuestoItemProducto,
     RecetaEstancia,
+    Recurso,
 )
 from app.services import unidades_precio as u
 
@@ -123,8 +124,8 @@ def _partida_editor_imperial() -> dict:
             {"precio": 25.0, "coste": None, "unidad": "ud"},
         ],
         "descomposicion": [
-            {"tipo": "recurso", "unidad": "kg", "rendimiento": 0.464515,
-             "precio": 0.446, "importe": 0.2072},
+            {"tipo": "recurso", "unidad": "lb", "rendimiento": 1.02408,
+             "precio": 0.2023, "importe": 0.2072},
             {"tipo": "recurso", "unidad": "%", "rendimiento": 3,
              "precio": 3.6, "importe": 0.108},
             {"tipo": "subtotal", "unidad": "", "rendimiento": "",
@@ -154,10 +155,11 @@ def test_normalizar_partida_a_metrico_completa():
     assert pd["productos_opciones"][0]["unidad"] == "m2"
     assert pd["productos_opciones"][1]["precio"] == pytest.approx(25.0 * F_M2)
     assert pd["productos_opciones"][1]["unidad"] == "ud"
-    # APU: el rendimiento convierte; el precio del recurso ($/kg) no.
+    # APU: lb/sq ft vuelve a kg/m² y el precio por lb vuelve a precio por kg.
     fila = pd["descomposicion"][0]
+    assert fila["unidad"] == "kg"
     assert fila["rendimiento"] == pytest.approx(5.0, abs=1e-3)
-    assert fila["precio"] == 0.446
+    assert fila["precio"] == pytest.approx(0.446, abs=1e-3)
     assert fila["importe"] == pytest.approx(0.2072 * F_M2)
     # Fila %: el rendimiento es un porcentaje (intacto) y su «precio» es la
     # base monetaria por unidad de partida (convierte).
@@ -184,7 +186,9 @@ def test_la_vuelta_a_pantalla_desde_lo_guardado():
     assert vista["unidad"] == "sq ft"
     assert vista["cantidad"] == pytest.approx(134.5489, abs=1e-2)
     assert vista["precio"] == pytest.approx(4.6452, abs=1e-3)
-    assert vista["descomposicion"][0]["rendimiento"] == pytest.approx(0.464515, abs=1e-4)
+    assert vista["descomposicion"][0]["unidad"] == "lb"
+    assert vista["descomposicion"][0]["rendimiento"] == pytest.approx(1.02408, abs=1e-4)
+    assert vista["descomposicion"][0]["precio"] == pytest.approx(0.2023, abs=1e-4)
     assert vista["descomposicion"][1]["rendimiento"] == 3
     # Sin mercado imperial la vista es el propio dict.
     assert u.partida_editor_a_mostrada(pd, False) is pd
@@ -197,6 +201,8 @@ def test_ficha_del_catalogo_a_pantalla():
         "descomposicion": {"unidad": "m2", "filas": [
             {"tipo": "recurso", "unidad": "h", "rendimiento": 0.85,
              "precio": 39.07, "importe": 33.2095},
+            {"tipo": "recurso", "unidad": "kg", "rendimiento": 5.0,
+             "precio": 2.0, "precio_unitario": 2.0, "importe": 10.0},
             {"tipo": "recurso", "unidad": "%", "rendimiento": 3,
              "precio": 38.75, "precio_unitario": 38.75, "importe": 1.1625},
         ]},
@@ -210,7 +216,12 @@ def test_ficha_del_catalogo_a_pantalla():
     f0 = vista["descomposicion"]["filas"][0]
     assert f0["rendimiento"] == pytest.approx(0.85 / F_M2, rel=1e-5)
     assert f0["precio"] == 39.07  # $/h intacto
-    f1 = vista["descomposicion"]["filas"][1]
+    fkg = vista["descomposicion"]["filas"][1]
+    assert fkg["unidad"] == "lb"
+    assert fkg["rendimiento"] == pytest.approx(5.0 * 2.204622622 / F_M2, rel=1e-5)
+    assert fkg["precio"] == pytest.approx(2.0 / 2.204622622, rel=1e-4)
+    assert fkg["rendimiento"] * fkg["precio"] == pytest.approx(10.0 / F_M2, rel=1e-4)
+    f1 = vista["descomposicion"]["filas"][2]
     assert f1["precio"] == pytest.approx(38.75 / F_M2, rel=1e-4)
     assert f1["precio_unitario"] == f1["precio"]
     # La ficha original no se muta.
@@ -366,6 +377,7 @@ def _empresa_eeuu(Session):
     with Session() as db:
         cfg = db.query(Configuracion).first()
         cfg.empresa_pais = "Estados Unidos"
+        cfg.empresa_estado_eeuu = "FL"
         cfg.moneda_default = "USD"
         db.commit()
         cliente = db.query(Cliente).first()
@@ -596,6 +608,190 @@ def test_plantilla_guardada_en_sq_ft_se_lee_en_sq_ft(entorno, cliente_web):
 
         guardada = json.loads(db.query(Plantilla).filter_by(id=creada["id"]).one().datos)
         assert guardada[0]["partidas"][0]["unidad"] == "m2"
+
+
+def test_catalogo_principal_usa_convierte_lista_lazy_apu_y_crud(entorno, cliente_web):
+    """Recorrido real de una organización US desde la pantalla /partidas.
+
+    Cubre las dos variantes de filas (HTML de búsqueda y JSON lazy), la
+    descomposición desplegable y el lápiz de edición. La base debe continuar
+    métrica después de guardar la misma ficha que el usuario vio en imperial.
+    """
+    Session, _ids, _rol = entorno
+    _empresa_eeuu(Session)
+    filas_metricas = [
+        {
+            "tipo": "recurso", "grupo": "Materiales", "categoria": "materiales",
+            "codigo": "MAT-LB-US", "unidad": "kg", "descripcion": "Mortero prueba US",
+            "rendimiento": 5.0, "precio": 2.0, "precio_unitario": 2.0,
+            "importe": 10.0,
+        },
+        {
+            "tipo": "recurso", "grupo": "Materiales", "categoria": "materiales",
+            "codigo": "MAT-GAL-US", "unidad": "l", "descripcion": "Aditivo prueba US",
+            "rendimiento": 2.0, "precio": 3.0, "precio_unitario": 3.0,
+            "importe": 6.0,
+        },
+    ]
+    with Session() as db:
+        partida = Partida(
+            nombre="Imperial catalog regression",
+            descripcion="USA catalog flow",
+            unidad="m2",
+            precio_unitario=50.0,
+            coste_materiales=16.0,
+            categoria="01 Regression",
+            subcategoria="01.01 Imperial",
+            apartado="01.01.01 Units",
+            codigo_interno="US-IMPERIAL-1",
+            descomposicion_json=json.dumps({
+                "origen": "manual", "unidad": "m2", "filas": filas_metricas,
+            }),
+        )
+        db.add(partida)
+        db.commit()
+        partida_id = partida.id
+
+    # El filtro/buscador renderiza las filas directamente en servidor.
+    html = cliente_web.get("/partidas", params={"q": "Imperial catalog regression"}).text
+    assert '<span class="und-badge">sq ft</span>' in html
+    assert '<span class="und-badge">m2</span>' not in html
+
+    # La navegación normal carga esas mismas filas bajo demanda.
+    lazy = cliente_web.get(
+        "/partidas/api/filas",
+        params={"categoria": "01 Regression", "subcategoria": "01.01 Imperial"},
+    ).json()
+    assert lazy["ok"] is True
+    fila = next(p for p in lazy["partidas"] if p["id"] == partida_id)
+    assert fila["unidad"] == "sq ft"
+    assert fila["precio"] == pytest.approx(50.0 / F_M2, rel=1e-4)
+    assert fila["coste_materiales"] == pytest.approx(16.0 / F_M2, rel=1e-4)
+    assert fila["precio"] - fila["coste_materiales"] == pytest.approx(
+        (50.0 - 16.0) / F_M2, rel=1e-4
+    )
+
+    # Al desplegar el APU también cambian las unidades de cada recurso. El
+    # producto rendimiento × precio conserva el importe por sq ft.
+    apu = cliente_web.get(f"/partidas/{partida_id}/descomposicion").json()
+    assert apu["ok"] is True
+    por_codigo = {r["codigo"]: r for r in apu["filas"]}
+    kg = por_codigo["MAT-LB-US"]
+    assert kg["unidad"] == "lb"
+    assert kg["rendimiento"] == pytest.approx(5.0 * 2.204622622 / F_M2, rel=1e-5)
+    assert kg["precio"] == pytest.approx(2.0 / 2.204622622, rel=1e-4)
+    assert kg["rendimiento"] * kg["precio"] == pytest.approx(10.0 / F_M2, rel=2e-4)
+    litros = por_codigo["MAT-GAL-US"]
+    assert litros["unidad"] == "gal"
+    assert litros["rendimiento"] * litros["precio"] == pytest.approx(6.0 / F_M2, rel=2e-4)
+
+    ficha = cliente_web.get(f"/partidas/{partida_id}/ficha").json()["partida"]
+    assert ficha["unidad"] == "sq ft"
+    assert {r["unidad"] for r in ficha["descomposicion"]["filas"]} == {"lb", "gal"}
+
+    csv_partidas = cliente_web.get("/partidas/exportar").text
+    linea_exportada = next(
+        linea for linea in csv_partidas.splitlines()
+        if "Imperial catalog regression" in linea
+    )
+    assert ";sq ft;" in linea_exportada
+    assert ";m2;" not in linea_exportada
+
+    editar = cliente_web.get(f"/partidas/{partida_id}/editar")
+    assert editar.status_code == 200
+    assert 'name="unidad" value="sq ft"' in editar.text
+    assert "lb" in editar.text and "gal" in editar.text
+
+    respuesta = cliente_web.post(
+        f"/partidas/{partida_id}/editar",
+        data={
+            "nombre": "Imperial catalog regression",
+            "descripcion": "USA catalog flow",
+            "unidad": "sq ft",
+            "precio_unitario": str(50.0 / F_M2),
+            "categoria": "01 Regression",
+            "subcategoria": "01.01 Imperial",
+            "apartado": "01.01.01 Units",
+            "codigo_interno": "US-IMPERIAL-1",
+            "d_categoria": ["materiales", "materiales"],
+            "d_codigo": ["MAT-LB-US", "MAT-GAL-US"],
+            "d_unidad": ["lb", "gal"],
+            "d_descripcion": ["Mortero prueba US", "Aditivo prueba US"],
+            "d_rendimiento": [
+                str(5.0 * 2.204622622 / F_M2),
+                str(2.0 * 0.2641720524 / F_M2),
+            ],
+            "d_precio": [
+                str(2.0 / 2.204622622),
+                str(3.0 / 0.2641720524),
+            ],
+        },
+        follow_redirects=False,
+    )
+    assert respuesta.status_code == 303
+    with Session() as db:
+        guardada = db.get(Partida, partida_id)
+        assert guardada.unidad == "m2"
+        assert guardada.precio_unitario == pytest.approx(50.0, rel=1e-4)
+        guardadas = json.loads(guardada.descomposicion_json)["filas"]
+        assert [r["unidad"] for r in guardadas] == ["kg", "l"]
+        assert guardadas[0]["rendimiento"] == pytest.approx(5.0, rel=1e-4)
+        assert guardadas[0]["precio"] == pytest.approx(2.0, rel=1e-4)
+        assert guardadas[1]["rendimiento"] == pytest.approx(2.0, rel=1e-4)
+        assert guardadas[1]["precio"] == pytest.approx(3.0, rel=1e-4)
+
+
+def test_catalogo_recursos_usa_muestra_y_guarda_libras(entorno, cliente_web):
+    Session, _ids, _rol = entorno
+    _empresa_eeuu(Session)
+    with Session() as db:
+        recurso = Recurso(
+            codigo="RES-LB-US", descripcion="Imperial resource regression",
+            unidad="kg", categoria="materiales", grupo="Morteros", precio=2.0,
+        )
+        db.add(recurso)
+        db.commit()
+        recurso_id = recurso.id
+
+    html = cliente_web.get("/recursos", params={"q": "Imperial resource regression"}).text
+    assert '<span class="und-badge">lb</span>' in html
+
+    api = cliente_web.get(
+        "/recursos/api/buscar", params={"q": "Imperial resource regression"}
+    ).json()
+    dato = next(r for r in api["recursos"] if r["id"] == recurso_id)
+    assert dato["unidad"] == "lb"
+    assert dato["precio"] == pytest.approx(2.0 / 2.204622622, rel=1e-4)
+
+    editar = cliente_web.get(f"/recursos/{recurso_id}/editar")
+    assert editar.status_code == 200
+    assert 'name="unidad" value="lb"' in editar.text
+    respuesta = cliente_web.post(
+        f"/recursos/{recurso_id}/editar",
+        data={
+            "codigo": "RES-LB-US", "descripcion": "Imperial resource regression",
+            "unidad": "lb", "categoria": "materiales", "grupo": "Morteros",
+            "precio": str(2.0 / 2.204622622), "precio_mercado": "1.25",
+        },
+        follow_redirects=False,
+    )
+    assert respuesta.status_code == 303
+    with Session() as db:
+        assert db.get(Recurso, recurso_id).unidad == "kg"
+
+    api_guardada = cliente_web.get(
+        "/recursos/api/buscar", params={"q": "Imperial resource regression"}
+    ).json()
+    dato_guardado = next(r for r in api_guardada["recursos"] if r["id"] == recurso_id)
+    assert dato_guardado["unidad"] == "lb"
+    assert dato_guardado["precio"] == pytest.approx(1.25, rel=1e-4)
+    csv_recursos = cliente_web.get("/recursos/exportar").text
+    linea_exportada = next(
+        linea for linea in csv_recursos.splitlines()
+        if "Imperial resource regression" in linea
+    )
+    assert ";lb;" in linea_exportada
+    assert ";kg;" not in linea_exportada
 
 
 def test_mercado_metrico_sin_cambios_en_la_ficha(entorno, cliente_web):

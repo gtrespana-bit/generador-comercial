@@ -979,9 +979,9 @@
     {% if pais_codigo %}
     · <a href="{{ ruta_mercado(pais_codigo, 'software-presupuestos') }}">Software en {{ seo.nombre_pais }}</a>
     · <a href="{{ ruta_mercado(pais_codigo, 'apu') }}">APU en {{ seo.nombre_pais }}</a>
-    {% if seo.articulo %}
-    · <a href="/guia/{{ seo.articulo.slug }}">{{ seo.articulo.h1 }}</a>
-    {% endif %}
+    {% for articulo in seo.articulos_mercado | default([]) %}
+    · <a href="{{ articulo.ruta }}">{{ articulo.h1 }}</a>
+    {% endfor %}
     {% endif %}
   </p>
 </section>

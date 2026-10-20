@@ -6,7 +6,7 @@
 <form method="post" action="{{ '/recursos/' ~ recurso.id ~ '/editar' if recurso else '/recursos/nuevo' }}">
   <div class="form-grid">
     <div class="field"><label>Code (optional)</label><input name="codigo" value="{{ recurso.codigo if recurso else '' }}" placeholder="la001, mt01..."><span class="hint">With a code, matching is by code. Without one, by description.</span></div>
-    <div class="field"><label>Unit *</label><input name="unidad" value="{{ recurso.unidad if recurso else 'h' }}" placeholder="h, kg, m3, ea..." required></div>
+    <div class="field"><label>Unit *</label><input name="unidad" value="{{ recurso.unidad if recurso else 'h' }}" placeholder="{{ 'h, lb, cu yd, ea...' if unidades_imperiales else 'h, kg, m3, ea...' }}" required></div>
     <div class="field field-full"><label>Description *</label><input name="descripcion" required value="{{ recurso.descripcion if recurso else '' }}" placeholder="Journeyman, general construction"></div>
     <div class="field"><label>Category *</label>
       <select name="categoria" required>

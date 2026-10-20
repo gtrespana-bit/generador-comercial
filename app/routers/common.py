@@ -351,6 +351,7 @@ try:
         etiqueta_mostrada as _etiqueta_mostrada,
         precio_mostrado as _precio_mostrado,
         rendimiento_mostrado as _rendimiento_mostrado,
+        rendimiento_recurso_mostrado as _rendimiento_recurso_mostrado,
         unidad_mostrada as _unidad_mostrada,
     )
 
@@ -359,6 +360,7 @@ try:
     TEMPLATES.env.filters["cant_mostrada"] = _cantidad_mostrada
     TEMPLATES.env.filters["precio_mostrado"] = _precio_mostrado
     TEMPLATES.env.filters["rend_mostrado"] = _rendimiento_mostrado
+    TEMPLATES.env.filters["rend_recurso_mostrado"] = _rendimiento_recurso_mostrado
 except Exception:  # pragma: no cover
     pass
 

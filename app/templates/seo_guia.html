@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="{{ seo.lang or 'es' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,7 +24,11 @@
   <nav class="hub-crumbs" aria-label="Migas de pan">
     <a href="/">Inicio</a>
     <span aria-hidden="true">/</span>
+    {% if guia.pais_path is defined %}
+    <a href="{{ guia.pais_path }}">{{ guia.pais_nombre }}</a>
+    {% else %}
     <a href="/mapa-del-sitio">Guías</a>
+    {% endif %}
     <span aria-hidden="true">/</span>
     <span>{{ guia.h1 }}</span>
   </nav>

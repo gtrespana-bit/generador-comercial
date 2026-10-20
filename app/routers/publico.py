@@ -286,14 +286,17 @@ def landing_publica(request: Request):
 @router.get("/mapa-del-sitio", response_class=HTMLResponse, include_in_schema=False)
 def mapa_del_sitio(request: Request):
     from ..paises import lista_paises
-    from ..seo import TEMAS, contexto_pagina_estatica
+    from ..seo import TEMAS, contexto_pagina_estatica, ruta_guia
     from ..seo_articulos import lista_articulos
     from ..seo_contenido import lista_guias
 
     ctx = contexto_pagina_estatica(request, "mapa-del-sitio")
     ctx["paises"] = lista_paises()
     ctx["guias"] = lista_guias()
-    ctx["articulos"] = lista_articulos()
+    ctx["articulos"] = [
+        {**articulo, "ruta": ruta_guia(articulo["slug"], "es")}
+        for articulo in lista_articulos()
+    ]
     # Guías de los mercados anglófonos (GB + US/IE/AU/CA): el mapa es un
     # enlace interno más hacia los artículos long-tail; la plantilla en
     # inglés los pinta y la española los ignora.
@@ -330,41 +333,55 @@ def novedades_publicas(request: Request):
 
 @router.get("/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
 def guia_publica(slug: str, request: Request):
-    from ..seo import contexto_guia
+    from ..paises import PAISES
+    from ..seo import contexto_guia, ruta_guia
+    from ..seo_contenido import ficha_guia
+
+    # Migración de los artículos hispanos al silo del país. La URL histórica
+    # conserva autoridad mediante 301, pero nunca devuelve una segunda copia.
+    original = str(getattr(request.state, "ruta_original", "") or request.url.path)
+    lang = _idioma_de(request)
+    if lang == "es" and original.rstrip("/").startswith("/guia/"):
+        ficha = ficha_guia(slug, lang="es")
+        pais_codigo = str((ficha or {}).get("pais") or "").strip().upper()
+        if pais_codigo and (PAISES.get(pais_codigo) or {}).get("idioma") == "es":
+            return RedirectResponse(ruta_guia(slug, "es"), status_code=301)
 
     ctx = contexto_guia(request, slug)
     if ctx is None:
         return Response("Página no encontrada.", status_code=404)
-    return TEMPLATES.TemplateResponse(request, "seo_guia.html", ctx)
+    plantilla = "seo_guia_en.html" if lang == "en" else "seo_guia.html"
+    return TEMPLATES.TemplateResponse(request, plantilla, ctx)
 
 
 @router.get("/{cc}/guia/{slug}", response_class=HTMLResponse, include_in_schema=False)
 def guia_de_mercado(cc: str, slug: str, request: Request):
-    """Artículo de un mercado anglófono: /en-gb/guia/<slug>.
+    """Artículo canónico de mercado: /es/guia/x o /en-gb/guia/x.
 
-    El middleware de idioma reescribe ``/en-gb/guia/x`` a ``/gb/guia/x``
-    antes de enrutar, así que hace falta esta ruta para no devolver 404.
-    La URL sin prefijo (``/gb/guia/x``) redirige a la canónica: es la misma
-    página y no debe competir consigo misma en Google.
+    El middleware reescribe ``/en-gb/guia/x`` a ``/gb/guia/x`` antes de
+    enrutar. Los mercados hispanos no necesitan reescritura, pero usan la
+    misma validación estricta: un artículo de España bajo /mx/ devuelve 404.
     """
     from ..paises import PAISES
+    from ..seo import ruta_guia
     from ..seo_contenido import ficha_guia
 
     codigo = str(cc or "").strip().upper()
     pais = PAISES.get(codigo)
-    if not pais or pais.get("idioma") != "en":
+    if not pais:
         return Response("Página no encontrada.", status_code=404)
-    # Un artículo vive solo bajo su mercado: /en-us/guia/<artículo-GB>
-    # devolvía 200 con la canónica a /en-gb/ (cinco URLs rastreables para
-    # el mismo documento). Si la guía existe pero es de otro país —o es
-    # genérica, cuya URL es /en/guia/…—, aquí es un 404 y Google deja de
-    # perder presupuesto de rastreo en copias.
-    ficha = ficha_guia(slug, lang="en")
-    if ficha is not None and str(ficha.get("pais") or "").strip().upper() != codigo:
+
+    lang = str(pais.get("idioma") or "es")
+    ficha = ficha_guia(slug, lang=lang)
+    if ficha is None or str(ficha.get("pais") or "").strip().upper() != codigo:
         return Response("Página no encontrada.", status_code=404)
-    original = str(getattr(request.state, "ruta_original", "") or "")
-    if not original.lower().startswith(f"/en-{codigo.lower()}"):
-        return RedirectResponse(f"/en-{codigo.lower()}/guia/{slug}", status_code=301)
+
+    original = str(getattr(request.state, "ruta_original", "") or request.url.path)
+    canonica = ruta_guia(slug, lang)
+    if lang == "en" and not original.lower().startswith(f"/en-{codigo.lower()}/"):
+        return RedirectResponse(canonica, status_code=301)
+    if lang == "es" and not original.lower().startswith(f"/{codigo.lower()}/"):
+        return RedirectResponse(canonica, status_code=301)
     return guia_publica(slug, request)
 
 

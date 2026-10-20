@@ -139,6 +139,35 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
         r.id: etiqueta_grupo_recurso(r.grupo, r.categoria, idioma)
         for r in recursos
     }
+    # Igual que las filas de partidas y sus APU, el catálogo de recursos US
+    # muestra la unidad realmente cotizable (lb/gal/ft...) y el precio por esa
+    # unidad. Las referencias nacionales siguen almacenadas normalizadas en
+    # métrico para poder compartir el catálogo base entre países.
+    try:
+        from copy import copy
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            precio_mostrado,
+            unidad_mostrada,
+        )
+
+        if es_imperial_codigo(pais):
+            recursos_vista = []
+            totales_categoria = {}
+            for r in recursos:
+                rv = copy(r)
+                rv.unidad = unidad_mostrada(r.unidad, True)
+                pv = precios_vista.get(r.id) or {}
+                pv["base"] = precio_mostrado(pv.get("base"), r.unidad, True)
+                pv["mercado"] = precio_mostrado(pv.get("mercado"), r.unidad, True)
+                if pv.get("mercado") is not None and pv.get("origen") in ("nacional", "organizacion"):
+                    totales_categoria[r.categoria] = (
+                        totales_categoria.get(r.categoria, 0.0) + float(pv["mercado"])
+                    )
+                recursos_vista.append(rv)
+            recursos = recursos_vista
+    except Exception:
+        pass
     # Agrupar por categoría; las claves internas no se traducen ni se guardan.
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
@@ -207,7 +236,7 @@ def api_buscar_recursos(request: Request, q: str = "", db: Session = Depends(get
             descripcion_vista = traducir_recurso_por_codigo(r.descripcion, r.codigo, pais)
         else:
             descripcion_vista = r.descripcion
-        salida.append({
+        recurso_salida = {
             "id": r.id,
             "codigo": r.codigo,
             "descripcion": descripcion_vista,
@@ -215,13 +244,26 @@ def api_buscar_recursos(request: Request, q: str = "", db: Session = Depends(get
             "categoria": r.categoria,
             "categoria_etiqueta": etiqueta_categoria_recurso(r.categoria, idioma),
             "grupo": etiqueta_grupo_recurso(r.grupo, r.categoria, idioma),
-            "precio": round(float(precio or 0), 2),
+            "precio": round(float(precio or 0), 4),
             "moneda": moneda,
             "proveedor": r.proveedor,
             "usos": r.usos,
             "origen_precio": origen,
             "aviso_precio": aviso,
-        })
+        }
+        try:
+            from ..services.unidades_precio import (
+                es_imperial_codigo,
+                producto_catalogo_a_mostrado,
+            )
+
+            if es_imperial_codigo(pais):
+                recurso_salida = producto_catalogo_a_mostrado(
+                    recurso_salida, True
+                )
+        except Exception:
+            pass
+        salida.append(recurso_salida)
     return {"ok": True, "recursos": salida, "moneda": moneda_vista}
 
 
@@ -275,24 +317,44 @@ def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depe
     except Exception:
         efectivos_x = {}
 
-    def _precio_export(r):
-        """Precio visible para exportar: solo mercado o precio propio.
+    try:
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            precio_mostrado,
+            unidad_mostrada,
+        )
+        _imperial_x = es_imperial_codigo(_pais_x)
+    except Exception:
+        _imperial_x = False
 
-        El precio base del catálogo no se exporta como si fuera un precio de
-        mercado; cuando no hay referencia se deja vacío para que el destinatario
-        no confunda la partida original convertida con un precio real de país.
-        """
+    def _precio_export(r):
+        """Precio visible para exportar: solo mercado o precio propio."""
         ef = efectivos_x.get(r.id)
         if ef is not None and ef.get("precio") is not None and not ef.get("requiere_tasa"):
-            return float(ef["precio"])
+            valor = float(ef["precio"])
+            return precio_mostrado(valor, r.unidad, True) if _imperial_x else valor
         return None
+
+    precios_export = {r.id: _precio_export(r) for r in recursos}
+    if _imperial_x:
+        try:
+            from copy import copy
+
+            recursos_salida = []
+            for r in recursos:
+                rv = copy(r)
+                rv.unidad = unidad_mostrada(r.unidad, True)
+                recursos_salida.append(rv)
+            recursos = recursos_salida
+        except Exception:
+            pass
 
     etiquetas_export = _etiquetas_vista(request)
     if formato.lower() == "excel" or formato.lower() == "xlsx":
         from ..services.excel_export import exportar_catalogo_recursos_excel
         buf = exportar_catalogo_recursos_excel(
             recursos, etiquetas_export, moneda=_moneda_x, factor=1.0,
-            precios_efectivos={r.id: _precio_export(r) for r in recursos},
+            precios_efectivos=precios_export,
             idioma=_idioma(request),
         )
         return Response(
@@ -314,7 +376,7 @@ def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depe
             r.unidad or "",
             etiquetas_export.get(r.categoria, r.categoria),
             etiqueta_grupo_recurso(r.grupo, r.categoria, _idioma(request)),
-            (f"{_precio_export(r):.2f}".replace(".", ",") if _precio_export(r) is not None else ""),
+            (f"{precios_export.get(r.id):.2f}".replace(".", ",") if precios_export.get(r.id) is not None else ""),
             _moneda_x,
             r.usos or 0,
             r.proveedor or "",
@@ -349,6 +411,7 @@ def nuevo_recurso_form(request: Request, _db: Session = Depends(get_db)):
         "precio_mercado": None,
         "precio_mercado_vista": None,
         "precio_referencia_nacional_vista": None,
+        "unidades_imperiales": pais == "US",
     })
 
 @router.post("/recursos/nuevo")
@@ -381,6 +444,21 @@ def crear_recurso(
     # como 650 USD y el precio se multiplicaba por la tasa en cada re-lectura.
     _moneda_c, _factor_c = _contexto_moneda(db)
     precio_base = _a_moneda_base(max(0.0, _f(precio)), _factor_c)
+    precio_mercado_base = _f(precio_mercado) if str(precio_mercado or "").strip() else None
+    rendimiento_base = _f(rendimiento_jornada, None)
+    try:
+        from ..services.unidades_precio import metrica_desde_mostrada
+
+        _destino_u = metrica_desde_mostrada(unidad)
+        if _destino_u is not None:
+            unidad, _factor_unidad = _destino_u
+            precio_base = float(precio_base or 0) * _factor_unidad
+            if precio_mercado_base is not None:
+                precio_mercado_base *= _factor_unidad
+            if rendimiento_base is not None:
+                rendimiento_base /= _factor_unidad
+    except Exception:
+        pass
     # Evitar duplicados por clave
     from ..services.recursos import clave_recurso
     clave = clave_recurso(codigo, descripcion, unidad, categoria)
@@ -398,16 +476,16 @@ def crear_recurso(
         proveedor=proveedor.strip(),
         subtipo=subtipo.strip(), capacidad=capacidad.strip(), modalidad_tarifa=modalidad_tarifa.strip() or "hora",
         incluye_operador=bool(incluye_operador), incluye_combustible=bool(incluye_combustible), incluye_flete=bool(incluye_flete),
-        rendimiento_jornada=_f(rendimiento_jornada, None),
+        rendimiento_jornada=rendimiento_base,
     )
     db.add(recurso)
     db.flush()
-    if str(precio_mercado or "").strip():
+    if precio_mercado_base is not None:
         from ..services.traduccion import codigo_desde_pais
         from ..services.precios_mercado import guardar_precio
         cfg = _config(db)
         pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
-        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
+        guardar_precio(db, recurso.id, pais, precio_mercado_base, cfg.moneda_default or "USD", organizacion_id=int(db.info.get("organizacion_id") or 0), fuente="Empresa")
     db.commit()
     return _redirect("/recursos", msg="Recurso creado correctamente.")
 
@@ -433,6 +511,23 @@ def impacto_recurso(recurso_id: int, request: Request, db: Session = Depends(get
             precio_vista_i = float(precio_mercado_i.precio)
         elif moneda_mercado_i == "USD":
             precio_vista_i = tasa_convertir_precio(precio_mercado_i.precio, _factor)
+    try:
+        from copy import copy
+        from ..services.unidades_precio import (
+            es_imperial_codigo,
+            precio_mostrado,
+            unidad_mostrada,
+        )
+
+        if es_imperial_codigo(pais_i):
+            recurso_vista_i = copy(recurso)
+            recurso_vista_i.unidad = unidad_mostrada(recurso.unidad, True)
+            precio_vista_i = precio_mostrado(
+                precio_vista_i, recurso.unidad, True
+            )
+            recurso = recurso_vista_i
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "recursos/impacto.html", {
         "recurso": recurso,
         "precio_vista": precio_vista_i,
@@ -493,6 +588,29 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
     recurso_vista.grupo = etiqueta_grupo_recurso(
         recurso.grupo, recurso.categoria, idioma
     )
+    try:
+        from ..services.unidades_precio import (
+            cantidad_mostrada,
+            es_imperial_codigo,
+            precio_mostrado,
+            unidad_mostrada,
+        )
+
+        if es_imperial_codigo(pais):
+            recurso_vista.unidad = unidad_mostrada(recurso.unidad, True)
+            precio_vista = precio_mostrado(precio_vista, recurso.unidad, True)
+            precio_mercado_vista = precio_mostrado(
+                precio_mercado_vista, recurso.unidad, True
+            )
+            precio_referencia_nacional_vista = precio_mostrado(
+                precio_referencia_nacional_vista, recurso.unidad, True
+            )
+            if recurso.rendimiento_jornada is not None:
+                recurso_vista.rendimiento_jornada = cantidad_mostrada(
+                    recurso.rendimiento_jornada, recurso.unidad, True
+                )
+    except Exception:
+        pass
     return TEMPLATES.TemplateResponse(request, "recursos/form.html", {
         "recurso": recurso_vista,
         "categorias": CATEGORIAS_RECURSO,
@@ -506,6 +624,7 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
         "precio_mercado": propio_edit if propio_edit.origen == "organizacion" else None,
         "precio_mercado_vista": precio_mercado_vista,
         "precio_referencia_nacional_vista": precio_referencia_nacional_vista,
+        "unidades_imperiales": pais == "US",
     })
 
 @router.post("/recursos/{recurso_id}/editar")
@@ -562,6 +681,21 @@ def actualizar_recurso(
         )
         if grupo_guardado == str(grupo_visible or "").strip():
             grupo_guardado = recurso.grupo or ""
+
+    precio_mercado_base = _f(precio_mercado) if str(precio_mercado or "").strip() else None
+    rendimiento_base = _f(rendimiento_jornada, None)
+    try:
+        from ..services.unidades_precio import metrica_desde_mostrada
+
+        _destino_u = metrica_desde_mostrada(unidad)
+        if _destino_u is not None:
+            unidad, _factor_unidad = _destino_u
+            if precio_mercado_base is not None:
+                precio_mercado_base *= _factor_unidad
+            if rendimiento_base is not None:
+                rendimiento_base /= _factor_unidad
+    except Exception:
+        pass
     nueva_clave = clave_recurso(codigo, descripcion_guardada, unidad, categoria)
     for existente in db.query(Recurso).filter(Recurso.id != recurso_id).all():
         if existente.clave == nueva_clave:
@@ -576,15 +710,15 @@ def actualizar_recurso(
     recurso.proveedor = proveedor.strip()
     recurso.subtipo = subtipo.strip(); recurso.capacidad = capacidad.strip(); recurso.modalidad_tarifa = modalidad_tarifa.strip() or "hora"
     recurso.incluye_operador = bool(incluye_operador); recurso.incluye_combustible = bool(incluye_combustible); recurso.incluye_flete = bool(incluye_flete)
-    recurso.rendimiento_jornada = _f(rendimiento_jornada, None)
+    recurso.rendimiento_jornada = rendimiento_base
     recurso.fecha_actualizacion_precio = datetime.utcnow()
     from ..services.traduccion import codigo_desde_pais
     from ..services.precios_mercado import guardar_precio, eliminar_precio_organizacion
     cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
-    if str(precio_mercado or "").strip():
-        guardar_precio(db, recurso.id, pais, _f(precio_mercado), cfg.moneda_default or "USD", organizacion_id=org_id, fuente="Empresa")
+    if precio_mercado_base is not None:
+        guardar_precio(db, recurso.id, pais, precio_mercado_base, cfg.moneda_default or "USD", organizacion_id=org_id, fuente="Empresa")
     else:
         # El usuario borró su precio propio: a partir de ahora manda la
         # referencia nacional de mercado.
