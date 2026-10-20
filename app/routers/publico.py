@@ -2,6 +2,9 @@
 
 from fastapi import APIRouter, Form, Request
 
+from ..indexnow import CLAVE as _CLAVE_INDEXNOW
+from ..indexnow import RUTA_CLAVE as _RUTA_CLAVE_INDEXNOW
+
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 
@@ -612,6 +615,15 @@ def sitemap(request: Request):
         xml.append("  </url>")
     xml.append("</urlset>")
     return Response("\n".join(xml) + "\n", media_type="application/xml")
+
+
+@router.get(_RUTA_CLAVE_INDEXNOW, include_in_schema=False)
+def clave_indexnow():
+    """Verificación de propiedad para IndexNow (Bing/Yahoo).
+
+    El fichero debe contener solo la clave: ni salto de línea ni adornos.
+    """
+    return Response(_CLAVE_INDEXNOW, media_type="text/plain; charset=utf-8")
 
 
 _PAGINAS_LEGALES = {
