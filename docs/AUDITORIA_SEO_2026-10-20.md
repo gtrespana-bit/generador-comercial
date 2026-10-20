@@ -61,8 +61,10 @@ se decide ahí, no a ciegas.
   escala ninguna superficie.
 
 ### Bing
-- **Estado:** IndexNow implementado en este PR; falta el primer envío
-  y (recomendado) el alta en Bing Webmaster Tools.
+- **Estado:** IndexNow implementado y desplegado (PR #143; clave viva
+  verificada). ⏸️ **Pendiente por decisión del titular (2026-10-20):**
+  el primer envío y el alta en Bing Webmaster Tools quedan aparcados;
+  la infraestructura queda lista para cuando se retomen.
 - **Titular:** tras el despliegue, ejecutar el envío (comandos abajo).
   Alta en BWT con su cuenta — permite importar el sitio desde GSC —
   para ver indexación y errores de rastreo.
@@ -77,9 +79,13 @@ se decide ahí, no a ciegas.
 
 ## Acciones del titular (en orden)
 
-1. **Verificar la clave viva** (tras el despliegue de este PR): abrir
-   `https://cotizat.online/c2ecc63e4cd4d18c77e5b5e5430d7358.txt` y
-   comprobar que devuelve solo la clave.
+1. ~~**Verificar la clave viva**~~ ✅ Hecho en la entrega del PR #143:
+   `https://cotizat.online/c2ecc63e4cd4d18c77e5b5e5430d7358.txt`
+   devuelve solo la clave.
+
+   *⏸️ Los puntos 2 y 3 quedan aparcados por decisión del titular
+   (2026-10-20). Se retoman tal cual cuando se quiera.*
+
 2. **Primer envío IndexNow** (prudente → completo):
    ```bash
    python tools/indexnow.py                    # ensayo: ver el lote
