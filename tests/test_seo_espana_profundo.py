@@ -94,6 +94,35 @@ def test_tabla_seo_usa_los_mismos_precios_que_la_matriz_espanola():
     assert por_oficio["Oficial electricista"][1] == f"{matriz['MO-OF1-ELE']['precio_referencia']} €/h"
 
 
+def test_tabla_seo_deriva_su_fecha_de_la_matriz_espanola():
+    """Fase 2: la nota ya no lleva el mes escrito a mano; sale de los datos.
+
+    Antes decía «de agosto de 2026» como literal: al reconsultar la matriz
+    habría seguido diciendo agosto para siempre. Ahora el mes se deriva de
+    las `fecha_consulta` de los oficios publicados.
+    """
+    from app.fechas_texto import consulta_es
+
+    with (BASE / "basedatos_partidas/salida/precios_recursos_espana.csv").open(
+        encoding="utf-8-sig"
+    ) as archivo:
+        matriz = {
+            fila["codigo_recurso"]: fila
+            for fila in csv.DictReader(archivo, delimiter=";")
+            if fila.get("codigo_recurso")
+        }
+    oficios = (
+        "MO-OF1-ALB", "MO-AYU", "MO-OF1-PIN",
+        "MO-OF1-PLO", "MO-OF1-ELE", "MO-OF1-CARPM",
+    )
+    esperado = consulta_es(
+        [matriz[c]["fecha_consulta"] for c in oficios if c in matriz]
+    )
+    tabla = _tabla_mano_obra()
+    assert esperado  # la matriz vigente documenta sus consultas
+    assert f"Precios consultados {esperado}." in tabla["nota"]
+
+
 def test_url_historica_redirige_al_silo_y_no_duplica_documento():
     casos = {
         "/guia/plantilla-presupuesto-reforma-espana": "/es/guia/plantilla-presupuesto-reforma-espana",

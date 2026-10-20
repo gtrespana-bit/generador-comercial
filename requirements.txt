@@ -19,6 +19,6 @@ reportlab==5.0.0
 # en CI: 6.18.0/6.18.1 cubrían parte, la última exige 6.19.0).
 pypdf==6.19.0
 python-multipart==0.0.32
-pillow==12.3.0
+pillow==13.0.0
 # Lectura de archivos .xlsx en el asistente de importación.
 openpyxl==3.1.5

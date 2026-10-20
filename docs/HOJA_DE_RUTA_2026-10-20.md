@@ -119,21 +119,29 @@ la fuente de datos definitiva.*
 compartida y el segundo hit no toca la función; `/readyz` sigue en verde con
 el paquete reducido; el panel se nota igual o más rápido (misma región).
 
-## Fase 2 — Precios con pipeline (antes del SEO programático)
+## Fase 2 — Precios con pipeline (antes del SEO programático) ✅
 
 *Publicar miles de URLs apoyadas en precios que caducan en silencio sería
 construir sobre arena (punto 12).*
 
-- Proceso único y documentado de actualización: fuente → carga →
-  verificación automática CSV↔BD (la herramienta ya existe;
-  `tools/verificar_matrices_bd.py`) → constancia de fecha.
-- `precios_actualizados` en `/readyz` con antigüedad en días (alarma blanda
-  visible sin entrar en ningún panel) y fecha de actualización visible en
-  las guías («precios actualizados a …»: también es señal de frescura SEO).
-- Cadencia a fijar por el titular según sus fuentes (sugerencia: trimestral).
+Cadencia fijada por el titular: **mensual** (umbral de alarma, 40 días).
+
+- ✅ `precios_actualizados` en `/readyz`: antigüedad por país desde
+  `MAX(fecha_actualizacion)` de las referencias nacionales (sin migración
+  de esquema); alarma blanda `REVISAR` sin tumbar `ok`.
+- ✅ Fecha de consulta derivada de los datos en las guías con tablas
+  (España, LatAm y Venezuela vía `app/fechas_texto.py`): nada de fechas
+  escritas a fuego — al actualizar `fecha_consulta` en la matriz, la guía
+  publica el mes nuevo sola.
+- ✅ Proceso único documentado en `docs/ACTUALIZACION_PRECIOS.md`:
+  fuente → validar (`verificar_matriz_importable.py`) → cargar → verificar
+  CSV↔BD → `/readyz` en «hoy». `tools/verificar_matrices_bd.py` verifica
+  ya las 7 matrices en una pasada, con la conversión imperial de EE. UU.
+  replicada (prueba de fuego local: 8536 precios, 22 países, sin
+  diferencias).
 
 **Hecho cuando:** actualizar precios es ejecutar un comando documentado y
-ver el check pasar a «hoy».
+ver el check pasar a «hoy». ✔
 
 ## Fase 3 — i18n: mecanismo único (antes de crear superficies nuevas)
 
