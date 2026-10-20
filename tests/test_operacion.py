@@ -246,9 +246,24 @@ def test_un_cliente_normal_no_alcanza_el_panel_de_operacion(entorno_operador, mo
 
 
 def test_el_operador_ve_salud_errores_y_hechos(entorno_operador, monkeypatch, registro_limpio):
-    _Session, _datos, _estado = entorno_operador
+    Sesion, _datos, _estado = entorno_operador
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
-    registro_limpio.registrar("GET", "/presupuestos/<token>/pdf", "ValueError", "explosion")
+    # Desde la Fase 0.2 el panel lee la tabla durable, no el buffer: el
+    # error se siembra en ``errores_internos`` ya saneado.
+    from app.models import ErrorInterno
+    from app.services.errores_internos import huella_de
+
+    with Sesion() as seed:
+        seed.add(ErrorInterno(
+            huella=huella_de("GET", "/presupuestos/<token>/pdf", "ValueError", "explosion"),
+            metodo="GET",
+            ruta="/presupuestos/<token>/pdf",
+            tipo="ValueError",
+            mensaje="explosion",
+            traza="Traceback...\nValueError: explosion",
+            ocurrencias=3,
+        ))
+        seed.commit()
 
     with _cliente_operador() as cliente:
         respuesta = cliente.get("/admin/operacion")
@@ -263,8 +278,11 @@ def test_el_operador_ve_salud_errores_y_hechos(entorno_operador, monkeypatch, re
     assert "titular@example.com" in respuesta.text
     # Los chequeos de /readyz aparecen en la tabla
     assert "auth" in respuesta.text or "storage" in respuesta.text
-    # La honestidad del registro en memoria está declarada
-    assert "memoria de esta instancia" in respuesta.text
+    # La fuente durable queda declarada en la nota, sin disimulo
+    assert "Registro durable" in respuesta.text
+    # Y la gestión (traza + marcar resuelto) está en la fila
+    assert "Ver traza" in respuesta.text
+    assert "Marcar resuelto" in respuesta.text
 
 
 def test_la_url_antigua_de_operacion_lleva_a_la_pestana_de_estado(entorno_operador, monkeypatch):

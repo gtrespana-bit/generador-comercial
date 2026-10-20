@@ -347,3 +347,71 @@ def test_check_seo_contra_postgresql_sin_error_de_tipos(pg):
     # planificarse: con «activo = 1» PostgreSQL rechazaba el tipo boolean
     # y producción devolvía el error en lugar de la cifra (20/10/2026).
     assert checks["precios_bd"] == "0 referencias nacionales en 0 paises"
+
+
+# ---------------------------------------------------------------------------
+# Errores internos (Fase 0.2): escritura sin sesión, lectura de operador
+# ---------------------------------------------------------------------------
+
+
+def test_errores_internos_funcion_y_rls(pg):
+    from datetime import datetime
+
+    from sqlalchemy import text
+    from sqlalchemy.exc import ProgrammingError
+
+    from app.models import ErrorInterno
+    from app.services.errores_internos import huella_de, marcar_resuelto
+
+    ahora = datetime(2026, 10, 20, 12, 0)
+    huella = huella_de("GET", "/boom", "ValueError", "estalla")
+    registrar = text(
+        "SELECT cotizat_security.registrar_error_interno("
+        ":huella, 'GET', '/boom', 'ValueError', 'estalla', 'traza de prueba', :ahora)"
+    )
+
+    # Sin sesión (claims vacíos, como un 500 anónimo): la función escribe
+    # y discrimina huella nueva de repetida; la tabla, invisible.
+    db = _sesion(pg)
+    try:
+        parametros = {"huella": huella, "ahora": ahora}
+        assert db.execute(registrar, parametros).scalar() is True
+        assert db.execute(registrar, parametros).scalar() is False
+        db.commit()
+        assert db.query(ErrorInterno).count() == 0
+        with pytest.raises(ProgrammingError):
+            db.execute(
+                text(
+                    "INSERT INTO errores_internos (huella, metodo, ruta, tipo, mensaje)"
+                    " VALUES ('inyectada', 'GET', '/', 'X', 'y')"
+                )
+            )
+        db.rollback()
+    finally:
+        db.close()
+
+    # El operador la lee, la suma cuadra y puede marcarla resuelta.
+    db_op = _sesion(pg, operador=True, email="titular@pg.test")
+    try:
+        fila = db_op.query(ErrorInterno).filter_by(huella=huella).one()
+        assert fila.ocurrencias == 2
+        marcar_resuelto(db_op, fila.id)
+        db_op.commit()
+        assert fila.resuelto_en is not None
+    finally:
+        db_op.close()
+
+    # Si el fallo vuelve, la función lo desmarca y pide avisar de nuevo.
+    db = _sesion(pg)
+    try:
+        assert db.execute(registrar, parametros).scalar() is True
+        db.commit()
+    finally:
+        db.close()
+    db_op = _sesion(pg, operador=True, email="titular@pg.test")
+    try:
+        fila = db_op.query(ErrorInterno).filter_by(huella=huella).one()
+        assert fila.ocurrencias == 3
+        assert fila.resuelto_en is None
+    finally:
+        db_op.close()

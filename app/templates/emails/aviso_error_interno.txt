@@ -1,0 +1,18 @@
+ERROR 500 NUEVO · {{ product_name }}
+
+El registro interno ha visto por primera vez este fallo{% if cuando %} ({{ cuando }}){% endif %}.
+Queda guardado en el panel (Sistema › Estado); si se repite, solo sumará
+ocurrencias y no volverá a avisarte.
+
+Ruta: {{ metodo }} {{ ruta }}
+Tipo: {{ tipo }}
+Mensaje: {{ mensaje }}
+{% if traza %}
+Traza (recortada):
+{{ traza }}
+{% endif %}{% if panel_url %}
+Ver en el panel: {{ panel_url }}
+{% endif %}
+---
+Aviso automático del registro interno de errores: solo ante huellas nuevas
+(máx. 5 por hora y proceso). El parte completo vive en el panel.

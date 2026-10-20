@@ -1,0 +1,65 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Error 500 nuevo · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Huella nueva
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Un fallo nuevo ha llegado a producción
+</h1>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;">
+  El registro interno de <strong style="color:#17211d;">{{ product_name }}</strong> ha visto
+  por primera vez este error{% if cuando %} ({{ cuando }}){% endif %}. Queda guardado en el
+  panel (Sistema › Estado), donde puedes ver la traza completa y marcarlo resuelto; si se
+  repite, solo sumará ocurrencias y no volverá a avisarte.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;">
+  <tr>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;">Ruta</td>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;text-align:right;"><code>{{ metodo }} {{ ruta }}</code></td>
+  </tr>
+  <tr>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;">Tipo</td>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;text-align:right;">{{ tipo }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 10px;font-size:13px;color:#475a51;">Mensaje</td>
+    <td style="padding:8px 10px;font-size:13px;color:#17211d;text-align:right;">{{ mensaje }}</td>
+  </tr>
+</table>
+
+{% if traza %}
+<p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#17211d;text-transform:uppercase;letter-spacing:0.5px;">
+  Traza (recortada)
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+  <tr>
+    <td style="border-radius:12px;background:#f6f8f7;border:1px solid #e3ece7;padding:14px 16px;">
+      <pre style="margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.5;color:#37463e;white-space:pre-wrap;word-break:break-word;">{{ traza }}</pre>
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+{% if panel_url %}
+<p style="margin:0 0 28px;font-size:14px;line-height:1.65;color:#475a51;">
+  Ver en el panel: <a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ panel_url }}</a>
+</p>
+{% endif %}
+
+{% endblock %}
+
+{% block pie %}
+<p style="margin:0;font-size:12px;line-height:1.6;color:#8ba096;">
+  Aviso automático del registro interno de errores. Se envía solo ante huellas
+  nuevas (máx. 5 por hora y proceso); el parte completo vive en el panel.
+</p>
+{% endblock %}

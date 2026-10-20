@@ -1051,6 +1051,82 @@ def enviar_mensaje_soporte_por_email(
     )
 
 
+def enviar_aviso_error_interno_por_email(
+    *,
+    metodo: str,
+    ruta: str,
+    tipo: str,
+    mensaje: str,
+    traza: str = "",
+    cuando: str = "",
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Avisa al titular de un **error 500 con huella nueva** (Fase 0.2).
+
+    Lo dispara ``errores_internos`` solo cuando el fallo no se había visto
+    (o reaparece tras estar resuelto): el correo es la señal «hay un bug
+    nuevo en producción», no un parte por ocurrencia. La fuente de verdad
+    es la tabla; por eso este envío, como el resto, no lanza hacia nadie
+    y un fallo de Resend solo deja un warning en el log.
+    """
+    from ..branding import PRODUCT_NAME
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "metodo": str(metodo or ""),
+        "ruta": str(ruta or ""),
+        "tipo": str(tipo or ""),
+        "mensaje": str(mensaje or ""),
+        "traza": str(traza or "")[-6000:],
+        "cuando": str(cuando or ""),
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    return _enviar_aviso_interno(
+        plantilla="aviso_error_interno",
+        contexto=contexto,
+        asunto=(
+            f"Error 500 nuevo en {PRODUCT_NAME}: "
+            f"{contexto['tipo']} en {contexto['metodo']} {contexto['ruta']}"
+        ),
+        destino_override=destino_override,
+        etiqueta="error interno nuevo",
+    )
+
+
+def enviar_resumen_errores_por_email(
+    *,
+    filas: list[dict],
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Resumen diario de huellas activas, desde el cron de mantenimiento.
+
+    Solo se llama si hubo actividad de errores sin resolver en las
+    últimas 24 h: un día sin 500 es también un día sin este correo.
+    """
+    from ..branding import PRODUCT_NAME
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "filas": filas,
+        "total": len(filas),
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    return _enviar_aviso_interno(
+        plantilla="resumen_errores_internos",
+        contexto=contexto,
+        asunto=(
+            f"Resumen de errores en {PRODUCT_NAME}: "
+            f"{len(filas)} huella(s) activa(s) en 24 h"
+        ),
+        destino_override=destino_override,
+        etiqueta="resumen de errores",
+    )
+
+
 def _soporte_email() -> str:
     from ..branding import SUPPORT_EMAIL
 

@@ -32,23 +32,33 @@ una anterior.
 
 *No toca lógica de negocio. Sin esta fase, todo lo demás es a ciegas.*
 
-- **0.1 CI contra PostgreSQL real** *(punto 1 del análisis).* Job nuevo de
-  GitHub Actions con servicio PostgreSQL: aplica las migraciones y corre
-  primero la batería sensible (pagos, licencias, soporte, aislamiento
-  multi-tenant/RLS) contra PG; ampliación progresiva después. Es la respuesta
-  estructural a los tres incidentes del 20/10 (boolean=integer, UPDATE,
-  RETURNING), invisibles en SQLite.
-- **0.2 Registro interno de errores** *(punto 2).* Tabla propia con huella
-  de deduplicación (conteo, primera/última vez, ruta, traza), captura en el
-  middleware **solo cuando ya hay un 500** (coste cero en el camino feliz y
-  *best-effort*: si el registro falla, la respuesta no se rompe, como el
-  resto de avisos de la casa). Aviso por correo al titular solo ante huella
-  nueva (y resumen diario en el cron de mantenimiento), vista en el panel de
-  operador. Sin SDK de terceros: ni coste por petición ni datos de clientes
-  saliendo fuera. Detrás de flag, aunque nazca encendido.
-  - *Titular:* monitor externo de disponibilidad (UptimeRobot o similar,
-    gratuito) contra `/readyz` y la home: es lo único que avisa si cae
-    Vercel entero.
+- **0.1 CI contra PostgreSQL real** *(punto 1 del análisis).* ✅ **HECHA
+  (PR #137 + job pegado por el titular, verde desde la primera corrida,
+  20/10/2026).** Job con servicio PostgreSQL 16: aplica las migraciones
+  desde cero y corre la batería sensible (licencias, compras, soporte,
+  aislamiento multi-tenant/RLS, `_check_seo`) con el login runtime sin
+  bypass — `tests/test_postgresql_rls.py` + `tests/test_rls_postgres.py`.
+  De paso se reparó que **la cadena Alembic no se reconstruía desde una
+  base vacía** (3 de 55 revisiones) y un bug latente en
+  `health._condicion_activo` (decidía por el motor global, no por la
+  conexión). Ampliación progresiva: cada fase nueva con superficie PG
+  añade su caso aquí (la 0.2 ya lo hizo).
+- **0.2 Registro interno de errores** *(punto 2).* ✅ **HECHA (20/10/2026).**
+  Tabla `errores_internos` con huella de deduplicación (conteo,
+  primera/última vez, ruta saneada, **traza redactada**), alimentada por el
+  middleware de captura existente **solo cuando ya hay un 500** (coste cero
+  en el camino feliz, *best-effort* con sesión propia: si el registro
+  falla —incluida la tabla sin migrar—, la respuesta no se rompe). En
+  PostgreSQL la escritura entra por función SECURITY DEFINER y la lectura
+  es solo del operador (RLS); el panel (Sistema › Estado) muestra la
+  traza y permite marcar **resuelta** (una recurrencia se desmarca sola).
+  Correo al buzón de avisos solo ante huella nueva o resucitada (tope
+  5/hora) y parte diario de activas en el cron de mantenimiento, con poda
+  a 90 días. Sin SDK de terceros; flag `COTIZAT_ERRORES_BD` (encendido).
+  Detalle en `docs/MONITORIZACION_Y_DIAGNOSTICO.md` §4.
+  - *Titular (pendiente):* monitor externo de disponibilidad (UptimeRobot
+    o similar, gratuito) contra `/readyz` y la home: es lo único que avisa
+    si cae Vercel entero.
 - **0.3 Migraciones automáticas** *(punto 3).* Workflow que ejecuta
   `alembic upgrade head` sobre producción al fusionar a `main` (secreto de
   GitHub con la URL administrativa), para que código y esquema dejen de

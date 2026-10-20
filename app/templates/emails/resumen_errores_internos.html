@@ -1,0 +1,51 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Resumen de errores · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  {{ total }} huella(s) activa(s)
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Errores activos en las últimas 24 horas
+</h1>
+
+<p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;">
+  El parte diario del registro interno de <strong style="color:#17211d;">{{ product_name }}</strong>:
+  estas huellas siguen sin resolver y han fallado en el último día. Marca las
+  corregidas como resueltas en el panel (Sistema › Estado) y dejarán de aparecer aquí.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border-collapse:collapse;">
+  {% for fila in filas %}
+  <tr>
+    <td style="padding:10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;">
+      <code>{{ fila.metodo }} {{ fila.ruta }}</code><br>
+      <span style="color:#475a51;">{{ fila.tipo }} — {{ fila.mensaje }}</span>
+    </td>
+    <td style="padding:10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;text-align:right;white-space:nowrap;">
+      ×{{ fila.ocurrencias }}<br>
+      <span style="font-size:12px;">{{ fila.ultima_vez }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% if panel_url %}
+<p style="margin:0 0 28px;font-size:14px;line-height:1.65;color:#475a51;">
+  Ver en el panel: <a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">{{ panel_url }}</a>
+</p>
+{% endif %}
+
+{% endblock %}
+
+{% block pie %}
+<p style="margin:0;font-size:12px;line-height:1.6;color:#8ba096;">
+  Resumen diario del registro interno de errores. Un día sin errores 500
+  es también un día sin este correo.
+</p>
+{% endblock %}

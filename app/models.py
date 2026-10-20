@@ -3573,6 +3573,53 @@ class MensajeSoporte(Base):
         return ESTADOS_SOPORTE_ETIQUETA.get(self.estado, self.estado)
 
 
+class ErrorInterno(Base):
+    """Huella durable de un error no capturado (los 500), Fase 0.2.
+
+    **No es una tabla de tenant ni lleva datos de clientes**: es telemetría
+    de la propia aplicación. El registro en memoria de ``operacion.py`` se
+    perdía al reiniciar cada instancia serverless; esta tabla es el
+    sumidero propio que aquella limitación declaraba como siguiente paso,
+    sin SDK de terceros ni coste por petición (solo se escribe cuando ya
+    hay un error).
+
+    Una fila por **huella** (método + ruta saneada + tipo + mensaje): los
+    reintentos del mismo fallo solo incrementan ``ocurrencias`` y refrescan
+    la traza (la última es la que se depura). ``resuelto_en`` lo marca el
+    operador desde el panel; si la huella reaparece, el registro lo borra
+    y el fallo vuelve a avisar como nuevo.
+
+    En PostgreSQL **nadie inserta directamente**: la escritura entra por
+    la función SECURITY DEFINER ``cotizat_security.registrar_error_interno``
+    (el middleware captura en contextos sin sesión —un 500 puede ser de un
+    anónimo— y no puede depender de claims). Leer, marcar resuelto y podar
+    es solo de operador (RLS). La traza llega ya redactada (credenciales
+    en URLs fuera) y recortada; la ruta sin query string ni tokens.
+    """
+
+    __tablename__ = "errores_internos"
+    __table_args__ = (
+        Index("ix_errores_internos_ultima", "ultima_vez"),
+        Index(
+            "ix_errores_internos_pendientes", "resuelto_en", "ultima_vez"
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    huella = Column(String(64), nullable=False, unique=True)
+    metodo = Column(String(10), nullable=False, default="")
+    ruta = Column(String(160), nullable=False, default="/")
+    tipo = Column(String(120), nullable=False, default="")
+    mensaje = Column(String(300), nullable=False, default="")
+    #: Traceback redactado y recortado de la última ocurrencia.
+    traza = Column(Text, nullable=False, default="")
+    ocurrencias = Column(Integer, nullable=False, default=1)
+    primera_vez = Column(DateTime, nullable=False, default=datetime.utcnow)
+    ultima_vez = Column(DateTime, nullable=False, default=datetime.utcnow)
+    #: Lo marca el operador; la recurrencia del fallo lo limpia solo.
+    resuelto_en = Column(DateTime, nullable=True)
+
+
 class ContenidoWeb(Base):
     """Contenido público de la web con publicar/descartar (Fase 3, C1/C2).
 
