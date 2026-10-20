@@ -15,6 +15,7 @@ guardar el primer muro dibujado por el usuario.
 from typing import Sequence, Union
 
 from alembic import op
+import sqlalchemy as sa
 
 
 revision: str = "d1e2f3a4b5c6"
@@ -59,6 +60,15 @@ def _conceder_secuencia(tabla: str) -> str:
 def upgrade() -> None:
     if not _postgres():
         return
+    if not sa.inspect(op.get_bind()).has_table(TABLA):
+        # Reparada el 2026-10-20 para que la cadena corra desde una base
+        # vacía (CI con PostgreSQL real, hoja de ruta fase 0.1). En su época
+        # la tabla nacía por create_all al arrancar la aplicación; en una
+        # base nueva aún no existe en este punto y la crea f1b2c3d4e5a6 con
+        # exactamente estos mismos permisos y políticas, así que saltarse
+        # esta migración no pierde nada. En producción ya se aplicó con la
+        # tabla presente: esta guardia no se ejecuta nunca allí.
+        return
 
     op.execute(f"REVOKE ALL ON TABLE public.{TABLA} FROM PUBLIC")
     op.execute(f"ALTER TABLE public.{TABLA} ENABLE ROW LEVEL SECURITY")
@@ -78,6 +88,8 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     if not _postgres():
+        return
+    if not sa.inspect(op.get_bind()).has_table(TABLA):
         return
 
     for tabla, nombre, _accion, _clausula in POLITICAS:

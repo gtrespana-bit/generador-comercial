@@ -127,8 +127,15 @@ def _aplicar_contexto(conexion, organizacion_id: str = "") -> None:
     )
 
 
-def test_alembic_version_es_legible_por_runtime_y_no_tiene_rls(entorno_postgres):
-    """La guardia de arranque funciona con el login real y limitado."""
+def test_alembic_version_es_legible_por_runtime(entorno_postgres):
+    """La guardia de arranque funciona con el login real y limitado.
+
+    La tabla lleva RLS con política de lectura para ``cotizat_app``
+    (``cotizat_alembic_version_lectura``): el runtime lee la revisión sin
+    ser dueño de la tabla ni poder tocarla. La aserción original («sin
+    RLS») quedó desactualizada al añadirse esa política y esta batería no
+    corría en CI para avisar; corregida el 2026-10-20 al activarla.
+    """
     from app.database import EXPECTED_ALEMBIC_HEAD
 
     motor = create_engine(entorno_postgres["runtime_url"])
@@ -147,7 +154,7 @@ def test_alembic_version_es_legible_por_runtime_y_no_tiene_rls(entorno_postgres)
             WHERE n.nspname = 'public' AND c.relname = 'alembic_version'
         """)).one()
 
-    assert fila.relrowsecurity is False
+    assert fila.relrowsecurity is True
     assert fila.relforcerowsecurity is False
     assert fila.puede_leer is True
     assert fila.version_num == EXPECTED_ALEMBIC_HEAD
