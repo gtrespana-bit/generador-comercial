@@ -9,11 +9,13 @@ Dos piezas, en la misma filosofía de honestidad que el resto del producto:
    operador muestra las últimas entradas agregadas por ruta + tipo + mensaje,
    con fecha del primer y del último fallo y número de ocurrencias.
 
-   Limitación declarada, no escondida: el buffer vive en el proceso. En un
-   despliegue serverless cada instancia tiene su propio contador y se pierde
-   al reiniciar. Para operación seria con varias instancias habría que
-   publicar los errores a un sumidero externo (p. ej. Vercel Log Drains);
-   queda fuera de este bloque a propósito y el panel lo dice.
+   El buffer en memoria sigue siendo la vista instantánea del proceso,
+   pero desde la Fase 0.2 de la hoja de ruta ya no es el único sumidero:
+   el middleware también persiste cada huella —con su traza— en la tabla
+   ``errores_internos`` mediante ``app/services/errores_internos.py``
+   (best-effort, solo cuando ya hay un 500, con correo al titular ante
+   huellas nuevas). El panel lee de la base cuando puede y cae a este
+   buffer con la nota honesta de siempre si la tabla aún no está.
 
 2. **Diagnóstico del despliegue.** Reutiliza los mismos chequeos que
    `/readyz` (sin duplicar la lógica) y los presenta junto a los hechos
@@ -171,20 +173,50 @@ class RegistroErrores:
 REGISTRO_ERRORES = RegistroErrores()
 
 
-def capturar_excepcion(scope: dict, exc: Exception) -> None:
-    """Registra una excepción no capturada sin exponer secretos."""
-    metodo = str(scope.get("method") or "?").upper()
-    ruta = _saneamiento_ruta(str(scope.get("path") or ""))
+def datos_error(scope: dict, exc: Exception) -> dict:
+    """Los hechos saneados de una excepción, para memoria y para BD.
+
+    La traza (redactada y recortada en ``errores_internos.traza_de``) solo
+    viaja a la base: el buffer en memoria conserva la forma ligera de
+    siempre (tipo + mensaje), que es lo que cabe en un vistazo rápido.
+    """
+    from .errores_internos import traza_de
+
+    return {
+        "metodo": str(scope.get("method") or "?").upper(),
+        "ruta": _saneamiento_ruta(str(scope.get("path") or "")),
+        "tipo": type(exc).__name__,
+        "mensaje": _saneamiento_mensaje(exc),
+        "traza": traza_de(exc),
+        "ahora": datetime.utcnow(),
+    }
+
+
+def capturar_excepcion(scope: dict, exc: Exception) -> dict:
+    """Registra una excepción no capturada sin exponer secretos.
+
+    Devuelve los datos saneados por si el llamante quiere persistirlos
+    (el middleware los pasa a ``errores_internos.persistir_y_avisar``).
+    """
+    datos = datos_error(scope, exc)
     REGISTRO_ERRORES.registrar(
-        metodo, ruta, type(exc).__name__, _saneamiento_mensaje(exc)
+        datos["metodo"],
+        datos["ruta"],
+        datos["tipo"],
+        datos["mensaje"],
+        ahora=datos["ahora"],
     )
+    return datos
 
 
 class RegistroErroresMiddleware:
     """Captura excepciones no manejadas y las vuelve a lanzar intactas.
 
     No cambia la semántica HTTP: el 500 lo sigue produciendo el servidor
-    como hasta ahora. Solo deja constancia para el diagnóstico.
+    como hasta ahora. Solo deja constancia para el diagnóstico: en el
+    buffer en memoria de siempre y, desde la Fase 0.2, en la tabla
+    ``errores_internos`` vía un hilo (la persistencia es síncrona y no
+    debe bloquear el bucle; solo ocurre cuando ya hay un 500).
     """
 
     def __init__(self, app) -> None:
@@ -196,14 +228,30 @@ class RegistroErroresMiddleware:
         except Exception as exc:
             if scope.get("type") == "http":
                 try:
-                    capturar_excepcion(scope, exc)
+                    datos = capturar_excepcion(scope, exc)
+                    from .errores_internos import (
+                        persistir_y_avisar,
+                        registro_bd_activado,
+                    )
+
+                    if registro_bd_activado():
+                        from starlette.concurrency import run_in_threadpool
+
+                        await run_in_threadpool(persistir_y_avisar, datos)
                 except Exception:  # pragma: no cover - el diagnóstico nunca rompe
                     pass
             raise
 
 
-def diagnostico_operacion() -> dict[str, Any]:
-    """Diagnóstico completo para el panel del operador (sin datos de tenant)."""
+def diagnostico_operacion(db=None) -> dict[str, Any]:
+    """Diagnóstico completo para el panel del operador (sin datos de tenant).
+
+    Con ``db`` (sesión de operador) la lista de errores viene de la tabla
+    durable ``errores_internos`` —todas las instancias, con traza y
+    gestión de resueltos—. Sin sesión, o si la tabla aún no existe (la
+    ventana entre desplegar el código y correr la migración), se cae al
+    buffer en memoria de siempre y la nota lo dice sin disimulo.
+    """
     salud = run_readiness()
     from ..config import resumen_configuracion
     from ..storage import get_storage_backend
@@ -215,7 +263,48 @@ def diagnostico_operacion() -> dict[str, Any]:
     rate_limit, _rate_limit_error = estado_configuracion()
     from .licencias import exigencia_licencia_activada
 
-    errores = REGISTRO_ERRORES.ultimos()
+    errores: list[dict[str, Any]] = [
+        error.to_dict() for error in REGISTRO_ERRORES.ultimos()
+    ]
+    errores_fuente = "memoria"
+    errores_registrados = len(REGISTRO_ERRORES)
+    nota_errores = (
+        "El registro de errores vive en la memoria de esta instancia y se "
+        "pierde al reiniciar; en despliegues serverless cada instancia "
+        "guarda el suyo."
+    )
+    if db is not None:
+        from .errores_internos import (
+            contar_errores,
+            listar_errores_recientes,
+            registro_bd_activado,
+        )
+
+        try:
+            errores = listar_errores_recientes(db)
+            errores_registrados = contar_errores(db)
+            errores_fuente = "bd"
+            nota_errores = (
+                "Registro durable en la base de datos (todas las "
+                "instancias): una fila por huella con la traza de la "
+                "última ocurrencia. Una huella nueva —o una que reaparece "
+                "tras marcarla resuelta— avisa por correo al buzón de "
+                "avisos; el cron diario resume las activas y poda las "
+                "resueltas antiguas."
+            )
+            if not registro_bd_activado():
+                nota_errores += (
+                    " La persistencia está apagada (COTIZAT_ERRORES_BD): "
+                    "lo que ves es el histórico guardado, sin entradas "
+                    "nuevas."
+                )
+        except Exception:
+            db.rollback()
+            nota_errores += (
+                " No se pudo leer la tabla durable (¿migración "
+                "«errores_internos» pendiente de aplicar?)."
+            )
+
     return {
         "salud": salud.to_dict(),
         "hechos": {
@@ -234,14 +323,9 @@ def diagnostico_operacion() -> dict[str, Any]:
             "arrancado_hace_segundos": int(
                 (datetime.utcnow() - _INICIO_PROCESO).total_seconds()
             ),
-            "errores_registrados": len(REGISTRO_ERRORES),
+            "errores_registrados": errores_registrados,
         },
-        "errores": [error.to_dict() for error in errores],
-        "nota_errores": (
-            "El registro de errores vive en la memoria de esta instancia y se "
-            "pierde al reiniciar; en despliegues serverless cada instancia "
-            "guarda el suyo. Para operación seria con varias instancias, "
-            "conectar un sumidero externo (p. ej. Vercel Log Drains) sería el "
-            "siguiente paso y queda fuera de este bloque."
-        ),
+        "errores": errores,
+        "errores_fuente": errores_fuente,
+        "nota_errores": nota_errores,
     }

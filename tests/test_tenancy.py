@@ -24,6 +24,7 @@ from app.models import (
     OperadorProducto,
     ReleaseWeb,
     Licencia,
+    ErrorInterno,
     MensajeSoporte,
     VistaGuardada,
     Membresia,
@@ -109,6 +110,11 @@ def test_todo_modelo_comercial_declara_propietario():
       `TenantMixin` lo exigiría NOT NULL. En PostgreSQL lo aíslan las políticas
       `cotizat_ms_*` (revisión `i4d7c1b8e2f5`): lectura y gestión de operador,
       INSERT abierto con `estado = 'nuevo'` forzado para el formulario público.
+    - `ErrorInterno` es telemetría de la propia aplicación (los 500): ni es
+      dato de negocio ni pertenece al cliente que lo sufrió. La escritura
+      puede ocurrir sin ninguna sesión (un 500 anónimo) y entra por la
+      función SECURITY DEFINER `registrar_error_interno`; la lectura es solo
+      del operador con políticas `cotizat_ei_*` (revisión `o2e4a6c8b1d3`).
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
     no_tenant_justificados = {
@@ -130,6 +136,7 @@ def test_todo_modelo_comercial_declara_propietario():
         CrmCliente,
         ApiKeyOperador,
         MensajeSoporte,
+        ErrorInterno,
     }
     sin_propietario = []
     for mapper in Base.registry.mappers:

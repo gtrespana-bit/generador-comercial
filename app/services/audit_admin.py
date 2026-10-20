@@ -64,6 +64,7 @@ ACCIONES_LECIBLES = {
     "web.release_alternada": "Visibilidad de versión cambiada",
     "web.flag_cambiado": "Feature flag cambiado",
     "soporte.mensaje_estado": "Estado de mensaje de soporte",
+    "error_interno.resuelto": "Error interno marcado como resuelto",
 }
 
 #: Resultados posibles en el registro; el panel los ofrece como filtro.

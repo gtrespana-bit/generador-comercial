@@ -1,0 +1,16 @@
+RESUMEN DE ERRORES · {{ product_name }}
+
+{{ total }} huella(s) sin resolver con actividad en las últimas 24 horas.
+Marca las corregidas como resueltas en el panel (Sistema › Estado) y
+dejarán de aparecer aquí.
+
+{% for fila in filas %}
+- {{ fila.metodo }} {{ fila.ruta }}
+  {{ fila.tipo }} — {{ fila.mensaje }}
+  x{{ fila.ocurrencias }} · última vez {{ fila.ultima_vez }}
+{% endfor %}
+{% if panel_url %}Ver en el panel: {{ panel_url }}
+{% endif %}
+---
+Resumen diario del registro interno de errores. Un día sin errores 500 es
+también un día sin este correo.

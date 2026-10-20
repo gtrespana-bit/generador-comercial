@@ -786,12 +786,75 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
         log.error("Error en la verificación diaria del cron:\n%s", traceback.format_exc())
         verificacion = {"ok": False, "error": "Error interno en la verificación."}
 
+    try:
+        from ..services.mantenimiento import ejecutar_resumen_errores_internos
+
+        resumen_errores = ejecutar_resumen_errores_internos(db)
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error en el resumen diario de errores:\n%s", traceback.format_exc()
+        )
+        resumen_errores = {"ok": False, "error": "Error interno en el resumen."}
+
     return JSONResponse(
         {"ok": respaldo.get("ok", True) and verificacion.get("ok", True),
          "respaldo": respaldo,
          "conversaciones_expiradas": chats_expirados,
-         "verificacion": verificacion},
+         "verificacion": verificacion,
+         "resumen_errores": resumen_errores},
         headers={"Cache-Control": "no-store"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Registro de errores internos: gestión de huellas (Fase 0.2)
+# ---------------------------------------------------------------------------
+
+
+@router.post("/admin/sistema/errores/{error_id}/resuelto", include_in_schema=False)
+def marcar_error_resuelto_web(
+    error_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    """Marca una huella como resuelta: deja de contar como activa.
+
+    No es un borrado ni un «silenciar para siempre»: si el mismo fallo
+    vuelve a ocurrir, el registro limpia la marca solo y la huella
+    reaparece en el panel (y en el correo de huellas nuevas).
+    """
+    from ..services.errores_internos import marcar_resuelto
+
+    destino = _volver_valor(volver, VOLVER_ESTADO)
+    try:
+        fila = marcar_resuelto(db, error_id)
+        if fila is None:
+            db.rollback()
+            return _redirect(destino, error="Ese error ya no existe en el registro.")
+        db.commit()
+        _auditar_admin(
+            db, request,
+            accion="error_interno.resuelto",
+            entidad="error_interno",
+            entidad_id=fila.id,
+            detalle={"ruta": fila.ruta, "tipo": fila.tipo},
+        )
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error marcando resuelta la huella #%s:\n%s",
+            error_id,
+            traceback.format_exc(),
+        )
+        raise
+    return _redirect(
+        destino,
+        msg=(
+            "Error marcado como resuelto. Si vuelve a producirse, "
+            "reaparecerá como activo."
+        ),
     )
 
 

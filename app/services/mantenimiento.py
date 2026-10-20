@@ -30,6 +30,11 @@ cada día las tareas de operación que no dependen de una sesión humana:
   (p. ej. UptimeRobot sobre ``/healthz``), documentado en
   ``docs/MONITORIZACION_Y_DIAGNOSTICO.md``.
 
+* **Parte diario del registro de errores (Fase 0.2).** Resume por correo al
+  buzón de avisos las huellas de 500 sin resolver con actividad en las
+  últimas 24 h y poda las resueltas sin actividad en 90 días. Sin errores,
+  sin correo: el silencio también es información.
+
 Ninguna de las dos toca datos de negocio fuera de su organización: la sesión
 es de operador del sistema (como el cron de recordatorios) y cada respaldo se
 genera con el contexto de su propia organización (``establecer_contexto_organizacion``).
@@ -251,4 +256,57 @@ def ejecutar_verificacion_diaria() -> dict:
         "alertas_enviadas": len(alertas),
         "operadores": len(operadores),
         "alertas_fallidas": len(fallos),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Registro de errores internos: parte diario y poda (Fase 0.2)
+# ---------------------------------------------------------------------------
+
+
+def ejecutar_resumen_errores_internos(db_operador) -> dict:
+    """Resume por correo las huellas activas del último día y poda.
+
+    El correo de «huella nueva» avisa en el momento; este es el parte de
+    cierre: lo que sigue sin resolver y ha fallado en las últimas 24 h.
+    Un día sin 500 es también un día sin este correo. La poda retira las
+    huellas resueltas sin actividad en 90 días (ya hicieron su trabajo).
+
+    Si la tabla aún no existe (ventana post-despliegue sin la migración
+    aplicada), el trabajo lo dice y no rompe el cron.
+    """
+    from .avisos_negocio import url_panel_absoluta
+    from .email import enviar_resumen_errores_por_email
+    from .errores_internos import (
+        podar_resueltos,
+        registro_bd_activado,
+        resumen_activas,
+    )
+
+    if not registro_bd_activado():
+        return {"ok": True, "omitido": "COTIZAT_ERRORES_BD desactivado"}
+    try:
+        podadas = podar_resueltos(db_operador)
+        db_operador.commit()
+        filas = resumen_activas(db_operador)
+    except Exception:
+        db_operador.rollback()
+        logger.warning(
+            "El resumen diario de errores no pudo leer la tabla "
+            "(¿migración «errores_internos» pendiente?).",
+            exc_info=True,
+        )
+        return {"ok": True, "omitido": "tabla no disponible"}
+
+    enviado = ""
+    if filas:
+        enviado = enviar_resumen_errores_por_email(
+            filas=filas,
+            panel_url=url_panel_absoluta("/admin/sistema?tab=estado"),
+        )
+    return {
+        "ok": True,
+        "activas_24h": len(filas),
+        "podadas": podadas,
+        "resumen_enviado": bool(enviado),
     }

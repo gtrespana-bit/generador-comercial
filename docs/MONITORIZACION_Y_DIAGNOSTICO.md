@@ -52,13 +52,40 @@ Tres bloques, todos sin datos de tenant:
 - **No captura:** excepciones ya manejadas por la aplicación (errores de
   negocio que devuelven su página con aviso), que son flujo normal.
 
-## 4. Limitación declarada (no escondida)
+## 4. Limitación declarada (resuelta el 20/10/2026, Fase 0.2)
 
-El registro vive **en la memoria del proceso** y se pierde al reiniciar. En
-despliegues serverless cada instancia guarda el suyo. El panel lo dice
-explícitamente. Para operación seria con varias instancias, el siguiente paso
-sería publicar los errores a un sumidero externo (p. ej. Vercel Log Drains);
-queda fuera de este bloque a propósito.
+El registro original vivía **en la memoria del proceso** y se perdía al
+reiniciar; en serverless cada instancia guardaba el suyo. Esa limitación
+quedó cerrada con un **sumidero propio** (sin SDK de terceros, para no
+pagar coste por petición ni exportar trazas fuera):
+
+- Cada huella (método + ruta saneada + tipo + mensaje) se persiste en la
+  tabla `errores_internos` mediante `app/services/errores_internos.py`,
+  *best-effort*: solo cuando ya hay un 500, en su propia sesión y sin que
+  un fallo del registro pueda romper la respuesta. En PostgreSQL la
+  escritura entra por la función SECURITY DEFINER
+  `cotizat_security.registrar_error_interno` (el llamante puede no tener
+  sesión) y la lectura es solo del operador (RLS).
+- La fila guarda la **traza** de la última ocurrencia (redactada: las
+  credenciales embebidas en URLs se sustituyen antes de guardarla),
+  además de ocurrencias y primera/última vez. El panel (Sistema › Estado)
+  lee de la base, muestra la traza bajo demanda y permite marcar la
+  huella como **resuelta**; si el fallo reaparece, la marca se limpia
+  sola y vuelve a contar como nueva.
+- Una huella nueva —o resucitada tras estar resuelta— dispara un correo
+  al buzón de avisos (tope anti-tormenta: 5 por hora y proceso). El cron
+  diario de mantenimiento envía el parte de huellas activas en las
+  últimas 24 h (silencio si no hay ninguna) y poda las resueltas sin
+  actividad en 90 días.
+- Interruptor: `COTIZAT_ERRORES_BD=false` vuelve al comportamiento
+  histórico (solo buffer en memoria). Si la tabla aún no existe (ventana
+  entre el despliegue y la migración), la persistencia se omite en
+  silencio y el panel cae al buffer declarándolo en la nota.
+
+Lo que sigue sin cubrir este sumidero, a propósito: la caída total de la
+plataforma (Vercel o la BD fuera) no genera fila ni correo — eso lo vigila
+el monitor externo de `/readyz`— y los errores «controlados» que la
+aplicación ya traduce a páginas con aviso no son 500 y no entran aquí.
 
 ## 5. Verificación
 

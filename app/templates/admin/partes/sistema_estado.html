@@ -7,10 +7,11 @@
     <div class="kpi-label">Salud del despliegue</div>
     <p class="note-sub">{{ diagnostico.salud.checks|length }} chequeos de <code>/readyz</code></p>
   </div>
-  <div class="kpi-card {{ 'danger' if diagnostico.errores else '' }}">
-    <div class="kpi-value">{{ diagnostico.errores|length }}</div>
+  {% set errores_pendientes = diagnostico.errores | rejectattr('resuelto_en') | list %}
+  <div class="kpi-card {{ 'danger' if errores_pendientes else '' }}">
+    <div class="kpi-value">{{ diagnostico.hechos.errores_registrados if diagnostico.errores_fuente == 'bd' else errores_pendientes|length }}</div>
     <div class="kpi-label">Errores no capturados</div>
-    <p class="note-sub">En esta instancia desde que arrancó</p>
+    <p class="note-sub">{{ 'Huellas en la base (todas las instancias)' if diagnostico.errores_fuente == 'bd' else 'En esta instancia desde que arrancó' }}</p>
   </div>
   <div class="kpi-card">
     <div class="kpi-value">{{ diagnostico.hechos.arrancado_hace_segundos }} <small>s</small></div>
@@ -74,22 +75,42 @@
       {% if diagnostico.errores %}
       <div class="table-container">
         <table class="estado-tabla">
-          <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th class="tabla-num">Veces</th></tr></thead>
+          <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th class="tabla-num">Veces</th><th>Estado</th></tr></thead>
           <tbody>
             {% for error in diagnostico.errores %}
             <tr>
               <td class="muted">{{ error.ultima_vez }}</td>
               <td><code>{{ error.metodo }} {{ error.ruta }}</code></td>
               <td>{{ error.tipo }}</td>
-              <td class="detalle-celda">{{ error.mensaje }}</td>
+              <td class="detalle-celda">
+                {{ error.mensaje }}
+                {% if error.traza %}
+                <details class="traza-error">
+                  <summary>Ver traza</summary>
+                  <pre>{{ error.traza }}</pre>
+                </details>
+                {% endif %}
+              </td>
               <td class="tabla-num">{{ error.ocurrencias }}</td>
+              <td>
+                {% if error.resuelto_en %}
+                <span class="badge badge-success">Resuelto {{ error.resuelto_en }}</span>
+                {% elif error.id %}
+                <form class="form-inline" method="post" action="/admin/sistema/errores/{{ error.id }}/resuelto">
+                  <input type="hidden" name="volver" value="/admin/sistema?tab=estado">
+                  <button class="btn btn-sm btn-secondary" type="submit">Marcar resuelto</button>
+                </form>
+                {% else %}
+                <span class="badge badge-danger">Activo</span>
+                {% endif %}
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
       {% else %}
-      <div class="card-body"><p class="muted-note">Ningún error no capturado en esta instancia desde que arrancó. Que siga así.</p></div>
+      <div class="card-body"><p class="muted-note">{{ 'Ningún error no capturado en la base. Que siga así.' if diagnostico.errores_fuente == 'bd' else 'Ningún error no capturado en esta instancia desde que arrancó. Que siga así.' }}</p></div>
       {% endif %}
       <div class="card-pie"><p class="note-bottom">{{ diagnostico.nota_errores }}</p></div>
     </div>

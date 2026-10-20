@@ -1457,7 +1457,7 @@ def _sistema_estado(request: Request, db, contexto: dict) -> None:
     from ..services.operacion import diagnostico_operacion
 
     contexto.update({
-        "diagnostico": diagnostico_operacion(),
+        "diagnostico": diagnostico_operacion(db),
         "notas_chequeos": NOTAS_CHEQUEOS,
         "exigencia_licencias": exigencia_licencia_activada(),
     })
