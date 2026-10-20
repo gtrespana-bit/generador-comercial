@@ -82,12 +82,18 @@ definición al descartarse; con 0.1, 0.2 y 0.4 la fase queda cerrada.)*
 *Antes que el SEO nuevo: las URLs que vengan deben nacer cacheadas y leyendo
 la fuente de datos definitiva.*
 
-- **1.1 Región de las funciones = región de Supabase** *(punto 5).*
-  `vercel.json` no fija `regions` hoy. Con 4–18 consultas secuenciales por
-  página de panel, la distancia función↔BD manda sobre cualquier otra
-  optimización.
-  - *Titular:* confirmarnos la región (está en el host de la `DATABASE_URL`:
-    `aws-0-<region>.pooler.supabase.com`).
+- **1.1 Región de las funciones = región de Supabase** *(punto 5).* ✅ HECHA
+  (2026-10-20). El proyecto Supabase está en **ca-central-1** (Montreal) y
+  las funciones corrían por defecto en `iad1` (Washington, D.C.):
+  `vercel.json` fija ahora `yul1`, la pareja exacta de ca-central-1, para
+  que las 4–18 consultas secuenciales por página de panel dejen de pagar
+  el viaje entre regiones. La base de datos **se queda en Canadá**
+  (decisión de 2026-10-20): moverla sería una migración de proyecto
+  completa (datos, Auth y Storage) con parada y riesgo para usuarios de
+  pago, y el coste dominante era el tramo función↔BD, no usuario→función;
+  la costa este norteamericana es además el punto medio razonable entre
+  España y LatAm. Solo se replanteará si el tráfico muestra un dominio
+  claro de una sola zona. Guarda en `tests/test_vercel_cron_config.py`.
 - **1.2 Caché CDN de las páginas públicas sin sesión** *(punto 5).* ✅ HECHA
   (2026-10-20). Landing, homes de país, temas, guías, legal, sitemap y robots
   con `s-maxage=300` + `stale-while-revalidate`/`stale-if-error` de un día.

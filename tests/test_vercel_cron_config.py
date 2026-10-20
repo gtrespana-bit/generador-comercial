@@ -95,3 +95,21 @@ def test_readyz_publica_el_estado_del_cron(monkeypatch):
     assert checks["cron_secret"] == "configurado"
     # El valor del secreto jamás puede filtrarse a la respuesta.
     assert "secreto-de-prueba" not in str(checks)
+
+
+def test_las_funciones_corren_junto_a_la_base_de_datos():
+    """Fase 1.1: las funciones se fijan en la región del proyecto Supabase.
+
+    Supabase está en ca-central-1 (Montreal) y su pareja en Vercel es
+    ``yul1``. Sin esto, las funciones corren por defecto en ``iad1``
+    (Washington, D.C.) y cada una de las 4–18 consultas secuenciales de
+    una página del panel paga el viaje Washington↔Montreal. Si algún día
+    la base de datos se migra de región, este test obliga a mover las
+    funciones con ella en el mismo cambio.
+    """
+    with VERCEL_JSON.open(encoding="utf-8") as fh:
+        data = json.load(fh)
+    assert data.get("regions") == ["yul1"], (
+        "vercel.json debe fijar las funciones en yul1 (ca-central-1), "
+        "la región del proyecto Supabase."
+    )
