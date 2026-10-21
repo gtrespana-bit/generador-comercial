@@ -105,6 +105,9 @@ class Usuario(Base):
     nombre = Column(String(200), default="")
     password_hash = Column(String(255), default="")
     activo = Column(Boolean, nullable=False, default=True)
+    #: Tombstone seudonimizado mientras Supabase Auth termina de borrar la
+    #: identidad; el cron reintenta las solicitudes que no pudieran finalizar.
+    borrado_pendiente = Column(Boolean, nullable=False, default=False, server_default="false")
     email_verificado_at = Column(DateTime, nullable=True)
     ultimo_acceso_at = Column(DateTime, nullable=True)
     # Marca visible «en la cuenta» de la aceptación de términos (E4-038). El
