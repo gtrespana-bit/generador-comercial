@@ -142,6 +142,9 @@ CASOS_LEGITIMOS = (
     "El buzón f.u.l.a.n.o@gmail.com recibe lo enviado a fulano@gmail.com.",
     "Casos degenerados: +etiqueta@gmail.com y .@gmail.com no dejan usuario.",
     "Teléfono de ejemplo: +58 412 000 0000",
+    # La parte fraccionaria de un decimal largo no es un teléfono: los
+    # artefactos de datos (precios_publicos.json) traen miles así.
+    '"rendimiento": 0.02903028939, "pu": 10.04160150304',
     "RIF de ejemplo: J-00000000-0",
     "El formulario sugiere J-12345678-9 como formato.",
     "Conéctate a https://tu-proyecto.supabase.co con tu clave.",

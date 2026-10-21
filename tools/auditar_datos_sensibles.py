@@ -265,7 +265,11 @@ REGLAS_PERSONALES = (
     ),
     _r(
         "telefono-venezolano",
-        r"(?:\+58[\s.-]?|\b0)(?:2\d{2}|4(?:12|14|16|24|26))[\s.-]?\d{3}[\s.-]?\d{4}\b",
+        # El lookbehind (?<![\d.]) evita cazar la parte fraccionaria de un
+        # decimal largo (0.02903028939): un teléfono real nunca es la cola
+        # de un número, y los artefactos de datos con miles de decimales
+        # (precios_publicos.json, 2026-10-21) inundarían el informe.
+        r"(?<![\d.])(?:\+58[\s.-]?|\b0)(?:2\d{2}|4(?:12|14|16|24|26))[\s.-]?\d{3}[\s.-]?\d{4}\b",
         "número de teléfono venezolano real",
     ),
     _r(
