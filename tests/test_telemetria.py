@@ -30,6 +30,7 @@ from migrations.versions import (
     o2e4a6c8b1d3_errores_internos as errores_internos_migracion,
     p3f7a1c9d2e4_identidad_error_y_unidad_producto as identidad_error_migracion,
     q5e1c8a9d3f7_borrado_completo_de_cuenta as borrado_cuenta_migracion,
+    r7f2b1d4e8a6_analitica_operativa as analitica_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -39,8 +40,10 @@ from tests.conftest import NOMBRE_ORG
 def _memo_latidos_limpio():
     """El memo de latidos vive a nivel de proceso: aislarlo entre pruebas."""
     telemetria._LATIDOS.clear()
+    telemetria._PRESENCIA.clear()
     yield
     telemetria._LATIDOS.clear()
+    telemetria._PRESENCIA.clear()
 
 
 def _eventos(Session, **filtros):
@@ -103,10 +106,16 @@ def test_registrar_nunca_lanza_si_la_base_falla(entorno):
 def test_el_catalogo_de_acciones_es_estable_y_legible():
     """El catálogo es la fuente única de etiquetas del panel."""
     assert telemetria.ACCIONES["actividad.diaria"] == "Uso diario"
+    assert telemetria.ACCIONES["sesion.activa"] == "Sesión activa"
+    assert telemetria.ACCIONES["cliente.creado"] == "Cliente creado"
+    assert telemetria.ACCIONES["asistente.consulta"] == "Consulta al asistente IA"
     assert telemetria.etiqueta("accion.desconocida") == "accion.desconocida"
     for accion in telemetria.ACCIONES:
         assert accion.count(".") == 1, accion
         assert len(accion) <= 60
+    # El ruido operativo existe siempre en el catálogo y nunca es global.
+    assert telemetria.ACCIONES_RUIDO <= set(telemetria.ACCIONES)
+    assert not (telemetria.ACCIONES_RUIDO & telemetria.ACCIONES_GLOBALES)
 
 
 # ---------------------------------------------------------------------------
@@ -189,6 +198,58 @@ def test_latido_diario_con_base_caida_no_rompe(entorno):
 
 
 # ---------------------------------------------------------------------------
+# Presencia en vivo (sesion.activa)
+# ---------------------------------------------------------------------------
+
+
+def test_marcar_presencia_escribe_una_fila_por_organizacion(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["auth_email"] = "titular@example.com"
+        assert telemetria.marcar_presencia(db, pagina="/presupuestos") is True
+
+    filas = _eventos(Session, accion="sesion.activa")
+    assert len(filas) == 1
+    assert filas[0].organizacion_id == ids[0]
+    assert filas[0].actor_email == "titular@example.com"
+    assert filas[0].detalle_dict() == {"pagina": "/presupuestos"}
+
+
+def test_marcar_presencia_no_escribe_dos_veces_en_la_ventana(entorno):
+    """Cada petición autenticada no puede dejar una fila: hay freno de 3 min."""
+    Session, ids, _rol = entorno
+    base = datetime(2026, 8, 28, 12, 0, 0)
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        assert telemetria.marcar_presencia(db, ahora=base) is True
+        assert telemetria.marcar_presencia(db, ahora=base + timedelta(minutes=2)) is True
+        # Pasada la ventana sí se anota de nuevo.
+        assert telemetria.marcar_presencia(db, ahora=base + timedelta(minutes=4)) is True
+
+    assert len(_eventos(Session, accion="sesion.activa")) == 2
+
+
+def test_marcar_presencia_sin_organizacion_no_hace_nada(entorno):
+    Session, _ids, _rol = entorno
+    with Session() as db:
+        assert telemetria.marcar_presencia(db) is False
+    assert _eventos(Session, accion="sesion.activa") == []
+
+
+def test_marcar_presencia_nunca_lanza_si_la_base_falla(entorno):
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+
+        def _commit_roto():
+            raise RuntimeError("base caída")
+
+        db.commit = _commit_roto
+        assert telemetria.marcar_presencia(db) is False
+
+
+# ---------------------------------------------------------------------------
 # Utilidades del panel
 # ---------------------------------------------------------------------------
 
@@ -245,12 +306,15 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [borrado_cuenta_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({borrado_cuenta_migracion.revision}); "
+    assert cabezas == [analitica_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({analitica_migracion.revision}); "
         f"hay: {cabezas}"
     )
+    assert analitica_migracion.down_revision == borrado_cuenta_migracion.revision
     assert identidad_error_migracion.down_revision == errores_internos_migracion.revision
     assert borrado_cuenta_migracion.down_revision == identidad_error_migracion.revision
+    # La última migración es la analítica operativa (presencia + lectura de
+    # operador sobre usuarios y membresías); detrás sigue el borrado de cuenta.
     # El registro durable de errores internos (Fase 0.2) queda inmediatamente detrás;
     # quedan la fiscalidad de EE. UU., la irlandesa (RCT), la lectura de
     # operador sobre el catálogo de recursos (panel de matrices de precios),

@@ -65,6 +65,8 @@ def _sembrar(Session):
         auth_user_id=AUTH_ID, email="titular@example.com",
         nombre="Titular", email_verificado_at=datetime(2026, 7, 1),
         created_at=datetime(2026, 7, 1, 8, 0),
+        # Entró hoy: es la señal de «sesiones iniciadas hoy».
+        ultimo_acceso_at=datetime.utcnow(),
     )
     nuevo = Usuario(
         auth_user_id="c5d84a10-2f6e-4d1b-9a30-71c2b9e0f002",
@@ -101,6 +103,11 @@ def _sembrar(Session):
         eventos_activa += [
             ("presupuesto.creado", hoy_dt - timedelta(days=5), {"primero": False, "partidas": 3}),
             ("presupuesto.pdf_descargado", hoy_dt - timedelta(days=5, hours=1), {}),
+        ]
+        # Presencia en vivo y primer cliente: las dos señales nuevas del panel.
+        eventos_activa += [
+            ("sesion.activa", hoy_dt - timedelta(minutes=3), {"pagina": "/presupuestos"}),
+            ("cliente.creado", hoy_dt - timedelta(days=5, hours=2), {}),
         ]
         import json as _json
 
@@ -239,6 +246,115 @@ def test_resumen_calcula_kpis_embudo_y_riesgo(entorno_panel):
     # Registros por país: el evento global reciente con ES.
     assert resumen["paises"][0]["pais"] == "ES"
 
+    # Presencia: la empresa activa dejó una señal de sesión hace 3 minutos y
+    # el titular entró hoy; la dormida no aparece en ninguna de las dos.
+    assert resumen["en_vivo"]["en_linea_total"] == 1
+    assert resumen["en_vivo"]["en_linea"][0]["organizacion"] == "Constructora Activa"
+    assert resumen["en_vivo"]["logueados_total"] == 1
+    assert resumen["en_vivo"]["logueados"][0]["email"] == "titular@example.com"
+
+    # Presupuestos creados: la serie sale del evento, no de la tabla de tenant.
+    # Dentro de la ventana de 30 días solo cae el de hace 5 días.
+    assert resumen["kpis"]["presupuestos_ventana"] == 1
+    assert resumen["kpis"]["presupuestos_hoy"] >= 0
+
+    # Actividad por hora: excluye latidos y presencia (ruido operativo).
+    assert resumen["horas"]["total"] > 0
+    assert resumen["horas"]["chart_horas"]["maximo"] >= 1
+
+    # Explorador de eventos: por omisión oculta el ruido y dice el total real.
+    assert resumen["explorador"]["total"] > 0
+    assert all(
+        ev["accion"] not in ("actividad.diaria", "sesion.activa")
+        for ev in resumen["explorador"]["eventos"]
+    )
+    assert resumen["explorador"]["paginas"] == 1
+    assert resumen["explorador"]["filtros"]["enlace_siguiente"] == ""
+
+
+def test_la_tabla_de_empresas_mezcla_uso_y_datos_comerciales(entorno_panel):
+    Session, ids, _estado = entorno_panel
+    with Session() as db:
+        resumen = resumen_analitica(db, hoy=HOY, dias=30)
+
+    filas = {fila["nombre"]: fila for fila in resumen["organizaciones"]["filas"]}
+    assert set(filas) == {"Constructora Activa", "Remodeladora Dormida"}
+    activa = filas["Constructora Activa"]
+    assert activa["miembros"] == 1
+    assert activa["en_linea"] is True
+    assert activa["estado"] == "en_linea"
+    assert activa["eventos"] > 0
+    # Días de uso (latidos) dentro de la ventana: el DAU por empresa.
+    assert activa["dias_uso"] >= 1
+    assert activa["pagando"] is True
+    # La primera fila es la que está conectada ahora: es lo que se mira primero.
+    assert resumen["organizaciones"]["filas"][0]["en_linea"] is True
+
+    dormida = filas["Remodeladora Dormida"]
+    assert dormida["miembros"] == 0
+    assert dormida["en_linea"] is False
+    assert dormida["estado"] in ("inactiva", "semana", "hoy")
+
+
+def test_el_explorador_filtra_por_empresa_accion_actor_y_fechas(entorno_panel):
+    Session, ids, _estado = entorno_panel
+    with Session() as db:
+        por_empresa = resumen_analitica(
+            db, hoy=HOY, dias=30, filtros={"organizacion_id": ids["dormida"]}
+        )
+        por_accion = resumen_analitica(
+            db, hoy=HOY, dias=30, filtros={"accion": "presupuesto.creado"}
+        )
+        por_actor = resumen_analitica(
+            db, hoy=HOY, dias=30, filtros={"actor": "remodeladora"}
+        )
+        por_fecha = resumen_analitica(
+            db, hoy=HOY, dias=30,
+            filtros={"desde": "2026-07-01", "hasta": "2026-07-31"},
+        )
+        con_ruido = resumen_analitica(
+            db, hoy=HOY, dias=30, filtros={"ocultar_ruido": False}
+        )
+        solo_ajenos = resumen_analitica(
+            db, hoy=HOY, dias=30,
+            filtros={"ocultar_mios": True, "mi_email": "titular@example.com"},
+        )
+        accion_invalida = resumen_analitica(
+            db, hoy=HOY, dias=30, filtros={"accion": "../../etc/passwd"}
+        )
+
+    # Empresa dormida: solo su alta (el latido es ruido y queda oculto).
+    assert por_empresa["explorador"]["total"] == 1
+    assert {e["organizacion"] for e in por_empresa["explorador"]["eventos"]} == {
+        "Remodeladora Dormida"
+    }
+    # Acción: los dos presupuestos creados de la empresa activa.
+    assert por_accion["explorador"]["total"] == 2
+    assert {e["accion"] for e in por_accion["explorador"]["eventos"]} == {
+        "presupuesto.creado"
+    }
+    # Actor: solo los eventos de la empresa dormida.
+    assert por_actor["explorador"]["total"] == 1
+    # Ventana de fechas: julio de 2026, ambos extremos incluidos.
+    assert por_fecha["explorador"]["total"] >= 4
+    for evento in por_fecha["explorador"]["eventos"]:
+        assert evento["created_at"].date().month == 7
+    # Con ruido se ven también los latidos y la presencia.
+    assert con_ruido["explorador"]["total"] > por_accion["explorador"]["total"]
+    assert any(
+        evento["accion"] == "actividad.diaria"
+        for evento in con_ruido["explorador"]["eventos"]
+    )
+    # «Ocultar mis eventos» deja fuera al titular.
+    assert solo_ajenos["explorador"]["total"] >= 1
+    assert all(
+        evento["actor"] != "titular@example.com"
+        for evento in solo_ajenos["explorador"]["eventos"]
+    )
+    # Una acción fuera del catálogo no filtra nada (ni llega al SQL).
+    assert accion_invalida["explorador"]["filtros"]["accion"] == ""
+    assert accion_invalida["explorador"]["total"] > 0
+
 
 # ---------------------------------------------------------------------------
 # La página por HTTP (solo operador)
@@ -262,9 +378,32 @@ def test_el_operador_ve_el_panel_completo(entorno_panel, monkeypatch):
     assert "40 días" in respuesta.text
     # Cohortes y eventos
     assert "Retención por cohorte" in respuesta.text
-    assert "Eventos recientes" in respuesta.text
+    assert "Eventos de todas las empresas" in respuesta.text
     assert "Cuenta registrada" in respuesta.text
+    # Presencia y actividad por empresa: lo que faltaba en la pestaña.
+    assert "En línea ahora mismo" in respuesta.text
+    assert "Sesiones iniciadas hoy" in respuesta.text
+    assert "Presupuestos creados hoy" in respuesta.text
+    assert "Constructora Activa" in respuesta.text  # tabla de empresas
+    assert "/presupuestos" in respuesta.text  # página de la presencia en vivo
     assert "no-store" in respuesta.headers.get("cache-control", "")
+
+
+def test_los_filtros_del_explorador_funcionan_por_url(entorno_panel, monkeypatch):
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@cotizat.online")
+    with _cliente() as client:
+        filtrada = client.get("/admin/analitica?organizacion_id=2&accion=organizacion.creada")
+        vacia = client.get("/admin/analitica?actor=nadie@example.com")
+        con_ruido = client.get("/admin/analitica?ruido=1")
+
+    assert filtrada.status_code == 200
+    # Los filtros quedan seleccionados en el formulario (GET, sin JavaScript).
+    assert 'value="organizacion.creada" selected' in filtrada.text
+    assert ">Remodeladora Dormida</option>" in filtrada.text
+    # Un filtro sin resultados lo dice y no rompe la página.
+    assert vacia.status_code == 200
+    assert "Ningún evento con estos filtros" in vacia.text
+    assert con_ruido.status_code == 200
 
 
 def test_las_ventanas_de_tiempo_se_respetan(entorno_panel, monkeypatch):
