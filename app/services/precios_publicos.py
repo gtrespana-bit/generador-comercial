@@ -298,8 +298,78 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
     }
 
 
+# Índices precalculados que viajan con el código
+# (``tools/generar_precios_publicos.py``). Construir un país en vivo
+# cuesta hasta ~7 s —la capa de variante del inglés pasa por miles de
+# cadenas— y en una instancia fría de Vercel la primera petición pagaba
+# los cinco países sin llegar a calentar: las páginas salieron con 404
+# por timeout el primer día. El JSON se lee en milisegundos; si falta
+# o está dañado se calcula en vivo (red de seguridad, mismo patrón que
+# ``cifras_catalogo.json``). La deriva la caza el test que compara el
+# artefacto con el cálculo en vivo.
+_FICHERO_PRECALCULADO = _DATOS / "precios_publicos.json"
+
+
+@lru_cache(maxsize=1)
+def _artefacto() -> dict:
+    try:
+        datos = json.loads(_FICHERO_PRECALCULADO.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return datos.get("paises") or {}
+
+
 @lru_cache(maxsize=8)
+def _indice_desde_artefacto(cc: str) -> dict | None:
+    bruto = _artefacto().get(cc)
+    if not bruto:
+        return None
+    try:
+        indice = dict(bruto)
+        # JSON no admite claves tupla: viajan como "apartado|partida"
+        # (los slugs solo llevan [a-z0-9-], el separador es seguro).
+        indice["partidas"] = {
+            tuple(clave.split("|", 1)): ficha
+            for clave, ficha in (bruto.get("partidas") or {}).items()
+        }
+        indice["por_codigo"] = {
+            codigo: tuple(destino)
+            for codigo, destino in (bruto.get("por_codigo") or {}).items()
+        }
+    except (AttributeError, TypeError, ValueError):
+        return None
+    return indice if indice["partidas"] else None
+
+
+def generar_artefacto() -> dict:
+    """Serializa los índices calculados en vivo para el JSON precalculado."""
+    paises = {}
+    for cc in PAISES_PRECIOS_PUBLICOS:
+        indice = _indice_en_vivo(cc)
+        if indice is None:
+            continue
+        copia = dict(indice)
+        copia["partidas"] = {
+            f"{slug_ap}|{slug_p}": ficha
+            for (slug_ap, slug_p), ficha in indice["partidas"].items()
+        }
+        copia["por_codigo"] = {
+            codigo: list(destino)
+            for codigo, destino in indice["por_codigo"].items()
+        }
+        paises[cc] = copia
+    return {"paises": paises}
+
+
 def _indice(cc: str) -> dict | None:
+    cc = str(cc or "").strip().upper()
+    if cc not in PAISES_PRECIOS_PUBLICOS or cc not in PAISES:
+        return None
+    return _indice_desde_artefacto(cc) or _indice_en_vivo(cc)
+
+
+@lru_cache(maxsize=8)
+def _indice_en_vivo(cc: str) -> dict | None:
     cc = str(cc or "").strip().upper()
     if cc not in PAISES_PRECIOS_PUBLICOS or cc not in PAISES:
         return None

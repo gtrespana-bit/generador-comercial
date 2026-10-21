@@ -98,6 +98,22 @@ EE. UU. aplicada, igual que el importador). El resultado esperado es
 `SIN DIFERENCIAS`: 22 países con 0 faltantes y 0 diferencias. Para una
 sola matriz: `--csv <ruta>`.
 
+## Paso 4b — Regenerar las páginas públicas de precios (SEO)
+
+Las páginas de precios por país (`/en-us/prices`, …) se sirven desde
+un JSON precalculado, no calculan en caliente. Si el commit de este
+mes toca alguna matriz `salida/precios_recursos_*.csv`, regenera el
+artefacto y súbelo en el mismo commit:
+
+```bash
+python tools/generar_precios_publicos.py
+```
+
+Escribe `basedatos_partidas/datos/precios_publicos.json`. Si se te
+olvida, el CI lo caza: `test_el_artefacto_precalculado_coincide_con_el_calculo_en_vivo`
+falla hasta que lo regeneres. (Confirmar la revisión con el botón no
+exige este paso: solo hace falta cuando cambian precios o catálogo.)
+
 ## Paso 5 — Confirmar en producción
 
 Abre `https://cotizat.online/readyz` y comprueba:
@@ -108,7 +124,9 @@ Abre `https://cotizat.online/readyz` y comprueba:
 
 Y echa un vistazo a una guía pública del mercado actualizado: su nota
 debe decir el mes de la nueva `fecha_consulta` (p. ej. «Precios
-consultados en noviembre de 2026»).
+consultados en noviembre de 2026»). Si regeneraste el artefacto, abre
+también una página de precios del país (p. ej. `/en-us/prices`) y
+comprueba que el mes de «Input prices checked …» es el nuevo.
 
 ## Si algo falla
 
