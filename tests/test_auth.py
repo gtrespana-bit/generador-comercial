@@ -10,6 +10,7 @@ from starlette.responses import Response
 from app.auth import (
     ACCESS_COOKIE,
     REFRESH_COOKIE,
+    AuthError,
     AuthNotConfigured,
     InvalidCredentials,
     SupabaseAuthClient,
@@ -111,6 +112,67 @@ def test_configuracion_auth_acepta_jwt_legacy_de_anon(monkeypatch):
     monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", jwt)
     settings = SupabaseAuthSettings.from_environment()
     assert settings.publishable_key == jwt
+
+
+def test_sign_out_local_revoca_solo_la_sesion_de_reautenticacion():
+    client = StubAuthClient([{}])
+
+    client.sign_out_local("access-token-temporal")
+
+    assert client.calls == [
+        ("POST", "/auth/v1/logout?scope=local", {}, "access-token-temporal")
+    ]
+
+
+def test_auth_admin_borra_identidad_con_clave_secreta_y_404_idempotente(monkeypatch):
+    class Respuesta:
+        status = 404
+
+        def read(self, _limite):
+            return b""
+
+    class Conexion:
+        def __init__(self):
+            self.solicitudes = []
+
+        def request(self, metodo, ruta, headers):
+            self.solicitudes.append((metodo, ruta, headers))
+
+        def getresponse(self):
+            return Respuesta()
+
+    clave_admin = "sb_" + "secret_" + "valor_de_prueba"
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", clave_admin)
+    client = SupabaseAuthClient(SupabaseAuthSettings(
+        url="https://project.supabase.co",
+        publishable_key="sb_publishable_test",
+        cookie_secure=True,
+    ))
+    conexion = Conexion()
+    client._conexion = lambda: conexion
+
+    # Un 404 ya significa que el usuario no existe: no es un error de reintento.
+    client.delete_user_admin(AUTH_ID)
+
+    metodo, ruta, headers = conexion.solicitudes[0]
+    assert metodo == "DELETE"
+    assert ruta == f"/auth/v1/admin/users/{AUTH_ID}"
+    assert headers["apikey"] == clave_admin
+    assert headers["Authorization"] == f"Bearer {clave_admin}"
+
+
+def test_auth_admin_rechaza_clave_publica_e_identidad_invalida(monkeypatch):
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_publishable_no-es-secreta")
+    client = SupabaseAuthClient(SupabaseAuthSettings(
+        url="https://project.supabase.co",
+        publishable_key="sb_publishable_test",
+        cookie_secure=True,
+    ))
+    with pytest.raises(AuthNotConfigured):
+        client.delete_user_admin(AUTH_ID)
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_secret_valor_de_prueba")
+    with pytest.raises(AuthError, match="identificador de cuenta"):
+        client.delete_user_admin("no-es-uuid")
 
 
 def test_url_publica_de_recuperacion_es_fija_y_https(monkeypatch):

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Delete account' if _idioma == 'en' else 'Eliminar cuenta' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Delete your account' if _idioma == 'en' else 'Eliminar tu cuenta' }}</h1>
+    <p class="subtitle">{{ 'This action is permanent and cannot be undone.' if _idioma == 'en' else 'Esta acción es permanente y no se puede deshacer.' }}</p>
+  </div>
+  <a class="btn" href="/cuenta">{{ 'Back to my account' if _idioma == 'en' else 'Volver a mi cuenta' }}</a>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error | mensaje(_idioma) }}</div>{% endif %}
+
+<div class="card">
+  <h2>{{ 'What will be deleted' if _idioma == 'en' else 'Qué se eliminará' }}</h2>
+  <p>{{ 'The access account, profile and personal identifiers will be deleted. You will be signed out on this browser.' if _idioma == 'en' else 'Se eliminarán la cuenta de acceso, el perfil y tus identificadores personales. Se cerrará tu sesión en este navegador.' }}</p>
+  {% if organizaciones %}
+  <ul>
+    {% for org in organizaciones %}
+    <li>
+      <strong>{{ org.nombre }}</strong> — {{ org.rol }}.
+      {% if org.se_borrara %}
+        {{ 'The company and all its business data will be deleted.' if _idioma == 'en' else 'Se eliminarán la empresa y todos sus datos comerciales.' }}
+        {% if org.miembros and org.miembros > 1 %}
+          {{ 'All other team members will lose access.' if _idioma == 'en' else 'El resto de miembros del equipo perderá el acceso.' }}
+        {% endif %}
+      {% else %}
+        {{ 'The company will remain, but your membership and access will be removed.' if _idioma == 'en' else 'La empresa se conservará, pero se eliminarán tu membresía y tu acceso.' }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>{{ 'You do not currently belong to any company.' if _idioma == 'en' else 'Actualmente no perteneces a ninguna empresa.' }}</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>{{ 'Limited retention' if _idioma == 'en' else 'Conservación limitada' }}</h2>
+  <p>{{ 'Only records that must be retained for legal accounting, tax, security or dispute-resolution obligations may remain, with access restricted and personal data minimized or pseudonymized where possible. Payment providers may retain invoices and transaction records under their own legal duties. Encrypted backups are removed through their normal rotation; deletion is not necessarily immediate in external systems or backups.' if _idioma == 'en' else 'Solo podrán conservarse los registros cuya conservación sea obligatoria por motivos legales, contables, fiscales, de seguridad o para resolver reclamaciones, con acceso restringido y datos personales minimizados o seudonimizados cuando sea posible. Los proveedores de pago pueden conservar facturas y transacciones según sus propias obligaciones. Las copias de seguridad cifradas se eliminan mediante su rotación habitual; el borrado no es necesariamente inmediato en sistemas externos o backups.' }}</p>
+</div>
+
+<div class="card">
+  <h2>{{ 'Confirm permanent deletion' if _idioma == 'en' else 'Confirmar eliminación permanente' }}</h2>
+  <form method="post" action="/cuenta/borrar">
+    <div class="field">
+      <label for="delete-password">{{ 'Current password (required to re-authenticate)' if _idioma == 'en' else 'Contraseña actual (necesaria para volver a autenticarte)' }} *</label>
+      <input id="delete-password" name="password" type="password" autocomplete="current-password" required>
+    </div>
+    <div class="field">
+      <label for="delete-confirmation">{{ 'Type DELETE to confirm' if _idioma == 'en' else 'Escribe ELIMINAR para confirmar' }} *</label>
+      <input id="delete-confirmation" name="confirmacion" autocomplete="off" required>
+    </div>
+    <label class="check-row">
+      <input type="checkbox" name="entiendo_organizaciones" value="si" required>
+      <span>{{ 'I understand that any company I own and its team access will be deleted, and that this cannot be undone.' if _idioma == 'en' else 'Entiendo que se eliminarán las empresas de las que soy propietario y el acceso de sus equipos, y que esta acción no se puede deshacer.' }}</span>
+    </label>
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">{{ 'Permanently delete my account and data' if _idioma == 'en' else 'Eliminar permanentemente mi cuenta y mis datos' }}</button>
+      <a class="btn" href="/cuenta">{{ 'Cancel' if _idioma == 'en' else 'Cancelar' }}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

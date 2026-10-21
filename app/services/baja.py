@@ -181,11 +181,13 @@ def ejecutar_baja(
     *,
     nombre_confirmado: str,
     confirmar: bool,
+    commit: bool = True,
 ) -> str:
     """Ejecuta la baja completa y verificada; devuelve el nombre borrado.
 
-    El ``commit`` lo hace la ruta llamante; ante cualquier error la ruta hace
-    ``rollback`` y no queda nada a medias.
+    Por defecto confirma la transacción como hasta ahora. ``commit=False``
+    deja el borrado dentro de la transacción del llamante (p. ej. el borrado
+    completo de una cuenta que tiene varias organizaciones).
     """
     organizacion_id = int(db.info.get("organizacion_id") or 0)
     if organizacion_id <= 0:
@@ -227,6 +229,14 @@ def ejecutar_baja(
         _borrar_organizacion_sqlite(db, organizacion_id)
     else:
         try:
+            # Una transacción puede dar de baja varias organizaciones (p. ej.
+            # al eliminar una cuenta). El claim de tenant se instala al abrir
+            # la transacción, así que hay que cambiarlo de forma explícita
+            # antes de cada SECURITY DEFINER.
+            db.execute(
+                text("SELECT set_config('cotizat.organization_id', :valor, true)"),
+                {"valor": str(organizacion_id)},
+            )
             db.execute(
                 text("SELECT cotizat_security.baja_organizacion(:organizacion_id)"),
                 {"organizacion_id": organizacion_id},
@@ -237,5 +247,6 @@ def ejecutar_baja(
                 "La base de datos rechazó la baja; no se borró nada. "
                 "Verifica que eres el propietario de esta organización."
             ) from exc
-    db.commit()
+    if commit:
+        db.commit()
     return nombre

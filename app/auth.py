@@ -501,10 +501,66 @@ class SupabaseAuthClient:
         return self.update_password(access_token, new_password)
 
     def sign_out(self, access_token: str) -> None:
-        """Revoca la sesión en Supabase; el logout local no depende de esto."""
+        """Revoca las sesiones de Supabase; el logout local no depende de esto."""
         if not access_token:
             return
         self._request_json("POST", "/auth/v1/logout", {}, access_token=access_token)
+
+    def sign_out_local(self, access_token: str) -> None:
+        """Revoca solo el token indicado, sin invalidar las demás sesiones."""
+        if not access_token:
+            return
+        self._request_json(
+            "POST", "/auth/v1/logout?scope=local", {}, access_token=access_token
+        )
+
+    def delete_user_admin(self, auth_user_id: str) -> None:
+        """Elimina una identidad con la clave secreta, solo desde el servidor.
+
+        El API público de GoTrue no permite borrar usuarios: esta operación
+        usa Auth Admin y exige ``SUPABASE_SECRET_KEY`` (nunca la clave pública
+        ni un token de navegador). Un 404 es idempotente: la identidad ya no
+        existe, que es el estado final que queremos.
+        """
+        try:
+            user_id = str(UUID(str(auth_user_id or "").strip()))
+        except (TypeError, ValueError, AttributeError) as exc:
+            raise AuthError("El identificador de cuenta no es válido.") from exc
+        secret = os.environ.get("SUPABASE_SECRET_KEY", "").strip()
+        if not es_clave_secreta_servidor(secret):
+            raise AuthNotConfigured(
+                "Falta la clave secreta del servidor para eliminar la identidad."
+            )
+        path = f"/auth/v1/admin/users/{quote(user_id, safe='')}"
+        for intento in (0, 1):
+            conexion = self._conexion()
+            try:
+                conexion.request(
+                    "DELETE",
+                    path,
+                    headers={
+                        "apikey": secret,
+                        "Authorization": f"Bearer {secret}",
+                        "Accept": "application/json",
+                        "User-Agent": "CotizaT/1.0",
+                        "Connection": "keep-alive",
+                    },
+                )
+                respuesta = conexion.getresponse()
+                estado = respuesta.status
+                respuesta.read(64 * 1024)
+                if 200 <= estado < 300 or estado == 404:
+                    return
+                log.error("Supabase Auth Admin no pudo borrar una identidad (HTTP %s).", estado)
+                raise AuthError(
+                    "Supabase Auth no pudo completar el borrado de la identidad."
+                )
+            except (http.client.HTTPException, OSError) as exc:
+                self._cerrar_conexion()
+                if intento:
+                    raise AuthError(
+                        "No se pudo contactar con Supabase Auth para completar el borrado."
+                    ) from exc
 
     def get_user(self, access_token: str) -> SupabaseIdentity:
         if not access_token:

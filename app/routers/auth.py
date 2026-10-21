@@ -372,6 +372,177 @@ def ver_cuenta(request: Request, db: Session = Depends(get_authenticated_db)):
     )
 
 
+@router.get("/cuenta/borrar", response_class=HTMLResponse)
+def confirmar_borrado_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Presenta el alcance exacto antes de borrar el perfil y las empresas."""
+    if common.DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    from ..services.borrado_cuenta import resumen_borrado_cuenta
+
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/delete_account.html",
+        {
+            "usuario": usuario,
+            "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+            "error": request.query_params.get("error", ""),
+        },
+    )
+
+
+@router.post("/cuenta/borrar")
+async def ejecutar_borrado_cuenta_web(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Reautentica, suprime datos locales y solicita el borrado de Auth Admin."""
+    if common.DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    from ..auth import identity_for_request
+    from ..services.borrado_cuenta import (
+        BorradoCuentaError,
+        ejecutar_borrado_local,
+        finalizar_tombstone,
+        resumen_borrado_cuenta,
+    )
+
+    form = await request.form()
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    identidad_actual = identity_for_request(request)
+    expected_confirmation = "DELETE" if _idioma(request) == "en" else "ELIMINAR"
+    if str(form.get("confirmacion") or "").strip() != expected_confirmation:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/delete_account.html",
+            {
+                "usuario": usuario,
+                "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+                "error": (
+                    f"Escribe {expected_confirmation} para confirmar."
+                    if _idioma(request) != "en"
+                    else f"Type {expected_confirmation} to confirm."
+                ),
+            },
+            status_code=400,
+        )
+    if not str(form.get("entiendo_organizaciones") or "").strip():
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/delete_account.html",
+            {
+                "usuario": usuario,
+                "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+                "error": (
+                    "Confirma que entiendes que se borrarán tus empresas y el acceso del equipo."
+                    if _idioma(request) != "en"
+                    else "Confirm that you understand your companies and their team's access will be deleted."
+                ),
+            },
+            status_code=400,
+        )
+    password = str(form.get("password") or "")
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        auth_client = common.SupabaseAuthClient(settings)
+        tokens = await run_in_threadpool(
+            auth_client.sign_in,
+            usuario.email,
+            password,
+        )
+    except AuthError as exc:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/delete_account.html",
+            {
+                "usuario": usuario,
+                "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+                "error": str(exc),
+            },
+            status_code=400 if isinstance(exc, InvalidCredentials) else 503,
+        )
+    if (
+        tokens.identity.auth_user_id != identidad_actual.auth_user_id
+        or tokens.identity.email.casefold() != usuario.email.casefold()
+    ):
+        try:
+            await run_in_threadpool(auth_client.sign_out_local, tokens.access_token)
+        except AuthError:
+            pass
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/delete_account.html",
+            {
+                "usuario": usuario,
+                "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+                "error": "La reautenticación no coincide con la cuenta actual. Vuelve a iniciar sesión.",
+            },
+            status_code=403,
+        )
+
+    try:
+        await run_in_threadpool(auth_client.sign_out_local, tokens.access_token)
+    except AuthError:
+        # La comprobación de contraseña ya fue satisfactoria; este refresh
+        # token recién creado no se entrega al navegador y la baja continúa.
+        log.info("No se pudo revocar la sesión temporal de reautenticación.")
+
+    try:
+        auth_user_id = ejecutar_borrado_local(
+            db,
+            usuario_id=usuario.id,
+            auth_user_id=identidad_actual.auth_user_id,
+            email=usuario.email,
+        )
+    except BorradoCuentaError as exc:
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/delete_account.html",
+            {
+                "usuario": usuario,
+                "organizaciones": resumen_borrado_cuenta(db, usuario.id),
+                "error": str(exc),
+            },
+            status_code=503,
+        )
+
+    auth_borrado = False
+    try:
+        await run_in_threadpool(
+            common.SupabaseAuthClient(settings).delete_user_admin,
+            auth_user_id,
+        )
+        finalizar_tombstone(db, usuario.id, auth_user_id)
+        auth_borrado = True
+    except Exception:
+        # La transacción local ya quedó suprimida. Se conserva solo el UUID en
+        # un tombstone no identificable y el mantenimiento reintenta Auth Admin.
+        db.rollback()
+        log.error("No se pudo finalizar el borrado de una cuenta tras la supresión local; el cron reintentará.")
+
+    if _idioma(request) == "en":
+        mensaje_borrado = (
+            "Your CotizaT account has been deleted. Local data was erased except records we must retain; providers and encrypted backups follow their own retention schedules."
+            if auth_borrado
+            else "Your local data was erased. Deletion of the login identity is pending an automatic retry."
+        )
+    else:
+        mensaje_borrado = (
+            "Tu cuenta de CotizaT se ha eliminado. Los datos locales se suprimieron salvo los registros que debamos conservar; proveedores y copias cifradas siguen sus propios plazos."
+            if auth_borrado
+            else "Tus datos locales se suprimieron. La eliminación de la identidad de acceso está pendiente de reintento automático."
+        )
+    response = RedirectResponse(
+        "/acceso?msg=" + quote(mensaje_borrado),
+        status_code=303,
+    )
+    clear_auth_cookies(response, settings.cookie_secure, request)
+    return response
+
+
 @router.post("/cuenta/consentimiento")
 def aceptar_terminos_cuenta(
     request: Request,

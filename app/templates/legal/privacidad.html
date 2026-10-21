@@ -1,7 +1,7 @@
 {% extends "legal/_base_legal.html" %}
 {% block contenido %}
 <h1>Política de privacidad</h1>
-<p class="meta">Versión 1.2 · Vigente desde el 8 de septiembre de 2026</p>
+<p class="meta">Versión 1.3 · Vigente desde el 21 de octubre de 2026</p>
 
 <div class="aviso">
   En corto: guardamos lo mínimo para que el servicio funcione; tus contraseñas
@@ -111,28 +111,47 @@ que no requieren consentimiento adicional.</p>
   <li>Las conversaciones del asistente se conservan durante <strong>365 días
       desde el último turno</strong>. Un trabajo automático las elimina al
       vencer ese plazo; el panel deja de mostrarlas antes de la purga.</li>
-  <li>Si cancelas, los datos permanecen disponibles para exportación durante un
-      plazo razonable (mínimo 30 días) y después pueden eliminarse.</li>
-  <li>Puedes pedir antes el acceso, la exportación o el borrado de tus
-      conversaciones escribiendo a soporte. Las copias de seguridad
-      administradas rotan y las eliminaciones se propagan a ellas con la
-      cadencia de esa rotación.</li>
+  <li>Si cancelas una suscripción sin pedir el borrado, los datos permanecen
+      disponibles para exportación durante un plazo razonable (mínimo 30 días)
+      y después pueden eliminarse.</li>
+  <li>Cuando confirmas el borrado de la cuenta desde el panel, eliminamos el
+      perfil, sus identificadores y membresías. También se inicia la baja de
+      cada organización de la que la persona sea propietaria, incluidos sus
+      datos comerciales y archivos; los demás miembros de esas organizaciones
+      pierden el acceso. Si pertenece a una organización ajena, esa organización
+      se conserva y se elimina su membresía.</li>
+  <li>Conservamos únicamente los registros cuya conservación resulte
+      obligatoria por ley o necesaria para atender reclamaciones o proteger la
+      seguridad. Cuando sea posible se minimizan o seudonimizan y el acceso se
+      restringe. Los proveedores de pago y otros encargados pueden conservar
+      determinados registros bajo sus propias obligaciones.</li>
+  <li>Las copias de seguridad cifradas se eliminan conforme a su ciclo normal
+      de rotación; por ello la supresión no es necesariamente inmediata en
+      backups ni en sistemas externos. Si el borrado de la identidad de acceso
+      no puede completarse por una indisponibilidad de Supabase, se elimina
+      primero el perfil local y se reintenta automáticamente la operación.</li>
 </ul>
 
 <h2>8. Tus derechos</h2>
-<p>Puedes ejercer en cualquier momento, escribiendo a
-<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>:</p>
+<p>Puedes ejercer en cualquier momento los derechos de acceso, portabilidad,
+rectificación, limitación, oposición y eliminación. Para eliminar una cuenta,
+inicia sesión, abre <strong>Mi cuenta → Revisar y eliminar cuenta</strong> y
+confirma la operación con tu contraseña. El flujo muestra antes las
+organizaciones afectadas. Si no puedes acceder, escribe a
+<a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>; verificaremos tu
+identidad antes de actuar.</p>
 <ul>
   <li><strong>Acceso y portabilidad</strong>: obtener una copia de tus datos (las
       exportaciones integradas ya cubren la mayor parte).</li>
   <li><strong>Rectificación</strong>: corregir datos inexactos (normalmente puedes
       hacerlo tú mismo desde la aplicación).</li>
-  <li><strong>Eliminación</strong>: pedir el borrado de tu cuenta y de los datos de
-      tu organización (si la organización tiene más miembros, la solicitud debe
-      venir de su propietario). También puedes solicitar el borrado de una
-      conversación concreta.</li>
+  <li><strong>Eliminación</strong>: borrar el perfil y los datos asociados con el
+      alcance descrito en el apartado anterior, salvo las excepciones legales
+      aplicables. No se promete la desaparición inmediata de datos sujetos a
+      retención legal, de sistemas de terceros o de copias de seguridad aún
+      dentro de su ciclo de rotación.</li>
 </ul>
-<p>Respondemos en un plazo máximo de 30 días.</p>
+<p>Respondemos a las solicitudes recibidas por email en un plazo máximo de 30 días.</p>
 
 <h2>9. Seguridad</h2>
 <ul>

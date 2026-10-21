@@ -206,9 +206,11 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert errores_internos_migration.down_revision == fiscalidad_us_migration.revision
     from migrations.versions import (
         p3f7a1c9d2e4_identidad_error_y_unidad_producto as identidad_error_migration,
+        q5e1c8a9d3f7_borrado_completo_de_cuenta as borrado_cuenta_migration,
     )
     assert identidad_error_migration.down_revision == errores_internos_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == identidad_error_migration.revision
+    assert borrado_cuenta_migration.down_revision == identidad_error_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == borrado_cuenta_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

@@ -797,12 +797,24 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
         )
         resumen_errores = {"ok": False, "error": "Error interno en el resumen."}
 
+    try:
+        from ..services.borrado_cuenta import reintentar_borrados_pendientes
+
+        borrados_pendientes = reintentar_borrados_pendientes(db)
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error reintentando borrados de cuentas:\n%s", traceback.format_exc()
+        )
+        borrados_pendientes = {"ok": False, "error": "Error interno en los borrados pendientes."}
+
     return JSONResponse(
         {"ok": respaldo.get("ok", True) and verificacion.get("ok", True),
          "respaldo": respaldo,
          "conversaciones_expiradas": chats_expirados,
          "verificacion": verificacion,
-         "resumen_errores": resumen_errores},
+         "resumen_errores": resumen_errores,
+         "borrados_pendientes": borrados_pendientes},
         headers={"Cache-Control": "no-store"},
     )
 

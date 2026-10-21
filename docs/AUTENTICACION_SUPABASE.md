@@ -16,6 +16,7 @@ MIGRATION_DATABASE_URL=postgresql://<administrador-solo-durante-alembic>@...
 COTIZAT_REQUIRE_RLS_ROLE=true
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+SUPABASE_SECRET_KEY=sb_secret_... # solo backend; Auth Admin y Storage privado
 COTIZAT_COOKIE_SECURE=true
 COTIZAT_PUBLIC_URL=https://cotizat.example.com
 ```
@@ -50,6 +51,13 @@ alembic upgrade head
 - Rutas comerciales: `get_db` ignora `COTIZAT_ORGANIZATION_ID` en PostgreSQL y deriva usuario, rol y organización de la sesión autenticada.
 - `/cuenta`: panel de la persona autenticada (perfil, contraseña, organizaciones y cierre de sesión).
 - `/salir`: revoca la sesión en GoTrue (`POST /auth/v1/logout`) y elimina access token, refresh token y organización seleccionada.
+- `/cuenta/borrar`: requiere volver a escribir la contraseña y confirma el UUID de la sesión antes de iniciar la supresión. Usa `SUPABASE_SECRET_KEY` solo en el servidor para borrar la identidad mediante Auth Admin; nunca expone esa clave al navegador.
+
+## Borrado autoservicio de cuenta
+
+La revisión `q5e1c8a9d3f7` incorpora el flujo de borrado y requiere estar aplicada antes de desplegar la versión que lo ofrece. Para Supabase SQL Editor, aplicar `docs/staging_upgrade_q5e1c8a9d3f7.sql` únicamente cuando `public.alembic_version` indique `p3f7a1c9d2e4`; alternativamente, ejecutar `alembic upgrade head` con la URL administrativa.
+
+El flujo borra las organizaciones del solicitante si es propietario (incluidos sus datos y el acceso de otros miembros); en organizaciones ajenas conserva la empresa pero elimina su membresía. Solo deja los campos financieros mínimos que pudieran ser exigibles, minimizados, y no promete purga inmediata de libros de facturas retenidos por proveedores ni de backups aún dentro de su rotación. Si Auth Admin no responde después de la supresión local, queda un tombstone sin email/nombre y el cron protegido reintenta eliminar la identidad. Para que ese reintento pueda completarse, `SUPABASE_SECRET_KEY` debe estar configurada en el backend.
 
 ## Panel de cuenta (`/cuenta`)
 
