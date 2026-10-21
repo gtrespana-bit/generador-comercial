@@ -44,7 +44,7 @@ from .unidades_precio import (
 )
 
 # Interruptor por país (ver docstring del módulo).
-PAISES_PRECIOS_PUBLICOS: tuple[str, ...] = ("US", "GB", "CA")
+PAISES_PRECIOS_PUBLICOS: tuple[str, ...] = ("US", "GB", "CA", "AU")
 
 _MIN_LINEAS = 3
 _MIN_DESCRIPCION = 120
