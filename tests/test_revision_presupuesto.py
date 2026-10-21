@@ -1,6 +1,7 @@
 from datetime import date
 from types import SimpleNamespace
 
+from app.models import PresupuestoItem
 from app.services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
 
 
@@ -36,6 +37,10 @@ def _presupuesto(partidas, **kw):
 
 def _cfg(logo="logo.png"):
     return SimpleNamespace(logo=logo)
+
+
+def test_unidad_de_producto_admite_descripciones_importadas_largas():
+    assert PresupuestoItem.__table__.c.producto_unidad.type.length == 120
 
 
 def test_revision_lista_presupuesto_sano():

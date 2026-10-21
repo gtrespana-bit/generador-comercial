@@ -25,7 +25,8 @@
   <tr>
     <td style="padding:10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;">
       <code>{{ fila.metodo }} {{ fila.ruta }}</code><br>
-      <span style="color:#475a51;">{{ fila.tipo }} — {{ fila.mensaje }}</span>
+      <span style="color:#475a51;">{{ fila.tipo }} — {{ fila.mensaje }}</span><br>
+      <span style="font-size:12px;color:#475a51;">Usuario afectado: {% if fila.usuario_email %}{% if fila.usuario_nombre %}{{ fila.usuario_nombre }} · {% endif %}{{ fila.usuario_email }}{% else %}No autenticado / no disponible{% endif %}</span>
     </td>
     <td style="padding:10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;text-align:right;white-space:nowrap;">
       ×{{ fila.ocurrencias }}<br>

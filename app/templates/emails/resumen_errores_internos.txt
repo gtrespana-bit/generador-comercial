@@ -7,6 +7,7 @@ dejarán de aparecer aquí.
 {% for fila in filas %}
 - {{ fila.metodo }} {{ fila.ruta }}
   {{ fila.tipo }} — {{ fila.mensaje }}
+  Usuario afectado: {% if fila.usuario_email %}{% if fila.usuario_nombre %}{{ fila.usuario_nombre }} · {% endif %}{{ fila.usuario_email }}{% else %}No autenticado / no disponible{% endif %}
   x{{ fila.ocurrencias }} · última vez {{ fila.ultima_vez }}
 {% endfor %}
 {% if panel_url %}Ver en el panel: {{ panel_url }}

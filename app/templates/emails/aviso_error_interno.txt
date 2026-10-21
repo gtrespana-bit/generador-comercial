@@ -6,6 +6,7 @@ ocurrencias y no volverá a avisarte.
 
 Ruta: {{ metodo }} {{ ruta }}
 Tipo: {{ tipo }}
+Usuario afectado: {% if usuario_email %}{% if usuario_nombre %}{{ usuario_nombre }} · {% endif %}{{ usuario_email }}{% else %}No autenticado / no disponible{% endif %}
 Mensaje: {{ mensaje }}
 {% if traza %}
 Traza (recortada):

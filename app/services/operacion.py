@@ -25,7 +25,9 @@ Dos piezas, en la misma filosofía de honestidad que el resto del producto:
 **Privacidad**: las rutas se registran sin query string (los enlaces
 públicos y tokens viajan ahí) y los segmentos con forma de token se sustituyen
 por ``<token>``; los mensajes se sanean igual que en ``/readyz`` para no
-filtrar credenciales.
+filtrar credenciales. Para seguimiento, el registro durable conserva solo el
+nombre y email de la identidad verificada más reciente; los errores anónimos
+no guardan identidad.
 """
 from __future__ import annotations
 
@@ -182,11 +184,25 @@ def datos_error(scope: dict, exc: Exception) -> dict:
     """
     from .errores_internos import traza_de
 
+    # El state lo comparten los middlewares ASGI y las dependencias ya
+    # ejecutadas. Solo guardamos datos de la identidad validada (nunca los
+    # parámetros del formulario); un fallo antes del login queda anónimo.
+    state = scope.get("state") or {}
+    identity = state.get("supabase_identity") if isinstance(state, dict) else None
+    usuario = state.get("usuario") if isinstance(state, dict) else None
+    email = str(
+        getattr(identity, "email", "") or getattr(usuario, "email", "") or ""
+    ).strip()[:254]
+    nombre = str(
+        getattr(identity, "name", "") or getattr(usuario, "nombre", "") or ""
+    ).strip()[:200]
     return {
         "metodo": str(scope.get("method") or "?").upper(),
         "ruta": _saneamiento_ruta(str(scope.get("path") or "")),
         "tipo": type(exc).__name__,
         "mensaje": _saneamiento_mensaje(exc),
+        "usuario_email": email,
+        "usuario_nombre": nombre,
         "traza": traza_de(exc),
         "ahora": datetime.utcnow(),
     }

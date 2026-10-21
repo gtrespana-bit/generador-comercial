@@ -31,6 +31,12 @@
     <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;text-align:right;">{{ tipo }}</td>
   </tr>
   <tr>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#475a51;">Usuario afectado</td>
+    <td style="padding:8px 10px;border-bottom:1px solid #e3ece7;font-size:13px;color:#17211d;text-align:right;">
+      {% if usuario_email %}{% if usuario_nombre %}{{ usuario_nombre }} · {% endif %}{{ usuario_email }}{% else %}No autenticado / no disponible{% endif %}
+    </td>
+  </tr>
+  <tr>
     <td style="padding:8px 10px;font-size:13px;color:#475a51;">Mensaje</td>
     <td style="padding:8px 10px;font-size:13px;color:#17211d;text-align:right;">{{ mensaje }}</td>
   </tr>
