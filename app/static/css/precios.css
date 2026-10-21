@@ -1,0 +1,76 @@
+/* Páginas públicas de precios por país (Fase 5 — SEO programático).
+   Solo lo específico de estas páginas; el resto sale de public.css. */
+
+.precios-pu-card {
+  background: #eef3fa;
+  border: 1px solid #d3e0f2;
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  margin: 1.25rem 0;
+}
+.precios-pu {
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  font-weight: 800;
+  color: #123f78;
+  line-height: 1.05;
+}
+.precios-pu-unidad { font-size: 1.05rem; font-weight: 600; color: #33527e; }
+.precios-revisado { margin-top: .35rem; font-size: .92rem; color: #33527e; }
+.precios-aviso { font-size: .86rem; color: #5a6b82; margin-top: .75rem; }
+
+.precios-tabla-wrap { overflow-x: auto; margin: 1rem 0 1.75rem; }
+.precios-tabla {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-size: .92rem;
+}
+.precios-tabla th,
+.precios-tabla td {
+  padding: .45rem .6rem;
+  border-bottom: 1px solid #dbe4f0;
+  text-align: right;
+  vertical-align: top;
+}
+.precios-tabla th:first-child,
+.precios-tabla td:first-child { text-align: left; }
+.precios-tabla thead th { color: #123f78; border-bottom: 2px solid #123f78; }
+.precios-tabla .precios-grupo td {
+  background: #eef3fa;
+  color: #123f78;
+  font-weight: 700;
+  text-align: left;
+}
+.precios-tabla .precios-subtotal td { font-weight: 700; }
+.precios-tabla .precios-total td {
+  font-weight: 700;
+  border-top: 2px solid #123f78;
+}
+.precios-tabla .precios-pu-fila td {
+  background: #123f78;
+  color: #fff;
+  font-weight: 800;
+  border-bottom: none;
+}
+
+.precios-lista { list-style: none; margin: 0; padding: 0; }
+.precios-lista li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .5rem .15rem;
+  border-bottom: 1px solid #e3ebf6;
+}
+.precios-lista .precios-importe { font-weight: 700; color: #123f78; white-space: nowrap; }
+
+.precios-capitulo { margin-top: 2.25rem; }
+.precios-faq h3 { margin: 1.25rem 0 .35rem; }
+.precios-paises { margin: 1.5rem 0; font-size: .95rem; }
+.precios-paises a { margin-right: .85rem; white-space: nowrap; }
+.precios-rendimiento {
+  background: #f6f9fd;
+  border-left: 4px solid #e5ae3c;
+  border-radius: 8px;
+  padding: .85rem 1.1rem;
+  margin: 1.25rem 0;
+}

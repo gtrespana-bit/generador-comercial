@@ -61,6 +61,7 @@ from .routers import (  # noqa: E402
     partidas,
     plantillas,
     planos,
+    precios_publicos,
     presupuestos,
     productos,
     publico,
@@ -610,6 +611,10 @@ app.include_router(recursos.router)
 app.include_router(plantillas.router)
 app.include_router(recetas.router)
 app.include_router(ia.router)
+# Precios públicos (Fase 5) el ÚLTIMO a propósito: sus patrones
+# /{cc}/precios/... capturarían rutas de dominio como
+# /partidas/precios/anomalos si se montaran antes (ver su docstring).
+app.include_router(precios_publicos.router)
 
 
 # ---------------------------------------------------------------------------

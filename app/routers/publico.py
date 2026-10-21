@@ -318,6 +318,15 @@ def mapa_del_sitio(request: Request):
             for a in guias_de(codigo)
         )
     ctx["guias_mercado_en"] = mercado_en
+    # Catálogos públicos de precios (Fase 5): enlace interno de entrada a
+    # /en-us/prices y sucesores desde la lista «Por país». Solo aparecen
+    # los países encendidos en services.precios_publicos.
+    from ..services import precios_publicos as _precios
+
+    ctx["catalogos_precios"] = {
+        codigo: _precios.ruta_indice(codigo)
+        for codigo in _precios.paises_publicados()
+    }
     ctx["temas_seo"] = TEMAS
     return TEMPLATES.TemplateResponse(request, "mapa_sitio.html", ctx)
 
@@ -590,12 +599,7 @@ def robots(request: Request):
     return Response(robots_txt(request), media_type="text/plain; charset=utf-8")
 
 
-@router.get("/sitemap.xml", include_in_schema=False)
-def sitemap(request: Request):
-    """Sitemap con landings de país, páginas de intención, hreflang y lastmod."""
-    from ..seo import urls_sitemap
-
-    entradas = urls_sitemap(request)
+def _xml_urlset(entradas) -> str:
     xml = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
@@ -614,7 +618,15 @@ def sitemap(request: Request):
             )
         xml.append("  </url>")
     xml.append("</urlset>")
-    return Response("\n".join(xml) + "\n", media_type="application/xml")
+    return "\n".join(xml) + "\n"
+
+
+@router.get("/sitemap.xml", include_in_schema=False)
+def sitemap(request: Request):
+    """Sitemap con landings de país, páginas de intención, hreflang y lastmod."""
+    from ..seo import urls_sitemap
+
+    return Response(_xml_urlset(urls_sitemap(request)), media_type="application/xml")
 
 
 @router.get(_RUTA_CLAVE_INDEXNOW, include_in_schema=False)

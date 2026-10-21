@@ -77,10 +77,17 @@ def _patrones() -> tuple[re.Pattern, ...]:
     return (
         re.compile(r"^/guia/[^/]+$"),
         re.compile(r"^/legal/[^/]+$"),
+        re.compile(rf"^/sitemap-precios-(?:{cc})\.xml$"),
         re.compile(rf"^/(?:{cc})/?$"),
         re.compile(rf"^/(?:{cc})/guia/[^/]+$"),
         re.compile(rf"^/(?:{cc})/(?:{temas})$"),
         re.compile(rf"^/(?:{temas})$"),
+        # Fase 5: precios públicos por país. País e idioma salen solo de
+        # la URL (los datos vienen de ficheros del repo, sin sesión ni
+        # cookies), así que cumplen el contrato de esta lista.
+        re.compile(rf"^/(?:{cc})/(?:prices|precios)$"),
+        re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+$"),
+        re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+/[^/]+$"),
     )
 
 
