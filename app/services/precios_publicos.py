@@ -12,15 +12,20 @@ por CDN porque país e idioma viven en la URL.
 Guardia anti-contenido-fino (es código, no intención): una partida solo
 existe como URL en un país si tiene el precio COMPLETO ahí (todos sus
 recursos con precio), al menos 3 líneas de descompuesto, descripción en
-el idioma del mercado de al menos 120 caracteres y ningún resto de
-español en título, descripción, nombres de recursos ni de su apartado o
-capítulo (las traducciones salen de las tablas del titular vía
+el idioma del mercado de al menos 120 caracteres y, en mercados de
+habla inglesa, ningún resto de español en título, descripción, nombres
+de recursos ni de su apartado o capítulo (las traducciones salen de las tablas del titular vía
 ``services.traduccion``; lo que no esté traducido, no se publica). Un
 apartado solo existe si conserva al menos 3 partidas publicables.
 
 Encender un país es añadirlo a ``PAISES_PRECIOS_PUBLICOS`` y solo eso:
-rutas, sitemap e hreflang lo recogen solos. Orden de encendido:
-US → GB → CA → AU → IE, verificando cada uno antes del siguiente.
+rutas, sitemap e hreflang lo recogen solos. Orden de encendido,
+verificando cada país antes del siguiente: primero los cinco
+mercados ingleses (US → GB → CA → AU → IE, 2026-10-21) y después los
+hispanos con matriz propia (ES → MX → CO → AR → CL → PE → EC → DO →
+UY → PY → BO → PA → CR → GT → HN → SV → NI). Venezuela no tiene
+matriz en el repo —la app cotiza VE con los precios base USD de
+``recursos.json``—: se encenderá cuando tenga la suya.
 """
 
 from __future__ import annotations
@@ -44,7 +49,7 @@ from .unidades_precio import (
 )
 
 # Interruptor por país (ver docstring del módulo).
-PAISES_PRECIOS_PUBLICOS: tuple[str, ...] = ("US", "GB", "CA", "AU", "IE")
+PAISES_PRECIOS_PUBLICOS: tuple[str, ...] = ("US", "GB", "CA", "AU", "IE", "ES", "MX", "CO", "AR", "CL", "PE", "EC", "DO", "UY", "PY", "BO", "PA", "CR", "GT", "HN", "SV", "NI")
 
 _MIN_LINEAS = 3
 _MIN_DESCRIPCION = 120
@@ -298,7 +303,7 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
     }
 
 
-# Índices precalculados que viajan con el código
+# Índices precalculados que viajan con el código, UN FICHERO POR PAÍS
 # (``tools/generar_precios_publicos.py``). Construir un país en vivo
 # cuesta hasta ~7 s —la capa de variante del inglés pasa por miles de
 # cadenas— y en una instancia fría de Vercel la primera petición pagaba
@@ -306,22 +311,21 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
 # por timeout el primer día. El JSON se lee en milisegundos; si falta
 # o está dañado se calcula en vivo (red de seguridad, mismo patrón que
 # ``cifras_catalogo.json``). La deriva la caza el test que compara el
-# artefacto con el cálculo en vivo.
-_FICHERO_PRECALCULADO = _DATOS / "precios_publicos.json"
+# artefacto con el cálculo en vivo. Nació como un único JSON; al
+# encender los 22 mercados con matriz habría rondado los 90 MB, así
+# que cada país lleva el suyo (~4 MB): el proceso solo parsea los
+# países que sirve y git solo versiona el país que cambia.
+_DIR_PRECALCULADO = _DATOS / "precios_publicos"
 
 
-@lru_cache(maxsize=1)
-def _artefacto() -> dict:
-    try:
-        datos = json.loads(_FICHERO_PRECALCULADO.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return datos.get("paises") or {}
-
-
-@lru_cache(maxsize=8)
+@lru_cache(maxsize=32)
 def _indice_desde_artefacto(cc: str) -> dict | None:
-    bruto = _artefacto().get(cc)
+    try:
+        bruto = json.loads(
+            (_DIR_PRECALCULADO / f"{cc}.json").read_text(encoding="utf-8")
+        )
+    except (OSError, ValueError):
+        return None
     if not bruto:
         return None
     try:
