@@ -113,7 +113,13 @@ def _hreflang(origen: str, rutas: list[dict]) -> list[dict]:
 
 
 def _alternates_visibles(rutas: list[dict], cc_actual: str) -> list[dict]:
-    """Selector de país visible: los demás mercados con esta página."""
+    """Selector de país visible: los demás mercados con esta página.
+
+    El nombre va en el idioma de la PÁGINA, no en el del destino: con
+    los cinco ingleses coincidían, pero al encender España una página
+    en inglés decía «España» y una en español «the United States».
+    """
+    lang_pagina = str((PAISES.get(cc_actual) or {}).get("idioma") or "es")
     salida = []
     for r in rutas:
         if r["cc"] == cc_actual:
@@ -123,7 +129,7 @@ def _alternates_visibles(rutas: list[dict], cc_actual: str) -> list[dict]:
             {
                 "cc": r["cc"],
                 "bandera": pais.get("bandera") or "",
-                "nombre": _nombre_pais(r["cc"], str(pais.get("idioma") or "es")),
+                "nombre": _nombre_pais(r["cc"], lang_pagina),
                 "href": r["path"],
             }
         )

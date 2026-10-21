@@ -70,14 +70,17 @@ def test_hay_al_menos_un_pais_publicado():
 
 def test_guardia_ninguna_pagina_fina_ni_con_restos():
     for cc in PUBLICADOS:
+        es_en = PAISES[cc]["idioma"] == "en"
         resumen = pp.resumen(cc)
         assert resumen["total_partidas"] >= 1000
         for capitulo in resumen["capitulos"]:
-            assert not _restos_es(capitulo["nombre"]), capitulo["nombre"]
+            if es_en:
+                assert not _restos_es(capitulo["nombre"]), capitulo["nombre"]
             for ap_resumen in capitulo["apartados"]:
                 assert ap_resumen["n_partidas"] >= 3
                 ficha_ap = pp.apartado(cc, ap_resumen["slug"])
-                assert not _restos_es(ficha_ap["nombre"]), ficha_ap["nombre"]
+                if es_en:
+                    assert not _restos_es(ficha_ap["nombre"]), ficha_ap["nombre"]
                 for entrada in ficha_ap["partidas"]:
                     ficha = pp.partida(cc, ap_resumen["slug"], entrada["slug"])
                     assert ficha is not None
@@ -85,11 +88,17 @@ def test_guardia_ninguna_pagina_fina_ni_con_restos():
                     assert len(ficha["descripcion"]) >= 120
                     assert ficha["pu"] > 0
                     assert ficha["fecha_revision"], "sin fecha de revisión"
-                    textos = [ficha["titulo"], ficha["descripcion"]] + [
-                        linea["nombre"] for linea in ficha["lineas"]
-                    ]
-                    restos = [r for t in textos for r in _restos_es(t)]
-                    assert not restos, (ficha["codigo"], restos[:5])
+                    if es_en:
+                        textos = [ficha["titulo"], ficha["descripcion"]] + [
+                            linea["nombre"] for linea in ficha["lineas"]
+                        ]
+                        restos = [r for t in textos for r in _restos_es(t)]
+                        assert not restos, (ficha["codigo"], restos[:5])
+                    else:
+                        # Mercado hispano: la descripción sale del catálogo
+                        # nativo + glosario; si algún día saliera en inglés
+                        # por un cruce de tablas, esta señal lo caza.
+                        assert _restos_es(ficha["descripcion"]), ficha["codigo"]
 
 
 def test_formula_del_pu_contra_los_ficheros():
@@ -156,6 +165,43 @@ def test_slugs_unicos_por_pais():
         assert total == resumen["total_partidas"]
 
 
+def test_mercados_del_mismo_idioma_no_son_calcos():
+    """Dos países del mismo idioma no son el mismo texto con otra bandera.
+
+    La diferenciación regional es la mitad del valor SEO de publicar
+    por mercado: glosario propio (interruptor/apagador,
+    labor/labour) y precios consultados en cada país. Medido al
+    encender la tanda hispana (2026-10-21): ES↔MX difieren en texto
+    772 de 1.986 fichas comunes y US↔GB 1.463 de 1.779; el umbral de
+    100 deja margen sin convertir el test en decoración.
+    """
+    por_idioma: dict[str, list[str]] = {}
+    for cc in PUBLICADOS:
+        por_idioma.setdefault(PAISES[cc]["idioma"], []).append(cc)
+    for paises in por_idioma.values():
+        if len(paises) < 2:
+            continue
+        a_cc, b_cc = paises[0], paises[1]
+        a = {f["codigo"]: f for f in pp._indice(a_cc)["partidas"].values()}
+        b = {f["codigo"]: f for f in pp._indice(b_cc)["partidas"].values()}
+        comunes = sorted(set(a) & set(b))
+        assert len(comunes) >= 1000, (a_cc, b_cc)
+        texto_distinto = sum(
+            1
+            for c in comunes
+            if a[c]["titulo"] != b[c]["titulo"]
+            or a[c]["descripcion"] != b[c]["descripcion"]
+        )
+        assert texto_distinto >= 100, (a_cc, b_cc, texto_distinto)
+        precio_distinto = sum(
+            1
+            for c in comunes
+            if a[c]["moneda"] != b[c]["moneda"]
+            or abs(a[c]["pu"] - b[c]["pu"]) > 1e-9
+        )
+        assert precio_distinto >= 0.9 * len(comunes), (a_cc, b_cc)
+
+
 def test_rutas_y_canonical(cliente_web):
     for cc in PUBLICADOS:
         ruta, ficha = _una_partida(cc)
@@ -166,9 +212,9 @@ def test_rutas_y_canonical(cliente_web):
         assert "BreadcrumbList" in resp.text and "FAQPage" in resp.text
         indice = cliente_web.get(pp.ruta_indice(cc))
         assert indice.status_code == 200
-        assert not _restos_es(_texto(resp.text)), ruta
-        assert not _restos_es(_texto(indice.text)), pp.ruta_indice(cc)
         if PAISES[cc]["idioma"] == "en":
+            assert not _restos_es(_texto(resp.text)), ruta
+            assert not _restos_es(_texto(indice.text)), pp.ruta_indice(cc)
             # Sin prefijo /en-cc/ -> 301 a la canónica.
             sin_prefijo = cliente_web.get(
                 f"/{cc.lower()}/prices", follow_redirects=False
@@ -181,12 +227,27 @@ def test_rutas_y_canonical(cliente_web):
             )
             assert mal_tema.status_code == 301
             assert mal_tema.headers["location"].endswith("/prices")
+        else:
+            # Tema en inglés en mercado hispano -> 301 a /precios.
+            mal_tema = cliente_web.get(
+                f"/{cc.lower()}/prices", follow_redirects=False
+            )
+            assert mal_tema.status_code == 301
+            assert mal_tema.headers["location"].endswith(pp.ruta_indice(cc))
+            # Prefijo /en-cc/ en mercado hispano -> 301 a la canónica.
+            con_prefijo = cliente_web.get(
+                f"/en-{cc.lower()}/precios", follow_redirects=False
+            )
+            assert con_prefijo.status_code == 301
+            assert con_prefijo.headers["location"].endswith(pp.ruta_indice(cc))
         assert cliente_web.get(ruta + "-no-existe").status_code == 404
         assert cliente_web.get(pp.ruta_indice(cc) + "/no-existe").status_code == 404
 
 
 def test_pais_sin_publicar_devuelve_404(cliente_web):
-    apagados = [c for c in ("GB", "CA", "AU", "IE", "MX", "ES") if c not in PUBLICADOS]
+    # VE no tiene matriz en el repo: aunque la lista de encendidos
+    # crezca, sin matriz no puede existir su catálogo público.
+    apagados = [c for c in ("GB", "CA", "AU", "IE", "MX", "ES", "VE") if c not in PUBLICADOS]
     for cc in apagados:
         prefijo = f"/en-{cc.lower()}" if PAISES[cc]["idioma"] == "en" else f"/{cc.lower()}"
         tema = "prices" if PAISES[cc]["idioma"] == "en" else "precios"
@@ -256,6 +317,11 @@ def test_mapa_del_sitio_enlaza_los_catalogos(cliente_web):
     for cc in PUBLICADOS:
         if PAISES[cc]["idioma"] == "en":
             assert f'href="{pp.ruta_indice(cc)}"' in mapa.text, cc
+    mapa_es = cliente_web.get("/mapa-del-sitio")
+    assert mapa_es.status_code == 200
+    for cc in PUBLICADOS:
+        if PAISES[cc]["idioma"] != "en":
+            assert f'href="{pp.ruta_indice(cc)}"' in mapa_es.text, cc
 
 
 def test_no_sombrea_rutas_de_la_app(cliente_web):
