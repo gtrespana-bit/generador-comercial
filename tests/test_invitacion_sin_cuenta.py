@@ -251,7 +251,10 @@ def test_crear_empresa_britanica_guarda_los_defaults_del_mercado(
 
     assert respuesta.status_code == 303, respuesta.text
     destino = respuesta.headers["location"]
-    assert destino.startswith(("/bienvenida", "/pago")), destino
+    # El alta siempre pasa por el asistente, haya prueba o no: una empresa sin
+    # configurar no debe entrar directa al panel (ver
+    # tests/test_alta_organizacion_configuracion.py).
+    assert destino.startswith("/bienvenida"), destino
 
     with Session() as db:
         organizacion = (

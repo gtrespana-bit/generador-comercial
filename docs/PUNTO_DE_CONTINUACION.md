@@ -23,6 +23,46 @@ junto con `basedatos_partidas/EMPEZAR_AQUI.md` (reglas y progreso del catálogo)
 
 ---
 
+## ✅ Cierre de sesión — Alta de organización: siempre pasa por la configuración (21/10/2026)
+
+**Incidencia reportada por el titular.** «Tengo una cuenta con varias
+organizaciones. Cada vez que creo una organización nueva solo me pide nombre y
+país y entra directa al generador; el paso de configurar (país, moneda,
+impuesto, nombre, logo) solo aparece al volver a entrar a la organización.»
+
+**Causa: era del código, no del uso.** `POST /organizaciones/nueva` terminaba en
+`/pago` cuando la identidad ya había gastado su prueba gratuita. Ese es siempre
+el caso a partir de la segunda empresa, porque la prueba es **por correo
+normalizado, no por organización** (ver «Prueba gratuita de 7 días», 18/08).
+El asistente (`/bienvenida`) solo se abría al pasar por `/inicio`; desde
+cualquier otra pantalla de trabajo la organización recién creada se «saltaba»
+la configuración, y el asistente aparecía únicamente en una segunda visita.
+Con `COTIZAT_EXIGIR_LICENCIA=true` había además un bloqueo real: `/bienvenida`
+colgaba de `get_db`, así que una empresa sin licencia no podía configurarse ni
+llegando a la ruta.
+
+**Corrección (`app/routers/auth.py`).**
+- `crear_organizacion_web` aterriza **siempre** en `/bienvenida`. Si la prueba
+  no se concedió, el aviso lo dice y el plan se elige al terminar; negar la
+  prueba sigue sin impedir pagar.
+- `/bienvenida` (GET y POST) usa `get_db_renovacion`: la configuración inicial
+  no queda detrás del corte por licencia. Al terminar, si el corte está
+  encendido y la empresa no tiene plan, se la lleva a `/pago` en lugar de
+  dejarla en la pantalla de suspensión.
+- La configuración nace con `empresa_nombre` = el nombre escrito en el alta y
+  el asistente lo muestra relleno (`onboarding.html` / `onboarding_en.html`):
+  el mismo dato no se pide dos veces.
+
+**Pruebas.** `tests/test_alta_organizacion_configuracion.py` reproduce el caso
+exacto (cuenta con una empresa ya configurada y la prueba gastada): el alta va
+a `/bienvenida`, el asistente pinta el formulario con país/moneda/IVA/nombre
+del alta, `/bienvenida` no depende de `get_db`, y el destino al terminar
+respeta el interruptor de licencia. `tests/conftest.py` resuelve también
+`get_db_renovacion` para la fixture `entorno`. Suite completa: **2322 passed,
+13 skipped**.
+
+---
+
 ## ✅ Cierre de sesión — Cron en Vercel: diagnóstico, /readyz y guardas CI (18/08/2026, noche)
 
 > **Actualización 19/08/2026:** todo lo de esta sección quedó **completado y

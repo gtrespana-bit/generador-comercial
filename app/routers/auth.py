@@ -834,6 +834,11 @@ async def crear_organizacion_web(
     _pais_data = PAISES.get(pais_org, PAIS_GENERICO)
     _cfg_init = Configuracion(
         organizacion_id=organizacion.id,
+        # El nombre comercial ya se preguntó en este formulario: se copia a la
+        # configuración para que el asistente de bienvenida lo muestre escrito
+        # y no vuelva a pedirlo. Sin esto la organización nacía como «Mi
+        # Empresa» y el paso de configuración pedía de nuevo el mismo dato.
+        empresa_nombre=nombre,
         empresa_pais=_pais_data["nombre"],
         moneda_default=_pais_data["moneda"],
         iva_default=float(_pais_data["iva"]),
@@ -844,11 +849,21 @@ async def crear_organizacion_web(
     db.add(_cfg_init)
     db.commit()
 
-    # Sin prueba, la persona va a la pantalla de planes: negarla nunca puede
-    # impedir pagar. Con prueba, entra directa a la bienvenida.
-    destino = "/bienvenida" if resultado_prueba.concedida else "/pago"
+    # Toda organización recién creada pasa por el asistente de bienvenida
+    # (nombre, país, moneda, IVA, etiqueta fiscal, logo). Antes, cuando la
+    # identidad ya había gastado su prueba —el caso normal de una cuenta con
+    # varias empresas—, el alta saltaba directo a `/pago` y la organización se
+    # quedaba sin configurar: el asistente solo aparecía más tarde, al entrar
+    # por `/inicio`, y desde las demás pantallas de trabajo nunca se veía.
+    # El plan se elige al terminar la configuración, no antes de empezarla;
+    # negar la prueba sigue sin impedir pagar.
+    mensaje = (
+        resultado_prueba.mensaje
+        if resultado_prueba.concedida
+        else "Tu organización está creada. Termina su configuración para empezar a trabajar."
+    )
     response = RedirectResponse(
-        f"{destino}?msg={quote(resultado_prueba.mensaje)}", status_code=303
+        f"/bienvenida?msg={quote(mensaje)}", status_code=303
     )
     _set_organization_cookie(response, organizacion.id)
     # Telemetría (E5-012): paso 2 del embudo, contado en el servidor.
@@ -1228,7 +1243,16 @@ def aceptar_invitacion_web(
 # ---------------------------------------------------------------------------
 
 @router.get("/bienvenida", response_class=HTMLResponse)
-def bienvenida(request: Request, db: Session = Depends(get_db)):
+def bienvenida(request: Request, db: Session = Depends(get_db_renovacion)):
+    """Asistente de configuración inicial de la organización.
+
+    Usa la puerta **sin corte por licencia** a propósito: una organización
+    recién creada cuya identidad ya gastó la prueba nace sin licencia, y con
+    ``COTIZAT_EXIGIR_LICENCIA`` encendido la pantalla de suspensión impediría
+    justamente darla de alta (nombre, país, moneda, IVA, logo). El asistente no
+    enseña datos de negocio: solo la configuración de esa empresa. El pago se
+    exige después, al terminar (ver ``finalizar_bienvenida``).
+    """
     cfg = _config(db)
     if cfg.onboarding_completado:
         return _redirect("/inicio")
@@ -1308,7 +1332,9 @@ def _idioma(request) -> str:
 
 
 @router.post("/bienvenida")
-async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
+async def finalizar_bienvenida(
+    request: Request, db: Session = Depends(get_db_renovacion)
+):
     cfg = _config(db)
     if cfg.onboarding_completado:
         return _redirect("/inicio")
@@ -1344,6 +1370,24 @@ async def finalizar_bienvenida(request: Request, db: Session = Depends(get_db)):
         if ruta:
             cfg.logo = ruta
             db.commit()
+
+    # Con el corte por licencia encendido, una empresa sin prueba no puede
+    # entrar a trabajar: si la enviáramos a `/inicio`, lo que vería sería la
+    # pantalla de suspensión justo después de configurarse. Se la lleva a
+    # elegir plan, que es el paso que de verdad le queda.
+    from ..services.licencias import exigencia_licencia_activada, organizacion_tiene_acceso
+
+    organizacion_id = int(db.info.get("organizacion_id") or 0)
+    if exigencia_licencia_activada() and not organizacion_tiene_acceso(
+        db, organizacion_id
+    ):
+        return _redirect(
+            "/pago",
+            msg=(
+                "Tu empresa ya está configurada. Elige un plan para empezar a "
+                "usar CotizaT."
+            ),
+        )
     return _redirect("/inicio", msg="Tu espacio de trabajo está listo. Completa la guía para crear tu primer PDF.")
 
 
