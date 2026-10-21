@@ -55,6 +55,23 @@ def _texto(html: str) -> str:
     return re.sub(r"<[^>]+>", " ", sin_scripts)
 
 
+def _texto_sin_toponimos(html: str, cc_pagina: str) -> str:
+    """Texto visible sin los nombres propios de los mercados.
+
+    «El Salvador» también es su nombre en inglés (así lo trae el
+    registro en ``nombre_en``): sin quitar el topónimo, el detector
+    caza su «El» como si fuera prosa sin traducir al aparecer en el
+    selector de países de las páginas inglesas.
+    """
+    texto = _texto(html)
+    en = PAISES[cc_pagina]["idioma"] == "en"
+    for otro in PUBLICADOS:
+        nombre = PAISES[otro].get("nombre_en" if en else "nombre") or ""
+        if nombre:
+            texto = texto.replace(nombre, " ")
+    return texto
+
+
 def _una_partida(cc: str) -> tuple[str, dict]:
     """(ruta, ficha) de una partida publicable del país, determinista."""
     resumen = pp.resumen(cc)
@@ -213,8 +230,10 @@ def test_rutas_y_canonical(cliente_web):
         indice = cliente_web.get(pp.ruta_indice(cc))
         assert indice.status_code == 200
         if PAISES[cc]["idioma"] == "en":
-            assert not _restos_es(_texto(resp.text)), ruta
-            assert not _restos_es(_texto(indice.text)), pp.ruta_indice(cc)
+            assert not _restos_es(_texto_sin_toponimos(resp.text, cc)), ruta
+            assert not _restos_es(
+                _texto_sin_toponimos(indice.text, cc)
+            ), pp.ruta_indice(cc)
             # Sin prefijo /en-cc/ -> 301 a la canónica.
             sin_prefijo = cliente_web.get(
                 f"/{cc.lower()}/prices", follow_redirects=False
