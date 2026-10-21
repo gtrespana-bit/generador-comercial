@@ -312,7 +312,7 @@
       {% if part.producto_precio is not none %}<strong>{{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ (part.producto_unidad or part.unidad) | etiqueta_mostrada(part.unidad, es_imperial) }}</strong>&nbsp;&nbsp;{% endif %}
       <em class="muted">{{ part.producto_nombre }}</em>
       {% if part.producto_precio is not none %}
-      <br><small class="hint">Desglose del P.U.: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · producto {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
+      <br><small class="hint">Unit price breakdown: base {{ ((part.precio_unitario - part.producto_precio) | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · product {{ (part.producto_precio | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} · total {{ (part.precio_unitario | precio_mostrado(part.unidad, es_imperial)) | money_iso(p.moneda) }} / {{ part.unidad | unidad_mostrada(es_imperial) }}</small>
       {% endif %}
       {% if part.producto_imagen %}<br><img src="{{ part.producto_imagen | archivo_url }}" alt="Product" loading="lazy" decoding="async">{% endif %}
     </div>
