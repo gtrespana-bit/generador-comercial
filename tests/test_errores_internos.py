@@ -116,6 +116,31 @@ def test_primera_ocurrencia_persiste_y_avisa(entorno):
     assert len(enviados) == 1
     assert enviados[0]["tipo"] == "ValueError"
     assert enviados[0]["ruta"] == "/presupuestos"
+    assert enviados[0]["usuario_email"] == ""
+
+
+def test_usuario_afectado_se_guarda_se_muestra_y_actualiza_en_recurrencias(entorno):
+    Sesiones, enviados = entorno
+    persistir_y_avisar(
+        _datos(usuario_email="ana@example.com", usuario_nombre="Ana García")
+    )
+    assert enviados[0]["usuario_email"] == "ana@example.com"
+    assert enviados[0]["usuario_nombre"] == "Ana García"
+
+    persistir_y_avisar(
+        _datos(
+            usuario_email="luis@example.com",
+            usuario_nombre="Luis",
+            ahora=AHORA + timedelta(minutes=1),
+        )
+    )
+    with Sesiones() as db:
+        fila = db.query(ErrorInterno).one()
+        assert fila.ocurrencias == 2
+        assert fila.usuario_email == "luis@example.com"
+        assert fila.usuario_nombre == "Luis"
+        assert listar_errores_recientes(db)[0]["usuario_email"] == "luis@example.com"
+    assert len(enviados) == 1  # no se reenvía por recurrencia
 
 
 def test_recurrencia_suma_sin_volver_a_avisar(entorno):
@@ -189,7 +214,12 @@ def test_persistir_nunca_lanza_aunque_la_bd_falle(monkeypatch):
 
 
 def _app_que_estalla():
-    async def boom(_request):
+    async def boom(request):
+        from types import SimpleNamespace
+
+        request.state.supabase_identity = SimpleNamespace(
+            email="cuenta@example.com", name="Cuenta de prueba"
+        )
         raise ValueError("explosion-middleware")
 
     async def sana(_request):
@@ -209,8 +239,11 @@ def test_middleware_persiste_el_500_y_no_toca_las_sanas(entorno):
     with Sesiones() as db:
         fila = db.query(ErrorInterno).one()
         assert fila.ruta == "/boom"
+        assert fila.usuario_email == "cuenta@example.com"
+        assert fila.usuario_nombre == "Cuenta de prueba"
         assert "explosion-middleware" in fila.traza
     assert len(enviados) == 1
+    assert enviados[0]["usuario_email"] == "cuenta@example.com"
 
 
 def test_datos_error_incluye_traza_saneada():
@@ -223,6 +256,31 @@ def test_datos_error_incluye_traza_saneada():
     assert datos["metodo"] == "GET"
     assert datos["ruta"] == "/x"
     assert "ValueError: con-token" in datos["traza"]
+
+
+def test_datos_error_toma_solo_la_identidad_validada_del_scope():
+    from types import SimpleNamespace
+
+    try:
+        raise RuntimeError("boom")
+    except RuntimeError as exc:
+        datos = datos_error(
+            {
+                "method": "POST",
+                "path": "/presupuestos/80/editar",
+                "state": {
+                    "supabase_identity": SimpleNamespace(
+                        email="cliente@example.com", name="Cliente"
+                    ),
+                    "usuario": SimpleNamespace(
+                        email="cliente@example.com", nombre="Cliente"
+                    ),
+                },
+            },
+            exc,
+        )
+    assert datos["usuario_email"] == "cliente@example.com"
+    assert datos["usuario_nombre"] == "Cliente"
 
 
 # ---------------------------------------------------------------------------

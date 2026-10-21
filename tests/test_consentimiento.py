@@ -547,7 +547,11 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     assert fiscalidad_ie_migracion.down_revision == lectura_operador_migracion.revision
     assert fiscalidad_us_migracion.down_revision == fiscalidad_ie_migracion.revision
     assert errores_internos_migracion.down_revision == fiscalidad_us_migracion.revision
-    assert errores_internos_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    from migrations.versions import (
+        p3f7a1c9d2e4_identidad_error_y_unidad_producto as identidad_error_migracion,
+    )
+    assert identidad_error_migracion.down_revision == errores_internos_migracion.revision
+    assert identidad_error_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

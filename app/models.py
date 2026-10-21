@@ -1035,7 +1035,10 @@ class PresupuestoItem(TenantMixin, Base):
     # Coste de compra congelado al asociar el producto, para que el margen del
     # presupuesto no cambie al actualizar el catálogo posteriormente.
     producto_coste = Column(Float, nullable=True)
-    producto_unidad = Column(String(20), default="")
+    # El dato suele ser una unidad breve, pero la importación de ciertos
+    # catálogos usa aquí una descripción de variante/nombre comercial.
+    # 20 caracteres truncaba presupuestos reales al guardar partidas.
+    producto_unidad = Column(String(120), default="")
     producto_imagen = Column(String(300), default="")   # referencia lógica o ruta local histórica
     # Campos avanzados, invisibles en el modo básico.
     tipo_partida = Column(String(20), default="included")
@@ -3576,8 +3579,10 @@ class MensajeSoporte(Base):
 class ErrorInterno(Base):
     """Huella durable de un error no capturado (los 500), Fase 0.2.
 
-    **No es una tabla de tenant ni lleva datos de clientes**: es telemetría
-    de la propia aplicación. El registro en memoria de ``operacion.py`` se
+    **No es una tabla de tenant**: es telemetría de la propia aplicación.
+    Conserva el email y nombre de la identidad verificada más reciente para
+    que el operador pueda contactar al usuario afectado; los fallos anónimos
+    no llevan identidad. El registro en memoria de ``operacion.py`` se
     perdía al reiniciar cada instancia serverless; esta tabla es el
     sumidero propio que aquella limitación declaraba como siguiente paso,
     sin SDK de terceros ni coste por petición (solo se escribe cuando ya
@@ -3611,6 +3616,9 @@ class ErrorInterno(Base):
     ruta = Column(String(160), nullable=False, default="/")
     tipo = Column(String(120), nullable=False, default="")
     mensaje = Column(String(300), nullable=False, default="")
+    #: Identidad verificada más reciente asociada a esta huella; vacía si anónimo.
+    usuario_email = Column(String(254), nullable=False, default="")
+    usuario_nombre = Column(String(200), nullable=False, default="")
     #: Traceback redactado y recortado de la última ocurrencia.
     traza = Column(Text, nullable=False, default="")
     ocurrencias = Column(Integer, nullable=False, default=1)

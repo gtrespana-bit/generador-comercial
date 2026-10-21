@@ -13,9 +13,11 @@ Reglas, las de todos los avisos internos de la casa:
   solo se entra cuando ya existe un 500. La escritura va en su propia
   sesión (la del request está rota por definición) y cualquier fallo —
   incluida la tabla aún sin migrar— se traga en silencio.
-- **Sin datos de clientes.** La ruta llega saneada (sin query ni tokens),
-  el mensaje sin credenciales y la traza pasa por ``logs.redactar`` antes
-  de guardarse, recortada a su parte útil.
+- **Datos mínimos para dar seguimiento.** Solo se conserva el nombre y
+  email de una identidad ya verificada, para poder contactar a quien sufrió
+  el fallo. La ruta llega saneada (sin query ni tokens), el mensaje sin
+  credenciales y la traza pasa por ``logs.redactar`` antes de guardarse,
+  recortada a su parte útil.
 - **La respuesta HTTP no se toca.** El middleware relanza la excepción
   igual que antes; esto solo deja constancia y, si toca, un correo.
 
@@ -113,7 +115,8 @@ def _persistir(datos: dict) -> bool:
             avisar = db.execute(
                 text(
                     "SELECT cotizat_security.registrar_error_interno("
-                    ":huella, :metodo, :ruta, :tipo, :mensaje, :traza, :ahora)"
+                    ":huella, :metodo, :ruta, :tipo, :mensaje, :traza, "
+                    ":usuario_email, :usuario_nombre, :ahora)"
                 ),
                 {
                     "huella": huella,
@@ -122,6 +125,8 @@ def _persistir(datos: dict) -> bool:
                     "tipo": datos["tipo"],
                     "mensaje": datos["mensaje"],
                     "traza": datos.get("traza") or "",
+                    "usuario_email": str(datos.get("usuario_email") or "")[:254],
+                    "usuario_nombre": str(datos.get("usuario_nombre") or "")[:200],
                     "ahora": ahora,
                 },
             ).scalar()
@@ -139,6 +144,8 @@ def _persistir(datos: dict) -> bool:
                     ruta=datos["ruta"][:160] or "/",
                     tipo=datos["tipo"][:120],
                     mensaje=datos["mensaje"][:300],
+                    usuario_email=str(datos.get("usuario_email") or "")[:254],
+                    usuario_nombre=str(datos.get("usuario_nombre") or "")[:200],
                     traza=datos.get("traza") or "",
                     ocurrencias=1,
                     primera_vez=ahora,
@@ -152,6 +159,8 @@ def _persistir(datos: dict) -> bool:
         fila.ocurrencias += 1
         fila.ultima_vez = ahora
         fila.traza = datos.get("traza") or ""
+        fila.usuario_email = str(datos.get("usuario_email") or "")[:254]
+        fila.usuario_nombre = str(datos.get("usuario_nombre") or "")[:200]
         fila.resuelto_en = None
         db.commit()
         return avisar
@@ -190,6 +199,8 @@ def _avisar(datos: dict) -> None:
         tipo=datos["tipo"],
         mensaje=datos["mensaje"],
         traza=datos.get("traza") or "",
+        usuario_email=str(datos.get("usuario_email") or "")[:254],
+        usuario_nombre=str(datos.get("usuario_nombre") or "")[:200],
         cuando=datos["ahora"].strftime(_FORMATO_FECHA),
         panel_url=url_panel_absoluta("/admin/sistema?tab=estado"),
     )
@@ -208,6 +219,8 @@ def _fila_a_dict(fila: ErrorInterno) -> dict:
         "ruta": fila.ruta,
         "tipo": fila.tipo,
         "mensaje": fila.mensaje,
+        "usuario_email": fila.usuario_email or "",
+        "usuario_nombre": fila.usuario_nombre or "",
         "primera_vez": fila.primera_vez.strftime(_FORMATO_FECHA),
         "ultima_vez": fila.ultima_vez.strftime(_FORMATO_FECHA),
         "ocurrencias": fila.ocurrencias,

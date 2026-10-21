@@ -28,6 +28,7 @@ from migrations.versions import (
     m8e1f4a7b2c5_fiscalidad_irlanda_rct as fiscalidad_ie_migracion,
     n9f2a5b8c3d6_fiscalidad_estados_unidos as fiscalidad_us_migracion,
     o2e4a6c8b1d3_errores_internos as errores_internos_migracion,
+    p3f7a1c9d2e4_identidad_error_y_unidad_producto as identidad_error_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -243,11 +244,12 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [errores_internos_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({errores_internos_migracion.revision}); "
+    assert cabezas == [identidad_error_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({identidad_error_migracion.revision}); "
         f"hay: {cabezas}"
     )
-    # La cabeza es el registro durable de errores internos (Fase 0.2); detrás
+    assert identidad_error_migracion.down_revision == errores_internos_migracion.revision
+    # El registro durable de errores internos (Fase 0.2) queda inmediatamente detrás;
     # quedan la fiscalidad de EE. UU., la irlandesa (RCT), la lectura de
     # operador sobre el catálogo de recursos (panel de matrices de precios),
     # la fiscalidad británica (CIS + inversión del sujeto pasivo) y el

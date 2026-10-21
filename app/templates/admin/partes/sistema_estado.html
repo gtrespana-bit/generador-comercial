@@ -75,7 +75,7 @@
       {% if diagnostico.errores %}
       <div class="table-container">
         <table class="estado-tabla">
-          <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th class="tabla-num">Veces</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Última vez</th><th>Método y ruta</th><th>Tipo</th><th>Mensaje</th><th>Usuario afectado</th><th class="tabla-num">Veces</th><th>Estado</th></tr></thead>
           <tbody>
             {% for error in diagnostico.errores %}
             <tr>
@@ -89,6 +89,14 @@
                   <summary>Ver traza</summary>
                   <pre>{{ error.traza }}</pre>
                 </details>
+                {% endif %}
+              </td>
+              <td>
+                {% if error.usuario_email %}
+                  {% if error.usuario_nombre %}<strong>{{ error.usuario_nombre }}</strong><br>{% endif %}
+                  <a href="mailto:{{ error.usuario_email }}">{{ error.usuario_email }}</a>
+                {% else %}
+                  <span class="muted">No autenticado / no disponible</span>
                 {% endif %}
               </td>
               <td class="tabla-num">{{ error.ocurrencias }}</td>
