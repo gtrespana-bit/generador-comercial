@@ -3620,6 +3620,67 @@ class ErrorInterno(Base):
     resuelto_en = Column(DateTime, nullable=True)
 
 
+class SolicitudEliminacion(Base):
+    """Solicitud de supresión total de cuenta y datos (bloque 2: solicitud).
+
+    **No es una tabla de tenant**: es información del titular sobre un
+    cliente —su petición formal de borrarlo todo—, así que lleva RLS de
+    operador (FORCE + políticas ``cotizat_se_*``, migración
+    ``p5f1c8d2a7b4``). El cliente autenticado solo puede crear la suya,
+    leer si tiene una pendiente y cancelarla, y únicamente a través de las
+    funciones SECURITY DEFINER ``cotizat_security.solicitar_eliminacion``,
+    ``solicitud_eliminacion_pendiente`` y ``cancelar_solicitud_eliminacion``
+    (guardadas por el claim de sesión ``cotizat.auth_user_id``: nadie puede
+    pedir la supresión de otra persona).
+
+    Ciclo de vida: nace ``pendiente``; el propio usuario puede dejarla
+    ``cancelada`` (sin contraseña: cancelar es la dirección segura) o el
+    operador la deja ``ejecutada`` al purgar organización y cuenta en la
+    aplicación (bloque 3), con ``auth_pendiente`` hasta que el titular borra
+    la identidad en Supabase Auth y lo marca. La cuenta sigue plenamente
+    usable mientras la solicitud está ``pendiente``. Al ejecutarse, el email
+    en claro desaparece de la base; la única marca que queda es
+    ``email_hash`` (irreversible), para que el anti-abuso de pruebas y el
+    registro de consentimiento sigan funcionando sin conservar el correo.
+
+    ``usuario_id`` va con ``ON DELETE SET NULL``: la purga borra el
+    ``Usuario`` y la solicitud debe sobrevivir como acta de que se hizo.
+    """
+
+    __tablename__ = "solicitudes_eliminacion"
+    __table_args__ = (
+        CheckConstraint(
+            "estado IN ('pendiente', 'cancelada', 'ejecutada')",
+            name="ck_solic_elim_estado_valido",
+        ),
+        Index("ix_solic_elim_estado_creada", "estado", "created_at"),
+        Index("ix_solic_elim_auth", "auth_user_id"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    usuario_id = Column(
+        Integer,
+        ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    #: UUID de Supabase Auth en el momento de la solicitud (la purga del
+    #: `Usuario` no debe dejarnos sin saber a quién le falta borrar la
+    #: identidad Auth).
+    auth_user_id = Column(String(36), nullable=False, default="")
+    email = Column(String(254), nullable=False, default="")
+    nombre = Column(String(200), nullable=False, default="")
+    motivo = Column(Text, nullable=False, default="")
+    estado = Column(String(20), nullable=False, default="pendiente")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    cancelada_at = Column(DateTime, nullable=True)
+    # --- Ejecución (operador, bloque 3) ---
+    ejecutada_at = Column(DateTime, nullable=True)
+    ejecutada_por = Column(String(254), nullable=False, default="")
+    auth_pendiente = Column(Boolean, nullable=False, default=False)
+    email_hash = Column(String(64), nullable=False, default="", index=True)
+
+
 class ContenidoWeb(Base):
     """Contenido público de la web con publicar/descartar (Fase 3, C1/C2).
 

@@ -171,6 +171,9 @@ class AuthRateLimitMiddleware:
         # Verifica la contraseña actual: sin límite, una sesión robada podría
         # usarse para adivinarla por fuerza bruta desde el propio panel.
         "/cuenta/clave": 10,
+        # Solicitar la supresión total también reautentica con la contraseña
+        # actual: mismo motivo, mismo límite.
+        "/cuenta/eliminacion": 10,
         # Formulario público de demo: evita que un bot inunde el buzón de
         # soporte con solicitudes falsas.
         "/demo": 3,

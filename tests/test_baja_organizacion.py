@@ -14,9 +14,11 @@ from urllib.parse import unquote
 
 import pytest
 
+from app.datos_pago import METODO_STRIPE
 from app.models import (
     ArchivoAlmacenado,
     Cliente,
+    CompraPlan,
     Configuracion,
     Licencia,
     Membresia,
@@ -26,6 +28,7 @@ from app.models import (
     Usuario,
 )
 from app.services.baja import BajaError, ejecutar_baja, resumen_baja
+from app.services.stripe import StripeError
 from app.storage import get_storage_backend
 
 from migrations.versions import a3d7e9c1b5f2_baja_organizacion_function as migration
@@ -260,3 +263,114 @@ def test_migracion_baja_no_hace_nada_en_sqlite(monkeypatch):
 def test_migracion_baja_cuelga_del_head_anterior():
     assert migration.down_revision == "c2f6e8a1d934"
     assert migration.revision == "a3d7e9c1b5f2"
+
+
+# ---------------------------------------------------------------------------
+# Cancelación de la suscripción de Stripe (paso previo a cualquier borrado)
+# ---------------------------------------------------------------------------
+
+def _sembrar_compra_stripe(Session, org_id, subscription_id="sub_test_123"):
+    with Session() as db:
+        db.info["organizacion_id"] = org_id
+        db.info["rol_membresia"] = "propietario"
+        db.add(
+            CompraPlan(
+                plan="mensual",
+                metodo_pago=METODO_STRIPE,
+                estado="activa",
+                stripe_subscription_id=subscription_id,
+            )
+        )
+        db.commit()
+
+
+def _stripe_ok(monkeypatch):
+    """Stripe configurado y cancelación que registra sus llamadas."""
+    llamadas = []
+
+    def _cancelar(subscription_id):
+        llamadas.append(subscription_id)
+        return {"status": "canceled"}
+
+    monkeypatch.setattr("app.services.baja.stripe_configurado", lambda: True)
+    monkeypatch.setattr("app.services.baja.cancelar_suscripcion", _cancelar)
+    return llamadas
+
+
+def test_baja_cancela_la_suscripcion_de_stripe_antes_de_borrar(entorno, cliente_web, monkeypatch):
+    Session, ids, rol = entorno
+    _sembrar_compra_stripe(Session, ids[0])
+    llamadas = _stripe_ok(monkeypatch)
+
+    respuesta = _post_baja(cliente_web)
+    assert respuesta.status_code == 200
+    assert llamadas == ["sub_test_123"]
+    with Session() as db:
+        assert db.get(Organizacion, ids[0]) is None
+
+
+def test_baja_aborta_sin_borrar_si_stripe_rechaza_la_cancelacion(entorno, cliente_web, monkeypatch):
+    Session, ids, rol = entorno
+    _sembrar_compra_stripe(Session, ids[0])
+    antes = _tablas_con_datos(Session, ids[0])
+
+    monkeypatch.setattr("app.services.baja.stripe_configurado", lambda: True)
+
+    def _rechaza(subscription_id):
+        raise StripeError("rechazada")
+
+    monkeypatch.setattr("app.services.baja.cancelar_suscripcion", _rechaza)
+
+    respuesta = _post_baja(cliente_web)
+    assert respuesta.status_code == 303
+    assert "Stripe" in unquote(respuesta.headers["location"])
+    assert _tablas_con_datos(Session, ids[0]) == antes
+    with Session() as db:
+        assert db.get(Organizacion, ids[0]) is not None
+
+
+def test_baja_cancela_una_sola_vez_la_suscripcion_compartida_por_renovaciones(entorno, cliente_web, monkeypatch):
+    Session, ids, rol = entorno
+    _sembrar_compra_stripe(Session, ids[0])
+    _sembrar_compra_stripe(Session, ids[0])
+    llamadas = _stripe_ok(monkeypatch)
+
+    respuesta = _post_baja(cliente_web)
+    assert respuesta.status_code == 200
+    assert llamadas == ["sub_test_123"]
+
+
+def test_baja_con_suscripcion_sin_stripe_configurado_aborta(entorno, cliente_web, monkeypatch):
+    Session, ids, rol = entorno
+    _sembrar_compra_stripe(Session, ids[0])
+    antes = _tablas_con_datos(Session, ids[0])
+    monkeypatch.setattr("app.services.baja.stripe_configurado", lambda: False)
+
+    respuesta = _post_baja(cliente_web)
+    assert respuesta.status_code == 303
+    assert "Stripe" in unquote(respuesta.headers["location"])
+    assert _tablas_con_datos(Session, ids[0]) == antes
+    with Session() as db:
+        assert db.get(Organizacion, ids[0]) is not None
+
+
+def test_resumen_baja_avisa_de_la_suscripcion_stripe(entorno):
+    Session, ids, _rol = entorno
+    _sembrar_compra_stripe(Session, ids[0])
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["rol_membresia"] = "propietario"
+        resumen = resumen_baja(db)
+        assert resumen["suscripciones_stripe"] == 1
+
+
+def test_pantalla_avisa_de_la_cancelacion_stripe_solo_si_paga_con_tarjeta(entorno, cliente_web):
+    Session, ids, rol = entorno
+    pagina = cliente_web.get("/configuracion/baja")
+    assert pagina.status_code == 200
+    assert "suscripción de tarjeta" not in pagina.text
+
+    _sembrar_compra_stripe(Session, ids[0])
+    pagina = cliente_web.get("/configuracion/baja")
+    assert pagina.status_code == 200
+    assert "suscripción de tarjeta (Stripe)" in pagina.text

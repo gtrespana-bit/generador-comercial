@@ -134,4 +134,47 @@
   </form>
   {% endif %}
 </div>
+
+<div class="card">
+  <h2>Delete my account and my data</h2>
+  {% if solicitud_eliminacion %}
+  <div class="alert alert-error">
+    <strong>You have a deletion request in progress</strong>
+    (recorded on {{ solicitud_eliminacion.created_at.strftime("%d/%m/%Y at %H:%M UTC") if solicitud_eliminacion.created_at else "a moment ago" }}).
+  </div>
+  <p>Your account stays <strong>active and fully usable</strong> until we carry out the deletion: a person processes it, it is not instant. When it runs we will delete your access account and personal data, the organizations you own with all their data and files, and your support messages; if you pay by card, the subscription will be cancelled before anything is deleted.</p>
+  <p>Changed your mind? You can withdraw the request right now and everything stays as it is.</p>
+  <form method="post" action="/cuenta/eliminacion/cancelar">
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Cancel the request and keep my account</button>
+    </div>
+  </form>
+  {% else %}
+  <p>Requesting deletion <strong>does not erase anything right away</strong>: it is recorded, we get a notice, and a person carries it out. Until then your account stays active and you can cancel the request anytime. When it runs, the deletion will be total and irreversible:</p>
+  <ul>
+    <li>Your access account and your personal data.</li>
+    <li><strong>The organizations you own, with all their data and files</strong>, even if there are more people on the team (please let them know first).</li>
+    <li>In organizations owned by others where you take part, you will simply stop being a member.</li>
+    <li>Your support messages and your terms acceptance record.</li>
+    <li>If you pay by card, the subscription will be cancelled in Stripe before anything is deleted.</li>
+  </ul>
+  <p class="hint">Before requesting it, take your data with you: from each organization's <em>Settings</em> you can download the full export. And if you only want to close <strong>one</strong> organization and keep your account, you can already do that in Settings → Close the organization.</p>
+  <form method="post" action="/cuenta/eliminacion" data-confirm="Are you sure? Your request to delete the account and all your data will be recorded. You can cancel it while it hasn't been carried out.">
+    <div class="form-grid">
+      <div class="field">
+        <label for="eliminacion-clave">Current password *</label>
+        <input id="eliminacion-clave" name="password_actual" type="password" autocomplete="current-password" required>
+        <p class="hint">We ask for it so no one can request deletion from an open session that is not yours.</p>
+      </div>
+      <div class="field">
+        <label for="eliminacion-motivo">Want to tell us why? (optional)</label>
+        <textarea id="eliminacion-motivo" name="motivo" rows="3" maxlength="4000" placeholder="It helps us improve, but it is not required to delete your account."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">Request total deletion of my account and data</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
 {% endblock %}

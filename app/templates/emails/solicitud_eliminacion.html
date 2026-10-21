@@ -1,0 +1,55 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Solicitud de eliminación · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Eliminación de cuenta
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Una persona pide borrar su cuenta y sus datos
+</h1>
+
+<p style="margin:0 0 22px;font-size:15px;line-height:1.65;color:#475a51;">
+  La ejecución es manual: la cuenta sigue activa y usable hasta que la
+  procesas en el panel. Responde a este correo si necesitas aclarar algo
+  con la persona antes de ejecutar el borrado.
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-size:13px;color:#8ba096;">De</td>
+    <td style="padding:16px 20px;font-size:14px;text-align:right;color:#17211d;">{{ nombre or "Sin nombre" }} &lt;{{ email }}&gt;</td>
+  </tr>
+</table>
+
+{% if motivo %}
+<p style="margin:0 0 10px;font-size:13px;color:#8ba096;">Motivo que dejó al pedirla:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px;">
+  <tr>
+    <td style="border-radius:12px;background:#f7faf8;border:1px solid #e3ece7;padding:18px 20px;font-size:14.5px;line-height:1.7;color:#17211d;white-space:pre-line;">{{ motivo }}</td>
+  </tr>
+</table>
+{% else %}
+<p style="margin:0 0 26px;font-size:14px;line-height:1.65;color:#475a51;">No dejó motivo.</p>
+{% endif %}
+
+{% if panel_url %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+  <tr>
+    <td style="border-radius:12px;background:#eef7f2;border:1px solid #cfe6da;padding:16px 20px;font-size:13.5px;line-height:1.6;color:#28503f;">
+      <a href="{{ panel_url }}" style="color:#0b5b38;font-weight:700;text-decoration:none;">Abrir el panel de administración →</a>
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block pie %}
+Aviso automático de {{ product_name }}. La solicitud queda guardada en el panel hasta que se ejecuta o la persona la cancela.
+{% endblock %}

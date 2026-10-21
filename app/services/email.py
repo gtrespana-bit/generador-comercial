@@ -1051,6 +1051,52 @@ def enviar_mensaje_soporte_por_email(
     )
 
 
+def enviar_solicitud_eliminacion_por_email(
+    *,
+    nombre: str,
+    email: str,
+    motivo: str = "",
+    panel_url: str = "",
+    destino_override: str = "",
+) -> str:
+    """Avisa al buzón de soporte de una solicitud de eliminación total.
+
+    La solicitud ya está guardada en ``solicitudes_eliminacion``; este
+    correo es el empujón para que no se quede esperando, porque la ejecución
+    es manual del operador. ``reply_to`` es la dirección de quien la pide,
+    por si hay que aclarar algo antes de ejecutar el borrado.
+
+    Como el aviso de error interno, es un aviso **interno para el titular**
+    (no un correo al cliente), así que nace único en español, sin gemela
+    ``_en``: las superficies del cliente (panel y mensajes) sí son bilingües.
+    """
+    from ..branding import PRODUCT_NAME
+
+    nombre = str(nombre or "").strip()
+    email = str(email or "").strip().lower()
+    if not email or not email_destino_valido(email):
+        raise EmailValidationError(
+            "La solicitud de eliminación necesita un email válido."
+        )
+
+    contexto = {
+        "product_name": PRODUCT_NAME,
+        "nombre": nombre,
+        "email": email,
+        "motivo": str(motivo or "").strip()[:4000],
+        "panel_url": str(panel_url or "").strip(),
+        "anio": datetime.utcnow().year,
+    }
+    return _enviar_aviso_interno(
+        plantilla="solicitud_eliminacion",
+        contexto=contexto,
+        asunto=f"Solicitud de eliminación de cuenta: {nombre or email}",
+        destino_override=destino_override,
+        reply_to=email,
+        etiqueta="solicitud-eliminacion",
+    )
+
+
 def enviar_aviso_error_interno_por_email(
     *,
     metodo: str,

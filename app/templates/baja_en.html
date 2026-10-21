@@ -19,6 +19,9 @@
     <li>Commercial settings, pending invitations, memberships and the organization itself</li>
   </ul>
   <p>Your <strong>access account</strong> is not deleted: you will be left with no organizations and you can create a new one. The associated license is cancelled with the closure.</p>
+  {% if resumen.suscripciones_stripe %}
+  <p>💳 This organization pays with a <strong>card subscription (Stripe)</strong>: when you confirm the closure it will be cancelled <strong>immediately</strong> in Stripe, before anything is deleted, so it is never charged again. If Stripe refused the cancellation, the closure would stop without deleting any data.</p>
+  {% endif %}
 </div>
 
 <div class="card">

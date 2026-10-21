@@ -1,0 +1,17 @@
+SOLICITUD DE ELIMINACIÓN DE CUENTA · {{ product_name }}
+
+De: {{ nombre or "Sin nombre" }} <{{ email }}>
+
+Una persona pide borrar su cuenta y todos sus datos. La ejecución es
+manual: la cuenta sigue activa y usable hasta que la procesas en el panel.
+Responde a este correo si necesitas aclarar algo antes de ejecutar.
+{% if motivo %}
+Motivo que dejó al pedirla:
+{{ motivo }}
+{% else %}
+No dejó motivo.
+{% endif %}{% if panel_url %}
+Panel de administración: {{ panel_url }}
+{% endif %}
+---
+Aviso automático de {{ product_name }}. La solicitud queda guardada en el panel hasta que se ejecuta o la persona la cancela.

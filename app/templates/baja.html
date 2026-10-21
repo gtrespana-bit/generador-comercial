@@ -19,6 +19,9 @@
     <li>La configuración comercial, las invitaciones pendientes, las membresías y la propia organización</li>
   </ul>
   <p>Tu <strong>cuenta de acceso</strong> no se borra: quedarás sin organizaciones y podrás crear una nueva. La licencia asociada se cancela con la baja.</p>
+  {% if resumen.suscripciones_stripe %}
+  <p>💳 Esta organización paga con <strong>suscripción de tarjeta (Stripe)</strong>: al confirmar la baja se cancelará <strong>de inmediato</strong> en Stripe, antes de borrar nada, para que no vuelva a cobrarse. Si Stripe no aceptara la cancelación, la baja se detendría sin borrar datos.</p>
+  {% endif %}
 </div>
 
 <div class="card">

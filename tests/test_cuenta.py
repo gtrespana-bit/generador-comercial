@@ -319,7 +319,7 @@ def test_toda_ruta_que_recibe_contrasenas_tiene_rate_limit():
     from app.security import AuthRateLimitMiddleware
 
     limitadas = set(AuthRateLimitMiddleware.DEFAULT_LIMITS)
-    assert {"/acceso", "/registro", "/cuenta/clave"} <= limitadas
+    assert {"/acceso", "/registro", "/cuenta/clave", "/cuenta/eliminacion"} <= limitadas
 
 
 def test_cambio_de_clave_rechaza_reutilizar_la_actual():
