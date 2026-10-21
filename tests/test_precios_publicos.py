@@ -314,7 +314,11 @@ def test_los_ficheros_del_servicio_viajan_a_vercel():
         # Muestra del directorio de descompuestos (3.006 ficheros).
         "basedatos_partidas/datos/descompuestos/01.01.01.010.json",
         "basedatos_partidas/salida/traducciones/EN.json",
-        "basedatos_partidas/datos/precios_publicos.json",
+    ] + [
+        # Un artefacto por país encendido: la lista se auto-actualiza
+        # con el interruptor del servicio.
+        f"basedatos_partidas/datos/precios_publicos/{cc}.json"
+        for cc in pp.PAISES_PRECIOS_PUBLICOS
     ]
     assert len(necesarios) >= 10  # cordura: el glob encontró los CSV
     fuera = [n for n in necesarios if esta_fuera(n)]
@@ -325,19 +329,25 @@ def test_los_ficheros_del_servicio_viajan_a_vercel():
 
 
 def test_el_artefacto_precalculado_coincide_con_el_calculo_en_vivo():
-    """Anti-deriva del JSON precalculado (precios_publicos.json).
+    """Anti-deriva de los JSON precalculados (datos/precios_publicos/).
 
-    Las páginas se sirven desde el artefacto (0,1 s) y no desde el
-    cálculo en vivo (~21 s los cinco países: en frío, Vercel no llegaba
-    a calentar y las páginas salieron con 404 por timeout). Si cambian
-    el catálogo, los CSV, las traducciones o los países encendidos y
-    nadie regenera (``tools/generar_precios_publicos.py``), esta prueba
-    lo caza comparando contra el cálculo en vivo.
+    Las páginas se sirven desde el artefacto (0,1 s/país) y no desde
+    el cálculo en vivo (~21 s los cinco mercados ingleses: en frío,
+    Vercel no llegaba a calentar y las páginas salieron con 404 por
+    timeout). Si cambian el catálogo, los CSV, las traducciones o los
+    países encendidos y nadie regenera
+    (``tools/generar_precios_publicos.py``), esta prueba lo caza
+    comparando contra el cálculo en vivo.
     """
-    artefacto = DATOS / "precios_publicos.json"
-    assert artefacto.exists(), "Falta el artefacto: python tools/generar_precios_publicos.py"
-    assert pp._artefacto(), "El artefacto no carga (JSON dañado o sin países)"
     for cc in PUBLICADOS:
+        artefacto = DATOS / "precios_publicos" / f"{cc}.json"
+        assert artefacto.exists(), (
+            f"Falta el artefacto de {cc}: "
+            "python tools/generar_precios_publicos.py"
+        )
+        assert pp._indice_desde_artefacto(cc), (
+            f"El artefacto de {cc} no carga (JSON dañado o sin partidas)"
+        )
         servido = pp._indice(cc)
         vivo = pp._indice_en_vivo(cc)
         assert servido is not None and vivo is not None

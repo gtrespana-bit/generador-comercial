@@ -298,7 +298,7 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
     }
 
 
-# Índices precalculados que viajan con el código
+# Índices precalculados que viajan con el código, UN FICHERO POR PAÍS
 # (``tools/generar_precios_publicos.py``). Construir un país en vivo
 # cuesta hasta ~7 s —la capa de variante del inglés pasa por miles de
 # cadenas— y en una instancia fría de Vercel la primera petición pagaba
@@ -306,22 +306,21 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
 # por timeout el primer día. El JSON se lee en milisegundos; si falta
 # o está dañado se calcula en vivo (red de seguridad, mismo patrón que
 # ``cifras_catalogo.json``). La deriva la caza el test que compara el
-# artefacto con el cálculo en vivo.
-_FICHERO_PRECALCULADO = _DATOS / "precios_publicos.json"
+# artefacto con el cálculo en vivo. Nació como un único JSON; al
+# encender los 22 mercados con matriz habría rondado los 90 MB, así
+# que cada país lleva el suyo (~4 MB): el proceso solo parsea los
+# países que sirve y git solo versiona el país que cambia.
+_DIR_PRECALCULADO = _DATOS / "precios_publicos"
 
 
-@lru_cache(maxsize=1)
-def _artefacto() -> dict:
-    try:
-        datos = json.loads(_FICHERO_PRECALCULADO.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return datos.get("paises") or {}
-
-
-@lru_cache(maxsize=8)
+@lru_cache(maxsize=32)
 def _indice_desde_artefacto(cc: str) -> dict | None:
-    bruto = _artefacto().get(cc)
+    try:
+        bruto = json.loads(
+            (_DIR_PRECALCULADO / f"{cc}.json").read_text(encoding="utf-8")
+        )
+    except (OSError, ValueError):
+        return None
     if not bruto:
         return None
     try:

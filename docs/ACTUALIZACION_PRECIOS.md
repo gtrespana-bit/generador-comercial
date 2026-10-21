@@ -109,7 +109,8 @@ artefacto y súbelo en el mismo commit:
 python tools/generar_precios_publicos.py
 ```
 
-Escribe `basedatos_partidas/datos/precios_publicos.json`. Si se te
+Escribe un JSON por país en `basedatos_partidas/datos/precios_publicos/`
+(`ES.json`, `MX.json`, `US.json`…). Si se te
 olvida, el CI lo caza: `test_el_artefacto_precalculado_coincide_con_el_calculo_en_vivo`
 falla hasta que lo regeneres. (Confirmar la revisión con el botón no
 exige este paso: solo hace falta cuando cambian precios o catálogo.)
