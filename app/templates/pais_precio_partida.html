@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <link rel="stylesheet" href="{{ 'css/precios.css' | asset }}">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" if _idioma == 'en' else "_nav.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="Breadcrumb">
+    {% for nombre, ruta in crumbs %}{% if not loop.last %}<a href="{{ ruta }}">{{ nombre }}</a> <span aria-hidden="true">/</span> {% else %}<span>{{ nombre }}</span>{% endif %}{% endfor %}
+  </nav>
+  <h1>{{ seo.h1 }}</h1>
+
+  <div class="precios-pu-card">
+    <div class="precios-pu">{{ partida.pu | money_iso(partida.moneda) }} <span class="precios-pu-unidad">{{ ('precios.por' | t(_idioma)).format(unidad=partida.unidad) }}</span></div>
+    <p class="precios-revisado">{{ 'precios.pu' | t(_idioma) }} · {{ ('precios.revisado' | t(_idioma)).format(mes=mes_revision) }}</p>
+    <p class="precios-aviso">{{ ('precios.aviso' | t(_idioma)).format(pais=(pais.nombre_en if _idioma == 'en' else pais.nombre)) }}</p>
+  </div>
+
+  <h2>{{ 'precios.incluye' | t(_idioma) }}</h2>
+  <p>{{ partida.descripcion }}</p>
+
+  <h2>{{ 'precios.descompuesto' | t(_idioma) }}</h2>
+  <div class="precios-tabla-wrap">
+    <table class="precios-tabla">
+      <thead>
+        <tr>
+          <th>{{ 'precios.tabla.recurso' | t(_idioma) }}</th>
+          <th>{{ 'precios.tabla.unidad' | t(_idioma) }}</th>
+          <th>{{ 'precios.tabla.rendimiento' | t(_idioma) }}</th>
+          <th>{{ 'precios.tabla.precio_recurso' | t(_idioma) }}</th>
+          <th>{{ 'precios.tabla.importe' | t(_idioma) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for grupo in ('materiales', 'mano_obra', 'maquinaria') %}
+        {% set lineas_grupo = partida.lineas | selectattr('grupo', 'equalto', grupo) | list %}
+        {% if lineas_grupo %}
+        <tr class="precios-grupo"><td colspan="5">{{ ('precios.grupo.' ~ grupo) | t(_idioma) }} · {{ pct_grupos[grupo] }} %</td></tr>
+        {% for linea in lineas_grupo %}
+        <tr>
+          <td>{{ linea.nombre }}</td>
+          <td>{{ linea.unidad }}</td>
+          <td>{{ linea.rendimiento_txt }}</td>
+          <td>{{ linea.precio | money_iso(partida.moneda) }}</td>
+          <td>{{ linea.importe | money_iso(partida.moneda) }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="precios-subtotal">
+          <td colspan="4">{{ ('precios.grupo.' ~ grupo) | t(_idioma) }}</td>
+          <td>{{ partida.grupos[grupo] | money_iso(partida.moneda) }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        <tr class="precios-total">
+          <td colspan="4">{{ 'precios.directo' | t(_idioma) }}</td>
+          <td>{{ partida.directo | money_iso(partida.moneda) }}</td>
+        </tr>
+        <tr>
+          <td colspan="4">{{ ('precios.complementarios' | t(_idioma)).format(pct='%g' % partida.compl_pct) }}</td>
+          <td>{{ partida.complementarios | money_iso(partida.moneda) }}</td>
+        </tr>
+        <tr class="precios-pu-fila">
+          <td colspan="4">{{ 'precios.pu' | t(_idioma) }} ({{ ('precios.por' | t(_idioma)).format(unidad=partida.unidad) }})</td>
+          <td>{{ partida.pu | money_iso(partida.moneda) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {% if partida.horas_mo %}
+  <div class="precios-rendimiento">
+    <strong>{{ 'precios.rendimiento.titulo' | t(_idioma) }}:</strong>
+    {{ ('precios.rendimiento.texto' | t(_idioma)).format(horas=horas_txt, uds=uds_dia_txt, unidad=partida.unidad) }}
+  </div>
+  {% endif %}
+
+  <section class="precios-faq">
+    <h2>{{ 'precios.faq' | t(_idioma) }}</h2>
+    {% for item in faq %}
+    <h3>{{ item.q }}</h3>
+    <p>{{ item.a }}</p>
+    {% endfor %}
+  </section>
+
+  {% if partida.hermanas %}
+  <h2>{{ ('precios.hermanas' | t(_idioma)).format(apartado=partida.apartado.nombre) }}</h2>
+  <ul class="precios-lista">
+    {% for h in partida.hermanas %}
+    <li><a href="{{ h.ruta }}">{{ h.titulo }}</a> <span class="precios-importe">{{ h.pu | money_iso(h.moneda) }}/{{ h.unidad }}</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if alternates %}
+  <p class="precios-paises">{{ 'precios.otros_paises' | t(_idioma) }}
+    {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}
+  </p>
+  {% endif %}
+</article>
+<section class="franja cta-final">
+  <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
+  <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="/acceso">{{ 'precios.cta.boton' | t(_idioma) }}</a>
+    <a class="btn btn-secondary" href="{{ '/en/pago' if _idioma == 'en' else '/pago' }}">{{ 'precios.cta.planes' | t(_idioma) }}</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+</body>
+</html>

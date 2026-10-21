@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <link rel="stylesheet" href="{{ 'css/precios.css' | asset }}">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" if _idioma == 'en' else "_nav.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="Breadcrumb">
+    {% for nombre, ruta in crumbs %}{% if not loop.last %}<a href="{{ ruta }}">{{ nombre }}</a> <span aria-hidden="true">/</span> {% else %}<span>{{ nombre }}</span>{% endif %}{% endfor %}
+  </nav>
+  <h1>{{ seo.h1 }}</h1>
+  <p>{{ ('precios.indice.intro' | t(_idioma)).format(pais=(pais.nombre_en if _idioma == 'en' else pais.nombre), total='{:,}'.format(resumen.total_partidas), moneda=pais.moneda, mes=mes_revision) }}</p>
+  {% for capitulo in resumen.capitulos %}
+  <section class="precios-capitulo">
+    <h2>{{ capitulo.nombre }}</h2>
+    <ul class="precios-lista">
+      {% for ap in capitulo.apartados %}
+      <li><a href="{{ ap.ruta }}">{{ ap.nombre }}</a> <span>{{ ('precios.indice.n_partidas' | t(_idioma)).format(n=ap.n_partidas) }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+  {% if alternates %}
+  <p class="precios-paises">{{ 'precios.otros_paises_indice' | t(_idioma) }}
+    {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}
+  </p>
+  {% endif %}
+</article>
+<section class="franja cta-final">
+  <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
+  <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="/acceso">{{ 'precios.cta.boton' | t(_idioma) }}</a>
+    <a class="btn btn-secondary" href="{{ '/en/pago' if _idioma == 'en' else '/pago' }}">{{ 'precios.cta.planes' | t(_idioma) }}</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+</body>
+</html>

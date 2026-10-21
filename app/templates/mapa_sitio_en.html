@@ -41,7 +41,8 @@
         <a href="{{ ruta_mercado(p.codigo) }}">{{ p.bandera }} {{ p.nombre }}</a>
         — <a href="{{ ruta_mercado(p.codigo, 'software-presupuestos') }}">software</a>,
         <a href="{{ ruta_mercado(p.codigo, 'apu') }}">APU</a>,
-        <a href="{{ ruta_mercado(p.codigo, 'remodelacion') }}">remodeling</a>
+        <a href="{{ ruta_mercado(p.codigo, 'remodelacion') }}">remodeling</a>{% if catalogos_precios and catalogos_precios.get(p.codigo) %},
+        <a href="{{ catalogos_precios[p.codigo] }}">unit prices</a>{% endif %}
       </li>
       {% endfor %}
     </ul>

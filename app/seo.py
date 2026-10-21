@@ -2417,8 +2417,17 @@ def robots_txt(request: Request | None = None) -> str:
         "Disallow: /demo",
         "",
         f"Sitemap: {origen}/sitemap.xml",
-        "",
     ]
+    # Sitemaps hijos de precios (Fase 5), uno por país publicado. El
+    # principal no cambia: es el que Search Console ya conoce.
+    try:
+        from .services import precios_publicos as _precios_publicos
+
+        for _cc in _precios_publicos.paises_publicados():
+            lineas.append(f"Sitemap: {origen}/sitemap-precios-{_cc.lower()}.xml")
+    except Exception:
+        pass
+    lineas.append("")
     return "\n".join(lineas)
 
 
