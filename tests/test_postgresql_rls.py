@@ -367,14 +367,20 @@ def test_errores_internos_funcion_y_rls(pg):
     huella = huella_de("GET", "/boom", "ValueError", "estalla")
     registrar = text(
         "SELECT cotizat_security.registrar_error_interno("
-        ":huella, 'GET', '/boom', 'ValueError', 'estalla', 'traza de prueba', :ahora)"
+        ":huella, 'GET', '/boom', 'ValueError', 'estalla', 'traza de prueba', "
+        ":usuario_email, :usuario_nombre, :ahora)"
     )
 
     # Sin sesión (claims vacíos, como un 500 anónimo): la función escribe
     # y discrimina huella nueva de repetida; la tabla, invisible.
     db = _sesion(pg)
     try:
-        parametros = {"huella": huella, "ahora": ahora}
+        parametros = {
+            "huella": huella,
+            "usuario_email": "reporter@example.com",
+            "usuario_nombre": "Reporter",
+            "ahora": ahora,
+        }
         assert db.execute(registrar, parametros).scalar() is True
         assert db.execute(registrar, parametros).scalar() is False
         db.commit()
@@ -395,6 +401,8 @@ def test_errores_internos_funcion_y_rls(pg):
     try:
         fila = db_op.query(ErrorInterno).filter_by(huella=huella).one()
         assert fila.ocurrencias == 2
+        assert fila.usuario_email == "reporter@example.com"
+        assert fila.usuario_nombre == "Reporter"
         marcar_resuelto(db_op, fila.id)
         db_op.commit()
         assert fila.resuelto_en is not None
