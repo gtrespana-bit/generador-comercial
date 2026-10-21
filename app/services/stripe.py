@@ -303,6 +303,26 @@ def fijar_cancelacion_al_vencer(subscription_id: str, cancelar: bool) -> dict:
     )
 
 
+def cancelar_suscripcion(subscription_id: str) -> dict:
+    """Cancela una suscripción DE INMEDIATO (no al vencer).
+
+    Es la vía de la baja y de la supresión de cuenta: la organización deja
+    de existir y nada debe seguir cobrándose nunca más. Cancelar así no
+    devuelve el período ya pagado ni corta el acceso en CotizaT, donde
+    manda la licencia local hasta su vencimiento.
+
+    Idempotente: si Stripe ya la tiene cancelada, devuelve su estado sin
+    error, para que reintentar una baja abortada a mitad no falle aquí.
+    """
+    subscription_id = str(subscription_id or "").strip()
+    if not subscription_id.startswith("sub_"):
+        raise StripeError("La suscripción de Stripe no es válida.")
+    actual = obtener_suscripcion(subscription_id)
+    if str(actual.get("status") or "") == "canceled":
+        return actual
+    return _llamar_stripe("DELETE", f"subscriptions/{subscription_id}")
+
+
 def resumen_suscripcion(suscripcion: dict) -> dict:
     """Lo que «Mi plan» necesita de una suscripción, ya digerido.
 

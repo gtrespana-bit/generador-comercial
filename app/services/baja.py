@@ -7,12 +7,21 @@ profundidad) antes de borrar nada.
 
 Orden del borrado, para no dejar residuos ni huérfanos:
 
-1. **Archivos primero.** Las claves se recogen de ``archivos_almacenados`` y
+1. **Suscripción de Stripe.** Si la organización paga con tarjeta, su(s)
+   suscripción(es) se cancelan DE INMEDIATO en Stripe antes de tocar nada:
+   borrar la organización sin cancelar dejaría el cobro cobrando para
+   siempre, sin forma de pararlo desde la app (la compra local que guarda
+   el id desaparecería). Si Stripe rechaza la cancelación —o no está
+   configurado y hay suscripción— la baja se aborta entera sin borrar
+   nada. Cancelar no corta el acceso ya pagado (manda la licencia local),
+   así que si un paso posterior aborta, la organización sigue intacta y
+   operativa; solo deja de renovar.
+2. **Archivos.** Las claves se recogen de ``archivos_almacenados`` y
    cada objeto se elimina del almacenamiento privado (local o Supabase) ANTES
    de tocar la base: una vez borrados los metadatos no habría forma de
    reintentar. Si algún objeto falla, la baja se aborta entera y no se borra
    nada en la base (reintentar es seguro).
-2. **Datos y organización.** En PostgreSQL se invoca
+3. **Datos y organización.** En PostgreSQL se invoca
    ``cotizat_security.baja_organizacion`` (SECURITY DEFINER, actualizada por
    ``g7c8d9e0f1a2``): borra en una sola transacción todas las tablas de
    negocio, conversaciones del asistente, licencias, membresías y la propia
@@ -25,9 +34,11 @@ Lo que NO se borra (y por qué):
 - **La cuenta de usuario (Supabase Auth):** la identidad de acceso no depende
   de la organización; sin membresías el usuario queda sin organizaciones y
   puede crear una nueva. El borrado de identidades de Auth es ajeno a la app.
-- **Los registros operativos del titular fuera de CotizaT:** la licencia y su
-  cobro desaparecen de la base (no hay contrato sin organización), pero el
-  operador conserva su propia contabilidad externa, como corresponde.
+- **La contabilidad externa del titular:** la licencia y su compra
+  desaparecen de la base (no hay contrato sin organización) y la
+  suscripción de tarjeta se cancela en Stripe (paso 1), pero el operador
+  conserva su propia contabilidad externa —facturas ya emitidas y
+  registros fiscales—, como corresponde.
 
 Sin período de gracia por decisión de diseño: la baja es inmediata y
 verificada; la pantalla ofrece descargar la exportación (E3-022) antes de
@@ -41,6 +52,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ..database import DATABASE_IS_SQLITE
+from ..datos_pago import METODO_STRIPE
 from ..models import (
     AnexoPresupuesto,
     ArchivoAlmacenado,
@@ -82,6 +94,12 @@ from ..models import (
 )
 from ..permisos import es_propietario
 from ..storage import get_storage_backend
+from .stripe import (
+    StripeError,
+    StripeNotConfigured,
+    cancelar_suscripcion,
+    stripe_configurado,
+)
 
 
 class BajaError(ValueError):
@@ -131,6 +149,54 @@ _ORDEN_BORRADO: tuple[Any, ...] = (
 )
 
 
+def _suscripciones_stripe(db: Session, organizacion_id: int) -> list[str]:
+    """Ids de suscripción de Stripe de la organización, sin repetir.
+
+    Cada renovación clona el mismo id de suscripción en una compra nueva:
+    hay que cancelarlo una sola vez. No se filtra por estado de la compra:
+    cualquier id presente en las compras debe dejar de cobrar, y cancelar
+    una suscripción ya cancelada es un no-op en ``cancelar_suscripcion``.
+    """
+    filas = (
+        db.query(CompraPlan.stripe_subscription_id)
+        .filter(
+            CompraPlan.organizacion_id == organizacion_id,
+            CompraPlan.metodo_pago == METODO_STRIPE,
+        )
+        .all()
+    )
+    return sorted(
+        {str(fila[0]).strip() for fila in filas if str(fila[0] or "").strip()}
+    )
+
+
+def _cancelar_suscripciones_stripe(db: Session, organizacion_id: int) -> None:
+    """Cancela en Stripe las suscripciones de la organización, o aborta.
+
+    Es el paso 1 de la baja: si la pasarela rechaza la cancelación (o no
+    está configurada y hay suscripción que cancelar), la baja se aborta
+    SIN tocar archivos ni base.
+    """
+    suscripciones = _suscripciones_stripe(db, organizacion_id)
+    if not suscripciones:
+        return
+    if not stripe_configurado():
+        raise BajaError(
+            "Esta organización paga con tarjeta (Stripe) y el cobro no está "
+            "configurado en el servidor: no se puede garantizar que la "
+            "suscripción deje de cobrar. No se ha borrado nada; escribe a "
+            "soporte para completar la baja."
+        )
+    for subscription_id in suscripciones:
+        try:
+            cancelar_suscripcion(subscription_id)
+        except (StripeError, StripeNotConfigured) as exc:
+            raise BajaError(
+                "Stripe no aceptó cancelar la suscripción; no se ha borrado "
+                "nada. Inténtalo de nuevo o escribe a soporte."
+            ) from exc
+
+
 def resumen_baja(db: Session) -> dict[str, Any]:
     """Qué se borraría: nombre de la organización y conteos por tabla."""
     organizacion_id = int(db.info.get("organizacion_id") or 0)
@@ -154,6 +220,11 @@ def resumen_baja(db: Session) -> dict[str, Any]:
         "nombre": organizacion.nombre,
         "conteos": conteos,
         "archivos": conteos["archivos_almacenados"],
+        # La pantalla avisa de que la suscripción con tarjeta se cancelará
+        # de inmediato en Stripe antes de borrar nada.
+        "suscripciones_stripe": len(
+            _suscripciones_stripe(db, organizacion_id)
+        ),
     }
 
 
@@ -207,7 +278,11 @@ def ejecutar_baja(
             "Marca la casilla de confirmación para dar de baja la organización."
         )
 
-    # 1) Archivos primero: sin metadatos no habría reintento después.
+    # 1) Stripe antes que los archivos: si la pasarela rechaza la
+    # cancelación, la baja se aborta sin tocar nada.
+    _cancelar_suscripciones_stripe(db, organizacion_id)
+
+    # 2) Archivos: sin metadatos no habría reintento después.
     claves = [fila.object_key for fila in db.query(ArchivoAlmacenado).all()]
     backend = get_storage_backend()
     fallos: list[str] = []
@@ -222,7 +297,7 @@ def ejecutar_baja(
             "privado; no se ha borrado nada. Inténtalo de nuevo."
         )
 
-    # 2) Datos y organización en una sola transacción.
+    # 3) Datos y organización en una sola transacción.
     if DATABASE_IS_SQLITE:
         _borrar_organizacion_sqlite(db, organizacion_id)
     else:

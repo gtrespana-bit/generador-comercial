@@ -17,6 +17,7 @@ from app.services.compras import crear_compra
 from app.services.stripe import (
     StripeNotConfigured,
     StripeWebhookError,
+    cancelar_suscripcion,
     cumplir_sesion_checkout,
     importe_a_centavos,
     procesar_evento_webhook,
@@ -700,3 +701,39 @@ def test_aplicacion_recibe_post_webhook_sin_redirigir_host(entorno, monkeypatch,
                 assert invalida.status_code == 400
         finally:
             _retirar_override()
+
+
+# ---------------------------------------------------------------------------
+# Cancelación inmediata (baja / supresión de cuenta)
+# ---------------------------------------------------------------------------
+
+def test_cancelar_suscripcion_inmediata_es_delete(monkeypatch):
+    llamadas = []
+
+    def _llamar(metodo, ruta, *args, **kwargs):
+        llamadas.append((metodo, ruta))
+        if metodo == "GET":
+            return {"status": "active"}
+        return {"status": "canceled"}
+
+    monkeypatch.setattr("app.services.stripe._llamar_stripe", _llamar)
+    resultado = cancelar_suscripcion("sub_test_123")
+    assert resultado["status"] == "canceled"
+    assert llamadas == [
+        ("GET", "subscriptions/sub_test_123"),
+        ("DELETE", "subscriptions/sub_test_123"),
+    ]
+
+
+def test_cancelar_suscripcion_ya_cancelada_es_idempotente(monkeypatch):
+    llamadas = []
+
+    def _llamar(metodo, ruta, *args, **kwargs):
+        llamadas.append((metodo, ruta))
+        return {"status": "canceled"}
+
+    monkeypatch.setattr("app.services.stripe._llamar_stripe", _llamar)
+    resultado = cancelar_suscripcion("sub_test_123")
+    assert resultado["status"] == "canceled"
+    # Sin DELETE: reintentar una baja abortada no debe fallar aquí.
+    assert llamadas == [("GET", "subscriptions/sub_test_123")]
