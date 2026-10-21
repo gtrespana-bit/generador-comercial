@@ -3,8 +3,8 @@
 # Criterio: solo viaja lo que la aplicación lee en caliente. De
 # basedatos_partidas/ se quedan: descompuestos.py, datos/descompuestos/,
 # datos/{recursos,recursos_en,clasificacion,sinonimos_busqueda,
-# cifras_catalogo}.json, glosarios/ y salida/{precios_recursos_espana.csv,
-# precios_recursos_latam.csv,traducciones/}. Todo lo demás son salidas de
+# cifras_catalogo}.json, glosarios/ y salida/{precios_recursos_*.csv,
+# traducciones/}. Todo lo demás son salidas de
 # generación, auditorías o fuentes intermedias que ningún código de app/
 # lee (verificado por inventario de lectores y simulación local moviéndolos
 # fuera y corriendo los tests). Las matrices de precios del panel se cargan
@@ -48,8 +48,12 @@ basedatos_partidas/datos/objetivos_cobertura.json
 basedatos_partidas/datos/partidas.csv
 
 # basedatos_partidas/salida: salidas de generación y auditorías.
-# Se quedan solo precios_recursos_espana.csv, precios_recursos_latam.csv
-# y traducciones/ (únicos con lector en app/).
+# Se quedan traducciones/ y TODOS los precios_recursos_*.csv: desde la
+# Fase 5 (2026-10-21) los lee en caliente services.precios_publicos
+# para las páginas públicas de precios por país. La primera salida de
+# la Fase 5 devolvió 404 en producción por tener esos CSV en esta
+# lista; lo caza el test de tests/test_precios_publicos.py que exige
+# que nada de lo que el servicio lee esté aquí.
 basedatos_partidas/salida/descompuestos/
 basedatos_partidas/salida/RESUMEN_COBERTURA.md
 basedatos_partidas/salida/arbol_catalogo.json
@@ -60,9 +64,3 @@ basedatos_partidas/salida/catalogo_partidas.xlsx
 basedatos_partidas/salida/matriz_cobertura.csv
 basedatos_partidas/salida/matriz_cobertura.json
 basedatos_partidas/salida/precios_para_revisar.csv
-basedatos_partidas/salida/precios_recursos_australia.csv
-basedatos_partidas/salida/precios_recursos_canada.csv
-basedatos_partidas/salida/precios_recursos_estados_unidos.csv
-basedatos_partidas/salida/precios_recursos_irlanda.csv
-basedatos_partidas/salida/precios_recursos_latam_completa.csv
-basedatos_partidas/salida/precios_recursos_reino_unido.csv
