@@ -16,5 +16,22 @@
   "common.language": "Language",
   "idioma.es": "Spanish",
   "idioma.en": "English",
-  "idioma.cambiar_a": "Switch to {nombre}"
+  "idioma.cambiar_a": "Switch to {nombre}",
+  "auth.forbidden.titulo": "Restricted access",
+  "auth.forbidden.encabezado": "Action not authorized",
+  "auth.forbidden.sin_cambios": "No information was modified.",
+  "auth.forbidden.volver": "Back to dashboard",
+  "cuenta.baja.titulo": "Closure completed",
+  "cuenta.baja.encabezado": "The organization «{nombre}» was closed",
+  "cuenta.baja.detalle": "All its data, files and access were permanently deleted. Your access account remains active, although with no associated organizations.",
+  "cuenta.baja.gracias": "Thank you for using {producto}. If you return in the future, you can create a new organization from scratch.",
+  "cuenta.baja.volver": "Back to start",
+  "cuenta.licencia.titulo": "Access suspended",
+  "cuenta.licencia.aviso_antes": "Your estimates, clients, catalogs and files",
+  "cuenta.licencia.aviso_fuerte": "have not been deleted",
+  "cuenta.licencia.aviso_despues": ": they become available again as soon as the license is renewed.",
+  "cuenta.licencia.contacto": "To reactivate access or request a copy of your data, write to us at",
+  "cuenta.licencia.renovar": "Renew my plan",
+  "cuenta.licencia.otra_organizacion": "Choose another organization",
+  "cuenta.licencia.salir": "Sign out"
 }
