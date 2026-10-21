@@ -16,5 +16,22 @@
   "common.language": "Idioma",
   "idioma.es": "Español",
   "idioma.en": "English",
-  "idioma.cambiar_a": "Cambiar a {nombre}"
+  "idioma.cambiar_a": "Cambiar a {nombre}",
+  "auth.forbidden.titulo": "Acceso restringido",
+  "auth.forbidden.encabezado": "Acción no autorizada",
+  "auth.forbidden.sin_cambios": "La información no fue modificada.",
+  "auth.forbidden.volver": "Volver al panel",
+  "cuenta.baja.titulo": "Baja completada",
+  "cuenta.baja.encabezado": "La organización «{nombre}» fue dada de baja",
+  "cuenta.baja.detalle": "Todos sus datos, archivos y accesos quedaron borrados de forma permanente. Tu cuenta de acceso sigue activa, aunque sin organizaciones asociadas.",
+  "cuenta.baja.gracias": "Gracias por usar {producto}. Si vuelves en el futuro, podrás crear una organización nueva desde cero.",
+  "cuenta.baja.volver": "Volver al inicio",
+  "cuenta.licencia.titulo": "Acceso suspendido",
+  "cuenta.licencia.aviso_antes": "Tus presupuestos, clientes, catálogos y archivos",
+  "cuenta.licencia.aviso_fuerte": "no se han borrado",
+  "cuenta.licencia.aviso_despues": ": vuelven a estar disponibles en cuanto la licencia se renueva.",
+  "cuenta.licencia.contacto": "Para reactivar el acceso o pedir una copia de tus datos, escríbenos a",
+  "cuenta.licencia.renovar": "Renovar mi plan",
+  "cuenta.licencia.otra_organizacion": "Elegir otra organización",
+  "cuenta.licencia.salir": "Cerrar sesión"
 }

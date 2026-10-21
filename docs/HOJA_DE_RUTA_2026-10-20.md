@@ -143,21 +143,36 @@ Cadencia fijada por el titular: **mensual** (umbral de alarma, 40 días).
 **Hecho cuando:** actualizar precios es ejecutar un comando documentado y
 ver el check pasar a «hoy». ✔
 
-## Fase 3 — i18n: mecanismo único (antes de crear superficies nuevas)
+## Fase 3 — i18n: mecanismo único (antes de crear superficies nuevas) ✅
 
 *Hay 94 plantillas `*_en.html` (40% del total): cada pantalla cuesta el
 doble (punto 8). No se migra todo ahora: se instala el mecanismo para que
 nada nuevo nazca duplicado.*
 
-- Sistema único de plantilla + catálogo de mensajes, conviviendo con el
-  sufijo `_en` actual (el resolvedor de plantillas prefiere la vía nueva
-  página a página). Piloto con 2–3 pantallas y tests de paridad ES/EN.
-- **Regla a partir de aquí:** toda plantilla nueva (fases 4 y 5) nace en el
-  sistema único. La migración del resto, por tandas en PRs que ya toquen
-  esas pantallas (fase 6), sin proyecto dedicado.
+El mecanismo ya existía (`app/i18n.py`, catálogos `app/locales/*.json`,
+filtro `t()` y un resolvedor que cae a la plantilla base si no hay
+gemela): la fase lo estrena de verdad en plantillas completas.
+
+- ✅ **Piloto:** `auth/forbidden.html`, `baja_completada.html` y
+  `licencia_suspendida.html` sirven ES/EN desde una sola plantilla
+  (textos trasladados desde sus gemelas al catálogo, sin re-traducir).
+  Paridad cubierta por `tests/test_i18n_plantillas.py` (render en
+  ambos idiomas, cobertura de claves, sin fuga de claves).
+- ✅ **Regla activa y vigilada:** toda plantilla nueva (fases 4 y 5)
+  nace única con `t()`; un test trinquete congela las 91 gemelas
+  restantes — la lista solo puede encoger. La migración del resto,
+  por tandas en PRs que ya toquen esas pantallas (fase 6), sin
+  proyecto dedicado.
+- **Frontera:** esto es solo la interfaz. Las traducciones del
+  catálogo (`basedatos_partidas/datos/recursos_en.json` y compañía,
+  hechas una a una) no se tocan.
+- **Orden aprendido:** las pantallas que extienden `base.html` migran
+  después de la propia base (su gemela extiende `base_en.html`;
+  migrarlas antes daría contenido en un idioma dentro del marco del
+  otro).
 
 **Hecho cuando:** las pantallas piloto sirven ES/EN desde una sola plantilla
-y la suite de idiomas lo cubre.
+y la suite de idiomas lo cubre. ✔
 
 ## Fase 4 — Stripe completo
 

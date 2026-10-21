@@ -1,11 +1,12 @@
-<!doctype html>
-<html lang="es">
+<!doctype html>{# Plantilla única ES/EN (Fase 3): textos del catálogo app/locales vía t();
+   la gemela licencia_suspendida_en.html se retiró al migrar. #}
+<html lang="{{ _idioma }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Acceso suspendido · {{ product_name }}</title>
+  <title>{{ 'cuenta.licencia.titulo' | t(_idioma) }} · {{ product_name }}</title>
   <link rel="icon" type="image/png" href="/static/icono.png">
-      <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
 </head>
 <body>
@@ -22,15 +23,15 @@
       {{ product_name }}
     </a>
 
-    <h1>Acceso suspendido</h1>
-    <p>{{ error }}</p>
-    <div class="alert warn">Tus presupuestos, clientes, catálogos y archivos <strong>no se han borrado</strong>: vuelven a estar disponibles en cuanto la licencia se renueva.</div>
-    <p class="text-soft">Para reactivar el acceso o pedir una copia de tus datos, escríbenos a <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
+    <h1>{{ 'cuenta.licencia.titulo' | t(_idioma) }}</h1>
+    <p>{{ error | mensaje(_idioma) }}</p>
+    <div class="alert warn">{{ 'cuenta.licencia.aviso_antes' | t(_idioma) }} <strong>{{ 'cuenta.licencia.aviso_fuerte' | t(_idioma) }}</strong>{{ 'cuenta.licencia.aviso_despues' | t(_idioma) }}</div>
+    <p class="text-soft">{{ 'cuenta.licencia.contacto' | t(_idioma) }} <a href="mailto:{{ email_soporte }}">{{ email_soporte }}</a>.</p>
 
     <div class="actions mt-3">
-      <a class="btn btn-primary" href="/mi-plan">Renovar mi plan</a>
-      <a class="btn" href="/organizaciones">Elegir otra organización</a>
-      <form method="post" action="/salir" class="mt-1"><button class="btn btn-block" type="submit">Cerrar sesión</button></form>
+      <a class="btn btn-primary" href="/mi-plan">{{ 'cuenta.licencia.renovar' | t(_idioma) }}</a>
+      <a class="btn" href="/organizaciones">{{ 'cuenta.licencia.otra_organizacion' | t(_idioma) }}</a>
+      <form method="post" action="/salir" class="mt-1"><button class="btn btn-block" type="submit">{{ 'cuenta.licencia.salir' | t(_idioma) }}</button></form>
     </div>
   </main>
 </div>
