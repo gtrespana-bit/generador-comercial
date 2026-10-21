@@ -58,7 +58,7 @@ from app.security import AuthRateLimitMiddleware
 original_demo_limit = AuthRateLimitMiddleware.DEFAULT_LIMITS.get("/demo", 3)
 AuthRateLimitMiddleware.DEFAULT_LIMITS["/demo"] = 999
 
-from app.database import Base, get_db
+from app.database import Base, get_db, get_db_renovacion
 from app.main import app
 from app.models import (
     AnexoPresupuesto,
@@ -326,10 +326,15 @@ def entorno(monkeypatch, tmp_path):
             db.close()
 
     app.dependency_overrides[get_db] = _db
+    # /bienvenida usa la puerta sin corte por licencia: el asistente debe
+    # poder abrirse en una organización recién creada aunque aún no tenga
+    # prueba ni plan. La fixture tiene que resolver la misma sesión.
+    app.dependency_overrides[get_db_renovacion] = _db
     try:
         yield Session, ids, rol
     finally:
         app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(get_db_renovacion, None)
         reset_storage_backend_cache()
         engine.dispose()
 

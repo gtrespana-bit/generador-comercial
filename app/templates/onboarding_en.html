@@ -147,7 +147,10 @@
           <div class="grid">
             <div class="field">
               <label for="empresa_nombre">Trading name *</label>
-              <input id="empresa_nombre" name="empresa_nombre" required maxlength="200" autocomplete="organization" placeholder="e.g. {{ _pais_form.ciudad_ejemplo or 'Andes' }} Construction">
+              {# El nombre se copia del alta de la organización: el asistente no
+                   debe pedir dos veces el mismo dato. «Mi Empresa» es el
+                   valor de relleno histórico, no un nombre real. #}
+              <input id="empresa_nombre" name="empresa_nombre" required maxlength="200" autocomplete="organization" value="{{ cfg.empresa_nombre if cfg.empresa_nombre and cfg.empresa_nombre|lower != 'mi empresa' else '' }}" placeholder="e.g. {{ _pais_form.ciudad_ejemplo or 'Andes' }} Construction">
             </div>
             <div class="field">
               <label for="empresa_legal">Legal name</label>
