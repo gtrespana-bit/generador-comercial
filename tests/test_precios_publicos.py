@@ -278,3 +278,46 @@ def test_cache_publica_cubre_las_rutas(cliente_web):
     cliente_web.get(pp.ruta_indice(PUBLICADOS[0]))
     sellada = cliente_web.get(pp.ruta_indice(PUBLICADOS[0]))
     assert "s-maxage" in sellada.headers.get("cache-control", "")
+
+
+def test_los_ficheros_del_servicio_viajan_a_vercel():
+    """El fallo de la primera salida de la Fase 5 (2026-10-21).
+
+    Los CSV de precios por país estaban en ``.vercelignore`` (Fase 1.3):
+    el servicio los lee en caliente, la CI no pudo cazarlo porque clona
+    el repo completo, y en producción todas las páginas devolvieron
+    404. Esta prueba lee ``.vercelignore`` y exige que nada de lo que
+    el servicio (y la traducción que usa) lee en caliente esté fuera
+    del despliegue.
+    """
+    from fnmatch import fnmatch
+
+    patrones = [
+        linea.strip()
+        for linea in (RAIZ / ".vercelignore").read_text(encoding="utf-8").splitlines()
+        if linea.strip() and not linea.strip().startswith("#")
+    ]
+
+    def esta_fuera(ruta_relativa: str) -> bool:
+        return any(
+            fnmatch(ruta_relativa, patron)
+            or ruta_relativa.startswith(patron.rstrip("/") + "/")
+            for patron in patrones
+        )
+
+    necesarios = sorted(
+        p.relative_to(RAIZ).as_posix() for p in SALIDA.glob("precios_recursos_*.csv")
+    ) + [
+        "basedatos_partidas/datos/recursos.json",
+        "basedatos_partidas/datos/recursos_en.json",
+        "basedatos_partidas/datos/clasificacion.json",
+        # Muestra del directorio de descompuestos (3.006 ficheros).
+        "basedatos_partidas/datos/descompuestos/01.01.01.010.json",
+        "basedatos_partidas/salida/traducciones/EN.json",
+    ]
+    assert len(necesarios) >= 10  # cordura: el glob encontró los CSV
+    fuera = [n for n in necesarios if esta_fuera(n)]
+    assert not fuera, (
+        f"Ficheros con lector en caliente excluidos de Vercel: {fuera}. "
+        "Si el servicio lee un fichero nuevo, sale de .vercelignore a la vez."
+    )
