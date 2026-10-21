@@ -134,4 +134,47 @@
   </form>
   {% endif %}
 </div>
+
+<div class="card">
+  <h2>Eliminar mi cuenta y mis datos</h2>
+  {% if solicitud_eliminacion %}
+  <div class="alert alert-error">
+    <strong>Tienes una solicitud de eliminación en curso</strong>
+    (registrada el {{ solicitud_eliminacion.created_at.strftime("%d/%m/%Y a las %H:%M UTC") if solicitud_eliminacion.created_at else "hace un rato" }}).
+  </div>
+  <p>Tu cuenta sigue <strong>activa y usable con normalidad</strong> hasta que ejecutemos la eliminación: la procesa una persona, no es instantánea. Cuando se ejecute se borrarán tu cuenta de acceso y tus datos personales, tus organizaciones propias con todos sus datos y archivos, y tus mensajes de soporte; si pagas con tarjeta, la suscripción se cancelará antes de borrar nada.</p>
+  <p>¿Te lo has pensado mejor? Puedes retirar la solicitud ahora mismo y todo se queda como está.</p>
+  <form method="post" action="/cuenta/eliminacion/cancelar">
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Cancelar la solicitud y conservar mi cuenta</button>
+    </div>
+  </form>
+  {% else %}
+  <p>Pedir la eliminación <strong>no borra nada al momento</strong>: queda registrada, nos llega el aviso y la ejecuta una persona. Hasta entonces tu cuenta sigue activa y puedes cancelar la solicitud cuando quieras. Cuando se ejecute, el borrado será total e irreversible:</p>
+  <ul>
+    <li>Tu cuenta de acceso y tus datos personales.</li>
+    <li><strong>Tus organizaciones propias con todos sus datos y archivos</strong>, aunque haya más personas en el equipo (avísales antes, por favor).</li>
+    <li>En las organizaciones de otros donde participas, simplemente dejarás de ser miembro.</li>
+    <li>Tus mensajes de soporte y tu registro de aceptación de términos.</li>
+    <li>Si pagas con tarjeta, la suscripción se cancelará en Stripe antes de borrar nada.</li>
+  </ul>
+  <p class="hint">Antes de pedirla, llévate lo tuyo: desde <em>Configuración</em> de cada organización puedes descargar la exportación completa. Y si solo quieres dar de baja <strong>una</strong> organización y seguir con tu cuenta, eso ya puedes hacerlo en Configuración → Dar de baja la organización.</p>
+  <form method="post" action="/cuenta/eliminacion" data-confirm="¿Seguro? Se registrará tu solicitud de eliminar la cuenta y todos tus datos. Podrás cancelarla mientras no se ejecute.">
+    <div class="form-grid">
+      <div class="field">
+        <label for="eliminacion-clave">Contraseña actual *</label>
+        <input id="eliminacion-clave" name="password_actual" type="password" autocomplete="current-password" required>
+        <p class="hint">La pedimos para que nadie pueda pedir el borrado desde una sesión abierta que no sea tuya.</p>
+      </div>
+      <div class="field">
+        <label for="eliminacion-motivo">¿Quieres contarnos el motivo? (opcional)</label>
+        <textarea id="eliminacion-motivo" name="motivo" rows="3" maxlength="4000" placeholder="Nos ayuda a mejorar, pero no es necesario para eliminar tu cuenta."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">Solicitar la eliminación total de mi cuenta y mis datos</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
 {% endblock %}

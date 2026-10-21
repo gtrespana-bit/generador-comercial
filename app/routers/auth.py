@@ -343,6 +343,13 @@ def _render_cuenta(
         seleccionada = None
     if seleccionada not in {m.organizacion_id for m in membresias}:
         seleccionada = membresias[0].organizacion_id if len(membresias) == 1 else None
+    from ..services import eliminacion
+
+    # Defensiva por diseño: sin la tabla (SQL aún sin aplicar) devuelve None
+    # y el panel simplemente no muestra la tarjeta de solicitud pendiente.
+    solicitud_eliminacion = eliminacion.solicitud_pendiente(
+        db, usuario_id=usuario.id, auth_user_id=usuario.auth_user_id or ""
+    )
     return TEMPLATES.TemplateResponse(
         request,
         "auth/account.html",
@@ -353,6 +360,7 @@ def _render_cuenta(
             "email_verificado": bool(usuario.email_verificado_at),
             "consentimiento_version": usuario.acepto_terminos_version or "",
             "consentimiento_at": usuario.acepto_terminos_at,
+            "solicitud_eliminacion": solicitud_eliminacion,
             "msg": msg,
             "error": error,
         },
@@ -487,6 +495,127 @@ async def cambiar_clave_cuenta(
     )
     clear_auth_cookies(response, settings.cookie_secure, request)
     return response
+
+
+@router.post("/cuenta/eliminacion")
+async def solicitar_eliminacion_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Registra la solicitud de supresión total, con reautenticación.
+
+    Pedir la supresión de la cuenta es tan sensible como cambiar la
+    contraseña, así que se exige la actual (``sign_in``, la misma
+    reautenticación de ``cambiar_clave_cuenta``): una sesión abierta no
+    basta para pedir el borrado. La solicitud no borra nada por sí sola:
+    la cuenta sigue plenamente usable hasta que el operador la ejecuta, y
+    la persona puede cancelarla desde esta misma página.
+    """
+    if common.DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    from ..services import eliminacion
+
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    if eliminacion.solicitud_pendiente(
+        db, usuario_id=usuario.id, auth_user_id=usuario.auth_user_id or ""
+    ) is not None:
+        # Ya hay una en curso: nada nuevo va a pasar, así que no se exige
+        # la contraseña otra vez ni se duplica el aviso al buzón.
+        return _redirect(
+            "/cuenta", msg="Ya tienes una solicitud de eliminación en curso."
+        )
+    form = await request.form()
+    actual = str(form.get("password_actual") or "")
+    motivo = str(form.get("motivo") or "")
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        await run_in_threadpool(
+            common.SupabaseAuthClient(settings).sign_in,
+            usuario.email,
+            actual,
+        )
+    except InvalidCredentials as exc:
+        return _render_cuenta(request, db, error=str(exc), status_code=400)
+    except AuthError as exc:
+        return _render_cuenta(request, db, error=str(exc), status_code=503)
+
+    solicitud_id = eliminacion.registrar_solicitud(
+        db,
+        usuario_id=usuario.id,
+        auth_user_id=usuario.auth_user_id or "",
+        email=usuario.email,
+        nombre=usuario.nombre or "",
+        motivo=motivo,
+    )
+    if solicitud_id is None:
+        return _render_cuenta(
+            request,
+            db,
+            error=(
+                "No se pudo registrar la solicitud. Inténtalo de nuevo en "
+                "unos minutos o escríbenos a soporte."
+            ),
+            status_code=503,
+        )
+    db.commit()
+    auditoria.anotar_sesion(
+        "cuenta.eliminacion_solicitada", email=usuario.email, request=request
+    )
+    # Aviso al buzón del titular sin bloquear la respuesta: la solicitud ya
+    # está guardada y un fallo de correo no puede deshacerla.
+    from ..services.avisos_negocio import url_panel_absoluta
+
+    await run_in_threadpool(
+        eliminacion.avisar_solicitud,
+        nombre=usuario.nombre or "",
+        email=usuario.email,
+        motivo=motivo,
+        panel_url=url_panel_absoluta("/admin"),
+    )
+    return _redirect(
+        "/cuenta",
+        msg=(
+            "Solicitud registrada. Tu cuenta sigue activa y usable hasta "
+            "que ejecutemos la eliminación; puedes cancelarla cuando "
+            "quieras desde esta página."
+        ),
+    )
+
+
+@router.post("/cuenta/eliminacion/cancelar")
+def cancelar_eliminacion_cuenta(
+    request: Request,
+    db: Session = Depends(get_authenticated_db),
+):
+    """Retira la solicitud pendiente (sin contraseña: es la vía segura).
+
+    Cancelar impide el propio borrado, así que no necesita reautenticación:
+    exigirla solo pondría fricción a quien se arrepiente.
+    """
+    if common.DATABASE_IS_SQLITE:
+        return _redirect("/configuracion")
+    from ..services import eliminacion
+
+    usuario = db.get(Usuario, db.info["usuario_id"])
+    cancelada = eliminacion.cancelar_solicitud(
+        db, usuario_id=usuario.id, auth_user_id=usuario.auth_user_id or ""
+    )
+    db.commit()
+    if cancelada:
+        auditoria.anotar_sesion(
+            "cuenta.eliminacion_cancelada", email=usuario.email, request=request
+        )
+        return _redirect(
+            "/cuenta",
+            msg=(
+                "Solicitud de eliminación cancelada. Tu cuenta y tus datos "
+                "se quedan como están."
+            ),
+        )
+    return _redirect(
+        "/cuenta",
+        msg="No tienes ninguna solicitud de eliminación pendiente.",
+    )
 
 
 @router.get("/organizaciones", response_class=HTMLResponse)

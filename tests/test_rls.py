@@ -21,6 +21,7 @@ from migrations.versions import (
     m8e1f4a7b2c5_fiscalidad_irlanda_rct as fiscalidad_ie_migration,
     n9f2a5b8c3d6_fiscalidad_estados_unidos as fiscalidad_us_migration,
     o2e4a6c8b1d3_errores_internos as errores_internos_migration,
+    p5f1c8d2a7b4_solicitudes_eliminacion as eliminacion_migration,
     e5f2a8d31b6c_add_plan_purchases as plan_purchases_migration,
     f9d4c2a7e5b3_organization_license_info as head_migration,
     a1b2c3d4e5f6_fix_license_info_type_mismatch as hotfix_migration,
@@ -198,13 +199,16 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert lectura_operador_migration.down_revision == fiscalidad_migration.revision
     # Sobre esa cabeza cuelga la fiscalidad irlandesa (RCT + inversión del
     # sujeto pasivo, que reutiliza `iva_tratamiento` de la británica) y sobre
-    # ella la estadounidense («sales tax» por estado). La cabeza vigente que
-    # el runtime exige es el registro durable de errores internos (Fase 0.2:
-    # tabla con RLS de operador y escritura por función SECURITY DEFINER).
+    # ella la estadounidense («sales tax» por estado), luego el registro
+    # durable de errores internos (Fase 0.2). La cabeza vigente que el
+    # runtime exige son las solicitudes de eliminación de cuenta: tabla con
+    # RLS de operador y puerta del cliente solo por funciones SECURITY
+    # DEFINER guardadas por el claim `cotizat.auth_user_id`.
     assert fiscalidad_ie_migration.down_revision == lectura_operador_migration.revision
     assert fiscalidad_us_migration.down_revision == fiscalidad_ie_migration.revision
     assert errores_internos_migration.down_revision == fiscalidad_us_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == errores_internos_migration.revision
+    assert eliminacion_migration.down_revision == errores_internos_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == eliminacion_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision
