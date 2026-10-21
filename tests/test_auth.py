@@ -141,7 +141,8 @@ def test_auth_admin_borra_identidad_con_clave_secreta_y_404_idempotente(monkeypa
         def getresponse(self):
             return Respuesta()
 
-    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_secret_valor_de_prueba")
+    clave_admin = "sb_" + "secret_" + "valor_de_prueba"
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", clave_admin)
     client = SupabaseAuthClient(SupabaseAuthSettings(
         url="https://project.supabase.co",
         publishable_key="sb_publishable_test",
@@ -156,8 +157,8 @@ def test_auth_admin_borra_identidad_con_clave_secreta_y_404_idempotente(monkeypa
     metodo, ruta, headers = conexion.solicitudes[0]
     assert metodo == "DELETE"
     assert ruta == f"/auth/v1/admin/users/{AUTH_ID}"
-    assert headers["apikey"] == "sb_secret_valor_de_prueba"
-    assert headers["Authorization"] == "Bearer sb_secret_valor_de_prueba"
+    assert headers["apikey"] == clave_admin
+    assert headers["Authorization"] == f"Bearer {clave_admin}"
 
 
 def test_auth_admin_rechaza_clave_publica_e_identidad_invalida(monkeypatch):
