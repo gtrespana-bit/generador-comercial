@@ -158,3 +158,133 @@ def test_no_nacen_gemelas_nuevas():
         f"Gemelas _en nuevas: {sorted(nuevas)}. Desde la Fase 3 las "
         "plantillas nacen únicas usando el catálogo (app/locales) vía t()."
     )
+
+
+# --- Marca bilingüe y español residual en la interfaz EN (2026-10-21) ---
+#
+# El subtítulo del panel salía en español tras iniciar sesión en
+# inglés: la propuesta de valor era un global de Jinja con el texto
+# español fijo, y las gemelas ``index_en``/``onboarding_en`` lo
+# imprimían tal cual (los JSON-LD de SEO hacían lo mismo). Ahora la
+# portada y el onboarding leen la clave ``marca.propuesta`` del
+# catálogo; el catálogo y las constantes de ``app.branding`` se
+# mantienen iguales por test para que nadie actualice una sin la otra.
+
+
+def test_marca_propuesta_catalogo_iguala_a_branding():
+    from app.branding import VALUE_PROPOSITION, VALUE_PROPOSITION_EN
+
+    assert _catalogo("es")["marca.propuesta"] == VALUE_PROPOSITION
+    assert _catalogo("en")["marca.propuesta"] == VALUE_PROPOSITION_EN
+    assert VALUE_PROPOSITION != VALUE_PROPOSITION_EN
+
+
+@pytest.mark.parametrize(
+    "nombre",
+    ["index.html", "index_en.html", "onboarding.html", "onboarding_en.html"],
+)
+def test_portada_y_onboarding_leen_la_propuesta_del_catalogo(nombre):
+    fuente = (PLANTILLAS / nombre).read_text(encoding="utf-8")
+    assert "'marca.propuesta' | t(_idioma)" in fuente
+    assert "{{ value_proposition }}" not in fuente
+
+
+# Detector de español en las gemelas inglesas: escanea solo el texto
+# que ve el usuario (fuera scripts, estilos, comentarios y Jinja;
+# dentro title/placeholder/aria-label/alt y el value de los submit).
+# Dos reglas: cualquier palabra con tilde o eñe fuera de la lista
+# blanca, y un vocabulario de interfaz inequívocamente español, sin
+# cognados idénticos en inglés («version» sin tilde es inglés: una
+# sola palabra así en la lista marcó una docena de ficheros limpios).
+_RE_SCRIPT = re.compile(r"<script.*?</script>", re.S | re.I)
+_RE_ESTILO = re.compile(r"<style.*?</style>", re.S | re.I)
+_RE_COMENT_HTML = re.compile(r"<!--.*?-->", re.S)
+_RE_COMENT_JINJA = re.compile(r"\{#.*?#\}", re.S)
+_RE_SENTENCIA = re.compile(r"\{%.*?%\}", re.S)
+_RE_EXPRESION = re.compile(r"\{\{.*?\}\}", re.S)
+_RE_ATRIBUTO = re.compile(
+    r"""(?:title|placeholder|aria-label|alt)\s*=\s*"([^"]*)"|(?:title|placeholder|aria-label|alt)\s*=\s*'([^']*)'"""
+)
+_RE_SUBMIT = re.compile(r'<input[^>]*type\s*=\s*"submit"[^>]*>', re.I)
+_RE_VALUE = re.compile(r'value\s*=\s*"([^"]*)"')
+_RE_ETIQUETA = re.compile(r"<[^>]+>")
+_RE_PALABRA = re.compile(r"[a-záéíóúñü]+")
+_RE_URL = re.compile(r"(https?://\S+|/[\w\-./]+|[\w.+-]+@[\w-]+\.[\w.-]+)")
+_RE_FICHERO = re.compile(
+    r"[\w-]+\.(?:db|zip|xlsx|xls|bc3|pdf|csv|json|png|jpg|jpeg|svg|ico|txt|html|py)\b",
+    re.I,
+)
+
+# Con tilde pero legítimos en una plantilla inglesa: nombres de
+# monedas y ciudades (se escriben igual en inglés), una marca de
+# software citada, y términos regionales de obra que las páginas
+# inglesas nombran a propósito al explicar equivalencias locales.
+_TILDES_PERMITIDAS = {
+    "guaraní", "colón", "córdoba", "bolívar",
+    "bogotá",
+    "arquímedes",
+    "pañete", "plafón", "hormigón",
+}
+_ES_INTERFAZ = {
+    "seleccionar", "todas", "todos", "datos", "presupuesto", "presupuestos",
+    "guardar", "cancelar", "eliminar", "editar", "buscar", "nombre",
+    "nombres", "precio", "precios", "cantidad", "unidad", "unidades",
+    "categoria", "categorias", "cliente", "clientes", "obra", "obras",
+    "moneda", "monedas", "idioma", "correo", "usuario", "usuarios",
+    "cuenta", "cuentas", "inicio", "volver", "siguiente", "anterior",
+    "cargar", "descargar", "subir", "imprimir", "exportar", "importar",
+    "nuevo", "nueva", "fecha", "fechas", "descripcion", "desglose",
+    "producto", "productos", "partida", "partidas", "capitulo", "equipo",
+    "equipos", "mano", "coeficiente", "rendimiento", "cronograma",
+    "herramientas", "contrasena", "pais", "paises", "añadir", "agregar",
+    "quitar", "mostrar", "ocultar", "cerrar", "abrir", "enviar", "pago",
+    "pagos", "pagar", "licencia", "soporte", "ayuda",
+}
+
+
+def _texto_visible(fuente: str) -> str:
+    fuente = _RE_COMENT_JINJA.sub(" ", fuente)
+    fuente = _RE_COMENT_HTML.sub(" ", fuente)
+    fuente = _RE_SCRIPT.sub(" ", fuente)
+    fuente = _RE_ESTILO.sub(" ", fuente)
+    fuente = _RE_SENTENCIA.sub(" ", fuente)
+    fuente = _RE_EXPRESION.sub(" ", fuente)
+    fragmentos = [
+        m.group(1) or m.group(2) or "" for m in _RE_ATRIBUTO.finditer(fuente)
+    ]
+    for m in _RE_SUBMIT.finditer(fuente):
+        valor = _RE_VALUE.search(m.group(0))
+        if valor:
+            fragmentos.append(valor.group(1))
+    fragmentos.append(_RE_ETIQUETA.sub(" ", fuente))
+    texto = " \n ".join(fragmentos)
+    texto = _RE_URL.sub(" ", texto)
+    return _RE_FICHERO.sub(" ", texto)
+
+
+def _espanol_visible(fuente: str) -> dict[str, int]:
+    malas: dict[str, int] = {}
+    for palabra in _RE_PALABRA.findall(_texto_visible(fuente).lower()):
+        if any(c in "áéíóúñ" for c in palabra):
+            if palabra not in _TILDES_PERMITIDAS:
+                malas[palabra] = malas.get(palabra, 0) + 1
+        elif palabra in _ES_INTERFAZ:
+            malas[palabra] = malas.get(palabra, 0) + 1
+    return malas
+
+
+def test_gemelas_en_sin_espanol_visible():
+    sucias = {}
+    for nombre in sorted(GEMELAS_CONGELADAS):
+        malas = _espanol_visible((PLANTILLAS / nombre).read_text(encoding="utf-8"))
+        if malas:
+            sucias[nombre] = malas
+    assert not sucias, f"Español visible en plantillas inglesas: {sucias}"
+
+
+def test_el_detector_de_espanol_detecta_espanol():
+    # Control positivo: si un regex se rompiera, el test anterior
+    # pasaría en vacío. Sobre una plantilla española el detector
+    # tiene que encontrar español a montones.
+    fuente = (PLANTILLAS / "budgets/tiempos.html").read_text(encoding="utf-8")
+    assert sum(_espanol_visible(fuente).values()) > 50

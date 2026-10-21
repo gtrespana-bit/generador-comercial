@@ -4,7 +4,13 @@ from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.branding import PRODUCT_NAME, VALUE_PROPOSITION, resolve_data_directory
+from app.branding import (
+    PRODUCT_NAME,
+    VALUE_PROPOSITION,
+    VALUE_PROPOSITION_EN,
+    resolve_data_directory,
+    value_proposition,
+)
 from app.database import Base
 from app.models import Configuracion, asegurar_config
 
@@ -132,3 +138,28 @@ def test_instalador_renombrado_conserva_identificador_de_actualizacion():
     assert "AppId=Generador de Presupuestos" in instalador
     assert "{app}\\Presupuestos.exe" in instalador
     assert "%LOCALAPPDATA%\\Presupuestos" in instalador
+
+
+def test_propuesta_por_idioma():
+    assert value_proposition("es") == VALUE_PROPOSITION
+    assert value_proposition(None) == VALUE_PROPOSITION
+    assert value_proposition("") == VALUE_PROPOSITION
+    assert value_proposition("en") == VALUE_PROPOSITION_EN
+    assert value_proposition("en-US") == VALUE_PROPOSITION_EN
+    assert VALUE_PROPOSITION_EN != VALUE_PROPOSITION
+
+
+def test_inicio_en_english_no_muestra_la_propuesta_en_espanol():
+    """Bug 2026-10-21: tras el login en inglés, el primer texto del
+    panel (la propuesta de valor) salía en español porque era un
+    global de plantilla fijo. La portada EN muestra la propuesta en
+    inglés y ni rastro de la española."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    with TestClient(app) as client:
+        response = client.get("/en/inicio")
+    assert response.status_code == 200
+    assert VALUE_PROPOSITION_EN in response.text
+    assert VALUE_PROPOSITION not in response.text

@@ -22,7 +22,7 @@
   <div class="dash-hero-copy">
     <span class="page-eyebrow">Summary</span>
     <h1>Hello{% if request.state.usuario is defined and request.state.usuario.nombre %}, {{ request.state.usuario.nombre.split()[0] }}{% endif %}</h1>
-    <p class="subtitle">{{ value_proposition }}</p>
+    <p class="subtitle">{{ 'marca.propuesta' | t(_idioma) }}</p>
   </div>
   <div class="dash-hero-actions">
     <a class="btn" href="/presupuestos/nuevo?autogenerar=1" title="Draft from your catalog">

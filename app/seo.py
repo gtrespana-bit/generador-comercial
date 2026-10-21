@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 from fastapi import Request
 
-from .branding import PRODUCT_NAME, VALUE_PROPOSITION
+from .branding import PRODUCT_NAME, value_proposition
 from .i18n import normalizar_idioma
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
@@ -1644,7 +1644,7 @@ def jsonld_organizacion(request: Request | None = None, lang: str = "es") -> dic
         "url": origen + "/",
         "logo": origen + "/static/icono.png",
         "email": "soporte@cotizat.online",
-        "description": VALUE_PROPOSITION,
+        "description": value_proposition(lang),
         "areaServed": [{"@type": "Country", "name": PAISES[c][clave_pais]} for c in ORDEN_SELECTOR],
         "contactPoint": {
             "@type": "ContactPoint",
@@ -1655,7 +1655,7 @@ def jsonld_organizacion(request: Request | None = None, lang: str = "es") -> dic
     }
 
 
-def jsonld_website(request: Request | None = None) -> dict:
+def jsonld_website(request: Request | None = None, lang: str = "es") -> dict:
     origen = origen_canonico(request)
     return {
         "@context": "https://schema.org",
@@ -1664,7 +1664,7 @@ def jsonld_website(request: Request | None = None) -> dict:
         "url": origen + "/",
         "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-HN", "es-NI", "es-ES", "en", "en-US", "en-GB"],
         "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
-        "description": VALUE_PROPOSITION,
+        "description": value_proposition(lang),
     }
 
 
@@ -1692,7 +1692,7 @@ def jsonld_software(request: Request | None = None, codigo: str = "", lang: str 
         "name": PRODUCT_NAME,
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
-        "description": VALUE_PROPOSITION,
+        "description": value_proposition(lang),
         "url": url_app,
         "image": origen + OG_IMAGE,
         "offers": {
@@ -1937,7 +1937,7 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         crumbs.extend([("Guías", "/mapa-del-sitio"), (guia["h1"], path)])
     bloques = [
         jsonld_organizacion(request, lang=lang),
-        jsonld_website(request),
+        jsonld_website(request, lang=lang),
         jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=locale),
         jsonld_articulo(guia, request, lang=lang),
         jsonld_breadcrumb(request, crumbs),
@@ -2018,7 +2018,7 @@ def contexto_seo(
     en = lang == "en"
     bloques_ld = [
         jsonld_organizacion(request, lang=lang),
-        jsonld_website(request),
+        jsonld_website(request, lang=lang),
         # inLanguage con el locale del mercado (en-GB, es-MX), no con el
         # idioma a secas: es lo que declara la página en <html lang>.
         jsonld_webpage(
@@ -2201,7 +2201,7 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     )
     bloques = [
         jsonld_organizacion(request, lang=lang),
-        jsonld_website(request),
+        jsonld_website(request, lang=lang),
         jsonld_webpage(request, path, ficha["h1"], ficha["description"], lang=lang),
     ]
     if ficha.get("software"):
