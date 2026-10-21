@@ -314,6 +314,7 @@ def test_los_ficheros_del_servicio_viajan_a_vercel():
         # Muestra del directorio de descompuestos (3.006 ficheros).
         "basedatos_partidas/datos/descompuestos/01.01.01.010.json",
         "basedatos_partidas/salida/traducciones/EN.json",
+        "basedatos_partidas/datos/precios_publicos.json",
     ]
     assert len(necesarios) >= 10  # cordura: el glob encontró los CSV
     fuera = [n for n in necesarios if esta_fuera(n)]
@@ -321,3 +322,33 @@ def test_los_ficheros_del_servicio_viajan_a_vercel():
         f"Ficheros con lector en caliente excluidos de Vercel: {fuera}. "
         "Si el servicio lee un fichero nuevo, sale de .vercelignore a la vez."
     )
+
+
+def test_el_artefacto_precalculado_coincide_con_el_calculo_en_vivo():
+    """Anti-deriva del JSON precalculado (precios_publicos.json).
+
+    Las páginas se sirven desde el artefacto (0,1 s) y no desde el
+    cálculo en vivo (~21 s los cinco países: en frío, Vercel no llegaba
+    a calentar y las páginas salieron con 404 por timeout). Si cambian
+    el catálogo, los CSV, las traducciones o los países encendidos y
+    nadie regenera (``tools/generar_precios_publicos.py``), esta prueba
+    lo caza comparando contra el cálculo en vivo.
+    """
+    artefacto = DATOS / "precios_publicos.json"
+    assert artefacto.exists(), "Falta el artefacto: python tools/generar_precios_publicos.py"
+    assert pp._artefacto(), "El artefacto no carga (JSON dañado o sin países)"
+    for cc in PUBLICADOS:
+        servido = pp._indice(cc)
+        vivo = pp._indice_en_vivo(cc)
+        assert servido is not None and vivo is not None
+        assert servido["total_partidas"] == vivo["total_partidas"], cc
+        assert servido["total_apartados"] == vivo["total_apartados"], cc
+        assert set(servido["partidas"]) == set(vivo["partidas"]), cc
+        assert servido["por_codigo"] == vivo["por_codigo"], cc
+        claves = sorted(vivo["partidas"])
+        for clave in claves[::97]:  # muestra determinista de todo el país
+            a, b = servido["partidas"][clave], vivo["partidas"][clave]
+            assert a["titulo"] == b["titulo"], (cc, clave)
+            assert a["descripcion"] == b["descripcion"], (cc, clave)
+            assert abs(a["pu"] - b["pu"]) < 1e-9, (cc, clave)
+            assert len(a["lineas"]) == len(b["lineas"]), (cc, clave)
