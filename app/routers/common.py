@@ -42,7 +42,7 @@ from starlette.middleware.gzip import GZipMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from ..analytics import evento_pendiente, ga_measurement_id
-from ..branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL, VALUE_PROPOSITION
+from ..branding import LEGAL_ENTITY, PRODUCT_NAME, SUPPORT_EMAIL
 from ..security import AuthRateLimitMiddleware, WebSecurityMiddleware, ip_de_request
 from ..database import (
     BACKUPS_DIR,
@@ -551,7 +551,6 @@ TEMPLATES.env.filters["asset"] = _asset_url
 TEMPLATES.env.globals["STATIC_VERSION"] = STATIC_VERSION
 TEMPLATES.env.globals.update(
     product_name=PRODUCT_NAME,
-    value_proposition=VALUE_PROPOSITION,
     database_is_sqlite=DATABASE_IS_SQLITE,
     titular_legal=LEGAL_ENTITY,
     email_soporte=SUPPORT_EMAIL,

@@ -12,6 +12,24 @@ VALUE_PROPOSITION = (
     "Convierte tu catálogo y tus precios en presupuestos de obra claros, "
     "editables y listos para presentar."
 )
+VALUE_PROPOSITION_EN = (
+    "Turn your catalog and prices into clear, editable construction "
+    "estimates, ready to present."
+)
+
+
+def value_proposition(idioma: str | None = "es") -> str:
+    """Propuesta de valor en el idioma pedido (es/en).
+
+    La consumen la portada tras el login y el onboarding (vía la clave
+    ``marca.propuesta`` del catálogo i18n, que un test mantiene igual a
+    estas constantes) y los JSON-LD de SEO. Antes era un global único
+    en español: el primer texto tras iniciar sesión salía en español
+    también en la versión inglesa.
+    """
+    if str(idioma or "").strip().lower().startswith("en"):
+        return VALUE_PROPOSITION_EN
+    return VALUE_PROPOSITION
 
 # Identidad legal publicada en términos, privacidad y landing.
 #

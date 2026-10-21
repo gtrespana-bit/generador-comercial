@@ -385,3 +385,15 @@ def test_el_pais_se_nombra_en_ingles_en_la_landing_inglesa():
     assert "🇺🇸 the United States" in visible
     # Y el schema declara los países servidos en inglés
     assert '"@type": "Country", "name": "the United States"' in html
+
+
+def test_jsonld_descripcion_en_el_idioma_de_la_pagina():
+    """Los tres JSON-LD usaban la propuesta de valor en español también
+    en las páginas inglesas; la descripción sigue ahora el idioma."""
+    from app.branding import VALUE_PROPOSITION, VALUE_PROPOSITION_EN
+    from app.seo import jsonld_organizacion, jsonld_software, jsonld_website
+
+    assert jsonld_organizacion(None, lang="en")["description"] == VALUE_PROPOSITION_EN
+    assert jsonld_website(None, lang="en")["description"] == VALUE_PROPOSITION_EN
+    assert jsonld_software(None, "", lang="en")["description"] == VALUE_PROPOSITION_EN
+    assert jsonld_software(None, "", lang="es")["description"] == VALUE_PROPOSITION
