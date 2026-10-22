@@ -222,6 +222,218 @@ def _base(request: Request, cc: str, ruta: str, seo: dict, bloques: list,
     }
 
 
+def _impuesto_texto(pais: dict, lang: str) -> tuple[str, str]:
+    """(etiqueta local del impuesto, tipo) tal y como se llama en ese país."""
+    etiqueta = (
+        pais.get("etiqueta_impuesto_en") if lang == "en" else pais.get("etiqueta_impuesto")
+    ) or pais.get("etiqueta_impuesto") or "IVA"
+    tipo = pais.get("iva")
+    if isinstance(tipo, (int, float)) and float(tipo).is_integer():
+        tipo = int(tipo)
+    # «I.V.A.» es como se imprime en la factura; en una frase se lee mal y
+    # nadie busca con puntos. Para el texto visible se usa «IVA».
+    if etiqueta.upper() == etiqueta and "." in etiqueta:
+        etiqueta = etiqueta.replace(".", "").strip()
+    return etiqueta, str(tipo) if tipo not in (None, "") else ""
+
+
+def _faq_indice(
+    pais: dict,
+    lang: str,
+    nombre: str,
+    moneda: str,
+    mes: str,
+    total: int,
+    total_apartados: int,
+    total_capitulos: int,
+    etiqueta: str,
+    tipo: str,
+) -> list[dict]:
+    """Preguntas del índice de precios, respondidas con los datos del país.
+
+    No es FAQ de relleno: cada respuesta lleva un dato que cambia de un
+    mercado a otro (número de partidas, moneda, nombre y tipo del impuesto
+    local, mes de revisión). Es justo lo que se pregunta quien busca
+    «precios de construcción en X»: cuántos hay, si llevan impuesto, de
+    dónde sale el número y cada cuánto se actualiza.
+    """
+    total_txt = _miles(total, pais)
+    ap_txt = _miles(total_apartados, pais)
+    cap_txt = _miles(total_capitulos, pais)
+    if lang == "en":
+        impuesto = (
+            f"The published figures are cost prices and do not include tax. "
+            f"When you build an estimate, {etiqueta} ({tipo}%) is calculated "
+            f"on top of the taxable base, not inside the unit price."
+        )
+        if pais.get("codigo") == "US":
+            impuesto = (
+                "The published figures are cost prices and do not include tax. "
+                "Sales tax is set state by state and by county, so CotizaT "
+                "applies it on top of the taxable base when you build the estimate."
+            )
+        return [
+            {
+                "q": f"How many construction unit prices are published for {nombre}?",
+                "a": (
+                    f"{total_txt} unit prices, organised into {ap_txt} sections "
+                    f"and {cap_txt} chapters, with reference prices in {moneda} "
+                    f"reviewed in {mes}."
+                ),
+            },
+            {
+                "q": f"Do these {nombre} prices include {etiqueta}?",
+                "a": impuesto,
+            },
+            {
+                "q": "What does the cost breakdown of each item show?",
+                "a": (
+                    "Materials, labour and equipment, each with its yield and its "
+                    "unit cost. That is what lets you check where the unit price "
+                    "comes from before you put it in a client estimate."
+                ),
+            },
+            {
+                "q": "How often are the prices updated?",
+                "a": (
+                    f"The catalog is revised periodically; the current revision is "
+                    f"{mes} and every section shows its own revision date. When the "
+                    f"underlying input prices change, the unit price changes with them."
+                ),
+            },
+            {
+                "q": "Can I use these prices in my own estimate?",
+                "a": (
+                    "Yes: they are published as a market reference. Adjust them to "
+                    "your area, your crew and your supplier, because a unit price "
+                    "in the capital and in a rural area never match."
+                ),
+            },
+        ]
+    impuesto = (
+        f"Los importes publicados son de coste y no incluyen impuestos. Al "
+        f"presupuestar, el {etiqueta} ({tipo} %) se calcula aparte, sobre la base "
+        f"imponible, no dentro del precio unitario."
+    )
+    if pais.get("codigo") == "US":
+        impuesto = (
+            "Los importes publicados son de coste y no incluyen impuestos. El "
+            "impuesto sobre ventas cambia por estado y por condado, así que "
+            "CotizaT lo aplica aparte sobre la base imponible al presupuestar."
+        )
+    return [
+        {
+            "q": f"¿Cuántos precios unitarios de construcción hay para {nombre}?",
+            "a": (
+                f"{total_txt} precios unitarios organizados en {ap_txt} apartados "
+                f"y {cap_txt} capítulos, con precios de referencia en {moneda} "
+                f"revisados en {mes}."
+            ),
+        },
+        {
+            "q": f"¿Los precios de {nombre} incluyen {etiqueta}?",
+            "a": impuesto,
+        },
+        {
+            "q": "¿Qué muestra el descompuesto de cada partida?",
+            "a": (
+                "Materiales, mano de obra y maquinaria, cada recurso con su "
+                "rendimiento y su coste unitario. Es lo que permite comprobar de "
+                "dónde sale el precio antes de meterlo en un presupuesto."
+            ),
+        },
+        {
+            "q": "¿Cada cuánto se actualizan los precios?",
+            "a": (
+                f"El catálogo se revisa de forma periódica; la revisión actual es "
+                f"de {mes} y cada apartado muestra su propia fecha. Cuando cambia "
+                f"el precio de un insumo, cambia el precio unitario con él."
+            ),
+        },
+        {
+            "q": "¿Puedo usar estos precios en mi propio presupuesto?",
+            "a": (
+                "Sí: se publican como referencia de mercado. Ajústalos a tu zona, "
+                "tu cuadrilla y tu proveedor, porque el mismo precio unitario en la "
+                "capital y en una zona rural nunca coincide."
+            ),
+        },
+    ]
+
+
+def jsonld_dataset(
+    request: Request,
+    *,
+    cc: str,
+    ruta: str,
+    nombre: str,
+    lang: str,
+    total: int,
+    moneda: str,
+    mes: str,
+) -> dict:
+    """El catálogo del país como ``Dataset``.
+
+    Google Dataset Search es un canal gratuito que casi nadie del sector de
+    la construcción usa, y esta página cumple los requisitos de verdad: es
+    un conjunto de datos publicados, con cobertura geográfica declarada,
+    fecha de revisión, autor identificable y acceso libre sin registro. No
+    se inventa una descarga que no existe: no se declara ``distribution``.
+    """
+    origen = origen_canonico(request)
+    en = lang == "en"
+    if en:
+        nombre_ds = f"Construction unit price database for {nombre} ({moneda})"
+        descripcion = (
+            f"{total} construction unit prices for {nombre}, with the cost "
+            f"breakdown of each item (materials, labour and "
+            f"equipment). Reference prices in {moneda}, revised {mes}."
+        )
+        variables = [
+            ("Unit price", moneda),
+            ("Materials cost", moneda),
+            ("Labour cost", moneda),
+            ("Equipment cost", moneda),
+            ("Yield per crew day", "unit/day"),
+        ]
+        palabras = ["construction", "unit prices", "cost database", nombre]
+    else:
+        nombre_ds = f"Base de precios unitarios de construcción de {nombre} ({moneda})"
+        descripcion = (
+            f"{total} precios unitarios de construcción para {nombre}, con el "
+            f"descompuesto de cada partida (materiales, mano de obra y "
+            f"maquinaria). Precios de referencia en {moneda}, revisados en {mes}."
+        )
+        variables = [
+            ("Precio unitario", moneda),
+            ("Coste de materiales", moneda),
+            ("Coste de mano de obra", moneda),
+            ("Coste de maquinaria", moneda),
+            ("Rendimiento por día de cuadrilla", "ud/día"),
+        ]
+        palabras = ["construcción", "precios unitarios", "base de precios", nombre]
+    return {
+        "@context": "https://schema.org",
+        "@id": origen + ruta + "#dataset",
+        "@type": "Dataset",
+        "name": nombre_ds,
+        "description": descripcion,
+        "url": origen + ruta,
+        "creator": {"@id": origen + "/#organization"},
+        "publisher": {"@id": origen + "/#organization"},
+        "isAccessibleForFree": True,
+        "license": origen + ("/en/legal/terminos" if en else "/legal/terminos"),
+        "inLanguage": hreflang_pais(cc),
+        "spatialCoverage": {"@type": "Country", "name": nombre},
+        "temporalCoverage": (mes.split()[-1] if mes else ""),
+        "keywords": palabras,
+        "variableMeasured": [
+            {"@type": "PropertyValue", "name": variable, "unitText": unidad}
+            for variable, unidad in variables
+        ],
+    }
+
+
 def contexto_indice(request: Request, cc: str) -> dict | None:
     resumen = pp.resumen(cc)
     if resumen is None:
@@ -287,10 +499,34 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
         ("Home" if en else "Inicio", ruta_mercado(cc)),
         (_etiqueta_precios(lang), pp.ruta_indice(cc)),
     ]
+    etiqueta_impuesto, tipo_impuesto = _impuesto_texto(pais, lang)
+    faq = _faq_indice(
+        pais,
+        lang,
+        nombre,
+        moneda,
+        mes,
+        total,
+        resumen["total_apartados"],
+        len(resumen["capitulos"]),
+        etiqueta_impuesto,
+        tipo_impuesto,
+    )
     bloques = [
         jsonld_organizacion(request, lang=lang),
         jsonld_website(request, lang=lang),
         jsonld_breadcrumb(request, crumbs),
+        jsonld_dataset(
+            request,
+            cc=cc,
+            ruta=pp.ruta_indice(cc),
+            nombre=nombre,
+            lang=lang,
+            total=total,
+            moneda=moneda,
+            mes=mes,
+        ),
+        jsonld_faq(faq),
         {
             "@context": "https://schema.org",
             "@type": "ItemList",
@@ -316,6 +552,9 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
             "resumen": {**resumen, "capitulos": capitulos},
             "mes_revision": mes,
             "alternates": _alternates_visibles(rutas_alternas, cc),
+            "faq": faq,
+            "etiqueta_impuesto": etiqueta_impuesto,
+            "tipo_impuesto": tipo_impuesto,
         }
     )
     return ctx

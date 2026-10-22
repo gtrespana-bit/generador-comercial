@@ -1816,6 +1816,64 @@ def jsonld_breadcrumb(request: Request | None, items: list[tuple[str, str]]) -> 
     }
 
 
+def jsonld_planes(request: Request | None = None, lang: str = "es") -> dict:
+    """La suscripción como ``Product`` con ``AggregateOffer``, en /pago.
+
+    A diferencia del catálogo de precios —donde se evita a propósito el
+    markup de oferta porque no hay nada que comprar— aquí sí hay una
+    compra real: dos planes con importe, moneda y URL de compra. Es la
+    única página del sitio con derecho a ese markup, y el resultado
+    enriquecido muestra el precio en el resultado de búsqueda, que es
+    justo lo que separa un clic de un salto a la competencia.
+    """
+    from .datos_pago import PLANES
+
+    origen = origen_canonico(request)
+    en = lang == "en"
+    ruta = "/en/pago" if en else "/pago"
+    nombre_planes = {
+        "anual": "Annual plan" if en else "Plan anual",
+        "mensual": "Monthly plan" if en else "Plan mensual",
+    }
+    ofertas = []
+    for clave, plan in PLANES.items():
+        ofertas.append(
+            {
+                "@type": "Offer",
+                "name": nombre_planes.get(clave, plan["nombre"]),
+                "price": f"{float(plan['importe']):.2f}",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": origen + ruta,
+                "itemOffered": {"@id": origen + ruta + "#product"},
+            }
+        )
+    importes = sorted(float(p["importe"]) for p in PLANES.values())
+    return {
+        "@context": "https://schema.org",
+        "@id": origen + ruta + "#product",
+        "@type": "Product",
+        "name": (
+            "CotizaT — construction estimating software"
+            if en
+            else "CotizaT — software de presupuestos de construcción"
+        ),
+        "description": value_proposition(lang),
+        "image": origen + OG_IMAGE,
+        "url": origen + ruta,
+        "brand": {"@type": "Brand", "name": PRODUCT_NAME},
+        "category": "BusinessApplication" if en else "Software de presupuestos",
+        "offers": {
+            "@type": "AggregateOffer",
+            "priceCurrency": "USD",
+            "lowPrice": f"{importes[0]:.2f}",
+            "highPrice": f"{importes[-1]:.2f}",
+            "offerCount": len(ofertas),
+            "offers": ofertas,
+        },
+    }
+
+
 def jsonld_webpage(
     request: Request | None,
     path: str,
@@ -2279,6 +2337,10 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
     ]
     if ficha.get("software"):
         bloques.append(jsonld_software(request, "", lang=lang))
+    if clave == "pago":
+        # Única página con oferta comprable: los dos planes, con importe y
+        # moneda reales. El catálogo de precios NO lleva este markup.
+        bloques.append(jsonld_planes(request, lang=lang))
     if seo.get("faq"):
         bloques.append(jsonld_faq(seo["faq"]))
     if en:

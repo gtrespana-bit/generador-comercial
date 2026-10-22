@@ -40,6 +40,17 @@
     </ul>
   </section>
   {% endfor %}
+  {% if faq %}
+  <section class="precios-faq" id="preguntas">
+    <h2>{{ 'precios.faq.titulo' | t(_idioma) }}</h2>
+    {% for item in faq %}
+    <details>
+      <summary>{{ item.q }}</summary>
+      <p>{{ item.a }}</p>
+    </details>
+    {% endfor %}
+  </section>
+  {% endif %}
   {% if alternates %}
   <p class="precios-paises">{{ 'precios.otros_paises_indice' | t(_idioma) }}
     {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}

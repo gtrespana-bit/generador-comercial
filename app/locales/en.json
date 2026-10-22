@@ -82,5 +82,6 @@
   "precios.rango.enlaces": "Keep exploring",
   "precios.rango.indice": "All prices in {pais}",
   "precios.rango.guia": "Guide: how a unit price analysis works",
-  "precios.rango.capitulo": "More sections in {capitulo}"
+  "precios.rango.capitulo": "More sections in {capitulo}",
+  "precios.faq.titulo": "Frequently asked questions about these prices"
 }

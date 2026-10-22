@@ -82,5 +82,6 @@
   "precios.rango.enlaces": "Seguir explorando",
   "precios.rango.indice": "Todos los precios de {pais}",
   "precios.rango.guia": "Guía: cómo se calcula un APU",
-  "precios.rango.capitulo": "Más apartados de {capitulo}"
+  "precios.rango.capitulo": "Más apartados de {capitulo}",
+  "precios.faq.titulo": "Preguntas frecuentes sobre estos precios"
 }
