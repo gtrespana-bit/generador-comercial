@@ -49,13 +49,27 @@ Guardias (defensa en profundidad: ruta + servicio + función PostgreSQL):
 
 Orden del borrado, para no dejar residuos ni huérfanos:
 
-1. **Archivos primero**: se recogen las claves de `archivos_almacenados` y se
+1. **Suscripciones de Stripe** *(protección añadida el 22/10/2026)*: se
+   cancelan de inmediato antes de borrar cualquier dato o archivo. Sin este
+   paso, la compra local desaparecía pero la suscripción podía seguir
+   cobrando fuera de la aplicación. Si Stripe no está configurado o rechaza
+   la operación, la baja se aborta sin borrar nada. La cancelación consulta
+   primero el estado y no repite el `DELETE` si ya estaba cancelada, por lo
+   que una baja puede reintentarse con seguridad.
+2. **Archivos**: se recogen las claves de `archivos_almacenados` y se
    eliminan del almacenamiento privado ANTES de tocar la base. Si un objeto
-   falla, la baja se aborta entera y no se borra nada (reintentar es seguro).
-2. **Datos y organización en una transacción**: tablas de negocio en orden
+   falla, la baja se aborta entera y no se borra nada en la base. Si esto
+   ocurre después de cancelar Stripe, la organización y su licencia local
+   permanecen, pero la suscripción ya no se renovará; el reintento no vuelve
+   a cancelarla.
+3. **Datos y organización en una transacción**: tablas de negocio en orden
    hijo → padre, invitaciones, configuración, licencias, membresías y la
    propia organización. En SQLite por ORM (con el filtro de tenant activo);
    en PostgreSQL por la función SECURITY DEFINER.
+
+Esta protección no añade ninguna migración. El borrado completo de **cuenta**
+conserva su comportamiento previo: programa la cancelación al final del
+período en `borrado_cuenta.py` y no la repite al reutilizar esta baja.
 
 Lo que NO se borra (declarado, no olvidado):
 

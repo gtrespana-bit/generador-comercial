@@ -9,6 +9,7 @@ from urllib.parse import unquote
 import pytest
 from fastapi.testclient import TestClient
 
+import app.services.stripe as stripe_service
 from app.database import get_db, get_db_renovacion, get_stripe_webhook_db
 from app.datos_pago import METODO_STRIPE
 from app.main import app
@@ -700,3 +701,56 @@ def test_aplicacion_recibe_post_webhook_sin_redirigir_host(entorno, monkeypatch,
                 assert invalida.status_code == 400
         finally:
             _retirar_override()
+
+
+# ---------------------------------------------------------------------------
+# Cancelación inmediata e idempotente para la baja de organización
+# ---------------------------------------------------------------------------
+
+
+def test_cancelar_suscripcion_inmediata_consulta_y_hace_delete(monkeypatch):
+    llamadas = []
+
+    def _llamar(metodo, ruta, datos=None):
+        llamadas.append((metodo, ruta, datos))
+        if metodo == "GET":
+            return {"status": "active"}
+        return {"status": "canceled"}
+
+    monkeypatch.setattr("app.services.stripe._llamar_stripe", _llamar)
+
+    resultado = stripe_service.cancelar_suscripcion("sub_test_123")
+
+    assert resultado["status"] == "canceled"
+    assert llamadas == [
+        ("GET", "subscriptions/sub_test_123", None),
+        ("DELETE", "subscriptions/sub_test_123", None),
+    ]
+
+
+def test_cancelar_suscripcion_ya_cancelada_no_repite_delete(monkeypatch):
+    llamadas = []
+
+    def _llamar(metodo, ruta, datos=None):
+        llamadas.append((metodo, ruta, datos))
+        return {"status": "canceled"}
+
+    monkeypatch.setattr("app.services.stripe._llamar_stripe", _llamar)
+
+    resultado = stripe_service.cancelar_suscripcion("sub_test_123")
+
+    assert resultado["status"] == "canceled"
+    assert llamadas == [("GET", "subscriptions/sub_test_123", None)]
+
+
+def test_cancelar_suscripcion_rechaza_id_invalido_sin_llamar_a_la_api(monkeypatch):
+    llamadas = []
+    monkeypatch.setattr(
+        "app.services.stripe._llamar_stripe",
+        lambda *args, **kwargs: llamadas.append((args, kwargs)),
+    )
+
+    with pytest.raises(stripe_service.StripeError, match="no es válida"):
+        stripe_service.cancelar_suscripcion("cs_no_es_una_suscripcion")
+
+    assert llamadas == []

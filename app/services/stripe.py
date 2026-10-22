@@ -303,6 +303,27 @@ def fijar_cancelacion_al_vencer(subscription_id: str, cancelar: bool) -> dict:
     )
 
 
+def cancelar_suscripcion(subscription_id: str) -> dict:
+    """Cancela una suscripción de inmediato, de forma idempotente.
+
+    La baja elimina la organización y con ella el id local que permitiría
+    localizar la suscripción después. Por eso la cancelación debe completarse
+    antes de borrar ese registro. No genera un reembolso ni modifica la
+    licencia local si un paso posterior de la baja obliga a abortar.
+
+    Consultar primero permite reintentar con seguridad: si una ejecución
+    anterior ya la canceló, no se repite el DELETE ni se convierte el
+    reintento en un error.
+    """
+    subscription_id = str(subscription_id or "").strip()
+    if not subscription_id.startswith("sub_"):
+        raise StripeError("La suscripción de Stripe no es válida.")
+    actual = obtener_suscripcion(subscription_id)
+    if str(actual.get("status") or "") == "canceled":
+        return actual
+    return _llamar_stripe("DELETE", f"subscriptions/{subscription_id}")
+
+
 def resumen_suscripcion(suscripcion: dict) -> dict:
     """Lo que «Mi plan» necesita de una suscripción, ya digerido.
 
