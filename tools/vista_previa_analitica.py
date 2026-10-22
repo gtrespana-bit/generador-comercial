@@ -32,10 +32,13 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.database import Base, get_operator_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
+    Cliente,
     EventoProducto,
+    Factura,
     Licencia,
     Membresia,
     Organizacion,
+    Presupuesto,
     Usuario,
 )
 
@@ -60,11 +63,20 @@ def sembrar(Session) -> int:
                 slug=f"org-{i}",
                 created_at=datetime.utcnow() - timedelta(days=dias),
             )
+            # Último acceso coherente con el perfil: es lo que alimenta
+            # «sesiones iniciadas hoy» y la columna de la tabla de empresas.
+            acceso = {
+                "activo": datetime.utcnow() - timedelta(minutes=2),
+                "riesgo": datetime.utcnow() - timedelta(days=45),
+                "nueva": datetime.utcnow() - timedelta(hours=2),
+                "muerta": datetime.utcnow() - timedelta(days=160),
+            }[_perfil]
             usuario = Usuario(
                 auth_user_id=f"00000000-0000-4000-8000-{i:012d}",
                 email=f"usuario{i}@example.com",
                 nombre=nombre.split()[0],
                 created_at=datetime.utcnow() - timedelta(days=dias),
+                ultimo_acceso_at=acceso,
             )
             db.add_all([org, usuario])
             db.flush()
@@ -115,6 +127,38 @@ def sembrar(Session) -> int:
                                         {"formato": "cype_descompuesto", "filas": 12}))
                     if n % 5 == 3:
                         eventos.append(("equipo.invitacion_enviada", base + timedelta(hours=5), {}))
+                # Primer cliente y uso del asistente: acciones que antes no
+                # existían y que el panel ya muestra.
+                eventos.append(("cliente.creado", alta + timedelta(days=1), {}))
+                eventos.append(("asistente.consulta", alta + timedelta(days=2, hours=3), {}))
+                # Filas reales de cliente/presupuesto/factura: la tabla de
+                # empresas mezcla el uso con el dato comercial exacto.
+                cliente = Cliente(
+                    organizacion_id=org.id,
+                    nombre=f"Cliente de {org.nombre.split()[0]}",
+                    pais="ES" if org.id % 2 else "VE",
+                    created_at=alta + timedelta(days=1),
+                )
+                db.add(cliente)
+                db.flush()
+                for n in range(cuantos):
+                    db.add(Presupuesto(
+                        organizacion_id=org.id, client_id=cliente.id,
+                        numero=f"P-{org.id}-{n + 1}", year=HOY.year,
+                        fecha=(alta + timedelta(days=2 + n * 6)).date(),
+                        titulo=f"Obra {n + 1} de {org.nombre}",
+                        estado="borrador" if n % 3 == 0 else "enviado",
+                        total_calculado=1250.0 + 480.0 * n,
+                        created_at=alta + timedelta(days=2 + n * 6),
+                    ))
+                if perfil == "activo":
+                    db.add(Factura(
+                        organizacion_id=org.id, client_id=cliente.id,
+                        numero=f"F-{org.id}-1", year=HOY.year,
+                        fecha=alta.date() + timedelta(days=10),
+                        titulo="Factura de prueba",
+                        estado="borrador",
+                    ))
             # Latidos: activa cada 2-3 días; riesgo murió hace 45; nueva a diario.
             if perfil == "activo":
                 dias_latido = range(0, dias, 2)
@@ -134,6 +178,24 @@ def sembrar(Session) -> int:
                     actor_email=usuario.email,
                     detalle=json.dumps(detalle), created_at=creado,
                 ))
+        # Presencia en vivo: la empresa «activa» y la «nueva» están trabajando
+        # ahora mismo; la de riesgo dejó de entrar hace horas.
+        for org, usuario, _dias, perfil in engine_orgs:
+            if perfil == "activo":
+                hace, ruta = 2, "/presupuestos"
+            elif perfil == "nueva":
+                hace, ruta = 9, "/clientes"
+            elif perfil == "riesgo":
+                hace, ruta = 240, "/dashboard"
+            else:
+                hace, ruta = 60 * 24 * 30, "/dashboard"
+            db.add(EventoProducto(
+                organizacion_id=org.id,
+                actor_email=usuario.email,
+                accion="sesion.activa",
+                detalle=json.dumps({"pagina": ruta}),
+                created_at=datetime.utcnow() - timedelta(minutes=hace),
+            ))
         # Registros globales recientes (países mixtos).
         for i, pais in enumerate(["ES", "ES", "VE", "MX", "ES", "CO", "VE", "ES"]):
             db.add(EventoProducto(

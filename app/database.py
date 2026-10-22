@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "q5e1c8a9d3f7"
+EXPECTED_ALEMBIC_HEAD = "r7f2b1d4e8a6"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -427,9 +427,13 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
             db.info["organizacion_id"] = _organizacion_sqlite_desde_entorno()
             # Telemetría (E5-012): latido diario de la organización activa.
             # Best-effort: si falla, la petición sigue exactamente igual.
-            from .services.telemetria import latido_diario
+            from .services.telemetria import latido_diario, marcar_presencia
 
             latido_diario(db)
+            # Presencia en vivo: alimenta «empresas en línea ahora» del panel.
+            marcar_presencia(
+                db, pagina=getattr(getattr(request, "url", None), "path", "")
+            )
             if request is not None:
                 # SQLite (escritorio/desarrollo) no tiene Supabase Auth: exponemos
                 # una organización y usuario sintéticos para que la barra lateral
@@ -528,9 +532,16 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
         # como uso). Best-effort: nunca puede romper la petición, y el listener
         # ``after_begin`` reinstala los claims de RLS en la transacción que
         # abra el handler después del commit del latido.
-        from .services.telemetria import latido_diario
+        from .services.telemetria import latido_diario, marcar_presencia
 
         latido_diario(db)
+        # Presencia en vivo (E5-012 ampliado): el latido solo deja una fila al
+        # día y no permite distinguir una empresa trabajando ahora mismo. Se
+        # anota con freno de escritura, después de superar la puerta de
+        # licencia, para que «en línea» signifique «puede usar el producto».
+        marcar_presencia(
+            db, pagina=getattr(getattr(request, "url", None), "path", "")
+        )
         yield db
     finally:
         db.close()

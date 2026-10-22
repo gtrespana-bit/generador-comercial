@@ -263,6 +263,12 @@ async def api_chat_ia(
             "conversation_id": registro.conversation_id,
             "conversacion_id": registro.conversation_id,
         })
+    # Telemetría: el asistente no se medía en absoluto y es una de las
+    # funciones que más soporte evita. Solo la acción, sin el texto de la
+    # consulta (el detalle nunca lleva contenido del cliente).
+    from ..services import telemetria
+
+    telemetria.registrar(db, "asistente.consulta")
     return JSONResponse(resultado)
 
 

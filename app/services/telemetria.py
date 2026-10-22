@@ -51,16 +51,31 @@ ACCIONES: dict[str, str] = {
     "cuenta.registrada": "Cuenta registrada",
     "organizacion.creada": "Empresa creada",
     "actividad.diaria": "Uso diario",
+    "sesion.activa": "Sesión activa",
+    "cliente.creado": "Cliente creado",
     "presupuesto.creado": "Presupuesto creado",
     "presupuesto.aprobado": "Presupuesto aprobado",
     "presupuesto.enviado_email": "Presupuesto enviado por email",
     "presupuesto.pdf_descargado": "PDF de presupuesto descargado",
     "importacion.confirmada": "Importación CYPE/BC3",
+    "asistente.consulta": "Consulta al asistente IA",
     "pago.checkout_iniciado": "Checkout Stripe iniciado",
     "pago.compra_registrada": "Compra registrada",
     "licencia.activada": "Licencia activada",
     "equipo.invitacion_enviada": "Invitación de equipo enviada",
 }
+
+#: Acciones de **ruido operativo**: se escriben solas con el uso normal y
+#: llenarían la tabla de «Eventos recientes» sin aportar información. El panel
+#: las oculta por omisión y las ofrece con un interruptor.
+ACCIONES_RUIDO = frozenset({"actividad.diaria", "sesion.activa"})
+
+#: Minutos sin presencia para considerar que una empresa ya no está en línea.
+PRESENCIA_MINUTOS = 15
+
+#: Cada cuántos minutos se escribe como mucho una fila ``sesion.activa`` por
+#: organización. Sin este freno, cada petición autenticada dejaría una fila.
+PRESENCIA_ESCRITURA_MINUTOS = 3
 
 #: Acciones que ocurren **sin organización** (antes de existir empresa).
 #: Debe coincidir con la lista de la función PostgreSQL
@@ -267,6 +282,81 @@ def dias_sin_uso(ultima: datetime | None, *, hoy: datetime | None = None) -> int
         return None
     referencia = hoy or datetime.utcnow()
     return max((referencia - ultima).days, 0)
+
+
+# ---------------------------------------------------------------------------
+# Presencia en vivo (sesion.activa)
+# ---------------------------------------------------------------------------
+
+#: Memo por proceso: última vez que se escribió presencia de cada organización.
+#: Evita una consulta y una escritura por petición; la verificación real sigue
+#: siendo la base, así los procesos serverless (fríos por definición) no
+#: duplican filas dentro de la ventana de escritura.
+_PRESENCIA: dict[int, datetime] = {}
+
+#: Tope del memo para que un proceso de vida larga no acumule organizaciones.
+_PRESENCIA_MAXIMO = 5000
+
+
+def marcar_presencia(db, *, pagina: str = "", ahora: datetime | None = None) -> bool:
+    """Anota que alguien de la organización está usando el producto **ahora**.
+
+    Es la señal que faltaba para responder «qué empresas están en línea»: el
+    latido (``actividad.diaria``) solo deja una fila por día y no distingue
+    una empresa trabajando ahora mismo de una que entró a las 8 de la mañana.
+
+    Se escribe como mucho una fila cada ``PRESENCIA_ESCRITURA_MINUTOS`` por
+    organización. Best-effort como el resto de la telemetría: nunca lanza y
+    nunca rompe la petición.
+    """
+    try:
+        org_id = int(db.info.get("organizacion_id") or 0)
+        if org_id <= 0:
+            return False
+        ahora = ahora or datetime.utcnow()
+        ultimo = _PRESENCIA.get(org_id)
+        if ultimo is not None and (ahora - ultimo) < timedelta(
+            minutes=PRESENCIA_ESCRITURA_MINUTOS
+        ):
+            return True
+        desde = ahora - timedelta(minutes=PRESENCIA_ESCRITURA_MINUTOS)
+        existe = (
+            db.query(EventoProducto.id)
+            .filter(
+                EventoProducto.accion == "sesion.activa",
+                EventoProducto.organizacion_id == org_id,
+                EventoProducto.created_at >= desde,
+            )
+            .first()
+        )
+        if existe is None:
+            ruta = str(pagina or "")[:120]
+            db.add(
+                EventoProducto(
+                    organizacion_id=org_id,
+                    actor_email=str(db.info.get("auth_email") or "")[:254],
+                    accion="sesion.activa",
+                    detalle=_serializar_detalle({"pagina": ruta} if ruta else None),
+                    # La marca temporal es la del instante medido: así la
+                    # ventana de escritura se calcula sobre el mismo reloj.
+                    created_at=ahora,
+                )
+            )
+            db.commit()
+        if len(_PRESENCIA) > _PRESENCIA_MAXIMO:
+            _PRESENCIA.clear()
+        _PRESENCIA[org_id] = ahora
+        return True
+    except Exception:
+        log.warning(
+            "No se pudo anotar la presencia (org %r).",
+            db.info.get("organizacion_id"),
+        )
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return False
 
 
 def ventana(dias: int) -> tuple[datetime, datetime]:

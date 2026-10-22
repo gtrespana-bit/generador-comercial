@@ -55,6 +55,11 @@ def crear_cliente(
                       telefono=telefono.strip(), email=email.strip(), direccion=direccion.strip())
     db.add(cliente)
     db.commit()
+    # Telemetría: crear el primer cliente es el paso previo al primer
+    # presupuesto y hasta ahora no se medía. Best-effort, tras el commit.
+    from ..services import telemetria
+
+    telemetria.registrar(db, "cliente.creado")
     return _redirect(f"/clientes/{cliente.id}/editar", msg="Cliente creado correctamente.")
 
 

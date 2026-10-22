@@ -1152,17 +1152,49 @@ def _web_versiones(db) -> dict:
 
 
 @router.get("/admin/analitica", response_class=HTMLResponse, include_in_schema=False)
-def pagina_analitica(request: Request, dias: int = 30, db: Session = Depends(get_operator_db)):
+def pagina_analitica(
+    request: Request,
+    dias: int = 30,
+    organizacion_id: int = 0,
+    accion: str = "",
+    actor: str = "",
+    q: str = "",
+    desde: str = "",
+    hasta: str = "",
+    pagina: int = 1,
+    ruido: int = 0,
+    sin_mios: int = 0,
+    db: Session = Depends(get_operator_db),
+):
     """Analítica de producto medida en el servidor (E5-012).
 
-    La ventana se valida aquí: ``dias`` acaba en una consulta SQL y no puede
-    venir de cualquier valor que escriba el navegador.
+    Los filtros del explorador de eventos viajan en la URL y se validan aquí:
+    ``dias`` acaba en consultas SQL y no puede venir de cualquier valor que
+    escriba el navegador. El resto se normaliza en el servicio (acción fuera
+    del catálogo = sin filtro, fechas ISO o nada).
     """
     from ..services.analitica import resumen_analitica
 
     ventana = dias if dias in (7, 30, 90) else 30
     contexto = contexto_base(request, db, seccion="analitica")
-    contexto.update({"resumen": resumen_analitica(db, dias=ventana), "dias": ventana})
+    filtros = {
+        "organizacion_id": organizacion_id,
+        "accion": accion,
+        "actor": actor,
+        "q": q,
+        "desde": desde,
+        "hasta": hasta,
+        "pagina": pagina,
+        "ocultar_ruido": not bool(ruido),
+        "ocultar_mios": bool(sin_mios),
+        "mi_email": str(db.info.get("auth_email") or ""),
+    }
+    contexto.update(
+        {
+            "resumen": resumen_analitica(db, dias=ventana, filtros=filtros),
+            "dias": ventana,
+        }
+    )
     return _respuesta(request, "analitica.html", contexto)
 
 

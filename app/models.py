@@ -231,6 +231,18 @@ def sincronizar_usuario_auth(
         raise VinculoIdentidadError("La cuenta de CotizaT está desactivada.")
     if email_verificado and usuario.email_verificado_at is None:
         usuario.email_verificado_at = datetime.utcnow()
+    # ``ultimo_acceso_at`` existía desde el esquema inicial y **nunca se
+    # escribía**: el panel de analítica no podía responder «cuántos usuarios
+    # entraron hoy» ni «cuándo entró por última vez esta empresa». Se sella
+    # aquí, que es el único punto por el que pasan todas las peticiones
+    # autenticadas, con un freno de 5 minutos para no convertir cada lectura
+    # en un UPDATE.
+    ahora_acceso = datetime.utcnow()
+    if (
+        usuario.ultimo_acceso_at is None
+        or (ahora_acceso - usuario.ultimo_acceso_at) >= timedelta(minutes=5)
+    ):
+        usuario.ultimo_acceso_at = ahora_acceso
     # E4-038: si el perfil todavía no tiene la marca de aceptación, se rellena
     # desde el registro de consentimientos (la persona pudo aceptar en el
     # formulario de registro, antes de que esta fila existiera). Es idempotente
@@ -2313,6 +2325,13 @@ _INDICES_RENDIMIENTO = (
     ("pagos", "ix_pagos_proyecto_id", ("proyecto_id",)),
     ("pagos", "ix_pagos_presupuesto_id", ("presupuesto_id",)),
     ("pagos", "ix_pagos_factura_id", ("factura_id",)),
+    # Panel de analítica (migración r7f2b1d4e8a6): último acceso por usuario
+    # y eventos por acción/actor con la fecha, que es como se filtra y pinta
+    # el explorador.
+    ("usuarios", "ix_usuarios_ultimo_acceso", ("ultimo_acceso_at",)),
+    ("eventos_producto", "ix_eventos_producto_accion_fecha", ("accion", "created_at")),
+    ("eventos_producto", "ix_eventos_producto_actor_fecha", ("actor_email", "created_at")),
+    ("organizaciones", "ix_organizaciones_creada", ("created_at",)),
 )
 
 
