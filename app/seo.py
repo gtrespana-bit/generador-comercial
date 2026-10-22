@@ -244,6 +244,10 @@ def _es_indexable_en(p: str) -> bool:
     m = re.match(r"^/en-([A-Za-z]{2})(?:/(.*))?$", ruta)
     if m:
         cc = m.group(1).lower()
+        # Espejo en inglés de un mercado hispano: utilidad del conmutador,
+        # no una página que deba competir con /mx/apu. Se queda en noindex.
+        if es_espejo_de_idioma(ruta):
+            return False
         if cc not in {c.lower() for c in ORDEN_SELECTOR}:
             return False
         resto = (m.group(2) or "").strip("/")
@@ -260,6 +264,32 @@ def _es_indexable_en(p: str) -> bool:
             return True
         return False
     return False
+
+
+# Mercados cuyo idioma no es el inglés. Su URL pública es la del subdirectorio
+# español (/mx/apu); la variante /en-mx/apu existe solo para quien pide la
+# interfaz en inglés desde el conmutador.
+MERCADOS_HISPANOS = frozenset(
+    cc for cc, p in PAISES.items() if str(p.get("idioma") or "es") != "en"
+)
+
+
+def es_espejo_de_idioma(ruta: str) -> bool:
+    """¿Es ``/en-xx/…`` de un mercado hispano con la interfaz en inglés?
+
+    Esas URL existen para que el conmutador cumpla lo que promete: al pedir
+    inglés desde /mx/apu tiene que haber una URL que sirva la misma página en
+    inglés (el resto de la superficie pública ignora la cookie para poder
+    cachearse). Pero no son páginas de mercado: nadie las enlaza, no están en
+    el sitemap y no tienen hreflang propio. Si se indexan, compiten con
+    /mx/apu sirviendo el mismo contenido en otro idioma y aparecen en los
+    resultados como duplicados.
+
+    ``/en-us/…`` y compañía no caen aquí: en esos mercados el inglés es el
+    idioma del país y la URL es la canónica.
+    """
+    m = re.match(r"^/en-([A-Za-z]{2})(?:/|$)", str(ruta or ""))
+    return bool(m) and m.group(1).upper() in MERCADOS_HISPANOS
 
 
 def hreflang_pais(codigo: str) -> str:

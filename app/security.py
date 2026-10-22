@@ -379,10 +379,18 @@ class WebSecurityMiddleware:
                 estado = scope.get("state") or {}
                 path = str(estado.get("ruta_original") or scope.get("path") or "")
                 try:
-                    from .seo import es_indexable
+                    from .seo import es_espejo_de_idioma, es_indexable
 
                     if not es_indexable(path):
-                        additions[b"x-robots-tag"] = b"noindex, nofollow, noarchive"
+                        # El espejo en inglés de un mercado hispano
+                        # (/en-mx/apu) es utilidad del conmutador: no debe
+                        # indexarse, pero sí seguir sus enlaces al mercado.
+                        valor = (
+                            b"noindex, follow, noarchive"
+                            if es_espejo_de_idioma(path)
+                            else b"noindex, nofollow, noarchive"
+                        )
+                        additions[b"x-robots-tag"] = valor
                 except Exception:
                     pass
                 raw = list(message.get("headers", []))

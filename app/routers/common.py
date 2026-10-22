@@ -641,6 +641,36 @@ def ruta_tema_en(tema: str) -> str:
 
 TEMPLATES.env.globals["ruta_tema_en"] = ruta_tema_en
 
+
+def espejo_idioma(request) -> bool:
+    """¿La URL pedida es ``/en-xx/…`` de un mercado hispano?
+
+    Se lee ``ruta_original`` porque el middleware ya reescribió el path
+    (/en-mx/apu → /mx/apu) y con la ruta interna la comprobación no vería el
+    prefijo.
+    """
+    try:
+        from ..seo import es_espejo_de_idioma
+
+        return es_espejo_de_idioma(str(getattr(request.state, "ruta_original", "") or ""))
+    except Exception:
+        return False
+
+
+def robots_meta(request) -> str:
+    """Valor del meta robots de la página.
+
+    Coincide con el ``X-Robots-Tag`` que pone el middleware de seguridad: si
+    las dos instrucciones se contradicen, Google aplica la más restrictiva y
+    la página se cae del índice sin que nadie lo haya pedido. Las URL espejo
+    del conmutador salen en ``noindex``; el resto, como siempre.
+    """
+    return "noindex, follow" if espejo_idioma(request) else "index,follow,max-image-preview:large"
+
+
+TEMPLATES.env.globals["espejo_idioma"] = espejo_idioma
+TEMPLATES.env.globals["robots_meta"] = robots_meta
+
 # Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
 try:
     from ..services.traduccion import (
