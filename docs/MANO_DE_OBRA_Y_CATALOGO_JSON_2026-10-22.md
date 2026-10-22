@@ -155,8 +155,8 @@ Pruebas nuevas: **180**. Suite completa: **2 631 pasan, 12 omitidas** (6:00).
 
 | # | Idea | Estado |
 |---|---|---|
-| 3 | `lastmod` real por URL en los sitemaps | Pendiente |
+| 3 | `lastmod` real por URL en los sitemaps | **Descartado con motivo**: el catálogo tiene una fecha de revisión por mercado (una sola para sus 1 989 partidas); inventar granularidad por URL sería mentirle al rastreador |
 | 5 | `/mx/precios.json` con `Dataset` | **Hecho** |
 | 6 | «¿Cuánto cuesta construir una casa en {país}?» | Siguiente |
 | — | Enlaces EN que faltan por mercado (`/en-us/remodeling` da 404) | Pendiente |
-| — | `tools/indexnow.py` no envía los sitemaps de precios | Pendiente |
+| — | `tools/indexnow.py` no envía los sitemaps de precios | **Hecho**: `--precios` (y `--cc` para ir mercado por mercado) |
