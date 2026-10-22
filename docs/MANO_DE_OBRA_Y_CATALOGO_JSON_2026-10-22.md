@@ -132,6 +132,25 @@ de precios de cada país y desde la página de mano de obra.
 
 ---
 
+## 2 bis. «Precios» en la cabecera (enlaces internos)
+
+El catálogo solo se alcanzaba desde la home del mercado, el pie y alguna guía.
+Los 47 000 precios colgaban de un hub con poquísimos enlaces internos.
+
+Ahora `_nav.html` y `_nav_en.html` llevan un elemento **Precios / Prices** que
+apunta al índice del mercado de la URL actual: `/mx/…` → `/mx/precios`,
+`/en-gb/…` → `/en-gb/prices`, `/au/…` → `/en-au/prices`, y las rutas genéricas
+al mercado de referencia de su idioma (`/` → `/mx/precios`,
+`/en/…` → `/en-us/prices`). La función es `ruta_precios_nav()` en
+`app/routers/common.py` y lee `request.state.ruta_original` para que las URL
+reescritas por el middleware de idioma no manden a un mercado equivocado.
+
+Efecto: la cabecera aparece en las 47 000 fichas del catálogo, así que cada una
+enlaza a su hub de mercado (y no todas al mismo dominio de destino). Lo cubre
+`tests/test_nav_precios.py` (29 pruebas, los 22 mercados).
+
+---
+
 ## 3. Cobertura
 
 | Fichero | Qué cubre |
@@ -146,8 +165,10 @@ de precios de cada país y desde la página de mano de obra.
 | `app/locales/es.json` / `en.json` | 24 claves `mo.*` + 4 de enlaces cruzados (148 por idioma) |
 | `tests/test_mano_obra.py` | 149 pruebas |
 | `tests/test_indexabilidad_catalogo.py` | 31 pruebas |
+| `tests/test_nav_precios.py` | 29 pruebas |
+| `app/indexnow.py` / `tools/indexnow.py` | `--precios` y `--cc` para avisar del catálogo a Bing |
 
-Pruebas nuevas: **180**. Suite completa: **2 631 pasan, 12 omitidas** (6:00).
+Pruebas nuevas: **209**. Suite completa: **2 662 pasan, 12 omitidas** (6:14).
 
 ---
 

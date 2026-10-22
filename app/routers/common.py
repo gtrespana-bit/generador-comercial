@@ -584,6 +584,45 @@ def whatsapp_url(telefono, texto) -> str:
 
 TEMPLATES.env.filters["whatsapp"] = whatsapp_url
 
+
+def ruta_precios_nav(path: str) -> str:
+    """Índice de precios del mercado de la URL actual (para la cabecera).
+
+    El catálogo de precios solo se alcanzaba desde la home del mercado, el
+    pie y alguna guía. Con este enlace en la cabecera, cada una de las ~47 000
+    fichas apunta a su índice de mercado: el cubo de enlaces deja de depender
+    del pie y el rastreador siempre tiene un camino corto al hub.
+    """
+    try:
+        from ..paises import PAISES
+        from ..services import precios_publicos as pp
+
+        partes = [x for x in str(path or "").split("/") if x]
+        if not partes:
+            # Portada global en español: el mercado de referencia es MX.
+            return "/mx/precios"
+        primero = partes[0].lower()
+        if primero == "en":
+            # Sitio genérico en inglés: su catálogo de referencia es el de US.
+            return "/en-us/prices"
+        if primero.startswith("en-") and len(primero) == 5:
+            cc = primero[3:].upper()
+        elif len(primero) == 2:
+            cc = primero.upper()
+        else:
+            cc = ""
+        if not cc:
+            # Rutas genéricas: /en/... es el sitio en inglés; el resto, español.
+            return "/en-us/prices" if primero == "en" else "/mx/precios"
+        if cc not in PAISES or cc not in pp.paises_publicados():
+            return ""
+        return pp.ruta_indice(cc)
+    except Exception:
+        return ""
+
+
+TEMPLATES.env.globals["ruta_precios_nav"] = ruta_precios_nav
+
 # Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
 try:
     from ..services.traduccion import (
