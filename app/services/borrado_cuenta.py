@@ -184,6 +184,9 @@ def ejecutar_borrado_local(
                 nombre_confirmado=nombre,
                 confirmar=True,
                 commit=False,
+                # Este flujo ya programó la cancelación al vencer justo
+                # arriba: no debe repetirla ni convertirla en inmediata.
+                cancelar_suscripciones=False,
             )
 
         # La función SECURITY DEFINER verifica auth_user_id + email contra los

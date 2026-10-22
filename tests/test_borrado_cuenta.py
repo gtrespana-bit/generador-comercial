@@ -5,7 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database import Base
-from app.models import Membresia, Organizacion, Usuario
+from app.models import CompraPlan, Membresia, Organizacion, Usuario
+from app.services.baja import BajaError
 from app.services.borrado_cuenta import (
     BorradoCuentaError,
     ejecutar_borrado_local,
@@ -87,3 +88,55 @@ def test_borrado_local_no_repite_un_tombstone(cuenta_db):
             auth_user_id=AUTH_ID,
             email=usuario.email,
         )
+
+
+def test_borrado_cuenta_conserva_su_cancelacion_programada_sin_duplicarla(
+    cuenta_db, monkeypatch
+):
+    """La baja reutilizada no debe volver a cancelar inmediatamente."""
+    usuario = Usuario(auth_user_id=AUTH_ID, email="persona@example.com", nombre="Persona")
+    propia = Organizacion(nombre="Empresa propia", slug="empresa-propia")
+    cuenta_db.add_all([usuario, propia])
+    cuenta_db.flush()
+    cuenta_db.add_all([
+        Membresia(
+            usuario_id=usuario.id,
+            organizacion_id=propia.id,
+            rol="propietario",
+            activa=True,
+        ),
+        CompraPlan(
+            organizacion_id=propia.id,
+            plan="mensual",
+            metodo_pago="stripe",
+            estado="activa",
+            stripe_subscription_id="sub_cuenta_123",
+        ),
+    ])
+    cuenta_db.commit()
+
+    programadas = []
+    monkeypatch.setattr(
+        "app.services.stripe.fijar_cancelacion_al_vencer",
+        lambda subscription_id, cancelar: programadas.append(
+            (subscription_id, cancelar)
+        ) or {"status": "active", "cancel_at_period_end": True},
+    )
+    parametros_baja = {}
+
+    def _detener_antes_de_borrar(db, **kwargs):
+        parametros_baja.update(kwargs)
+        raise BajaError("Detención deliberada antes de borrar")
+
+    monkeypatch.setattr("app.services.baja.ejecutar_baja", _detener_antes_de_borrar)
+
+    with pytest.raises(BorradoCuentaError):
+        ejecutar_borrado_local(
+            cuenta_db,
+            usuario_id=usuario.id,
+            auth_user_id=AUTH_ID,
+            email=usuario.email,
+        )
+
+    assert programadas == [("sub_cuenta_123", True)]
+    assert parametros_baja["cancelar_suscripciones"] is False
