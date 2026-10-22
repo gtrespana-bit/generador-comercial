@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "fastapi",
-  "regions": ["yul1"],
+  "regions": [
+    "yul1"
+  ],
   "functions": {
     "app/main.py": {
       "maxDuration": 60
@@ -15,6 +17,19 @@
     {
       "path": "/api/cron/mantenimiento",
       "schedule": "0 2 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.cotizat.online"
+        }
+      ],
+      "destination": "https://cotizat.online/:path*",
+      "permanent": true
     }
   ]
 }

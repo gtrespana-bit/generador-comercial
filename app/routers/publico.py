@@ -684,6 +684,18 @@ def robots(request: Request):
     return Response(robots_txt(request), media_type="text/plain; charset=utf-8")
 
 
+@router.get("/llms.txt", include_in_schema=False)
+def llms(request: Request):
+    """Mapa del sitio en Markdown para asistentes de IA (convención llms.txt).
+
+    Se genera del mismo sitio que el sitemap, así que no se queda atrás
+    cuando nace un mercado o un capítulo nuevo.
+    """
+    from ..seo import llms_txt
+
+    return Response(llms_txt(request), media_type="text/plain; charset=utf-8")
+
+
 def _xml_urlset(entradas) -> str:
     xml = [
         '<?xml version="1.0" encoding="UTF-8"?>',

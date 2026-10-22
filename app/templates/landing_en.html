@@ -77,6 +77,7 @@
       {% else %}
       <h1>Construction estimating software: <span class="hero-hl">profit, time and PDF</span>.</h1>
       {% endif %}
+      <p class="hero-definicion">{{ product_name }} is construction estimating software: it turns your price catalog into estimates with true cost, margin, crew time and a professional PDF, using the currency, tax and trade terms of {{ pais_actual.nombre_en if pais_actual else 'each market' }}.</p>
       <p class="sub">Estimate with your country's price catalog, see your real margin and crew time, and send a professional PDF. No Excel, no copy and paste.</p>
       <div class="hero-mercados" aria-label="Available markets">
         {# In English pages the market access points lead with the five
@@ -814,13 +815,29 @@
 </section>
 {% endif %}
 
+<section class="fuentes" id="fuentes">
+  <h2>Where the rules {{ product_name }} applies come from</h2>
+  <p class="intro">The product does not invent tax or building rules: it applies what official sources publish. These are the Spanish references, which you can check yourself.</p>
+  <ul class="fuentes-lista">
+    <li>
+      <a href="https://www.codigotecnico.org/" target="_blank" rel="noopener">Spanish Building Code (CTE)</a>
+      — the technical framework for Spanish construction: structural, insulation and safety requirements that drive many catalog items.
+    </li>
+    <li>
+      <a href="https://www.boe.es/" target="_blank" rel="noopener">BOE, Spain's official state gazette</a>
+      — where consolidated VAT rates and invoicing duties are published.
+    </li>
+  </ul>
+  <p class="fuentes-nota">In Latin American and English-speaking markets the catalog applies each country's currency, tax and tax ID; the source of each figure is stated on that market's page.</p>
+</section>
+
 {% if seo.faq %}
 <section class="seo-faq" id="preguntas-seo">
   <span class="section-kicker">Frequently asked questions</span>
   <h2>What contractors in {{ seo.nombre_pais }} ask before signing up.</h2>
   {% for item in seo.faq %}
   <details>
-    <summary>{{ item.q }}</summary>
+    <summary><h3>{{ item.q }}</h3></summary>
     <p>{{ item.a }}</p>
   </details>
   {% endfor %}
