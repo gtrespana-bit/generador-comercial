@@ -61,6 +61,9 @@
   <h2>{{ 'precios.rango.enlaces' | t(_idioma) }}</h2>
   <ul class="precios-lista">
     <li><a href="{{ ruta_indice }}">{{ ('precios.rango.indice' | t(_idioma)).format(pais=nombre_pais) }}</a></li>
+    {% if mano_obra_url %}
+    <li><a href="{{ mano_obra_url }}">{{ 'precios.mano_obra' | t(_idioma) }}</a></li>
+    {% endif %}
     <li><a href="{{ guia_apu }}">{{ 'precios.rango.guia' | t(_idioma) }}</a></li>
     {% for h in apartados_hermanos %}
     <li><a href="{{ h.ruta }}">{{ h.nombre }}</a></li>

@@ -91,6 +91,9 @@ def _patrones() -> tuple[re.Pattern, ...]:
         re.compile(rf"^/(?:{cc})/(?:prices|precios)$"),
         re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+$"),
         re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+/[^/]+$"),
+        # Coste horario de la mano de obra por mercado y su descarga JSON.
+        re.compile(rf"^/(?:{cc})/(?:labour-rates|mano-de-obra)$"),
+        re.compile(rf"^/(?:{cc})/(?:prices|precios)\.json$"),
     )
 
 

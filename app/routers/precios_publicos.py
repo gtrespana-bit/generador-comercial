@@ -93,6 +93,53 @@ def precios_partida(cc: str, apartado: str, partida: str, request: Request):
     return TEMPLATES.TemplateResponse(request, "pais_precio_partida.html", ctx)
 
 
+@router.get("/{cc}/labour-rates", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/{cc}/mano-de-obra", response_class=HTMLResponse, include_in_schema=False)
+def precios_mano_obra(cc: str, request: Request):
+    """Coste horario de los oficios del país: /mx/mano-de-obra."""
+    from ..mano_obra import contexto_mano_obra, ruta_mano_obra
+
+    codigo, respuesta = _mercado_precios(cc, request, ruta_mano_obra)
+    if respuesta is not None:
+        return respuesta
+    ctx = contexto_mano_obra(request, codigo)
+    if ctx is None:
+        raise HTTPException(status_code=404)
+    return TEMPLATES.TemplateResponse(request, "pais_mano_obra.html", ctx)
+
+
+@router.get("/{cc}/prices.json", include_in_schema=False)
+@router.get("/{cc}/precios.json", include_in_schema=False)
+def precios_json(cc: str, request: Request):
+    """Catálogo del país en JSON (descarga real para ``Dataset``).
+
+    Estático por despliegue: el catálogo vive en el repositorio y solo cambia
+    al publicarlo, así que se cachea un día en el CDN con revalidación
+    larga. Es el ``distribution`` que Google Dataset Search necesita; sin una
+    descarga real, el ``Dataset`` del HTML no cuenta.
+    """
+    import json as _json
+
+    from ..services import precios_publicos as pp
+
+    codigo = str(cc or "").strip().upper()
+    if codigo not in pp.paises_publicados():
+        raise HTTPException(status_code=404)
+    datos = pp.exportar(codigo)
+    if not datos:
+        raise HTTPException(status_code=404)
+    return Response(
+        _json.dumps(datos, ensure_ascii=False, separators=(",", ":")),
+        media_type="application/json; charset=utf-8",
+        headers={
+            "Cache-Control": "public, max-age=3600, s-maxage=86400, "
+            "stale-while-revalidate=604800",
+            "Content-Disposition": f'inline; filename="precios-{codigo.lower()}.json"',
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
+
+
 @router.get("/sitemap-precios-{cc}.xml", include_in_schema=False)
 def sitemap_precios(cc: str, request: Request):
     """Sitemap hijo con las páginas de precios de un país (Fase 5).

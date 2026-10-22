@@ -77,6 +77,35 @@ def url_publica(path: str, request: Request | None = None) -> str:
     return origen_canonico(request) + ruta
 
 
+def _es_indexable_precios(resto: str) -> bool:
+    """Rutas del catálogo público de precios de un mercado.
+
+    Son ~47 000 URL con dato propio (precio unitario, descompuesto, moneda y
+    país) y estaban fuera de la lista blanca: el ``<meta robots>`` decía
+    «index» pero la cabecera ``X-Robots-Tag`` decía «noindex» y, cuando las
+    dos se contradicen, manda la cabecera. El catálogo entero llevaba tiempo
+    fuera del índice sin que ningún test lo detectara.
+
+    Se acepta la forma canónica de cada tipo de página y nada más: un slug
+    inventado da 404 en el router, no una página indexable.
+    """
+    partes = str(resto or "").strip("/").split("/")
+    if not partes or not partes[0]:
+        return False
+    if len(partes) == 1 and partes[0] in {"precios.json", "prices.json"}:
+        return True
+    if len(partes) == 1 and partes[0] in {"mano-de-obra", "labour-rates"}:
+        return True
+    if partes[0] not in {"precios", "prices"}:
+        return False
+    if len(partes) == 1:
+        return True
+    return len(partes) <= 3 and all(
+        re.fullmatch(r"[a-z0-9][a-z0-9-]*", segmento)
+        for segmento in partes[1:]
+    )
+
+
 def es_indexable(path: str) -> bool:
     """¿Esta ruta debe aparecer en buscadores?
 
@@ -89,7 +118,7 @@ def es_indexable(path: str) -> bool:
     # hay que reconocerlo para no marcar toda la web en inglés como noindex.
     if p == "/en" or p.startswith("/en/") or p.startswith("/en-"):
         return _es_indexable_en(p)
-    if p.endswith((".xml", ".txt")):
+    if p.endswith((".xml", ".txt", ".json")):
         # Sitemaps (incluidos los hijos de precios), robots.txt y el fichero
         # de IndexNow. No son HTML, pero marcarlos noindex desde el
         # middleware no tiene ningún sentido y confunde al diagnóstico.
@@ -115,6 +144,10 @@ def es_indexable(path: str) -> bool:
         # /es/guia/x, /co/guia/x… La ruta se valida además en el router para
         # que un artículo español bajo /mx/ devuelva 404.
         if len(partes) == 3 and partes[1] == "guia" and re.fullmatch(r"[a-z0-9-]+", partes[2]):
+            return True
+        # Catalogo de precios del mercado: /mx/precios, /mx/precios/{apartado},
+        # /mx/precios/{apartado}/{partida}, /mx/mano-de-obra, /mx/precios.json
+        if _es_indexable_precios("/".join(partes[1:])):
             return True
         return False
     return False
@@ -165,6 +198,9 @@ def _es_indexable_en(p: str) -> bool:
         # Guías y artículos del mercado: /en-gb/guia/... es la URL canónica
         # de los artículos británicos y sin esta rama quedarían en noindex.
         if re.match(r"^guia/[a-z0-9-]+$", resto):
+            return True
+        # Mismo catalogo con la URL inglesa: /en-gb/prices, /en-us/labour-rates
+        if _es_indexable_precios(resto):
             return True
         return False
     return False

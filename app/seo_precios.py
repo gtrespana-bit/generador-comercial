@@ -397,8 +397,12 @@ def jsonld_dataset(
     Google Dataset Search es un canal gratuito que casi nadie del sector de
     la construcción usa, y esta página cumple los requisitos de verdad: es
     un conjunto de datos publicados, con cobertura geográfica declarada,
-    fecha de revisión, autor identificable y acceso libre sin registro. No
-    se inventa una descarga que no existe: no se declara ``distribution``.
+    fecha de revisión, autor identificable y acceso libre sin registro.
+
+    La ``distribution`` apunta a ``/{cc}/precios.json``, que existe de verdad
+    (mismo catálogo, mismos precios). Antes se omitía para no inventar una
+    descarga; desde que el endpoint publica el catálogo completo, declararla
+    es lo que hace que el ``Dataset`` sea elegible en Google Dataset Search.
     """
     origen = origen_canonico(request)
     en = lang == "en"
@@ -447,6 +451,15 @@ def jsonld_dataset(
         "spatialCoverage": {"@type": "Country", "name": nombre},
         "temporalCoverage": (mes.split()[-1] if mes else ""),
         "keywords": palabras,
+        "distribution": [
+            {
+                "@type": "DataDownload",
+                "contentUrl": origen + ruta.rstrip("/") + ".json",
+                "encodingFormat": "application/json",
+                "name": (nombre_ds),
+                "inLanguage": hreflang_pais(cc),
+            }
+        ],
         "variableMeasured": [
             {"@type": "PropertyValue", "name": variable, "unitText": unidad}
             for variable, unidad in variables
@@ -574,6 +587,10 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "faq": faq,
             "calc_url": ruta_calculadora(cc),
+            "mano_obra_url": (
+                pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
+            ),
+            "json_url": pp.ruta_json(cc),
             "etiqueta_impuesto": etiqueta_impuesto,
             "tipo_impuesto": tipo_impuesto,
         }
@@ -717,6 +734,9 @@ def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
             "apartados_hermanos": hermanos,
             "obras_relacionadas": apartados_relacionados(cc, slug),
             "calc_url": ruta_calculadora(cc, slug),
+            "mano_obra_url": (
+                pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
+            ),
             "alternates": _alternates_visibles(rutas_alternas, cc),
         }
     )
@@ -880,6 +900,10 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
             "horas_txt": _cantidad(ficha["horas_mo"], 4),
             "uds_dia_txt": _cantidad(ficha["uds_dia_cuadrilla"], 1),
             "calc_url": ruta_calculadora(cc, slug_apartado),
+            "mano_obra_url": (
+                pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
+            ),
+            "nombre_pais": _nombre_pais(cc, lang),
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "og_type": "article",
         }
@@ -1096,6 +1120,7 @@ def enlaces_catalogo(codigo_pais: str, semilla: str = "", limite: int = 5) -> di
         "codigo": cc,
         "nombre": _nombre_pais(cc, "en" if pais.get("idioma") == "en" else "es"),
         "indice": pp.ruta_indice(cc),
+        "mano_obra": pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else "",
         "moneda": pais.get("moneda") or "",
         "apartados": [
             {
@@ -1127,6 +1152,9 @@ def indices_catalogo(lang: str = "es") -> list[dict]:
                 "nombre": _nombre_pais(cc, lang),
                 "moneda": (PAISES.get(cc) or {}).get("moneda") or "",
                 "indice": ruta,
+                "mano_obra": (
+                    pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
+                ),
             }
         )
     return salida

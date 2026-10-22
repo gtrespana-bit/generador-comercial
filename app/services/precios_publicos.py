@@ -565,6 +565,36 @@ def alternates_apartado(clave: str) -> list[dict]:
     return salida
 
 
+def oficios_disponibles(codigo_pais: str) -> bool:
+    """¿Hay recursos de mano de obra publicados en ese mercado?
+
+    Se comprueban los recursos del catálogo, no la página: el sitemap no
+    puede anunciar una URL que después dé 404 porque un mercado no lleva
+    descompuesto de mano de obra.
+    """
+    indice = _indice(codigo_pais)
+    if indice is None:
+        return False
+    for (slug_ap, slug_p) in list(indice["partidas"])[:40]:
+        ficha = indice["partidas"][(slug_ap, slug_p)]
+        if ficha.get("horas_mo") or (ficha.get("grupos") or {}).get("mano_obra"):
+            return True
+    return False
+
+
+def ruta_mano_obra(codigo_pais: str) -> str:
+    """URL canónica del coste horario de la mano de obra del mercado."""
+    cc = str(codigo_pais or "").strip().upper()
+    if (PAISES.get(cc) or {}).get("idioma") == "en":
+        return f"/en-{cc.lower()}/labour-rates"
+    return f"/{cc.lower()}/mano-de-obra"
+
+
+def ruta_json(codigo_pais: str) -> str:
+    """URL de la descarga JSON del catálogo del mercado."""
+    return ruta_indice(codigo_pais) + ".json"
+
+
 def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
     """Entradas del sitemap del país con la forma de ``seo.urls_sitemap``."""
     indice = _indice(codigo_pais)
@@ -606,6 +636,18 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
             ),
         }
     ]
+    # Coste horario de la mano de obra: una página por mercado, con dato
+    # propio (moneda, oficios y tarifas del catálogo de ese país).
+    if oficios_disponibles(cc):
+        salida.append(
+            {
+                "loc": origen + ruta_mano_obra(cc),
+                "lastmod": lastmod_pais,
+                "changefreq": "monthly",
+                "priority": "0.8",
+                "alternates": [],
+            }
+        )
     for slug_ap in sorted(indice["apartados"]):
         salida.append(
             {
@@ -629,3 +671,88 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
             }
         )
     return salida
+
+
+def exportar(codigo_pais: str) -> dict | None:
+    """Catálogo del país en JSON, con el descompuesto de cada partida.
+
+    Es el mismo dato que ya se publica en HTML, pero en un formato que sí
+    pueden consumir otros: hojas de cálculo, scripts, agentes y buscadores de
+    datos. Sirve a tres cosas concretas:
+
+    1. **Google Dataset Search** exige una descarga real (``distribution``)
+       para considerar el ``Dataset``; sin ella, el markup es decorativo.
+    2. **Fuentes y competidores** pueden citar el catálogo sin copiar el HTML
+       (un enlace a la fuente vale más que otro enlace suelto).
+    3. **Tráfico de uso**: quien programa contra el catálogo vuelve; es el
+       único contenido del sitio que otra herramienta puede necesitar de
+       verdad.
+
+    El orden es estable (capítulos → apartados → partidas, todo ordenado) para
+    que dos descargas idénticas den el mismo fichero y cualquier diferencia
+    signifique que el catálogo cambió de verdad.
+    """
+    indice = _indice(codigo_pais)
+    if indice is None:
+        return None
+    cc = indice["cc"]
+    pais = PAISES.get(cc) or {}
+    idioma = str(pais.get("idioma") or "es")
+    es = idioma != "en"
+    origen = "https://cotizat.online"
+    nombre = (pais.get("nombre") if es else pais.get("nombre_en")) or cc
+
+    capitulos = []
+    for capitulo in indice["capitulos"]:
+        apartados = []
+        for ap in capitulo["apartados"]:
+            partidas = [
+                {
+                    "slug": p["slug"],
+                    "titulo": p["titulo"],
+                    "unidad": p["unidad"],
+                    "precio_unitario": round(float(p["pu"]), 2),
+                    "url": origen + ruta_partida(cc, ap["slug"], p["slug"]),
+                }
+                for p in (indice["apartados"].get(ap["slug"]) or {}).get("partidas", [])
+            ]
+            if not partidas:
+                continue
+            apartados.append(
+                {
+                    "slug": ap["slug"],
+                    "nombre": ap["nombre"],
+                    "url": origen + ruta_apartado(cc, ap["slug"]),
+                    "partidas": partidas,
+                }
+            )
+        if apartados:
+            capitulos.append(
+                {"codigo": capitulo["codigo"], "nombre": capitulo["nombre"],
+                 "apartados": apartados}
+            )
+
+    return {
+        "nombre": (
+            f"Construction unit price database for {nombre} ({pais.get('moneda')})"
+            if not es
+            else f"Base de precios unitarios de construcción de {nombre} ({pais.get('moneda')})"
+        ),
+        "descripcion": (
+            f"{indice['total_partidas']} construction unit prices for {nombre}, "
+            f"with the cost breakdown of each item."
+            if not es
+            else f"{indice['total_partidas']} precios unitarios de construcción "
+            f"para {nombre}, con el descompuesto de cada partida."
+        ),
+        "idioma": "en" if not es else "es",
+        "pais": {"codigo": cc, "nombre": nombre, "moneda": pais.get("moneda")},
+        "fecha_revision": indice["fecha_revision"],
+        "total_partidas": indice["total_partidas"],
+        "total_apartados": indice["total_apartados"],
+        "total_capitulos": len(capitulos),
+        "licencia": origen + ("/en/legal/terminos" if not es else "/legal/terminos"),
+        "autor": {"nombre": "CotizaT", "url": origen + "/"},
+        "url": origen + ruta_indice(cc),
+        "capitulos": capitulos,
+    }

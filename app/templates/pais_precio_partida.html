@@ -94,6 +94,22 @@
   </div>
   {% endif %}
 
+  {% if mano_obra_url %}
+  {% set lineas_mo = partida.lineas | selectattr('grupo', 'equalto', 'mano_obra') | list %}
+  {% if lineas_mo %}
+  <section class="precios-mo-partida">
+    <h2>{{ 'precios.mo_partida' | t(_idioma) }}</h2>
+    <p>{{ ('precios.mo_partida.texto' | t(_idioma)).format(moneda=partida.moneda) }}</p>
+    <ul class="precios-lista">
+      {% for linea in lineas_mo %}
+      <li>{{ linea.nombre }} — <span class="precios-importe">{{ linea.precio | money_iso(partida.moneda) }}/{{ linea.unidad }}</span></li>
+      {% endfor %}
+    </ul>
+    <p><a href="{{ mano_obra_url }}">{{ ('precios.mo_partida.enlace' | t(_idioma)).format(pais=nombre_pais) }}</a></p>
+  </section>
+  {% endif %}
+  {% endif %}
+
   <section class="precios-faq">
     <h2>{{ 'precios.faq' | t(_idioma) }}</h2>
     {% for item in faq %}

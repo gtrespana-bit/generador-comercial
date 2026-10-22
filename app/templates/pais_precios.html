@@ -57,6 +57,14 @@
   </p>
   {% endif %}
 </article>
+  {% if json_url %}
+  <p class="precios-json">{{ 'precios.json_texto' | t(_idioma) }}
+    <a href="{{ json_url }}" download>{{ 'precios.json_enlace' | t(_idioma) }}</a></p>
+  {% endif %}
+  {% if mano_obra_url %}
+  <p class="precios-mano-obra">{{ 'precios.mano_obra.texto' | t(_idioma) }}
+    <a href="{{ mano_obra_url }}">{{ 'precios.mano_obra' | t(_idioma) }}</a></p>
+  {% endif %}
   {% if calc_url %}
   <p class="precios-calc"><a class="btn btn-secondary" href="{{ calc_url }}">{{ 'precios.calc' | t(_idioma) }}</a></p>
   {% endif %}
