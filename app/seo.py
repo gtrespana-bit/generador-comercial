@@ -338,13 +338,19 @@ def enlaces_hreflang(request: Request | None = None, tema: str = "") -> list[dic
     se anunciaban variantes inexistentes como «es-US».
     """
     base = origen_canonico(request)
-    # «en» apunta a la URL que de verdad se sirve, no a /en/, que es un 301 a
-    # /en-us/. Un hreflang que resuelve en redirección se descarta en Search
-    # Console y reparte la señal entre dos URLs.
+    # «en» es la página inglesa sin mercado (/en/unit-price-analysis), no
+    # /en-us/: cada mercado ya aporta su propio en-XX y el inglés genérico es
+    # un documento con URL propia que rankea por su cuenta. Antes apuntaba a
+    # /en-us/ y eso rompía la reciprocidad: /en/estimating-software declaraba
+    # los 26 mercados y ninguno lo declaraba a él, así que Google descartaba
+    # el conjunto (78 páginas con el hreflang incoherente).
+    # En la home se mantiene /en-us/ porque /en/ responde 301: un hreflang que
+    # resuelve en redirección también se descarta.
+    generico_en = ruta_en("", tema) if tema else ruta_en("US", "")
     out = [
         {"hreflang": "x-default", "href": base + ruta_pais("", tema)},
         {"hreflang": "es", "href": base + ruta_pais("", tema)},
-        {"hreflang": "en", "href": base + ruta_en("US", tema)},
+        {"hreflang": "en", "href": base + generico_en},
     ]
     for pais in lista_paises():
         out.append(
