@@ -32,3 +32,27 @@ def test_robots_y_sitemap_siguen_vivos(cliente_web):
     sitemap = cliente_web.get("/sitemap.xml")
     assert sitemap.status_code == 200
     assert "<urlset" in sitemap.text
+
+
+def test_el_catalogo_de_precios_tambien_se_puede_avisar():
+    """Las ~47 000 fichas de precios no están en el sitemap editorial."""
+    from app.indexnow import urls_precios
+
+    urls = urls_precios()
+    assert len(urls) > 40_000
+    assert len(urls) == len(set(urls))
+    assert all(u.startswith("https://cotizat.online/") for u in urls)
+    assert not any(u.endswith(".json") for u in urls)
+    assert "https://cotizat.online/mx/precios" in urls
+    assert "https://cotizat.online/mx/mano-de-obra" in urls
+
+
+def test_se_puede_avisar_un_solo_mercado():
+    """Bing admite un cupo diario: conviene poder ir mercado por mercado."""
+    from app.indexnow import urls_precios
+
+    solo_mx = urls_precios(cc="MX")
+    assert solo_mx
+    assert all("/mx/" in u for u in solo_mx)
+    assert len(solo_mx) < len(urls_precios())
+    assert urls_precios(cc="zz") == []

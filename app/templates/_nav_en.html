@@ -18,6 +18,10 @@
     {% include "_idioma_switch.html" %}
     <a class="nav-item{% if request.url.path == '/como-funciona' %} is-active{% endif %}" href="{{ '/en/como-funciona' }}">How it works</a>
     <a class="nav-item{% if request.url.path == '/calculadora' %} is-active{% endif %}" href="{{ '/en/calculadora' }}">Calculator</a>
+    {% set nav_precios = ruta_precios_nav(request.state.ruta_original or request.url.path) %}
+    {% if nav_precios %}
+    <a class="nav-item{% if request.url.path.endswith('/prices') %} is-active{% endif %}" href="{{ nav_precios }}">Prices</a>
+    {% endif %}
     <a class="nav-item{% if request.url.path.startswith('/guia/') %} is-active{% endif %}" href="{{ '/en/guia/presupuesto-de-obra' }}">Guides</a>
     <a class="nav-item{% if request.url.path == '/legal/preguntas' %} is-active{% endif %}" href="{{ '/en/legal/preguntas' }}">FAQ</a>
     <a class="nav-item{% if request.url.path == '/pago' %} is-active{% endif %}" href="{{ '/en/pago' }}">Plans</a>

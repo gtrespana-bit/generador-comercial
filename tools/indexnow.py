@@ -12,6 +12,7 @@ Uso:
   python tools/indexnow.py                    # ensayo: qué se enviaría
   python tools/indexnow.py --limite 10        # ensayo con las 10 primeras
   python tools/indexnow.py --enviar           # envía todo el sitemap
+  python tools/indexnow.py --enviar --precios # sitemap + catálogo (47k URL)
   python tools/indexnow.py --enviar --url https://cotizat.online/nueva-guia
                                               # solo esa URL (repetible)
 
@@ -82,6 +83,14 @@ def main() -> int:
         "--url", action="append", default=None,
         help="URL concreta a enviar en vez del sitemap (repetible)",
     )
+    parser.add_argument(
+        "--precios", action="store_true",
+        help="incluye el catálogo de precios (sitemaps sitemap-precios-{cc}.xml)",
+    )
+    parser.add_argument(
+        "--cc", default=None,
+        help="con --precios, limita el catálogo a un mercado (MX, US, …)",
+    )
     args = parser.parse_args()
 
     from app.indexnow import CLAVE, RUTA_CLAVE
@@ -94,6 +103,14 @@ def main() -> int:
 
         urls = [str(entrada["loc"]) for entrada in urls_sitemap()]
         origen = "sitemap completo"
+        if args.precios:
+            from app.indexnow import urls_precios
+
+            precios = urls_precios(cc=args.cc)
+            ya = set(urls)
+            urls.extend(u for u in precios if u not in ya)
+            etiqueta = f"catálogo de precios de {args.cc}" if args.cc else "catálogo de precios"
+            origen = f"{origen} + {etiqueta} ({len(precios)} URL)"
         if args.limite is not None:
             urls = urls[: max(0, args.limite)]
             origen = f"{origen}, primeras {len(urls)}"

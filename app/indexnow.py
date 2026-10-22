@@ -20,3 +20,33 @@ CLAVE = "c2ecc63e4cd4d18c77e5b5e5430d7358"
 
 #: Ruta pública donde los buscadores verifican la propiedad del dominio.
 RUTA_CLAVE = f"/{CLAVE}.txt"
+
+
+#: Origen público por defecto (el mismo que usan los sitemaps).
+ORIGEN = "https://cotizat.online"
+
+
+def urls_precios(origen: str = ORIGEN, cc: str | None = None) -> list[str]:
+    """URLs del catálogo de precios, mercado por mercado.
+
+    El sitemap editorial (``app.seo.urls_sitemap``) no incluye el catálogo:
+    las ~47 000 fichas de precios viven en ``sitemap-precios-{cc}.xml``. Hasta
+    ahora la herramienta de IndexNow solo leía el sitemap editorial, así que
+    Bing nunca se enteró de que el catálogo existía. Y justo ahora importa más
+    que nunca: el catálogo llevaba tiempo sirviendo ``X-Robots-Tag: noindex``
+    por cabecera, y acaba de dejar de hacerlo.
+
+    Orden estable y sin duplicados; una URL por partida, apartado y página de
+    mano de obra del mercado.
+    """
+    from .services import precios_publicos as pp
+
+    vistos: dict[str, None] = {}
+    mercados = sorted(pp.paises_publicados())
+    if cc:
+        codigo = str(cc).strip().upper()
+        mercados = [c for c in mercados if c == codigo]
+    for codigo in mercados:
+        for entrada in pp.urls_sitemap(codigo, origen):
+            vistos.setdefault(str(entrada["loc"]), None)
+    return list(vistos)
