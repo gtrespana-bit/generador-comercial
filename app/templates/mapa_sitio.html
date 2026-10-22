@@ -16,7 +16,10 @@
     if (el.sheet) activar();
   })();
   </script>
-  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# Sin JS no hay quien active la hoja diferida, pero ya está enlazada
+     arriba (media="print" se aplica igual al imprimir): repetirla aquí
+     producía una SEGUNDA descarga con otra URL (la del noscript) y el
+     navegador aplicaba la misma hoja dos veces. #}
 </head>
 <body class="landing hub-page">
 {% include "_nav.html" %}
@@ -31,6 +34,8 @@
       <li><a href="/pago">Planes y precios</a></li>
       <li><a href="/legal/preguntas">Preguntas frecuentes</a></li>
       <li><a href="/soporte">Soporte: escribir al equipo</a></li>
+      <li><a href="/novedades">Novedades y versiones</a></li>
+      <li><a href="/en-us/">English site</a></li>
     </ul>
   </section>
   <section class="hub-bloque">

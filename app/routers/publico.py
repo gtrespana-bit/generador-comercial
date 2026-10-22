@@ -1,6 +1,6 @@
 """Rutas públicas: landing, legales, propuestas compartidas y descarga de archivos."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Form, HTTPException, Request
 
 from ..indexnow import CLAVE as _CLAVE_INDEXNOW
 from ..indexnow import RUTA_CLAVE as _RUTA_CLAVE_INDEXNOW
@@ -139,6 +139,16 @@ def _idioma_de(request: Request | None) -> str:
         return "es"
 
 
+def _indices_catalogos(idioma: str) -> list[dict]:
+    """Índices de los catálogos de precios publicados (para la home genérica)."""
+    from ..seo_precios import indices_catalogo
+
+    try:
+        return indices_catalogo("en" if idioma == "en" else "es")
+    except Exception:
+        return []
+
+
 def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict:
     """Contexto de la landing. El subdirectorio (/co/) manda sobre la query."""
     from ..paises import (
@@ -177,6 +187,10 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "seo_defer_jsonld": True,
             }
             ctx.update(contexto_seo(request, codigo=codigo))
+            if not ctx.get("catalogo_precios"):
+                # Sin catálogo propio: al menos el índice de todos los
+                # catálogos publicados, para no dejar la home sin puente.
+                ctx["indices_catalogos"] = _indices_catalogos(idioma)
             web = _web_publico()
             if web:
                 ctx["web"] = web
@@ -196,6 +210,8 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
         "seo_defer_jsonld": True,
     }
     ctx.update(contexto_seo(request, codigo=pais_codigo))
+    if not ctx.get("catalogo_precios"):
+        ctx["indices_catalogos"] = _indices_catalogos(idioma)
     web = _web_publico()
     if web:
         ctx["web"] = web
@@ -208,7 +224,7 @@ def _landing_con_pais(request: Request, codigo: str):
 
     codigo = str(codigo).strip().upper()
     if codigo not in PAISES:
-        return Response("Página no encontrada.", status_code=404)
+        raise HTTPException(status_code=404)
     # Un mercado de habla inglesa no tiene versión en español: /us/ a secas
     # dejaría la interfaz en español por la cookie. Se manda a la canónica
     # (/en-us/), salvo que ya venga de ahí, que es cuando se sirve.
@@ -413,6 +429,20 @@ def como_funciona(request: Request):
 
 
 def _redirige_a_slash(codigo: str):
+    """301 a la canónica de un mercado, en un solo salto.
+
+    Un mercado de habla inglesa no vive en ``/us/`` sino en ``/en-us/``.
+    Redirigir primero a ``/us/`` y desde ahí a ``/en-us/`` encadenaba dos
+    301 por visita: Search Console lo apunta como «página con redirección»,
+    gasta rastreo y reparte la señal entre tres URLs. Se salta directo a la
+    canónica (y de paso ``/en-us`` sin barra deja de responder 200).
+    """
+    from ..paises import PAISES
+    from ..seo import ruta_mercado
+
+    pais = PAISES.get(str(codigo or "").strip().upper()) or {}
+    if pais.get("idioma") == "en":
+        return RedirectResponse(ruta_mercado(codigo), status_code=301)
     return RedirectResponse(f"/{codigo.lower()}/", status_code=301)
 
 
@@ -627,6 +657,49 @@ def sitemap(request: Request):
     from ..seo import urls_sitemap
 
     return Response(_xml_urlset(urls_sitemap(request)), media_type="application/xml")
+
+
+@router.get("/sitemap_index.xml", include_in_schema=False)
+def sitemap_index(request: Request):
+    """Índice de sitemaps: el principal y un hijo por país con precios.
+
+    Con 23 sitemaps (el principal más 22 de precios) el índice es lo que se
+    envía una sola vez a Search Console y Bing: cualquier país que se
+    encienda mañana entra solo, sin reenviar nada ni tocar el alta. Además
+    deja un único `Sitemap:` legible en robots.txt.
+    """
+    from ..seo import SITEMAP_LASTMOD, origen_canonico
+
+    origen = origen_canonico(request)
+    # (url, lastmod): la fecha de revisión de los precios de cada país, no
+    # una constante. Un lastmod que no cambia cuando cambia el contenido
+    # enseña a Google a ignorarlo, y entonces tampoco sirve el día que sí
+    # hay novedades.
+    hijos = [(f"{origen}/sitemap.xml", SITEMAP_LASTMOD)]
+    try:
+        from ..services import precios_publicos as pp
+
+        for cc in pp.paises_publicados():
+            resumen = pp.resumen(cc) or {}
+            hijos.append(
+                (
+                    f"{origen}/sitemap-precios-{cc.lower()}.xml",
+                    resumen.get("fecha_revision") or SITEMAP_LASTMOD,
+                )
+            )
+    except Exception:
+        pass
+    xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for hijo, lastmod in hijos:
+        xml.append("  <sitemap>")
+        xml.append(f"    <loc>{hijo}</loc>")
+        xml.append(f"    <lastmod>{lastmod}</lastmod>")
+        xml.append("  </sitemap>")
+    xml.append("</sitemapindex>")
+    return Response("\n".join(xml) + "\n", media_type="application/xml")
 
 
 @router.get(_RUTA_CLAVE_INDEXNOW, include_in_schema=False)

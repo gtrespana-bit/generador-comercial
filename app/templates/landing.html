@@ -24,7 +24,10 @@
     if (el.sheet) activar();
   })();
   </script>
-  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# Sin JS no hay quien active la hoja diferida, pero ya está enlazada
+     arriba (media="print" se aplica igual al imprimir): repetirla aquí
+     producía una SEGUNDA descarga con otra URL (la del noscript) y el
+     navegador aplicaba la misma hoja dos veces. #}
   {% set seo_skip_ga = true %}
   {% include "_seo_head.html" %}
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
@@ -261,6 +264,39 @@
   </div>
   {% endfor %}
 </section>
+
+{# Puente entre la landing y el catálogo público de precios del mercado: es
+   el enlace interno de más autoridad hacia las páginas programáticas (cada
+   partida con su descompuesto), que hasta ahora solo se alcanzaban desde el
+   índice del país. #}
+{% if catalogo_precios %}
+<section class="mercados-precios" aria-label="Precios unitarios publicados">
+  <div class="mercados-precios-int">
+    <span class="section-kicker">Catálogo abierto, sin registro</span>
+    <h2>Precios unitarios de obra en {{ pais_actual.nombre if pais_actual else 'tu mercado' }}, con su descompuesto.</h2>
+    <p class="intro">Cada partida del catálogo se publica con su precio de referencia y el descompuesto completo —materiales, mano de obra y maquinaria— para que compruebes de dónde sale el número antes de confiar en él.</p>
+    <ul class="mercados-precios-lista">
+      <li><a href="{{ catalogo_precios.indice }}">Todos los precios unitarios de {{ catalogo_precios.nombre }} ({{ catalogo_precios.moneda }})</a></li>
+      {% for a in catalogo_precios.apartados %}
+      <li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% elif indices_catalogos %}
+<section class="mercados-precios" aria-label="Catálogos de precios publicados">
+  <div class="mercados-precios-int">
+    <span class="section-kicker">Catálogo abierto, sin registro</span>
+    <h2>Precios unitarios de obra, país por país, con su descompuesto.</h2>
+    <p class="intro">Cada partida se publica con su precio de referencia y el descompuesto completo —materiales, mano de obra y maquinaria—. Elige el catálogo de tu mercado:</p>
+    <ul class="mercados-precios-lista">
+      {% for c in indices_catalogos %}
+      <li><a href="{{ c.indice }}">Precios de {{ c.nombre }} ({{ c.moneda }})</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
 
 <section class="flujo-real" id="flujo-real">
   <div class="flujo-real-intro">

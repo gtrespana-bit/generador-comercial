@@ -67,5 +67,20 @@
   "precios.cta.planes": "Ver planes",
   "precios.cta.texto": "Añade esta partida a un presupuesto editable, ajusta cantidades y precios, y genera el PDF para tu cliente.",
   "precios.faq": "Preguntas frecuentes",
-  "precios.volver_apartado": "Ver todas las partidas de {apartado}"
+  "precios.volver_apartado": "Ver todas las partidas de {apartado}",
+  "error404.titulo": "Página no encontrada",
+  "error404.texto": "Esta dirección no existe o el enlace se ha quedado viejo. La página que buscas puede estar en otro sitio:",
+  "error404.inicio": "Ir al inicio",
+  "error404.mapa": "Mapa del sitio",
+  "error404.guias": "Guías de presupuestos",
+  "error404.precios": "Precios unitarios por país",
+  "error404.como": "Cómo funciona",
+  "precios.rango.titulo": "Rango de precios de {apartado} en {pais}",
+  "precios.rango.texto": "{n} partidas publicadas con precio completo: la más barata es {minimo} y la más cara {maximo}; la media queda en {medio}, con los precios de insumos revisados en {mes}.",
+  "precios.rango.como": "Cómo se lee este precio",
+  "precios.rango.como.texto": "Cada precio es el de una unidad de la partida (m², ml, ud) calculado con el descompuesto del catálogo: materiales, mano de obra y maquinaria con su rendimiento. Es un precio de referencia con un margen típico de contratista, no una oferta cerrada: la obra, las cantidades y tus proveedores lo mueven. Abre cualquier partida para ver el descompuesto línea a línea.",
+  "precios.rango.enlaces": "Seguir explorando",
+  "precios.rango.indice": "Todos los precios de {pais}",
+  "precios.rango.guia": "Guía: cómo se calcula un APU",
+  "precios.rango.capitulo": "Más apartados de {capitulo}"
 }

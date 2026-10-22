@@ -16,7 +16,10 @@
     if (el.sheet) activar();
   })();
   </script>
-  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# Sin JS no hay quien active la hoja diferida, pero ya está enlazada
+     arriba (media="print" se aplica igual al imprimir): repetirla aquí
+     producía una SEGUNDA descarga con otra URL (la del noscript) y el
+     navegador aplicaba la misma hoja dos veces. #}
 </head>
 <body class="landing hub-page">
 {% include "_nav_en.html" %}
@@ -68,7 +71,19 @@
     {% endfor %}
   </section>
   {% endif %}
-  <section class="hub-relacionadas">
+    {% if catalogo_precios %}
+<section class="hub-bloque hub-precios">
+  <h2>Unit prices in this market</h2>
+  <p>The public {{ catalogo_precios.nombre }} catalog lists the unit price of every item with its full cost breakdown:</p>
+  <ul>
+    <li><a href="{{ catalogo_precios.indice }}">All unit prices ({{ catalogo_precios.moneda }})</a></li>
+    {% for a in catalogo_precios.apartados %}
+    <li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+  {% endif %}
+<section class="hub-relacionadas">
     <h2>Keep reading</h2>
     <ul>
       {% if guia.related is defined %}

@@ -18,7 +18,10 @@
     if (el.sheet) activar();
   })();
   </script>
-  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
+  {# Sin JS no hay quien active la hoja diferida, pero ya está enlazada
+     arriba (media="print" se aplica igual al imprimir): repetirla aquí
+     producía una SEGUNDA descarga con otra URL (la del noscript) y el
+     navegador aplicaba la misma hoja dos veces. #}
   {% set seo_skip_ga = true %}
   {% include "_seo_head.html" %}
   <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
@@ -267,6 +270,35 @@
   </div>
   {% endfor %}
 </section>
+
+{% if catalogo_precios %}
+<section class="mercados-precios" aria-label="Published unit prices">
+  <div class="mercados-precios-int">
+    <span class="section-kicker">Open catalog, no sign-up</span>
+    <h2>Construction unit prices in {{ pais_actual.nombre_en if pais_actual else 'your market' }}, with their cost breakdown.</h2>
+    <p class="intro">Every catalog item is published with its reference price and the full breakdown (materials, labor, equipment), so you can check where the number comes from before you trust it.</p>
+    <ul class="mercados-precios-lista">
+      <li><a href="{{ catalogo_precios.indice }}">All unit prices in {{ catalogo_precios.nombre }} ({{ catalogo_precios.moneda }})</a></li>
+      {% for a in catalogo_precios.apartados %}
+      <li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% elif indices_catalogos %}
+<section class="mercados-precios" aria-label="Published price catalogs">
+  <div class="mercados-precios-int">
+    <span class="section-kicker">Open catalog, no sign-up</span>
+    <h2>Construction unit prices, country by country, with their cost breakdown.</h2>
+    <p class="intro">Every item is published with its reference price and full breakdown (materials, labor, equipment). Pick your market's catalog:</p>
+    <ul class="mercados-precios-lista">
+      {% for c in indices_catalogos %}
+      <li><a href="{{ c.indice }}">{{ c.nombre }} prices ({{ c.moneda }})</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
 
 <section class="flujo-real" id="flujo-real">
   <div class="flujo-real-intro">

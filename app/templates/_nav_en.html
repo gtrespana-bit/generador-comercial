@@ -1,6 +1,6 @@
 {# Shared public header: landing, how it works, plans and legal pages. #}
 <nav class="nav" aria-label="Main">
-  <a class="brand" href="/">
+  <a class="brand" href="/en-us/">
     <span class="mark">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -16,10 +16,10 @@
   </label>
   <div class="nav-links">
     {% include "_idioma_switch.html" %}
-    <a class="nav-item{% if request.url.path == '/como-funciona' %} is-active{% endif %}" href="/como-funciona">How it works</a>
-    <a class="nav-item{% if request.url.path.startswith('/guia/') %} is-active{% endif %}" href="/guia/presupuesto-de-obra">Guides</a>
-    <a class="nav-item{% if request.url.path == '/legal/preguntas' %} is-active{% endif %}" href="/legal/preguntas">FAQ</a>
-    <a class="nav-item{% if request.url.path == '/pago' %} is-active{% endif %}" href="/pago">Plans</a>
+    <a class="nav-item{% if request.url.path == '/como-funciona' %} is-active{% endif %}" href="{{ '/en/como-funciona' }}">How it works</a>
+    <a class="nav-item{% if request.url.path.startswith('/guia/') %} is-active{% endif %}" href="{{ '/en/guia/presupuesto-de-obra' }}">Guides</a>
+    <a class="nav-item{% if request.url.path == '/legal/preguntas' %} is-active{% endif %}" href="{{ '/en/legal/preguntas' }}">FAQ</a>
+    <a class="nav-item{% if request.url.path == '/pago' %} is-active{% endif %}" href="{{ '/en/pago' }}">Plans</a>
     {% if nav_modo == 'cuenta' %}
     <a class="entrar" href="/inicio">My dashboard</a>
     {% else %}
@@ -27,7 +27,7 @@
     {% if hay_prueba_gratuita() %}
     <a class="btn btn-primary" href="/acceso">Try {{ dias_de_prueba() }} days free</a>
     {% else %}
-    <a class="btn btn-primary" href="/pago">See plans</a>
+    <a class="btn btn-primary" href="{{ '/en/pago' }}">See plans</a>
     {% endif %}
     {% endif %}
   </div>

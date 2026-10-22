@@ -1,0 +1,35 @@
+<!doctype html>{# 404 pública. Se sirve con estado 404 (nunca 200) y sin canónica: una
+   página de error indexable o «blanda» es peor que no tenerla. Enlaza a los
+   hubs reales para que quien llegue por un enlace viejo siga navegando. #}
+<html lang="{{ _idioma }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'error404.titulo' | t(_idioma) }} · {{ product_name }}</title>
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing">
+<main class="hub-hero-int error-404">
+  <a class="brand" href="{{ '/en-us/' if _idioma == 'en' else '/' }}">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </span>
+    {{ product_name }}
+  </a>
+
+  <h1>{{ 'error404.titulo' | t(_idioma) }}</h1>
+  <p class="sub">{{ 'error404.texto' | t(_idioma) }}</p>
+
+  <div class="acciones error-404-acciones">
+    <a class="btn btn-primary" href="{{ '/en-us/' if _idioma == 'en' else '/' }}">{{ 'error404.inicio' | t(_idioma) }}</a>
+    <a class="btn" href="{{ '/en/mapa-del-sitio' if _idioma == 'en' else '/mapa-del-sitio' }}">{{ 'error404.mapa' | t(_idioma) }}</a>
+    <a class="btn" href="{{ '/en/guia/presupuesto-de-obra' if _idioma == 'en' else '/guia/presupuesto-de-obra' }}">{{ 'error404.guias' | t(_idioma) }}</a>
+    <a class="btn" href="{{ '/en-us/prices' if _idioma == 'en' else '/mx/precios' }}">{{ 'error404.precios' | t(_idioma) }}</a>
+    <a class="btn" href="{{ '/en/como-funciona' if _idioma == 'en' else '/como-funciona' }}">{{ 'error404.como' | t(_idioma) }}</a>
+  </div>
+</main>
+</body>
+</html>
