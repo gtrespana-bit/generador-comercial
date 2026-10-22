@@ -140,7 +140,9 @@ def test_sin_token_no_se_emite_la_etiqueta_de_meta(monkeypatch):
 def test_con_token_se_emite_la_etiqueta(monkeypatch):
     # Se lee del entorno en cada petición: el titular pega el token en Vercel
     # y no hace falta tocar código ni compartirlo.
-    token = "abc123def456"
+    # Sin hexadecimal: un token de ejemplo con pinta de hash lo marca el
+    # escáner de secretos de CI (detect-secrets) y rompe la compilación.
+    token = "token-de-ejemplo-para-la-prueba"
     monkeypatch.setenv("COTIZAT_FACEBOOK_DOMAIN_VERIFICATION", token)
     assert social.verificacion_dominio_meta() == token
     with _cliente() as cliente:
