@@ -29,6 +29,7 @@
     <h2>Bandeja de soporte{% if filtro_estado %} · {{ dict(opciones_estado).get(filtro_estado, filtro_estado) }}{% endif %}</h2>
     <div class="card-header-acc">
       <span class="badge badge-neutral">{{ total_mensajes }} mensaje{{ 's' if total_mensajes != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
     </div>
   </div>
 
@@ -43,10 +44,19 @@
     {% endfor %}
   </div>
 
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
+
   <form class="toolbar" method="get" action="/admin/clientes">
     <input type="hidden" name="tab" value="soporte">
     {% if filtro_estado %}<input type="hidden" name="estado" value="{{ filtro_estado }}">{% endif %}
     {% if filtro_tipo %}<input type="hidden" name="tipo" value="{{ filtro_tipo }}">{% endif %}
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
     <label class="visualmente-oculto" for="soporte-q">Buscar en los mensajes</label>
     <input id="soporte-q" type="search" name="q" value="{{ q }}" placeholder="Correo, nombre o texto del mensaje…">
     <button class="btn btn-sm" type="submit">Buscar</button>
@@ -95,24 +105,24 @@
 
     <div class="mensaje-acciones">
       <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
-        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="volver" value="{{ url_actual }}">
         <input type="hidden" name="estado" value="en_proceso">
         <button class="btn btn-sm" type="submit">Marcar en proceso</button>
       </form>
       <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
-        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="volver" value="{{ url_actual }}">
         <input type="hidden" name="estado" value="resuelto">
         <button class="btn btn-sm" type="submit">Marcar resuelto</button>
       </form>
       {% if m.estado != 'nuevo' %}
       <form class="form-inline" method="post" action="/admin/soporte/{{ m.id }}/estado">
-        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="volver" value="{{ url_actual }}">
         <input type="hidden" name="estado" value="nuevo">
         <button class="btn btn-sm btn-secondary" type="submit">Reabrir</button>
       </form>
       {% endif %}
       <form class="form-inline nota-soporte" method="post" action="/admin/soporte/{{ m.id }}/estado">
-        <input type="hidden" name="volver" value="/admin/clientes?tab=soporte">
+        <input type="hidden" name="volver" value="{{ url_actual }}">
         <input type="hidden" name="estado" value="{{ m.estado }}">
         <label class="visualmente-oculto" for="nota-{{ m.id }}">Nota interna</label>
         <input id="nota-{{ m.id }}" type="text" name="nota" value="{{ m.nota_interna }}" placeholder="Nota interna (qué hiciste, qué falta)…" maxlength="600">
@@ -132,6 +142,8 @@
     <a class="btn btn-sm btn-secondary" href="{{ ruta_filtro(estado='', tipo='', q='') }}">Ver todos</a>
   </div>
   {% endfor %}
+
+  {% include "admin/partes/_paginador.html" %}
 
   <div class="card-pie">
     <span class="muted-note">

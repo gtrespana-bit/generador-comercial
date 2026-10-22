@@ -484,7 +484,7 @@ def test_activar_una_compra_la_saca_de_la_cola_y_concede_el_plan(entorno):
     assert "Verificar y activar" in lista.text
     assert f"/admin/compras/{datos['compra']}/activar" in lista.text
     assert f"/admin/compras/{datos['compra']}/rechazar" in lista.text
-    assert "1 visible" in lista.text
+    assert "1 compra" in lista.text
 
     respuesta = cliente.post(
         f"/admin/compras/{datos['compra']}/activar",
@@ -1001,13 +1001,13 @@ def test_los_enlaces_que_fabrican_los_servicios_apuntan_a_pantallas_reales(entor
 
     with Session() as db:
         por_cliente = buscar_global(db, "Obras")
-    # El resultado de una licencia no cae en una ruta huérfana: abre la lista de
-    # contratos ya filtrada por ese cliente, donde está el botón de renovar.
+    # El resultado de una licencia abre la ficha del cliente en «Acceso», que es
+    # donde la cadena se ve entera y están el recibo y la renovación. Antes caía
+    # en la lista de contratos filtrada por nombre y había que buscar la fila.
     licencia = next(r for r in por_cliente if r["tipo"] == "licencia")
-    assert licencia["url"] == "/admin/ingresos?tab=contratos&q=Obras%20Norte"
-    # ...y el filtro del enlace funciona de verdad en esa pestaña.
+    assert licencia["url"] == f"/admin/clientes/{datos['por_vencer']}?tab=acceso"
     pagina = cliente.get(licencia["url"]).text
-    assert "Obras Norte" in pagina and "Reformas Sur" not in pagina
+    assert "Cadena de licencias" in pagina
     # Y el aviso de vencimiento de la campana lleva a la ficha del cliente.
     renovacion = next(a for a in notificaciones_admin(db) if a["tipo"] == "renovacion")
     assert renovacion["url"] == f"/admin/clientes/{datos['por_vencer']}?tab=acceso"

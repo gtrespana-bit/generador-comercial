@@ -5,8 +5,9 @@
   <div class="card-header">
     <h2>Compras de plan</h2>
     <div class="card-header-acc">
-      <span class="badge badge-neutral">{{ compras|length }} visible{{ 's' if compras|length != 1 else '' }}</span>
-      {% if filtro_estado == 'pendiente' and compras|length %}
+      <span class="badge badge-neutral">{{ paginador.meta.total }} compra{{ 's' if paginador.meta.total != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
+      {% if filtro_estado == 'pendiente' and paginador.meta.total %}
       <a class="btn btn-sm" href="/admin/ingresos?tab=compras&estado=todas">Ver el histórico</a>
       {% endif %}
     </div>
@@ -18,9 +19,30 @@
     <a class="chip {{ 'sel' if filtro_estado == valor else '' }}" href="{{ ruta_filtro(estado=valor) }}">{{ etiqueta }} <span class="chip-cnt">{{ contador }}</span></a>
     {% endfor %}
     {% if compra_concreta %}
-    <span class="chip sel">Filtro por compra #{{ compra_concreta }} <a class="chip-x" href="/admin/ingresos?tab=compras&estado={{ filtro_estado }}" aria-label="Quitar el filtro por compra">×</a></span>
+    <span class="chip sel">Filtro por compra #{{ compra_concreta }} <a class="chip-x" href="{{ url_quitar_compra }}" aria-label="Quitar el filtro por compra">×</a></span>
     {% endif %}
   </div>
+
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/ingresos">
+    <input type="hidden" name="tab" value="compras">
+    <input type="hidden" name="estado" value="{{ filtro_estado }}">
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
+    <label class="visualmente-oculto" for="compras-q">Buscar compras</label>
+    <input class="toolbar-buscar" id="compras-q" type="search" name="q" value="{{ q }}"
+           placeholder="Cliente, correo, compra #, comprobante…">
+    <button class="btn btn-sm" type="submit">Buscar</button>
+    {% if q %}
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras&amp;estado={{ filtro_estado }}">Limpiar búsqueda</a>
+    {% endif %}
+  </form>
 
   {% set vista_modulo = 'compras' %}
   {% set vistas_guardadas = vistas %}
@@ -51,12 +73,12 @@
           {% if c.estado == 'pendiente' %}
           <form class="form-inline" method="post" action="/admin/compras/{{ c.id }}/activar"
                 data-confirmar="Se activará la compra #{{ c.id }} y se concederá la licencia del plan. ¿Comprobante verificado?">
-            <input type="hidden" name="volver" value="/admin/ingresos?tab=compras&estado={{ filtro_estado }}">
+            <input type="hidden" name="volver" value="{{ url_actual }}">
             <button class="btn btn-sm" type="submit">Verificar y activar</button>
           </form>
           <form class="form-inline" method="post" action="/admin/compras/{{ c.id }}/rechazar"
                 data-confirmar="Se rechazará la compra #{{ c.id }}. El cliente no pierde sus datos.">
-            <input type="hidden" name="volver" value="/admin/ingresos?tab=compras&estado={{ filtro_estado }}">
+            <input type="hidden" name="volver" value="{{ url_actual }}">
             <button class="btn btn-sm btn-danger" type="submit">Rechazar</button>
           </form>
           {% elif c.licencia_id %}
@@ -95,9 +117,11 @@
   </div>
   {% else %}
   <div class="vacio">
-    <b>No hay compras {% if filtro_estado == 'pendiente' %}por activar{% else %}con ese estado{% endif %}.</b>
+    <b>No hay compras {% if q %}que coincidan con «{{ q }}»{% elif filtro_estado == 'pendiente' %}por activar{% else %}con ese estado{% endif %}.</b>
     <p>Cuando un cliente compre un plan desde la web con pago manual, aparecerá aquí con su comprobante para que lo verifiques.</p>
     <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras&estado=todas">Ver todas las compras</a>
   </div>
   {% endif %}
+
+  {% include "admin/partes/_paginador.html" %}
 </div>

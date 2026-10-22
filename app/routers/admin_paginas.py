@@ -30,6 +30,14 @@ from ..panel_arquitectura import (
     redireccion_de,
     ruta_panel,
 )
+from ..services.panel_listas import (
+    POR_PAGINA,
+    meta_pagina,
+    normalizar_pagina,
+    normalizar_por_pagina,
+    orden_chips,
+    paginador,
+)
 from ..services.panel_contextos import (
     ALCANCES_ROL,
     DESCRIPCIONES_CRM,
@@ -350,14 +358,27 @@ def _clientes_soporte(request: Request, db, pestana: str) -> dict:
     registrado sin salir del panel, con el remitente y su organización a mano.
     """
     from ..models import ESTADOS_SOPORTE, TIPOS_SOPORTE
-    from ..services.soporte import contadores_soporte, listar_mensajes
+    from ..services.soporte import ORDENES_SOPORTE, contadores_soporte, listar_mensajes
 
-    pedidos = _texto(request, "estado", "tipo", "q")
+    pedidos = _texto(request, "estado", "tipo", "q", "orden", "dir")
     estado = _seleccionar(ESTADOS_SOPORTE, pedidos["estado"], permitidos={"", *dict(ESTADOS_SOPORTE)})
     tipo = _seleccionar(TIPOS_SOPORTE, pedidos["tipo"], permitidos={"", *dict(TIPOS_SOPORTE)})
-    mensajes = listar_mensajes(db, estado=estado, tipo=tipo, q=pedidos["q"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_SOPORTE} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
+    mensajes, meta = listar_mensajes(
+        db,
+        estado=estado,
+        tipo=tipo,
+        q=pedidos["q"],
+        orden=orden,
+        direccion=direccion,
+        pagina=pagina,
+        por_pagina=por_pagina,
+    )
     contadores = contadores_soporte(db)
-    totales = {"total": contadores["todos"], **contadores}
 
     actuales = {"tab": pestana}
     if estado:
@@ -366,12 +387,20 @@ def _clientes_soporte(request: Request, db, pestana: str) -> dict:
         actuales["tipo"] = tipo
     if pedidos["q"]:
         actuales["q"] = pedidos["q"]
+    # El orden va al final para que la URL se lea como la pantalla: primero el
+    # filtro, después cómo está ordenada.
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
 
     ruta = ruta_panel("clientes")
     contexto = contexto_base(request, db, seccion="clientes", pestana=pestana)
     contexto.update({
         "mensajes": mensajes,
-        "total_mensajes": len(mensajes),
+        "total_mensajes": meta["total"],
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_SOPORTE),
         "opciones_estado": ESTADOS_SOPORTE,
         "opciones_tipo": TIPOS_SOPORTE,
         "filtro_estado": estado,
@@ -384,6 +413,10 @@ def _clientes_soporte(request: Request, db, pestana: str) -> dict:
         ],
         "ruta_filtro": enlace_filtro(ruta, actuales),
         "actuales": actuales,
+        "url_actual": url_panel(ruta, **actuales),
+        "url_csv": url_panel("/admin/soporte.csv", **{
+            clave: valor for clave, valor in actuales.items() if clave != "tab"
+        }),
         "url_bandeja": ruta_panel("clientes", "soporte"),
     })
     return contexto
@@ -774,34 +807,74 @@ def _ingresos_renovaciones(request: Request, db, pestana: str) -> dict:
 
 
 def _ingresos_compras(request: Request, db, pestana: str) -> dict:
-    from ..services.compras import resumen_compras
+    from ..services.compras import (
+        ORDENES_COMPRAS,
+        contadores_compras,
+        exportar_compras,
+        listar_compras,
+    )
 
-    pedidos = _texto(request, "estado")
+    pedidos = _texto(request, "estado", "q", "orden", "dir")
     estado = pedidos["estado"] or "pendiente"
     if estado not in {clave for clave, _ in ESTADOS_COMPRA}:
         estado = "pendiente"
     compra_id = _entero(request.query_params.get("compra"))
-    todas = resumen_compras(db)
-    contadores = {"todas": len(todas)}
-    for clave, _ in ESTADOS_COMPRA:
-        if clave != "todas":
-            contadores[clave] = sum(1 for fila in todas if fila["compra"].estado == clave)
-    visibles = [
-        fila for fila in todas
-        if (estado == "todas" or fila["compra"].estado == estado)
-        and (not compra_id or fila["compra"].id == compra_id)
-    ]
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_COMPRAS} else "fecha"
+    direccion = "desc" if pedidos["dir"] != "asc" else "asc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
+    if compra_id:
+        # El buscador ⌘K enlaza a una compra concreta: se muestra esa aunque no
+        # caiga en la página actual ni coincida con el estado por omisión.
+        visibles = [
+            fila
+            for fila in exportar_compras(db, estado="todas", q=str(compra_id))
+            if fila["compra"].id == compra_id
+        ]
+        meta = meta_pagina(len(visibles), 1, por_pagina)
+    else:
+        visibles, meta = listar_compras(
+            db,
+            estado=estado,
+            q=pedidos["q"],
+            orden=orden,
+            direccion=direccion,
+            pagina=pagina,
+            por_pagina=por_pagina,
+        )
+
+    contadores = contadores_compras(db, q=pedidos["q"])
     actuales = {"tab": pestana, "estado": estado}
+    if pedidos["q"]:
+        actuales["q"] = pedidos["q"]
     if compra_id:
         actuales["compra"] = str(compra_id)
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
+
+    ruta = ruta_panel("ingresos")
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
         "compras": visibles,
         "compra_concreta": compra_id or None,
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_COMPRAS),
         "filtro_estado": estado,
+        "q": pedidos["q"],
         "opciones_estado": opciones_con_contadores(contadores, ESTADOS_COMPRA),
-        "chips_estado": chips(ruta_panel("ingresos"), actuales, ESTADOS_COMPRA, "estado", contadores),
+        "chips_estado": chips(ruta, actuales, ESTADOS_COMPRA, "estado", contadores),
         "etiqueta_estado": dict(ESTADOS_COMPRA),
+        "url_actual": url_panel(ruta, **actuales),
+        "url_quitar_compra": url_panel(ruta, **{
+            clave: valor for clave, valor in actuales.items() if clave != "compra"
+        }),
+        "url_csv": url_panel("/admin/ingresos.csv", **{
+            "tab": pestana,
+            **{clave: valor for clave, valor in actuales.items() if clave not in ("tab", "compra")},
+        }),
     })
     return contexto
 
@@ -977,29 +1050,32 @@ def _csv_contratos(request: Request, db):
 
 
 def _csv_compras(request: Request, db):
-    """La cola de verificación, con lo que hace falta para decidir.
+    """La cola de verificación tal y como se está mirando.
 
-    No había CSV de compras: exportar la cola significaba descargar el histórico
-    y cruzarlo a mano con los comprobantes. Va con el mismo filtro por estado que
-    la pestaña, por eso mismo.
+    Mismos filtros, mismo orden y mismo texto libre que la pantalla: exportar
+    «lo pendiente» no puede devolver el histórico entero.
     """
-    from ..services.compras import resumen_compras
+    from ..services.compras import ORDENES_COMPRAS, exportar_compras
 
-    estado = _texto(request, "estado")["estado"] or "pendiente"
+    pedidos = _texto(request, "estado", "q", "orden", "dir")
+    estado = pedidos["estado"] or "pendiente"
     if estado not in {clave for clave, _ in ESTADOS_COMPRA}:
         estado = "pendiente"
-    filas = [["Compra", "Cliente", "Plan", "Método", "Importe", "Moneda", "Estado",
-              "Fecha", "Verificación", "Comprobante"]]
-    for fila in resumen_compras(db):
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_COMPRAS} else "fecha"
+    direccion = "desc" if pedidos["dir"] != "asc" else "asc"
+    filas = [["Compra", "Cliente", "Plan", "Método", "Correo", "Importe", "Moneda",
+              "Estado", "Fecha", "Verificación", "Comprobante"]]
+    for fila in exportar_compras(
+        db, estado=estado, q=pedidos["q"], orden=orden, direccion=direccion
+    ):
         compra = fila["compra"]
-        if estado != "todas" and compra.estado != estado:
-            continue
         verificacion = fila.get("verificacion") or {}
         filas.append([
             str(compra.id),
             fila["organizacion_nombre"],
             fila["plan_nombre"],
             fila["metodo_nombre"],
+            compra.creada_por_email,
             f"{compra.importe:.2f}",
             compra.moneda,
             compra.estado,
@@ -1008,6 +1084,53 @@ def _csv_compras(request: Request, db):
             compra.comprobante_nombre or "",
         ])
     return filas, "compras.csv"
+
+
+def _csv_soporte(request: Request, db):
+    """El buzón filtrado, con la gestión anotada.
+
+    Es la exportación que faltaba para reclamaciones recurrentes y para
+    revisar el tiempo de respuesta sin leer tarjeta por tarjeta.
+    """
+    from ..models import (
+        ESTADOS_SOPORTE,
+        ESTADOS_SOPORTE_ETIQUETA,
+        TIPOS_SOPORTE,
+        TIPOS_SOPORTE_ETIQUETA,
+    )
+    from ..services.soporte import exportar_mensajes
+
+    pedidos = _texto(request, "estado", "tipo", "q", "orden", "dir")
+    # Igual que la pantalla: un estado inventado no filtra por «nuevo».
+    estado = _seleccionar(ESTADOS_SOPORTE, pedidos["estado"], permitidos={"", *dict(ESTADOS_SOPORTE)})
+    tipo = _seleccionar(TIPOS_SOPORTE, pedidos["tipo"], permitidos={"", *dict(TIPOS_SOPORTE)})
+    filas = [[
+        "Fecha", "Estado", "Motivo", "Nombre", "Email", "Organización", "Asunto",
+        "Mensaje", "Página", "Atendido por", "Nota interna",
+    ]]
+    for fila in exportar_mensajes(
+        db,
+        estado=estado,
+        tipo=tipo,
+        q=pedidos["q"],
+        orden=pedidos["orden"] or "fecha",
+        direccion="asc" if pedidos["dir"] == "asc" else "desc",
+    ):
+        mensaje = fila["mensaje"]
+        filas.append([
+            f"{mensaje.created_at:%Y-%m-%d %H:%M}" if mensaje.created_at else "",
+            ESTADOS_SOPORTE_ETIQUETA.get(mensaje.estado, mensaje.estado),
+            TIPOS_SOPORTE_ETIQUETA.get(mensaje.tipo, mensaje.tipo),
+            mensaje.nombre,
+            mensaje.email,
+            fila["organizacion_nombre"],
+            mensaje.asunto,
+            mensaje.mensaje,
+            mensaje.pagina,
+            mensaje.atendido_por_email,
+            mensaje.nota_interna,
+        ])
+    return filas, "soporte.csv"
 
 
 def _csv_ventas(request: Request, db):
@@ -1061,6 +1184,24 @@ def exportar_renovaciones_csv(request: Request, db: Session = Depends(get_operat
 @router.get("/admin/cobros.csv", include_in_schema=False)
 def exportar_cobros_csv(request: Request, db: Session = Depends(get_operator_db)):
     filas, nombre = _csv_cobros(request, db)
+    return _csv_response(filas, nombre)
+
+
+@router.get("/admin/contratos.csv", include_in_schema=False)
+def exportar_contratos_csv(request: Request, db: Session = Depends(get_operator_db)):
+    """URL histórica del CSV de contratos.
+
+    La pestaña enlazaba a esta ruta desde que se reorganizó el panel, pero la
+    ruta no existía: el botón devolvía 404. El exportador ya respetaba ``q`` y
+    ``estado``; lo que faltaba era la puerta.
+    """
+    filas, nombre = _csv_contratos(request, db)
+    return _csv_response(filas, nombre)
+
+
+@router.get("/admin/soporte.csv", include_in_schema=False)
+def exportar_soporte_csv(request: Request, db: Session = Depends(get_operator_db)):
+    filas, nombre = _csv_soporte(request, db)
     return _csv_response(filas, nombre)
 
 

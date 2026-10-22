@@ -1,0 +1,37 @@
+{# Paginador común de las listas del panel (Fase 1).
+
+   Recibe un único objeto `paginador` montado en el servidor por
+   `app/services/panel_listas.py`: URLs de anterior/siguiente, números con
+   elipsis, tamaños de página y el rango visible. La plantilla no reconstruye
+   query strings, así que cada lista conserva sus filtros al cambiar de página. #}
+{% if paginador %}
+<div class="paginador">
+  <span class="paginador-info">{{ paginador.info }}</span>
+
+  {% if paginador.meta.paginas > 1 %}
+  <nav class="paginador-nav" aria-label="Paginación">
+    {% if paginador.anterior %}
+    <a class="pagina-salto" href="{{ paginador.anterior }}" rel="prev">← Anterior</a>
+    {% endif %}
+    {% for pagina in paginador.numeros %}
+      {% if pagina.numero %}
+      <a class="pagina-num {{ 'sel' if pagina.activa else '' }}" href="{{ pagina.url }}"
+         {% if pagina.activa %}aria-current="page"{% endif %}>{{ pagina.numero }}</a>
+      {% else %}
+      <span class="pagina-puntos" aria-hidden="true">…</span>
+      {% endif %}
+    {% endfor %}
+    {% if paginador.siguiente %}
+    <a class="pagina-salto" href="{{ paginador.siguiente }}" rel="next">Siguiente →</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  <span class="paginador-tamano">
+    Por página
+    {% for tamano in paginador.tamanos %}
+    <a class="pagina-num {{ 'sel' if tamano.activa else '' }}" href="{{ tamano.url }}">{{ tamano.valor }}</a>
+    {% endfor %}
+  </span>
+</div>
+{% endif %}

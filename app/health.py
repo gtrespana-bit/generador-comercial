@@ -36,9 +36,20 @@ class HealthStatus:
     ok: bool
     checks: dict[str, str]
     errors: list[str] = field(default_factory=list)
+    #: Gravedad de cada chequeo: ``ok``, ``aviso``, ``fallo`` o ``info``.
+    #: El panel pintaba el color con ``'error' in valor`` y marcaba en rojo
+    #: chequeos informativos como ``cron_secret: no-configurado`` (que no
+    #: tumba la app) mientras otros fallos silenciosos salían en verde. La
+    #: gravedad se decide donde se conoce el chequeo, no adivinando el texto.
+    severidades: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
-        return {"ok": self.ok, "checks": self.checks, "errors": self.errors}
+        salida = {"ok": self.ok, "checks": self.checks, "errors": self.errors}
+        # Solo se publica cuando existe: /healthz (liveness) conserva su
+        # contrato exacto de tres claves.
+        if self.severidades:
+            salida["severidades"] = self.severidades
+        return salida
 
 
 def liveness() -> HealthStatus:
@@ -172,6 +183,7 @@ def _check_cron_configuration() -> dict[str, str]:
 def _check_postgresql(engine: Engine) -> dict[str, object]:
     """Comprueba conexión, head de Alembic y el rol runtime limitado."""
     results: dict[str, object] = {"database": "postgresql"}
+    severidades: dict[str, str] = {"database": "ok"}
     errors: list[str] = []
     require_rls = True
     try:
@@ -190,13 +202,16 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
             ).scalar_one_or_none()
         if version == EXPECTED_ALEMBIC_HEAD:
             results["alembic"] = f"head:{EXPECTED_ALEMBIC_HEAD}"
+            severidades["alembic"] = "ok"
         else:
             results["alembic"] = f"inesperado:{version or 'sin-version'}"
+            severidades["alembic"] = "fallo"
             errors.append(
                 f"Esquema en {version or 'sin versión'}; se espera {EXPECTED_ALEMBIC_HEAD}."
             )
     except Exception as exc:  # pragma: no cover - depende de red/infra
         results["alembic"] = "error"
+        severidades["alembic"] = "fallo"
         errors.append(f"No se pudo comprobar Alembic: {_safe_error(exc)}")
 
     if require_rls:
@@ -217,21 +232,27 @@ def _check_postgresql(engine: Engine) -> dict[str, object]:
                 f"inherit={row['rolinherit']}, cotizat_app={row['app_member']}"
             )
             results["rol_runtime"] = role_bits
+            severidades["rol_runtime"] = "ok"
             if row["rolsuper"] or row["rolbypassrls"] or not row["rolinherit"]:
+                severidades["rol_runtime"] = "fallo"
                 errors.append(
                     "El rol runtime es privilegiado: debe ser NOSUPERUSER, "
                     "NOBYPASSRLS y con INHERIT."
                 )
             if not row["app_member"]:
+                severidades["rol_runtime"] = "fallo"
                 errors.append(
                     "El rol runtime no es miembro de cotizat_app."
                 )
         except Exception as exc:  # pragma: no cover - depende de red/infra
             results["rol_runtime"] = "error"
+            severidades["rol_runtime"] = "fallo"
             errors.append(f"No se pudo verificar el rol runtime: {_safe_error(exc)}")
     else:
         results["rol_runtime"] = "verificacion-desactivada"
+        severidades["rol_runtime"] = "info"
 
+    results["severidades"] = severidades
     results["errors"] = errors
     return results
 
@@ -413,6 +434,7 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     """
     checks: dict[str, str] = {}
     errors: list[str] = []
+    severidades: dict[str, str] = {}
 
     # Informativo: el entorno detectado (E4-003). No falla por sí mismo; la
     # validación por entorno vive en ``app.config.validar`` y se expone en el
@@ -421,19 +443,23 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     from .config import entorno_actual
 
     checks["entorno"] = entorno_actual().etiqueta
+    severidades["entorno"] = "info"
 
     auth_state, auth_error = _check_auth_configuration()
     checks["auth"] = auth_state
+    severidades["auth"] = "fallo" if auth_error else "ok"
     if auth_error:
         errors.append(f"Auth: {auth_error}")
 
     storage_state, storage_error = _check_storage_configuration()
     checks["storage"] = storage_state
+    severidades["storage"] = "fallo" if storage_error else "ok"
     if storage_error:
         errors.append(f"Storage: {storage_error}")
 
     url_state, url_error = _check_public_url()
     checks["public_url"] = url_state
+    severidades["public_url"] = "fallo" if url_error else "ok"
     if url_error:
         errors.append(f"URL pública: {url_error}")
 
@@ -441,29 +467,41 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     # vive en Supabase y no puede comprobarse desde aquí.
     redirect_state, _redirect_error = _check_recovery_redirect()
     checks["recovery_redirect_url_esperada"] = redirect_state
+    severidades["recovery_redirect_url_esperada"] = "info"
 
     # Informativo: sin correo configurado las invitaciones se entregan como
     # enlace en pantalla, así que nunca añade errores al readiness.
     email_state, _email_error = _check_email_configuration()
     checks["email"] = email_state
+    severidades["email"] = "info"
 
     # Informativo: sin Stripe el cobro manual sigue funcionando.
     from .services.stripe import estado_configuracion_stripe
 
     stripe_state, _stripe_error = estado_configuracion_stripe()
     checks["stripe"] = stripe_state
+    severidades["stripe"] = "info"
 
     # Informativo: el cron de Vercel depende de `CRON_SECRET` y de que el
     # despliegue de producción contenga el vercel.json con `crons`. Sin cron
     # la aplicación funciona igual, así que nunca añade errores al readiness.
-    checks.update(_check_cron_configuration())
+    cron_checks = _check_cron_configuration()
+    checks.update(cron_checks)
+    # El cron es informativo: «cron_secret: no-configurado» no tumba la app.
+    for clave in cron_checks:
+        severidades[clave] = "info"
 
     # En SQLite local (escritorio) un contador por proceso es correcto: hay un
     # único proceso. Solo se informa/exige el compartido en despliegue web.
     ratelimit_state, ratelimit_error = estado_configuracion()
     checks["rate_limit"] = ratelimit_state
-    if ratelimit_error and not DATABASE_IS_SQLITE:
+    if DATABASE_IS_SQLITE:
+        severidades["rate_limit"] = "info"
+    elif ratelimit_error:
+        severidades["rate_limit"] = "fallo"
         errors.append(f"Rate limit: {ratelimit_error}")
+    else:
+        severidades["rate_limit"] = "ok"
 
     # Informativo: exigir licencia es una decisión de negocio del despliegue,
     # no una condición de salud; con ella apagada la app funciona igual.
@@ -475,23 +513,41 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
         checks["licencias"] = (
             "exigida" if exigencia_licencia_activada() else "no-exigida"
         )
+    severidades["licencias"] = "info"
 
     if DATABASE_IS_SQLITE:
         checks.update({k: str(v) for k, v in _check_sqlite().items()})
+        for clave in ("database", "alembic", "rol_runtime"):
+            severidades[clave] = "info"
     else:
         db_results = _check_postgresql(engine or default_engine)
         db_errors = db_results.pop("errors", [])
+        db_severidades = db_results.pop("severidades", {})
         checks.update({k: str(v) for k, v in db_results.items()})
+        severidades.update(db_severidades)  # type: ignore[arg-type]
         errors.extend(db_errors)  # type: ignore[arg-type]
 
     # Informativo (nunca añade errores): corpus SEO, artefactos de precios
     # dentro de la función, referencias nacionales en BD y host canónico.
-    checks.update(_check_seo(engine, host))
+    seo_checks = _check_seo(engine, host)
+    checks.update(seo_checks)
+    for clave, valor in seo_checks.items():
+        # Un host distinto del canónico no rompe la app, pero sí es un aviso
+        # que conviene ver en ámbar y no en verde.
+        if clave == "host_es_canonico" and str(valor).startswith("no:"):
+            severidades[clave] = "aviso"
+        else:
+            severidades[clave] = "info"
 
     # Informativo: destino de los avisos internos (sin revelar la dirección).
-    checks.update(_check_avisos_destino())
+    avisos_checks = _check_avisos_destino()
+    checks.update(avisos_checks)
+    for clave in avisos_checks:
+        severidades[clave] = "info"
 
-    return HealthStatus(ok=not errors, checks=checks, errors=errors)
+    return HealthStatus(
+        ok=not errors, checks=checks, errors=errors, severidades=severidades
+    )
 
 
 # Permite inyectar un chequeo alternativo en tests sin reabrir conexiones.

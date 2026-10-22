@@ -412,11 +412,20 @@ def pestanas_panel(seccion_id: str, activa: str, contadores: dict | None = None)
     return salida
 
 
+#: Qué contador alimenta el badge del menú de cada área. Clientes no tiene un
+#: contador propio: lo que hay que atender ahí es el buzón de soporte, que es
+#: una de sus pestañas. Sin este mapa el badge de Clientes nunca se pintaba
+#: aunque ``contadores_panel`` ya calculaba el número.
+CONTADOR_DE_AREA: dict[str, str] = {
+    "clientes": "soporte",
+}
+
+
 def nav_panel(contadores: dict | None = None) -> list[dict]:
     """Enlaces del menú lateral. Seis, ni uno más.
 
-    El contador solo se muestra donde hay algo que atender (hoy Ingresos); un
-    badge en cada entrada sería decoración.
+    El contador solo se muestra donde hay algo que atender (Ingresos y el
+    buzón de Clientes); un badge en cada entrada sería decoración.
     """
     contadores = contadores or {}
     return [
@@ -427,7 +436,9 @@ def nav_panel(contadores: dict | None = None) -> list[dict]:
             "descripcion": actual.descripcion,
             "icono": ICONOS.get(actual.icono, ()),
             "atajo": actual.atajo,
-            "contador": int(contadores.get(actual.id, 0) or 0),
+            "contador": int(
+                contadores.get(CONTADOR_DE_AREA.get(actual.id, actual.id), 0) or 0
+            ),
             "pestanas": pestanas_de(actual.id),
         }
         for actual in SECCIONES

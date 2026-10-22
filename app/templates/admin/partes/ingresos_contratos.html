@@ -49,7 +49,7 @@
     <h2>Registro de acceso</h2>
     <div class="card-header-acc">
       <span class="badge badge-neutral">{{ resumen.filas|length }} cliente{{ 's' if resumen.filas|length != 1 else '' }}</span>
-      <a class="btn btn-sm btn-secondary" href="/admin/contratos.csv">CSV</a>
+      <a class="btn btn-sm btn-secondary" href="/admin/contratos.csv?{{ url_filtros }}">CSV con filtros</a>
     </div>
   </div>
 

@@ -210,29 +210,149 @@ def _referencia_compra(compra: CompraPlan) -> str:
     return f"compra-{compra.id}"
 
 
+#: Columnas ordenables de la cola de compras. La clave viaja en la URL y el
+#: tercer elemento es la dirección con la que empieza al pulsarla por primera
+#: vez: la fecha y el importe interesan de mayor a menor.
+ORDENES_COMPRAS = (
+    ("fecha", "Fecha", "desc"),
+    ("importe", "Importe", "desc"),
+    ("cliente", "Cliente", "asc"),
+    ("estado", "Estado", "asc"),
+)
+
+
+def _fila_compra(compra: CompraPlan, org: Organizacion | None) -> dict:
+    return {
+        "compra": compra,
+        "organizacion_nombre": org.nombre if org else "—",
+        "plan_nombre": plan_info(compra.plan)["nombre"],
+        "metodo_nombre": _etiqueta_metodo(compra.metodo_pago),
+        "verificacion": compra.datos_verificacion_dict(),
+    }
+
+
+def _consulta_compras(db: Session, *, estado: str = "pendiente", q: str = ""):
+    """Consulta base de la cola: la comparten la pantalla y el CSV.
+
+    La organización entra por ``outerjoin`` para no perder una compra cuyo
+    cliente se dio de baja; en ese caso el panel muestra «—» en vez de
+    desaparecer la fila.
+    """
+    from sqlalchemy import or_
+
+    consulta = db.query(CompraPlan, Organizacion).outerjoin(
+        Organizacion, CompraPlan.organizacion_id == Organizacion.id
+    )
+    if estado and estado != "todas":
+        consulta = consulta.filter(CompraPlan.estado == estado)
+
+    texto = str(q or "").strip()
+    if texto:
+        patron = f"%{texto}%"
+        condiciones = [
+            Organizacion.nombre.ilike(patron),
+            Organizacion.slug.ilike(patron),
+            CompraPlan.creada_por_email.ilike(patron),
+            CompraPlan.comprobante_nombre.ilike(patron),
+        ]
+        # Escribir el número de compra es la forma más rápida de encontrarla
+        # cuando el cliente lo cita en un correo o en una llamada.
+        if texto.isdigit():
+            condiciones.append(CompraPlan.id == int(texto))
+        consulta = consulta.filter(or_(*condiciones))
+    return consulta
+
+
+def _ordenar_compras(consulta, orden: str, direccion: str):
+    clave = orden if orden in {o[0] for o in ORDENES_COMPRAS} else "fecha"
+    columna = {
+        "cliente": Organizacion.nombre,
+        "importe": CompraPlan.importe,
+        "estado": CompraPlan.estado,
+    }.get(clave, CompraPlan.created_at)
+    columna = columna.desc() if direccion == "desc" else columna.asc()
+    # El id desempata: dos compras del mismo segundo no pueden cambiar de
+    # orden entre dos páginas (eso duplicaría o perdería filas al paginar).
+    return consulta.order_by(columna, CompraPlan.id.desc())
+
+
+def listar_compras(
+    db: Session,
+    *,
+    estado: str = "pendiente",
+    q: str = "",
+    orden: str = "fecha",
+    direccion: str = "desc",
+    pagina: int = 1,
+    por_pagina: int = 25,
+) -> tuple[list[dict], dict]:
+    """Página de compras con su meta de paginación.
+
+    Sustituye al ``resumen_compras`` completo que cargaba **todas** las compras
+    y **todas** las organizaciones en cada visita a la pestaña.
+    """
+    from .panel_listas import paginar_consulta
+
+    consulta = _ordenar_compras(_consulta_compras(db, estado=estado, q=q), orden, direccion)
+    filas, meta = paginar_consulta(consulta, pagina=pagina, por_pagina=por_pagina)
+    return [_fila_compra(compra, org) for compra, org in filas], meta
+
+
+def contadores_compras(db: Session, *, q: str = "") -> dict:
+    """Cuántas compras hay por estado, con el mismo filtro de texto.
+
+    Se resuelve con un ``GROUP BY``: antes la pestaña cargaba **todas** las
+    compras solo para contarlas y pintar los chips.
+    """
+    from sqlalchemy import func
+
+    consulta = _consulta_compras(db, estado="todas", q=q)
+    filas = (
+        consulta.with_entities(CompraPlan.estado, func.count(CompraPlan.id))
+        .group_by(CompraPlan.estado)
+        .all()
+    )
+    contadores = {"pendiente": 0, "activa": 0, "rechazada": 0}
+    for estado, total in filas:
+        contadores[str(estado or "")] = int(total or 0)
+    contadores["todas"] = sum(contadores.values())
+    return contadores
+
+
+def exportar_compras(
+    db: Session,
+    *,
+    estado: str = "pendiente",
+    q: str = "",
+    orden: str = "fecha",
+    direccion: str = "desc",
+) -> list[dict]:
+    """Todas las compras que cumplen el filtro, para el CSV.
+
+    Es la misma consulta que la pantalla, sin recorte: lo que se exporta es
+    exactamente lo que se está mirando (mismo filtro y mismo orden).
+    """
+    consulta = _ordenar_compras(_consulta_compras(db, estado=estado, q=q), orden, direccion)
+    return [_fila_compra(compra, org) for compra, org in consulta.all()]
+
+
 def resumen_compras(db: Session) -> list[dict]:
     """Compras para el panel del operador, de la más reciente a la más antigua.
 
     Incluye el nombre de la organización compradora (la compra guarda solo el
     id; el panel lo enriquece para que el operador sepa a quién activar).
+
+    Se mantiene para los usos que necesitan el histórico completo (Hoy y la
+    ficha del cliente). La pestaña de Compras usa ``listar_compras``.
     """
     compras = db.query(CompraPlan).order_by(CompraPlan.created_at.desc()).all()
     organizaciones = {
         org.id: org for org in db.query(Organizacion).all()
     }
-    filas = []
-    for compra in compras:
-        org = organizaciones.get(compra.organizacion_id)
-        filas.append(
-            {
-                "compra": compra,
-                "organizacion_nombre": org.nombre if org else "—",
-                "plan_nombre": plan_info(compra.plan)["nombre"],
-                "metodo_nombre": _etiqueta_metodo(compra.metodo_pago),
-                "verificacion": compra.datos_verificacion_dict(),
-            }
-        )
-    return filas
+    return [
+        _fila_compra(compra, organizaciones.get(compra.organizacion_id))
+        for compra in compras
+    ]
 
 
 def compras_de_organizacion(

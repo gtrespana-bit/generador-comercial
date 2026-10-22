@@ -652,7 +652,7 @@ def test_panel_admin_muestra_compras_pendientes_y_activacion(entorno, monkeypatc
         assert r.status_code == 200
         assert "Compras por revisar" in r.text
         assert "Plan anual" in r.text
-        assert "1 visible" in r.text
+        assert "1 compra" in r.text
         assert f"compras/{compra_id}/activar" in r.text
         # La acción se dispara desde la propia fila: sin salir de la lista.
         assert 'name="volver" value="/admin/ingresos?tab=compras&amp;estado=pendiente"' in r.text

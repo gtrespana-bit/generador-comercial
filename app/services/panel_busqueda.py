@@ -53,10 +53,10 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "licencia",
             "titulo": f"Licencia · {nombre}",
             "subtitulo": f"{lic.estado} · vence {lic.vence}",
-            # El resultado del buscador lleva a la lista donde la fila se ve y se
-            # puede actuar: `?q=` por el nombre del cliente, no a un `?licencia=`
-            # que ninguna pantalla del panel interpreta.
-            "url": f"/admin/ingresos?tab=contratos&q={quote(nombre, safe='')}",
+            # La ficha del cliente es donde la licencia se ve entera (cadena,
+            # recibo, renovación). Antes llevaba a la lista filtrada por nombre y
+            # el operador tenía que volver a buscar la fila.
+            "url": f"/admin/clientes/{lic.organizacion_id}?tab=acceso",
         })
 
     for compra in db.query(CompraPlan).join(
@@ -72,7 +72,9 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "tipo": "compra",
             "titulo": f"Compra #{compra.id} · {nombre}",
             "subtitulo": f"{compra.plan} · {compra.estado}",
-            "url": "/admin/ingresos?tab=compras&estado=todas",
+            # `?compra=` abre exactamente esa compra, no la cola entera: el
+            # buscador ya sabía cuál era y la obligaba a buscar a ojo.
+            "url": f"/admin/ingresos?tab=compras&estado=todas&compra={compra.id}",
         })
 
     for op in db.query(OperadorProducto).filter(
