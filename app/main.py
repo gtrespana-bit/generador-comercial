@@ -210,6 +210,11 @@ class FormulariosUTF8Middleware:
 
 
 
+#: Mercados de habla inglesa cuyo prefijo interno (/us/) no es una URL
+#: pública: la pública lleva el idioma delante (/en-us/).
+_PREFIJOS_INTERNOS_EN = frozenset({"us", "gb", "ca", "au", "ie"})
+
+
 class IdiomaMiddleware:
     """Resuelve el idioma desde /en/... o la cookie y reescribe la ruta."""
 
@@ -249,6 +254,37 @@ class IdiomaMiddleware:
         # respuesta no cacheable). Fuera de esta superficie (panel,
         # /soporte, /pago...) la cookie manda como siempre.
         publica_cacheable = es_ruta_publica_cacheable(path)
+
+        # Prefijo interno de un mercado de habla inglesa: /us/apu es la misma
+        # página que /en-us/apu, y hasta ahora respondía 200 con canonical
+        # propia. Dos URLs indexables para el mismo documento es contenido
+        # duplicado con la firma del propio sitio; se consolida en 301.
+        prefijo = path.split("/")[1].lower() if "/" in path else ""
+        if (
+            prefijo in _PREFIJOS_INTERNOS_EN
+            and not path.lower().startswith(f"/en-{prefijo}")
+        ):
+            from starlette.responses import RedirectResponse
+            from .seo import slug_tema, tema_desde_slug
+
+            resto = path[len(prefijo) + 1 :] or "/"
+            # El slug del tema también se traduce en el salto: /us/apu ->
+            # /en-us/unit-price-analysis en un solo 301.
+            partes = resto.strip("/").split("/", 1)
+            if partes and partes[0]:
+                tema = tema_desde_slug(partes[0])
+                if tema:
+                    partes[0] = slug_tema(tema, "en")
+                    resto = "/" + "/".join(p for p in partes if p)
+            destino = f"/en-{prefijo}{resto}"
+            if destino.endswith("/") is False and destino.rstrip("/") == f"/en-{prefijo}":
+                destino += "/"
+            consulta = (scope.get("query_string") or b"").decode("latin-1")
+            if consulta:
+                destino = f"{destino}?{consulta}"
+            resp = RedirectResponse(destino, status_code=301)
+            await resp(scope, receive, send)
+            return
 
         # /en/ y /en-us/ serían la misma página en dos sitios: «en» a secas
         # resuelve a Estados Unidos en el registro de mercados. Se consolida

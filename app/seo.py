@@ -28,6 +28,39 @@ SITEMAP_LASTMOD = "2026-10-19"
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
 TEMAS = ("software-presupuestos", "apu", "remodelacion")
 
+#: Slug inglés de cada tema.
+#:
+#: Los mercados de habla inglesa publicaban `/en-us/apu` y
+#: `/en-us/remodelacion`: una URL en español para una página en inglés. El
+#: slug se ve en el resultado de búsqueda y en el enlace compartido, así que
+#: una página que compite por «estimating software» no puede llamarse
+#: «software-presupuestos». Se añaden los slugs ingleses como URL canónica y
+#: las antiguas redirigen con 301 (el enlace entrante no se pierde).
+TEMAS_EN = {
+    "software-presupuestos": "estimating-software",
+    "apu": "unit-price-analysis",
+    "remodelacion": "remodeling",
+}
+
+#: Vuelta atrás: slug inglés -> tema interno.
+_TEMA_DESDE_SLUG_EN = {v: k for k, v in TEMAS_EN.items()}
+
+
+def slug_tema(tema: str, lang: str = "es") -> str:
+    """Slug público de un tema en el idioma pedido."""
+    tema = str(tema or "").strip().lower()
+    if lang == "en":
+        return TEMAS_EN.get(tema, tema)
+    return tema
+
+
+def tema_desde_slug(slug: str) -> str | None:
+    """Tema interno a partir del slug público (español o inglés)."""
+    texto = str(slug or "").strip().lower().strip("/")
+    if texto in TEMAS:
+        return texto
+    return _TEMA_DESDE_SLUG_EN.get(texto)
+
 # Rutas que Google SÍ debe indexar. El resto lleva X-Robots-Tag noindex.
 # Se usa también para robots.txt.
 _INDEXABLES_EXACTAS = frozenset(
@@ -142,11 +175,18 @@ def es_indexable(path: str) -> bool:
     partes = [seg for seg in p.split("/") if seg]
     if not partes:
         return True
+    # Prefijo interno de un mercado inglés (/us/, /gb/…): no es una URL
+    # pública, el middleware la redirige a /en-xx/. Si se colara aquí, el
+    # diagnóstico diría que hay dos páginas indexables donde solo hay una.
+    if partes[0].lower() in {"us", "gb", "ca", "au", "ie"} and len(partes) > 0:
+        return False
     cc = partes[0].lower()
     if cc in {c.lower() for c in ORDEN_SELECTOR}:
         if len(partes) == 1:
             return True
-        if len(partes) == 2 and partes[1] in TEMAS:
+        if len(partes) == 2 and (
+            partes[1] in TEMAS or partes[1] in _TEMA_DESDE_SLUG_EN
+        ):
             return True
         # Los artículos de mercados hispanos viven en su silo canónico:
         # /es/guia/x, /co/guia/x… La ruta se valida además en el router para
@@ -172,9 +212,11 @@ _INDEXABLES_EN = frozenset(
         "/en/calculadora",
         "/en/mapa-del-sitio",
         "/en/novedades",
-        "/en/software-presupuestos",
-        "/en/apu",
-        "/en/remodelacion",
+        # Slugs ingleses (canónicos desde esta ronda) y los antiguos, que
+        # redirigen con 301: si alguno se sirviera indexable sería un duplicado.
+        "/en/estimating-software",
+        "/en/unit-price-analysis",
+        "/en/remodeling",
         "/en/legal/preguntas",
         "/en/legal/terminos",
         "/en/legal/privacidad",
@@ -207,7 +249,7 @@ def _es_indexable_en(p: str) -> bool:
         resto = (m.group(2) or "").strip("/")
         if not resto:
             return True
-        if resto in TEMAS:
+        if resto in TEMAS or resto in _TEMA_DESDE_SLUG_EN:
             return True
         # Guías y artículos del mercado: /en-gb/guia/... es la URL canónica
         # de los artículos británicos y sin esta rama quedarían en noindex.
@@ -253,7 +295,8 @@ def ruta_mercado(codigo: str, tema: str = "") -> str:
     codigo = str(codigo or "").strip().upper()
     pais = PAISES.get(codigo)
     if pais and pais.get("idioma") == "en":
-        return ruta_en(codigo, tema)
+        # El slug va en el idioma del mercado: /en-us/estimating-software.
+        return ruta_en(codigo, TEMAS_EN.get(str(tema or "").strip(), tema))
     return ruta_pais(codigo, tema)
 
 
@@ -2441,7 +2484,7 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         add(ruta_mercado(codigo), "0.9", "weekly")
     for tema in TEMAS:
         add(ruta_pais("", tema), "0.8", "monthly", tema)
-        add(f"/en/{tema}", "0.8", "monthly", tema)
+        add(f"/en/{TEMAS_EN[tema]}", "0.8", "monthly", tema)
         for codigo in ORDEN_SELECTOR:
             add(ruta_mercado(codigo, tema), "0.8", "monthly", tema)
     # Páginas sueltas con traducción: par es/en explícito.
@@ -2614,9 +2657,9 @@ def _sitemap_con_hreflang(path: str, tema: str = "") -> bool:
         if cc not in {c.lower() for c in ORDEN_SELECTOR}:
             return False
         resto = (m.group(2) or "").strip("/")
-        return (not resto) or (resto in TEMAS)
+        return (not resto) or (resto in TEMAS) or (resto in _TEMA_DESDE_SLUG_EN)
     if p.startswith("/en/"):
-        return p[len("/en/"):] in TEMAS
+        return p[len("/en/"):] in TEMAS or p[len("/en/"):] in _TEMA_DESDE_SLUG_EN
     if p in {f"/{t}" for t in TEMAS}:
         return True
     if any(p == ruta_pais(c) for c in ORDEN_SELECTOR):

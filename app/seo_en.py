@@ -650,9 +650,16 @@ def landing_en(codigo: str = "") -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def _ruta_en(codigo: str, tema: str = "") -> str:
-    """Ruta canónica en inglés: /en/, /en-mx/, /en/apu, /en-mx/apu."""
+    """Ruta canónica en inglés: /en/, /en-us/estimating-software.
+
+    El slug del tema va en inglés (``TEMAS_EN`` en ``app.seo``): una página
+    que compite por «estimating software» no puede vivir en
+    ``/en-us/software-presupuestos``. Las rutas antiguas redirigen con 301.
+    """
+    from .seo import slug_tema
+
     codigo = str(codigo or "").strip().upper()
-    tema = str(tema or "").strip().strip("/")
+    tema = slug_tema(str(tema or "").strip().strip("/"), "en")
     prefijo = f"/en-{codigo.lower()}" if codigo else "/en"
     return f"{prefijo}/{tema}" if tema else f"{prefijo}/"
 

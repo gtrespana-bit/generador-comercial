@@ -73,10 +73,16 @@ def _patrones() -> tuple[re.Pattern, ...]:
     ``app.main`` muy arriba.
     """
     from .paises import PAISES
-    from .seo import TEMAS
+    from .seo import TEMAS, TEMAS_EN
 
     cc = "|".join(sorted(re.escape(c.lower()) for c in PAISES))
-    temas = "|".join(sorted(re.escape(t) for t in TEMAS))
+    # Slugs de hub en los dos idiomas: desde que los mercados ingleses usan
+    # /en-us/estimating-software, su ruta interna es /us/estimating-software y
+    # sin esto quedaría fuera de la caché compartida (y el idioma pasaría a
+    # depender de la cookie, que es justo lo que esta lista evita).
+    temas = "|".join(
+        sorted(re.escape(t) for t in (*TEMAS, *TEMAS_EN.values()))
+    )
     return (
         re.compile(r"^/guia/[^/]+$"),
         re.compile(r"^/legal/[^/]+$"),

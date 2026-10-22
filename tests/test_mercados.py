@@ -648,8 +648,10 @@ def test_el_hreflang_es_el_locale_de_cada_mercado():
 def test_el_hreflang_apunta_a_la_ruta_del_mercado():
     from app.seo import ruta_mercado
 
-    assert ruta_mercado("US", "apu") == "/en-us/apu"
-    assert ruta_mercado("GB", "apu") == "/en-gb/apu"
+    # Los mercados de habla inglesa usan el slug inglés: una página que
+    # compite por «unit price analysis» no puede vivir en /en-us/apu.
+    assert ruta_mercado("US", "apu") == "/en-us/unit-price-analysis"
+    assert ruta_mercado("GB", "apu") == "/en-gb/unit-price-analysis"
     assert ruta_mercado("MX", "apu") == "/mx/apu"
 
 
