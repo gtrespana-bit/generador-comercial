@@ -237,19 +237,10 @@ def _landing_con_pais(request: Request, codigo: str):
     # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
     # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request, pais_forzado=codigo)
-    resp = TEMPLATES.TemplateResponse(request, "landing.html", ctx)
-    # Solo si cambia el valor: un Set-Cookie innecesario en cada visita
-    # impediría que el CDN sirviera la copia cacheada (Fase 1.2).
-    if request.cookies.get("cotizat_pais") != codigo:
-        resp.set_cookie(
-            "cotizat_pais",
-            codigo,
-            max_age=365 * 24 * 3600,
-            path="/",
-            samesite="lax",
-            httponly=False,
-        )
-    return resp
+    # La cookie de país la escribe el navegador (_cookies_publicas.html): el
+    # contenido depende solo de la ruta, y una respuesta con Set-Cookie deja
+    # la landing fuera del caché del CDN.
+    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -618,19 +609,9 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
             "guias": lista_guias(),
         }
     )
-    resp = TEMPLATES.TemplateResponse(request, "seo_hub.html", ctx)
-    # Solo si cambia el valor: un Set-Cookie innecesario en cada visita
-    # impediría que el CDN sirviera la copia cacheada (Fase 1.2).
-    if codigo and request.cookies.get("cotizat_pais") != codigo:
-        resp.set_cookie(
-            "cotizat_pais",
-            codigo,
-            max_age=365 * 24 * 3600,
-            path="/",
-            samesite="lax",
-            httponly=False,
-        )
-    return resp
+    # Igual que en la landing: el país ya está en la ruta y la cookie la
+    # escribe el navegador, para no renunciar al caché compartido.
+    return TEMPLATES.TemplateResponse(request, "seo_hub.html", ctx)
 
 
 @router.get("/software-presupuestos", response_class=HTMLResponse, include_in_schema=False)

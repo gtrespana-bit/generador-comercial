@@ -1,0 +1,56 @@
+{# Cookies de preferencia, puestas desde el navegador.
+
+   El idioma y el país de estas páginas ya vienen en la URL (/en-gb/prices,
+   /mx/apu): el HTML es idéntico para todos los visitantes anónimos y por eso
+   el CDN puede servirlo desde el borde. Pero el servidor aprovechaba el
+   render para escribir ``cotizat_pais`` y ``cotizat_lang``, y una respuesta
+   con ``Set-Cookie`` no se cachea en el CDN: las 96 URL más comerciales del
+   sitemap (las 23 landings de mercado y los 69 hubs) se estaban generando
+   enteras en cada visita de cada buscador.
+
+   La preferencia se sigue guardando, ahora aquí. El panel la lee igual (es
+   una cookie normal), y si el visitante tiene JavaScript desactivado no pasa
+   nada: el país se deduce de la ruta igualmente y al crear la cuenta se
+   puede elegir. #}
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  var COOKIES = {pais: "cotizat_pais", idioma: "cotizat_lang"};
+  var ANIO = 31536000;
+  var PAISES = {{ paises_codigos | tojson }};
+
+  function leer(nombre) {
+    var trozos = document.cookie ? document.cookie.split("; ") : [];
+    for (var i = 0; i < trozos.length; i++) {
+      var par = trozos[i].split("=");
+      if (par[0] === nombre) return decodeURIComponent(par[1] || "");
+    }
+    return "";
+  }
+
+  function escribir(nombre, valor) {
+    if (leer(nombre) === valor) return;
+    document.cookie = nombre + "=" + encodeURIComponent(valor) +
+      "; Path=/; Max-Age=" + ANIO + "; SameSite=Lax";
+  }
+
+  var ruta = window.location.pathname || "/";
+  // /mx/apu -> MX · /en-gb/prices -> GB · /apu -> (sin país)
+  var partes = ruta.split("/").filter(Boolean);
+  var primero = (partes[0] || "").toLowerCase();
+  var codigo = "";
+  if (primero.indexOf("en-") === 0 && primero.length === 5) {
+    codigo = primero.slice(3);
+  } else if (primero.length === 2) {
+    codigo = primero;
+  }
+  if (ANIO && codigo) {
+    for (var j = 0; j < PAISES.length; j++) {
+      if (PAISES[j] === codigo.toUpperCase()) {
+        escribir(COOKIES.pais, codigo.toUpperCase());
+        break;
+      }
+    }
+  }
+  escribir(COOKIES.idioma, ruta.indexOf("/en") === 0 ? "en" : "es");
+})();
+</script>

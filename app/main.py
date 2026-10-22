@@ -373,7 +373,11 @@ class IdiomaMiddleware:
                     _nombre, _valor = par.split("=", 1)
                     if _nombre.strip() == COOKIE_IDIOMA:
                         _idioma_actual = _valor.strip()
-            if _idioma_actual == lang:
+            # En la superficie cacheable la cookie la escribe el navegador
+            # (_cookies_publicas.html): una respuesta con Set-Cookie no se
+            # cachea en el CDN, y todas las URL /en-xx/ del sitemap recibían
+            # una cabecera nueva en cada visita de cada buscador.
+            if _idioma_actual == lang or publica_cacheable:
                 await self.app(scope, receive, send)
                 return
 

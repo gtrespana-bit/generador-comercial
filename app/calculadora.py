@@ -433,15 +433,17 @@ def contexto_calculadora(
         if en
         else "Calculadora de presupuesto de obra con precios reales"
     )
+    # ≤158 caracteres: por encima, Google corta la meta description a media
+    # frase y lo que se lee en el resultado es un final truncado.
     descripcion = (
         "Pick a construction item, enter the quantity and get the cost range "
-        "from the published unit prices of your country: materials, labour and "
-        "equipment included. Free, no sign-up."
+        "from your country's published unit prices: materials, labour and "
+        "equipment. Free."
         if en
         else (
-            "Elige una partida, pon la cantidad y obtén el rango de coste con "
-            "los precios unitarios publicados de tu país: materiales, mano de "
-            "obra y maquinaria. Gratis y sin registro."
+            "Elige una partida, pon la cantidad y obtén el coste con los "
+            "precios unitarios publicados de tu país: materiales, mano de obra "
+            "y maquinaria. Gratis."
         )
     )
 

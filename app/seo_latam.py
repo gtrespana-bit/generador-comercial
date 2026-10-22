@@ -191,7 +191,12 @@ def _base(codigo: str, slug: str, titulo: str, lead: str, tipo: str) -> dict:
     return {
         "slug": slug, "pais": codigo, "pais_nombre": pais["nombre"],
         "pais_path": f"/{codigo.lower()}/", "kicker": f"{pais['nombre']} · {tipo}",
-        "h1": titulo, "title": titulo + " | CotizaT", "lead": lead,
+        "h1": titulo,
+        # La marca va al final, pero solo si cabe: un título de 74-82
+        # caracteres se corta en el resultado y lo que se pierde es justo
+        # el final (la marca), mientras el principio sí se lee.
+        "title": (titulo + " | CotizaT") if len(titulo) + 10 <= 70 else titulo,
+        "lead": lead,
         "description": f"{titulo}. Datos y método en {pais['moneda']}, sin facturación fiscal.",
         # Ninguna pieza técnica se presenta automáticamente como tutorial normativo.
         "schema_howto": False,
@@ -200,7 +205,12 @@ def _base(codigo: str, slug: str, titulo: str, lead: str, tipo: str) -> dict:
 
 def _labor(codigo: str, perfil: dict) -> dict:
     pais = PAISES[codigo]
+    # El título lleva «| CotizaT» detrás; en los mercados de nombre largo
+    # (República Dominicana) se cae el «de construcción» para no pasarse de
+    # los ~70 caracteres que caben en el resultado de búsqueda.
     titulo = f"Mano de obra de construcción en {pais['nombre']}: referencias 2026"
+    if len(titulo) + len(" | CotizaT") > 70:
+        titulo = f"Mano de obra en {pais['nombre']}: referencias 2026"
     slug = f"mano-obra-construccion-{perfil['slug']}"
     lead = (
         f"Cómo estudiar la mano de obra en {pais['nombre']} sin confundir jornal, coste empresa y precio de venta. "

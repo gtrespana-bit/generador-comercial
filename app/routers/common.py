@@ -668,6 +668,17 @@ def robots_meta(request) -> str:
     return "noindex, follow" if espejo_idioma(request) else "index,follow,max-image-preview:large"
 
 
+def _paises_codigos() -> list[str]:
+    """Códigos de mercado, en mayúsculas, para el script de preferencias."""
+    try:
+        from ..paises import lista_paises
+
+        return [str(p["codigo"]).upper() for p in lista_paises()]
+    except Exception:  # pragma: no cover - fail-open
+        return []
+
+
+TEMPLATES.env.globals["paises_codigos"] = _paises_codigos()
 TEMPLATES.env.globals["espejo_idioma"] = espejo_idioma
 TEMPLATES.env.globals["robots_meta"] = robots_meta
 

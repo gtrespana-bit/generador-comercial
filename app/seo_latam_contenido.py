@@ -58,7 +58,7 @@ MERCADOS = {
         "labor": "En Chile no conviene comparar el sueldo líquido de un maestro con el coste hora de una empresa. Las referencias CLP incluyen una aproximación de coste empresa y no calculan una liquidación laboral. Un gasfíter que trabaja por visita puede incluir desplazamiento y un mínimo de servicio que no aparecen en una simple hora de catálogo. El estuco en altura tampoco conserva necesariamente el rendimiento de un paño accesible.",
         "documento": (
             "plantilla-presupuesto-construccion-chile",
-            "Plantilla de presupuesto de construcción en Chile, en CLP",
+            "Plantilla de presupuesto en Chile (CLP)",
             "Un presupuesto en pesos chilenos debe distinguir el trabajo contratado de las decisiones todavía abiertas. Cielo falso, guardapolvo y artefactos no se deben esconder en un único importe de terminaciones si el cliente puede cambiar uno de ellos.",
             [
                 ("Capítulos que permitan comparar ofertas", "Separa retiro y preparación, obra base, instalaciones y terminaciones. Cada partida necesita unidad, cantidad, precio CLP y alcance. Indica si el hormigón, la protección del edificio, el retiro de escombros y el traslado de materiales están incluidos. Dos ofertas con el mismo total no son comparables cuando una omite el acceso a un departamento o el retiro final."),
@@ -82,7 +82,7 @@ MERCADOS = {
         "labor": "En Argentina una referencia de septiembre no es automáticamente un precio vigente en octubre. Las horas ARS de la tabla conservan su fecha de consulta; no se actualizan con un índice inventado ni siguiendo una cotización de dólar implícita. Revisa acuerdos y costes propios antes de enviar. Cambiar la mano de obra del catálogo debe ser una decisión para una nueva propuesta, no una reescritura del PDF ya aceptado.",
         "documento": (
             "actualizar-presupuesto-obra-argentina",
-            "Actualizar un presupuesto de obra en Argentina sin perder el PDF enviado",
+            "Actualizar un presupuesto en Argentina sin perder el PDF enviado",
             "La actualización de precios en pesos argentinos exige separar catálogo vigente, propuesta enviada y cambio aceptado. Si los tres se editan como una sola hoja, deja de existir evidencia de la oferta que recibió el cliente.",
             [
                 ("Anotar corte, vigencia y alcance", "Identifica la fecha de los precios y la validez comercial que acuerdas para esa propuesta. No uses una cláusula genérica como sustituto de la revisión de condiciones. Un cambio de cotización de proveedor no equivale por sí solo a un nuevo acuerdo con el cliente. Las condiciones de actualización contractual deben revisarse profesionalmente, no deducirse de un botón del programa."),
@@ -146,7 +146,7 @@ MERCADOS = {
         ),
         "tecnica": (
             "plantilla-presupuesto-dop-itbis",
-            "Plantilla de presupuesto en pesos dominicanos: alcance e ITBIS",
+            "Presupuesto en pesos dominicanos: alcance e ITBIS",
             "Una plantilla DOP sirve para explicar qué se ofrece y qué queda por decidir. No basta con añadir RD$ a una hoja: el cliente necesita cantidades, productos, exclusiones y una referencia inequívoca del documento que acepta.",
             [
                 ("Separar la oferta de la cubicación de avance", "En la oferta, indica cantidades previstas y condiciones de medición. Si el cliente pide un documento de avance, no reutilices el mismo total como si fuera una certificación de obra ejecutada. Esta plantilla no administra retenciones ni valida cubicaciones contractuales; organiza un presupuesto comercial por capítulos y partidas."),
@@ -160,7 +160,7 @@ MERCADOS = {
         "labor": "En Panamá una tarifa de mercado, un mínimo legal y una tabla de convenio no son intercambiables. La referencia USD del catálogo modela coste empresa; no acredita cumplimiento de un convenio concreto ni sustituye la revisión de categorías, jornada y beneficios. Comprueba además si un subcontratista factura por actividad y aporta sus herramientas. No vuelvas a cargar aportes de planilla sobre una oferta cerrada sin analizar su alcance.",
         "documento": (
             "plantilla-presupuesto-construccion-panama",
-            "Plantilla de presupuesto de construcción en Panamá, en USD",
+            "Plantilla de presupuesto en Panamá (USD)",
             "En una obra privada panameña, el presupuesto debe dejar claro qué incluye el precio en dólares y qué condiciones lo pueden cambiar. La moneda compartida con otros países no hace equivalentes jornales, materiales ni tratamiento tributario.",
             [
                 ("Identificar el alcance y el acceso", "Divide preparación, estructura o albañilería, instalaciones y acabados. Registra unidad y cantidad de repello, cielo raso y artefactos, además de retiro y protección. En un edificio, confirma restricciones de acceso, horarios y traslado interno antes de prometer un plazo. El flete o el izado omitidos no se recuperan solo cambiando el margen."),
@@ -184,7 +184,7 @@ MERCADOS = {
         "labor": "En Costa Rica debe separarse salario de referencia, cargas de la empresa y tarifa facturada por el profesional. La tabla CRC no calcula planillas CCSS ni primas individuales de riesgos del trabajo. Un fontanero contratado por servicio puede incorporar visita y herramienta. Pide el alcance de ese servicio antes de compararlo con una hora de coste interno; tampoco supone que se hayan tramitado permisos o responsabilidades CFIA.",
         "documento": (
             "plantilla-presupuesto-construccion-costa-rica",
-            "Plantilla de presupuesto de construcción en Costa Rica, en colones",
+            "Plantilla de presupuesto en Costa Rica (colones)",
             "Una oferta en colones necesita un alcance entendible y cifras con separadores consistentes. El formato de la plantilla no sustituye permisos, dirección técnica ni revisión fiscal de la obra.",
             [
                 ("Partidas con rodapié, cielo raso y repello definidos", "Separa obra base, instalaciones, acabados y servicios. Describe tipo de cielo raso, altura y remates; mide rodapié por su longitud cuando esa sea la unidad contratada. La protección de una vivienda ocupada y el retiro de escombros deben estar expresamente incluidos o excluidos. No dejes esos trabajos bajo una palabra genérica como varios."),
@@ -208,7 +208,7 @@ MERCADOS = {
         "labor": "En Guatemala el jornal de mercado no incluye necesariamente todos los costes de una empresa formal. La referencia en quetzales incorpora un modelo con prestaciones; no es una planilla IGSS ni certifica la situación de cada trabajador. El bono 14 y el aguinaldo no deben añadirse dos veces al usar una referencia ya cargada. Para block y repello, comprueba además si la cuadrilla cobra por producción o por jornada.",
         "documento": (
             "plantilla-presupuesto-construccion-guatemala",
-            "Plantilla de presupuesto de construcción en Guatemala, en quetzales",
+            "Plantilla de presupuesto en Guatemala (quetzales)",
             "La plantilla guatemalteca debe distinguir block, repello, cielo falso e instalaciones, con cantidades que el cliente pueda revisar. Poner un total GTQ sin describir esos trabajos no permite comparar alcance ni gestionar cambios.",
             [
                 ("Describir obra base y acabados por separado", "La pared de block debe indicar dimensiones, espesor y si incluye refuerzos o solo colocación. El repello y la pintura se estudian como trabajos propios cuando puedan variar. En instalaciones eléctricas, identifica circuitos y elementos como flipones, sin convertir una partida genérica en promesa de diseño técnico completo. La seguridad y el diseño requieren su revisión específica."),
@@ -232,7 +232,7 @@ MERCADOS = {
         "labor": "En Honduras las referencias investigadas distinguen albañil, ayudante y maestro de obra; no justifican llamar maestro a cualquier hora de oficial. La tabla en lempiras es nacional, no una tarifa certificada de Tegucigalpa o San Pedro Sula. Revisa contratación, herramientas y traslado antes de comparar un jornal ofrecido por una cuadrilla con el coste empresa modelado. Una obra pequeña puede tener mínimos de movilización que la hora no recoge.",
         "documento": (
             "plantilla-presupuesto-construccion-honduras",
-            "Plantilla de presupuesto de construcción en Honduras, en lempiras",
+            "Plantilla de presupuesto en Honduras (lempiras)",
             "Un presupuesto HNL debe permitir distinguir pared de bloque, repello y acabado. El cliente necesita saber si contrata suministro y colocación o solamente mano de obra, especialmente cuando compra parte de los materiales.",
             [
                 ("Aclarar quién aporta cada recurso", "Indica si la empresa suministra cemento, bloque, arena y equipo o si los entrega el cliente. No elimines el control de consumos por tratarse de mano de obra: la espera de material puede cambiar el plazo. Separa partidas de cielo falso, instalaciones y pintura. Define retiro, transporte y limpieza final para que no aparezcan como extras inesperados."),
@@ -256,7 +256,7 @@ MERCADOS = {
         "labor": "En El Salvador el uso de dólares no permite tomar como propia una tarifa de Ecuador o Panamá. Las referencias salvadoreñas distinguen coste empresa y jornal de mercado; no liquidan ISSS o AFP por trabajador. Comprueba si el acuerdo de cuadrilla incluye herramienta y desplazamiento. Para comparar una propuesta por obra con una hora interna necesitas conocer producción, alcance y gastos incluidos, no solo dividir su total entre ocho.",
         "documento": (
             "plantilla-presupuesto-construccion-el-salvador",
-            "Plantilla de presupuesto de construcción en El Salvador, en USD",
+            "Plantilla de presupuesto en El Salvador (USD)",
             "Un presupuesto salvadoreño en dólares debe explicar qué obra se entrega y con qué cantidades. La identificación fiscal y el impuesto son datos del documento; no sustituyen el desglose comercial ni lo convierten en facturación electrónica.",
             [
                 ("Partidas de repello y cielo falso con límites claros", "Define preparación de soporte, espesor y acabado del repello; separa pintura y cielo falso cuando sus cantidades o productos puedan cambiar. Aclara si se incluyen demolición, protección de la vivienda y retiro de escombros. En un trabajo de remodelación, omitir estas tareas puede cambiar más el total que una pequeña variación de material."),
@@ -280,7 +280,7 @@ MERCADOS = {
         "labor": "En Nicaragua una referencia mensual de empleo y un jornal de albañil no deben mezclarse sin explicar días y horas. La tabla NIO conserva el modelo de coste empresa de la investigación, no certifica salario mínimo MITRAB vigente ni liquida INSS. Cuando una referencia sea estimada o derivada, se muestra como tal. Contrasta la tarifa del equipo que trabajará en la obra antes de asumir producción y plazo.",
         "documento": (
             "plantilla-presupuesto-construccion-nicaragua",
-            "Plantilla de presupuesto de construcción en Nicaragua, en córdobas",
+            "Plantilla de presupuesto en Nicaragua (córdobas)",
             "La oferta en córdobas debe identificar moneda y alcance incluso si algunas compras se negocian en dólares. No mezcles importes NIO y USD en una misma columna ni dejes la conversión implícita en el total.",
             [
                 ("Capítulos y materiales con unidad definida", "Separa preparación, albañilería, instalaciones y acabados. Un cielo raso de Gypsum necesita sistema, superficie y remates; no basta con escribir láminas. Para repello y pintura, deja clara la superficie y el estado del soporte. Anota transporte, protección y retiro de desperdicios como incluidos o excluidos para poder comparar la propuesta con otra oferta."),
