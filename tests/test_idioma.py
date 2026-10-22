@@ -51,12 +51,12 @@ def test_partir_ruta(ruta, esperado):
     [
         ("/", "en", "/en"),
         ("/", "es", "/"),
-        ("/apu", "en", "/en/apu"),
+        ("/apu", "en", "/en/unit-price-analysis"),
         ("/apu", "es", "/apu"),
-        ("/mx/apu", "en", "/en-mx/apu"),
+        ("/mx/apu", "en", "/en-mx/unit-price-analysis"),
         ("/mx/apu", "es", "/mx/apu"),
         ("/en-mx/apu", "es", "/mx/apu"),  # ida y vuelta
-        ("/en-mx/apu", "en", "/en-mx/apu"),
+        ("/en-mx/apu", "en", "/en-mx/unit-price-analysis"),
         ("/presupuestos/nuevo", "en", "/en/presupuestos/nuevo"),
         ("/guia/presupuesto-de-obra", "en", "/en/guia/presupuesto-de-obra"),
         ("/en/", "es", "/"),
@@ -126,9 +126,9 @@ def cliente():
 @pytest.mark.parametrize(
     "url,ubicacion,cookie",
     [
-        ("/idioma/en?destino=/apu", "/en/apu", "en"),
+        ("/idioma/en?destino=/apu", "/en/unit-price-analysis", "en"),
         ("/idioma/es?destino=/apu", "/apu", "es"),
-        ("/idioma/en?destino=/mx/apu", "/en-mx/apu", "en"),
+        ("/idioma/en?destino=/mx/apu", "/en-mx/unit-price-analysis", "en"),
         ("/idioma/es?destino=/mx/apu", "/mx/apu", "es"),
         ("/idioma/en?destino=/", "/en", "en"),
         ("/idioma/es?destino=/en/", "/", "es"),

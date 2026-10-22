@@ -623,6 +623,24 @@ def ruta_precios_nav(path: str) -> str:
 
 TEMPLATES.env.globals["ruta_precios_nav"] = ruta_precios_nav
 
+
+def ruta_tema_en(tema: str) -> str:
+    """URL canónica de un hub de intención en inglés: /en/estimating-software.
+
+    Se expone a las plantillas porque varias la escribían a mano con el slug
+    español (/en/apu), y esas URL ahora redirigen con 301: un enlace interno
+    a una redirección gasta un salto en cada rastreo.
+    """
+    try:
+        from ..seo import slug_tema
+
+        return f"/en/{slug_tema(tema, 'en')}"
+    except Exception:
+        return f"/en/{tema}"
+
+
+TEMPLATES.env.globals["ruta_tema_en"] = ruta_tema_en
+
 # Filtro de traducción de terminología por país (VE base -> CO/MX/EC/PE)
 try:
     from ..services.traduccion import (

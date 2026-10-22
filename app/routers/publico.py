@@ -588,6 +588,25 @@ def _pagina_intencion(request: Request, codigo: str, tema: str):
     if ficha is None:
         return Response("Página no encontrada.", status_code=404)
     ctx = contexto_seo(request, codigo=codigo, tema=tema)
+    # Una sola URL por página. Los mercados ingleses publicaban el slug en
+    # español (/en-us/apu) y el genérico inglés también (/en/apu); desde que
+    # la canónica es /en-us/unit-price-analysis, la antigua redirige con 301
+    # en vez de seguir sirviendo el mismo HTML con otra URL.
+    from ..seo import origen_canonico
+
+    original = str(getattr(request.state, "ruta_original", "") or request.url.path)
+    canonica = str(ctx.get("canonical_url") or "")
+    origen = origen_canonico(request)
+    if canonica.startswith(origen):
+        ruta_canonica = canonica[len(origen):] or "/"
+        if original.rstrip("/") != ruta_canonica.rstrip("/"):
+            from starlette.responses import RedirectResponse
+
+            destino = ruta_canonica
+            consulta = str(getattr(request.url, "query", "") or "")
+            if consulta:
+                destino = f"{destino}?{consulta}"
+            return RedirectResponse(destino, status_code=301)
     ctx.update(
         {
             "pais_actual": PAISES.get(codigo),
@@ -641,6 +660,39 @@ def hub_apu_pais(cc: str, request: Request):
 
 @router.get("/{cc}/remodelacion", response_class=HTMLResponse, include_in_schema=False)
 def hub_remodelacion_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "remodelacion")
+
+
+# Hubs de intención con el slug en inglés. La ruta interna que llega aquí es
+# la ya reescrita por el middleware (/en-us/unit-price-analysis -> /us/...),
+# así que se registran con el prefijo de mercado y sin prefijo (genérico).
+@router.get("/estimating-software", response_class=HTMLResponse, include_in_schema=False)
+def hub_estimating_software(request: Request):
+    return _pagina_intencion(request, "", "software-presupuestos")
+
+
+@router.get("/unit-price-analysis", response_class=HTMLResponse, include_in_schema=False)
+def hub_unit_price_analysis(request: Request):
+    return _pagina_intencion(request, "", "apu")
+
+
+@router.get("/remodeling", response_class=HTMLResponse, include_in_schema=False)
+def hub_remodeling(request: Request):
+    return _pagina_intencion(request, "", "remodelacion")
+
+
+@router.get("/{cc}/estimating-software", response_class=HTMLResponse, include_in_schema=False)
+def hub_estimating_software_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "software-presupuestos")
+
+
+@router.get("/{cc}/unit-price-analysis", response_class=HTMLResponse, include_in_schema=False)
+def hub_unit_price_analysis_pais(cc: str, request: Request):
+    return _pagina_intencion(request, cc, "apu")
+
+
+@router.get("/{cc}/remodeling", response_class=HTMLResponse, include_in_schema=False)
+def hub_remodeling_pais(cc: str, request: Request):
     return _pagina_intencion(request, cc, "remodelacion")
 
 

@@ -135,12 +135,32 @@ def ruta_en_idioma(path: str, idioma: str | None = None) -> str:
     ``/apu`` → ``/en/apu`` · ``/mx/apu`` → ``/en-mx/apu`` · ``/`` → ``/en``.
     """
     pais, resto = partir_ruta(path)
+    # El slug del hub también cambia de idioma (/apu <-> /unit-price-analysis).
+    # Sin esto, el conmutador mandaba a /en/apu, que ahora responde 301: un
+    # salto de más en cada cambio de idioma y una URL española en la barra.
+    resto = _slug_tema_traducido(resto, normalizar_idioma(idioma))
     if normalizar_idioma(idioma) == "en":
         prefijo = "/en" + (f"-{pais}" if pais else "")
         return prefijo if resto == "/" else prefijo + resto
     if pais:
         return f"/{pais}" if resto == "/" else f"/{pais}{resto}"
     return resto or "/"
+
+
+def _slug_tema_traducido(resto: str, idioma: str) -> str:
+    """Traduce el segmento del hub al idioma pedido («/apu» ↔ «/unit-price-analysis»)."""
+    try:
+        from .seo import TEMAS_EN, _TEMA_DESDE_SLUG_EN
+    except Exception:  # pragma: no cover - ciclo defensivo
+        return resto
+    partes = [x for x in str(resto or "").split("/") if x]
+    if not partes:
+        return resto
+    if idioma == "en":
+        partes[0] = TEMAS_EN.get(partes[0], partes[0])
+    else:
+        partes[0] = _TEMA_DESDE_SLUG_EN.get(partes[0], partes[0])
+    return "/" + "/".join(partes)
 
 
 def ruta_segura(destino: str | None) -> str:
