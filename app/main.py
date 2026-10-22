@@ -7,6 +7,7 @@ monta la aplicación, los middlewares, los manejadores de excepción, los
 estáticos y las rutas de sistema (salud y favicon).
 """
 import logging
+import os
 import zipfile
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -215,6 +216,68 @@ class FormulariosUTF8Middleware:
 _PREFIJOS_INTERNOS_EN = frozenset({"us", "gb", "ca", "au", "ie"})
 
 
+class HostCanonicoMiddleware:
+    """301 del dominio alternativo (www) al canónico.
+
+    En Vercel la redirección de www la resuelve el borde y suele salir 307
+    (temporal), que no consolida señales: Google la trata como un salto
+    provisional y mantiene las dos URL como candidatas. Aquí se garantiza el
+    301 en cualquier despliegue (Vercel con `vercel.json`, Docker o local) y
+    con la misma forma: ruta y query intactas.
+
+    Solo actúa si ``COTIZAT_PUBLIC_URL`` está definida: en pruebas y en
+    escritorio no hay dominio alternativo que corregir.
+    """
+
+    def __init__(self, app):
+        self.app = app
+
+    @staticmethod
+    def _host_canonico() -> str:
+        """Host de ``COTIZAT_PUBLIC_URL``, o cadena vacía si no está definida.
+
+        Se lee en cada petición y no se memoriza: memorizarlo en la instancia
+        del middleware hace que el primer valor gane para siempre, y en las
+        pruebas (que cambian el entorno entre casos) eso convierte el orden
+        de ejecución en parte del resultado.
+        """
+        from urllib.parse import urlsplit
+
+        publico = (os.environ.get("COTIZAT_PUBLIC_URL") or "").strip()
+        return (urlsplit(publico).netloc or "").lower() if publico else ""
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            await self.app(scope, receive, send)
+            return
+        canonico = self._host_canonico()
+        headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope.get("headers", [])}
+        host = (headers.get("host") or "").lower()
+        ruta = scope.get("path") or "/"
+        # Los diagnósticos no se redirigen: /readyz existe justo para poder
+        # decir «me han llamado por www.cotizat.online» cuando algo va mal.
+        # Redirigirlo escondía el dato que sirve para depurar.
+        diagnostico = ruta in ("/readyz", "/healthz") or ruta.startswith("/api/")
+        if (
+            canonico
+            and host
+            and host != canonico
+            and host == "www." + canonico
+            and not diagnostico
+            and scope.get("method") in ("GET", "HEAD")
+        ):
+            from starlette.responses import RedirectResponse
+
+            destino = "https://" + canonico + (scope.get("path") or "/")
+            consulta = (scope.get("query_string") or b"").decode("latin-1")
+            if consulta:
+                destino = f"{destino}?{consulta}"
+            resp = RedirectResponse(destino, status_code=301)
+            await resp(scope, receive, send)
+            return
+        await self.app(scope, receive, send)
+
+
 class IdiomaMiddleware:
     """Resuelve el idioma desde /en/... o la cookie y reescribe la ruta."""
 
@@ -401,6 +464,7 @@ class IdiomaMiddleware:
 
 app = FastAPI(title=PRODUCT_NAME, lifespan=lifespan)
 app.add_middleware(IdiomaMiddleware)
+app.add_middleware(HostCanonicoMiddleware)
 app.add_middleware(FormulariosUTF8Middleware)
 app.add_middleware(RefreshedAuthCookieMiddleware)
 app.add_middleware(

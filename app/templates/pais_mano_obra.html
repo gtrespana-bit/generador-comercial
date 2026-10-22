@@ -68,7 +68,7 @@
   <h2>{{ 'mo.faq_titulo' | t(_idioma) }}</h2>
   {% for item in faq %}
   <details>
-    <summary>{{ item.q }}</summary>
+    <summary><h3>{{ item.q }}</h3></summary>
     <p>{{ item.a }}</p>
   </details>
   {% endfor %}

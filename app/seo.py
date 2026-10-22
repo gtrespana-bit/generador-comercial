@@ -2734,6 +2734,93 @@ def _sitemap_con_hreflang(path: str, tema: str = "") -> bool:
     return False
 
 
+def llms_txt(request: Request | None = None) -> str:
+    """``/llms.txt``: mapa del sitio en Markdown para asistentes de IA.
+
+    Es una convención emergente (no un estándar de ningún buscador): un
+    fichero de texto en la raíz que dice qué es el sitio y cuáles son sus
+    páginas importantes, sin HTML ni navegación. Lo usan rastreadores de IA
+    para decidir qué leer y cómo citarlo.
+
+    Se genera del mismo sitio que el sitemap: si mañana hay un mercado o un
+    capítulo nuevo, aparece aquí sin tocar nada a mano.
+    """
+    origen = origen_canonico(request)
+    lineas = [
+        f"# {PRODUCT_NAME}",
+        "",
+        f"> {value_proposition('es')} Software de presupuestos de construcción con "
+        f"catálogo de precios propio en {len(ORDEN_SELECTOR)} mercados (España, "
+        "Latinoamérica y los cinco mercados de habla inglesa), análisis de precios "
+        "unitarios, margen, plazos y PDF profesional.",
+        "",
+        "Datos verificables: el catálogo público de cada país se publica con sus "
+        "precios unitarios y la fecha de sus tasas de cambio. No hay cifras "
+        "inventadas ni estimaciones sin fuente.",
+        "",
+        "## Producto",
+        "",
+        f"- [Cómo funciona]({origen}/como-funciona): el producto, función por función.",
+        f"- [Calculadora de presupuesto]({origen}/calculadora): herramienta gratuita con los precios del catálogo.",
+        f"- [Planes y precios]({origen}/pago): precios públicos del producto.",
+        "",
+        "## Comparador internacional de precios",
+        "",
+        f"- [Precios de construcción en 22 países]({origen}/precios-comparados): índice por mercado y capítulo, con la misma cesta de partidas.",
+    ]
+    try:
+        from .comparador import capitulos_publicados, ruta_capitulo
+
+        for codigo in capitulos_publicados():
+            lineas.append(f"- [Capítulo {codigo}]({origen}{ruta_capitulo('es', codigo)})")
+    except Exception:  # pragma: no cover - el comparador puede no tener datos
+        pass
+    lineas += [
+        "",
+        "## Catálogo de precios por mercado",
+        "",
+    ]
+    for codigo in ORDEN_SELECTOR:
+        destino = ruta_mercado(codigo, "")
+        nombre = PAISES[codigo].get("nombre") or codigo
+        lineas.append(f"- [{nombre}]({origen}{destino}): catálogo con precios unitarios y descompuestos.")
+    lineas += [
+        "",
+        "## Hubs de intención",
+        "",
+    ]
+    for tema in TEMAS:
+        lineas.append(f"- [{tema}]({origen}{ruta_pais('', tema)})")
+        lineas.append(f"- [{TEMAS_EN[tema]} (inglés)]({origen}{ruta_en('', tema)})")
+    lineas += [
+        "",
+        "## Guías",
+        "",
+    ]
+    try:
+        from .seo_contenido import lista_guias
+
+        for guia in lista_guias():
+            lineas.append(f"- [{guia['h1']}]({origen}{_ruta_guia(guia['slug'], 'es')})")
+    except Exception:  # pragma: no cover
+        pass
+    lineas += [
+        "",
+        "## Idioma y mercados",
+        "",
+        f"- Español: {origen}/ (España y 16 mercados de Latinoamérica, cada uno en su subdirectorio).",
+        f"- Inglés: {origen}/en/ y {origen}/en-us/, /en-gb/, /en-ie/, /en-au/, /en-ca/.",
+        "",
+        "## Sobre este fichero",
+        "",
+        "Generado por el propio sitio desde su configuración de rutas. "
+        "Los sitemaps XML están en /sitemap.xml. Las páginas de sesión, el panel "
+        "y los documentos privados no se listan aquí ni se indexan.",
+        "",
+    ]
+    return "\n".join(lineas)
+
+
 def robots_txt(request: Request | None = None) -> str:
     origen = origen_canonico(request)
     lineas = [
