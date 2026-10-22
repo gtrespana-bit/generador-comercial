@@ -678,6 +678,27 @@ def _paises_codigos() -> list[str]:
         return []
 
 
+def _social_enlaces() -> list[dict]:
+    """Perfiles sociales oficiales, para el pie y el mapa del sitio."""
+    try:
+        from ..social import enlaces
+
+        return enlaces()
+    except Exception:  # pragma: no cover - fail-open
+        return []
+
+
+def _verificacion_dominio_meta() -> str:
+    try:
+        from ..social import verificacion_dominio_meta
+
+        return verificacion_dominio_meta()
+    except Exception:  # pragma: no cover - fail-open
+        return ""
+
+
+TEMPLATES.env.globals["verificacion_dominio_meta"] = _verificacion_dominio_meta
+TEMPLATES.env.globals["social_enlaces"] = _social_enlaces()
 TEMPLATES.env.globals["paises_codigos"] = _paises_codigos()
 TEMPLATES.env.globals["espejo_idioma"] = espejo_idioma
 TEMPLATES.env.globals["robots_meta"] = robots_meta

@@ -36,6 +36,16 @@
             Soporte directo
           </span>
         </div>
+        {% if social_enlaces %}
+        {# rel="me" además de sameAs en el JSON-LD: es la otra forma de
+           declarar «esta cuenta es esta marca». #}
+        <nav class="footer-social" aria-label="Perfiles de {{ product_name }}">
+          {% for red in social_enlaces %}
+          <a href="{{ red.url }}" rel="me noopener" target="_blank"
+             title="{{ product_name }} en {{ red.nombre }}">{{ red.nombre }}</a>
+          {% endfor %}
+        </nav>
+        {% endif %}
       </div>
 
       {# ── Columna 2: Producto ── #}
