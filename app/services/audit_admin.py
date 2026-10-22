@@ -75,6 +75,15 @@ RESULTADOS_AUDITORIA = (
     ("error", "Fallidas"),
 )
 
+#: Columnas ordenables del registro. Lo natural es leer lo último primero; el
+#: resto permite responder «¿qué hizo este operador?» sin exportar la tabla.
+ORDENES_AUDITORIA = (
+    ("fecha", "Fecha", "desc"),
+    ("operador", "Operador", "asc"),
+    ("accion", "Acción", "asc"),
+    ("resultado", "Resultado", "asc"),
+)
+
 
 def _serializar_detalle(detalle: dict | None) -> str:
     """Serialize a JSON pequeño y legible, sin datos sensibles."""
@@ -135,23 +144,17 @@ def registrar_evento_admin(
         return False
 
 
-def resumen_auditoria_admin(
+def _consulta_auditoria(
     db,
     *,
     actor: str = "",
     accion: str = "",
     resultado: str = "",
     organizacion_id: int | None = None,
-    limite: int = 200,
     desde=None,
     hasta=None,
-) -> list[EventoAdmin]:
-    """Eventos del panel, filtrados y ordenados de más reciente a más antiguo.
-
-    ``resultado`` vale ``ok`` o ``error``: poder separar los intentos fallidos
-    es la razón por la que el registro guarda el campo, y hasta ahora la única
-    forma de verlos era descargar la tabla.
-    """
+):
+    """Consulta base del registro, con los filtros que comparten pantalla y CSV."""
     consulta = db.query(EventoAdmin)
     actor_l = (actor or "").strip().lower()
     if actor_l:
@@ -170,6 +173,108 @@ def resumen_auditoria_admin(
         consulta = consulta.filter(EventoAdmin.created_at >= desde)
     if hasta is not None:
         consulta = consulta.filter(EventoAdmin.created_at <= hasta)
+    return consulta
+
+
+def _ordenar_auditoria(consulta, orden: str = "fecha", direccion: str = "desc"):
+    """Orden de la pantalla, aplicado también al CSV."""
+    clave = orden if orden in {o[0] for o in ORDENES_AUDITORIA} else "fecha"
+    columna = {
+        "operador": EventoAdmin.operador_email,
+        "accion": EventoAdmin.accion,
+        "resultado": EventoAdmin.resultado,
+    }.get(clave, EventoAdmin.created_at)
+    columna = columna.desc() if direccion == "desc" else columna.asc()
+    # El id desempata: dos eventos del mismo segundo no se repiten ni se
+    # pierden al cambiar de página.
+    return consulta.order_by(columna, desc(EventoAdmin.id))
+
+
+def listar_auditoria_admin(
+    db,
+    *,
+    actor: str = "",
+    accion: str = "",
+    resultado: str = "",
+    organizacion_id: int | None = None,
+    orden: str = "fecha",
+    direccion: str = "desc",
+    pagina: int = 1,
+    por_pagina: int = 25,
+):
+    """Página del registro con su meta (Fase 1).
+
+    Antes la pantalla pedía 250 eventos y no decía cuántos había: el operador
+    no sabía si el registro tenía 20 o 20 000. Ahora se cuenta en SQL y se
+    recorta a la página pedida.
+    """
+    from .panel_listas import paginar_consulta
+
+    consulta = _ordenar_auditoria(
+        _consulta_auditoria(
+            db,
+            actor=actor,
+            accion=accion,
+            resultado=resultado,
+            organizacion_id=organizacion_id,
+        ),
+        orden=orden,
+        direccion=direccion,
+    )
+    return paginar_consulta(consulta, pagina=pagina, por_pagina=por_pagina)
+
+
+def exportar_auditoria_admin(
+    db,
+    *,
+    actor: str = "",
+    accion: str = "",
+    resultado: str = "",
+    organizacion_id: int | None = None,
+    orden: str = "fecha",
+    direccion: str = "desc",
+) -> list[EventoAdmin]:
+    """Todo lo que cumple el filtro, sin recorte, para el CSV."""
+    consulta = _ordenar_auditoria(
+        _consulta_auditoria(
+            db,
+            actor=actor,
+            accion=accion,
+            resultado=resultado,
+            organizacion_id=organizacion_id,
+        ),
+        orden=orden,
+        direccion=direccion,
+    )
+    return consulta.all()
+
+
+def resumen_auditoria_admin(
+    db,
+    *,
+    actor: str = "",
+    accion: str = "",
+    resultado: str = "",
+    organizacion_id: int | None = None,
+    limite: int = 200,
+    desde=None,
+    hasta=None,
+) -> list[EventoAdmin]:
+    """Eventos del panel, filtrados y ordenados de más reciente a más antiguo.
+
+    ``resultado`` vale ``ok`` o ``error``: poder separar los intentos fallidos
+    es la razón por la que el registro guarda el campo, y hasta ahora la única
+    forma de verlos era descargar la tabla.
+    """
+    consulta = _consulta_auditoria(
+        db,
+        actor=actor,
+        accion=accion,
+        resultado=resultado,
+        organizacion_id=organizacion_id,
+        desde=desde,
+        hasta=hasta,
+    )
     return consulime(consulta, limite)
 
 

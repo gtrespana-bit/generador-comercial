@@ -262,3 +262,209 @@ def test_la_gravedad_de_salud_viaja_con_el_chequeo_y_no_se_adivina():
     assert estado.to_dict()["severidades"]["cron_secret"] == "info"
     # /healthz conserva su contrato exacto: sin gravedades no se publica la clave.
     assert "severidades" not in liveness().to_dict()
+
+
+# ---------------------------------------------------------------------------
+# Renovaciones, Ventas, Cobros, Contratos y Auditoría (Fase 1, resto)
+# ---------------------------------------------------------------------------
+
+
+def _sembrar_licencias(Session, *, cuantas: int = 30, org_id: int | None = None):
+    """Licencias que vencen este mes, una por día (máximo 28: febrero)."""
+    from datetime import date
+
+    from app.models import Licencia
+
+    hoy = date.today()
+    mes = hoy.replace(day=1)
+    with Session() as db:
+        if org_id is None:
+            org_id = db.query(Organizacion).first().id
+        for indice in range(cuantas):
+            dia = min(indice + 1, 28)
+            db.add(
+                Licencia(
+                    organizacion_id=org_id,
+                    origen="pago",
+                    estado="activa",
+                    inicio=mes,
+                    vence=mes.replace(day=dia),
+                    importe=10.0 + indice,
+                    moneda="USD",
+                )
+            )
+        db.commit()
+
+
+def test_renovaciones_pagina_ordena_y_el_csv_sigue_el_mismo_orden(entorno_admin):
+    cliente, Session, _datos = entorno_admin
+    _sembrar_licencias(Session, cuantas=30)
+
+    primera = cliente.get("/admin/ingresos?tab=renovaciones")
+    segunda = cliente.get("/admin/ingresos?tab=renovaciones&pagina=2")
+    por_importe = cliente.get(
+        "/admin/ingresos?tab=renovaciones&orden=importe&dir=desc&por=50"
+    )
+    csv = cliente.get(
+        "/admin/ingresos.csv?tab=renovaciones&orden=importe&dir=desc"
+    )
+
+    assert primera.status_code == 200 and segunda.status_code == 200
+    assert "1–25 de 30" in primera.text
+    assert "26–30 de 30" in segunda.text
+    # El orden por importe deja primero la licencia más cara (10 + 29).
+    assert "39.00 US$" in por_importe.text
+    lineas = [linea for linea in csv.text.splitlines() if linea.strip()]
+    # El CSV del panel va con BOM y separador «;» para que Excel en castellano
+    # lo abra en columnas.
+    assert lineas[0].lstrip("\ufeff").startswith("Cliente;Slug;Vence")
+    assert "39.00" in lineas[1]
+
+
+def test_ventas_pagina_busca_y_exporta_el_mismo_conjunto(entorno_admin):
+    cliente, Session, datos = entorno_admin
+    with Session() as db:
+        db.query(CompraPlan).delete()
+        for indice in range(30):
+            db.add(
+                CompraPlan(
+                    organizacion_id=datos["norte"],
+                    plan="anual",
+                    metodo_pago="stripe",
+                    importe=89.0 + indice,
+                    moneda="USD",
+                    datos_verificacion="{}",
+                    estado="activa",
+                    creada_por_email=f"venta{indice}@example.com",
+                    created_at=BASE + timedelta(days=indice),
+                    revisado_at=BASE + timedelta(days=indice),
+                )
+            )
+        db.commit()
+
+    primera = cliente.get("/admin/ingresos?tab=ventas&periodo=todo")
+    segunda = cliente.get("/admin/ingresos?tab=ventas&periodo=todo&pagina=2")
+    buscado = cliente.get(
+        "/admin/ingresos?tab=ventas&periodo=todo&q=venta0@example.com"
+    )
+    csv = cliente.get(
+        "/admin/ingresos.csv?tab=ventas&periodo=todo&q=venta0@example.com"
+    )
+
+    assert primera.status_code == 200
+    assert "30 ventas" in primera.text
+    assert "1–25 de 30" in primera.text
+    assert "26–30 de 30" in segunda.text
+    assert "venta0@example.com" in buscado.text
+    assert "1 venta" in buscado.text
+    assert "venta0@example.com" in csv.text
+    assert "venta1@example.com" not in csv.text
+
+
+def test_cobros_pagina_busca_y_el_csv_respeta_el_filtro(entorno_admin):
+    from datetime import date
+
+    from app.models import Pago
+
+    cliente, Session, datos = entorno_admin
+    hoy = date.today()
+    with Session() as db:
+        # Las compras del fixture también caen en el mes: fuera, para que el
+        # libro del mes tenga exactamente los 30 pagos que se van a paginar.
+        db.query(CompraPlan).delete()
+        for indice in range(30):
+            db.add(
+                Pago(
+                    organizacion_id=datos["norte"],
+                    fecha=hoy.replace(day=min(indice + 1, 28)),
+                    importe=100.0 + indice,
+                    moneda="USD",
+                    estado="confirmado",
+                    referencia=f"pago-{indice:02d}",
+                )
+            )
+        db.commit()
+
+    primera = cliente.get("/admin/ingresos?tab=cobros")
+    segunda = cliente.get("/admin/ingresos?tab=cobros&pagina=2")
+    buscado = cliente.get("/admin/ingresos?tab=cobros&q=pago-00")
+    csv = cliente.get("/admin/ingresos.csv?tab=cobros&q=pago-00")
+
+    assert primera.status_code == 200
+    assert "1–25 de 30" in primera.text
+    assert "26–30 de 30" in segunda.text
+    assert "pago-00" in buscado.text
+    assert "pago-01" not in buscado.text
+    assert "1 movimiento" in buscado.text
+    assert "pago-00" in csv.text and "pago-01" not in csv.text
+
+
+def test_contratos_pagina_y_ordena_sin_perder_los_kpi(entorno_admin):
+    cliente, Session, _datos = entorno_admin
+    with Session() as db:
+        for indice in range(28):
+            db.add(
+                Organizacion(
+                    nombre=f"Cliente {indice:02d}",
+                    slug=f"cliente-{indice:02d}",
+                )
+            )
+        db.commit()
+
+    primera = cliente.get("/admin/ingresos?tab=contratos&por=25")
+    segunda = cliente.get("/admin/ingresos?tab=contratos&por=25&pagina=2")
+    ordenado = cliente.get(
+        "/admin/ingresos?tab=contratos&orden=nombre&dir=desc&q=Cliente"
+    )
+    csv = cliente.get("/admin/contratos.csv?q=Cliente&orden=nombre&dir=desc")
+
+    assert primera.status_code == 200
+    assert "30 clientes" in primera.text
+    assert "26–30 de 30" in segunda.text
+    # Los KPI cuentan todo lo filtrado: siguen diciendo 30 aunque se vea una
+    # página de 25.
+    assert "de 30 organizaciones" in primera.text
+    assert "Cliente 27" in ordenado.text
+    primera_linea = [l for l in csv.text.splitlines() if l.strip()][1]
+    assert primera_linea.startswith("Cliente 27")
+
+
+def test_auditoria_pagina_filtra_y_descarga_el_csv(entorno_admin):
+    from datetime import datetime
+
+    from app.models import EventoAdmin
+
+    cliente, Session, datos = entorno_admin
+    with Session() as db:
+        for indice in range(30):
+            db.add(
+                EventoAdmin(
+                    operador_email=f"op{indice}@example.com",
+                    operador_rol="superadmin",
+                    accion="compra.activada",
+                    entidad="compra",
+                    entidad_id=indice,
+                    organizacion_id=datos["norte"],
+                    detalle="{}",
+                    resultado="error" if indice == 0 else "ok",
+                    created_at=datetime(2026, 10, 1, 8, 0) + timedelta(minutes=indice),
+                )
+            )
+        db.commit()
+
+    primera = cliente.get("/admin/sistema?tab=auditoria")
+    segunda = cliente.get("/admin/sistema?tab=auditoria&pagina=2")
+    fallos = cliente.get("/admin/sistema?tab=auditoria&resultado=error")
+    descarga = cliente.get("/admin/auditoria.csv?resultado=error")
+
+    assert primera.status_code == 200
+    assert "30 eventos" in primera.text
+    assert "1–25 de 30" in primera.text
+    assert "26–30 de 30" in segunda.text
+    assert "op0@example.com" in fallos.text and "op1@example.com" not in fallos.text
+    assert "1 evento" in fallos.text
+    assert descarga.status_code == 200
+    assert "op0@example.com" in descarga.text
+    assert "op1@example.com" not in descarga.text
+    # La página también enlaza una descarga, no solo el endpoint.
+    assert "/admin/auditoria.csv" in primera.text

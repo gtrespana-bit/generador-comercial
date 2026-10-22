@@ -3,7 +3,7 @@
 
 <div class="kpis">
   <div class="kpi-card">
-    <div class="kpi-value">{{ renovaciones.total }}</div>
+    <div class="kpi-value">{{ renovaciones.total_mes }}</div>
     <div class="kpi-label">Accesos que vencen</div>
     <p class="note-sub">{{ periodo.etiqueta }}</p>
   </div>
@@ -28,8 +28,9 @@
   <div class="card-header">
     <h2>Renovaciones de {{ periodo.etiqueta|lower }}</h2>
     <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ paginador.meta.total }} renovaci{{ 'ón' if paginador.meta.total == 1 else 'ones' }}</span>
       {% include "admin/partes/_cambio_mes.html" %}
-      <a class="btn btn-sm btn-secondary" href="/admin/renovaciones.csv?mes={{ periodo.actual }}{% if filtro_estado %}&amp;estado={{ filtro_estado }}{% endif %}">CSV</a>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
     </div>
   </div>
 
@@ -40,11 +41,33 @@
     {% endfor %}
   </div>
 
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/ingresos">
+    <input type="hidden" name="tab" value="renovaciones">
+    <input type="hidden" name="mes" value="{{ periodo.actual }}">
+    {% if filtro_estado %}<input type="hidden" name="estado" value="{{ filtro_estado }}">{% endif %}
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
+    <label class="visualmente-oculto" for="renovaciones-q">Buscar cliente</label>
+    <input class="toolbar-buscar" id="renovaciones-q" type="search" name="q" value="{{ q }}"
+           placeholder="Nombre o slug del cliente…">
+    <button class="btn btn-sm" type="submit">Buscar</button>
+    {% if q %}
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=renovaciones&amp;mes={{ periodo.actual }}{% if filtro_estado %}&amp;estado={{ filtro_estado }}{% endif %}">Limpiar búsqueda</a>
+    {% endif %}
+  </form>
+
   {% set vista_modulo = 'renovaciones' %}
   {% set vistas_guardadas = vistas %}
   {% set vista_activa = 0 %}
   {% set vista_ruta_base = '/admin/ingresos?tab=renovaciones' %}
-  {% set vista_ruta_actual = '/admin/ingresos?tab=renovaciones&mes=' ~ periodo.actual ~ ('&estado=' ~ filtro_estado if filtro_estado else '') %}
+  {% set vista_ruta_actual = '/admin/ingresos?tab=renovaciones&mes=' ~ periodo.actual ~ ('&estado=' ~ filtro_estado if filtro_estado else '') ~ ('&q=' ~ q|urlencode if q else '') %}
   {% set vista_accion = '/admin/vistas/crear' %}
   {% set vista_filtros = dict_filtros %}
   {% set vista_total = renovaciones.total %}
@@ -99,7 +122,7 @@
         {% else %}
         <tr><td colspan="7">
           <div class="vacio">
-            <b>Ninguna licencia vence en {{ periodo.etiqueta|lower }}{% if filtro_estado %} con ese estado{% endif %}.</b>
+            <b>Ninguna licencia vence en {{ periodo.etiqueta|lower }}{% if q %} y coincide con «{{ q }}»{% elif filtro_estado %} con ese estado{% endif %}.</b>
             <p>Cuando algo empiece a vencer aparecerá aquí con el botón de renovación y el aviso automático a 5 y 1 día.</p>
             <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=contratos">Ver todos los contratos</a>
           </div>
@@ -108,6 +131,8 @@
       </tbody>
     </table>
   </div>
+
+  {% include "admin/partes/_paginador.html" %}
 
   <div class="card-pie">
     <form class="form-inline" method="post" action="/admin/licencias/avisos"

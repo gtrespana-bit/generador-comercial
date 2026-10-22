@@ -8,10 +8,10 @@
 > Ya está implementado:
 >
 > - **Fase 0 completa:** CSV de Contratos (la ruta no existía: el botón daba 404), `volver` con filtros en Soporte y Compras, badge de Soporte en el menú, estado tipado en Sistema › Estado y resultados de ⌘K que abren la compra o la ficha concretas.
-> - **Fase 1 iniciada:** paginación 25/50/100 y orden en SQL en **Compras** y **Soporte**, búsqueda por correo o número de compra, CSV que respeta los filtros y contadores con `GROUP BY`.
-> - Suite completa en verde: **2343 tests** (13 nuevos).
+> - **Fase 1 completa** en las siete listas del panel: Compras, Soporte, Renovaciones, Ventas, Cobros, Contratos y Auditoría. Todas buscan, ordenan, paginan de 25 en 25 (hasta 100), conservan los filtros en la URL y exportan un CSV con **el mismo filtro y el mismo orden** que se está viendo. Auditoría estrena además `/admin/auditoria.csv` y deja de cortar en 250 eventos a ciegas: cuenta en SQL y dice cuántos hay.
+> - Suite completa en verde: **2348 tests** (5 nuevos de listas, 18 en total en `test_panel_listas.py`).
 >
-> Pendiente de la Fase 1: Renovaciones, Ventas, Cobros, Contratos y Auditoría.
+> El orden «en SQL» se aplica donde la fila sale de una sola tabla (Compras, Soporte, Auditoría). Renovaciones, Ventas, Cobros y Contratos siguen materializando el conjunto filtrado —sus filas se construyen cruzando licencias, compras y organizaciones— y paginan después; la paginación ya es correcta, pero mover el recorte a SQL exige antes reescribir esos servicios con agregados. Queda anotado como deuda de la Fase 4 (rendimiento).
 
 ---
 
@@ -360,21 +360,23 @@ Cuatro fases, ordenadas por relación impacto/esfuerzo. Cada una es entregable y
 - Filas por página: 25 / 50 / 100, con memoria en la URL (`?pagina=2`).
 - Selección múltiple con barra de acciones que aparece al marcar (la base para la Fase 2).
 
-**Orden de migración**, por dolor:
+**Orden de migración**, por dolor (los siete hechos, en este orden):
 
-1. **Compras** (hoy se revisa a ciegas)
-2. **Soporte** (crece sin control)
-3. **Renovaciones** (dinero recurrente)
-4. **Ventas**
-5. **Cobros**
-6. **Contratos**
-7. **Auditoría** (con fechas)
+1. ✅ **Compras** (hoy se revisa a ciegas)
+2. ✅ **Soporte** (crece sin control)
+3. ✅ **Renovaciones** (dinero recurrente)
+4. ✅ **Ventas**
+5. ✅ **Cobros**
+6. ✅ **Contratos**
+7. ✅ **Auditoría** (con fechas, orden y CSV)
 
 **No migrar:** Pipeline, Hoy ni Analítica. Tienen otra forma y funcionan.
 
 **Archivos:** `app/services/panel_contextos.py`, `app/templates/admin/partes/_tabla.html` (nuevo), los `partes/*.html` de las siete pantallas, y una función `listar()` por pantalla que devuelva `(filas, total, filtros)`.
 
 **Criterio de aceptación:** en las siete pantallas, buscar + filtrar + ordenar + paginar + exportar dan **el mismo conjunto de filas**. Un test parametrizado por pantalla lo verifica.
+
+**Cómo quedó (22/10/2026).** La pieza compartida no es un macro de tabla —cada pantalla tiene columnas y acciones muy distintas— sino tres piezas pequeñas que sí se repiten: `panel_listas.paginar_consulta`/`paginar_lista` (recorte y meta), `panel_listas.paginador` (URLs y números) y `partes/_paginador.html` (el marcado). Cada servicio expone su lista de columnas ordenables (`ORDENES_COMPRAS`, `ORDENES_RENOVACIONES`, `ORDENES_VENTAS`, `ORDENES_COBROS`, `ORDENES_AUDITORIA`) y su `filtrar_*`/`ordenar_*`, que comparten la pantalla y el CSV. Se descartó `_tabla.html` genérico: obligaba a meter HTML de acciones dentro de una estructura de datos y perdía la legibilidad de cada pantalla.
 
 **Impacto:** es el cambio que hace que el panel se sienta «de verdad». Todo lo demás se apoya aquí.
 

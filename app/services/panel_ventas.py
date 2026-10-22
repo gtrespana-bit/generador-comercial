@@ -42,6 +42,15 @@ PERIODOS = (
 )
 PERIODOS_ETIQUETA = dict(PERIODOS)
 
+#: Columnas ordenables del libro de ventas. La fecha y el importe interesan de
+#: mayor a menor; los nombres, de la A a la Z.
+ORDENES_VENTAS = (
+    ("fecha", "Fecha", "desc"),
+    ("importe", "Importe", "desc"),
+    ("cliente", "Cliente", "asc"),
+    ("plan", "Plan", "asc"),
+)
+
 
 def _fecha_cobro(compra: CompraPlan) -> datetime:
     """Momento en que la venta quedó cobrada.
@@ -197,6 +206,29 @@ def _filtrar(
     return salida
 
 
+def ordenar_ventas(ventas: list[dict], *, orden: str = "fecha", direccion: str = "desc"):
+    """Orden en el servidor: la tabla y el CSV salen en el mismo orden."""
+    clave = orden if orden in {o[0] for o in ORDENES_VENTAS} else "fecha"
+    invertido = direccion == "desc"
+
+    def valor(venta):
+        if clave == "importe":
+            return venta["importe"]
+        if clave == "cliente":
+            return venta["organizacion_nombre"].lower()
+        if clave == "plan":
+            return (venta["plan_nombre"] or "").lower()
+        return venta["fecha"]
+
+    # El id de la compra desempata: dos cobros del mismo minuto no cambian de
+    # orden entre páginas.
+    return sorted(
+        ventas,
+        key=lambda venta: (valor(venta), venta["compra"].id),
+        reverse=invertido,
+    )
+
+
 def resumen_ventas(
     db,
     *,
@@ -205,9 +237,11 @@ def resumen_ventas(
     plan: str = "",
     metodo: str = "",
     q: str = "",
+    orden: str = "fecha",
+    direccion: str = "desc",
     ahora: datetime | None = None,
 ) -> dict:
-    """KPIs del negocio y ventas del período pedido, ya filtradas."""
+    """KPIs del negocio y ventas del período pedido, ya filtradas y ordenadas."""
     hoy = hoy or date.today()
     ahora = ahora or datetime.utcnow()
     periodo = periodo if periodo in PERIODOS_ETIQUETA else "mes"
@@ -231,7 +265,11 @@ def resumen_ventas(
         variacion = round((total_mes - total_mes_anterior) / total_mes_anterior * 100, 1)
 
     acumulado = sum(v["importe"] for v in todas)
-    visibles = _filtrar(todas, periodo=periodo, plan=plan, metodo=metodo, q=q, hoy=hoy)
+    visibles = ordenar_ventas(
+        _filtrar(todas, periodo=periodo, plan=plan, metodo=metodo, q=q, hoy=hoy),
+        orden=orden,
+        direccion=direccion,
+    )
     for venta in visibles:
         venta["es_novedad"] = _es_novedad(venta["fecha"], ahora)
 

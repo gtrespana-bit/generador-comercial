@@ -36,6 +36,7 @@ from ..services.panel_listas import (
     normalizar_pagina,
     normalizar_por_pagina,
     orden_chips,
+    paginar_lista,
     paginador,
 )
 from ..services.panel_contextos import (
@@ -71,6 +72,15 @@ router = APIRouter()
 #: Pestañas de Ingresos con su constructor de contexto. Cada una lee un servicio
 #: distinto pero comparten barra de filtros, vistas guardadas, CSV y navegación.
 _constructor = {}
+
+#: Columnas ordenables de Contratos. Las claves son las que entiende
+#: ``ordenar_filas``: nombre, vence, ingresos y estado.
+ORDENES_CONTRATOS = (
+    ("nombre", "Cliente", "asc"),
+    ("vence", "Vencimiento", "asc"),
+    ("ingresos", "Ingresos", "desc"),
+    ("estado", "Estado", "asc"),
+)
 
 #: Tope del fichero de matriz de precios. El CSV se reenvía codificado en el
 #: formulario de confirmación para no depender de disco temporal entre dos
@@ -743,13 +753,32 @@ def _ingresos_ventas(request: Request, db, pestana: str) -> dict:
     destacaba en ninguna parte: el titular se enteraba por el banco. Aquí está
     cada cobro confirmado, con el periodo, el método y la ficha del cliente.
     """
-    from ..services.panel_ventas import PERIODOS, PERIODOS_ETIQUETA, resumen_ventas
+    from ..services.panel_ventas import (
+        ORDENES_VENTAS,
+        PERIODOS,
+        PERIODOS_ETIQUETA,
+        resumen_ventas,
+    )
 
-    pedidos = _texto(request, "periodo", "plan", "metodo", "q")
+    pedidos = _texto(request, "periodo", "plan", "metodo", "q", "orden", "dir")
     periodo = pedidos["periodo"] if pedidos["periodo"] in PERIODOS_ETIQUETA else "mes"
     plan = pedidos["plan"] if pedidos["plan"] in {"anual", "mensual"} else ""
     metodo = pedidos["metodo"] if pedidos["metodo"] in {"auto", "manual", "stripe"} else ""
-    datos = resumen_ventas(db, periodo=periodo, plan=plan, metodo=metodo, q=pedidos["q"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_VENTAS} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
+    datos = resumen_ventas(
+        db,
+        periodo=periodo,
+        plan=plan,
+        metodo=metodo,
+        q=pedidos["q"],
+        orden=orden,
+        direccion=direccion,
+    )
+    filas, meta = paginar_lista(datos["filas"], pagina=pagina, por_pagina=por_pagina)
 
     actuales = {"tab": pestana, "periodo": periodo}
     if plan:
@@ -758,13 +787,20 @@ def _ingresos_ventas(request: Request, db, pestana: str) -> dict:
         actuales["metodo"] = metodo
     if pedidos["q"]:
         actuales["q"] = pedidos["q"]
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
 
+    ruta = ruta_panel("ingresos")
     contadores = {clave: 0 for clave, _ in PERIODOS}
     contadores[periodo] = datos["total_filas"]
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
-        "ventas": datos,
+        "ventas": {**datos, "filas": filas},
         "kpis": datos["kpis"],
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_VENTAS),
         "opciones_periodo": [(clave, etiqueta) for clave, etiqueta in PERIODOS],
         "filtro_periodo": periodo,
         "filtro_plan": plan,
@@ -774,34 +810,72 @@ def _ingresos_ventas(request: Request, db, pestana: str) -> dict:
         "etiqueta_periodo": PERIODOS_ETIQUETA[periodo],
         "por_plan": datos["por_plan"],
         "por_metodo": datos["por_metodo"],
+        "url_csv": url_panel("/admin/ingresos.csv", **{
+            "tab": pestana,
+            **{clave: valor for clave, valor in actuales.items() if clave != "tab"},
+        }),
     })
     return contexto
 
 
 def _ingresos_renovaciones(request: Request, db, pestana: str) -> dict:
-    from ..services.panel_renovaciones import renovaciones_del_mes
+    from ..services.panel_renovaciones import (
+        ORDENES_RENOVACIONES,
+        listar_renovaciones,
+    )
 
+    pedidos = _texto(request, "estado", "q", "orden", "dir")
     mes = _mes(request.query_params.get("mes"))
-    datos = renovaciones_del_mes(db, mes=mes)
-    estado = _seleccionar(RENOVACION_ESTADOS, _texto(request, "estado")["estado"])
-    contadores = {
-        "": datos["total"],
-        "por_renovar": datos["por_renovar"],
-        "vencida": sum(1 for fila in datos["filas"] if fila["estado"] == "vencida"),
-        "activa": sum(1 for fila in datos["filas"] if fila["estado"] == "activa"),
-    }
-    filas = [f for f in datos["filas"] if not estado or f["estado"] == estado]
+    estado = _seleccionar(RENOVACION_ESTADOS, pedidos["estado"])
+    orden = (
+        pedidos["orden"]
+        if pedidos["orden"] in {o[0] for o in ORDENES_RENOVACIONES}
+        else "vence"
+    )
+    direccion = "desc" if pedidos["dir"] == "desc" else "asc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
+    datos = listar_renovaciones(
+        db,
+        mes=mes,
+        q=pedidos["q"],
+        estado=estado,
+        orden=orden,
+        direccion=direccion,
+        pagina=pagina,
+        por_pagina=por_pagina,
+    )
+
     actuales = {"tab": pestana, "mes": mes.strftime("%Y-%m")}
     if estado:
         actuales["estado"] = estado
+    if pedidos["q"]:
+        actuales["q"] = pedidos["q"]
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
+
+    ruta = ruta_panel("ingresos")
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
-        "renovaciones": {**datos, "filas": filas},
-        "periodo": periodo_mes(mes, ruta=ruta_panel("ingresos"), pestana=pestana, actuales=actuales),
-        "opciones_estado": opciones_con_contadores(contadores, RENOVACION_ESTADOS),
-        "chips_estado": chips(ruta_panel("ingresos"), actuales, RENOVACION_ESTADOS, "estado", contadores),
+        "renovaciones": datos,
+        "paginador": paginador(ruta, actuales, datos["meta"]),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_RENOVACIONES),
+        "periodo": periodo_mes(mes, ruta=ruta, pestana=pestana, actuales=actuales),
+        "opciones_estado": opciones_con_contadores(
+            datos["contadores"], RENOVACION_ESTADOS
+        ),
+        "chips_estado": chips(
+            ruta, actuales, RENOVACION_ESTADOS, "estado", datos["contadores"]
+        ),
         "filtro_estado": estado,
-        "avisos_hoy": sum(1 for fila in datos["filas"] if fila.get("avisado_hoy")),
+        "q": pedidos["q"],
+        "avisos_hoy": datos["avisos_hoy"],
+        "url_csv": url_panel("/admin/renovaciones.csv", **{
+            clave: valor for clave, valor in actuales.items() if clave != "tab"
+        }),
     })
     return contexto
 
@@ -880,29 +954,61 @@ def _ingresos_compras(request: Request, db, pestana: str) -> dict:
 
 
 def _ingresos_cobros(request: Request, db, pestana: str) -> dict:
-    from ..services.panel_cobros import resumen_cobros
+    from ..services.panel_cobros import (
+        ORDENES_COBROS,
+        filtrar_movimientos,
+        ordenar_movimientos,
+        resumen_cobros,
+    )
 
+    pedidos = _texto(request, "tipo", "q", "orden", "dir")
     mes = _mes(request.query_params.get("mes"))
+    tipo = _seleccionar(TIPOS_COBRO, pedidos["tipo"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_COBROS} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
     datos = resumen_cobros(db, mes=mes)
-    tipo = _seleccionar(TIPOS_COBRO, _texto(request, "tipo")["tipo"])
-    contadores = {"": len(datos["movimientos"])}
+    # El texto se aplica antes de contar: los chips dicen cuántos movimientos
+    # quedarían con ese tipo, no cuántos hay en todo el mes.
+    con_texto = filtrar_movimientos(datos["movimientos"], q=pedidos["q"])
+    contadores = {"": len(con_texto)}
     for clave, _ in TIPOS_COBRO:
         if clave:
-            contadores[clave] = sum(1 for m in datos["movimientos"] if m["tipo"] == clave)
-    movimientos = [m for m in datos["movimientos"] if not tipo or m["tipo"] == tipo]
+            contadores[clave] = sum(1 for m in con_texto if m["tipo"] == clave)
+    visibles = ordenar_movimientos(
+        filtrar_movimientos(con_texto, tipo=tipo), orden=orden, direccion=direccion
+    )
+    movimientos, meta = paginar_lista(visibles, pagina=pagina, por_pagina=por_pagina)
+
     actuales = {"tab": pestana, "mes": mes.strftime("%Y-%m")}
     if tipo:
         actuales["tipo"] = tipo
+    if pedidos["q"]:
+        actuales["q"] = pedidos["q"]
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
+
+    ruta = ruta_panel("ingresos")
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
         "cobros": {**datos, "movimientos": movimientos},
-        "periodo": periodo_mes(mes, ruta=ruta_panel("ingresos"), pestana=pestana, actuales=actuales),
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_COBROS),
+        "periodo": periodo_mes(mes, ruta=ruta, pestana=pestana, actuales=actuales),
         "opciones_tipo": opciones_con_contadores(contadores, TIPOS_COBRO),
-        "chips_estado": chips(ruta_panel("ingresos"), actuales, TIPOS_COBRO, "tipo", contadores),
+        "chips_estado": chips(ruta, actuales, TIPOS_COBRO, "tipo", contadores),
         "filtro_tipo": tipo,
+        "q": pedidos["q"],
         "etiquetas_tipo": ETIQUETAS_TIPO_COBRO,
         "etiquetas_estado": ETIQUETAS_ESTADO_COBRO,
         "etiquetas_badge": BADGES_TIPO_COBRO,
+        "url_csv": url_panel("/admin/cobros.csv", **{
+            clave: valor for clave, valor in actuales.items() if clave != "tab"
+        }),
     })
     return contexto
 
@@ -911,26 +1017,48 @@ def _ingresos_contratos(request: Request, db, pestana: str) -> dict:
     from ..services.licencias import exigencia_licencia_activada
     from ..services.panel_admin import resumen_admin
 
-    pedidos = _texto(request, "q", "estado")
+    pedidos = _texto(request, "q", "estado", "orden", "dir")
     estado = _seleccionar(ESTADOS_ACCESO, pedidos["estado"])
+    orden = pedidos["orden"] if pedidos["orden"] in ORDENES else "nombre"
+    direccion = "desc" if pedidos["dir"] == "desc" else "asc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
     visibles = ordenar_filas(
         filtrar_filas(resumen_admin(db)["filas"], q=pedidos["q"], estado=estado),
-        "vence",
-        "asc",
+        orden,
+        direccion,
     )
+    filas, meta = paginar_lista(visibles, pagina=pagina, por_pagina=por_pagina)
+    # Los KPI cuentan todo lo filtrado, no solo la página: si no, cambiar de
+    # página cambiaría el número de organizaciones con acceso.
+    totales = _totales_contratos(visibles)
+
     actuales = {"tab": pestana}
     if pedidos["q"]:
         actuales["q"] = pedidos["q"]
     if estado:
         actuales["estado"] = estado
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
+
+    ruta = ruta_panel("ingresos")
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
-        "resumen": {"filas": visibles, "totales": _totales_contratos(visibles), "hoy": date.today()},
-        "totales": _totales_contratos(visibles),
+        "resumen": {"filas": filas, "totales": totales, "hoy": date.today()},
+        "totales": totales,
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_CONTRATOS),
         "exigencia_licencias": exigencia_licencia_activada(),
         "opciones_estado": ESTADOS_ACCESO,
         "filtro_estado": estado,
         "q": pedidos["q"],
+        "url_actual": url_panel(ruta, **actuales),
+        "url_csv": url_panel("/admin/contratos.csv", **{
+            clave: valor for clave, valor in actuales.items() if clave != "tab"
+        }),
     })
     return contexto
 
@@ -972,15 +1100,27 @@ def exportar_ingresos_csv(request: Request, db: Session = Depends(get_operator_d
 
 
 def _csv_renovaciones(request: Request, db):
-    from ..services.panel_renovaciones import renovaciones_del_mes
+    """La agenda del mes tal y como se está mirando: filtro y orden incluidos."""
+    from ..services.panel_renovaciones import (
+        ORDENES_RENOVACIONES,
+        filtrar_renovaciones,
+        ordenar_renovaciones,
+        renovaciones_del_mes,
+    )
 
+    pedidos = _texto(request, "estado", "q", "orden", "dir")
     mes = _mes(request.query_params.get("mes"))
-    estado = _seleccionar(RENOVACION_ESTADOS, _texto(request, "estado")["estado"])
+    estado = _seleccionar(RENOVACION_ESTADOS, pedidos["estado"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_RENOVACIONES} else "vence"
+    direccion = "desc" if pedidos["dir"] == "desc" else "asc"
     datos = renovaciones_del_mes(db, mes=mes)
+    visibles = ordenar_renovaciones(
+        filtrar_renovaciones(datos["filas"], q=pedidos["q"], estado=estado),
+        orden=orden,
+        direccion=direccion,
+    )
     filas = [["Cliente", "Slug", "Vence", "Días", "Importe US$", "Origen", "Estado", "Avisado hoy"]]
-    for fila in datos["filas"]:
-        if estado and fila["estado"] != estado:
-            continue
+    for fila in visibles:
         filas.append([
             fila["organizacion"].nombre,
             fila["organizacion"].slug,
@@ -995,15 +1135,27 @@ def _csv_renovaciones(request: Request, db):
 
 
 def _csv_cobros(request: Request, db):
-    from ..services.panel_cobros import resumen_cobros
+    """El libro del mes con el filtro y el orden de la pantalla."""
+    from ..services.panel_cobros import (
+        ORDENES_COBROS,
+        filtrar_movimientos,
+        ordenar_movimientos,
+        resumen_cobros,
+    )
 
+    pedidos = _texto(request, "tipo", "q", "orden", "dir")
     mes = _mes(request.query_params.get("mes"))
-    tipo = _seleccionar(TIPOS_COBRO, _texto(request, "tipo")["tipo"])
+    tipo = _seleccionar(TIPOS_COBRO, pedidos["tipo"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_COBROS} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
     datos = resumen_cobros(db, mes=mes)
+    visibles = ordenar_movimientos(
+        filtrar_movimientos(datos["movimientos"], tipo=tipo, q=pedidos["q"]),
+        orden=orden,
+        direccion=direccion,
+    )
     filas = [["Fecha", "Mes", "Tipo", "Número", "Cliente", "Importe", "Moneda", "Estado"]]
-    for movimiento in datos["movimientos"]:
-        if tipo and movimiento["tipo"] != tipo:
-            continue
+    for movimiento in visibles:
         filas.append([
             f"{movimiento['fecha']:%Y-%m-%d}" if movimiento.get("fecha") else "",
             f"{datos['mes']:%Y-%m}",
@@ -1018,11 +1170,20 @@ def _csv_cobros(request: Request, db):
 
 
 def _csv_contratos(request: Request, db):
+    """El registro de acceso con el mismo filtro y orden que la tabla."""
     from ..services.panel_admin import resumen_admin
 
-    pedidos = _texto(request, "q", "estado")
-    filas_clientes = filtrar_filas(
-        resumen_admin(db)["filas"], q=pedidos["q"], estado=_seleccionar(ESTADOS_ACCESO, pedidos["estado"])
+    pedidos = _texto(request, "q", "estado", "orden", "dir")
+    orden = pedidos["orden"] if pedidos["orden"] in ORDENES else "nombre"
+    direccion = "desc" if pedidos["dir"] == "desc" else "asc"
+    filas_clientes = ordenar_filas(
+        filtrar_filas(
+            resumen_admin(db)["filas"],
+            q=pedidos["q"],
+            estado=_seleccionar(ESTADOS_ACCESO, pedidos["estado"]),
+        ),
+        orden,
+        direccion,
     )
     contenido = [[
         "Cliente", "Slug", "Estado", "Plan", "Origen", "Inicio", "Vence", "Días restantes",
@@ -1135,13 +1296,27 @@ def _csv_soporte(request: Request, db):
 
 def _csv_ventas(request: Request, db):
     """El libro de ventas tal y como se está mirando, sin retoques a mano."""
-    from ..services.panel_ventas import PERIODOS_ETIQUETA, resumen_ventas
+    from ..services.panel_ventas import (
+        ORDENES_VENTAS,
+        PERIODOS_ETIQUETA,
+        resumen_ventas,
+    )
 
-    pedidos = _texto(request, "periodo", "plan", "metodo", "q")
+    pedidos = _texto(request, "periodo", "plan", "metodo", "q", "orden", "dir")
     periodo = pedidos["periodo"] if pedidos["periodo"] in PERIODOS_ETIQUETA else "mes"
     plan = pedidos["plan"] if pedidos["plan"] in {"anual", "mensual"} else ""
     metodo = pedidos["metodo"] if pedidos["metodo"] in {"auto", "manual", "stripe"} else ""
-    datos = resumen_ventas(db, periodo=periodo, plan=plan, metodo=metodo, q=pedidos["q"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_VENTAS} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    datos = resumen_ventas(
+        db,
+        periodo=periodo,
+        plan=plan,
+        metodo=metodo,
+        q=pedidos["q"],
+        orden=orden,
+        direccion=direccion,
+    )
     filas = [[
         "Fecha", "Cliente", "Comprador", "Plan", "Importe", "Moneda", "Método",
         "Automática", "Renovación", "Compra", "Inicio", "Vence",
@@ -1163,6 +1338,47 @@ def _csv_ventas(request: Request, db):
         ])
     etiqueta = periodo.replace("á", "a")
     return filas, f"ventas_{etiqueta}.csv"
+
+
+def _csv_auditoria(request: Request, db):
+    """El registro de acciones con el filtro y el orden de la pantalla."""
+    from ..services.audit_admin import (
+        ACCIONES_LECIBLES,
+        ORDENES_AUDITORIA,
+        RESULTADOS_AUDITORIA,
+        exportar_auditoria_admin,
+    )
+
+    pedidos = _texto(request, "actor", "accion", "resultado", "orden", "dir")
+    accion = _seleccionar(ACCIONES_LECIBLES.items(), pedidos["accion"])
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_AUDITORIA} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    eventos = exportar_auditoria_admin(
+        db,
+        actor=pedidos["actor"],
+        accion=accion,
+        resultado=_seleccionar(RESULTADOS_AUDITORIA, pedidos["resultado"]),
+        organizacion_id=_entero(request.query_params.get("organizacion_id")) or None,
+        orden=orden,
+        direccion=direccion,
+    )
+    filas = [[
+        "Fecha", "Operador", "Rol", "Acción", "Entidad", "Entidad ID", "Cliente",
+        "Detalle", "Resultado",
+    ]]
+    for evento in eventos:
+        filas.append([
+            f"{evento.created_at:%Y-%m-%d %H:%M}" if evento.created_at else "",
+            evento.operador_email or "",
+            evento.operador_rol or "",
+            evento.accion,
+            evento.entidad or "",
+            str(evento.entidad_id) if evento.entidad_id else "",
+            str(evento.organizacion_id) if evento.organizacion_id else "",
+            evento.detalle or "",
+            evento.resultado,
+        ])
+    return filas, "auditoria.csv"
 
 
 _EXPORTADORES = {
@@ -1202,6 +1418,13 @@ def exportar_contratos_csv(request: Request, db: Session = Depends(get_operator_
 @router.get("/admin/soporte.csv", include_in_schema=False)
 def exportar_soporte_csv(request: Request, db: Session = Depends(get_operator_db)):
     filas, nombre = _csv_soporte(request, db)
+    return _csv_response(filas, nombre)
+
+
+@router.get("/admin/auditoria.csv", include_in_schema=False)
+def exportar_auditoria_csv(request: Request, db: Session = Depends(get_operator_db)):
+    """URL nueva de Fase 1: el registro se podía leer pero no descargar."""
+    filas, nombre = _csv_auditoria(request, db)
     return _csv_response(filas, nombre)
 
 
@@ -1746,23 +1969,50 @@ def _sistema_accesos(request: Request, db, contexto: dict) -> None:
 def _sistema_auditoria(request: Request, db, contexto: dict) -> None:
     from ..services.audit_admin import (
         ACCIONES_LECIBLES,
+        ORDENES_AUDITORIA,
         RESULTADOS_AUDITORIA,
-        resumen_auditoria_admin,
+        listar_auditoria_admin,
     )
 
-    pedidos = _texto(request, "actor", "accion", "resultado")
+    pedidos = _texto(request, "actor", "accion", "resultado", "orden", "dir")
     organizacion_id = _entero(request.query_params.get("organizacion_id"))
     accion = _seleccionar(ACCIONES_LECIBLES.items(), pedidos["accion"])
-    eventos = resumen_auditoria_admin(
+    orden = pedidos["orden"] if pedidos["orden"] in {o[0] for o in ORDENES_AUDITORIA} else "fecha"
+    direccion = "asc" if pedidos["dir"] == "asc" else "desc"
+    pagina = normalizar_pagina(request.query_params.get("pagina"))
+    por_pagina = normalizar_por_pagina(request.query_params.get("por"))
+
+    eventos, meta = listar_auditoria_admin(
         db,
         actor=pedidos["actor"],
         accion=accion,
         resultado=_seleccionar(RESULTADOS_AUDITORIA, pedidos["resultado"]),
         organizacion_id=organizacion_id or None,
-        limite=250,
+        orden=orden,
+        direccion=direccion,
+        pagina=pagina,
+        por_pagina=por_pagina,
     )
+
+    actuales = {"tab": "auditoria"}
+    if pedidos["actor"]:
+        actuales["actor"] = pedidos["actor"]
+    if accion:
+        actuales["accion"] = accion
+    if pedidos["resultado"]:
+        actuales["resultado"] = pedidos["resultado"]
+    if organizacion_id:
+        actuales["organizacion_id"] = str(organizacion_id)
+    actuales["orden"] = orden
+    actuales["dir"] = direccion
+    if por_pagina != POR_PAGINA:
+        actuales["por"] = str(por_pagina)
+
+    ruta = ruta_panel("sistema")
     contexto.update({
         "eventos": eventos,
+        "paginador": paginador(ruta, actuales, meta),
+        "opciones_orden": orden_chips(ruta, actuales, ORDENES_AUDITORIA),
         "acciones": sorted(ACCIONES_LECIBLES.items()),
         "etiquetas_acciones": ACCIONES_LECIBLES,
         "resultados": list(RESULTADOS_AUDITORIA),
@@ -1772,7 +2022,13 @@ def _sistema_auditoria(request: Request, db, contexto: dict) -> None:
             "resultado": pedidos["resultado"],
             "organizacion_id": organizacion_id,
         },
-        "filtros_activos": any(pedidos.values()) or bool(organizacion_id),
+        "filtros_activos": any(
+            (pedidos["actor"], accion, pedidos["resultado"], organizacion_id)
+        ),
+        "actuales": actuales,
+        "url_csv": url_panel("/admin/auditoria.csv", **{
+            clave: valor for clave, valor in actuales.items() if clave != "tab"
+        }),
     })
 
 
