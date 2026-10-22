@@ -11,9 +11,11 @@ Contrato fijado por estas pruebas:
   ignora): es la condición para que una URL tenga un único contenido
   cacheable. Fuera de ella (/soporte) la cookie sigue mandando.
 * La cabecera de caché solo se sella en GET 200 anónimos, sin query y
-  sin Set-Cookie en la respuesta. Las cookies de preferencia (idioma y
-  país) solo se fijan si cambian: la primera visita las guarda y las
-  siguientes pueden poblar el CDN.
+  sin Set-Cookie en la respuesta.
+* Las cookies de preferencia (idioma y país) NO las fija el servidor: las
+  escribe el navegador (``_cookies_publicas.html``) a partir de la ruta.
+  Un ``Set-Cookie`` en la respuesta basta para que el CDN no guarde la
+  página, y esas 92 URL son justo las comerciales del sitio.
 """
 from __future__ import annotations
 
@@ -134,12 +136,15 @@ def test_home_ignora_la_cookie_de_idioma(cliente_web):
     assert _sellada(r)
 
 
-def test_primera_visita_en_fija_preferencias_sin_sellar(cliente_web):
+def test_primera_visita_en_no_fija_cookies_y_se_sella(cliente_web):
+    """La primera visita de un buscador también tiene que entrar en el CDN."""
     r = cliente_web.get("/en-us/")
     assert r.status_code == 200
     assert '<html lang="en-US">' in r.text
-    assert "cotizat_lang=en" in r.headers.get("set-cookie", "")
-    assert not _sellada(r)  # con Set-Cookie nunca se sella
+    assert "set-cookie" not in r.headers
+    assert _sellada(r)
+    # La preferencia se guarda igual, ahora desde el navegador.
+    assert "cotizat_lang" in r.text and "document.cookie" in r.text
 
 
 def test_visita_en_con_preferencias_no_refija_y_se_sella(cliente_web):
@@ -153,11 +158,29 @@ def test_visita_en_con_preferencias_no_refija_y_se_sella(cliente_web):
 
 
 def test_no_se_refija_la_cookie_de_idioma(cliente_web):
-    # Falta la de país (se fijará), pero la de idioma ya vale «en»:
-    # re-fijarla seria el Set-Cookie que impide poblar el caché.
     r = cliente_web.get("/en-us/", headers={"cookie": "cotizat_lang=en"})
     assert r.status_code == 200
-    assert "cotizat_lang" not in r.headers.get("set-cookie", "")
+    assert "set-cookie" not in r.headers
+    assert _sellada(r)
+
+
+def test_ninguna_url_del_sitemap_fija_cookies(cliente_web):
+    """Si el servidor vuelve a escribir una preferencia, el CDN se vacía.
+
+    Es la comprobación que impide que el arreglo se deshaga sin que nadie se
+    entere: basta con que una ruta pública vuelva a llamar a ``set_cookie``.
+    """
+    from app.seo import urls_sitemap as _sitemap
+
+    culpables = []
+    for entrada in _sitemap():
+        ruta = urlsplit(entrada["loc"]).path
+        if ruta in EXCEPCIONES_SITEMAP:
+            continue
+        r = cliente_web.get(ruta)
+        if r.status_code == 200 and "set-cookie" in r.headers:
+            culpables.append((ruta, r.headers["set-cookie"]))
+    assert not culpables, culpables
 
 
 def test_hub_de_pais_con_cookie_puesta_se_sella(cliente_web):
@@ -169,11 +192,12 @@ def test_hub_de_pais_con_cookie_puesta_se_sella(cliente_web):
     assert _sellada(r)
 
 
-def test_landing_pais_primera_visita_fija_cookie_sin_sellar(cliente_web):
+def test_landing_pais_primera_visita_se_sella(cliente_web):
     r = cliente_web.get("/co/")
     assert r.status_code == 200
-    assert "cotizat_pais=CO" in r.headers.get("set-cookie", "")
-    assert not _sellada(r)
+    assert "set-cookie" not in r.headers
+    assert _sellada(r)
+    assert "cotizat_pais" in r.text  # el navegador la escribe desde la ruta
 
 
 def test_con_sesion_nunca_se_sella(cliente_web):

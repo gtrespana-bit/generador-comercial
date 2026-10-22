@@ -187,7 +187,10 @@ def test_landing_espana_habla_de_espana(cliente_web):
     assert resp.status_code == 200
     assert "España" in resp.text
     assert "NIF" in resp.text
-    assert "cotizat_pais=ES" in resp.headers["set-cookie"]
+    # La preferencia de país la escribe el navegador: un Set-Cookie del
+    # servidor dejaría la landing fuera del caché del CDN.
+    assert "set-cookie" not in resp.headers
+    assert "cotizat_pais" in resp.text
 
 
 def test_landing_espana_muestra_ejemplo_en_eur(cliente_web):

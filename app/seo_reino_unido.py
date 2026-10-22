@@ -11,8 +11,8 @@ siempre el 20 %, y el CIS no existe en ningún otro mercado del producto.
 Este módulo concentra lo que es **exclusivo** de Reino Unido:
 
 - el cuerpo largo de la landing ``/en-gb/``;
-- los bloques extra de los tres hubs (``/en-gb/software-presupuestos``,
-  ``/en-gb/apu``, ``/en-gb/remodelacion``);
+- los bloques extra de los tres hubs (``/en-gb/estimating-software``,
+  ``/en-gb/unit-price-analysis``, ``/en-gb/remodeling``);
 - cuatro artículos de cola larga con su propia URL canónica
   (``/en-gb/guia/<slug>``), pensados para búsquedas que una landing no cubre:
   plantilla de presupuesto, retenciones CIS, inversión del sujeto pasivo y
@@ -501,7 +501,7 @@ ARTICULOS: dict[str, dict] = {
         "related": [
             ("CIS deductions explained", "/en-gb/guia/cis-deduction-subcontractors"),
             ("VAT domestic reverse charge", "/en-gb/guia/vat-domestic-reverse-charge-construction"),
-            ("Estimating software for the UK", "/en-gb/software-presupuestos"),
+            ("Estimating software for the UK", "/en-gb/estimating-software"),
         ],
     },
     "cis-deduction-subcontractors": {
@@ -874,7 +874,7 @@ ARTICULOS: dict[str, dict] = {
         "related": [
             ("What a UK quote must include", "/en-gb/guia/construction-quote-template-uk"),
             ("CIS deductions explained", "/en-gb/guia/cis-deduction-subcontractors"),
-            ("Unit price analysis hub", "/en-gb/apu"),
+            ("Unit price analysis hub", "/en-gb/unit-price-analysis"),
         ],
     },
 }

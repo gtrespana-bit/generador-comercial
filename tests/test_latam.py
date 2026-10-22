@@ -287,7 +287,8 @@ def test_landing_subdirectorio_colombia(cliente_web):
     assert resp.status_code == 200
     assert "Colombia" in resp.text
     assert "NIT" in resp.text
-    assert "cotizat_pais=CO" in resp.headers["set-cookie"]
+    assert "set-cookie" not in resp.headers
+    assert "cotizat_pais" in resp.text
 
 
 def test_landing_query_pais_redirige_al_subdirectorio(cliente_web):

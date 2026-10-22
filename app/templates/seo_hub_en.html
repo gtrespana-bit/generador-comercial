@@ -87,7 +87,9 @@
   <h2>{{ product_name }} by country</h2>
   <p class="intro">Same tool, with the trade terms, VAT and currency of each market.</p>
   <ul class="hub-paises-lista">
-    <li><a href="/en/{{ ficha.tema }}/">All countries</a></li>
+    {# Slug inglés y sin barra final: /en/apu/ encadenaba dos 301
+       (/en/apu -> /en/unit-price-analysis) en un enlace de la propia página. #}
+    <li><a href="{{ ruta_tema_en(ficha.tema) }}">All countries</a></li>
     {% for p in paises %}
     <li><a href="{{ ruta_mercado(p.codigo, ficha.tema) }}">{{ p.bandera }} {{ p.nombre_en or p.nombre }}</a></li>
     {% endfor %}

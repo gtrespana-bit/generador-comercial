@@ -1152,7 +1152,7 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Australia",
         "pais_path": "/en-au/",
         "kicker": "Australia · Labour costs",
-        "title": "CotizaT: tradie hourly rates in Australia (2026 award rates and true cost)",
+        "title": "Tradie hourly rates in Australia: 2026 award rates and true cost",
         "h1": "Tradie hourly rates in Australia 2026: award pay vs. what an hour really costs",
         "description": (
             "Building, electrical and plumbing award ordinary rates next to "

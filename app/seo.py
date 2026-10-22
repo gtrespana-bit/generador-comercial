@@ -2477,11 +2477,29 @@ def contexto_pagina_estatica(request: Request, clave: str) -> dict:
         "seo": seo,
         "origen_seo": origen,
         "canonical_url": origen + path,
-        "hreflang_links": [],
+        "hreflang_links": _hreflang_estatica(origen, path),
         "og_image": origen + OG_IMAGE,
         "jsonld_bloques": bloques,
         "seo_temas": TEMAS,
     }
+
+
+def _hreflang_estatica(origen: str, path: str) -> list[dict]:
+    """Par es/en de una página estática, con x-default.
+
+    Todas tienen traducción (``/como-funciona`` y ``/en/como-funciona``
+    existen las dos, con contenido propio), y hasta ahora no lo declaraban:
+    cada idioma se presentaba como un documento suelto y Google tenía que
+    adivinar que eran la misma página. El sitemap tampoco llevaba
+    ``x-default``, así que el par llegaba a medias.
+    """
+    ruta_es = path[3:] if path.startswith("/en/") else path
+    ruta_en = path if path.startswith("/en/") else "/en" + path
+    return [
+        {"hreflang": "es", "href": origen + ruta_es},
+        {"hreflang": "en", "href": origen + ruta_en},
+        {"hreflang": "x-default", "href": origen + ruta_es},
+    ]
 
 
 def urls_sitemap(request: Request | None = None) -> list[dict]:
@@ -2532,6 +2550,9 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         pares = [
             {"hreflang": "es", "href": base + ruta_es},
             {"hreflang": "en", "href": base + ruta_en},
+            # x-default en el sitemap igual que en el HTML: sin él, el par
+            # declara dos idiomas pero ningún mercado por defecto.
+            {"hreflang": "x-default", "href": base + ruta_es},
         ]
         add(ruta_es, prio, freq, alts=pares)
         add(ruta_en, prio, freq, alts=pares)
@@ -2544,6 +2565,7 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
     pares_cmp = [
         {"hreflang": "es", "href": base + ruta_comparador("es")},
         {"hreflang": "en", "href": base + ruta_comparador("en")},
+        {"hreflang": "x-default", "href": base + ruta_comparador("es")},
     ]
     add(ruta_comparador("es"), "0.9", "weekly", alts=pares_cmp)
     add(ruta_comparador("en"), "0.9", "weekly", alts=pares_cmp)
@@ -2553,6 +2575,7 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         pares_cap = [
             {"hreflang": "es", "href": base + ruta_es},
             {"hreflang": "en", "href": base + ruta_en},
+            {"hreflang": "x-default", "href": base + ruta_es},
         ]
         add(ruta_es, "0.7", "monthly", alts=pares_cap)
         add(ruta_en, "0.7", "monthly", alts=pares_cap)
@@ -2634,6 +2657,7 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         pares = [
             {"hreflang": "es", "href": base + ruta_es},
             {"hreflang": "en", "href": base + ruta_en},
+            {"hreflang": "x-default", "href": base + ruta_es},
         ]
         add(ruta_es, "0.3", "yearly", alts=pares)
         add(ruta_en, "0.3", "yearly", alts=pares)
