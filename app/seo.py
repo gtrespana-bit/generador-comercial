@@ -45,6 +45,7 @@ _INDEXABLES_EXACTAS = frozenset(
         "/mapa-del-sitio",
         "/novedades",
         "/soporte",
+        "/calculadora",
         "/guia/presupuesto-de-obra",
         "/guia/analisis-precios-unitarios",
         "/guia/presupuesto-remodelacion",
@@ -127,6 +128,7 @@ _INDEXABLES_EN = frozenset(
         "/en/como-funciona",
         "/en/pago",
         "/en/soporte",
+        "/en/calculadora",
         "/en/mapa-del-sitio",
         "/en/novedades",
         "/en/software-presupuestos",
@@ -2395,6 +2397,9 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
     # Páginas sueltas con traducción: par es/en explícito.
     for ruta, prio, freq in (
         ("como-funciona", "0.7", "monthly"),
+        # Herramienta gratuita: la página con más intención de uso del sitio
+        # y la que reparte autoridad a los 47.000 precios.
+        ("calculadora", "0.8", "weekly"),
         ("pago", "0.6", "monthly"),
         ("soporte", "0.4", "monthly"),
         ("mapa-del-sitio", "0.4", "monthly"),

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <link rel="stylesheet" href="{{ 'css/precios.css' | asset }}">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" if _idioma == 'en' else "_nav.html" %}
+{% set _r = resultado %}
+<article class="hub-hero-int calc-hero">
+  <nav class="hub-crumbs" aria-label="{{ 'nav.breadcrumb' | t(_idioma, default='Migas de pan') }}">
+    <a href="{{ '/en-us/' if _idioma == 'en' else '/' }}">{{ 'calc.crumb_inicio' | t(_idioma) }}</a>
+    <span aria-hidden="true">/</span>
+    <a href="{{ ruta_catalogo }}">{{ 'calc.crumb_precios' | t(_idioma) }}</a>
+    <span aria-hidden="true">/</span>
+    <span>{{ 'calc.crumb_actual' | t(_idioma) }}</span>
+  </nav>
+
+  <h1>{% if _r %}{{ ('calc.h1' | t(_idioma)).format(pais=_r.nombre_pais) }}{% else %}{{ 'calc.h1_sin_pais' | t(_idioma) }}{% endif %}</h1>
+  <p class="sub">{{ 'calc.sub' | t(_idioma) }}</p>
+
+  <form class="calc-form" method="get" action="{{ ruta }}" role="search" aria-label="{{ 'calc.calcular' | t(_idioma) }}">
+    <div class="calc-campo">
+      <label for="calc-pais">{{ 'calc.pais' | t(_idioma) }}</label>
+      <select id="calc-pais" name="cc">
+        {% for p in paises %}
+        <option value="{{ p.codigo }}"{% if p.codigo == cc %} selected{% endif %}>{{ p.bandera }} {{ p.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="calc-campo calc-campo-ancho">
+      <label for="calc-apartado">{{ 'calc.trabajo' | t(_idioma) }}</label>
+      <select id="calc-apartado" name="apartado">
+        {% for capitulo in obras %}
+        <optgroup label="{{ capitulo.nombre }}">
+          {% for ap in capitulo.apartados %}
+          <option value="{{ ap.slug }}"{% if _r and ap.slug == _r.apartado.slug %} selected{% endif %}>{{ ap.nombre }}</option>
+          {% endfor %}
+        </optgroup>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="calc-campo calc-campo-corto">
+      <label for="calc-cantidad">{{ 'calc.cantidad' | t(_idioma) }}</label>
+      <input id="calc-cantidad" name="cantidad" type="number" inputmode="decimal" min="0.01" step="any" value="{{ cantidad_valor }}">
+    </div>
+    <div class="calc-campo calc-campo-corto">
+      <label for="calc-unidad">{{ 'calc.unidad' | t(_idioma) }}</label>
+      <select id="calc-unidad" name="unidad">
+        {% for u in (_r.unidades if _r else []) %}
+        <option value="{{ u.clave }}"{% if _r and u.clave == _r.unidad %} selected{% endif %}>{{ u.etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="btn btn-primary calc-boton" type="submit">{{ 'calc.calcular' | t(_idioma) }}</button>
+  </form>
+
+  {% if _r %}
+  <section class="calc-resultado" aria-live="polite">
+    <h2>{{ _r.apartado.nombre }} · {{ _r.nombre_pais }}</h2>
+    {% if _r.totales %}
+    <p class="calc-cifra">{{ ('calc.rango' | t(_idioma)).format(cantidad=_r.cantidad_txt, unidad=_r.unidad_etiqueta, minimo=_r.totales.minimo, medio=_r.totales.medio, maximo=_r.totales.maximo) | safe }}</p>
+    {% else %}
+    <p class="calc-cifra">{{ ('calc.unitario' | t(_idioma)).format(apartado=_r.apartado.nombre, pais=_r.nombre_pais, unidad=_r.unidad_etiqueta) | safe }}</p>
+    {% endif %}
+
+    {% if _r.grupos %}
+    <ul class="calc-grupos">
+      {% for grupo in _r.grupos %}
+      <li><span class="calc-grupo-nombre">{{ grupo.nombre }}</span> <strong>{{ grupo.pct }} %</strong> {{ 'calc.del_directo' | t(_idioma) }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <table class="calc-tabla">
+      <caption>{{ ('calc.tabla_caption' | t(_idioma)).format(apartado=_r.apartado.nombre, pais=_r.nombre_pais, moneda=_r.moneda) }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'calc.th_partida' | t(_idioma) }}</th>
+          <th scope="col">{{ 'calc.th_pu' | t(_idioma) }}</th>
+          {% if _r.cantidad %}<th scope="col">{{ ('calc.th_importe' | t(_idioma)).format(cantidad=_r.cantidad_txt, unidad=_r.unidad_etiqueta) }}</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for linea in _r.lineas %}
+        <tr>
+          <th scope="row"><a href="{{ linea.ruta }}">{{ linea.titulo }}</a></th>
+          <td>{{ linea.pu }}</td>
+          {% if _r.cantidad %}<td>{{ linea.importe }}</td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="calc-nota">
+      {{ ('calc.nota' | t(_idioma)).format(mes=_r.mes) }}
+      <a href="{{ _r.indice }}">{{ ('calc.ver_catalogo' | t(_idioma)).format(pais=_r.nombre_pais) }}</a>.
+    </p>
+    {% if hermanos %}
+    <nav class="calc-hermanos" aria-label="{{ 'calc.sigue' | t(_idioma) }}">
+      <span>{{ 'calc.sigue' | t(_idioma) }}</span>
+      {% for h in hermanos %}<a href="{{ h.calc }}">{{ h.nombre }}</a>{% endfor %}
+    </nav>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {# Los textos de método llevan <strong> en el catálogo: se marcan `safe`
+     porque sus valores interpolados son importes ya formateados y nombres de
+     país del registro de mercados, nunca HTML de terceros. #}
+  <section class="calc-metodo">
+    <h2>{{ 'calc.metodo_titulo' | t(_idioma) }}</h2>
+    <p>{{ 'calc.metodo_p1' | t(_idioma) }}</p>
+    <p>{{ 'calc.metodo_p2' | t(_idioma) }}</p>
+    <h3>{{ 'calc.incluye_titulo' | t(_idioma) }}</h3>
+    <ul>
+      <li>{{ 'calc.incluye1' | t(_idioma) | safe }}</li>
+      <li>{{ 'calc.incluye2' | t(_idioma) | safe }}</li>
+      <li>{{ 'calc.incluye3' | t(_idioma) | safe }}</li>
+      <li>{{ 'calc.incluye4' | t(_idioma) | safe }}</li>
+    </ul>
+    <p>{{ 'calc.metodo_p3' | t(_idioma) }}</p>
+  </section>
+</article>
+<section class="franja cta-final">
+  <h2>{{ 'calc.cta_titulo' | t(_idioma) }}</h2>
+  <p class="intro">{{ ('calc.cta_texto' | t(_idioma)).format(producto=product_name) }}</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="/acceso">{{ ('calc.cta_boton' | t(_idioma)).format(producto=product_name) }}</a>
+    <a class="btn btn-secondary" href="{{ ruta_catalogo }}">{{ ('calc.cta_catalogo' | t(_idioma)).format(moneda=moneda) }}</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+</body>
+</html>

@@ -17,6 +17,7 @@
   <div class="nav-links">
     {% include "_idioma_switch.html" %}
     <a class="nav-item{% if request.url.path == '/como-funciona' %} is-active{% endif %}" href="{{ '/en/como-funciona' }}">How it works</a>
+    <a class="nav-item{% if request.url.path == '/calculadora' %} is-active{% endif %}" href="{{ '/en/calculadora' }}">Calculator</a>
     <a class="nav-item{% if request.url.path.startswith('/guia/') %} is-active{% endif %}" href="{{ '/en/guia/presupuesto-de-obra' }}">Guides</a>
     <a class="nav-item{% if request.url.path == '/legal/preguntas' %} is-active{% endif %}" href="{{ '/en/legal/preguntas' }}">FAQ</a>
     <a class="nav-item{% if request.url.path == '/pago' %} is-active{% endif %}" href="{{ '/en/pago' }}">Plans</a>

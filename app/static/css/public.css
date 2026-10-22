@@ -5138,3 +5138,74 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   .soporte-grid { grid-template-columns: 1fr; gap: 1.6rem; }
   .soporte-grid-campos { grid-template-columns: 1fr; }
 }
+
+/* ---------------------------------------------------------------
+   Calculadora pública (/calculadora). Es la puerta de entrada de
+   mayor intención: el formulario tiene que leerse de un vistazo y
+   el resultado, caber sin scroll en móvil.
+   --------------------------------------------------------------- */
+.calc-hero { max-width: 1080px; }
+.calc-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  align-items: flex-end;
+  margin: 1.6rem 0 1.9rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.calc-campo { display: flex; flex-direction: column; gap: .3rem; flex: 0 1 200px; min-width: 150px; }
+.calc-campo-ancho { flex: 1 1 320px; }
+.calc-campo-corto { flex: 0 1 120px; min-width: 96px; }
+.calc-campo label { font-size: .78rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; color: var(--text-secondary); }
+.calc-campo select,
+.calc-campo input {
+  width: 100%;
+  padding: .55rem .65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .92rem;
+}
+.calc-campo select:focus-visible,
+.calc-campo input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.calc-boton { flex: 0 0 auto; min-height: 42px; }
+
+.calc-resultado {
+  margin: 0 0 2.2rem;
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+.calc-resultado h2 { margin: .1rem 0 .7rem; font-size: 1.3rem; }
+.calc-cifra { font-size: 1.02rem; line-height: 1.6; margin: 0 0 .9rem; }
+.calc-cifra strong { color: var(--accent-h); }
+.calc-grupos { display: flex; flex-wrap: wrap; gap: .4rem .8rem; margin: 0 0 1.1rem; padding: 0; list-style: none; font-size: .88rem; color: var(--text-secondary); }
+.calc-grupos li { background: var(--accent-soft); border-radius: 999px; padding: .28rem .7rem; }
+.calc-grupos strong { color: var(--accent-h); }
+.calc-tabla { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.calc-tabla caption { text-align: left; font-size: .8rem; color: var(--text-secondary); padding-bottom: .45rem; }
+.calc-tabla th, .calc-tabla td { padding: .48rem .5rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.calc-tabla thead th { font-size: .76rem; text-transform: uppercase; letter-spacing: .03em; color: var(--text-secondary); }
+.calc-tabla tbody th { font-weight: 600; }
+.calc-tabla td { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.calc-nota { font-size: .82rem; color: var(--text-secondary); margin: .8rem 0 0; }
+.calc-hermanos { display: flex; flex-wrap: wrap; gap: .4rem .55rem; align-items: baseline; margin-top: 1rem; font-size: .88rem; }
+.calc-hermanos span { font-weight: 700; }
+.calc-hermanos a { border: 1px solid var(--border); border-radius: 999px; padding: .25rem .65rem; text-decoration: none; color: var(--accent-h); }
+.calc-hermanos a:hover { border-color: var(--accent); }
+.calc-metodo { max-width: 780px; margin: 0 auto; }
+.calc-metodo h3 { margin-top: 1.3rem; }
+.calc-metodo ul { padding-left: 1.1rem; }
+.calc-metodo li { margin-bottom: .35rem; }
+@media (max-width: 640px) {
+  .calc-campo, .calc-campo-ancho, .calc-campo-corto { flex: 1 1 100%; }
+  .calc-boton { width: 100%; }
+  .calc-tabla td, .calc-tabla th { font-size: .84rem; }
+}
