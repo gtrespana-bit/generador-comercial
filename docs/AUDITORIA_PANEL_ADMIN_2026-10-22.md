@@ -12,6 +12,11 @@
 > - Suite completa en verde: **2348 tests** (5 nuevos de listas, 18 en total en `test_panel_listas.py`).
 >
 > El orden «en SQL» se aplica donde la fila sale de una sola tabla (Compras, Soporte, Auditoría). Renovaciones, Ventas, Cobros y Contratos siguen materializando el conjunto filtrado —sus filas se construyen cruzando licencias, compras y organizaciones— y paginan después; la paginación ya es correcta, pero mover el recorte a SQL exige antes reescribir esos servicios con agregados. Queda anotado como deuda de la Fase 4 (rendimiento).
+>
+> **Decisiones del titular (22/10/2026).**
+> - **Responder soporte desde el panel: descartado.** Prefiere contestar desde su propio correo; es más cómodo para él y no quiere la conversación dentro del panel. Se mejora el enlace `mailto:` para que lleve el número del ticket y el mensaje citado, y la Fase 2 queda fuera del plan.
+> - **Roles aplicados: aplazado sin fecha.** Solo él tiene acceso al panel y prevé que siga así; no compensa construir la tabla de permisos. `ALCANCES_ROL` sigue siendo descriptivo, no una puerta.
+> - **Bandeja de Hoy con `tareas_panel`: pendiente de decidir.** Se le explicó en lenguaje llano (posponer y marcar hecho); respuesta pendiente.
 
 ---
 
@@ -380,7 +385,9 @@ Cuatro fases, ordenadas por relación impacto/esfuerzo. Cada una es entregable y
 
 **Impacto:** es el cambio que hace que el panel se sienta «de verdad». Todo lo demás se apoya aquí.
 
-### Fase 2 · «Actuar sin salir de la lista» (3–4 días)
+### Fase 2 · «Actuar sin salir de la lista» (3–4 días) — *responder soporte, descartado*
+
+> **Estado (22/10/2026):** la parte de responder tickets desde el panel **no se hace** por decisión del titular, que contesta desde su correo. Las acciones en lote y el menú `⋯` por fila siguen siendo válidos como Fase 2bis si algún día hacen falta; hoy no son prioritarios.
 
 - **Acciones en lote** en Compras («activar marcadas»), Soporte («asignar a…», «marcar resueltas»), Renovaciones («avisar a las marcadas»). Con resumen previo («12 compras, 1.480 US$») y confirmación que diga el número.
 - **Responder soporte desde el panel.** Requiere migración pequeña en `mensajes_soporte`: `respuesta`, `respondida_por_email`, `respondida_at`, `prioridad`, `asignado_email`. Envío por Resend con plantilla, y la respuesta visible en la ficha del cliente (pestaña Actividad). Es la función que más cambia el día a día.
@@ -428,8 +435,8 @@ Dentro de seis meses, cualquier pantalla del panel debería cumplir:
 4. Toda acción que aparece se puede ejecutar **sin salir de la pantalla** donde aparece el problema.
 5. Lo que se hace en lote se hace en lote, y la confirmación dice **cuántos** y **cuánto**.
 6. Toda acción destructiva pide **motivo** y se puede **deshacer**.
-7. Un ticket de soporte se responde **dentro del panel** y queda en la historia del cliente.
-8. El rol decide qué se ve **y** qué se puede hacer, en el menú y en el servidor.
+7. Un ticket de soporte se responde **desde el correo del operador**, con el número y el mensaje citados, sin copiar datos a mano. *(Decisión del titular: no dentro del panel.)*
+8. El rol decide qué se ve **y** qué se puede hacer, en el menú y en el servidor. *(Aplazado: hoy hay un solo operador.)*
 9. Los números comparan con algo (ayer, la semana pasada, el mes pasado).
 10. Cualquier cambio en el panel es **rastreable**: quién, cuándo, sobre qué, con enlace.
 11. Nada de la pantalla principal tarda más de lo que tarda un café, con 10 o con 500 clientes.
@@ -439,12 +446,12 @@ Los puntos 1, 4, 5, 7 y 8 son el 80 % del beneficio.
 
 ---
 
-## 9. Lo que necesito que decidas
+## 9. Decisiones (actualizado el 22/10/2026)
 
-1. **¿Empezamos por el patrón de listas (Fase 1) o por Soporte (Fase 2, respondible)?** Mi recomendación: Fase 0 + Fase 1. Soporte se beneficia de la Fase 1 y, si se hace antes, habría que migrarlo dos veces.
-2. **¿Responder soporte desde el panel implica guardar la respuesta en la base?** Yo diría sí (migración pequeña). La alternativa —solo enviar y anotar en la nota interna— es más barata pero deja la conversación fuera del sistema.
-3. **¿Los roles se aplican de verdad?** Si sí, propongo una tabla de permisos por acción (no por pantalla) y filtrar el menú. Si no, quitaría las descripciones de `ALCANCES_ROL` para no prometer lo que no pasa.
-4. **¿La bandeja de Hoy puede tener tabla propia (`tareas_panel`)?** Es una tabla mínima y la única forma honesta de que «asignar» y «posponer» sobrevivan a la recarga.
+1. ✅ **Fase 0 + Fase 1 primero.** Hechas: las siete listas del panel buscan, ordenan, paginan y exportan con el mismo criterio.
+2. ❌ **Responder soporte desde el panel: no.** El titular contesta desde su correo. Se deja el enlace de correo bien armado (número de ticket + mensaje citado) y no se toca `mensajes_soporte`.
+3. ⏸ **Roles reales: aplazado.** Un solo operador con acceso; no hay nada que repartir todavía. Si algún día entra otra persona, la tabla de permisos por acción queda descrita en el punto 5 del veredicto y cuesta 1–2 días.
+4. ❓ **Bandeja de Hoy (`tareas_panel`): sin decidir.** La pregunta es si merece la pena poder **posponer** («esto lo miro el lunes») y **marcar hecho** lo que aparece en Hoy, o si la lista actual le sirve tal cual. Con un solo operador, «asignar a alguien» no aporta; posponer y cerrar, sí.
 
 ---
 

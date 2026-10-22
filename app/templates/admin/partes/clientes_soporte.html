@@ -67,6 +67,11 @@
 
   {% for fila in mensajes %}
   {% set m = fila.mensaje %}
+  {# Responder desde el correo del operador es la vía elegida: el enlace lleva
+     el número del ticket en el asunto y el mensaje original citado, para no
+     tener que copiarlo a mano. #}
+  {% set asunto_respuesta = 'Re: [' ~ m.etiqueta_tipo ~ ' #' ~ m.id ~ '] ' ~ (m.asunto or 'tu mensaje') %}
+  {% set cuerpo_respuesta = '\n\n\n—— Mensaje original (' ~ (m.created_at.strftime('%d/%m/%Y %H:%M') if m.created_at else '') ~ ') ——\n' ~ (m.nombre or 'Sin nombre') ~ ' escribió:\n' ~ (m.mensaje or '') %}
   <div class="mensaje-soporte {{ 'sin-atender' if m.estado == 'nuevo' else '' }}">
     <div class="mensaje-cabecera">
       <div class="mensaje-quien">
@@ -128,7 +133,7 @@
         <input id="nota-{{ m.id }}" type="text" name="nota" value="{{ m.nota_interna }}" placeholder="Nota interna (qué hiciste, qué falta)…" maxlength="600">
         <button class="btn btn-sm btn-secondary" type="submit">Guardar nota</button>
       </form>
-      <a class="btn btn-sm btn-secondary" href="mailto:{{ m.email }}?subject={{ ('Re: ' ~ (m.asunto or m.etiqueta_tipo))|urlencode }}">Responder por correo</a>
+      <a class="btn btn-sm btn-secondary" href="mailto:{{ m.email }}?subject={{ asunto_respuesta|urlencode }}&amp;body={{ cuerpo_respuesta|urlencode }}">Responder por correo</a>
     </div>
   </div>
   {% else %}
