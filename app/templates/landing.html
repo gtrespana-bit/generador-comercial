@@ -277,6 +277,9 @@
     <p class="intro">Cada partida del catálogo se publica con su precio de referencia y el descompuesto completo —materiales, mano de obra y maquinaria— para que compruebes de dónde sale el número antes de confiar en él.</p>
     <ul class="mercados-precios-lista">
       <li><a href="{{ catalogo_precios.indice }}">Todos los precios unitarios de {{ catalogo_precios.nombre }} ({{ catalogo_precios.moneda }})</a></li>
+      {% if catalogo_precios.mano_obra %}
+      <li><a href="{{ catalogo_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=catalogo_precios.nombre) }}</a></li>
+      {% endif %}
       {% for a in catalogo_precios.apartados %}
       <li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>
       {% endfor %}
@@ -291,7 +294,7 @@
     <p class="intro">Cada partida se publica con su precio de referencia y el descompuesto completo —materiales, mano de obra y maquinaria—. Elige el catálogo de tu mercado:</p>
     <ul class="mercados-precios-lista">
       {% for c in indices_catalogos %}
-      <li><a href="{{ c.indice }}">Precios de {{ c.nombre }} ({{ c.moneda }})</a></li>
+      <li><a href="{{ c.indice }}">Precios de {{ c.nombre }} ({{ c.moneda }})</a>{% if c.mano_obra %} · <a href="{{ c.mano_obra }}">mano de obra</a>{% endif %}</li>
       {% endfor %}
     </ul>
   </div>

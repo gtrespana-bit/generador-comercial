@@ -302,6 +302,9 @@ def test_sitemaps(cliente_web):
         assert hijo.status_code == 200
         resumen = pp.resumen(cc)
         esperado = 1 + resumen["total_apartados"] + resumen["total_partidas"]
+        # +1: la página de coste horario de la mano de obra del mercado.
+        if pp.oficios_disponibles(cc):
+            esperado += 1
         assert hijo.text.count("<loc>") == esperado, cc
     for cc in ("GB", "MX"):
         if cc not in PUBLICADOS:

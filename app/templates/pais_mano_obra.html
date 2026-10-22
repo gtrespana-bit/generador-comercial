@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <link rel="stylesheet" href="{{ 'css/precios.css' | asset }}">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" if _idioma == 'en' else "_nav.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="{{ 'nav.breadcrumb' | t(_idioma, default='Migas de pan') }}">
+    {% for nombre, ruta in crumbs %}{% if not loop.last %}<a href="{{ ruta }}">{{ nombre }}</a> <span aria-hidden="true">/</span> {% else %}<span>{{ nombre }}</span>{% endif %}{% endfor %}
+  </nav>
+
+  <h1>{{ seo.h1 }}</h1>
+  <p class="sub">{{ ('mo.intro' | t(_idioma)).format(n=n_oficios, pais=nombre_pais, moneda=moneda, mes=mes) }}</p>
+
+  <div class="precios-tabla-wrap">
+    <table class="precios-tabla mo-tabla">
+      <caption class="mo-caption">{{ ('mo.tabla_caption' | t(_idioma)).format(pais=nombre_pais, mes=mes) }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'mo.oficio' | t(_idioma) }}</th>
+          <th scope="col">{{ ('mo.hora' | t(_idioma)).format(moneda=moneda) }}</th>
+          <th scope="col">{{ 'mo.peso' | t(_idioma) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in oficios %}
+        <tr>
+          <th scope="row">{{ o.nombre }}</th>
+          <td>{{ o.hora_txt }}</td>
+          <td>{{ ('mo.en_partidas' | t(_idioma)).format(n=o.partidas) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>{{ ('mo.lectura_titulo' | t(_idioma)).format(pais=nombre_pais) }}</h2>
+  <p>{{ ('mo.lectura1' | t(_idioma)).format(caro=mas_caro.nombre, caro_txt=mas_caro.hora_txt, barato=mas_barato.nombre, barato_txt=mas_barato.hora_txt, moneda=moneda) }}</p>
+  <p>{{ 'mo.lectura2' | t(_idioma) }}</p>
+  <p>{{ 'mo.lectura3' | t(_idioma) }}</p>
+
+  <h2>{{ 'mo.como_titulo' | t(_idioma) }}</h2>
+  <p>{{ ('mo.como1' | t(_idioma)).format(total=total_partidas, pais=nombre_pais, mes=mes) }}</p>
+  <ul>
+    <li>{{ 'mo.como2' | t(_idioma) }}</li>
+    <li>{{ 'mo.como3' | t(_idioma) }}</li>
+    <li>{{ ('mo.como4' | t(_idioma)).format(moneda=moneda) }}</li>
+  </ul>
+  <p>{{ 'mo.como5' | t(_idioma) }}</p>
+
+  {% if faq %}
+  <h2>{{ 'mo.faq_titulo' | t(_idioma) }}</h2>
+  {% for item in faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+  {% endif %}
+
+  <h2>{{ 'mo.seguir' | t(_idioma) }}</h2>
+  <ul class="precios-lista">
+    <li><a href="{{ ruta_indice }}">{{ ('mo.enlace_catalogo' | t(_idioma)).format(pais=nombre_pais) }}</a></li>
+    <li><a href="{{ ruta_calculadora }}">{{ 'mo.enlace_calc' | t(_idioma) }}</a></li>
+    {% for e in enlaces_precios %}
+    <li><a href="{{ e.ruta }}">{{ e.nombre }}</a></li>
+    {% endfor %}
+    <li><a href="{{ ruta_json }}" download>{{ ('mo.enlace_json' | t(_idioma)).format(pais=nombre_pais) }}</a></li>
+  </ul>
+
+  {% if alternates %}
+  <h2>{{ 'mo.otros_paises' | t(_idioma) }}</h2>
+  <p class="precios-paises">
+    {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}
+  </p>
+  {% endif %}
+</article>
+<section class="franja cta-final">
+  <h2>{{ 'mo.cta_titulo' | t(_idioma) }}</h2>
+  <p class="intro">{{ ('mo.cta_texto' | t(_idioma)).format(producto=product_name) }}</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="/acceso">{{ ('mo.cta_boton' | t(_idioma)).format(producto=product_name) }}</a>
+    <a class="btn btn-secondary" href="{{ ruta_indice }}">{{ 'mo.cta_catalogo' | t(_idioma) }}</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+</body>
+</html>

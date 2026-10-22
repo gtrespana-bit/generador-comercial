@@ -279,6 +279,9 @@
     <p class="intro">Every catalog item is published with its reference price and the full breakdown (materials, labor, equipment), so you can check where the number comes from before you trust it.</p>
     <ul class="mercados-precios-lista">
       <li><a href="{{ catalogo_precios.indice }}">All unit prices in {{ catalogo_precios.nombre }} ({{ catalogo_precios.moneda }})</a></li>
+      {% if catalogo_precios.mano_obra %}
+      <li><a href="{{ catalogo_precios.mano_obra }}">Hourly labour rates in {{ catalogo_precios.nombre }}</a></li>
+      {% endif %}
       {% for a in catalogo_precios.apartados %}
       <li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>
       {% endfor %}
@@ -293,7 +296,7 @@
     <p class="intro">Every item is published with its reference price and full breakdown (materials, labor, equipment). Pick your market's catalog:</p>
     <ul class="mercados-precios-lista">
       {% for c in indices_catalogos %}
-      <li><a href="{{ c.indice }}">{{ c.nombre }} prices ({{ c.moneda }})</a></li>
+      <li><a href="{{ c.indice }}">{{ c.nombre }} prices ({{ c.moneda }})</a>{% if c.mano_obra %} · <a href="{{ c.mano_obra }}">labour rates</a>{% endif %}</li>
       {% endfor %}
     </ul>
   </div>
