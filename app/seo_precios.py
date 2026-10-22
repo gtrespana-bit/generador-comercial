@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from starlette.requests import Request
 
+from . import comparador
 from .paises import PAISES
 from .seo import (
     OG_IMAGE,
@@ -591,6 +592,7 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
                 pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
             ),
             "json_url": pp.ruta_json(cc),
+            "ruta_comparador": comparador.ruta_comparador(lang),
             "etiqueta_impuesto": etiqueta_impuesto,
             "tipo_impuesto": tipo_impuesto,
         }
@@ -862,6 +864,9 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
     origen = origen_canonico(request)
     rutas_alternas = pp.alternates(ficha["codigo"])
     nombre_apartado = (ficha.get("apartado") or {}).get("nombre") or ""
+    # ¿Esta partida tiene el mismo código en otros mercados? Si sí, la ficha
+    # lleva la tabla de precios por país (comparador internacional).
+    codigo_comparador = str(ficha.get("codigo") or "")
     crumbs = [
         ("Home" if en else "Inicio", ruta_mercado(cc)),
         (_etiqueta_precios(lang), pp.ruta_indice(cc)),
@@ -903,6 +908,13 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
             "mano_obra_url": (
                 pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else ""
             ),
+            "comparativa": comparador.comparativa_partida(cc, ficha["codigo"], lang),
+            "ruta_comparador": (
+                comparador.ruta_comparador(lang)
+                if codigo_comparador
+                else ""
+            ),
+            "tasa_fecha": comparador.fecha_tasas(lang),
             "nombre_pais": _nombre_pais(cc, lang),
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "og_type": "article",

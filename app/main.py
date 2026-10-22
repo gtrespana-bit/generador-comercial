@@ -143,6 +143,24 @@ async def lifespan(_app: FastAPI):
                 IMPORTS_DIR,
             )
     _backup_automatico()
+    # El comparador internacional recorre los 22 catálogos (~1,3 s la primera
+    # vez). Se calcula en segundo plano al arrancar para que la primera visita
+    # a una ficha de precios no pague ese coste; si falla, la página sigue
+    # funcionando sin el bloque de comparación.
+    try:
+        import threading as _threading
+
+        def _precalentar_comparador() -> None:
+            try:
+                from .comparador import _datos
+
+                _datos()
+            except Exception:
+                pass
+
+        _threading.Thread(target=_precalentar_comparador, daemon=True).start()
+    except Exception:
+        pass
     yield
 
 

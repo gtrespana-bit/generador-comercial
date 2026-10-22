@@ -313,6 +313,7 @@ def contexto_mano_obra(request: Request, codigo_pais: str) -> dict | None:
         "ruta_pais": ruta_mercado(cc),
         "ruta_json": pp.ruta_json(cc),
         "ruta_calculadora": f"/en/calculadora?cc={cc}" if en else f"/calculadora?cc={cc}",
+        "ruta_comparador": f"/en/prices-comparison" if en else "/precios-comparados",
         "enlaces_precios": enlaces_precios(cc),
         "alternates": alternates,
     }

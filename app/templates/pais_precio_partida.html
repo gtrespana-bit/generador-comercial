@@ -127,6 +127,34 @@
   </ul>
   {% endif %}
 
+  {% if comparativa %}
+  <section class="cmp-partida">
+    <h2>{{ 'cmp.partida_titulo' | t(_idioma) }}</h2>
+    <p>{{ ('cmp.partida_texto' | t(_idioma)).format(fecha=tasa_fecha) }}</p>
+    <div class="precios-tabla-wrap">
+      <table class="precios-tabla cmp-tabla">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'cmp.mercado' | t(_idioma) }}</th>
+            <th scope="col">USD</th>
+            <th scope="col">{{ 'cmp.precio_local' | t(_idioma) }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in comparativa %}
+          <tr{% if f.actual %} class="cmp-este"{% endif %}>
+            <th scope="row"><span aria-hidden="true">{{ f.bandera }}</span> <a href="{{ f.ruta }}">{{ f.nombre }}</a>{% if f.actual %} <span class="cmp-codigo">{{ 'cmp.partida_actual' | t(_idioma) }}</span>{% endif %}</th>
+            <td>{{ f.usd_txt }}</td>
+            <td>{{ f.local_txt }}/{{ f.unidad_local }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p><a href="{{ ruta_comparador }}">{{ 'cmp.partida_ver' | t(_idioma) }}</a></p>
+  </section>
+  {% endif %}
+
   {% if alternates %}
   <p class="precios-paises">{{ 'precios.otros_paises' | t(_idioma) }}
     {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}

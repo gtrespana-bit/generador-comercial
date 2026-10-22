@@ -93,6 +93,69 @@ def precios_partida(cc: str, apartado: str, partida: str, request: Request):
     return TEMPLATES.TemplateResponse(request, "pais_precio_partida.html", ctx)
 
 
+@router.get("/prices-comparison.json", include_in_schema=False)
+@router.get("/precios-comparados.json", include_in_schema=False)
+def comparador_json():
+    """El comparador como conjunto de datos (``distribution`` del ``Dataset``)."""
+    import json as _json
+
+    from ..comparador import exportar
+
+    datos = exportar()
+    if not datos["partidas"]:
+        raise HTTPException(status_code=404)
+    return Response(
+        _json.dumps(datos, ensure_ascii=False, separators=(",", ":")),
+        media_type="application/json; charset=utf-8",
+        headers={
+            "Cache-Control": "public, max-age=3600, s-maxage=86400, "
+            "stale-while-revalidate=604800",
+            "Content-Disposition": 'inline; filename="precios-comparados.json"',
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
+
+
+# El middleware de idioma reescribe /en/prices-comparison a /prices-comparison
+# antes de enrutar, así que aquí solo existe la ruta interna; el idioma se lee
+# de la ruta original (o del estado que deja el propio middleware).
+@router.get("/prices-comparison/{capitulo}", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/precios-comparados/{capitulo}", response_class=HTMLResponse, include_in_schema=False)
+def comparador_capitulo(capitulo: str, request: Request):
+    from ..comparador import CAPITULOS, capitulos_publicados, contexto_comparador
+
+    original = str(getattr(request.state, "ruta_original", "") or request.url.path)
+    en = original.startswith("/en/") or str(getattr(request.state, "lang", "")) == "en"
+    codigo = next(
+        (
+            cod
+            for cod, datos in CAPITULOS.items()
+            if capitulo in (datos["slug_es"], datos["slug_en"])
+        ),
+        None,
+    )
+    if codigo is None or codigo not in capitulos_publicados():
+        raise HTTPException(status_code=404)
+    ctx = contexto_comparador(request, codigo, "en" if en else "es")
+    if ctx is None:
+        raise HTTPException(status_code=404)
+    return TEMPLATES.TemplateResponse(request, "comparador_precios.html", ctx)
+
+
+@router.get("/prices-comparison", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/precios-comparados", response_class=HTMLResponse, include_in_schema=False)
+def comparador(request: Request):
+    """Comparador internacional: la misma partida en los 22 mercados."""
+    from ..comparador import contexto_comparador
+
+    original = str(getattr(request.state, "ruta_original", "") or request.url.path)
+    en = original.startswith("/en/") or str(getattr(request.state, "lang", "")) == "en"
+    ctx = contexto_comparador(request, None, "en" if en else "es")
+    if ctx is None:
+        raise HTTPException(status_code=404)
+    return TEMPLATES.TemplateResponse(request, "comparador_precios.html", ctx)
+
+
 @router.get("/{cc}/labour-rates", response_class=HTMLResponse, include_in_schema=False)
 @router.get("/{cc}/mano-de-obra", response_class=HTMLResponse, include_in_schema=False)
 def precios_mano_obra(cc: str, request: Request):
