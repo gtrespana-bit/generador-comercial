@@ -423,3 +423,67 @@ def test_errores_internos_funcion_y_rls(pg):
         assert fila.resuelto_en is None
     finally:
         db_op.close()
+
+
+# ---------------------------------------------------------------------------
+# Analítica operativa (r7f2b1d4e8a6): el operador ve cuentas y membresías
+# ---------------------------------------------------------------------------
+
+
+def test_el_operador_lee_las_cuentas_y_membresias_de_todas_las_empresas(pg):
+    """Sin esta lectura, «Cuentas» contaba 1 (el propio operador).
+
+    La política anterior exigía membresía propia y ``can_view_user`` siempre
+    devuelve falso en una sesión de operador (no hay organización de
+    contexto), así que la pestaña de analítica medía a ciegas.
+    """
+    from sqlalchemy import text
+
+    db_op = _sesion(pg, operador=True, email="titular@pg.test")
+    try:
+        emails = {usuario.email for usuario in db_op.query(Usuario).all()}
+        assert {"duena-a@pg.test", "duena-b@pg.test"} <= emails
+
+        organizaciones = {m.organizacion_id for m in db_op.query(Membresia).all()}
+        assert {pg["org_a"], pg["org_b"]} <= organizaciones
+
+        filas = db_op.execute(
+            text("SELECT * FROM cotizat_security.admin_resumen_organizaciones()")
+        ).mappings().all()
+        por_org = {int(fila["organizacion_id"]): fila for fila in filas}
+        assert {pg["org_a"], pg["org_b"]} <= set(por_org)
+        # Una fila por empresa y solo cifras: nunca contenido de presupuestos.
+        assert int(por_org[pg["org_a"]]["miembros"]) == 1
+        assert int(por_org[pg["org_a"]]["presupuestos"]) == 0
+        assert set(por_org[pg["org_a"]]).isdisjoint(
+            {"titulo", "cliente", "detalle", "total_calculado", "notas"}
+        )
+    finally:
+        db_op.close()
+
+
+def test_la_funcion_de_resumen_no_abre_nada_a_una_empresa(pg):
+    """La función es SECURITY DEFINER: la guarda de operador es la que manda."""
+    from sqlalchemy import text
+
+    db_a = _sesion(
+        pg, org=pg["org_a"], auth_id=pg["auth_a"], email="duena-a@pg.test"
+    )
+    try:
+        emails = {usuario.email for usuario in db_a.query(Usuario).all()}
+        assert "duena-a@pg.test" in emails
+        assert "duena-b@pg.test" not in emails
+
+        assert {m.organizacion_id for m in db_a.query(Membresia).all()} == {
+            pg["org_a"]
+        }
+
+        # Con EXECUTE concedido, pero sin la marca de operador: cero filas.
+        assert (
+            db_a.execute(
+                text("SELECT * FROM cotizat_security.admin_resumen_organizaciones()")
+            ).all()
+            == []
+        )
+    finally:
+        db_a.close()
