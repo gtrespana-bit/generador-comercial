@@ -16,7 +16,7 @@
 > **Decisiones del titular (22/10/2026).**
 > - **Responder soporte desde el panel: descartado.** Prefiere contestar desde su propio correo; es más cómodo para él y no quiere la conversación dentro del panel. Se mejora el enlace `mailto:` para que lleve el número del ticket y el mensaje citado, y la Fase 2 queda fuera del plan.
 > - **Roles aplicados: aplazado sin fecha.** Solo él tiene acceso al panel y prevé que siga así; no compensa construir la tabla de permisos. `ALCANCES_ROL` sigue siendo descriptivo, no una puerta.
-> - **Bandeja de Hoy con `tareas_panel`: pendiente de decidir.** Se le explicó en lenguaje llano (posponer y marcar hecho); respuesta pendiente.
+> - **Bandeja de Hoy con `tareas_panel`: descartada.** No hay nada que posponer: lo que aparece en Hoy o se resuelve en el momento o solo hay que saberlo. La Fase 3 se reduce a un tablero de novedades («desde tu última visita»), y aun así es opcional.
 
 ---
 
@@ -29,7 +29,7 @@ Hoy el panel es bueno **para mirar** y regular **para operar**. En concreto:
 1. **Solo una lista de todo el panel se puede usar de verdad.** Clientes › Directorio tiene búsqueda, chips, orden, vistas guardadas y CSV con filtros. Las otras ocho tablas no: cada una implementó un trozo distinto (unas buscan, otras filtran, otras ordenan, ninguna pagina).
 2. **No se puede actuar en lote en ningún sitio.** Cero casillas de selección en todo el panel. Veinte compras pendientes = veinte clics y veinte recargas.
 3. **No se puede responder a un cliente desde el panel.** El único botón de Soporte abre el cliente de correo del operador (`mailto:`). La respuesta no queda guardada, no se puede consultar después y no existe para el resto del equipo.
-4. **"Hoy" informa pero no permite trabajar.** La agenda dice qué requiere atención y no deja marcarlo hecho, asignarlo ni posponerlo. Es una lista de lectura, no una bandeja.
+4. **"Hoy" informa, pero no distingue lo nuevo de lo viejo.** No dice qué ha pasado desde tu última visita ni separa «entérate» (una venta, un alta) de «decide» (un comprobante por verificar, un mensaje por responder). *(Corrección del 22/10: se había planteado como bandeja de tareas con «posponer». No aplica: esto es un negocio de suscripción, no un despacho con una cola de encargos. Lo que se pospone no existe; lo que se pierde es una venta o una queja.)*
 5. **Los roles existen en el papel, no en la puerta.** `ALCANCES_ROL` describe que un `analista` es «solo lectura» y que `soporte` atiende incidencias; en la práctica **no hay ninguna comprobación de rol** salvo en cuatro acciones de equipo y tres de precios. Un operador con rol `analista` puede suspender el acceso de un cliente, apagar un flag o crear una API key.
 
 Y por debajo de todo eso, un problema que no se ve pero se va a notar: **cada pantalla del panel recalcula todos los contadores recorriendo todas las organizaciones**. Con 30 clientes es gratis; con 300 será la razón por la que el panel "va lento".
@@ -60,18 +60,18 @@ Formato: **qué hay** → **qué duele** → **qué necesita**. La etiqueta entr
 
 ### 3.1 Hoy (`/admin`)
 
+**Qué es.** El negocio es una suscripción: se vende el generador de presupuestos, y los clientes son quienes usan el producto con un plan de acceso. El operador no produce presupuestos para terceros; lo que necesita saber cada mañana es **si entró dinero, si alguien escribió y si algo se va a caer**. Hoy no es una bandeja de tareas: es un tablero de novedades y cobros.
+
 **Qué hay.** 8 KPIs, últimas 5 ventas, últimas 5 altas, buzón (3 mensajes), bloque «Requiere tu acción hoy» con las notificaciones del panel, gráfico SVG de ingresos, «Van a vencer» (6), 8 atajos y 6 acciones de auditoría. Dos botones operativos: *Conceder acceso* y *Enviar avisos de vencimiento*.
 
 **Qué duele.**
-- El bloque «Requiere tu acción hoy» **excluye** justo lo que más se acumula: ventas y registros. Es una lista de novedades, no de trabajo pendiente.
-- No se puede marcar nada como hecho, asignarlo ni posponerlo. Si lo ves y no lo haces, mañana sigue igual y no hay forma de saber si alguien lo cogió.
-- Los KPIs **duplican** los de las subpáginas, sin rango de fechas ni comparación (¿mejor o peor que la semana pasada? no se sabe).
-- «Van a vencer» corta en 6 sin decir cuántos hay en total ni permitir ordenar por importe o por días.
-- No hay forma de saber «qué pasó desde que me fui»: la auditoría reciente está al final, en formato técnico.
+- El bloque «Requiere tu acción hoy» **excluye** ventas y altas por diseño. Es defendible (una venta no pide nada), pero deja lo que más interesa —**que ha entrado una venta**— solo en la campana y en una tarjeta más abajo. El titular quiere verlo al entrar.
+- Nunca dice **qué es nuevo desde tu última visita**: la campana repite la misma venta durante 72 h y los mensajes sin atender no distinguen «llegó ayer» de «lleva una semana esperando».
+- Los KPIs **duplican** los de las subpáginas y no comparan con nada (¿mejor o peor que la semana pasada? no se sabe).
+- «Van a vencer» corta en 6 sin decir cuántos hay en total.
+- La auditoría reciente está al final, en formato técnico.
 
-**Qué necesita.** 🔴 Convertirse en **bandeja de trabajo**: una sola lista de tareas del día con origen (compra por revisar, soporte nuevo, licencia que vence, error sin resolver), y tres gestos por tarea: **asignar**, **posponer**, **hecho**. KPIs con comparación contra el periodo anterior y enlace al listado ya filtrado. Ver Fase 3.
-
----
+**Qué necesita.** 🟠 Un **tablero de novedades**, no una bandeja: arriba, «desde tu última visita» con las ventas, altas y mensajes nuevos y una marca de leído; debajo, «lo que espera una decisión corta» (comprobantes por verificar, mensajes por responder, licencias que vencen en 15 días), cada cosa con enlace a la fila concreta. Sin asignar, sin posponer, sin cerrar: nada de eso describe el trabajo real, que se resuelve en minutos y en el mismo sitio.
 
 ### 3.2 Clientes
 
@@ -397,14 +397,16 @@ Cuatro fases, ordenadas por relación impacto/esfuerzo. Cada una es entregable y
 
 **Criterio de aceptación:** 15 compras pendientes se resuelven en 2 acciones y sin recargar 15 veces; un ticket se responde sin abrir el correo; toda cancelación deja motivo y se puede revertir desde el propio aviso.
 
-### Fase 3 · «Hoy como centro de mando» (3–4 días)
+### Fase 3 · «Hoy como tablero de novedades» (0,5–1 día)
 
-- **Bandeja única** con origen, cliente, importe/urgencia y tres gestos: **asignar**, **posponer**, **hecho**. Persistencia mínima: tabla `tareas_panel(clave, tipo, ref_id, asignado_email, pospuesta_hasta, resuelta_at, resuelta_por)`, sin duplicar los datos de origen.
-- **KPIs con comparación** contra el periodo anterior (se calcula de `licencias`/`compras`, no hace falta histórico nuevo).
-- **«Desde tu última visita»** al principio de Hoy: ventas, altas, tickets y errores nuevos desde el último acceso del operador.
-- Enlaces de cada tarjeta al listado **ya filtrado** (no a la pestaña en general).
+> **Corregido el 22/10/2026.** La versión original hablaba de una bandeja con `tareas_panel` y tres gestos (asignar, posponer, hecho). **Descartado:** el negocio vende suscripciones, no encargos; no hay una cola que despachar y lo que importa —una venta, una queja— no se pospone, se ve. Se sustituye por lo que sí falta.
 
-**Criterio de aceptación:** abrir el panel por la mañana contesta tres preguntas sin hacer clic: *¿qué pasó?*, *¿qué me toca?*, *¿qué está peor que la semana pasada?*.
+- **«Desde tu última visita»** al principio de Hoy: ventas, altas y mensajes llegados desde el último acceso del operador, con un botón «marcar como visto». Persistencia mínima: una fecha por operador (`ultima_visita_panel`), no una tabla de tareas.
+- **Separar «entérate» de «decide»**: ventas y altas son información; comprobantes por verificar, mensajes por responder y licencias que vencen son las únicas cosas que piden un clic.
+- **Enlaces a la fila concreta**, no a la pestaña: la compra #42, el mensaje #17, la ficha del cliente que vence.
+- **KPIs con comparación** contra el periodo anterior (se calcula de `licencias`/`compras`, sin histórico nuevo). Opcional: si no aporta, se quitan antes que añadir ruido.
+
+**Criterio de aceptación:** al abrir el panel después de tres días, se ve en una pantalla qué pasó en esos tres días y qué quedó sin atender, sin repetir lo ya visto y sin inventar tareas.
 
 ### Fase 4 · «Sistema y contenido de verdad» (2–3 días)
 
@@ -433,7 +435,7 @@ Dentro de seis meses, cualquier pantalla del panel debería cumplir:
 2. Desde cualquier aviso o KPI se llega en **un clic** al objeto concreto, no a la pestaña.
 3. Cualquier dato que el panel muestra se puede encontrar **escribiendo lo que el cliente diría** (correo, nombre, referencia, número de compra).
 4. Toda acción que aparece se puede ejecutar **sin salir de la pantalla** donde aparece el problema.
-5. Lo que se hace en lote se hace en lote, y la confirmación dice **cuántos** y **cuánto**.
+5. Lo que se hace en lote se hace en lote, y la confirmación dice **cuántos** y **cuánto**. *(Con el volumen actual —decenas de clientes y un operador— el lote no cambia el día a día; se mantiene como criterio para cuando crezca.)*
 6. Toda acción destructiva pide **motivo** y se puede **deshacer**.
 7. Un ticket de soporte se responde **desde el correo del operador**, con el número y el mensaje citados, sin copiar datos a mano. *(Decisión del titular: no dentro del panel.)*
 8. El rol decide qué se ve **y** qué se puede hacer, en el menú y en el servidor. *(Aplazado: hoy hay un solo operador.)*
@@ -451,7 +453,7 @@ Los puntos 1, 4, 5, 7 y 8 son el 80 % del beneficio.
 1. ✅ **Fase 0 + Fase 1 primero.** Hechas: las siete listas del panel buscan, ordenan, paginan y exportan con el mismo criterio.
 2. ❌ **Responder soporte desde el panel: no.** El titular contesta desde su correo. Se deja el enlace de correo bien armado (número de ticket + mensaje citado) y no se toca `mensajes_soporte`.
 3. ⏸ **Roles reales: aplazado.** Un solo operador con acceso; no hay nada que repartir todavía. Si algún día entra otra persona, la tabla de permisos por acción queda descrita en el punto 5 del veredicto y cuesta 1–2 días.
-4. ❓ **Bandeja de Hoy (`tareas_panel`): sin decidir.** La pregunta es si merece la pena poder **posponer** («esto lo miro el lunes») y **marcar hecho** lo que aparece en Hoy, o si la lista actual le sirve tal cual. Con un solo operador, «asignar a alguien» no aporta; posponer y cerrar, sí.
+4. ✅ **Bandeja de Hoy con `tareas_panel`: no.** El titular lo dejó claro: no hay nada que posponer. Lo que aparece en Hoy o se hace en el momento (verificar un comprobante, responder un correo) o solo hay que saberlo (una venta, un alta). Se sustituye por el tablero de novedades de la Fase 3, mucho más pequeño.
 
 ---
 
