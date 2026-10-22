@@ -67,12 +67,25 @@
     {% endfor %}
   </ul>
 
+  {% if obras_relacionadas %}
+  <h2>{{ 'precios.relacionadas.titulo' | t(_idioma) }}</h2>
+  <p>{{ ('precios.relacionadas.texto' | t(_idioma)).format(apartado=apartado.nombre) }}</p>
+  <ul class="precios-lista">
+    {% for r in obras_relacionadas %}
+    <li><a href="{{ r.ruta }}">{{ r.nombre }}</a> <span>{{ r.capitulo }}</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
   {% if alternates %}
   <p class="precios-paises">{{ 'precios.otros_paises_indice' | t(_idioma) }}
     {% for alt in alternates %}<a href="{{ alt.href }}">{{ alt.bandera }} {{ alt.nombre }}</a>{% endfor %}
   </p>
   {% endif %}
 </article>
+  {% if calc_url %}
+  <p class="precios-calc"><a class="btn btn-secondary" href="{{ calc_url }}">{{ 'precios.calc' | t(_idioma) }}</a></p>
+  {% endif %}
 <section class="franja cta-final">
   <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
   <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>

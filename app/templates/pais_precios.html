@@ -57,6 +57,9 @@
   </p>
   {% endif %}
 </article>
+  {% if calc_url %}
+  <p class="precios-calc"><a class="btn btn-secondary" href="{{ calc_url }}">{{ 'precios.calc' | t(_idioma) }}</a></p>
+  {% endif %}
 <section class="franja cta-final">
   <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
   <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>

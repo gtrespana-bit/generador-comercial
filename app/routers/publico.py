@@ -428,6 +428,28 @@ def como_funciona(request: Request):
     return TEMPLATES.TemplateResponse(request, "como_funciona.html", ctx)
 
 
+@router.get("/calculadora", response_class=HTMLResponse, include_in_schema=False)
+def calculadora(request: Request):
+    """Calculadora pública: precio real de una partida por cantidad.
+
+    Es la puerta de entrada de mayor intención del sitio («cuánto cuesta X m²
+    de Y») y no exige cuenta. Todo lo que calcula sale del catálogo publicado
+    del país elegido; el país y el apartado viajan en la query, pero la
+    canónica es siempre ``/calculadora`` (o ``/en/calculadora``): un
+    formulario no debe generar miles de URLs equivalentes.
+    """
+    from ..calculadora import contexto_calculadora
+
+    ctx = contexto_calculadora(
+        request,
+        cc=request.query_params.get("cc", ""),
+        apartado=request.query_params.get("apartado", ""),
+        cantidad=request.query_params.get("cantidad", ""),
+        unidad=request.query_params.get("unidad", ""),
+    )
+    return TEMPLATES.TemplateResponse(request, "calculadora.html", ctx)
+
+
 def _redirige_a_slash(codigo: str):
     """301 a la canónica de un mercado, en un solo salto.
 

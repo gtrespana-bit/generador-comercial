@@ -207,6 +207,26 @@ def _alternates_visibles(rutas: list[dict], cc_actual: str) -> list[dict]:
     return salida
 
 
+def ruta_calculadora(cc: str, apartado: str = "", cantidad: str = "") -> str:
+    """URL de la calculadora, ya apuntando al apartado de esta página.
+
+    Es el enlace de vuelta que faltaba: cada apartado y cada partida mandan
+    a la herramienta con su contexto rellenado (país y apartado), y la
+    herramienta manda de vuelta a cada partida. Ese ida y vuelta es lo que
+    convierte 47.000 páginas sueltas en un silo con una entrada clara.
+    """
+    from urllib.parse import urlencode
+
+    largo = "en" if (PAISES.get(cc.upper()) or {}).get("idioma") == "en" else "es"
+    base = "/en/calculadora" if largo == "en" else "/calculadora"
+    parametros = {"cc": cc.upper()}
+    if apartado:
+        parametros["apartado"] = apartado
+    if cantidad:
+        parametros["cantidad"] = cantidad
+    return f"{base}?{urlencode(parametros)}"
+
+
 def _base(request: Request, cc: str, ruta: str, seo: dict, bloques: list,
           hreflang_links: list, crumbs: list) -> dict:
     origen = origen_canonico(request)
@@ -553,6 +573,7 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
             "mes_revision": mes,
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "faq": faq,
+            "calc_url": ruta_calculadora(cc),
             "etiqueta_impuesto": etiqueta_impuesto,
             "tipo_impuesto": tipo_impuesto,
         }
@@ -694,6 +715,8 @@ def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
             "guia_apu": guia_apu,
             "capitulo_nombre": capitulo_nombre,
             "apartados_hermanos": hermanos,
+            "obras_relacionadas": apartados_relacionados(cc, slug),
+            "calc_url": ruta_calculadora(cc, slug),
             "alternates": _alternates_visibles(rutas_alternas, cc),
         }
     )
@@ -856,6 +879,7 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
             "pct_grupos": pct,
             "horas_txt": _cantidad(ficha["horas_mo"], 4),
             "uds_dia_txt": _cantidad(ficha["uds_dia_cuadrilla"], 1),
+            "calc_url": ruta_calculadora(cc, slug_apartado),
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "og_type": "article",
         }
@@ -953,6 +977,84 @@ def _indice_apartados(cc: str) -> dict | None:
             if ap.get("slug"):
                 apartados[ap["slug"]] = ap
     return {"apartados": apartados} if apartados else None
+
+
+#: Capítulos que van juntos en una obra real, por código de capítulo (los
+#: códigos 01–18 significan lo mismo en los 22 mercados, aunque el nombre
+#: esté traducido). Es el criterio que usa un jefe de obra: quien
+#: impermeabiliza una cubierta va a necesitar el aislamiento y el remate; quien
+#: levanta un tabique, el yeso y la pintura. Sin este grafo, cada apartado
+#: solo se enlazaba con los de su propio capítulo y la autoridad se quedaba
+#: atrapada en 16 islas por país.
+_AFINIDAD_CAPITULOS: dict[str, tuple[str, ...]] = {
+    "01": ("02", "15"),
+    "02": ("15", "01"),
+    "03": ("04", "14"),
+    "04": ("05", "03"),
+    "05": ("04", "06"),
+    "06": ("12", "10", "08"),
+    "07": ("06", "18"),
+    "08": ("06", "09"),
+    "09": ("13", "08", "10"),
+    "10": ("11", "12", "06"),
+    "11": ("10", "05"),
+    "12": ("06", "10", "13"),
+    "13": ("09", "12"),
+    "14": ("03", "11"),
+    "15": ("02", "01"),
+    "17": ("01", "02"),
+    "18": ("07", "10"),
+}
+
+
+def apartados_relacionados(codigo_pais: str, slug: str, limite: int = 3) -> list[dict]:
+    """Apartados de capítulos afines, elegidos de forma determinista.
+
+    Se toman ``limite`` apartados de los capítulos que de verdad acompañan a
+    esta obra y se eligen con un desplazamiento derivado del slug: cada
+    apartado reparte su enlace a un tramo distinto del capítulo afín, en vez
+    de que los 2.000 apartados de un país apunten siempre a los mismos tres.
+    Estable entre peticiones y despliegues (nada de enlaces aleatorios).
+    """
+    cc = str(codigo_pais or "").strip().upper()
+    resumen = pp_resumen(cc)
+    if not resumen:
+        return []
+    ficha = pp.apartado(cc, slug)
+    if not ficha:
+        return []
+    propio = str(ficha.get("capitulo_codigo") or "")
+    afines = _AFINIDAD_CAPITULOS.get(propio, ())
+    candidatos: list[dict] = []
+    for codigo_capitulo in afines:
+        for capitulo in resumen.get("capitulos") or []:
+            if capitulo.get("codigo") != codigo_capitulo:
+                continue
+            candidatos.extend(
+                {
+                    "nombre": ap["nombre"],
+                    "slug": ap["slug"],
+                    "capitulo": capitulo.get("nombre") or "",
+                    "ruta": pp.ruta_apartado(cc, ap["slug"]),
+                }
+                for ap in capitulo.get("apartados") or []
+                if ap.get("slug") and ap["slug"] != slug
+            )
+    if not candidatos:
+        return []
+    arranque = sum(ord(c) * (i + 1) for i, c in enumerate(str(slug))) % len(candidatos)
+    salto = max(1, len(candidatos) // max(1, limite))
+    elegidos: list[dict] = []
+    vistos: set[str] = set()
+    for i in range(limite * 4):
+        if len(elegidos) >= limite:
+            break
+        candidato = candidatos[(arranque + i * salto) % len(candidatos)]
+        if candidato["slug"] in vistos:
+            continue
+        vistos.add(candidato["slug"])
+        elegidos.append(candidato)
+    return elegidos
 
 
 def enlaces_catalogo(codigo_pais: str, semilla: str = "", limite: int = 5) -> dict | None:

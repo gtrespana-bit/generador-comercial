@@ -50,6 +50,8 @@ _RUTAS_FIJAS = frozenset(
         "/mapa-del-sitio",
         "/novedades",
         "/como-funciona",
+        "/calculadora",
+        "/en/calculadora",
         "/robots.txt",
         "/sitemap.xml",
         "/sitemap_index.xml",
