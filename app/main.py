@@ -19,6 +19,7 @@ from .logs import configurar_logs  # noqa: E402  (tras crear el logger)
 configurar_logs()
 
 from fastapi import FastAPI, Request  # noqa: E402
+from starlette.exceptions import HTTPException as StarletteHTTPException  # noqa: E402
 from fastapi.exceptions import RequestValidationError  # noqa: E402
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
@@ -226,6 +227,15 @@ class IdiomaMiddleware:
             await resp(scope, receive, send)
             return
         _m = _re.match(r"^/en(?:-([A-Za-z]{2}))?(/.*)?$", path)
+        # /en-us (sin barra) y /en-us/ servirían el mismo HTML con un 200
+        # cada una: dos URLs para una página. Se consolida en la que
+        # declaran la canónica y el sitemap, antes de reescribir.
+        if _m and _m.group(1) and not (_m.group(2) or ""):
+            from starlette.responses import RedirectResponse
+
+            resp = RedirectResponse(path + "/", status_code=301)
+            await resp(scope, receive, send)
+            return
         if _m:
             lang = "en"
             reescribir = True
@@ -543,6 +553,39 @@ _NO_CACHE = {
     "Cache-Control": "no-store, max-age=0",
     "Pragma": "no-cache",
 }
+
+
+def _quiere_html(request: Request) -> bool:
+    """¿La petición es una navegación del navegador y no una API/fetch?"""
+    path = str(getattr(request.url, "path", "") or "")
+    if path.startswith("/api/"):
+        return False
+    acepta = request.headers.get("accept", "")
+    return "text/html" in acepta or acepta in ("", "*/*")
+
+
+@app.exception_handler(StarletteHTTPException)
+async def _error_http(request: Request, exc: StarletteHTTPException):
+    """404 con página propia (y 405/410 intactos).
+
+    Una URL muerta devolvía ``{"detail":"Not Found"}``: correcto para una
+    API, pobre para una persona que llega desde un enlace viejo y, para el
+    rastreo, una página sin salidas. Se sirve un 404 real —nunca 200— con
+    enlaces a los hubs; el resto de códigos sigue respondiendo JSON.
+    """
+    headers = getattr(exc, "headers", None) or None
+    if exc.status_code == 404 and _quiere_html(request):
+        try:
+            from .routers.common import TEMPLATES
+
+            return TEMPLATES.TemplateResponse(
+                request, "404.html", {}, status_code=404, headers=headers
+            )
+        except Exception:  # nunca convertir un 404 en un 500
+            pass
+    return JSONResponse(
+        {"detail": exc.detail}, status_code=exc.status_code, headers=headers
+    )
 
 
 @app.exception_handler(RequestValidationError)

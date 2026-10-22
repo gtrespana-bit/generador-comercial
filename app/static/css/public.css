@@ -4230,6 +4230,61 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 /* Rótulo de cada bloque de la tabla de mercados (hispano / anglófono).
    Sin él, los cinco mercados de habla inglesa quedaban como una cola de
    filas al final de la lista y se leían como un apéndice. */
+/* Puente landing → catálogo público de precios (/mx/precios…). Mismo ancho y
+   ritmo vertical que la tabla de mercados para que no parezca un añadido. */
+/* 404 pública: ancho de lectura corto y acciones en una fila que rompe bien.
+   Los estilos van aquí y no en el HTML porque la CSP prohíbe `style=` y el
+   test de plantillas lo comprueba. */
+.error-404 {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+.error-404 .brand { margin-bottom: 1.6rem; }
+.error-404-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-top: 1.2rem;
+}
+
+.landing .mercados-precios {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2.4rem 1.5rem 3.2rem;
+}
+.landing .mercados-precios-int {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.6rem 1.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+}
+.landing .mercados-precios-int h2 { margin: .35rem 0 .6rem; font-size: 1.42rem; }
+.landing .mercados-precios-int .intro { color: var(--text-secondary); margin: 0 0 1rem; }
+.landing .mercados-precios-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem .6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.landing .mercados-precios-lista li { margin: 0; }
+.landing .mercados-precios-lista a {
+  display: inline-block;
+  padding: .34rem .7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: .84rem;
+  font-weight: 650;
+  color: var(--accent-h);
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+.landing .mercados-precios-lista a:hover { border-color: var(--accent-light); }
+
 .landing .mercado-bloque-titulo {
   position: relative;
   margin: 2.1rem auto .75rem;

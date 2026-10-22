@@ -15,7 +15,7 @@ guardia de ``services.precios_publicos``; aquí solo se enruta.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 from .common import TEMPLATES
@@ -31,7 +31,9 @@ def _mercado_precios(cc: str, request: Request, construir_ruta):
 
     codigo = str(cc or "").strip().upper()
     if codigo not in PAISES or codigo not in pp.paises_publicados():
-        return codigo, Response("Página no encontrada.", status_code=404)
+        # Raise y no Response: el manejador global sirve la 404 HTML con
+        # enlaces, la misma que ve quien llega desde un enlace viejo.
+        raise HTTPException(status_code=404)
     canonica = construir_ruta(codigo)
     original = str(getattr(request.state, "ruta_original", "") or request.url.path)
     if original.rstrip("/") != canonica.rstrip("/"):
@@ -51,7 +53,7 @@ def precios_indice(cc: str, request: Request):
         return respuesta
     ctx = contexto_indice(request, codigo)
     if ctx is None:
-        return Response("Página no encontrada.", status_code=404)
+        raise HTTPException(status_code=404)
     return TEMPLATES.TemplateResponse(request, "pais_precios.html", ctx)
 
 
@@ -69,7 +71,7 @@ def precios_apartado(cc: str, apartado: str, request: Request):
         return respuesta
     ctx = contexto_apartado(request, codigo, apartado)
     if ctx is None:
-        return Response("Página no encontrada.", status_code=404)
+        raise HTTPException(status_code=404)
     return TEMPLATES.TemplateResponse(request, "pais_precio_apartado.html", ctx)
 
 
@@ -87,7 +89,7 @@ def precios_partida(cc: str, apartado: str, partida: str, request: Request):
         return respuesta
     ctx = contexto_partida(request, codigo, apartado, partida)
     if ctx is None:
-        return Response("Página no encontrada.", status_code=404)
+        raise HTTPException(status_code=404)
     return TEMPLATES.TemplateResponse(request, "pais_precio_partida.html", ctx)
 
 
@@ -105,5 +107,5 @@ def sitemap_precios(cc: str, request: Request):
         str(cc or "").strip().upper(), origen_canonico(request)
     )
     if not entradas:
-        return Response("Página no encontrada.", status_code=404)
+        raise HTTPException(status_code=404)
     return Response(_xml_urlset(entradas), media_type="application/xml")

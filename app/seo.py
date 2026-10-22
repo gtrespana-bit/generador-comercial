@@ -19,7 +19,10 @@ from .branding import PRODUCT_NAME, value_proposition
 from .i18n import normalizar_idioma
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
 
-OG_IMAGE = "/static/og-cotizat.png"
+#: Imagen social 1200×630. JPEG y no PNG: la tarjeta es un degradado plano
+#: y el PNG pesaba 870 KB (WhatsApp y LinkedIn descartan previews así). El
+#: JPEG equivalente son 66 KB sin diferencia visible.
+OG_IMAGE = "/static/og-cotizat.jpg"
 SITEMAP_LASTMOD = "2026-10-19"
 
 # Temas con URL propia. Cada uno apunta a una intención de búsqueda distinta.
@@ -85,6 +88,11 @@ def es_indexable(path: str) -> bool:
     # hay que reconocerlo para no marcar toda la web en inglés como noindex.
     if p == "/en" or p.startswith("/en/") or p.startswith("/en-"):
         return _es_indexable_en(p)
+    if p.endswith((".xml", ".txt")):
+        # Sitemaps (incluidos los hijos de precios), robots.txt y el fichero
+        # de IndexNow. No son HTML, pero marcarlos noindex desde el
+        # middleware no tiene ningún sentido y confunde al diagnóstico.
+        return True
     if p in _INDEXABLES_EXACTAS:
         return True
     if p.startswith("/legal/") and p.count("/") == 2:
@@ -369,17 +377,44 @@ def _recortar_meta(texto: str, maximo: int = 160) -> str:
     return _sin_conector_final(corte.rstrip(" ,;·").rstrip()) + "…"
 
 
+#: Ancho útil del título en un resultado de Google (≈600 px). Pasarse no
+#: penaliza, pero lo que sobra se sustituye por «…» justo donde iba el país,
+#: que es la parte que hace clic en una búsqueda local.
+MAX_TITULO = 60
+
+#: Versiones cortas del oficio, para que el país quepa en el título.
+_OFICIO_CORTO = {
+    "software de presupuestos de construcción": "software de presupuestos",
+    "software de APU y análisis de precios unitarios": "software de APU",
+    "software de presupuestos de remodelación": "software de remodelación",
+}
+
+
 def titulo_publico(oficio: str, donde: str = "") -> str:
-    """Título de Google: marca primero, oficio después.
+    """Título de Google: marca primero, oficio después, país al final.
 
     Quien busca «CotizaT» o ve el snippet tiene que leer de un vistazo qué es
     (software de presupuestos de construcción/obra), no un nombre suelto.
+    Si con la marca no cabe el país («…en República Dominicana» son 21
+    caracteres más), se acorta el oficio y, en último caso, se sacrifica la
+    marca: el país es la señal que Google usa para la búsqueda local y el
+    nombre propio aún no lo busca nadie.
     """
     oficio = str(oficio or "").strip().rstrip(".")
     donde = str(donde or "").strip()
+    corto = _OFICIO_CORTO.get(oficio, oficio)
     if donde:
-        return f"{PRODUCT_NAME}: {oficio} en {donde}"
-    return f"{PRODUCT_NAME}: {oficio}"
+        candidatos = [
+            f"{PRODUCT_NAME}: {oficio} en {donde}",
+            f"{PRODUCT_NAME}: {corto} en {donde}",
+            f"{corto} en {donde}",
+        ]
+    else:
+        candidatos = [f"{PRODUCT_NAME}: {oficio}", f"{PRODUCT_NAME}: {corto}"]
+    for candidato in candidatos:
+        if len(candidato) <= MAX_TITULO:
+            return candidato
+    return candidatos[-1]
 
 
 # ---------------------------------------------------------------------------
@@ -1409,9 +1444,16 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
     ciudad = pais.get("ciudad_ejemplo") or ""
 
     if tema == "software-presupuestos":
-        title = titulo_publico(
-            "software de presupuestos de construcción",
-            nombre if codigo else "",
+        # El hub genérico no puede repetir el <title> de la home: son dos
+        # URLs distintas compitiendo por la misma consulta de marca y Google
+        # termina eligiendo una y marcando la otra como duplicada.
+        title = (
+            titulo_publico(
+                "software de presupuestos de construcción",
+                nombre,
+            )
+            if codigo
+            else "CotizaT: software de presupuestos de obra con APU y margen"
         )
         h1 = f"Software de presupuestos de construcción en {nombre}"
         lead = (
@@ -1577,7 +1619,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         faq = faq_local + faq
     return _aplicar_prueba({
         "title": title,
-        "description": description[:170],
+        "description": _recortar_meta(description, 155),
         "h1": h1,
         "lead": lead,
         "body": body,
@@ -1638,11 +1680,18 @@ def jsonld_organizacion(request: Request | None = None, lang: str = "es") -> dic
     clave_pais = "nombre_en" if lang == "en" else "nombre"
     return {
         "@context": "https://schema.org",
+        "@id": origen + "/#organization",
         "@type": "Organization",
         "name": PRODUCT_NAME,
         "legalName": PRODUCT_NAME + " · Presupuestos",
         "url": origen + "/",
-        "logo": origen + "/static/icono.png",
+        "logo": {
+            "@type": "ImageObject",
+            "url": origen + "/static/icono-512.png",
+            "width": 512,
+            "height": 512,
+        },
+        "image": origen + OG_IMAGE,
         "email": "soporte@cotizat.online",
         "description": value_proposition(lang),
         "areaServed": [{"@type": "Country", "name": PAISES[c][clave_pais]} for c in ORDEN_SELECTOR],
@@ -1659,11 +1708,12 @@ def jsonld_website(request: Request | None = None, lang: str = "es") -> dict:
     origen = origen_canonico(request)
     return {
         "@context": "https://schema.org",
+        "@id": origen + "/#website",
         "@type": "WebSite",
         "name": PRODUCT_NAME,
         "url": origen + "/",
         "inLanguage": ["es", "es-VE", "es-CO", "es-MX", "es-PE", "es-EC", "es-PA", "es-SV", "es-CL", "es-AR", "es-DO", "es-UY", "es-PY", "es-BO", "es-CR", "es-GT", "es-HN", "es-NI", "es-ES", "en", "en-US", "en-GB"],
-        "publisher": {"@type": "Organization", "name": PRODUCT_NAME},
+        "publisher": {"@id": origen + "/#organization"},
         "description": value_proposition(lang),
     }
 
@@ -1675,11 +1725,23 @@ def jsonld_software(request: Request | None = None, codigo: str = "", lang: str 
     pais = PAISES.get(str(codigo or "").upper())
     # El país se nombra en el idioma de la página: un schema en inglés que
     # anuncia «Reino Unido» delata que el dato viene del registro español.
+    clave_area = "nombre_en" if en else "nombre"
+
+    def _area(codigo: str) -> dict:
+        # ``nombre_en`` está escrito para fluir en una frase («the United
+        # Kingdom»); en schema, el nombre del país va sin artículo.
+        nombre = (PAISES[codigo].get(clave_area) or PAISES[codigo]["nombre"]).strip()
+        if nombre.lower().startswith("the "):
+            nombre = nombre[4:]
+        return {"@type": "Country", "name": nombre}
+
     if pais:
-        nombre_area = (pais.get("nombre_en") or pais["nombre"]) if en else pais["nombre"]
+        area = _area(str(codigo).upper())
     else:
-        nombre_area = "Latin America" if en else "Latinoamérica"
-    area = {"@type": "Country", "name": nombre_area}
+        # La home genérica no es un país: «Latinoamérica» no es un Country y
+        # Search Console lo marcaba como área no válida. Se enumeran los
+        # mercados reales, que es lo que el producto cubre de verdad.
+        area = [_area(c) for c in ORDEN_SELECTOR]
     if en:
         url_app = origen + ruta_en(codigo)
         url_precio = origen + "/en/pago"
@@ -1688,6 +1750,7 @@ def jsonld_software(request: Request | None = None, codigo: str = "", lang: str 
         url_precio = origen + "/pago"
     return {
         "@context": "https://schema.org",
+        "@id": url_app + "#software",
         "@type": "SoftwareApplication",
         "name": PRODUCT_NAME,
         "applicationCategory": "BusinessApplication",
@@ -1772,7 +1835,7 @@ def jsonld_webpage(
         "@type": page_type,
         "name": title,
         "url": origen + path,
-        "isPartOf": {"@type": "WebSite", "name": PRODUCT_NAME, "url": origen + "/"},
+        "isPartOf": {"@id": origen + "/#website"},
         "inLanguage": (lang or "es"),
         "dateModified": SITEMAP_LASTMOD,
     }
@@ -1872,12 +1935,8 @@ def jsonld_articulo(guia: dict, request: Request | None = None, lang: str = "es"
         "mainEntityOfPage": origen + path,
         "datePublished": SITEMAP_LASTMOD,
         "dateModified": SITEMAP_LASTMOD,
-        "author": {"@type": "Organization", "name": PRODUCT_NAME},
-        "publisher": {
-            "@type": "Organization",
-            "name": PRODUCT_NAME,
-            "logo": {"@type": "ImageObject", "url": origen + "/static/icono.png"},
-        },
+        "author": {"@id": origen + "/#organization"},
+        "publisher": {"@id": origen + "/#organization"},
         "image": origen + OG_IMAGE,
     }
 
@@ -1938,7 +1997,10 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
     bloques = [
         jsonld_organizacion(request, lang=lang),
         jsonld_website(request, lang=lang),
-        jsonld_webpage(request, path, guia["h1"], guia["description"], "Article", lang=locale),
+        # WebPage, no Article: el Article completo lo emite jsonld_articulo()
+        # unas líneas más abajo. Dos nodos Article para la misma URL con
+        # fechas y autores distintos es schema duplicado y contradictorio.
+        jsonld_webpage(request, path, guia["h1"], guia["description"], "WebPage", lang=locale),
         jsonld_articulo(guia, request, lang=lang),
         jsonld_breadcrumb(request, crumbs),
     ]
@@ -1948,23 +2010,28 @@ def contexto_guia(request: Request, slug: str) -> dict | None:
         bloques.append(jsonld_howto(guia, request, lang=lang))
     if seo["faq"]:
         bloques.append(jsonld_faq(seo["faq"]))
-    if mercado_especifico:
+    if mercado_especifico and en:
+        # Artículo de mercado en su idioma (en-GB): no tiene versión en
+        # español, así que se declara con su locale y x-default.
         hreflang = [
             {"hreflang": locale, "href": origen + path},
             {"hreflang": "x-default", "href": origen + path},
         ]
+    elif mercado_especifico:
+        hreflang = enlaces_guia(guia["slug"], origen)
     else:
-        hreflang = [{"hreflang": "es", "href": origen + _ruta_guia(guia["slug"], "es")}]
-        try:
-            from .seo_contenido import GUIAS_EN
+        hreflang = enlaces_guia(guia["slug"], origen)
+    # Enlaces al catálogo de precios del mercado (Fase 5): las guías son las
+    # páginas que primero rankean y no enlazaban a ninguna de las 47.000.
+    catalogo = None
+    if pais_guia:
+        from .seo_precios import enlaces_catalogo
 
-            if en or slug in GUIAS_EN:
-                hreflang.append({"hreflang": "en", "href": origen + _ruta_guia(guia["slug"], "en")})
-        except Exception:
-            pass
+        catalogo = enlaces_catalogo(pais_guia, guia["slug"])
     return {
         "seo": seo,
         "guia": guia,
+        "catalogo_precios": catalogo,
         "guias": lista_guias(),
         "guias_en": (
             [
@@ -2045,8 +2112,14 @@ def contexto_seo(
         if tema:
             crumbs.append((ficha["h1"], ficha["canonical_path"]))
     bloques_ld.append(jsonld_breadcrumb(request, crumbs))
+    catalogo = None
+    if codigo:
+        from .seo_precios import enlaces_catalogo
+
+        catalogo = enlaces_catalogo(codigo, f"{codigo}-{tema}")
     return {
         "seo": ficha,
+        "catalogo_precios": catalogo,
         "origen_seo": origen,
         "canonical_url": canonical,
         "hreflang_links": enlaces_hreflang(request, tema),
@@ -2288,34 +2361,34 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         if mercado.get("idioma") != "es":
             continue
         ruta = _ruta_guia(articulo["slug"], "es")
-        locale_art = hreflang_pais(pais_articulo)
-        add(
-            ruta,
-            "0.7",
-            "monthly",
-            alts=[
-                {"hreflang": locale_art, "href": base + ruta},
-                {"hreflang": "x-default", "href": base + ruta},
-            ],
-        )
-    # Guías en inglés (solo las traducidas): se declaran como par es/en.
+        add(ruta, "0.7", "monthly", alts=enlaces_guia(articulo["slug"], base))
+    # Pares es/en de guías traducidas. La ruta española NO siempre es
+    # /guia/x: un artículo de mercado vive en su silo (/co/guia/x) y su
+    # traducción en el hub inglés (/en/guia/x). Se declaran ambas en los dos
+    # sentidos y con x-default (la española); un hreflang de un solo sentido
+    # lo descarta Google.
     try:
         from .seo_contenido import GUIAS_EN
 
-        for slug in GUIAS_EN:
-            ruta_es = f"/guia/{slug}"
-            ruta_en = f"/en/guia/{slug}"
-            pares = [
-                {"hreflang": "es", "href": base + ruta_es},
-                {"hreflang": "en", "href": base + ruta_en},
-            ]
-            for ruta, alt in ((ruta_es, pares), (ruta_en, pares)):
-                if not any(o["loc"] == base + ruta for o in out):
+        slugs_traducidos = list(GUIAS_EN) + [
+            articulo["slug"]
+            for articulo in lista_articulos()
+            if _tiene_version_en(articulo["slug"])
+            and (
+                (PAISES.get(str(articulo.get("pais") or "").upper()) or {}).get(
+                    "idioma"
+                )
+                != "en"
+            )
+        ]
+        for slug in dict.fromkeys(slugs_traducidos):
+            pares = enlaces_guia(slug, base)
+            for ruta in (_ruta_guia(slug, "es"), f"/en/guia/{slug}"):
+                existente = next((o for o in out if o["loc"] == base + ruta), None)
+                if existente is None:
                     add(ruta, "0.7", "monthly", alts=pares)
                 else:
-                    for o in out:
-                        if o["loc"] == base + ruta:
-                            o["alternates"] = pares
+                    existente["alternates"] = pares
     except Exception:
         pass
     # Artículos de mercado con URL propia (/en-gb/guia/...). No tienen
@@ -2353,6 +2426,42 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         add(ruta_es, "0.3", "yearly", alts=pares)
         add(ruta_en, "0.3", "yearly", alts=pares)
     return out
+
+
+def enlaces_guia(slug: str, origen: str) -> list[dict]:
+    """hreflang de una guía o artículo: español (con su locale), inglés y x-default.
+
+    Fuente única para el <head> y para el sitemap: si divergen, Search
+    Console marca el hreflang como incoherente y descarta el par.
+
+    - Guía pilar: ``es`` ↔ ``en`` en /guia/x y /en/guia/x.
+    - Artículo de mercado: ``es-CO`` (o el locale del mercado) en su silo
+      /co/guia/x ↔ ``en`` en /en/guia/x, que es donde vive su traducción.
+    - x-default apunta siempre a la española, que es la que existe.
+    """
+    from .seo_articulos import ficha_articulo
+
+    articulo = ficha_articulo(slug, "es") or {}
+    pais_art = str(articulo.get("pais") or "").strip().upper()
+    mercado_art = PAISES.get(pais_art) or {}
+    locale_es = hreflang_pais(pais_art) if mercado_art.get("idioma") == "es" else "es"
+    ruta_es = origen + _ruta_guia(slug, "es")
+    salida = [{"hreflang": locale_es, "href": ruta_es}]
+    if _tiene_version_en(slug):
+        salida.append({"hreflang": "en", "href": origen + f"/en/guia/{slug}"})
+    salida.append({"hreflang": "x-default", "href": ruta_es})
+    return salida
+
+
+def _tiene_version_en(slug: str) -> bool:
+    """¿Este artículo hispano tiene traducción inglesa publicada en /en/guia/?"""
+    try:
+        from .seo_articulos import ficha_articulo
+        from .seo_contenido import ficha_guia
+
+        return bool(ficha_articulo(slug, "en") or ficha_guia(slug, lang="en"))
+    except Exception:
+        return False
 
 
 def _sitemap_con_hreflang(path: str, tema: str = "") -> bool:
@@ -2416,6 +2525,10 @@ def robots_txt(request: Request | None = None) -> str:
         "Disallow: /api/",
         "Disallow: /demo",
         "",
+        # El índice es la única línea que hace falta: contiene el sitemap
+        # principal y los hijos de precios. Se deja también el principal
+        # para no romper a quien ya lo tenga enviado en Search Console.
+        f"Sitemap: {origen}/sitemap_index.xml",
         f"Sitemap: {origen}/sitemap.xml",
     ]
     # Sitemaps hijos de precios (Fase 5), uno por país publicado. El

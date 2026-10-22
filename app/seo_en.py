@@ -78,7 +78,7 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "Estimating software for US contractors: researched 2026 prices, "
             "feet & square feet, sales tax by state, margin-checked PDFs."
         ),
-        "titulo_hub": "CotizaT: construction estimating software with US prices built in",
+        "titulo_hub": "CotizaT: estimating software with US prices built in",
         "h1_hub": "Construction estimating software for the United States",
         "desc_hub": (
             "Construction estimating software with a researched US price library, "
@@ -97,6 +97,11 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
         "autoridad": "HM Revenue and Customs (HMRC)",
         "ciudad": "London",
         "precios": "",
+        # Landing y hub con títulos distintos (UK, más corto, deja sitio a
+        # la condición fiscal) y ninguno por encima de 60 caracteres.
+        "titulo_landing": "CotizaT: estimating software for UK builders and trades",
+        "titulo_hub": "CotizaT: estimating software for the UK (CIS, VAT)",
+        "h1_hub": "Construction estimating software for the United Kingdom",
         "nota": (
             "VAT on construction in the United Kingdom depends on the work: "
             "the standard rate, the reduced rate and the zero rate all apply "
@@ -124,7 +129,7 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "Quoting software for Aussie builders and tradies: award-based "
             "labour costs, researched 2026 prices in AUD, GST-inclusive PDFs."
         ),
-        "titulo_hub": "CotizaT: construction estimating software for Australia (GST-ready)",
+        "titulo_hub": "CotizaT: estimating software for Australia (GST)",
         "h1_hub": "Construction estimating software for Australia",
         "desc_hub": (
             "Estimating software for Australia: MA000020 award costing with "
@@ -156,7 +161,7 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "Estimating software for Canadian contractors: Job Bank-based "
             "labour costs, researched 2026 prices in CAD, GST/HST by province."
         ),
-        "titulo_hub": "CotizaT: construction estimating software for Canada (GST/HST)",
+        "titulo_hub": "CotizaT: estimating software for Canada (GST/HST)",
         "h1_hub": "Construction estimating software for Canada",
         "desc_hub": (
             "Construction estimating software for Canada: unit price analysis, "
@@ -189,7 +194,7 @@ _PAISES_EN: dict[str, dict[str, Any]] = {
             "Estimating software for Irish builders: researched 2026 prices in "
             "EUR, 13.5 % VAT with the two-thirds rule checked, RCT splits."
         ),
-        "titulo_hub": "CotizaT: construction estimating software for Ireland (13.5 % VAT)",
+        "titulo_hub": "CotizaT: estimating software for Ireland (13.5 % VAT)",
         "h1_hub": "Construction estimating software for Ireland",
         "desc_hub": (
             "Construction estimating software for Ireland: SEO-based labour "
@@ -665,7 +670,13 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
     vocab = d["vocabulario"]
 
     if tema == "software-presupuestos":
-        title = f"CotizaT: construction estimating software{' for ' + nombre if codigo else ''}"
+        # El hub genérico no repite el <title> de la home inglesa: dos URLs
+        # con el mismo título compiten por la misma consulta.
+        title = (
+            f"CotizaT: construction estimating software for {nombre}"
+            if codigo
+            else "CotizaT: estimating software with APU and margin control"
+        )
         h1 = f"Construction estimating software for {nombre}"
         # Landing y hub compartían <title> y H1 en los cuatro mercados
         # (GB se salvaba por su titular propio): el hub tiene intención y

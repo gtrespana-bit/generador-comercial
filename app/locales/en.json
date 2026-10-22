@@ -67,5 +67,20 @@
   "precios.cta.planes": "See plans",
   "precios.cta.texto": "Add this item to an editable estimate, adjust quantities and prices, and generate the PDF for your client.",
   "precios.faq": "Frequently asked questions",
-  "precios.volver_apartado": "See all items in {apartado}"
+  "precios.volver_apartado": "See all items in {apartado}",
+  "error404.titulo": "Page not found",
+  "error404.texto": "This address does not exist or the link is out of date. What you are looking for may be somewhere else:",
+  "error404.inicio": "Go to home",
+  "error404.mapa": "Site map",
+  "error404.guias": "Estimating guides",
+  "error404.precios": "Unit prices by country",
+  "error404.como": "How it works",
+  "precios.rango.titulo": "{apartado} price range in {pais}",
+  "precios.rango.texto": "{n} items published with their full price: from {minimo} to {maximo}, average {medio}. Input prices checked {mes}.",
+  "precios.rango.como": "How to read this price",
+  "precios.rango.como.texto": "Each price is for one unit of the item, built from the catalog breakdown: materials, labor and equipment with their output rates. It is a reference price with a typical contractor margin, not a fixed offer: the site, the quantities and your suppliers move it. Open any item to see the breakdown line by line.",
+  "precios.rango.enlaces": "Keep exploring",
+  "precios.rango.indice": "All prices in {pais}",
+  "precios.rango.guia": "Guide: how a unit price analysis works",
+  "precios.rango.capitulo": "More sections in {capitulo}"
 }
