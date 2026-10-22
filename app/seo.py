@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 
 from fastapi import Request
 
+from . import social
 from .branding import PRODUCT_NAME, value_proposition
 from .i18n import normalizar_idioma
 from .paises import ORDEN_SELECTOR, PAISES, PAIS_GENERICO, lista_paises
@@ -1832,6 +1833,10 @@ def jsonld_organizacion(request: Request | None = None, lang: str = "es") -> dic
             "contactType": "customer support",
             "availableLanguage": ["es", "en"],
         },
+        # sameAs: une la marca con sus perfiles. Sin esto, «CotizaT» de
+        # Facebook y cotizat.online son para el buscador dos entidades
+        # distintas con el mismo nombre.
+        "sameAs": social.same_as(),
     }
 
 

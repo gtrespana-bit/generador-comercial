@@ -4,6 +4,13 @@
   <meta name="description" content="{{ seo.description }}">
   <meta name="robots" content="{{ robots_meta(request) }}">
   <meta name="author" content="{{ product_name }}">
+  {% set _meta_dominio = verificacion_dominio_meta() %}
+  {% if _meta_dominio %}
+  {# Verificación de propiedad del dominio en Meta Business Manager. Solo
+     aparece si COTIZAT_FACEBOOK_DOMAIN_VERIFICATION está puesta: el sitio no
+     anuncia una verificación que no existe. #}
+  <meta name="facebook-domain-verification" content="{{ _meta_dominio }}">
+  {% endif %}
   <link rel="canonical" href="{{ canonical_url }}">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   {# Un hreflang desde una página noindex no vale nada: Search Console lo

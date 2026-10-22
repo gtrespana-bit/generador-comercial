@@ -35,6 +35,14 @@
             Direct support
           </span>
         </div>
+        {% if social_enlaces %}
+        <nav class="footer-social" aria-label="{{ product_name }} profiles">
+          {% for red in social_enlaces %}
+          <a href="{{ red.url }}" rel="me noopener" target="_blank"
+             title="{{ product_name }} on {{ red.nombre }}">{{ red.nombre }}</a>
+          {% endfor %}
+        </nav>
+        {% endif %}
       </div>
 
       <nav class="footer-col" aria-label="Product">
