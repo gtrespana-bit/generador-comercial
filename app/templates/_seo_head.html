@@ -2,13 +2,18 @@
 {% if seo is defined %}
   <title>{{ seo.title }}</title>
   <meta name="description" content="{{ seo.description }}">
-  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="robots" content="{{ robots_meta(request) }}">
   <meta name="author" content="{{ product_name }}">
   <link rel="canonical" href="{{ canonical_url }}">
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  {# Un hreflang desde una página noindex no vale nada: Search Console lo
+     descarta y, mientras tanto, anuncia variantes que no existen. El espejo
+     en inglés de un mercado hispano (/en-mx/apu) no declara ninguna. #}
+  {% if not espejo_idioma(request) %}
   {% for alt in hreflang_links %}
   <link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
   {% endfor %}
+  {% endif %}
   {# Iconos: favicon, apple-touch-icon y manifest PWA. #}
   <link rel="icon" type="image/png" href="/static/icono.png">
   <link rel="apple-touch-icon" href="/static/icono-180.png">
@@ -23,7 +28,7 @@
   <meta property="og:type" content="{{ og_type | default('website') }}">
   <meta property="og:site_name" content="{{ product_name }}">
   <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">
-  {% if hreflang_links %}
+  {% if hreflang_links and not espejo_idioma(request) %}
   {# ``alternate`` no incluye el idioma de la propia página: repetirlo como
      alternativo es una contradicción que Open Graph permite pero que no
      aporta nada (Meta lo ignora y algunos validadores lo marcan). #}

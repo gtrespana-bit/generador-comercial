@@ -138,13 +138,32 @@ def ruta_en_idioma(path: str, idioma: str | None = None) -> str:
     # El slug del hub también cambia de idioma (/apu <-> /unit-price-analysis).
     # Sin esto, el conmutador mandaba a /en/apu, que ahora responde 301: un
     # salto de más en cada cambio de idioma y una URL española en la barra.
-    resto = _slug_tema_traducido(resto, normalizar_idioma(idioma))
-    if normalizar_idioma(idioma) == "en":
+    lang = normalizar_idioma(idioma)
+    resto = _slug_tema_traducido(resto, lang)
+    if lang == "en":
         prefijo = "/en" + (f"-{pais}" if pais else "")
         return prefijo if resto == "/" else prefijo + resto
+    # Los mercados de habla inglesa no tienen versión en español: su
+    # subdirectorio (/us/apu) es la ruta interna y hoy responde 301 a
+    # /en-us/unit-price-analysis. Devolverlo aquí mandaba al visitante a la
+    # página inglesa otra vez, así que «ES» desde /en-us/ no hacía nada. La
+    # versión española de esa página es la genérica, sin país.
+    if pais and _mercado_en_ingles(pais):
+        pais = ""
     if pais:
         return f"/{pais}" if resto == "/" else f"/{pais}{resto}"
     return resto or "/"
+
+
+def _mercado_en_ingles(pais: str) -> bool:
+    """¿El mercado ``pais`` tiene el inglés como idioma?"""
+    try:
+        from .paises import PAISES
+
+        datos = PAISES.get(str(pais or "").upper()) or {}
+        return str(datos.get("idioma") or "es") == "en"
+    except Exception:  # pragma: no cover - ciclo defensivo
+        return False
 
 
 def _slug_tema_traducido(resto: str, idioma: str) -> str:
