@@ -207,6 +207,22 @@ class IdiomaMiddleware:
         reescribir = False
         import re as _re
 
+        from .alias_paises import destino_alias, normalizar_barra, ubicacion
+
+        # Alias de país (/colombia, /reino-unido/precios…) y barra final
+        # sobrante: las dos son redirecciones permanentes que se resuelven
+        # antes de enrutar, para que exista un solo salto hasta la canónica.
+        # Solo GET/HEAD: un POST no se debe convertir en un GET silencioso.
+        if scope.get("method") in ("GET", "HEAD"):
+            query = (scope.get("query_string") or b"").decode("latin-1")
+            destino = destino_alias(path) or normalizar_barra(path)
+            if destino and destino != path:
+                from starlette.responses import RedirectResponse
+
+                resp = RedirectResponse(ubicacion(destino, query), status_code=301)
+                await resp(scope, receive, send)
+                return
+
         from .cache_publico import es_ruta_publica_cacheable
 
         # Superficie pública cacheable en el CDN (Fase 1.2): el contenido

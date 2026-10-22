@@ -24,7 +24,10 @@
   <meta property="og:site_name" content="{{ product_name }}">
   <meta property="og:locale" content="{{ (seo.lang or 'es') | replace('-', '_') }}">
   {% if hreflang_links %}
-  {% for alt in hreflang_links if alt.hreflang != 'x-default' %}
+  {# ``alternate`` no incluye el idioma de la propia página: repetirlo como
+     alternativo es una contradicción que Open Graph permite pero que no
+     aporta nada (Meta lo ignora y algunos validadores lo marcan). #}
+  {% for alt in hreflang_links if alt.hreflang != 'x-default' and alt.hreflang != (seo.lang or 'es') %}
   <meta property="og:locale:alternate" content="{{ alt.hreflang | replace('-', '_') }}">
   {% endfor %}
   {% endif %}
