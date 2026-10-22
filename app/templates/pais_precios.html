@@ -57,6 +57,10 @@
   </p>
   {% endif %}
 </article>
+  {% if ruta_comparador %}
+  <p class="precios-comparador">{{ ('cmp.desde_indice' | t(_idioma)).format(pais=nombre_pais) }}
+    <a href="{{ ruta_comparador }}">{{ 'cmp.desde_indice_enlace' | t(_idioma) }}</a></p>
+  {% endif %}
   {% if json_url %}
   <p class="precios-json">{{ 'precios.json_texto' | t(_idioma) }}
     <a href="{{ json_url }}" download>{{ 'precios.json_enlace' | t(_idioma) }}</a></p>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="{{ seo.lang or 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "_seo_head.html" %}
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <link rel="stylesheet" href="{{ 'css/precios.css' | asset }}">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+</head>
+<body class="landing hub-page">
+{% include "_nav_en.html" if _idioma == 'en' else "_nav.html" %}
+<article class="hub-hero-int guia-articulo">
+  <nav class="hub-crumbs" aria-label="{{ 'nav.breadcrumb' | t(_idioma, default='Migas de pan') }}">
+    {% for nombre, ruta in crumbs %}{% if not loop.last %}<a href="{{ ruta }}">{{ nombre }}</a> <span aria-hidden="true">/</span> {% else %}<span>{{ nombre }}</span>{% endif %}{% endfor %}
+  </nav>
+
+  <h1>{{ seo.h1 }}</h1>
+
+  {% if nombre_capitulo %}
+  <p class="sub">{{ ('cmp.intro_cap' | t(_idioma)).format(n=n_partidas_txt, capitulo=nombre_capitulo, n_mercados=n_mercados, fecha=tasa_fecha) }}</p>
+  {% else %}
+  <p class="sub">{{ ('cmp.intro' | t(_idioma)).format(n=n_partidas_txt, n_mercados=n_mercados, fecha=tasa_fecha) }}</p>
+  {% endif %}
+
+  <div class="precios-tabla-wrap">
+    <table class="precios-tabla cmp-tabla">
+      <caption>{{ ('cmp.tabla_caption' | t(_idioma)).format(n=n_partidas_txt) }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'cmp.puesto' | t(_idioma) }}</th>
+          <th scope="col">{{ 'cmp.mercado' | t(_idioma) }}</th>
+          <th scope="col">{{ 'cmp.indice' | t(_idioma) }}</th>
+          <th scope="col">{{ 'cmp.vs_mediana' | t(_idioma) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in filas %}
+        <tr{% if loop.first %} class="cmp-mas-caro"{% endif %}{% if loop.last %} class="cmp-mas-barato"{% endif %}>
+          <td>{{ loop.index }}</td>
+          <th scope="row"><span aria-hidden="true">{{ f.bandera }}</span> <a href="{{ f.ruta }}">{{ f.nombre }}</a></th>
+          <td>{{ ('%g' % f.indice) | replace('.', ',' if _idioma != 'en' else '.') }}</td>
+          <td>{% if f.indice >= 100 %}+{% endif %}{{ ('%g' % (f.indice - 100)) | replace('.', ',' if _idioma != 'en' else '.') }} %</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>{{ 'cmp.lectura_titulo' | t(_idioma) }}</h2>
+  <p>{{ ('cmp.lectura1' | t(_idioma)).format(mayor=mayor.nombre, menor=menor.nombre, n=n_mercados) }}</p>
+  <p>{{ 'cmp.lectura2' | t(_idioma) }}</p>
+  <p>{{ 'cmp.lectura3' | t(_idioma) }}</p>
+
+  {% if partidas %}
+  <h2>{{ 'cmp.partidas_titulo' | t(_idioma) }}</h2>
+  <p>{{ 'cmp.partidas_texto' | t(_idioma) }}
+    {% if nombre_capitulo %}<span class="cmp-codigo">{{ ('cmp.mostradas' | t(_idioma)).format(n=n_partidas_txt) }}</span>{% endif %}</p>
+  <div class="precios-tabla-wrap">
+    <table class="precios-tabla cmp-tabla">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'cmp.partida' | t(_idioma) }}</th>
+          <th scope="col">{{ 'cmp.unidad' | t(_idioma) }}</th>
+          <th scope="col">{{ 'cmp.mediana' | t(_idioma) }}</th>
+          {% if nombre_capitulo %}<th scope="col">{{ 'cmp.rango' | t(_idioma) }}</th>{% endif %}
+          <th scope="col">{{ 'cmp.diferencia' | t(_idioma) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in partidas %}
+        <tr>
+          <td>{{ p.nombre }} <span class="cmp-codigo">{{ p.codigo }}</span></td>
+          <td>{{ p.unidad_txt }}</td>
+          <td>{{ p.mediana_txt }}</td>
+          {% if nombre_capitulo %}<td>{{ p.min_usd }} – {{ p.max_usd }}</td>{% endif %}
+          <td>{{ ('%.1f' % p.cociente) | replace('.', ',' if _idioma != 'en' else '.') }}× <span class="cmp-extremos">{{ p.barato.nombre }} → {{ p.caro.nombre }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <h2>{{ 'cmp.como_titulo' | t(_idioma) }}</h2>
+  <p>{{ ('cmp.como1' | t(_idioma)).format(n=n_partidas_txt, n_mercados=n_mercados) }}</p>
+  <ul>
+    <li>{{ ('cmp.como2' | t(_idioma)).format(fecha=tasa_fecha) }}</li>
+    <li>{{ 'cmp.como3' | t(_idioma) }}</li>
+    <li>{{ 'cmp.como4' | t(_idioma) }}</li>
+  </ul>
+
+  {% if capitulos %}
+  <h2>{{ 'cmp.capitulos' | t(_idioma) }}</h2>
+  <ul class="precios-lista">
+    {% if nombre_capitulo %}
+    <li><a href="{{ ruta_comparador }}">{{ 'cmp.ver_todos' | t(_idioma) }}</a></li>
+    {% endif %}
+    {% for c in capitulos %}
+    <li><a href="{{ c.ruta }}">{{ c.nombre }}</a> <span class="cmp-codigo">{{ c.n }} {{ 'cmp.partidas' | t(_idioma) }}</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if faq %}
+  <h2>{{ 'cmp.faq_titulo' | t(_idioma) }}</h2>
+  {% for item in faq %}
+  <details>
+    <summary>{{ item.q }}</summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+  {% endif %}
+
+  <h2>{{ 'cmp.seguir' | t(_idioma) }}</h2>
+  <ul class="precios-lista">
+    <li><a href="{{ '/en/prices-comparison.json' if _idioma == 'en' else '/precios-comparados.json' }}" download>{{ 'cmp.json' | t(_idioma) }}</a></li>
+    <li><a href="{{ '/en/calculadora' if _idioma == 'en' else '/calculadora' }}">{{ 'cmp.calc' | t(_idioma) }}</a></li>
+  </ul>
+</article>
+<section class="franja cta-final">
+  <h2>{{ 'cmp.cta_titulo' | t(_idioma) }}</h2>
+  <p class="intro">{{ ('cmp.cta_texto' | t(_idioma)).format(producto=product_name) }}</p>
+  <div class="acciones mt-3">
+    <a class="btn btn-primary" href="/acceso">{{ ('cmp.cta_boton' | t(_idioma)).format(producto=product_name) }}</a>
+    <a class="btn btn-secondary" href="{{ ruta_comparador }}">{{ 'cmp.cta_ver' | t(_idioma) }}</a>
+  </div>
+</section>
+{% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+</body>
+</html>

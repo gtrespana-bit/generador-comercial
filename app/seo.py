@@ -49,6 +49,7 @@ _INDEXABLES_EXACTAS = frozenset(
         "/guia/presupuesto-de-obra",
         "/guia/analisis-precios-unitarios",
         "/guia/presupuesto-remodelacion",
+        "/precios-comparados",
     }
 )
 
@@ -129,6 +130,13 @@ def es_indexable(path: str) -> bool:
         return True
     if p.startswith("/guia/") and p.count("/") == 2:
         return True
+    # Comparador internacional (portada y capítulos).
+    if p == "/precios-comparados" or (
+        p.startswith("/precios-comparados/") and p.count("/") == 2
+    ):
+        return True
+    if p == "/precios-comparados.json":
+        return True
     if p.startswith("/static/"):
         return True
     partes = [seg for seg in p.split("/") if seg]
@@ -183,6 +191,12 @@ def _es_indexable_en(p: str) -> bool:
     if ruta in _INDEXABLES_EN:
         return True
     if ruta.startswith("/en/guia/") and ruta.count("/") == 3:
+        return True
+    if ruta == "/en/prices-comparison" or (
+        ruta.startswith("/en/prices-comparison/") and ruta.count("/") == 3
+    ):
+        return True
+    if ruta == "/en/prices-comparison.json":
         return True
     # /en-mx/, /en-mx/apu ... (misma regla que el subdirectorio en español)
     m = re.match(r"^/en-([A-Za-z]{2})(?:/(.*))?$", ruta)
@@ -2448,6 +2462,28 @@ def urls_sitemap(request: Request | None = None) -> list[dict]:
         ]
         add(ruta_es, prio, freq, alts=pares)
         add(ruta_en, prio, freq, alts=pares)
+    # Comparador internacional de precios: portada + una página por capítulo de
+    # obra, en los dos idiomas. Es el único contenido del sitio que compara los
+    # 22 mercados entre sí, y la página que puede captar búsquedas del tipo
+    # «precio de la construcción en X vs Y».
+    from .comparador import capitulos_publicados, ruta_capitulo, ruta_comparador
+
+    pares_cmp = [
+        {"hreflang": "es", "href": base + ruta_comparador("es")},
+        {"hreflang": "en", "href": base + ruta_comparador("en")},
+    ]
+    add(ruta_comparador("es"), "0.9", "weekly", alts=pares_cmp)
+    add(ruta_comparador("en"), "0.9", "weekly", alts=pares_cmp)
+    for codigo in capitulos_publicados():
+        ruta_es = ruta_capitulo("es", codigo)
+        ruta_en = ruta_capitulo("en", codigo)
+        pares_cap = [
+            {"hreflang": "es", "href": base + ruta_es},
+            {"hreflang": "en", "href": base + ruta_en},
+        ]
+        add(ruta_es, "0.7", "monthly", alts=pares_cap)
+        add(ruta_en, "0.7", "monthly", alts=pares_cap)
+
     # Guías pilar (sin país) y artículos de mercado (dentro de su silo) son
     # dos arquitecturas distintas. No se publican artículos españoles bajo
     # /guia/: esa URL histórica redirige a /es/guia/… y no entra al sitemap.

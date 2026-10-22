@@ -74,3 +74,62 @@
   padding: .85rem 1.1rem;
   margin: 1.25rem 0;
 }
+
+/* ── Comparador internacional de precios ──────────────────────────────────
+   Tabla de niveles por mercado y tabla de la misma partida en cada país.
+   La primera y la última fila del ranking se marcan para que el extremo se
+   lea de un vistazo: es lo que la gente viene a ver. */
+.cmp-tabla td:first-child,
+.cmp-tabla th:first-child {
+  width: 3.5rem;
+  color: var(--color-texto-suave, #5b6472);
+}
+
+.cmp-tabla .cmp-mas-caro th,
+.cmp-tabla .cmp-mas-caro td {
+  font-weight: 700;
+}
+
+.cmp-tabla .cmp-mas-caro {
+  background: color-mix(in srgb, #d64545 8%, transparent);
+}
+
+.cmp-tabla .cmp-mas-barato {
+  background: color-mix(in srgb, #2f8f5b 8%, transparent);
+}
+
+.cmp-codigo {
+  color: var(--color-texto-suave, #5b6472);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cmp-extremos {
+  color: var(--color-texto-suave, #5b6472);
+  display: block;
+  font-size: 0.8rem;
+}
+
+.cmp-tabla .cmp-este th,
+.cmp-tabla .cmp-este td {
+  font-weight: 700;
+}
+
+.cmp-partida,
+.precios-comparador,
+.precios-mano-obra,
+.precios-json {
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 640px) {
+  .cmp-tabla td,
+  .cmp-tabla th {
+    font-size: 0.85rem;
+  }
+
+  .cmp-extremos {
+    display: none;
+  }
+}

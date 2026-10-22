@@ -91,6 +91,10 @@ def _patrones() -> tuple[re.Pattern, ...]:
         re.compile(rf"^/(?:{cc})/(?:prices|precios)$"),
         re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+$"),
         re.compile(rf"^/(?:{cc})/(?:prices|precios)/[^/]+/[^/]+$"),
+        # Comparador internacional: portada, capítulos y descarga.
+        # Ojo: ``_normalizar`` quita el prefijo /en, así que la comprobación
+        # ve «/prices-comparison» y no «/en/prices-comparison».
+        re.compile(r"^/(?:precios-comparados|prices-comparison)(?:/[^/]+|\.json)?$"),
         # Coste horario de la mano de obra por mercado y su descarga JSON.
         re.compile(rf"^/(?:{cc})/(?:labour-rates|mano-de-obra)$"),
         re.compile(rf"^/(?:{cc})/(?:prices|precios)\.json$"),

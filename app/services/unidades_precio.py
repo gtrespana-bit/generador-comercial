@@ -43,11 +43,15 @@ _ALIAS: dict[str, str] = {
     "oz": "oz", "onza": "oz", "onzas": "oz",
     "gal": "gal", "galon": "gal", "galones": "gal", "galón": "gal",
     "ft": "ft", "pie": "ft", "pies": "ft",
-    "ft2": "ft2", "sqft": "ft2", "pie2": "ft2", "pies2": "ft2",
-    "ft3": "ft3", "cuft": "ft3", "pie3": "ft3", "pies3": "ft3",
+    "ft2": "ft2", "sqft": "ft2", "pie2": "ft2", "pies2": "ft2", "sq ft": "ft2",
+    "ft3": "ft3", "cuft": "ft3", "pie3": "ft3", "pies3": "ft3", "cu ft": "ft3",
     "yd": "yd", "yarda": "yd", "yardas": "yd",
-    "yd2": "yd2", "sqyd": "yd2", "yarda2": "yd2",
-    "yd3": "yd3", "cuyd": "yd3", "yarda3": "yd3",
+    "yd2": "yd2", "sqyd": "yd2", "yarda2": "yd2", "sq yd": "yd2",
+    "yd3": "yd3", "cuyd": "yd3", "yarda3": "yd3", "cu yd": "yd3",
+    # «ea» (each) es la unidad por pieza del catálogo inglés: es «ud».
+    "ea": "ud",
+    # «lot» es un precio alzado, no una unidad de medida: no se convierte.
+    "lot": "glb",
     "in": "in", "pulg": "in", "pulgada": "in", "pulgadas": "in",
     "ton": "ton", "tonelada": "ton",
 }

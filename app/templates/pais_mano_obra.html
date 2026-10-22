@@ -81,6 +81,9 @@
     {% for e in enlaces_precios %}
     <li><a href="{{ e.ruta }}">{{ e.nombre }}</a></li>
     {% endfor %}
+    {% if ruta_comparador %}
+    <li><a href="{{ ruta_comparador }}">{{ 'cmp.desde_mano_obra' | t(_idioma) }}</a></li>
+    {% endif %}
     <li><a href="{{ ruta_json }}" download>{{ ('mo.enlace_json' | t(_idioma)).format(pais=nombre_pais) }}</a></li>
   </ul>
 
