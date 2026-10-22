@@ -5,7 +5,8 @@
   <div class="card-header">
     <h2>Registro de acciones</h2>
     <div class="card-header-acc">
-      <span class="badge badge-neutral">{{ eventos|length }} evento{{ 's' if eventos|length != 1 else '' }}</span>
+      <span class="badge badge-neutral">{{ paginador.meta.total }} evento{{ 's' if paginador.meta.total != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
       {% if filtros_activos %}
       <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=auditoria">Quitar filtros</a>
       {% endif %}
@@ -31,8 +32,17 @@
     </select>
     <label class="visualmente-oculto" for="aud-org">Organización</label>
     <input id="aud-org" type="number" min="1" name="organizacion_id" value="{{ filtros.organizacion_id or '' }}" placeholder="ID de organización" aria-label="Filtrar por organización">
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
     <button class="btn btn-sm" type="submit">Filtrar</button>
   </form>
+
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
 
   <div class="table-container">
     <table>
@@ -66,6 +76,9 @@
       </tbody>
     </table>
   </div>
+
+  {% include "admin/partes/_paginador.html" %}
+
   <div class="card-pie">
     <span class="muted-note">Solo inserción y lectura: la tabla no admite edición ni borrado (RLS sin UPDATE/DELETE en PostgreSQL).</span>
   </div>

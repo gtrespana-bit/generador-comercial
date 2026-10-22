@@ -28,8 +28,9 @@
   <div class="card-header">
     <h2>Movimientos de {{ periodo.etiqueta|lower }}</h2>
     <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ paginador.meta.total }} movimiento{{ 's' if paginador.meta.total != 1 else '' }}</span>
       {% include "admin/partes/_cambio_mes.html" %}
-      <a class="btn btn-sm btn-secondary" href="/admin/cobros.csv?mes={{ periodo.actual }}{% if filtro_tipo %}&amp;tipo={{ filtro_tipo }}{% endif %}">CSV</a>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
     </div>
   </div>
 
@@ -40,11 +41,33 @@
     {% endfor %}
   </div>
 
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/ingresos">
+    <input type="hidden" name="tab" value="cobros">
+    <input type="hidden" name="mes" value="{{ periodo.actual }}">
+    {% if filtro_tipo %}<input type="hidden" name="tipo" value="{{ filtro_tipo }}">{% endif %}
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
+    <label class="visualmente-oculto" for="cobros-q">Buscar movimientos</label>
+    <input class="toolbar-buscar" id="cobros-q" type="search" name="q" value="{{ q }}"
+           placeholder="Número (F-001, compra-12) o cliente…">
+    <button class="btn btn-sm" type="submit">Buscar</button>
+    {% if q %}
+    <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=cobros&amp;mes={{ periodo.actual }}{% if filtro_tipo %}&amp;tipo={{ filtro_tipo }}{% endif %}">Limpiar búsqueda</a>
+    {% endif %}
+  </form>
+
   {% set vista_modulo = 'cobros' %}
   {% set vistas_guardadas = vistas %}
   {% set vista_activa = 0 %}
   {% set vista_ruta_base = '/admin/ingresos?tab=cobros' %}
-  {% set vista_ruta_actual = '/admin/ingresos?tab=cobros&mes=' ~ periodo.actual ~ ('&tipo=' ~ filtro_tipo if filtro_tipo else '') %}
+  {% set vista_ruta_actual = '/admin/ingresos?tab=cobros&mes=' ~ periodo.actual ~ ('&tipo=' ~ filtro_tipo if filtro_tipo else '') ~ ('&q=' ~ q|urlencode if q else '') %}
   {% set vista_accion = '/admin/vistas/crear' %}
   {% set vista_filtros = dict_filtros %}
   {% set vista_total = cobros.total_movimientos %}
@@ -71,7 +94,7 @@
         {% else %}
         <tr><td colspan="7">
           <div class="vacio">
-            <b>Sin movimientos en {{ periodo.etiqueta|lower }}{% if filtro_tipo %} de ese tipo{% endif %}.</b>
+            <b>Sin movimientos en {{ periodo.etiqueta|lower }}{% if filtro_tipo %} de ese tipo{% endif %}{% if q %} que coincidan con «{{ q }}»{% endif %}.</b>
             <p>Aquí aparecen las licencias de pago concedidas, las compras de plan activadas y las facturas y pagos que registran los clientes.</p>
             <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=cobros&mes={{ periodo.anterior_mes }}">Revisa el mes anterior</a>
           </div>
@@ -80,6 +103,8 @@
       </tbody>
     </table>
   </div>
+
+  {% include "admin/partes/_paginador.html" %}
 
   <div class="card-pie">
     <span class="muted-note">Los cobros de clientes se leen solo agregados (número, fecha, importe y estado): el panel nunca abre el contenido de sus presupuestos.</span>

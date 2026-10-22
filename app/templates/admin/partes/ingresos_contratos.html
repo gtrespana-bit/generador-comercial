@@ -48,8 +48,8 @@
   <div class="card-header">
     <h2>Registro de acceso</h2>
     <div class="card-header-acc">
-      <span class="badge badge-neutral">{{ resumen.filas|length }} cliente{{ 's' if resumen.filas|length != 1 else '' }}</span>
-      <a class="btn btn-sm btn-secondary" href="/admin/contratos.csv">CSV</a>
+      <span class="badge badge-neutral">{{ paginador.meta.total }} cliente{{ 's' if paginador.meta.total != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
     </div>
   </div>
 
@@ -63,11 +63,20 @@
       <option value="{{ valor }}" {{ 'selected' if filtro_estado == valor else '' }}>{{ etiqueta }}</option>
       {% endfor %}
     </select>
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
     <button class="btn btn-sm" type="submit">Aplicar</button>
     <span class="toolbar-limpiar">
       <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=contratos">Limpiar</a>
     </span>
   </form>
+
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
 
   <div class="table-container">
     <table>
@@ -129,7 +138,7 @@
                   {% if licencia.estado != 'cancelada' %}
                   <form class="inline" method="post" action="/admin/licencias/{{ licencia.id }}/cancelar"
                         data-confirmar="Se cancelará esta licencia concreta. Si hay renovaciones encadenadas, el acceso puede seguir activo.">
-                    <input type="hidden" name="volver" value="/admin/ingresos?tab=contratos{% if q %}&amp;q={{ q|urlencode }}{% endif %}">
+                    <input type="hidden" name="volver" value="{{ url_actual }}">
                     <button class="link" type="submit">cancelar</button>
                   </form>
                   {% endif %}
@@ -151,6 +160,8 @@
       </tbody>
     </table>
   </div>
+
+  {% include "admin/partes/_paginador.html" %}
 
   <div class="card-pie">
     <span class="muted-note">Esta pantalla solo muestra el estado del acceso. Los datos de negocio de cada cliente siguen aislados por organización (RLS).</span>

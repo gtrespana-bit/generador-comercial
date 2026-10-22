@@ -321,8 +321,13 @@ def diagnostico_operacion(db=None) -> dict[str, Any]:
                 "«errores_internos» pendiente de aplicar?)."
             )
 
+    salud_dict = salud.to_dict()
+    # Un readiness inyectado (tests o mantenimiento) puede no traer gravedades;
+    # la plantilla necesita el mapa para no volver a adivinar por el texto.
+    salud_dict.setdefault("severidades", {})
+
     return {
-        "salud": salud.to_dict(),
+        "salud": salud_dict,
         "hechos": {
             "backend": DATABASE_BACKEND,
             "efimero": bool(DATOS_EFIMEROS),

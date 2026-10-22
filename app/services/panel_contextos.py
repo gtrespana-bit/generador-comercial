@@ -450,12 +450,14 @@ def filtros_json(actuales: dict) -> dict:
     """Dict que se guarda en ``vistas_guardadas.filtros`` desde la URL actual.
 
     Excluye ``tab``/``orden``/``dir``: una vista guarda *a quién se busca*, no
-    en qué pestaña estaba el operador ni cómo estaba ordenada la tabla.
+    en qué pestaña estaba el operador ni cómo estaba ordenada la tabla. Excluye
+    también ``pagina``/``por`` para que aplicarla vuelva al principio de la
+    lista: guardar «lo que estoy viendo» no puede guardar «la página 7».
     """
     return {
         clave: valor
         for clave, valor in actuales.items()
-        if valor and clave not in ("tab", "orden", "dir", "vista")
+        if valor and clave not in ("tab", "orden", "dir", "vista", "pagina", "por")
     }
 
 

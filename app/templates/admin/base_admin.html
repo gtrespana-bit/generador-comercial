@@ -858,6 +858,42 @@
     .chip-x { color: inherit; font-weight: 900; margin-left: 2px; text-decoration: none; }
     .chip-x:hover { text-decoration: underline; }
 
+    /* Paginador de las listas (Fase 1): mismo pie para todas las pantallas. */
+    .paginador {
+      display: flex;
+      gap: 10px 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8rem;
+    }
+    .paginador-info { color: var(--text-muted); font-weight: 600; }
+    .paginador-nav { display: flex; gap: 4px; align-items: center; margin-left: auto; }
+    .pagina-num,
+    .pagina-salto {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      padding: 5px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      color: var(--text-main);
+      font-weight: 700;
+      text-decoration: none;
+      background: #fff;
+    }
+    .pagina-num:hover,
+    .pagina-salto:hover { border-color: var(--brand-color); color: var(--brand-color); }
+    .pagina-num.sel {
+      background: var(--brand-color);
+      border-color: var(--brand-color);
+      color: #fff;
+    }
+    .pagina-puntos { padding: 0 3px; color: var(--text-muted); }
+    .paginador-tamano { display: flex; gap: 4px; align-items: center; color: var(--text-muted); }
+
     /* Vistas guardadas: la barra de la lista, no una página aparte. */
     .vista-flotante { position: relative; }
     .vista-form,
@@ -1006,7 +1042,7 @@
         </svg>
         <span class="nav-nombre">{{ entrada.nombre }}</span>
         {% if entrada.contador %}
-        <span class="nav-cnt" title="{{ entrada.contador }} asunto(s) pendientes">{{ entrada.contador }}</span>
+        <span class="nav-cnt" title="{{ entrada.contador }} pendiente(s) de atender">{{ entrada.contador }}</span>
         {% endif %}
       </a>
       {% if activa %}

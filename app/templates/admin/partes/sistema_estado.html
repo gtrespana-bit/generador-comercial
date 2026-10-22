@@ -36,17 +36,26 @@
         <span class="badge badge-danger chip-lg">Con errores</span>
         {% endif %}
       </div>
+      <div class="card-body">
+        <p class="note-fine">La gravedad la decide cada chequeo: <b>verde</b> está bien,
+          <b>ámbar</b> es un aviso que no detiene el servicio y <b>gris</b> es informativo.
+          Solo los rojos convierten <code>/readyz</code> en un 503.</p>
+      </div>
       <div class="table-container">
         <table class="estado-tabla">
           <thead><tr><th>Chequeo</th><th>Resultado</th><th>Qué significa</th></tr></thead>
           <tbody>
+            {% set severidades = diagnostico.salud.severidades or {} %}
             {% for clave, valor in diagnostico.salud.checks.items() %}
+            {% set gravedad = severidades.get(clave, 'ok') %}
             <tr>
               <td class="text-bold">{{ clave|replace("_", " ") }}</td>
               <td>
-                {% if 'error' in valor|string or 'no-configurado' in valor|string or 'mal-' in valor|string or 'inesperado' in valor|string %}
+                {% if gravedad == 'fallo' %}
                 <span class="badge badge-danger">{{ valor }}</span>
-                {% elif 'no-aplica' in valor|string or 'verificacion-desactivada' in valor|string %}
+                {% elif gravedad == 'aviso' %}
+                <span class="badge badge-warning">{{ valor }}</span>
+                {% elif gravedad == 'info' %}
                 <span class="badge badge-neutral">{{ valor }}</span>
                 {% else %}
                 <span class="badge badge-success">{{ valor }}</span>

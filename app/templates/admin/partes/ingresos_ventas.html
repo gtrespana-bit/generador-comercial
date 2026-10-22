@@ -48,7 +48,8 @@
   <div class="card-header">
     <h2>Libro de ventas · {{ ventas.periodo_etiqueta|lower }}</h2>
     <div class="card-header-acc">
-      <a class="btn btn-sm btn-secondary" href="/admin/ingresos.csv?tab=ventas&amp;periodo={{ filtro_periodo }}{% if filtro_plan %}&amp;plan={{ filtro_plan }}{% endif %}{% if filtro_metodo %}&amp;metodo={{ filtro_metodo }}{% endif %}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">CSV</a>
+      <span class="badge badge-neutral">{{ paginador.meta.total }} venta{{ 's' if paginador.meta.total != 1 else '' }}</span>
+      <a class="btn btn-sm btn-secondary" href="{{ url_csv }}">CSV con filtros</a>
     </div>
   </div>
 
@@ -68,11 +69,20 @@
     <a class="chip {{ 'sel' if filtro_plan == 'mensual' else '' }}" href="{{ ruta_filtro(plan='mensual') }}">Mensual</a>
   </div>
 
+  <div class="chips">
+    <span class="chips-titulo">Orden</span>
+    {% for opcion in opciones_orden %}
+    <a class="chip {{ 'sel' if opcion.activo else '' }}" href="{{ opcion.url }}">{{ opcion.etiqueta }} {{ opcion.flecha }}</a>
+    {% endfor %}
+  </div>
+
   <form class="toolbar" method="get" action="/admin/ingresos">
     <input type="hidden" name="tab" value="ventas">
     <input type="hidden" name="periodo" value="{{ filtro_periodo }}">
     {% if filtro_plan %}<input type="hidden" name="plan" value="{{ filtro_plan }}">{% endif %}
     {% if filtro_metodo %}<input type="hidden" name="metodo" value="{{ filtro_metodo }}">{% endif %}
+    <input type="hidden" name="orden" value="{{ actuales.orden }}">
+    <input type="hidden" name="dir" value="{{ actuales.dir }}">
     <label class="visualmente-oculto" for="ventas-q">Buscar en las ventas</label>
     <input id="ventas-q" type="search" name="q" value="{{ q }}" placeholder="Cliente, correo o nº de compra…">
     <button class="btn btn-sm" type="submit">Buscar</button>
@@ -143,6 +153,8 @@
       </tbody>
     </table>
   </div>
+
+  {% include "admin/partes/_paginador.html" %}
 
   <div class="card-pie">
     <span class="muted-note">

@@ -215,34 +215,101 @@ def _avisar(
 # ---------------------------------------------------------------------------
 
 
+#: Columnas ordenables del buzón. La fecha manda por omisión: lo último que
+#: llegó es lo que hay que atender.
+ORDENES_SOPORTE = (
+    ("fecha", "Fecha", "desc"),
+    ("estado", "Estado", "asc"),
+    ("tipo", "Motivo", "asc"),
+)
+
+
+def _consulta_mensajes(db, *, estado: str = "", tipo: str = "", q: str = ""):
+    """Consulta base del buzón: la comparten la bandeja y el CSV.
+
+    El filtro de texto se hacía **en Python después del LIMIT**: buscar un
+    correo antiguo solo miraba los últimos 200 mensajes y devolvía «no hay
+    resultados» aunque el mensaje existiera. Ahora el filtro va en SQL y el
+    total es el de la consulta completa.
+    """
+    from sqlalchemy import or_
+
+    consulta = db.query(MensajeSoporte, Organizacion.nombre).outerjoin(
+        Organizacion, MensajeSoporte.organizacion_id == Organizacion.id
+    )
+    estado = normalizar_estado(estado) if estado else ""
+    if estado:
+        consulta = consulta.filter(MensajeSoporte.estado == estado)
+    if tipo and tipo in tipos_validos():
+        consulta = consulta.filter(MensajeSoporte.tipo == tipo)
+
+    texto = str(q or "").strip()
+    if texto:
+        patron = f"%{texto}%"
+        consulta = consulta.filter(
+            or_(
+                MensajeSoporte.nombre.ilike(patron),
+                MensajeSoporte.email.ilike(patron),
+                MensajeSoporte.asunto.ilike(patron),
+                MensajeSoporte.mensaje.ilike(patron),
+                Organizacion.nombre.ilike(patron),
+            )
+        )
+    return consulta
+
+
+def _ordenar_mensajes(consulta, orden: str, direccion: str):
+    clave = orden if orden in {o[0] for o in ORDENES_SOPORTE} else "fecha"
+    columna = {
+        "estado": MensajeSoporte.estado,
+        "tipo": MensajeSoporte.tipo,
+    }.get(clave, MensajeSoporte.created_at)
+    columna = columna.desc() if direccion == "desc" else columna.asc()
+    return consulta.order_by(columna, MensajeSoporte.id.desc())
+
+
+def _fila_mensaje(mensaje: MensajeSoporte, organizacion_nombre: str | None) -> dict:
+    return {
+        "mensaje": mensaje,
+        "organizacion_nombre": organizacion_nombre or "",
+    }
+
+
 def listar_mensajes(
     db,
     *,
     estado: str = "",
     tipo: str = "",
     q: str = "",
-    limite: int = 200,
-) -> list[dict]:
-    """Mensajes del buzón con su organización, del más nuevo al más antiguo."""
-    consulta = db.query(MensajeSoporte).order_by(MensajeSoporte.created_at.desc(), MensajeSoporte.id.desc())
-    estado = normalizar_estado(estado) if estado else ""
-    if estado:
-        consulta = consulta.filter(MensajeSoporte.estado == estado)
-    if tipo and tipo in tipos_validos():
-        consulta = consulta.filter(MensajeSoporte.tipo == tipo)
-    filas = consulta.limit(max(1, min(int(limite or 200), 500))).all()
+    orden: str = "fecha",
+    direccion: str = "desc",
+    pagina: int = 1,
+    por_pagina: int = 25,
+) -> tuple[list[dict], dict]:
+    """Página del buzón con su meta de paginación."""
+    from .panel_listas import paginar_consulta
 
-    texto = str(q or "").strip().lower()
-    nombres_org = {o.id: o.nombre for o in db.query(Organizacion).all()}
-    salida = []
-    for fila in filas:
-        organizacion_nombre = nombres_org.get(fila.organizacion_id, "") if fila.organizacion_id else ""
-        if texto and texto not in " ".join(
-            (fila.nombre, fila.email, fila.asunto, fila.mensaje, organizacion_nombre)
-        ).lower():
-            continue
-        salida.append({"mensaje": fila, "organizacion_nombre": organizacion_nombre})
-    return salida
+    consulta = _ordenar_mensajes(
+        _consulta_mensajes(db, estado=estado, tipo=tipo, q=q), orden, direccion
+    )
+    filas, meta = paginar_consulta(consulta, pagina=pagina, por_pagina=por_pagina)
+    return [_fila_mensaje(mensaje, org_nombre) for mensaje, org_nombre in filas], meta
+
+
+def exportar_mensajes(
+    db,
+    *,
+    estado: str = "",
+    tipo: str = "",
+    q: str = "",
+    orden: str = "fecha",
+    direccion: str = "desc",
+) -> list[dict]:
+    """Todos los mensajes que cumplen el filtro, para el CSV."""
+    consulta = _ordenar_mensajes(
+        _consulta_mensajes(db, estado=estado, tipo=tipo, q=q), orden, direccion
+    )
+    return [_fila_mensaje(mensaje, org_nombre) for mensaje, org_nombre in consulta.all()]
 
 
 def contadores_soporte(db) -> dict:
@@ -308,9 +375,11 @@ def url_bandeja() -> str:
 
 
 __all__ = [
+    "ORDENES_SOPORTE",
     "SoporteError",
     "contadores_soporte",
     "estados_validos",
+    "exportar_mensajes",
     "listar_mensajes",
     "marcar_estado",
     "mensajes_sin_atender",

@@ -27,6 +27,15 @@ _ETIQUETAS_ESTADO_COMPRA = {
     "rechazada": "Rechazada",
 }
 
+#: Columnas ordenables del libro del mes. La fecha y el importe, de mayor a
+#: menor; los nombres, de la A a la Z.
+ORDENES_COBROS = (
+    ("fecha", "Fecha", "desc"),
+    ("importe", "Importe", "desc"),
+    ("cliente", "Cliente", "asc"),
+    ("tipo", "Tipo", "asc"),
+)
+
 
 def _normalizar_numero(valor):
     if valor is None:
@@ -106,6 +115,52 @@ def _cobros_tenant_mes(db, inicio: date, fin: date) -> list[dict]:
             "organizacion_nombre": org.nombre if org else "—",
         })
     return movimientos
+
+
+def filtrar_movimientos(movimientos, *, tipo: str = "", q: str = ""):
+    """Movimientos que pasan el tipo y la búsqueda, para la tabla y el CSV.
+
+    El texto busca en el número del documento (``F-001``, ``compra-12``,
+    ``lic-3``) y en el nombre del cliente: son las dos formas en que el
+    operador identifica un cobro cuando cuadra el mes.
+    """
+    texto = str(q or "").strip().lower()
+    salida = []
+    for movimiento in movimientos:
+        if tipo and movimiento["tipo"] != tipo:
+            continue
+        if texto:
+            heno = (
+                f"{movimiento['numero']} {movimiento['organizacion_nombre']} "
+                f"{movimiento['moneda']}"
+            ).lower()
+            if texto not in heno:
+                continue
+        salida.append(movimiento)
+    return salida
+
+
+def ordenar_movimientos(movimientos, *, orden: str = "fecha", direccion: str = "desc"):
+    """Orden en el servidor: lo que se ve es lo que se exporta."""
+    clave = orden if orden in {o[0] for o in ORDENES_COBROS} else "fecha"
+    invertido = direccion == "desc"
+
+    def valor(movimiento):
+        if clave == "importe":
+            return movimiento["importe"]
+        if clave == "cliente":
+            return (movimiento["organizacion_nombre"] or "").lower()
+        if clave == "tipo":
+            return movimiento["tipo"]
+        return movimiento["fecha"] or date.min
+
+    # El número desempata: dos movimientos del mismo día no cambian de sitio
+    # entre páginas.
+    return sorted(
+        movimientos,
+        key=lambda movimiento: (valor(movimiento), str(movimiento["numero"])),
+        reverse=invertido,
+    )
 
 
 def resumen_cobros(
