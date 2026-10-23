@@ -324,6 +324,41 @@ def _texto_frescura_precios(
         return "no evaluado"
 
 
+def _check_analitica() -> tuple[str, str | None]:
+    """Estado de la etiqueta GA4 tal como la sirve el despliegue.
+
+    Devuelve (texto legible, error). No se considera un fallo de salud tenerla
+    apagada: la aplicación funciona igual sin analítica. El error solo existe si
+    el módulo no se puede importar, que sí sería un problema de despliegue.
+    """
+    try:
+        from .analytics import (
+            csp_connect_src_extra,
+            csp_img_src_extra,
+            csp_script_src_extra,
+            ga_measurement_id,
+        )
+
+        identificador = ga_measurement_id()
+        if not identificador:
+            return "off (sin COTIZAT_GA_ID ni entorno de producción)", None
+        politica = " ".join(
+            parte.strip()
+            for parte in (
+                csp_script_src_extra(),
+                csp_img_src_extra(),
+                csp_connect_src_extra(),
+            )
+            if parte.strip()
+        )
+        return (
+            f"{identificador} · CSP: {politica}",
+            None,
+        )
+    except Exception as exc:  # pragma: no cover - diagnóstico
+        return "no evaluado", _safe_error(exc)
+
+
 def _check_seo(engine: Engine | None, host: str | None) -> dict[str, str]:
     """Estado SEO del DESPLIEGUE, informativo: nunca tumba el readiness.
 
@@ -481,6 +516,19 @@ def readiness(engine: Engine | None = None, host: str | None = None) -> HealthSt
     stripe_state, _stripe_error = estado_configuracion_stripe()
     checks["stripe"] = stripe_state
     severidades["stripe"] = "info"
+
+    # Informativo: GA4 se sirve desde el propio HTML, así que el único estado
+    # que el servidor puede certificar es «la etiqueta sale en el HTML y la CSP
+    # abre los hosts de Google». Si aquí pone «off», no hay nada que buscar en
+    # el navegador: no hay etiqueta. (Se comprobó en producción el 23/10/2026:
+    # la etiqueta se sirve bien y el nonce coincide con la cabecera CSP, así
+    # que un «Tiempo real» vacío apunta al cliente o a la propiedad, no al
+    # servidor.)
+    analitica_state, analitica_error = _check_analitica()
+    checks["analitica_ga"] = analitica_state
+    severidades["analitica_ga"] = "info"
+    if analitica_error:  # solo si rompe el renderizado, nunca por tener GA off
+        errors.append(f"Analítica: {analitica_error}")
 
     # Informativo: el cron de Vercel depende de `CRON_SECRET` y de que el
     # despliegue de producción contenga el vercel.json con `crons`. Sin cron

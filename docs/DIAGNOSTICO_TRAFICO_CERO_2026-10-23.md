@@ -288,3 +288,54 @@ española (texto propio, unidades propias, contenido local real).
   rastreo, las cadenas lo empeoran.
 - No volver a publicar mercados por volumen. Si algún día se enciende otro, que
   sea con contenido propio del país, de uno en uno y midiendo entre uno y otro.
+
+## 7. GA4: por qué el informe «Tiempo real» puede salir vacío
+
+Comprobado desde fuera el 23/10/2026, 20:36 UTC:
+
+| Comprobación | Resultado |
+|---|---|
+| Etiqueta en el HTML servido | presente: `googletagmanager.com/gtag/js?id=G-013NT3ZTHP` |
+| CSP de la respuesta | `script-src` incluye `www.googletagmanager.com` y `*.googletagmanager.com`; `connect-src` y `img-src` incluyen los recolectores de Google |
+| Coherencia nonce ↔ CSP | el `nonce` del HTML coincide con el de la cabecera **también en respuestas servidas desde caché** (dos peticiones con `x-vercel-cache: HIT` y `age` idéntico devuelven el mismo nonce): no hay desajuste que bloquee el script de configuración |
+| Caché | `/` se sirve con `public, max-age=0, must-revalidate` (MISS/HIT alternos), no desde una copia vieja sin etiqueta |
+
+Es decir: **el servidor entrega la etiqueta correcta y deja pasar todo lo que
+gtag.js necesita**. Lo que ya no se puede comprobar desde fuera es si *tu
+navegador* la ejecuta. Las causas posibles, por frecuencia:
+
+1. **Bloqueador o privacidad del navegador.** uBlock Origin, Brave Shields,
+   AdGuard, Ghostery, Safari/Firefox con protección antitracking, o un DNS
+   privado (NextDNS, Pi-hole, AdGuard DNS) cortan `googletagmanager.com`. La
+   etiqueta sigue en el HTML: simplemente nunca se descarga.
+2. **Vista equivocada en GA4.** El ID que sirve el sitio es `G-013NT3ZTHP`. Si
+   la propiedad que miras tiene otro ID (o es una propiedad nueva), su
+   «Tiempo real» estará siempre vacío aunque el sitio envíe datos a la otra.
+3. **Retraso del informe.** «Tiempo real» suele pintar en 10–30 s; abrirlo
+   después de navegar a veces muestra la visita ya cerrada.
+
+### Cómo se resuelve en 1 minuto, sin instalar nada
+
+Con el despliegue hecho, abre **`https://cotizat.online/comprobar-analitica`**.
+
+La página (nueva, no indexable) ejecuta la misma etiqueta del sitio y, a los
+4 segundos, informa en castellano de:
+
+- si el script de configuración se ejecutó (`gtag` definido);
+- si `gtag.js` se **descargó** de verdad (entradas de `performance`);
+- cuántos eventos hay en `dataLayer` y si se creó la cookie `_ga`;
+- si hubo **violaciones de CSP** (escuchando `securitypolicyviolation`);
+- y envía un evento de prueba `ga_diagnostico` que debe aparecer en
+  **GA4 → Informes → Tiempo real** en menos de un minuto.
+
+Interpretación directa:
+
+| Lo que muestra | Qué significa |
+|---|---|
+| Todo en verde y el evento no aparece en GA4 | el sitio funciona: el problema es la **propiedad/vista** que estás mirando |
+| «gtag.js descargado: no» | un **bloqueador o DNS** corta Google: no es el sitio |
+| «Bloqueos de la política de seguridad» con contenido | bug real de CSP/nonce: avísame con el texto y lo corrijo |
+| «GA está apagado» | el despliegue no tiene ID: revisa `COTIZAT_GA_ID` en Vercel |
+
+Además, `GET /readyz` incluye ahora la clave `analitica_ga` con el ID en uso y
+los hosts abiertos en la CSP, para no tener que mirar el HTML.

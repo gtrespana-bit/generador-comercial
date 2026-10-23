@@ -677,6 +677,34 @@ def hub_remodeling_pais(cc: str, request: Request):
     return _pagina_intencion(request, cc, "remodelacion")
 
 
+@router.get("/comprobar-analitica", response_class=HTMLResponse, include_in_schema=False)
+def comprobar_analitica(request: Request):
+    """Autodiagnóstico de GA4 en el navegador del visitante.
+
+    Nace de un caso concreto: en producción la etiqueta de GA4 viaja en el HTML
+    (con su ``nonce`` y los hosts de Google abiertos en la CSP) y, aun así, el
+    informe de *Tiempo real* no mostraba la visita del propio titular. Desde
+    fuera solo se puede comprobar que la etiqueta **se sirve**; no si el
+    navegador la **ejecuta**. Eso depende de cosas que solo existen en el
+    cliente: un bloqueador de anuncios, un DNS privado, una extensión de
+    privacidad o una violación de CSP.
+
+    La página es un diagnóstico y nada más: no indexable, sin enlaces desde el
+    sitio y sin datos privados (el ID de medición ya viaja en el HTML público).
+    """
+    from ..analytics import csp_script_src_extra, ga_measurement_id
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "comprobar_analitica.html",
+        {
+            "csp_script": csp_script_src_extra().strip(),
+            "ga_activo": bool(ga_measurement_id()),
+        },
+        headers={"X-Robots-Tag": "noindex, nofollow, noarchive"},
+    )
+
+
 @router.get("/robots.txt", include_in_schema=False)
 def robots(request: Request):
     from ..seo import robots_txt
