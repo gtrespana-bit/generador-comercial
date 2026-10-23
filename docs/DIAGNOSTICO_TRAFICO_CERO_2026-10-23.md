@@ -18,10 +18,17 @@ falta comprobar** y **en qué orden**, para no seguir tocando cosas a ciegas.
 | `robots.txt` | `Allow: /`, sin `Disallow: /`, anuncia índice + 23 sitemaps de precios |
 | `sitemap_index.xml` | 200, 23 hijos; los hijos responden 200 |
 | `/healthz` | `{"ok": true}` |
+| `site:cotizat.online` en Google | **devuelve resultados y paginación** (varias páginas de resultados, mercados `en-ie`, `do`, `en-gb`…) |
+| `site:cotizat.online` en DuckDuckGo | devuelve resultados (portada, `en-us`, `en-gb`, legales, planes) |
 
 **Conclusión de esta parte:** no hay `noindex` masivo, ni canónica cruzada, ni
 `robots.txt` bloqueando, ni el `X-Robots-Tag` restrictivo que ya tuvo el catálogo
 en el pasado. El sitio, tal como lo ve un lector de contenido, es indexable hoy.
+Y, sobre todo: **Google sigue teniendo las páginas en el índice**. No hubo
+eliminación del sitio ni bloqueo total del rastreo.
+
+Con eso, el diagnóstico se estrecha: si el sitio está indexado y no recibe ni
+clics ni visitas, lo que ha caído es la **posición**, no la indexación.
 
 **Lo que no se puede ver desde fuera:** cómo responde el borde de Vercel al
 `User-Agent` de Googlebot, qué dicen Search Console y Vercel, y si GA4 está
@@ -54,6 +61,12 @@ gráfico de 28 días, con el conmutador *Clics / Impresiones*):
 |---|---|---|
 | Impresiones a cero | el sitio **salió del índice** | Acciones manuales, Estadísticas de rastreo, `site:cotizat.online` en Google |
 | Impresiones sí, clics cero | el sitio **sigue indexado** pero hundido en posiciones | Rendimiento → Posición media (si saltó a >20, es desvalorización de calidad) |
+
+Este segundo caso **ya está comprobado a medias**: `site:cotizat.online` en
+Google devuelve resultados y paginación, así que el índice conserva las páginas.
+Falta el número que lo cierra: en **Rendimiento**, ¿las impresiones siguen
+existiendo mientras los clics se han ido a cero? Si sí, es una
+**desvalorización a nivel de sitio** (ver sección 4).
 
 ### 2.2 ¿El borde está bloqueando a Googlebot? (la causa nº 1 de un cero seco)
 
@@ -140,6 +153,13 @@ GitHub y deja el informe escrito en el resumen:
 También queda programada a las 06:00 UTC de cada día (eso solo se activa
 cuando el fichero está en la rama principal).
 
+> **Nota:** el fichero del workflow no se pudo empujar al repositorio desde el
+> entorno de desarrollo (la integración de GitHub de ese entorno no tiene
+> permiso `workflows`). Si no aparece en la pestaña *Actions*, créalo una vez a
+> mano en GitHub: **Add file → Create new file**, nombre
+> `.github/workflows/auditoria-seo.yml`, pegar el contenido del fichero y
+> confirmar en la rama. A partir de ahí ya se puede lanzar desde la interfaz.
+
 ### 3.2 Desde un equipo con Python
 
 Debe ejecutarse desde una máquina con acceso al dominio (el entorno de este
@@ -165,7 +185,58 @@ Qué comprueba y por qué:
 Sale con código 1 si algo falla, así que sirve de puerta antes de dar por bueno
 un cambio de SEO.
 
-## 4. Qué no hacer ahora
+## 4. Hipótesis principal: desvalorización a nivel de sitio
+
+Es la que encaja con todo lo comprobado: el sitio **sigue indexado** (Google lo
+devuelve en `site:`), las páginas **siguen siendo indexables** (200, canónica
+propia, sin `noindex`) y, aun así, no llega ni un clic ni una visita. Eso no es
+un problema de rastreo ni de etiquetas: es que Google ha dejado de mostrarlo.
+
+Qué lo habría disparado, en orden de sospecha:
+
+1. **Publicar y anunciar de golpe ~47 000 URL generadas** cuyo texto es el
+   mismo en 18 mercados (solo cambia la moneda y el precio). Es el patrón que
+   Google llama *scaled content abuse* y se evalúa **a nivel de sitio**: cuando
+   se activa, arrastra también las páginas buenas.
+2. Los `lastmod` de los sitemaps de precios son del 25/08 y 08/09, mientras el
+   índice se regeneró el 19/10: se envió como «nuevo» un catálogo que en su
+   mayoría llevaba semanas publicado. Para Google, una subida repentina de
+   volumen sin cambios reales de contenido es una señal más de generación
+   masiva, no de frescura.
+
+### Cómo se confirma (10 minutos, sin instalar nada)
+
+- GSC → **Rendimiento** → 28 días → gráfico de **Impresiones**: si siguen
+  existiendo mientras los clics son cero, es desvalorización confirmada.
+- GSC → Rendimiento → **Posición media**: un salto de, por ejemplo, 8 → 40 en
+  dos días es la firma de una desvalorización, no de un bloqueo.
+- GSC → **Indexación → Páginas**: cuántas URL de `/xx/precios/…` están en
+  *Rastreada: actualmente no indexada*. Miles ahí = Google ha decidido que ese
+  catálogo no merece índice.
+- GSC → **Acciones manuales**: si aparece algo, esto deja de ser algorítmico y
+  hay que pedir revisión. Si está vacío (lo habitual), es algorítmico.
+
+### Plan si se confirma, en este orden
+
+1. **Congelar** cualquier cambio de SEO durante 7 días y recoger datos. Cada
+   cambio nuevo reinicia la lectura.
+2. **Reducir la huella anunciada**: dejar en `sitemap_index.xml` solo el sitemap
+   editorial y no anunciar los 23 de precios desde `robots.txt`. Las fichas
+   siguen accesibles por enlazado interno, pero dejan de presentarse como un
+   bloque de 47 000 URL nuevas.
+3. **Diferenciar los mercados hispanos**, que es donde está el duplicado real.
+   Opciones, de menos a más agresiva: ficha completa solo en España y los 3–4
+   mercados con demanda demostrada; en el resto, página de **apartado** con
+   tabla de precios en vez de ficha individual; o `noindex` en los mercados sin
+   demanda. Los mercados de habla inglesa no sufren este problema: su texto es
+   distinto de verdad.
+4. **Reforzar lo que sí convierte**: landings por mercado, guías, comparador y
+   calculadora —contenido escrito, no generado— para que la proporción de
+   páginas de valor suba.
+5. **Medir a 3–4 semanas.** Una desvalorización de sitio no se levanta en días,
+   y seguir publicando páginas generadas mientras tanto la empeora.
+
+## 5. Qué no hacer ahora
 
 - **Congelar cambios de SEO** (canonical, hreflang, robots, sitemap, noindex)
   hasta saber la causa: un cambio más en 48 h hace imposible atribuir el efecto.
