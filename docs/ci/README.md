@@ -4,6 +4,14 @@
 integración continua. GitHub Actions solo ejecuta el archivo situado en
 `.github/workflows/ci.yml`, así que ambos deben ser idénticos.
 
+`auditoria-seo.yml` sigue el mismo patrón: es la definición versionada de la
+auditoría SEO de producción (sonda de Googlebot, sitemaps, canónicas,
+`robots.txt`). Se activa copiándola a `.github/workflows/auditoria-seo.yml`, se
+lanza a mano desde **Actions → Auditoría SEO de producción → Run workflow** y
+deja el informe en el resumen de la ejecución. Existe porque el titular no tiene
+entorno local: es la forma de ejecutar `tools/auditar_seo_produccion.py` sin
+instalar nada.
+
 ## Por qué está duplicado
 
 El token de la aplicación que abre los cambios automáticos en este repositorio

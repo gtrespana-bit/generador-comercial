@@ -728,12 +728,13 @@ def sitemap(request: Request):
 
 @router.get("/sitemap_index.xml", include_in_schema=False)
 def sitemap_index(request: Request):
-    """Índice de sitemaps: el principal y un hijo por país con precios.
+    """Índice de sitemaps: el principal y un hijo por país anunciado.
 
-    Con 23 sitemaps (el principal más 22 de precios) el índice es lo que se
-    envía una sola vez a Search Console y Bing: cualquier país que se
-    encienda mañana entra solo, sin reenviar nada ni tocar el alta. Además
-    deja un único `Sitemap:` legible en robots.txt.
+    Es lo que se envía una sola vez a Search Console y Bing: cualquier país
+    que se encienda mañana entra solo, sin reenviar nada ni tocar el alta.
+    Solo se listan los mercados cuyo catálogo se anuncia
+    (``MERCADOS_FICHAS_INDEXABLES``); el resto de mercados publicados sirven
+    sus páginas con ``noindex`` y no tienen sitemap.
     """
     from ..seo import SITEMAP_LASTMOD, origen_canonico
 
@@ -746,7 +747,7 @@ def sitemap_index(request: Request):
     try:
         from ..services import precios_publicos as pp
 
-        for cc in pp.paises_publicados():
+        for cc in pp.paises_con_catalogo_indexable():
             resumen = pp.resumen(cc) or {}
             hijos.append(
                 (

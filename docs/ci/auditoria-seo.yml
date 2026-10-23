@@ -1,0 +1,95 @@
+# Auditoría SEO de producción — definición versionada.
+#
+# GitHub solo ejecuta lo que está en `.github/workflows/auditoria-seo.yml`.
+# Este archivo vive aquí por la misma razón que `docs/ci/ci.yml`: el token de
+# la aplicación que abre los cambios automáticos no tiene permiso `workflows`,
+# así que el push a `.github/workflows/` se rechaza.
+#
+# Activación (una vez), desde la interfaz web de GitHub:
+#   Add file → Create new file → `.github/workflows/auditoria-seo.yml`
+#   → pegar este archivo entero (sin estas primeras líneas de comentario, si
+#   se quiere) → Commit.
+#
+# Uso después: pestaña Actions → «Auditoría SEO de producción» → Run workflow.
+# El informe aparece en el resumen de la ejecución.
+
+name: Auditoría SEO de producción
+
+# El titular no tiene entorno local: esta acción ejecuta la auditoría SEO HTTP
+# real (tools/auditar_seo_produccion.py) desde un runner de GitHub y deja el
+# informe en el resumen del propio workflow. Sirve para responder, sin
+# terminal, a las dos preguntas que deciden una caída de tráfico:
+#
+#   1. ¿El borde bloquea a Googlebot? (sonda con el User-Agent de Google).
+#   2. ¿Alguna URL de los sitemaps —incluidas las de precios por país— ha
+#      dejado de ser indexable, redirige o devuelve error?
+#
+# Ojo: las peticiones salen de una IP de GitHub, no de Google. Un cortafuegos
+# que distingue bots verificados por IP puede responder al challenge a esta
+# sonda aunque Googlebot pase. Por eso el veredicto definitivo sigue siendo la
+# prueba de URL en vivo de Search Console; esta acción es el indicio rápido.
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Origen a auditar (sin barra final)"
+        required: false
+        default: "https://cotizat.online"
+      muestra:
+        description: "URLs por sitemap (0 = todas, lento)"
+        required: false
+        default: "6"
+  schedule:
+    # Cada día a las 06:00 UTC: si alguna vez vuelve a romperse la
+    # indexabilidad, queda registrado sin que nadie lo pida.
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  auditar:
+    name: Auditar el sitio publicado
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ejecutar la auditoría
+        # La herramienta solo usa la biblioteca estándar: no hay nada que
+        # instalar, así que no depende del cierre de requisitos de la app.
+        env:
+          BASE: ${{ inputs.base || 'https://cotizat.online' }}
+          MUESTRA: ${{ inputs.muestra || '6' }}
+        run: |
+          set +e
+          python tools/auditar_seo_produccion.py "$BASE" --muestra "$MUESTRA" --timeout 15 \
+            > /tmp/auditoria.txt 2>&1
+          estado=$?
+          cat /tmp/auditoria.txt
+          {
+            echo "## Auditoría SEO de $BASE"
+            echo ""
+            if [ "$estado" -eq 0 ]; then
+              echo "**Sin fallos**: el sitio publicado responde 200, es indexable,"
+              echo "sus sitemaps son válidos y la sonda de Googlebot pasa."
+              echo "Si Search Console sigue a cero, la causa no está en el HTML:"
+              echo "mira «Acciones manuales» y «Estadísticas de rastreo»."
+            else
+              echo "**Hay fallos** (código de salida $estado). Cada línea"
+              echo "«FALLO …» indica qué comprobación incumple y por qué."
+            fi
+            echo ""
+            echo '```'
+            tail -n 500 /tmp/auditoria.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $estado

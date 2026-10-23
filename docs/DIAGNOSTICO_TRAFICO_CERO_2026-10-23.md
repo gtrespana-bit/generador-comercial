@@ -5,6 +5,15 @@ precios por país) y se envió el sitemap nuevo. Desde entonces Search Console
 muestra 0 visitas al día. Este documento fija **qué está comprobado**, **qué
 falta comprobar** y **en qué orden**, para no seguir tocando cosas a ciegas.
 
+> **Veredicto (23/10 por la noche).** Con los datos de Search Console delante
+> —74 impresiones en el día, posición media 44, **0 clics**, **ni una ficha de
+> precios indexada** y **ninguna acción manual**— el sitio no está bloqueado:
+> está **hundido**. La causa más probable es haber publicado y anunciado de
+> golpe ~40 000 URL casi idénticas (los 17 mercados hispanos son el mismo
+> texto con otra moneda). Medida aplicada: el catálogo solo se anuncia en
+> España y los cinco mercados ingleses; el resto publica con `noindex, follow`
+> pero sigue navegable. Ver **sección 5**.
+
 ## 1. Lo que ya está verificado (23/10, 19:50 UTC, desde fuera)
 
 | Comprobación | Resultado |
@@ -15,11 +24,14 @@ falta comprobar** y **en qué orden**, para no seguir tocando cosas a ciegas.
 | GA4 en el HTML | `gtag/js?id=G-013NT3ZTHP` presente, con `nonce` |
 | `GET /es/precios` | 200, indexable, canónica autorreferente |
 | Ficha de partida (`/es/precios/…/alarma-de-asistencia-de-bano`) | 200, `<title>` propio, canónica autorreferente |
-| `robots.txt` | `Allow: /`, sin `Disallow: /`, anuncia índice + 23 sitemaps de precios |
-| `sitemap_index.xml` | 200, 23 hijos; los hijos responden 200 |
+| `robots.txt` | `Allow: /`, sin `Disallow: /`, anunciaba índice + 23 sitemaps de precios (antes de la sección 5) |
+| `sitemap_index.xml` | 200, 23 hijos; los hijos responden 200 (antes de la sección 5) |
 | `/healthz` | `{"ok": true}` |
 | `site:cotizat.online` en Google | **devuelve resultados y paginación** (varias páginas de resultados, mercados `en-ie`, `do`, `en-gb`…) |
 | `site:cotizat.online` en DuckDuckGo | devuelve resultados (portada, `en-us`, `en-gb`, legales, planes) |
+| GSC, día de ayer | **74 impresiones**, **posición media 44**, **0 clics** |
+| GSC, indexación del catálogo | **ni una** URL de precios indexada |
+| GSC, acciones manuales | **ninguna** |
 
 **Conclusión de esta parte:** no hay `noindex` masivo, ni canónica cruzada, ni
 `robots.txt` bloqueando, ni el `X-Robots-Tag` restrictivo que ya tuvo el catálogo
@@ -185,7 +197,7 @@ Qué comprueba y por qué:
 Sale con código 1 si algo falla, así que sirve de puerta antes de dar por bueno
 un cambio de SEO.
 
-## 4. Hipótesis principal: desvalorización a nivel de sitio
+## 4. Causa: desvalorización a nivel de sitio
 
 Es la que encaja con todo lo comprobado: el sitio **sigue indexado** (Google lo
 devuelve en `site:`), las páginas **siguen siendo indexables** (200, canónica
@@ -204,39 +216,69 @@ Qué lo habría disparado, en orden de sospecha:
    volumen sin cambios reales de contenido es una señal más de generación
    masiva, no de frescura.
 
-### Cómo se confirma (10 minutos, sin instalar nada)
+### Confirmado con los datos del 23/10
 
-- GSC → **Rendimiento** → 28 días → gráfico de **Impresiones**: si siguen
-  existiendo mientras los clics son cero, es desvalorización confirmada.
-- GSC → Rendimiento → **Posición media**: un salto de, por ejemplo, 8 → 40 en
-  dos días es la firma de una desvalorización, no de un bloqueo.
-- GSC → **Indexación → Páginas**: cuántas URL de `/xx/precios/…` están en
-  *Rastreada: actualmente no indexada*. Miles ahí = Google ha decidido que ese
-  catálogo no merece índice.
-- GSC → **Acciones manuales**: si aparece algo, esto deja de ser algorítmico y
-  hay que pedir revisión. Si está vacío (lo habitual), es algorítmico.
+| Dato de Search Console | Lectura |
+|---|---|
+| 74 impresiones en el día | Google **sigue mostrando** el sitio: no hay eliminación ni bloqueo |
+| Posición media 44 | Está en la página 4–5: por eso 74 impresiones no producen ni un clic |
+| Posición bajó | Es una **pérdida de posiciones**, no de indexación |
+| **Ni una** URL de precios indexada | Google rastreó el catálogo y decidió no indexarlo: la huella de contenido masivo, sin valor añadido por mercado |
+| Acciones manuales vacías | Es **algorítmico**, no una penalización manual: no hay nada que apelar |
 
-### Plan si se confirma, en este orden
+Ese cuadro descarta las otras dos explicaciones que quedaban (bloqueo de
+rastreo del borde y acción manual) y deja la desvalorización por contenido
+generado a escala como la única que encaja con todo.
 
-1. **Congelar** cualquier cambio de SEO durante 7 días y recoger datos. Cada
-   cambio nuevo reinicia la lectura.
-2. **Reducir la huella anunciada**: dejar en `sitemap_index.xml` solo el sitemap
-   editorial y no anunciar los 23 de precios desde `robots.txt`. Las fichas
-   siguen accesibles por enlazado interno, pero dejan de presentarse como un
-   bloque de 47 000 URL nuevas.
-3. **Diferenciar los mercados hispanos**, que es donde está el duplicado real.
-   Opciones, de menos a más agresiva: ficha completa solo en España y los 3–4
-   mercados con demanda demostrada; en el resto, página de **apartado** con
-   tabla de precios en vez de ficha individual; o `noindex` en los mercados sin
-   demanda. Los mercados de habla inglesa no sufren este problema: su texto es
-   distinto de verdad.
-4. **Reforzar lo que sí convierte**: landings por mercado, guías, comparador y
-   calculadora —contenido escrito, no generado— para que la proporción de
-   páginas de valor suba.
-5. **Medir a 3–4 semanas.** Una desvalorización de sitio no se levanta en días,
-   y seguir publicando páginas generadas mientras tanto la empeora.
+## 5. Cambio aplicado: reducir la huella a lo que tiene valor propio
 
-## 5. Qué no hacer ahora
+Implementado el 23/10/2026. La política vive en **una constante** de
+`app/services/precios_publicos.py`:
+
+```python
+MERCADOS_FICHAS_INDEXABLES: tuple[str, ...] = ("ES", "US", "GB", "CA", "AU", "IE")
+```
+
+| Qué | Antes | Ahora |
+|---|---|---|
+| Catálogo de precios en los 22 mercados | indexable en todos | indexable solo en ES y los 5 ingleses |
+| 16 mercados hispanos restantes (MX, CO, AR, CL, PE, EC, DO, UY, PY, BO, PA, CR, GT, HN, SV, NI) | `index,follow` + sitemap + hreflang | `noindex, follow` en **meta y cabecera**, sin sitemap, sin hreflang; la página **sigue funcionando** para quien navega |
+| Landings de mercado (`/mx/`, `/mx/apu`, guías) | indexables | **sin cambios**: son las páginas que rankean |
+| `sitemap_index.xml` | 24 hijos (todos los mercados) | 7 hijos (principal + 6 mercados anunciados) |
+| `robots.txt` | anunciaba además los 23 sitemaps hijos | solo índice y principal (el índice ya los contiene) |
+| hreflang del catálogo | 22 mercados entre sí | solo mercados anunciados (un hreflang a `noindex` invalida el grupo) |
+| `<meta robots>` vs `X-Robots-Tag` | dos listas distintas que podían divergir | el meta se deriva de la **misma** función que la cabecera |
+
+**No se pierde tráfico con esto**: hoy esas páginas tienen cero URL indexadas y
+cero clics. Lo que se gana es dejar de presentar a Google 40 000 páginas que
+son el mismo texto con otra moneda.
+
+### Cómo se revierte o se amplía
+
+Añadir un mercado a `MERCADOS_FICHAS_INDEXABLES` (una línea) y desplegar. Todo
+lo demás —sitemap, índice, `robots.txt`, hreflang, meta y cabecera— se recoge
+solo. Condición antes de añadirlo: que su ficha **no** sea un calco de la
+española (texto propio, unidades propias, contenido local real).
+
+### Qué esperar, y cuándo
+
+| Cuándo | Qué mirar |
+|---|---|
+| 24–72 h | Search Console → **Estadísticas de rastreo**: que Google vuelva a pedir las páginas clave. `site:cotizat.online` sigue devolviendo resultados |
+| 1 semana | **Cobertura**: las URL de precios de los 16 mercados pasan a «Excluida por noindex». Es lo esperado: están saliendo del índice |
+| 2–4 semanas | **Rendimiento**: la posición media de las landings y las guías debe empezar a recuperarse. Una desvalorización de sitio no se levanta en días |
+| Si a las 4 semanas no hay mejora | El disparador no era solo el catálogo: toca revisar la calidad del contenido de las landings por mercado (títulos y textos clonados entre países) |
+
+### Qué no tocar mientras tanto
+
+- **Nada más de SEO** durante 2 semanas (títulos, canónicas, hreflang, sitemaps,
+  redirecciones). Cada cambio reinicia la lectura y hace imposible saber qué
+  funcionó.
+- No «reenviar» el sitemap: ya está enviado y ahora es más pequeño; reenviarlo
+  no acelera nada.
+- No pedir indexación de las fichas retiradas: es lo contrario de lo que toca.
+
+## 6. Qué no hacer ahora
 
 - **Congelar cambios de SEO** (canonical, hreflang, robots, sitemap, noindex)
   hasta saber la causa: un cambio más en 48 h hace imposible atribuir el efecto.
@@ -244,3 +286,5 @@ Qué lo habría disparado, en orden de sospecha:
   señal de fecha.
 - No rotar URLs ni añadir redirecciones nuevas: si ya hay un problema de
   rastreo, las cadenas lo empeoran.
+- No volver a publicar mercados por volumen. Si algún día se enciende otro, que
+  sea con contenido propio del país, de uno en uno y midiendo entre uno y otro.

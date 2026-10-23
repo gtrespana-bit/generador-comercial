@@ -275,7 +275,13 @@ def test_pais_sin_publicar_devuelve_404(cliente_web):
 
 
 def test_hreflang_solo_variantes_existentes(cliente_web):
-    ruta, ficha = _una_partida(PUBLICADOS[0])
+    """El hreflang solo lista mercados con la página indexable.
+
+    Un hreflang hacia una página ``noindex`` invalida el grupo entero, así que
+    los mercados silenciados quedan fuera de los ``<link rel=alternate>``. El
+    selector de país visible los sigue mostrando: son cosas distintas.
+    """
+    ruta, ficha = _una_partida(pp.paises_con_catalogo_indexable()[0])
     resp = cliente_web.get(ruta)
     # Solo <link rel=alternate>: el selector de idioma del nav lleva
     # hreflang en sus anclajes y eso es UX, no señal SEO.
@@ -283,21 +289,41 @@ def test_hreflang_solo_variantes_existentes(cliente_web):
         re.findall(r'<link[^>]*hreflang="([a-z-]+)"', resp.text, flags=re.I)
     )
     esperados = {
-        hreflang_pais(a["cc"]) for a in pp.alternates(ficha["codigo"])
+        hreflang_pais(a["cc"])
+        for a in pp.alternates(ficha["codigo"])
+        if pp.ficha_indexable(a["cc"])
     } | {"x-default"}
     assert presentes == esperados
+    for cc in (a["cc"] for a in pp.alternates(ficha["codigo"])):
+        if not pp.ficha_indexable(cc):
+            assert hreflang_pais(cc) not in presentes, cc
+            # Pero la página hermana sigue existiendo y navegable.
+            assert f"{pp.ruta_indice(cc)}/" in resp.text or pp.ruta_indice(cc) in resp.text
     for cc in ("GB", "CA", "AU", "IE"):
         if cc not in PUBLICADOS:
             assert f"/en-{cc.lower()}/prices/" not in resp.text
 
 
 def test_sitemaps(cliente_web):
+    """Solo se anuncian los mercados cuyo catálogo es indexable.
+
+    Desde el 23/10/2026 los mercados hispanos que no son España publican sus
+    fichas con ``noindex``: anunciarlas sería contradecirse, y un sitemap que
+    anuncia páginas noindex es un error que Search Console reporta por cada
+    URL. El índice de sitemaps y ``robots.txt`` se recogen solos de la misma
+    política.
+    """
+    anunciados = pp.paises_con_catalogo_indexable()
+    silenciados = [cc for cc in PUBLICADOS if cc not in anunciados]
+
     principal = cliente_web.get("/sitemap.xml")
     assert principal.status_code == 200
     assert principal.text.count("<loc>") == len(urls_sitemap())
+
+    indice = cliente_web.get("/sitemap_index.xml").text
     robots = cliente_web.get("/robots.txt").text
-    for cc in PUBLICADOS:
-        assert f"sitemap-precios-{cc.lower()}.xml" in robots
+    for cc in anunciados:
+        assert f"sitemap-precios-{cc.lower()}.xml" in indice, cc
         hijo = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
         assert hijo.status_code == 200
         resumen = pp.resumen(cc)
@@ -306,14 +332,20 @@ def test_sitemaps(cliente_web):
         if pp.oficios_disponibles(cc):
             esperado += 1
         assert hijo.text.count("<loc>") == esperado, cc
-    for cc in ("GB", "MX"):
-        if cc not in PUBLICADOS:
-            r = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
-            assert r.status_code == 404
+    for cc in silenciados:
+        assert f"sitemap-precios-{cc.lower()}.xml" not in indice, cc
+        r = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
+        assert r.status_code == 404, cc
+    # robots.txt anuncia el índice (que contiene los hijos); repetir ahí los
+    # 23 hijos era lo que presentaba el catálogo de golpe.
+    assert "sitemap_index.xml" in robots
+    for cc in PUBLICADOS:
+        assert f"sitemap-precios-{cc.lower()}.xml" not in robots, cc
 
 
 def test_todas_las_urls_del_primer_pais_responden(cliente_web):
-    cc = PUBLICADOS[0]
+    # Se audita un mercado anunciado: los silenciados no tienen sitemap.
+    cc = pp.paises_con_catalogo_indexable()[0]
     hijo = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml").text
     locs = re.findall(r"<loc>https://cotizat\.test([^<]+)</loc>", hijo)
     assert len(locs) > 1000
@@ -325,7 +357,7 @@ def test_todas_las_urls_del_primer_pais_responden(cliente_web):
 
 
 def test_muestra_de_urls_de_los_demas_paises(cliente_web):
-    for cc in PUBLICADOS[1:]:
+    for cc in pp.paises_con_catalogo_indexable()[1:]:
         hijo = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml").text
         locs = re.findall(r"<loc>https://cotizat\.test([^<]+)</loc>", hijo)
         paso = max(1, len(locs) // 40)
