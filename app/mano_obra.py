@@ -279,12 +279,14 @@ def contexto_mano_obra(request: Request, codigo_pais: str) -> dict | None:
             "h1": h1,
         },
         "canonical_url": origen + ruta,
-        # Al igual que las páginas de precios, la mano de obra se ofrece en
-        # los 22 mercados: cada versión declara las demás para que Google no
-        # las trate como duplicados entre países.
+        # La mano de obra sigue el mismo criterio que el catálogo: el grupo de
+        # hreflang solo incluye mercados anunciados. Un hreflang hacia una
+        # página ``noindex`` invalida el grupo entero, y desde el 23/10/2026
+        # los mercados hispanos que no son España sirven su catálogo con
+        # ``noindex`` (ver ``precios_publicos.MERCADOS_FICHAS_INDEXABLES``).
         "hreflang_links": [
             {"hreflang": hreflang_pais(otro), "href": origen + ruta_mano_obra(otro)}
-            for otro in sorted(pp.paises_publicados())
+            for otro in sorted(pp.paises_con_catalogo_indexable())
         ]
         + [
             {

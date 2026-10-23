@@ -5,18 +5,31 @@ La verificación con lectores de contenido no expone código HTTP,
 redirecciones ni cabeceras; esta herramienta sí. Solo usa la biblioteca
 estándar: corre igual en el portátil del titular que en CI.
 
-Descubre las URLs desde el ``/sitemap.xml`` del propio origen y comprueba
-en cada una: cadena de redirecciones, código final, host final (delata el
-conflicto apex↔www), ``X-Robots-Tag`` y meta robots, canónica
-autorreferente, hreflang coherente con el sitemap, un único ``<h1>`` y
-JSON-LD válido. Controles extra: ``robots.txt`` anuncia el sitemap del
-mismo origen, ``/acceso`` sale noindex y una guía pedida bajo el silo de
-otro país devuelve 404.
+Descubre las URLs desde el ``/sitemap_index.xml`` del propio origen (o del
+``/sitemap.xml`` si no hay índice) y comprueba en cada una: cadena de
+redirecciones, código final, host final (delata el conflicto apex↔www),
+``X-Robots-Tag`` y meta robots, canónica autorreferente, hreflang coherente
+con el sitemap, un único ``<h1>`` y JSON-LD válido.
+
+Tres controles cubren lo que de verdad deja un sitio con **cero visitas** de
+un día para otro y que ninguna lectura de contenido detecta:
+
+* **Sonda Googlebot**: pide la portada y una URL del sitemap con el
+  ``User-Agent`` de Googlebot. Un cortafuegos de borde (WAF, protección de
+  bots, «Deployment Protection») devuelve 401/403/challenge al rastreador
+  mientras el navegador del titular sigue viendo el sitio perfecto. Es la
+  causa número uno de una caída a cero inmediata.
+* **Cobertura de todos los sitemaps**: el catálogo público de precios vive en
+  ``sitemap-precios-{cc}.xml``, fuera de ``sitemap.xml``. Auditar solo el
+  principal deja sin revisar justo las ~47 000 URL que se envían nuevas.
+* **Tamaño por fichero**: un sitemap de más de 50 000 URL o 50 MB incumple
+  el protocolo y Google descarta el fichero entero.
 
 Uso:
   python tools/auditar_seo_produccion.py                       # https://cotizat.online
   python tools/auditar_seo_produccion.py https://www.cotizat.online
-  python tools/auditar_seo_produccion.py http://127.0.0.1:8000 --limite 30
+  python tools/auditar_seo_produccion.py http://127.0.0.1:8000 --muestra 10
+  python tools/auditar_seo_produccion.py --muestra 0           # todas (lento)
 
 Sale con código 1 si alguna comprobación falla. No escribe nada.
 """
@@ -33,6 +46,27 @@ from urllib.parse import urljoin, urlparse
 
 AGENTE = "CotizaT-AuditoriaSEO/1.0 (+tools/auditar_seo_produccion.py)"
 
+#: El mismo ``User-Agent`` que Google declara para su rastreador. Se usa solo
+#: para comprobar que el borde no lo bloquea; no se pide nada privado.
+AGENTE_GOOGLEBOT = (
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+)
+
+#: Marcas de una página de verificación/cortafuegos. Si aparecen en la
+#: respuesta a Googlebot, el rastreador no está viendo el sitio.
+_MARCAS_BLOQUEO = (
+    "vercel security checkpoint",
+    "checking your browser",
+    "just a moment",
+    "captcha",
+    "enable javascript and cookies to continue",
+    "attention required",
+    "request blocked",
+)
+
+#: Límites del protocolo de sitemaps: por encima, Google ignora el fichero.
+_MAX_URLS_SITEMAP = 50_000
+
 
 class _SinRedirigir(urllib.request.HTTPRedirectHandler):
     """Registra la cadena de redirecciones en lugar de seguirla en silencio."""
@@ -41,7 +75,9 @@ class _SinRedirigir(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def pedir(url: str, timeout: float) -> tuple[int, dict, str, str, list[tuple[int, str]]]:
+def pedir(
+    url: str, timeout: float, agente: str = AGENTE
+) -> tuple[int, dict, str, str, list[tuple[int, str]]]:
     """GET siguiendo redirecciones a mano. Devuelve (código, cabeceras,
     cuerpo, url_final, [(código, Location)…])."""
     opener = urllib.request.build_opener(_SinRedirigir)
@@ -49,7 +85,7 @@ def pedir(url: str, timeout: float) -> tuple[int, dict, str, str, list[tuple[int
     actual = url
     for _ in range(10):
         req = urllib.request.Request(
-            actual, headers={"User-Agent": AGENTE, "Accept-Encoding": "identity"}
+            actual, headers={"User-Agent": agente, "Accept-Encoding": "identity"}
         )
         try:
             with opener.open(req, timeout=timeout) as resp:
@@ -102,7 +138,84 @@ class _Cabeza(HTMLParser):
             self._en_ld = False
 
 
-def urls_del_sitemap(base: str, timeout: float) -> tuple[list[str], dict[str, list[str]], str]:
+def locs_del_xml(cuerpo: str) -> list[str]:
+    """``<loc>`` de un ``<urlset>`` (o los hijos de un ``<sitemapindex>``)."""
+    return [loc.strip() for loc in re.findall(r"<loc>(.*?)</loc>", cuerpo, re.S)]
+
+
+def es_indice(cuerpo: str) -> bool:
+    """¿El XML es un ``<sitemapindex>`` en lugar de un ``<urlset>``?"""
+    return "<sitemapindex" in cuerpo
+
+
+def muestrear(urls: list[str], cuantas: int) -> list[str]:
+    """Toma ``cuantas`` URLs repartidas por toda la lista.
+
+    Con 47 000 fichas de precios no se pueden pedir todas en cada pasada, y
+    quedarse con las primeras N solo revisa una letra del catálogo: el reparto
+    salta de forma uniforme para que la muestra caiga en todas las secciones.
+    0 o menos significa «todas».
+    """
+    if cuantas <= 0 or cuantas >= len(urls):
+        return list(urls)
+    paso = len(urls) / float(cuantas)
+    return [urls[int(i * paso)] for i in range(cuantas)]
+
+
+def problemas_de_robots(cuerpo: str, base: str) -> tuple[list[str], list[str]]:
+    """Revisa ``robots.txt``. Devuelve (problemas, sitemaps declarados).
+
+    El origen puede declarar tantos sitemaps como quiera mientras sean suyos:
+    el índice más los hijos de precios es la forma prevista, no un error. Lo
+    que sí rompe el rastreo es un ``Disallow: /`` para todos, o anunciar
+    sitemaps de otro dominio (copia y pega de una plantilla).
+    """
+    problemas: list[str] = []
+    sitemaps = re.findall(r"^Sitemap:\s*(\S+)", cuerpo, re.M | re.I)
+    disallow_total = re.search(r"^Disallow:\s*/\s*$", cuerpo, re.M | re.I)
+    if disallow_total:
+        problemas.append("robots.txt bloquea todo el sitio (Disallow: /)")
+    if not sitemaps:
+        problemas.append("robots.txt no declara ningún Sitemap")
+    propios = [url for url in sitemaps if urlparse(url).netloc == urlparse(base).netloc]
+    for url in sitemaps:
+        if urlparse(url).netloc != urlparse(base).netloc:
+            problemas.append(f"robots.txt anuncia un sitemap de otro origen: {url}")
+    if not any(url.rstrip("/").endswith("/sitemap.xml") for url in propios):
+        problemas.append("robots.txt no anuncia /sitemap.xml")
+    return problemas, sitemaps
+
+
+def sitemaps_del_origen(base: str, timeout: float) -> tuple[list[str], list[str]]:
+    """Sitemaps a auditar y avisos encontrados al descubrirlos.
+
+    Se prefiere ``/sitemap_index.xml`` porque es el que contiene el principal
+    y los de precios; si no existe se cae a ``/sitemap.xml``.
+    """
+    avisos: list[str] = []
+    for ruta in ("/sitemap_index.xml", "/sitemap.xml"):
+        codigo, _cab, cuerpo, _final, cadena = pedir(base + ruta, timeout)
+        if codigo != 200:
+            continue
+        if cadena:
+            avisos.append(
+                f"{ruta} redirige ({cadena[0][0]} -> {cadena[0][1]}); un sitemap "
+                "debe servirse en su URL canónica"
+            )
+        if es_indice(cuerpo):
+            hijos = locs_del_xml(cuerpo)
+            if hijos:
+                return hijos, avisos
+            avisos.append(f"{ruta} es un índice sin hijos")
+        return [base + ruta], avisos
+    raise SystemExit(
+        "Ni /sitemap_index.xml ni /sitemap.xml responden 200; no hay auditoría posible."
+    )
+
+
+def urls_del_sitemap(
+    base: str, timeout: float
+) -> tuple[list[str], dict[str, list[str]], str]:
     codigo, _cab, cuerpo, _final, cadena = pedir(base + "/sitemap.xml", timeout)
     if codigo != 200:
         raise SystemExit(f"El sitemap respondió {codigo}; no hay auditoría posible.")
@@ -152,13 +265,49 @@ def auditar_url(url: str, timeout: float, alternates: dict[str, list[str]]) -> l
     return fallos
 
 
+def sonda_googlebot(base: str, urls: list[str], timeout: float) -> list[str]:
+    """Comprueba si el rastreador de Google recibe el sitio o un challenge.
+
+    Se compara con la respuesta que recibe un agente propio: si el agente
+    propio ve 200 y Googlebot ve 401/403/429, un cortafuegos de borde está
+    bloqueando la indexación aunque el sitio «funcione» en el navegador.
+    """
+    problemas: list[str] = []
+    for url in urls:
+        codigo, cabeceras, cuerpo, _final, cadena = pedir(url, timeout, AGENTE_GOOGLEBOT)
+        if cadena:
+            problemas.append(
+                f"Googlebot recibe redirecciones en {url}: "
+                f"{' -> '.join(f'{c} {d}' for c, d in cadena)}"
+            )
+        if codigo != 200:
+            problemas.append(f"Googlebot recibe HTTP {codigo} en {url}")
+        tipo = (cabeceras.get("Content-Type") or "").lower()
+        texto = cuerpo[:4000].lower()
+        if "html" in tipo:
+            marca = next((m for m in _MARCAS_BLOQUEO if m in texto), "")
+            if marca:
+                problemas.append(
+                    f"Googlebot recibe una página de verificación en {url} "
+                    f"(«{marca}»): WAF/protección de bots activa"
+                )
+        xrobots = (cabeceras.get("X-Robots-Tag") or "").lower()
+        if "noindex" in xrobots:
+            problemas.append(f"Googlebot recibe X-Robots-Tag noindex en {url}: {xrobots}")
+    return problemas
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("base", nargs="?", default="https://cotizat.online",
                         help="origen a auditar (sin barra final)")
+    parser.add_argument("--muestra", type=int, default=25,
+                        help="URLs a auditar por sitemap (0 = todas; por defecto 25)")
     parser.add_argument("--limite", type=int, default=0,
-                        help="auditar solo las N primeras URLs del sitemap (0 = todas)")
+                        help="tope total de URLs a auditar (0 = sin tope)")
     parser.add_argument("--timeout", type=float, default=20.0)
+    parser.add_argument("--sin-googlebot", action="store_true",
+                        help="omite la sonda con el User-Agent de Googlebot")
     parser.add_argument("--solo-fallos", action="store_true",
                         help="imprimir únicamente las URLs con problemas")
     args = parser.parse_args()
@@ -167,25 +316,73 @@ def main() -> int:
     print(f"Origen: {base}")
     fallos_totales = 0
 
-    # robots.txt debe anunciar el sitemap de ESTE origen.
-    codigo, _cab, cuerpo, final, cadena = pedir(base + "/robots.txt", args.timeout)
-    sitemap_declarado = re.findall(r"^Sitemap:\s*(\S+)", cuerpo, re.M)
+    # robots.txt debe anunciar sitemaps de ESTE origen y no bloquear el sitio.
+    try:
+        codigo, _cab, cuerpo, _final, cadena = pedir(base + "/robots.txt", args.timeout)
+    except Exception as exc:  # DNS, TLS, proxy del portátil: no es un fallo SEO
+        print(f"No se pudo conectar con {base}: {exc}")
+        print("Comprueba la red (o el proxy) antes de interpretar el resultado: "
+              "un origen inalcanzable también deja el sitio sin visitas.")
+        return 1
     if codigo != 200 or cadena:
         print(f"FALLO robots.txt: HTTP {codigo}, redirecciones={len(cadena)}")
         fallos_totales += 1
-    if sitemap_declarado != [base + "/sitemap.xml"]:
-        print(f"FALLO robots.txt: Sitemap declarado {sitemap_declarado} != {base}/sitemap.xml")
+    problemas_robots, sitemaps_declarados = problemas_de_robots(cuerpo, base)
+    for problema in problemas_robots:
+        print(f"FALLO robots.txt: {problema}")
         fallos_totales += 1
-    else:
-        print("robots.txt: OK (Sitemap del mismo origen)")
+    if not problemas_robots:
+        print(f"robots.txt: OK ({len(sitemaps_declarados)} sitemaps del mismo origen)")
 
-    locs, alternates, _xml = urls_del_sitemap(base, args.timeout)
-    print(f"Sitemap: {len(locs)} URLs")
+    # Se auditan todos los sitemaps anunciados por el índice, no solo el
+    # principal: el catálogo de precios por país vive en ficheros aparte.
+    try:
+        sitemaps, avisos = sitemaps_del_origen(base, args.timeout)
+    except SystemExit as exc:
+        print(f"FALLO {exc}")
+        return 1
+    except Exception as exc:  # DNS, TLS, proxy del portátil: no es un fallo SEO
+        print(f"No se pudo conectar con {base}: {exc}")
+        print("Comprueba la red (o el proxy) antes de interpretar el resultado: "
+              "un origen inalcanzable también deja el sitio sin visitas.")
+        return 1
+    for aviso in avisos:
+        print(f"AVISO {aviso}")
+
+    por_sitemap: dict[str, list[str]] = {}
+    alternates: dict[str, list[str]] = {}
+    total_declaradas = 0
+    for sitemap in sitemaps:
+        codigo, _cab, cuerpo, _final, _cadena = pedir(sitemap, args.timeout)
+        if codigo != 200:
+            print(f"FALLO sitemap {sitemap}: HTTP {codigo}")
+            fallos_totales += 1
+            continue
+        locs = locs_del_xml(cuerpo)
+        total_declaradas += len(locs)
+        por_sitemap[sitemap] = locs
+        if len(locs) > _MAX_URLS_SITEMAP:
+            print(f"FALLO sitemap {sitemap}: {len(locs)} URLs supera el límite "
+                  f"de {_MAX_URLS_SITEMAP}; Google descarta el fichero")
+            fallos_totales += 1
+        if sitemap.rstrip("/").endswith("/sitemap.xml"):
+            for bloque in re.findall(r"<url>(.*?)</url>", cuerpo, re.S):
+                loc = re.search(r"<loc>(.*?)</loc>", bloque)
+                if loc:
+                    alternates[loc.group(1)] = re.findall(r'href="([^"]+)"', bloque)
+
+    print(f"Sitemaps: {len(por_sitemap)} con contenido, {total_declaradas} URLs declaradas")
+    for sitemap, locs in por_sitemap.items():
+        print(f"  {len(locs):>6} URLs  {sitemap}")
+
+    a_auditar: list[str] = []
+    for locs in por_sitemap.values():
+        a_auditar.extend(muestrear(locs, args.muestra))
     if args.limite:
-        locs = locs[: args.limite]
-        print(f"(limitado a las primeras {len(locs)})")
+        a_auditar = a_auditar[: args.limite]
+    print(f"Auditando {len(a_auditar)} URLs (muestra de {args.muestra} por sitemap)")
 
-    for url in locs:
+    for url in a_auditar:
         try:
             fallos = auditar_url(url, args.timeout, alternates)
         except Exception as exc:  # red caída en una URL no aborta la auditoría
@@ -197,6 +394,18 @@ def main() -> int:
                 print(f"      - {fallo}")
         elif not args.solo_fallos:
             print(f"OK    {url}")
+
+    # Lo que deja el sitio en cero visitas de un día para otro: el rastreador
+    # recibe un challenge o un 403 aunque el navegador vea la página perfecta.
+    if not args.sin_googlebot:
+        objetivos = [base + "/"] + a_auditar[:2]
+        problemas_bot = sonda_googlebot(base, objetivos, args.timeout)
+        if problemas_bot:
+            for problema in problemas_bot:
+                print(f"FALLO sonda Googlebot: {problema}")
+            fallos_totales += len(problemas_bot)
+        else:
+            print(f"Sonda Googlebot: OK ({len(objetivos)} URLs vistas como Googlebot)")
 
     # Controles que no salen del sitemap.
     codigo, cabeceras, cuerpo, _f, _c = pedir(base + "/acceso", args.timeout)

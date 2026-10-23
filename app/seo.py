@@ -112,7 +112,7 @@ def url_publica(path: str, request: Request | None = None) -> str:
     return origen_canonico(request) + ruta
 
 
-def _es_indexable_precios(resto: str) -> bool:
+def _es_indexable_precios(resto: str, codigo_pais: str) -> bool:
     """Rutas del catálogo público de precios de un mercado.
 
     Son ~47 000 URL con dato propio (precio unitario, descompuesto, moneda y
@@ -121,9 +121,19 @@ def _es_indexable_precios(resto: str) -> bool:
     dos se contradicen, manda la cabecera. El catálogo entero llevaba tiempo
     fuera del índice sin que ningún test lo detectara.
 
+    Desde el 23/10/2026 la respuesta depende además del mercado: solo los de
+    ``MERCADOS_FICHAS_INDEXABLES`` se anuncian. En los 16 mercados hispanos
+    restantes la ficha es el mismo texto con otra moneda —Google no indexó ni
+    una— y el sitio entero perdió posiciones en la misma semana. Ahí la página
+    sigue sirviendo al visitante, pero lleva ``noindex, follow``.
+
     Se acepta la forma canónica de cada tipo de página y nada más: un slug
     inventado da 404 en el router, no una página indexable.
     """
+    from .services.precios_publicos import ficha_indexable
+
+    if not ficha_indexable(codigo_pais):
+        return False
     partes = str(resto or "").strip("/").split("/")
     if not partes or not partes[0]:
         return False
@@ -157,6 +167,16 @@ def es_indexable(path: str) -> bool:
         # Sitemaps (incluidos los hijos de precios), robots.txt y el fichero
         # de IndexNow. No son HTML, pero marcarlos noindex desde el
         # middleware no tiene ningún sentido y confunde al diagnóstico.
+        #
+        # Excepción: la descarga JSON del catálogo (/mx/precios.json) es la
+        # cara de datos de la ficha y sigue su misma política. Si el mercado
+        # no se anuncia, el JSON tampoco.
+        primero = next((s for s in p.split("/") if s), "").lower()
+        if primero in {c.lower() for c in ORDEN_SELECTOR}:
+            from .services.precios_publicos import ficha_indexable
+
+            if not ficha_indexable(primero):
+                return False
         return True
     if p in _INDEXABLES_EXACTAS:
         return True
@@ -196,7 +216,7 @@ def es_indexable(path: str) -> bool:
             return True
         # Catalogo de precios del mercado: /mx/precios, /mx/precios/{apartado},
         # /mx/precios/{apartado}/{partida}, /mx/mano-de-obra, /mx/precios.json
-        if _es_indexable_precios("/".join(partes[1:])):
+        if _es_indexable_precios("/".join(partes[1:]), cc):
             return True
         return False
     return False
@@ -261,7 +281,7 @@ def _es_indexable_en(p: str) -> bool:
         if re.match(r"^guia/[a-z0-9-]+$", resto):
             return True
         # Mismo catalogo con la URL inglesa: /en-gb/prices, /en-us/labour-rates
-        if _es_indexable_precios(resto):
+        if _es_indexable_precios(resto, cc):
             return True
         return False
     return False
@@ -2865,15 +2885,10 @@ def robots_txt(request: Request | None = None) -> str:
         f"Sitemap: {origen}/sitemap_index.xml",
         f"Sitemap: {origen}/sitemap.xml",
     ]
-    # Sitemaps hijos de precios (Fase 5), uno por país publicado. El
-    # principal no cambia: es el que Search Console ya conoce.
-    try:
-        from .services import precios_publicos as _precios_publicos
-
-        for _cc in _precios_publicos.paises_publicados():
-            lineas.append(f"Sitemap: {origen}/sitemap-precios-{_cc.lower()}.xml")
-    except Exception:
-        pass
+    # Ya NO se anuncian aquí los sitemaps hijos: el índice los contiene todos
+    # y repetirlos en robots.txt era lo que presentaba de golpe ~47 000 URL de
+    # catálogo. Las repeticiones vuelven el fichero más largo sin añadir nada
+    # que Google no tenga ya en el índice de sitemaps.
     lineas.append("")
     return "\n".join(lineas)
 

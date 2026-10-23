@@ -677,6 +677,34 @@ def hub_remodeling_pais(cc: str, request: Request):
     return _pagina_intencion(request, cc, "remodelacion")
 
 
+@router.get("/comprobar-analitica", response_class=HTMLResponse, include_in_schema=False)
+def comprobar_analitica(request: Request):
+    """Autodiagnóstico de GA4 en el navegador del visitante.
+
+    Nace de un caso concreto: en producción la etiqueta de GA4 viaja en el HTML
+    (con su ``nonce`` y los hosts de Google abiertos en la CSP) y, aun así, el
+    informe de *Tiempo real* no mostraba la visita del propio titular. Desde
+    fuera solo se puede comprobar que la etiqueta **se sirve**; no si el
+    navegador la **ejecuta**. Eso depende de cosas que solo existen en el
+    cliente: un bloqueador de anuncios, un DNS privado, una extensión de
+    privacidad o una violación de CSP.
+
+    La página es un diagnóstico y nada más: no indexable, sin enlaces desde el
+    sitio y sin datos privados (el ID de medición ya viaja en el HTML público).
+    """
+    from ..analytics import csp_script_src_extra, ga_measurement_id
+
+    return TEMPLATES.TemplateResponse(
+        request,
+        "comprobar_analitica.html",
+        {
+            "csp_script": csp_script_src_extra().strip(),
+            "ga_activo": bool(ga_measurement_id()),
+        },
+        headers={"X-Robots-Tag": "noindex, nofollow, noarchive"},
+    )
+
+
 @router.get("/robots.txt", include_in_schema=False)
 def robots(request: Request):
     from ..seo import robots_txt
@@ -728,12 +756,13 @@ def sitemap(request: Request):
 
 @router.get("/sitemap_index.xml", include_in_schema=False)
 def sitemap_index(request: Request):
-    """Índice de sitemaps: el principal y un hijo por país con precios.
+    """Índice de sitemaps: el principal y un hijo por país anunciado.
 
-    Con 23 sitemaps (el principal más 22 de precios) el índice es lo que se
-    envía una sola vez a Search Console y Bing: cualquier país que se
-    encienda mañana entra solo, sin reenviar nada ni tocar el alta. Además
-    deja un único `Sitemap:` legible en robots.txt.
+    Es lo que se envía una sola vez a Search Console y Bing: cualquier país
+    que se encienda mañana entra solo, sin reenviar nada ni tocar el alta.
+    Solo se listan los mercados cuyo catálogo se anuncia
+    (``MERCADOS_FICHAS_INDEXABLES``); el resto de mercados publicados sirven
+    sus páginas con ``noindex`` y no tienen sitemap.
     """
     from ..seo import SITEMAP_LASTMOD, origen_canonico
 
@@ -746,7 +775,7 @@ def sitemap_index(request: Request):
     try:
         from ..services import precios_publicos as pp
 
-        for cc in pp.paises_publicados():
+        for cc in pp.paises_con_catalogo_indexable():
             resumen = pp.resumen(cc) or {}
             hijos.append(
                 (

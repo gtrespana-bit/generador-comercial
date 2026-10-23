@@ -51,6 +51,31 @@ from .unidades_precio import (
 # Interruptor por país (ver docstring del módulo).
 PAISES_PRECIOS_PUBLICOS: tuple[str, ...] = ("US", "GB", "CA", "AU", "IE", "ES", "MX", "CO", "AR", "CL", "PE", "EC", "DO", "UY", "PY", "BO", "PA", "CR", "GT", "HN", "SV", "NI")
 
+#: Mercados cuyo catálogo de precios se **anuncia a los buscadores**.
+#:
+#: Se publica en 22 países, pero el texto de la ficha es el mismo en los 17
+#: hispanos: cambian la moneda y el precio, no la prosa (el descompuesto sale
+#: de la matriz del país, traducido del mismo original). Eso son ~40 000 URL
+#: casi idénticas. Publicadas y anunciadas de golpe el 19/10/2026, coincidieron
+#: con dos cosas medidas el 23/10: Google no había indexado **ni una** ficha y
+#: el sitio entero pasó de sus posiciones habituales a la 44 de media, con 0
+#: clics. Es el patrón que Google llama contenido generado a escala, y se
+#: evalúa por sitio: arrastra también las páginas buenas.
+#:
+#: Los mercados de habla inglesa se quedan porque su contenido **sí** está
+#: traducido de verdad (no es un calco con otra moneda). España se queda por ser
+#: el mercado de referencia, con su impuesto y su terminología.
+#:
+#: Los demás mercados siguen publicados, navegables y enlazados; lo único que
+#: cambia es que llevan ``noindex, follow`` y no aparecen en ningún sitemap. No
+#: se pierde tráfico: hoy no tienen ni una URL indexada.
+#:
+#: Para volver a anunciar un mercado basta con añadirlo aquí —una línea— y
+#: comprobar antes que su ficha no es un calco de la española. El sitemap, el
+#: ``robots.txt``, el hreflang, el ``<meta robots>`` y el ``X-Robots-Tag`` se
+#: recogen solos de esta lista.
+MERCADOS_FICHAS_INDEXABLES: tuple[str, ...] = ("ES", "US", "GB", "CA", "AU", "IE")
+
 _MIN_LINEAS = 3
 _MIN_DESCRIPCION = 120
 _MIN_PARTIDAS_APARTADO = 3
@@ -490,6 +515,22 @@ def paises_publicados() -> tuple[str, ...]:
     return tuple(cc for cc in PAISES_PRECIOS_PUBLICOS if _indice(cc) is not None)
 
 
+def ficha_indexable(codigo_pais: str) -> bool:
+    """¿Se anuncia a buscadores el catálogo de precios de este mercado?
+
+    Ver ``MERCADOS_FICHAS_INDEXABLES``. Un mercado no anunciado conserva sus
+    páginas (sirven a quien navega), pero con ``noindex, follow``, fuera de los
+    sitemaps y sin hreflang: no compite en el índice con el mercado del que es
+    copia.
+    """
+    return str(codigo_pais or "").strip().upper() in MERCADOS_FICHAS_INDEXABLES
+
+
+def paises_con_catalogo_indexable() -> tuple[str, ...]:
+    """Mercados publicados cuyo catálogo se anuncia a los buscadores."""
+    return tuple(cc for cc in paises_publicados() if ficha_indexable(cc))
+
+
 def resumen(codigo_pais: str) -> dict | None:
     indice = _indice(codigo_pais)
     if indice is None:
@@ -596,7 +637,15 @@ def ruta_json(codigo_pais: str) -> str:
 
 
 def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
-    """Entradas del sitemap del país con la forma de ``seo.urls_sitemap``."""
+    """Entradas del sitemap del país con la forma de ``seo.urls_sitemap``.
+
+    Un mercado cuyo catálogo no se anuncia (``MERCADOS_FICHAS_INDEXABLES``)
+    devuelve una lista vacía: sus páginas existen y se navegan, pero llevan
+    ``noindex`` y un sitemap que anuncia páginas noindex es una contradicción
+    que Search Console reporta como error y que empeora la señal del sitio.
+    """
+    if not ficha_indexable(codigo_pais):
+        return []
     indice = _indice(codigo_pais)
     if indice is None:
         return []

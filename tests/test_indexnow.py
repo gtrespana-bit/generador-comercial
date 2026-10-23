@@ -39,20 +39,29 @@ def test_el_catalogo_de_precios_tambien_se_puede_avisar():
     from app.indexnow import urls_precios
 
     urls = urls_precios()
-    assert len(urls) > 40_000
+    # Solo los mercados anunciados: avisar a Bing de una URL que sirve
+    # ``noindex`` es pedirle que rastree algo que luego ignora.
+    assert len(urls) > 5_000
     assert len(urls) == len(set(urls))
     assert all(u.startswith("https://cotizat.online/") for u in urls)
     assert not any(u.endswith(".json") for u in urls)
-    assert "https://cotizat.online/mx/precios" in urls
-    assert "https://cotizat.online/mx/mano-de-obra" in urls
+    assert "https://cotizat.online/es/precios" in urls
+    assert "https://cotizat.online/es/mano-de-obra" in urls
+    assert not any("/mx/precios" in u for u in urls)
 
 
 def test_se_puede_avisar_un_solo_mercado():
     """Bing admite un cupo diario: conviene poder ir mercado por mercado."""
     from app.indexnow import urls_precios
 
-    solo_mx = urls_precios(cc="MX")
-    assert solo_mx
-    assert all("/mx/" in u for u in solo_mx)
-    assert len(solo_mx) < len(urls_precios())
+    solo_es = urls_precios(cc="ES")
+    assert solo_es
+    assert all("/es/" in u for u in solo_es)
+    assert len(solo_es) < len(urls_precios())
     assert urls_precios(cc="zz") == []
+    from app.services import precios_publicos as pp
+
+    # Un mercado silenciado no tiene nada que anunciar.
+    silenced = [c for c in pp.paises_publicados() if not pp.ficha_indexable(c)]
+    if silenced:
+        assert urls_precios(cc=silenced[0]) == []

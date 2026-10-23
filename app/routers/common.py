@@ -660,12 +660,26 @@ def espejo_idioma(request) -> bool:
 def robots_meta(request) -> str:
     """Valor del meta robots de la página.
 
-    Coincide con el ``X-Robots-Tag`` que pone el middleware de seguridad: si
-    las dos instrucciones se contradicen, Google aplica la más restrictiva y
-    la página se cae del índice sin que nadie lo haya pedido. Las URL espejo
-    del conmutador salen en ``noindex``; el resto, como siempre.
+    Se deriva de la MISMA función que usa el ``X-Robots-Tag`` del middleware
+    (``seo.es_indexable``) y no de una lista paralela: si las dos
+    instrucciones se contradicen, Google aplica la más restrictiva y la página
+    se cae del índice sin que nadie lo haya pedido. Eso ya pasó una vez con el
+    catálogo entero, que servía «index» en el meta y «noindex» en la cabecera.
+
+    Ruta no indexable → ``noindex, nofollow, noarchive``; espejo de idioma →
+    ``noindex, follow`` (sus enlaces sí valen); el resto, indexable.
     """
-    return "noindex, follow" if espejo_idioma(request) else "index,follow,max-image-preview:large"
+    try:
+        from ..seo import es_indexable
+
+        ruta = str(getattr(request.state, "ruta_original", "") or "")
+        if ruta and not es_indexable(ruta):
+            if espejo_idioma(request):
+                return "noindex, follow"
+            return "noindex, nofollow, noarchive"
+    except Exception:  # fail-open: mejor indexable que romper la página
+        return "index,follow,max-image-preview:large"
+    return "index,follow,max-image-preview:large"
 
 
 def _paises_codigos() -> list[str]:

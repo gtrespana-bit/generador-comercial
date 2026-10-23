@@ -26,6 +26,8 @@ from app.seo_precios import jsonld_dataset
 from app.services import precios_publicos as pp
 
 MERCADOS = sorted(pp.paises_publicados())
+#: Mercados cuyo catálogo se anuncia; el resto publica con noindex.
+ANUNCIADOS = sorted(pp.paises_con_catalogo_indexable())
 
 
 def _cliente() -> TestClient:
@@ -102,7 +104,7 @@ def test_ruta_canonica_por_idioma(cc):
         assert ruta == f"/{cc.lower()}/mano-de-obra"
 
 
-@pytest.mark.parametrize("cc", MERCADOS)
+@pytest.mark.parametrize("cc", ANUNCIADOS)
 def test_la_pagina_responde_y_es_indexable(cc):
     ruta = pp.ruta_mano_obra(cc)
     with _cliente() as cliente:
@@ -226,7 +228,7 @@ def test_el_dataset_apunta_a_una_descarga_que_existe(monkeypatch):
         assert cliente.get(descarga.replace("https://cotizat.online", "")).status_code == 200
 
 
-@pytest.mark.parametrize("cc", MERCADOS)
+@pytest.mark.parametrize("cc", ANUNCIADOS)
 def test_el_sitemap_anuncia_la_pagina_y_no_el_json(cc):
     urls = [x["loc"] for x in pp.urls_sitemap(cc, "https://cotizat.online")]
     assert "https://cotizat.online" + pp.ruta_mano_obra(cc) in urls
