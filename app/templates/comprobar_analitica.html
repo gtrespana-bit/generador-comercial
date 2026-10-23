@@ -1,9 +1,14 @@
 {# Autodiagnóstico de Google Analytics 4.
 
    El titular no tiene terminal y el problema no se puede ver desde fuera: si
-   gtag.js carga, si el script de configuración se ejecuta o si algo lo bloquea
-   solo se sabe **en el navegador de quien visita**. Esta página lo comprueba y
-   lo explica en castellano, sin instalar nada.
+   gtag.js carga, si el script de configuración se ejecuta o si los hits salen
+   del navegador solo se sabe **en el navegador de quien visita**. Esta página
+   lo comprueba, lo explica en castellano y permite copiar el informe para
+   pegarlo en una consulta, sin instalar nada.
+
+   Lo que distingue un fallo del sitio de un fallo de la propiedad es la última
+   fila: si el navegador manda hits a Google con `tid=G-…` y ese ID es el de la
+   propiedad que se mira, el problema no puede ser del código.
 
    Reglas del proyecto: CSP estricta (todo script o estilo inline lleva el nonce
    de la respuesta), sin `onclick` ni estilos en línea, sin dependencias.
@@ -19,35 +24,39 @@
 <style nonce="{{ request.state.csp_nonce }}">
   :root { color-scheme: light dark; }
   body { margin: 0; padding: 24px 16px 64px; font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f6f7f9; color: #1b2430; }
-  main { max-width: 820px; margin: 0 auto; }
+  main { max-width: 860px; margin: 0 auto; }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
   h2 { font-size: 1.05rem; margin: 28px 0 10px; }
   .intro { color: #4a5568; margin: 0 0 20px; }
   .card { background: #fff; border: 1px solid #dfe3e8; border-radius: 12px; padding: 16px 18px; margin: 0 0 14px; }
+  .veredicto { font-weight: 700; font-size: 1.02rem; }
+  .veredicto.ok { color: #0a7d3f; }
+  .veredicto.mal { color: #b3261e; }
+  .veredicto.duda { color: #8a5b10; }
   table { width: 100%; border-collapse: collapse; }
   th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #eceef1; vertical-align: top; font-size: 0.95rem; }
-  th { width: 42%; font-weight: 600; color: #334; }
+  th { width: 44%; font-weight: 600; color: #334; }
   tr:last-child td, tr:last-child th { border-bottom: 0; }
   .ok { color: #0a7d3f; font-weight: 700; }
   .mal { color: #b3261e; font-weight: 700; }
   .duda { color: #8a5b10; font-weight: 700; }
-  code { background: #eef1f5; border-radius: 5px; padding: 1px 5px; font-size: 0.9em; }
+  code { background: #eef1f5; border-radius: 5px; padding: 1px 5px; font-size: 0.9em; word-break: break-all; }
   ol, ul { padding-left: 20px; }
-  li { margin: 4px 0; }
+  li { margin: 6px 0; }
   .pie { color: #667; font-size: 0.88rem; margin-top: 26px; }
   button { font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 9px; border: 1px solid #1b4fa0; background: #1b4fa0; color: #fff; cursor: pointer; }
   button[disabled] { opacity: .55; cursor: default; }
-  #aviso-resultado { margin-top: 10px; font-size: .93rem; }
+  pre { background: #f0f2f5; border: 1px solid #e0e4ea; border-radius: 9px; padding: 12px; overflow-x: auto; font-size: 0.82rem; white-space: pre-wrap; word-break: break-word; }
 </style>
 </head>
 <body>
 <main>
   <h1>Comprobación de Google Analytics</h1>
-  <p class="intro">Esta página mira, <strong>en tu navegador</strong>, si la etiqueta de GA4 arranca y si algo la bloquea. No envía nada más que un evento de prueba a tu propia propiedad.</p>
+  <p class="intro">Esta página mira, <strong>en tu navegador</strong>, si la etiqueta de GA4 arranca y si los hits <strong>llegan a salir</strong> hacia Google. Después envía un evento de prueba a tu propia propiedad.</p>
 
   <div class="card">
     <table>
-      <tr><th>ID de medición que sirve el servidor</th><td><code>{{ ga_id() or "(ninguno: GA está apagado)" }}</code></td></tr>
+      <tr><th>ID de medición que sirve el servidor</th><td><code id="id-servidor">{{ ga_id() or "(ninguno: GA está apagado)" }}</code></td></tr>
       <tr><th>Etiqueta renderizada en esta página</th><td>{{ "sí" if ga_id() else "no" }}</td></tr>
       <tr><th>Hosts permitidos por la CSP</th><td><code>{{ csp_script or "(ninguno: sin GA no se abre la política)" }}</code></td></tr>
     </table>
@@ -55,16 +64,25 @@
 
   <h2>Resultado en tu navegador</h2>
   <div class="card">
+    <p id="veredicto" class="veredicto">Comprobando… espera unos segundos.</p>
     <table id="tabla"></table>
-    <div id="aviso-resultado" role="status" aria-live="polite">Comprobando… espera unos segundos.</div>
+    <p><button id="copiar" type="button" disabled>Copiar el informe</button> <span id="copiado" class="ok"></span></p>
+    <pre id="informe" hidden></pre>
   </div>
 
-  <h2>Si todo sale en verde y GA4 sigue sin mostrarte</h2>
+  <h2>Cómo leerlo</h2>
+  <ul>
+    <li><strong>Todo verde y el evento no aparece en GA4:</strong> el sitio manda los datos. El problema está en la propiedad: el ID que miras no es este, el flujo de datos se borró o hay un filtro de datos activo. Es la causa más frecuente y no se arregla en el código.</li>
+    <li><strong>«gtag.js descargado: no»:</strong> un bloqueador, un DNS privado o el modo de protección del navegador cortan Google. Prueba en otro navegador sin extensiones.</li>
+    <li><strong>«Hits salientes: 0» con gtag.js descargado:</strong> el script arranca pero no envía. Suele ser CSP o una extensión que filtra peticiones.</li>
+    <li><strong>«GA está apagado»:</strong> el despliegue no tiene ID de medición.</li>
+  </ul>
+
+  <h2>Las tres comprobaciones que cierran el caso (2 minutos)</h2>
   <ol>
-    <li>Comprueba que en GA4 estás mirando <strong>la propiedad que corresponde a ese ID</strong> (<code>{{ ga_id() or "G-…" }}</code>) y su flujo de datos web. Un ID de otra propiedad no aparece nunca en este informe.</li>
-    <li>Abre <strong>Informes → Tiempo real</strong> en otra pestaña <em>antes</em> de recargar esta página: el informe tarda unos segundos en pintar.</li>
-    <li>Repite desde el móvil con datos móviles, o en una ventana de incógnito <strong>con las extensiones desactivadas</strong>. Los bloqueadores (uBlock, Brave, AdGuard, DNS privado) cortan <code>googletagmanager.com</code> y el sitio no se entera.</li>
-    <li>Si tu navegador tiene una extensión de privacidad, prueba también sin ella: es la causa más frecuente de «la etiqueta está pero no cuenta».</li>
+    <li><strong>Compara el ID.</strong> En GA4: <em>Administrar → (tu propiedad) → Flujos de datos → tu flujo web</em>. Arriba a la derecha pone <strong>ID de medición</strong>. Debe ser exactamente <code>{{ ga_id() or "G-…" }}</code>. Si es otro, el sitio envía a una propiedad y tú miras otra: eso lo explica todo.</li>
+    <li><strong>DebugView.</strong> En GA4: <em>Administrar → DebugView</em>. El evento de esta página (<code>ga_diagnostico</code>) lleva <code>debug_mode</code> y aparece ahí en segundos, antes que en Tiempo real. Si sale en DebugView pero no en Tiempo real, es cuestión de minutos.</li>
+    <li><strong>Tiempo real con la visita completa.</strong> Abre <em>Informes → Tiempo real</em> en una pestaña, y en otra navega por la portada y espera 30 s sin cerrar. El contador aparece arriba, en «Usuarios en los últimos 30 minutos».</li>
   </ol>
 
   <p class="pie">CotizaT · página de diagnóstico, no indexable y sin enlaces desde el sitio.</p>
@@ -87,24 +105,55 @@
       String(evento.blockedURI || "inline"));
   });
 
-  // gtag.js se marca como cargado si el navegador lo descargó de verdad.
+  function recursos() {
+    if (!window.performance || !window.performance.getEntriesByType) return [];
+    return window.performance.getEntriesByType("resource") || [];
+  }
+
   function scriptCargado() {
-    var recursos = window.performance && window.performance.getEntriesByType
-      ? window.performance.getEntriesByType("resource") : [];
-    for (var i = 0; i < recursos.length; i++) {
-      if (String(recursos[i].name || "").indexOf("googletagmanager.com/gtag/js") !== -1) {
+    var lista = recursos();
+    for (var i = 0; i < lista.length; i++) {
+      if (String(lista[i].name || "").indexOf("googletagmanager.com/gtag/js") !== -1) {
         return true;
       }
     }
     return false;
   }
 
+  // Los hits de GA4 salen como /g/collect (a veces por sendBeacon, a veces por
+  // fetch; en ambos casos quedan registrados como recurso de la página).
+  function hitsSalientes() {
+    var lista = recursos();
+    var salida = [];
+    for (var i = 0; i < lista.length; i++) {
+      var nombre = String(lista[i].name || "");
+      if (nombre.indexOf("/g/collect") === -1) continue;
+      var tid = /[?&]tid=([^&]+)/.exec(nombre);
+      var evento = /[?&]en=([^&]+)/.exec(nombre);
+      salida.push({
+        tid: tid ? decodeURIComponent(tid[1]) : "?",
+        en: evento ? decodeURIComponent(evento[1]) : "(page_view)",
+        url: nombre
+      });
+    }
+    return salida;
+  }
+
   function cookieDeGa() {
     var galletas = document.cookie ? document.cookie.split("; ") : [];
     for (var i = 0; i < galletas.length; i++) {
-      if (galletas[i].indexOf("_ga=") === 0) return galletas[i];
+      if (galletas[i].indexOf("_ga=") === 0) return galletas[i].slice(4);
     }
     return "";
+  }
+
+  // El client_id vive en la cookie _ga: GA1.1.<cid1>.<cid2>.
+  function clientId() {
+    var valor = cookieDeGa();
+    if (!valor) return "";
+    var partes = valor.split(".");
+    if (partes.length < 4) return "";
+    return partes[2] + "." + partes[3];
   }
 
   function pintar() {
@@ -130,17 +179,68 @@
     tabla.appendChild(fragmento);
   }
 
-  function veredicto(arranca) {
-    var aviso = document.getElementById("aviso-resultado");
+  function informeTexto() {
+    return filas.map(function (f) {
+      return f.clave + ": " + f.valor + (f.estado ? " [" + f.estado + "]" : "");
+    }).join("\n");
+  }
+
+  function veredicto(arranca, hits) {
+    var nodo = document.getElementById("veredicto");
     if (!ID) {
-      aviso.textContent = "GA está apagado en el servidor: no hay ID de medición que comprobar.";
+      nodo.className = "veredicto mal";
+      nodo.textContent = "GA está apagado en el servidor: no hay ID de medición que comprobar.";
       return;
     }
     if (!arranca) {
-      aviso.textContent = "La etiqueta NO arrancó en este navegador. Mira las filas en rojo: suelen señalar un bloqueador o un bloqueo de la política de seguridad.";
+      nodo.className = "veredicto mal";
+      nodo.textContent = "La etiqueta NO arrancó en este navegador. Mira las filas en rojo: suele ser un bloqueador o un bloqueo de la política de seguridad.";
       return;
     }
-    aviso.textContent = "La etiqueta arrancó y gtag.js está cargado. Si GA4 Tiempo real no te muestra, el problema está en la propiedad o en la vista que estás mirando, no en el sitio.";
+    if (!hits.length) {
+      nodo.className = "veredicto mal";
+      nodo.textContent = "gtag.js cargó pero NO salió ningún hit hacia Google. El corte está entre el navegador y Google (CSP, extensión o red), no en la propiedad.";
+      return;
+    }
+    var tids = {};
+    hits.forEach(function (h) { tids[h.tid] = true; });
+    var lista = Object.keys(tids).join(", ");
+    nodo.className = "veredicto ok";
+    nodo.textContent = "El sitio funciona: salieron " + hits.length +
+      " hits hacia " + lista + ". Si GA4 no te muestra, el problema está en la " +
+      "propiedad que miras (ID distinto, flujo borrado o filtro de datos), no en el código.";
+  }
+
+  function copiar() {
+    var boton = document.getElementById("copiar");
+    var pre = document.getElementById("informe");
+    var texto = pre.textContent || "";
+    function hecho() {
+      document.getElementById("copiado").textContent = "copiado";
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(hecho, function () {
+        pre.hidden = false;
+      });
+    } else {
+      pre.hidden = false;
+    }
+    void boton;
+  }
+
+  // Hit propio, independiente de gtag: si tampoco sale, el corte es de red/CSP.
+  function probarSalida(cid) {
+    if (!ID || !cid) return Promise.resolve("sin client_id todavía");
+    var url = "https://www.google-analytics.com/g/collect?v=2&tid=" +
+      encodeURIComponent(ID) + "&cid=" + encodeURIComponent(cid) +
+      "&en=ga_diag_fetch&_p=1";
+    try {
+      return fetch(url, {mode: "no-cors", credentials: "omit", keepalive: true})
+        .then(function () { return "enviado (respuesta opaca por CORS, es lo normal)"; })
+        .catch(function (error) { return "ERROR de red: " + error.message; });
+    } catch (error) {
+      return Promise.resolve("ERROR: " + error.message);
+    }
   }
 
   window.setTimeout(function () {
@@ -148,6 +248,7 @@
     var capa = window.dataLayer ? window.dataLayer.length : -1;
     var cargado = scriptCargado();
     var cookie = cookieDeGa();
+    var cid = clientId();
     var arranca = tieneGtag && cargado;
 
     fila("Script de configuración ejecutado (gtag definido)", tieneGtag ? "sí" : "no",
@@ -156,8 +257,8 @@
          cargado ? "ok" : "mal");
     fila("Eventos encolados en dataLayer", capa < 0 ? "no existe dataLayer" : String(capa),
          capa > 0 ? "ok" : "dudoso");
-    fila("Cookie _ga creada", cookie ? cookie.split("=")[1].slice(0, 24) + "…" : "todavía no",
-         cookie ? "ok" : "dudoso");
+    fila("Cookie _ga", cookie || "todavía no", cookie ? "ok" : "dudoso");
+    fila("client_id de esta visita", cid || "sin identificar", cid ? "ok" : "dudoso");
     fila("Bloqueos de la política de seguridad (CSP)",
          violaciones.length ? violaciones.join(" · ") : "ninguno",
          violaciones.length ? "mal" : "ok");
@@ -165,15 +266,38 @@
     if (arranca) {
       try {
         window.gtag("event", "ga_diagnostico", {debug_mode: true});
-        fila("Evento de prueba ga_diagnostico", "enviado ahora", "ok");
+        fila("Evento ga_diagnostico", "enviado con debug_mode", "ok");
       } catch (error) {
-        fila("Evento de prueba ga_diagnostico", "error: " + error.message, "mal");
+        fila("Evento ga_diagnostico", "error: " + error.message, "mal");
       }
     } else {
-      fila("Evento de prueba ga_diagnostico", "no se pudo enviar", "mal");
+      fila("Evento ga_diagnostico", "no se pudo enviar", "mal");
     }
+
+    probarSalida(cid).then(function (resultado) {
+      fila("Prueba de salida directa a Google", resultado,
+           resultado.indexOf("ERROR") === 0 ? "mal" : "ok");
+
+      // Margen para que el navegador registre las peticiones.
+      window.setTimeout(function () {
+        var hits = hitsSalientes();
+        fila("Hits salientes detectados (/g/collect)", hits.length ? String(hits.length) : "ninguno",
+             hits.length ? "ok" : "mal");
+        hits.slice(0, 4).forEach(function (h, indice) {
+          fila("   hit " + (indice + 1), h.tid + " · " + h.en, "ok");
+        });
+        pintar();
+        veredicto(arranca, hits);
+
+        var pre = document.getElementById("informe");
+        pre.textContent = informeTexto() + "\n\nFecha: " + new Date().toISOString() +
+          "\nPágina: " + window.location.href + "\nNavegador: " + navigator.userAgent;
+        var boton = document.getElementById("copiar");
+        boton.disabled = false;
+        boton.addEventListener("click", copiar);
+      }, 1800);
+    });
     pintar();
-    veredicto(arranca);
   }, 4000);
 
   pintar();

@@ -117,3 +117,39 @@ def test_readyz_no_falla_por_tener_ga_apagado(monkeypatch):
     texto, error = _check_analitica()
     assert error is None
     assert texto.startswith("off")
+
+
+# ── La prueba de salida (lo que separa «sitio roto» de «propiedad rota») ─────
+
+def test_la_pagina_prueba_la_salida_de_los_hits(monkeypatch):
+    """Sin esta prueba la página diría «todo bien» aunque no saliera un solo hit.
+
+    Es la comprobación que decide el caso: si los hits salen con el `tid`
+    correcto, el problema está en la propiedad de GA4 y no en el código.
+    """
+    monkeypatch.setenv("COTIZAT_GA_ID", "G-TEST12345")
+    with _cliente() as cliente:
+        html = cliente.get(RUTA).text
+    assert "/g/collect" in html
+    assert "ga_diag_fetch" in html  # hit propio, independiente de gtag
+    assert "hitsSalientes" in html
+    assert "client_id de esta visita" in html
+
+
+def test_la_pagina_permite_copiar_el_informe(monkeypatch):
+    """El titular no tiene terminal: el informe se copia y se pega en una consulta."""
+    monkeypatch.setenv("COTIZAT_GA_ID", "G-TEST12345")
+    with _cliente() as cliente:
+        html = cliente.get(RUTA).text
+    assert 'id="copiar"' in html
+    assert "clipboard" in html
+    assert 'id="informe"' in html
+
+
+def test_explica_donde_comparar_el_id_de_medicion(monkeypatch):
+    """La causa más probable es mirar otra propiedad: hay que decirlo con la ruta."""
+    with _cliente() as cliente:
+        html = cliente.get(RUTA).text
+    assert "Flujos de datos" in html
+    assert "DebugView" in html
+    assert "ID de medición" in html
