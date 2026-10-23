@@ -17,7 +17,7 @@ reportlab==5.0.0
 # Fusión de los anexos PDF como páginas del presupuesto (app/services/pdf_anexos.py).
 # 6.21.1 corrige CVE-2026-113786, publicada el 21/10/2026 y detectada por
 # `pip-audit` en CI (la 6.20.1 quedó marcada como vulnerable ese mismo día).
-pypdf==6.21.1
+pypdf==6.21.2
 python-multipart==0.0.32
 pillow==13.0.0
 # Lectura de archivos .xlsx en el asistente de importación.

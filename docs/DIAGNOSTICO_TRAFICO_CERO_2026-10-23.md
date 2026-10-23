@@ -339,3 +339,50 @@ Interpretación directa:
 
 Además, `GET /readyz` incluye ahora la clave `analitica_ga` con el ID en uso y
 los hosts abiertos en la CSP, para no tener que mirar el HTML.
+
+### Estado tras el despliegue del PR #169 (23/10, 21:07 UTC)
+
+| Comprobación | Resultado |
+|---|---|
+| `robots.txt` | ✅ solo 2 líneas `Sitemap:` (el índice y el principal) |
+| `sitemap_index.xml` | ✅ 7 hijos: principal + `es`, `us`, `gb`, `ca`, `au`, `ie` |
+| `/mx/precios` | ✅ abre con normalidad para el visitante |
+| `/readyz` → `analitica_ga` | ✅ `G-013NT3ZTHP · CSP: …googletagmanager.com…` |
+| `/comprobar-analitica` | ✅ publicada |
+
+La copia de `robots.txt` con 25 líneas que se vio justo después del merge era
+la servida por el CDN mientras revalidaba (`stale-while-revalidate`), no la del
+despliegue nuevo.
+
+### GA4: la pregunta que decide
+
+La etiqueta se sirve bien y el navegador la carga, pero **ni el PC, ni otro PC,
+ni Chrome en el móvil** muestran nada en Tiempo real. Con tres dispositivos
+distintos la hipótesis del bloqueador pierde fuerza y quedan dos:
+
+1. **La propiedad que se mira no es la que recibe los datos.** El sitio envía a
+   `G-013NT3ZTHP`. En GA4: *Administrar → (propiedad) → Flujos de datos → flujo
+   web*: el «ID de medición» debe ser exactamente ese. Si GA4 **nunca** ha
+   mostrado datos, ni siquiera antes del incidente de SEO, es la explicación
+   más probable y significa que el «0 visitas» de GA4 no era una caída: nunca
+   hubo medición.
+2. **La propiedad existe pero no procesa:** flujo de datos borrado o recreado,
+   propiedad en la papelera, o un filtro de datos activo que excluye el tráfico
+   (por ejemplo «tráfico interno» definido por IP y activado).
+
+**DebugView es el discriminador definitivo**: *Administrar → DebugView*. El
+evento `ga_diagnostico` de la página de diagnóstico lleva `debug_mode`, así que
+aparece ahí en segundos dentro de la propiedad que posee el ID.
+
+| Resultado | Conclusión |
+|---|---|
+| Sale en DebugView y no en Tiempo real | minutos de retraso: no hay avería |
+| No sale en DebugView, pero la página dice «salieron N hits» | el ID no corresponde a esa propiedad, o el flujo está roto |
+| La página dice «Hits salientes: 0» | el corte está entre el navegador y Google (CSP, extensión, red) |
+
+La página `/comprobar-analitica` ahora lo mide todo en el navegador: si
+`gtag.js` se descargó, si arrancó el script de configuración, la cookie `_ga`,
+el `client_id`, las violaciones de CSP, un **hit propio** a `/g/collect`
+independiente de gtag y —lo decisivo— **cuántos hits salieron y con qué
+`tid`**. Con eso se puede separar «fallo del sitio» de «fallo de la propiedad»
+sin discutir. El informe se copia con un botón y se pega en una consulta.
