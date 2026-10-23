@@ -386,3 +386,62 @@ el `client_id`, las violaciones de CSP, un **hit propio** a `/g/collect`
 independiente de gtag y —lo decisivo— **cuántos hits salieron y con qué
 `tid`**. Con eso se puede separar «fallo del sitio» de «fallo de la propiedad»
 sin discutir. El informe se copia con un botón y se pega en una consulta.
+
+## 8. GA4: caso cerrado — la etiqueta funciona
+
+Prueba definitiva (23/10, 21:41 UTC, desde el navegador del titular):
+
+```
+Script de configuración ejecutado (gtag definido): sí
+gtag.js descargado desde googletagmanager.com: sí
+Eventos encolados en dataLayer: 4
+Cookie _ga: GA1.1.2097734947.1792081648
+client_id de esta visita: 2097734947.1792081648
+Bloqueos de la política de seguridad (CSP): ninguno
+Prueba de salida directa a Google: enviado
+Hits salientes (/g/collect): 2 → G-013NT3ZTHP · page_view
+                                        G-013NT3ZTHP · ga_diag_fetch
+```
+
+Y, lo concluyente: **`ga_diagnostico` aparece en GA4 → DebugView**. DebugView
+solo muestra eventos que la propiedad **ha recibido y validado**, así que
+quedan demostradas las tres cosas a la vez:
+
+1. la etiqueta se ejecuta en el navegador;
+2. los hits salen hacia Google con el `tid` correcto (`G-013NT3ZTHP`);
+3. la propiedad que se mira es la que recibe esos hits.
+
+No hay nada que arreglar en el código ni en la configuración de GA4.
+
+### Por qué el «0 visitas» de GA4 era correcto
+
+Search Console da **0 clics** de Google. Sin clics no hay sesiones: las únicas
+visitas posibles eran las del propio titular, y un puñado de visitas propias no
+pinta una curva. **GA4 no estaba roto: estaba diciendo la verdad.** El cero de
+GA4 y el cero de clics son el mismo hecho, no dos averías.
+
+### Qué hacer con GA4 a partir de ahora
+
+1. **Marcar el tráfico interno.** GA4 → *Administrar → Recopilación y
+   modificación de datos → Definir tráfico interno*: añadir la IP propia (o usar
+   una regla por `traffic_type`) y activar el filtro de exclusión. Así las
+   visitas de trabajo no se mezclan con las reales y las cifras sirven para
+   decidir.
+2. **No usar GA4 como termómetro del SEO todavía.** Con el tráfico orgánico a
+   cero, GA4 no tiene nada que medir. La señal útil hasta que se recupere es
+   Search Console: *impresiones*, *posición media* y *cobertura del índice*.
+3. **Los informes estándar tardan 24–48 h** en poblarse; «Tiempo real» y
+   «DebugView» van al minuto. Si un cambio se hizo hoy, no se juzga con los
+   informes de hoy.
+
+### Resumen del incidente completo
+
+| Pieza | Estado |
+|---|---|
+| Etiqueta GA4, CSP, nonce | correctos (verificado en navegador y en DebugView) |
+| Indexabilidad del sitio | correcta (200, canónica propia, sin `noindex` en landings ni guías) |
+| Índice de Google | el sitio sigue indexado (`site:` devuelve resultados) |
+| Catálogo de precios | reducido a mercados con contenido propio (PR #169, desplegado) |
+| `robots.txt` / `sitemap_index.xml` | 2 líneas `Sitemap:` / 7 hijos (desplegado) |
+| Causa del cero | **pérdida de posiciones** (media 44) por volumen de contenido casi idéntico |
+| Próxima señal a vigilar | GSC: impresiones y posición media, a 2–4 semanas |
