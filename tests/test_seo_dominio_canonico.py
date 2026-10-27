@@ -46,7 +46,8 @@ def test_sitemap_y_robots_usan_el_apex(entorno_canonico):
         robots = cliente.get("/robots.txt").text
     assert f"<loc>{APEX}/mx/guia/mano-obra-construccion-mexico</loc>" in sitemap
     assert "<loc>https://www.cotizat.online" not in sitemap
-    assert f"Sitemap: {APEX}/sitemap.xml" in robots
+    assert f"Sitemap: {APEX}/sitemap_index.xml" in robots
+    assert robots.count("\nSitemap:") == 1
 
 
 def test_readyz_publica_el_diagnostico_seo_y_de_host(entorno_canonico):

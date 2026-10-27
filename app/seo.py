@@ -2834,8 +2834,9 @@ def llms_txt(request: Request | None = None) -> str:
         "## Sobre este fichero",
         "",
         "Generado por el propio sitio desde su configuración de rutas. "
-        "Los sitemaps XML están en /sitemap.xml. Las páginas de sesión, el panel "
-        "y los documentos privados no se listan aquí ni se indexan.",
+        "El índice de sitemaps XML está en /sitemap_index.xml e incluye el "
+        "sitemap principal y los hijos de precios. Las páginas de sesión, el "
+        "panel y los documentos privados no se listan aquí ni se indexan.",
         "",
     ]
     return "\n".join(lineas)
@@ -2879,11 +2880,11 @@ def robots_txt(request: Request | None = None) -> str:
         "Disallow: /api/",
         "Disallow: /demo",
         "",
-        # El índice es la única línea que hace falta: contiene el sitemap
-        # principal y los hijos de precios. Se deja también el principal
-        # para no romper a quien ya lo tenga enviado en Search Console.
+        # Una sola referencia: el índice contiene ya el sitemap principal y
+        # los hijos de precios. Anunciar también /sitemap.xml presentaba el
+        # mismo contenido por dos vías (robots y el propio índice), sin añadir
+        # ninguna URL que Google no descubra ya desde el índice.
         f"Sitemap: {origen}/sitemap_index.xml",
-        f"Sitemap: {origen}/sitemap.xml",
     ]
     # Ya NO se anuncian aquí los sitemaps hijos: el índice los contiene todos
     # y repetirlos en robots.txt era lo que presentaba de golpe ~47 000 URL de

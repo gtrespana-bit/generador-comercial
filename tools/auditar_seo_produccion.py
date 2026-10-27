@@ -181,8 +181,17 @@ def problemas_de_robots(cuerpo: str, base: str) -> tuple[list[str], list[str]]:
     for url in sitemaps:
         if urlparse(url).netloc != urlparse(base).netloc:
             problemas.append(f"robots.txt anuncia un sitemap de otro origen: {url}")
-    if not any(url.rstrip("/").endswith("/sitemap.xml") for url in propios):
-        problemas.append("robots.txt no anuncia /sitemap.xml")
+    # Producción anuncia solo el índice (/sitemap_index.xml), que incluye el
+    # principal como primer hijo: cualquiera de las dos URLs satisface la
+    # señal de descubrimiento. Exigir la línea /sitemap.xml a secas marcaría
+    # como error la forma canónica recomendada por el propio sitio.
+    if not any(
+        url.rstrip("/").endswith(("/sitemap.xml", "/sitemap_index.xml"))
+        for url in propios
+    ):
+        problemas.append(
+            "robots.txt no anuncia /sitemap.xml ni /sitemap_index.xml"
+        )
     return problemas, sitemaps
 
 

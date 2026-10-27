@@ -45,19 +45,23 @@ def test_locs_y_deteccion_de_indice():
 
 
 def test_robots_de_produccion_no_es_un_fallo():
-    """El índice más los hijos de precios es la forma prevista, no un error."""
+    """El índice como única referencia es la forma prevista, no un error."""
     cuerpo = (
         "User-agent: *\n"
         "Allow: /\n"
         "Disallow: /admin\n"
         "\n"
         "Sitemap: https://cotizat.online/sitemap_index.xml\n"
-        "Sitemap: https://cotizat.online/sitemap.xml\n"
-        "Sitemap: https://cotizat.online/sitemap-precios-es.xml\n"
     )
     problemas, sitemaps = aud.problemas_de_robots(cuerpo, "https://cotizat.online")
     assert problemas == []
-    assert len(sitemaps) == 3
+    assert len(sitemaps) == 1
+    # Y seguir tolerando quien declare varios sitemaps propios (formato antiguo).
+    cuerpo_varios = cuerpo + "Sitemap: https://cotizat.online/sitemap.xml\n"
+    problemas_varios, _ = aud.problemas_de_robots(
+        cuerpo_varios, "https://cotizat.online"
+    )
+    assert problemas_varios == []
 
 
 def test_robots_que_bloquea_todo_el_sitio():

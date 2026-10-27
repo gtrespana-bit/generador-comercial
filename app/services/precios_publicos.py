@@ -643,6 +643,20 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
     devuelve una lista vacía: sus páginas existen y se navegan, pero llevan
     ``noindex`` y un sitemap que anuncia páginas noindex es una contradicción
     que Search Console reporta como error y que empeora la señal del sitio.
+
+    Dos políticas deliberadas:
+
+    * Los ``alternates`` se filtran por ``ficha_indexable``: un hreflang hacia
+      una página ``noindex`` invalida el clúster entero, así que el sitemap
+      solo anuncia los mercados que se indexan, los mismos que el ``<head>``
+      vía ``seo_precios._hreflang``. ``alternates()`` y
+      ``alternates_apartado()`` siguen devolviendo los 22 mercados porque
+      alimentan también el selector de país visible, que es UX y no señal SEO.
+    * Las entradas llevan ``lastmod = None``: la fecha de revisión es la del
+      lote completo del catálogo (idéntica para miles de URLs), no un cambio
+      real de cada página. Un ``lastmod`` uniforme y antiguo enseña a Google a
+      ignorar esta señal; la fecha veraz se publica una sola vez por hijo en
+      ``sitemap_index.xml`` (la revisión del lote de ese mercado).
     """
     if not ficha_indexable(codigo_pais):
         return []
@@ -650,9 +664,13 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
     if indice is None:
         return []
     cc = indice["cc"]
-    lastmod_pais = indice["fecha_revision"] or "2026-10-19"
 
     def alts_de(paths: list[dict]) -> list[dict]:
+        # Punto único de filtrado del sitemap: alternates() nace con los 22
+        # mercados publicados (los necesita el selector visible), pero aquí
+        # solo pueden quedar los indexables. Un destino noindex en el
+        # sitemap es el mismo error que en el <head>: tira del clúster entero.
+        paths = [p for p in paths if ficha_indexable(p.get("cc"))]
         alts = [
             {"hreflang": a["hreflang"], "href": origen + a["path"]} for a in paths
         ]
@@ -670,7 +688,7 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
     salida: list[dict] = [
         {
             "loc": origen + ruta_indice(cc),
-            "lastmod": lastmod_pais,
+            "lastmod": None,
             "changefreq": "monthly",
             "priority": "0.8",
             "alternates": alts_de(
@@ -680,7 +698,7 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
                         "cc": otro,
                         "path": ruta_indice(otro),
                     }
-                    for otro in paises_publicados()
+                    for otro in paises_con_catalogo_indexable()
                 ]
             ),
         }
@@ -691,7 +709,7 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
         salida.append(
             {
                 "loc": origen + ruta_mano_obra(cc),
-                "lastmod": lastmod_pais,
+                "lastmod": None,
                 "changefreq": "monthly",
                 "priority": "0.8",
                 "alternates": [],
@@ -701,7 +719,7 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
         salida.append(
             {
                 "loc": origen + ruta_apartado(cc, slug_ap),
-                "lastmod": lastmod_pais,
+                "lastmod": None,
                 "changefreq": "monthly",
                 "priority": "0.7",
                 "alternates": alts_de(
@@ -713,7 +731,7 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
         salida.append(
             {
                 "loc": origen + ruta_partida(cc, slug_ap, slug_p),
-                "lastmod": ficha["fecha_revision"] or lastmod_pais,
+                "lastmod": None,
                 "changefreq": "monthly",
                 "priority": "0.6",
                 "alternates": alts_de(alternates(ficha["codigo"])),

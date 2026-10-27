@@ -733,7 +733,11 @@ def _xml_urlset(entradas) -> str:
     for item in entradas:
         xml.append("  <url>")
         xml.append(f"    <loc>{item['loc']}</loc>")
-        xml.append(f"    <lastmod>{item['lastmod']}</lastmod>")
+        # Los sitemaps hijos de precios emiten lastmod=None: su fecha es la
+        # revisión del lote completo (igual para miles de URLs), que se publica
+        # una sola vez en el índice. Un lastmod veraz por URL no existe ahí.
+        if item.get("lastmod"):
+            xml.append(f"    <lastmod>{item['lastmod']}</lastmod>")
         xml.append(f"    <changefreq>{item['changefreq']}</changefreq>")
         xml.append(f"    <priority>{item['priority']}</priority>")
         for alt in item.get("alternates") or []:
