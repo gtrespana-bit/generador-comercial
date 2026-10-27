@@ -683,6 +683,17 @@ def favicon() -> RedirectResponse:
     return RedirectResponse("/static/icono.png", status_code=307)
 
 
+@app.get("/" + __import__("app.indexnow").CLAVE + ".txt", include_in_schema=False)
+def indexnow_key() -> Response:
+    """Verificación de dominio para IndexNow (Bing / Yahoo)."""
+    from app.indexnow import CLAVE
+    return Response(
+        content=CLAVE,
+        media_type="text/plain; charset=utf-8",
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )
+
+
 # ---------------------------------------------------------------------------
 # Salud (sin autenticación; no exponen secretos ni datos de tenant)
 # ---------------------------------------------------------------------------

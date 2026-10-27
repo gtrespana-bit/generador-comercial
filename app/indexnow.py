@@ -16,7 +16,7 @@ lee de aquí.
 from __future__ import annotations
 
 #: Clave pública IndexNow (hex). Se sirve tal cual en ``RUTA_CLAVE``.
-CLAVE = "c2ecc63e4cd4d18c77e5b5e5430d7358"
+CLAVE = "31f54838b77f4354a78bf26116d1ec4d"
 
 #: Ruta pública donde los buscadores verifican la propiedad del dominio.
 RUTA_CLAVE = f"/{CLAVE}.txt"
