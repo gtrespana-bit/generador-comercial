@@ -67,7 +67,10 @@ def test_robots_bloquea_el_panel_y_apunta_al_sitemap():
     assert resp.status_code == 200
     assert "Disallow: /presupuestos" in resp.text
     assert "Disallow: /acceso" in resp.text
-    assert "Sitemap: https://cotizat.test/sitemap.xml" in resp.text
+    # Una sola referencia: el índice contiene el principal y los hijos;
+    # anunciar /sitemap.xml además duplicaba la señal.
+    assert "Sitemap: https://cotizat.test/sitemap_index.xml" in resp.text
+    assert resp.text.count("\nSitemap:") == 1
     assert resp.headers["content-type"].startswith("text/plain")
 
 

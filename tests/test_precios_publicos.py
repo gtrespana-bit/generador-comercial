@@ -343,6 +343,94 @@ def test_sitemaps(cliente_web):
         assert f"sitemap-precios-{cc.lower()}.xml" not in robots, cc
 
 
+def _mercado_del_href(href: str) -> str:
+    """Mercado (cc en minúscula) al que apunta un alternate del sitemap."""
+    from urllib.parse import urlparse
+
+    segmento = urlparse(href).path.split("/")[1].lower()
+    return segmento.removeprefix("en-")
+
+
+def test_los_sitemaps_hijos_solo_enlazan_mercados_indexables():
+    """El hreflang del sitemap no puede apuntar a una página noindex.
+
+    Es la versión sitemap de ``test_hreflang_solo_variantes_existentes`` (que
+    cubre el ``<head>``): un alternate hacia un mercado silenciado invalida el
+    clúster hreflang entero, así que los 16 mercados noindex no pueden aparecer
+    en ninguno de los seis sitemaps hijos.
+    """
+    indexables = {cc.lower() for cc in pp.paises_con_catalogo_indexable()}
+    assert len(indexables) == 6
+    for cc in pp.paises_con_catalogo_indexable():
+        entradas = pp.urls_sitemap(cc, "https://cotizat.online")
+        assert entradas  # mercado indexable: su sitemap nunca va vacío
+        for entrada in entradas:
+            mercados = set()
+            for alt in entrada["alternates"]:
+                if alt["hreflang"] == "x-default":
+                    # El destino por defecto también tiene que ser indexable.
+                    assert _mercado_del_href(alt["href"]) in indexables, alt
+                    continue
+                mercado = _mercado_del_href(alt["href"])
+                assert mercado in indexables, (cc, entrada["loc"], alt)
+                mercados.add(mercado)
+            if entrada["alternates"]:
+                # 6 mercados indexables + x-default: nunca los 23 de antes.
+                assert len(entrada["alternates"]) <= 7, entrada["loc"]
+        # La entrada índice del mercado existe en los seis catálogos: su grupo
+        # tiene exactamente los seis mercados más x-default.
+        entrada_indice = next(
+            e for e in entradas if e["loc"].endswith(pp.ruta_indice(cc))
+        )
+        assert len(entrada_indice["alternates"]) == 7
+
+
+def test_las_alternates_crudas_siguen_incluyendo_mercados_silenciados():
+    """El filtro es del sitemap, no de ``alternates()``.
+
+    El selector de país visible necesita los 22 mercados (es UX, no señal
+    SEO): filtrar dentro de ``alternates()`` habría borrado mercados del nav.
+    """
+    indice_es = pp._indice("ES")
+    clave, codigo = None, None
+    for (sa, sp), ficha in indice_es["partidas"].items():
+        if any(not pp.ficha_indexable(a["cc"]) for a in pp.alternates(ficha["codigo"])):
+            clave, codigo = (sa, sp), ficha["codigo"]
+            break
+    assert codigo is not None
+    crudas = pp.alternates(codigo)
+    assert any(not pp.ficha_indexable(a["cc"]) for a in crudas)
+
+    # El mismo dato, al pasar por el sitemap, queda filtrado.
+    ruta = pp.ruta_partida("ES", clave[0], clave[1])
+    entradas = pp.urls_sitemap("ES", "https://cotizat.online")
+    entrada = next(e for e in entradas if e["loc"].endswith(ruta))
+    assert all(
+        pp.ficha_indexable(_mercado_del_href(a["href"]).upper())
+        for a in entrada["alternates"]
+    )
+
+
+def test_los_sitemaps_hijos_omiten_lastmod_pero_el_indice_lo_conserva(cliente_web):
+    """Sin lastmod veraz por URL, los hijos no lo emiten; el índice sí.
+
+    La fecha de revisión es la del lote completo (idéntica para miles de
+    URLs), así que el dato veraz vive una sola vez por hijo en
+    ``sitemap_index.xml``. El sitemap principal, con páginas editoriales
+    distintas, mantiene su ``lastmod``.
+    """
+    for cc in pp.paises_con_catalogo_indexable():
+        assert all(
+            e["lastmod"] is None
+            for e in pp.urls_sitemap(cc, "https://cotizat.online")
+        )
+        hijo = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
+        assert hijo.status_code == 200
+        assert "<lastmod>" not in hijo.text, cc
+    assert "<lastmod>" in cliente_web.get("/sitemap_index.xml").text
+    assert "<lastmod>" in cliente_web.get("/sitemap.xml").text
+
+
 def test_todas_las_urls_del_primer_pais_responden(cliente_web):
     # Se audita un mercado anunciado: los silenciados no tienen sitemap.
     cc = pp.paises_con_catalogo_indexable()[0]
