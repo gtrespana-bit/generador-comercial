@@ -122,11 +122,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "España",
         "pais_path": _PAIS_PATH,
         "kicker": "España · Presupuesto de reforma",
-        "title": "CotizaT: plantilla de presupuesto de reforma en España",
+        "title": "Plantilla de presupuesto de reforma en España: estructura completa y checklist",
         "h1": "Plantilla de presupuesto de reforma: qué debe llevar en España",
         "description": (
-            "Estructura completa de un presupuesto de reforma en España: capítulos, "
-            "partidas, mediciones, IVA, condiciones, opciones y control de versiones."
+            "Estructura completa de un presupuesto de reforma en España: capítulos (demolición, albañilería, fontanería, electricidad, revestimientos), "
+            "partidas con descripción técnica, mediciones, IVA 21 %, opciones, exclusiones, condiciones de pago y control de versiones. Incluye una plantilla editable."
         ),
         "lead": (
             "Una plantilla útil no es una tabla con cantidad y precio. Tiene que dejar "
@@ -226,11 +226,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "España",
         "pais_path": _PAIS_PATH,
         "kicker": "España · Mano de obra 2026",
-        "title": "CotizaT: precio hora de mano de obra en España (2026)",
+        "title": "Precio hora mano de obra construcción España 2026: coste empresa y precio venta",
         "h1": "Precio por hora de la mano de obra de construcción en España (2026)",
         "description": (
-            "Coste empresa por hora de albañil, peón, pintor, fontanero y electricista "
-            "en España en 2026, con rangos y método para convertirlo en precio de venta."
+            "Coste empresa por hora facturable (no tarifa al cliente) para albañil (21 €/h), peón (15 €/h), pintor (20 €/h), fontanero (23 €/h) y electricista (24 €/h) en España 2026. "
+            "Incluye rango nacional, método para convertir en precio de venta, y la fórmula del APU (APU = materiales + mano de obra + equipo + complementarios)."
         ),
         "lead": (
             "El precio de una hora puede significar salario, coste para la empresa o "
@@ -328,11 +328,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "España",
         "pais_path": _PAIS_PATH,
         "kicker": "España · BC3 / FIEBDC",
-        "title": "CotizaT: cómo usar BC3 en presupuestos de reformas",
+        "title": "Cómo usar BC3 (FIEBDC) en presupuestos de reformas en España",
         "h1": "BC3 en presupuestos de reformas: importar, revisar y volver a exportar",
         "description": (
-            "Qué contiene un archivo BC3, cómo importar capítulos, partidas, "
-            "descompuestos y mediciones, y qué revisar antes de exportar el presupuesto."
+            "Qué contiene un archivo BC3 (FIEBDC-3), cómo importar capítulos, partidas, descompuestos y mediciones en España, "
+            "y qué revisar antes de exportar el presupuesto técnico. Incluye una guía paso a paso para arquitectos y reformistas."
         ),
         "lead": (
             "BC3 no es una hoja de cálculo ni una base de precios concreta: es un "
