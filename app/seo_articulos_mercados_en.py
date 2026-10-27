@@ -109,12 +109,12 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "the United States",
         "pais_path": "/en-us/",
         "kicker": "United States · Estimates",
-        "title": "CotizaT: what a US construction estimate must include",
+        "title": "What a US construction estimate must include (template & checklist)",
         "h1": "What a construction estimate must include in the United States",
         "description": (
-            "A US construction estimate needs license details, a sectioned scope, "
-            "allowances, tax treatment, payment schedule and change-order terms. "
-            "Section by section."
+            "A complete US construction estimate template: license details, sectioned scope, "
+            "allowances, sales tax by state, payment schedule, retainage and change-order terms. "
+            "Includes a checklist for contractors, remodelers and general contractors in all 51 jurisdictions."
         ),
         "lead": (
             "A homeowner compares three estimates and signs one. The document that "
@@ -261,12 +261,12 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "the United States",
         "pais_path": "/en-us/",
         "kicker": "United States · Sales tax",
-        "title": "CotizaT: sales tax on construction, state by state",
+        "title": "Sales tax on US construction: the default treatment for all 51 states and DC",
         "h1": "Do contractors charge sales tax? Construction tax in all 51 jurisdictions",
         "description": (
-            "Most states never put sales tax on a remodel invoice. The default "
-            "treatment, average rate and exceptions of all 50 states plus DC in "
-            "one table."
+            "Most US states never charge sales tax on a remodel invoice. The default treatment, "
+            "average rate and exceptions for all 50 states plus DC: no tax, full tax, materials only, "
+            "gross receipts (Hawaii GET, New Mexico GRT) and Washington's full-contract tax."
         ),
         "lead": (
             "The short answer most software gets wrong: in the majority of states "
@@ -395,12 +395,12 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "the United States",
         "pais_path": "/en-us/",
         "kicker": "United States · Labor costs",
-        "title": "CotizaT: true construction labor cost per hour (2026)",
+        "title": "US construction labor cost per hour (2026): BLS wages vs. employer cost",
         "h1": "Construction labor cost per hour in 2026: wage vs. what an hour really costs you",
         "description": (
-            "BLS median wages by trade next to the burdened employer cost per "
-            "billable hour. Why a $30.67 plumber costs your company $40.21 — "
-            "before margin."
+            "BLS median wages by trade (carpenter $39.07, electrician $39.76, plumber $40.21, laborer $30.68) "
+            "loaded with FICA, FUTA, SUTA, workers' comp and overhead into true employer cost per billable hour. "
+            "Includes the formula to convert a wage into a billable rate for estimates."
         ),
         "lead": (
             "Ask what an hour of labor costs and you get three different numbers: "
@@ -522,12 +522,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Ireland",
         "pais_path": "/en-ie/",
         "kicker": "Ireland · Quotations",
-        "title": "CotizaT: what an Irish builder's quote must include",
+        "title": "What an Irish builder's quote must include (VAT 13.5 %, RCT, terms)",
         "h1": "What a builder's quote must include in Ireland (VAT 13.5 %, RCT and terms)",
         "description": (
-            "An Irish builder's quote must state scope, price basis, VAT "
-            "treatment, the RCT labour split, exclusions and validity. What each "
-            "part does."
+            "An Irish builder's quote must carry scope sections, price basis, VAT treatment (13.5 % standard, 23 % two-thirds rule), "
+            "RCT retention, exclusions, exclusions, and validity. Includes a checklist for contractors, remodelers and general contractors."
         ),
         "lead": (
             "An Irish homeowner compares three quotes and signs one. The document "
@@ -659,12 +658,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Ireland",
         "pais_path": "/en-ie/",
         "kicker": "Ireland · VAT and RCT",
-        "title": "CotizaT: VAT on construction in Ireland — 13.5 %, 23 % and RCT",
+        "title": "VAT on Irish construction: 13.5 %, the two-thirds rule and RCT (2026)",
         "h1": "VAT on construction in Ireland: the 13.5 % rate, the two-thirds rule and RCT",
         "description": (
-            "Construction services are 13.5 % VAT in Ireland — unless materials "
-            "pass two thirds of the price and the whole job becomes 23 %. The "
-            "rule worked, plus RCT."
+            "Irish construction VAT is 13.5 % — unless materials exceed two-thirds of the price, making the whole job 23 %. "
+            "Includes the RCT retention, the two-thirds rule explained with examples, and how to configure VAT in estimates."
         ),
         "lead": (
             "Ireland taxes construction services at a reduced 13.5 % VAT — with a "
@@ -788,12 +786,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Ireland",
         "pais_path": "/en-ie/",
         "kicker": "Ireland · Labour costs",
-        "title": "CotizaT: builder and trades rates in Ireland (2026)",
+        "title": "Irish builder and trades rates (2026): SEO wages vs. true employer cost",
         "h1": "Builder and trades rates in Ireland 2026: the SEO wage vs. the true hourly cost",
         "description": (
-            "Statutory SEO and Connect/AECI wages by trade, next to the "
-            "employer cost per billable hour they produce. A €23.74 craft "
-            "rate costs €32.67."
+            "Statutory SEO craft wage (€23.74/h) and Connect/AECI mechanical/electrical rates, loaded with PRSI, pension, "
+            "leave and non-billable time into true employer cost per billable hour. A craft rate costs €32.67 — before overhead and margin."
         ),
         "lead": (
             "Ireland is the one market where construction wages are set in law: "
@@ -908,12 +905,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Australia",
         "pais_path": "/en-au/",
         "kicker": "Australia · Quotes",
-        "title": "CotizaT: what an Australian building quote must include",
+        "title": "What an Australian building quote must include (ABN, licence, GST)",
         "h1": "What a building quote must include in Australia (ABN, licence, GST)",
         "description": (
-            "An Australian building quote must carry your ABN and licence "
-            "number, a GST-inclusive price for consumers, inclusions and "
-            "exclusions, and an expiry."
+            "An Australian building quote must include ABN, state licence number, GST-inclusive price for consumers, "
+            "scope sections (demolition, framing, finishes), exclusions, validity period and payment terms. Checklist included."
         ),
         "lead": (
             "An Aussie homeowner gets three quotes and picks one — and the state "
@@ -1033,12 +1029,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Australia",
         "pais_path": "/en-au/",
         "kicker": "Australia · GST",
-        "title": "CotizaT: GST on building work in Australia, for builders and tradies",
+        "title": "GST on Australian building work: registration, quoting & 47 % withholding (2026)",
         "h1": "GST on building work in Australia: registration, quoting and the 47 % no-ABN withholding",
         "description": (
-            "10 % GST on building services, registration at $75,000, "
-            "GST-inclusive consumer quotes and the 47 % withholding when no "
-            "ABN is quoted."
+            "10 % GST on building services, $75,000 registration threshold, GST-inclusive consumer quotes (Australian Consumer Law), "
+            "ex-GST business quotes, and the 47 % no-ABN withholding. Includes a calculator for estimates."
         ),
         "lead": (
             "GST on building work is simpler than most countries' systems — one "
@@ -1152,12 +1147,12 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Australia",
         "pais_path": "/en-au/",
         "kicker": "Australia · Labour costs",
-        "title": "Tradie hourly rates in Australia: 2026 award rates and true cost",
+        "title": "Tradie hourly rates in Australia (2026): award rates vs. true employer cost",
         "h1": "Tradie hourly rates in Australia 2026: award pay vs. what an hour really costs",
         "description": (
-            "Building, electrical and plumbing award ordinary rates next to "
-            "the employer cost per billable hour with 12 % super counted. The "
-            "award is a floor, not a price."
+            "Australian award hourly rates (CW3 $31.22/h, plumber $31.63, electrician $31.13) loaded with 12 % super, "
+            "portable long service leave, workers' comp and non-billable time into true employer cost per billable hour. "
+            "Includes the formula to convert an award rate into a billable rate."
         ),
         "lead": (
             "Australia sets construction pay by award: the Building and "
@@ -1281,12 +1276,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Canada",
         "pais_path": "/en-ca/",
         "kicker": "Canada · Estimates",
-        "title": "CotizaT: what a Canadian contractor estimate must include",
+        "title": "What a Canadian contractor estimate must include (GST/HST, holdback, permits)",
         "h1": "What a contractor estimate must include in Canada (GST/HST number, holdback, permits)",
         "description": (
-            "A Canadian estimate needs your GST/HST number, a sectioned "
-            "scope, the provincial tax treatment, deposit and holdback "
-            "terms, and permit lines."
+            "A Canadian contractor estimate needs GST/HST number, provincial tax treatment (5 % GST, 13 % HST Ontario, 15 % HST Atlantic), "
+            "scope sections, exclusions, deposit, holdback (10 % common), permits, and validity period. Includes a checklist."
         ),
         "lead": (
             "A Canadian homeowner signs the estimate that reads like it was "
@@ -1418,12 +1412,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Canada",
         "pais_path": "/en-ca/",
         "kicker": "Canada · GST/HST",
-        "title": "CotizaT: GST/HST on construction in Canada, province by province",
+        "title": "GST/HST on Canadian construction by province (2026): what contractors charge",
         "h1": "GST/HST on construction in Canada: the provincial table (2026)",
         "description": (
-            "13 % HST in Ontario to GST-only in Alberta: what a contractor "
-            "charges on construction services in every province, and the "
-            "place-of-supply rule."
+            "Federal GST (5 %) plus provincial HST or PST for all provinces: Ontario 13 % HST, Nova Scotia 15 % HST, Alberta 5 % GST, "
+            "British Columbia 5 % GST + 7 % PST, Quebec 5 % GST + 9.975 % QST. Includes the place-of-supply rule for real property."
         ),
         "lead": (
             "Ask what tax to put on a Canadian construction estimate and the "
@@ -1547,12 +1540,11 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "Canada",
         "pais_path": "/en-ca/",
         "kicker": "Canada · Labour costs",
-        "title": "CotizaT: construction labour rates in Canada (2026)",
+        "title": "Canadian construction labour rates (2026): Job Bank wages vs. employer cost",
         "h1": "Construction labour rates in Canada 2026: Job Bank wages vs. true employer cost",
         "description": (
-            "Government of Canada Job Bank median wages by trade (Ontario) "
-            "next to employer cost per billable hour with CPP, EI and WSIB "
-            "counted."
+            "Government of Canada Job Bank median wages by trade (bricklayer $38.00/h, electrician $34.00, plumber $32.50) loaded with CPP, EI, WSIB, "
+            "vacation pay and overhead into true employer cost per billable hour. Includes the formula to convert a wage into a billable rate."
         ),
         "lead": (
             "Canada publishes its construction wages: the federal Job Bank "

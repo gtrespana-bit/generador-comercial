@@ -14,11 +14,12 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Colombia",
         "pais_path": "/co/",
         "kicker": "Colombia · APU",
-        "title": "CotizaT: cómo armar un APU de pañete en Colombia sin Excel",
+        "title": "Cómo armar un APU de pañete en Colombia (COP, NIT, IVA 19 % — sin Excel roto)",
         "h1": "Cómo armar un APU de pañete en Colombia (sin que el Excel se rompa)",
         "description": (
-            "Método para un análisis de precios unitarios de pañete en Colombia: "
-            "recursos, rendimientos, COP e IVA 19 %. Sin AIU de obra pública."
+            "Guía completa del análisis de precios unitarios de pañete en Colombia: recursos (cemento, arena, agua), rendimientos, COP, NIT e IVA 19 %. "
+            "Método paso a paso para remodeladores y SAS de 2-15 personas en Bogotá, Medellín o cualquier ciudad. "
+            "No es AIU de obra pública ni pliego SECOP."
         ),
         "lead": (
             "En Colombia un presupuesto serio se sostiene en el APU. El pañete "
@@ -85,11 +86,11 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "México",
         "pais_path": "/mx/",
         "kicker": "México · Cotización",
-        "title": "CotizaT: de la visita a la cotización de remodelación en MXN",
+        "title": "De la visita a la cotización de remodelación en México (MXN, RFC, IVA 16 %, sin CFDI)",
         "h1": "De la visita a la cotización en México (en pesos, con tu margen)",
         "description": (
-            "Cómo pasar de la visita a una cotización de remodelación en México: "
-            "aplanado, plafón, opciones de producto, MXN e IVA 16 %. Sin CFDI."
+            "Cómo pasar de la visita a una cotización profesional de remodelación en México: medidas, aplanado, plafón, zoclo, opciones de producto con foto. "
+            "MXN, RFC e IVA 16 %. CotizaT es software comercial, no emite CFDI ni es visor BIM (no es Neodata)."
         ),
         "lead": (
             "En México el cliente pide una cotización tanto como un presupuesto. "
@@ -155,11 +156,11 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Perú",
         "pais_path": "/pe/",
         "kicker": "Perú · Metrados",
-        "title": "CotizaT: metrados y APU en soles para Perú",
+        "title": "Metrados y APU en soles para Perú (RUC, IGV 18 %, sin expediente S10)",
         "h1": "Metrados y APU en Perú (en soles, con IGV aparte del comprobante)",
         "description": (
-            "Cómo armar metrados y APU de remodelación en Perú: cantidades por "
-            "zona, tarrajeo, soles, RUC e IGV 18 %. No es un expediente S10."
+            "Cómo armar metrados y análisis de precios unitarios de remodelación en Perú: cantidades por zona (cocina, baño, pasadizo), tarrajeo, soles, RUC e IGV 18 %. "
+            "No es un expediente S10 ni una herramienta de licitación pública. CotizaT es para obra privada y reformas residenciales en Lima, Arequipa o cualquier ciudad."
         ),
         "lead": (
             "En Perú el presupuesto de obra arranca en el metrado: cuántos m², "
@@ -219,11 +220,10 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Venezuela",
         "pais_path": "/ve/",
         "kicker": "Venezuela · USD y Bs",
-        "title": "CotizaT: presupuesto de obra en USD con equivalente en bolívares",
+        "title": "Presupuesto de obra en Venezuela: USD con equivalente en Bs (RIF, IVA 16 %, tasa congelada)",
         "h1": "Presupuesto en USD y bolívares: la tasa se congela, el PDF no se mueve",
         "description": (
-            "Cómo presupuestar remodelación en Venezuela en USD o Bs, con tasa "
-            "congelada, RIF e IVA 16 %. El PDF de marzo no cambia en abril."
+            "Cómo presupuestar remodelación y obra en Venezuela en USD o bolívares: catálogo propio, tasa de referencia congelada por documento, RIF e IVA 16 %. El PDF enviado en marzo no cambia si en abril se mueve el tipo de cambio. Nota: el cuadro base USD es referencia interna, no una encuesta salarial nacional; no sustituye factura fiscal del SENIAT."
         ),
         "lead": (
             "En Venezuela se discute en dólares y a veces se cobra en bolívares. "
@@ -283,11 +283,10 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Ecuador",
         "pais_path": "/ec/",
         "kicker": "Ecuador · APU en USD",
-        "title": "CotizaT: APU en Ecuador, en dólares, con RUC",
+        "title": "APU de construcción en Ecuador: análisis en USD, RUC e IVA 15 % (sin factura SRI)",
         "h1": "APU en Ecuador: dólares nativos, RUC e IVA 15 %",
         "description": (
-            "Análisis de precios unitarios para constructoras en Ecuador: "
-            "hormigón, enlucido, tumbado, USD, RUC e IVA 15 %. Sin factura SRI."
+            "Cómo armar un análisis de precios unitarios (APU) para construcción y remodelación en Ecuador: recursos nacionales (cemento, arena, bloques, hormigón), rendimientos por m² o unidad, precios en USD con referencia de mercado (Sodimac, Novey, GlobalGTC), RUC e IVA 15 %. No es una factura electrónica SRI ni un expediente de licitación pública. CotizaT es para obra privada y reformas residenciales/comerciales en Quito, Guayaquil o cualquier ciudad."
         ),
         "lead": (
             "Ecuador ya cotiza en USD. No hace falta «convertir después». "
@@ -438,11 +437,10 @@ ARTICULOS_EN.update({
         "pais_nombre": "Colombia",
         "pais_path": "/co/",
         "kicker": "Colombia · APU",
-        "title": "CotizaT: how to build a render (panete) APU in Colombia without Excel",
+        "title": "How to build a render (panete) APU in Colombia (COP, NIT, 19% VAT — no broken Excel)",
         "h1": "How to build a render (panete) APU in Colombia (without the spreadsheet breaking)",
         "description": (
-            "Method for a unit price analysis of render in Colombia: resources, "
-            "productivity, COP and 19% VAT. No public-works AIU."
+            "Complete method for a render (panete) unit price analysis in Colombia: materials (cement, sand, water), labor (foreman, helper), productivity per m2, COP, NIT and 19% VAT. For remodelers and SAS (2-15 people) in Bogota, Medellin or any city. Not public-works AIU or SECOP tender. Includes checklist."
         ),
         "lead": (
             "In Colombia a serious estimate stands on the APU. Render is the example "
@@ -498,11 +496,10 @@ ARTICULOS_EN.update({
         "pais_nombre": "Mexico",
         "pais_path": "/mx/",
         "kicker": "Mexico · quote",
-        "title": "CotizaT: from the site visit to a remodel quote in MXN",
+        "title": "From site visit to remodel quote in Mexico (MXN, RFC, 16% VAT — no CFDI)",
         "h1": "From the site visit to a quote in Mexico (in pesos, with your margin)",
         "description": (
-            "How to go from a site visit to a remodel quote in Mexico: plaster, "
-            "ceiling, product options, MXN and 16% VAT. No CFDI."
+            "How to go from a site visit to a professional remodel quote in Mexico: measurements, plaster (aplanado), ceiling (plafon), baseboard (zoclo), product options with photo, MXN, RFC and 16% VAT. Not a CFDI generator or BIM viewer (not Neodata). For contractors and remodelers in Mexico City, Guadalajara or any region."
         ),
         "lead": (
             "In Mexico the client asks for a quote as much as an estimate. The visit, "
@@ -557,11 +554,10 @@ ARTICULOS_EN.update({
         "pais_nombre": "Peru",
         "pais_path": "/pe/",
         "kicker": "Peru · measurements",
-        "title": "CotizaT: measurements and APU in soles for Peru",
+        "title": "Measurements and APU in soles for Peru (RUC, 18% IGV — not an S10 file)",
         "h1": "Measurements and APU in Peru (in soles, with IGV separate from the receipt)",
         "description": (
-            "How to build measurements and APU for a remodel in Peru: quantities by zone, "
-            "plaster, soles, RUC and 18% IGV. Not an S10 file."
+            "How to build measurements and APU for private remodels in Peru: quantities by zone (kitchen 8 m2, bathroom 4 m2, hallway 6 m2), plaster (tarrajeo), soles, RUC and 18% IGV. Not an S10 public-works file or tender document. For residential and small commercial remodels in Lima, Arequipa or any city."
         ),
         "lead": (
             "In Peru a construction estimate starts with the measurement: how many m2, "
@@ -609,11 +605,10 @@ ARTICULOS_EN.update({
         "pais_nombre": "Venezuela",
         "pais_path": "/ve/",
         "kicker": "Venezuela · USD/Bs",
-        "title": "CotizaT: construction estimate in USD with bolivar equivalent",
+        "title": "Estimate in Venezuela: USD with bolivar equivalent (RIF, 16% VAT, frozen rate)",
         "h1": "Estimate in USD and bolivars: the rate freezes, the PDF does not move",
         "description": (
-            "How to estimate a remodel in Venezuela in USD or Bs, with a frozen rate, "
-            "RIF and 16% VAT. The March PDF does not change in April."
+            "How to build commercial estimates for construction and remodels in Venezuela: USD native catalog with optional bolivar equivalent, frozen reference rate per document, RIF and 16% VAT. The March PDF does not change in April. Note: the USD base is an internal reference (not a national salary survey or validated employer cost); it does not replace a SENIAT fiscal invoice."
         ),
         "lead": (
             "In Venezuela you discuss in dollars and sometimes collect in bolivars. "
@@ -661,11 +656,10 @@ ARTICULOS_EN.update({
         "pais_nombre": "Ecuador",
         "pais_path": "/ec/",
         "kicker": "Ecuador · APU",
-        "title": "CotizaT: APU in Ecuador, in dollars, with RUC",
+        "title": "APU in Ecuador: native dollars, RUC and 15% VAT (no SRI invoice)",
         "h1": "APU in Ecuador: native dollars, RUC and 15% VAT",
         "description": (
-            "Unit price analysis for contractors in Ecuador: concrete, plaster, "
-            "ceiling, USD, RUC and 15% VAT. No SRI invoice."
+            "Complete unit price analysis method for contractors and remodelers in Ecuador: concrete (hormigon), plaster (enlucido), ceiling (tumbado), broom (barredera), plumber (gasfitero) — all in USD. Includes resources, productivity, national price references (Sodimac, Novey, GlobalGTC), RUC and 15% VAT configured in the commercial document. Not an SRI electronic invoice or public-tender file."
         ),
         "lead": (
             "Ecuador already quotes in USD. No need to convert afterwards. "
