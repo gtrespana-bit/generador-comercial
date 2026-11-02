@@ -189,23 +189,35 @@ def registrar_global(
         return False
 
 
-def anotar_registro(*, email: str, pais: str = "") -> bool:
+def anotar_registro(
+    *, email: str, pais: str = "", detalle_extra: dict | None = None
+) -> bool:
     """``cuenta.registrada`` con sesión propia y efímera.
 
     La ruta de registro no depende de ``get_db`` (todavía no hay
     organización); el mismo patrón que el consentimiento y las sesiones de
     auditoría. El país llega del selector del formulario y solo se usa
     agregado en el panel.
+
+    ``detalle_extra`` lleva la atribución de la visita (``origen_mercado``,
+    ``origen_seccion``): de qué página pública vino quien se registra. Son
+    dos cadenas cortas elegidas de un catálogo cerrado, nunca una URL.
     """
     try:
         from ..database import SessionLocal
 
+        detalle: dict = {}
+        if pais:
+            detalle["pais"] = pais
+        for clave, valor in (detalle_extra or {}).items():
+            if isinstance(valor, str) and valor:
+                detalle[str(clave)[:32]] = valor[:64]
         with SessionLocal() as db:
             return registrar_global(
                 db,
                 "cuenta.registrada",
                 email=email,
-                detalle={"pais": pais} if pais else None,
+                detalle=detalle or None,
             )
     except Exception:
         log.warning("No se pudo anotar el registro de %r.", email)

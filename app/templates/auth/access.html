@@ -63,6 +63,12 @@
         <p class="auth-prueba">✨ Incluye <strong>{{ dias_de_prueba() }} días gratis</strong> con acceso completo. No pedimos tarjeta.</p>
         {% endif %}
         <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
+        {# De qué sección venía la visita. El CTA de las páginas públicas
+           trae ``?origen=`` y este campo lo conserva hasta el POST: la
+           barra de direcciones no arrastra el parámetro y la analítica
+           sigue sabiendo de dónde salió el alta. Es el nombre de una
+           sección del catálogo cerrado, no una URL. #}
+        {% if origen_seccion %}<input type="hidden" name="origen" value="{{ origen_seccion }}">{% endif %}
         <div class="field">
           <label for="signup-name">Nombre</label>
           <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>

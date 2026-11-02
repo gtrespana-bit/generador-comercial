@@ -11,6 +11,48 @@ from ..services.avisos_negocio import avisar_registro
 
 router = APIRouter()
 
+def _seccion_de_origen(request: Request) -> str:
+    """Sección pública desde la que se llegó al alta, o cadena vacía.
+
+    Dos fuentes, en este orden:
+
+    1. **``?origen=`` en la URL.** Es la fuente fiable: las páginas públicas
+       se sirven desde el CDN y no pueden escribir cookies, así que el CTA
+       lleva la sección en el enlace (``/acceso?origen=precios_ficha``).
+       Sobrevive al caché porque el HTML es idéntico para todos.
+    2. **``Referer``**, solo como respaldo y reducido a una sección del
+       catálogo cerrado. Nunca se guarda ni se devuelve la URL recibida.
+
+    En ambos casos el valor se valida contra el catálogo: cualquier cosa que
+    no sea una sección conocida se descarta.
+    """
+    try:
+        from ..services.atribucion import SECCIONES_CONOCIDAS, seccion_de
+
+        candidata = str(request.query_params.get("origen") or "").strip()
+        if candidata:
+            # Se normaliza pasándola por el mismo clasificador que una ruta
+            # real, así ``origen=precios_ficha`` y ``origen=/es/precios``
+            # acaban en el mismo sitio y cualquier invento cae en «otro».
+            seccion = seccion_de("/" + candidata.strip("/") + "/")
+            if seccion in ("otro", "portada"):
+                seccion = candidata if candidata in SECCIONES_CONOCIDAS else "otro"
+            if seccion not in ("otro", "portada"):
+                return seccion
+        referencia = str(request.headers.get("referer") or "")
+        if referencia:
+            from urllib.parse import urlsplit
+
+            camino = urlsplit(referencia).path or ""
+            if camino.startswith("/"):
+                seccion = seccion_de(camino)
+                if seccion not in ("otro", "portada"):
+                    return seccion
+        return ""
+    except Exception:
+        return ""
+
+
 @router.get("/acceso", response_class=HTMLResponse)
 def acceso(request: Request, next: str = ""):
     error = request.query_params.get("error", "")
@@ -33,6 +75,11 @@ def acceso(request: Request, next: str = ""):
             "msg": mensaje,
             "auth_configured": configurado,
             "next": _next_seguro(next, "/inicio"),
+            # Sección de origen para el campo oculto del alta (atribución).
+            # El CTA la trae en la URL (``?origen=precios_ficha``); el campo
+            # oculto la lleva al POST y la barra de direcciones no la arrastra
+            # al resto de la navegación.
+            "origen_seccion": _seccion_de_origen(request),
             "paises": lista_paises(),
             "pais_preseleccionado": (
                 str(request.query_params.get("pais", "") or "").strip().upper()
@@ -210,8 +257,29 @@ async def registrar_cuenta(request: Request):
     # Telemetría propia (E5-012): el registro contado en el servidor, sin
     # depender de que el navegador ejecute GA4. El país llega del selector
     # y solo se usa agregado en el panel de analítica.
+    #
+    # Además se anota de qué sección pública vino la visita
+    # (``origen_mercado`` / ``origen_seccion``): el embudo sabía cuántos se
+    # registran, pero no si venían de una ficha de precios, de un hub o de
+    # una landing. Sin eso no se puede decidir qué página merece el trabajo.
+    # La sección llega en un campo oculto del formulario, que el CTA de la
+    # página pública puso en la URL (``/acceso?origen=precios_ficha``). No hay
+    # cookie: las páginas públicas se sirven desde el CDN y un ``Set-Cookie``
+    # las haría incacheables. Se valida contra el catálogo cerrado.
+    origen_visita = {}
+    try:
+        from ..services.atribucion import SECCIONES_CONOCIDAS
+
+        seccion_form = str(form.get("origen") or "").strip()
+        if seccion_form in SECCIONES_CONOCIDAS:
+            origen_visita["origen_seccion"] = seccion_form
+    except Exception:
+        origen_visita = {}
+
     telemetria.anotar_registro(
-        email=str(form.get("email") or ""), pais=pais_reg,
+        email=str(form.get("email") or ""),
+        pais=pais_reg,
+        detalle_extra=origen_visita,
     )
     # Aviso al buzón del titular (no bloqueante): el alta se cuenta en el
     # servidor y el aviso es la forma de enterarse sin abrir el panel. Va en un

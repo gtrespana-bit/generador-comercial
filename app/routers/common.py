@@ -277,10 +277,36 @@ class _CotizaTemplates(Jinja2Templates):
         # mensaje(_idioma) }}``). ``setdefault`` para no pisar nada que el
         # router ya traiga en el contexto.
         ctx.setdefault("_idioma", lang or "es")
+        # Atribución del alta: la sección de la página actual, para que los
+        # CTA que llevan al registro la conserven en la URL. Va en el
+        # contexto de todas las plantillas porque cualquiera puede tener un
+        # botón de alta (ficha, hub, landing, artículo).
+        ctx.setdefault("origen_seccion", _seccion_para_enlace(request))
         return super().TemplateResponse(
             request, name, ctx, status_code=status_code, headers=headers,
             media_type=media_type, background=background,
         )
+
+
+def _seccion_para_enlace(request) -> str:
+    """Sección comercial de la página actual, para el ``?origen=`` de los CTA.
+
+    Las páginas públicas se sirven desde el CDN y no admiten ``Set-Cookie``
+    (una respuesta con cookie no se cachea, y con ``Vary: Cookie`` Vercel no
+    cachea nada). Por eso la atribución no viaja en una cookie puesta por el
+    servidor: viaja como parámetro en el enlace del CTA
+    (``/acceso?origen=precios_ficha&pais=MX``), que sí sobrevive al caché
+    porque el HTML es idéntico para todos los visitantes de esa URL.
+
+    Devuelve ``""`` cuando la sección no aporta nada (legal, soporte, API).
+    """
+    try:
+        from ..services.atribucion import seccion_de
+
+        seccion = seccion_de(getattr(getattr(request, "url", None), "path", "") or "")
+        return "" if seccion in ("otro", "portada") else seccion
+    except Exception:
+        return ""
 
 
 TEMPLATES = _CotizaTemplates(directory=str(BASE_DIR / "app" / "templates"))

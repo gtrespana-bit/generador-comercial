@@ -168,7 +168,11 @@
   <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
   <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>
   <div class="acciones mt-3">
-    <a class="btn btn-primary" href="/acceso">{{ 'precios.cta.boton' | t(_idioma) }}</a>
+    {# Los CTA llevan la sección y el país en la URL, no en una cookie: estas
+       páginas se sirven desde el CDN y una respuesta con Set-Cookie dejaría
+       de cachearse (y con Vary: Cookie, Vercel no cachea nada). El
+       ``?origen=`` sobrevive porque el HTML es igual para todos. #}
+    <a class="btn btn-primary" href="/acceso?origen={{ origen_seccion|default('precios_ficha') }}{% if request.url.path.split('/')[1] %}&pais={{ request.url.path.split('/')[1]|upper }}{% endif %}">{{ 'precios.cta.boton' | t(_idioma) }}</a>
     <a class="btn btn-secondary" href="{{ '/en/pago' if _idioma == 'en' else '/pago' }}">{{ 'precios.cta.planes' | t(_idioma) }}</a>
   </div>
 </section>
