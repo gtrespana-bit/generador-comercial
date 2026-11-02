@@ -636,16 +636,25 @@ def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
             "medio": _dinero(sum(precios) / len(precios), pais),
         }
     if en:
+        # El rango entra en el título cuando existe: es el dato que busca
+        # quien teclea «home lift prices ireland» y lo que separa un listado
+        # de precios de una respuesta. Con los datos del 02/11/2026 este hub
+        # tenía 63 impresiones, posición 10,2 y CERO clics; el mismo tipo de
+        # página en España, con el precio en el título, sí los tenía.
         title = _titulo_meta(
-            _con_marca(
-                [
-                    f"{apartado}: unit prices in {nombre} ({moneda})",
-                    f"{apartado} prices in {nombre}",
-                    f"{apartado} — {nombre}",
-                ]
-            ),
+            [
+                (
+                    f"{apartado}: {rango['minimo']}–{rango['maximo']} in {nombre}"
+                    if rango
+                    else ""
+                ),
+                f"{apartado}: unit prices in {nombre} ({moneda})",
+                f"{apartado} prices in {nombre}",
+                f"{apartado} — {nombre}",
+            ],
             respaldo=apartado,
         )
+        title = _con_marca([title])[0]
         if rango:
             description = (
                 f"{n} unit prices for {_minuscula_inicial(apartado)} in {nombre}: "
@@ -660,16 +669,23 @@ def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
             )
         h1 = f"{apartado} — unit prices in {nombre}"
     else:
+        # Igual que en inglés: el rango del apartado en el título. «Precios
+        # unitarios en España» no promete ninguna cifra; «de 120 a 890 EUR»
+        # sí, y es exactamente lo que se busca.
         title = _titulo_meta(
-            _con_marca(
-                [
-                    f"{apartado}: precios unitarios en {nombre}",
-                    f"{apartado}: precios en {nombre} ({moneda})",
-                    f"{apartado} — precios en {nombre}",
-                ]
-            ),
+            [
+                (
+                    f"{apartado}: de {rango['minimo']} a {rango['maximo']} en {nombre}"
+                    if rango
+                    else ""
+                ),
+                f"{apartado}: precios unitarios en {nombre}",
+                f"{apartado}: precios en {nombre} ({moneda})",
+                f"{apartado} — precios en {nombre}",
+            ],
             respaldo=apartado,
         )
+        title = _con_marca([title])[0]
         if rango:
             description = (
                 f"{n} precios unitarios de {_minuscula_inicial(apartado)} en "

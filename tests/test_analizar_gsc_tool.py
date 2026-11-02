@@ -196,3 +196,41 @@ def test_mercado_e_idioma_de_una_url():
     assert gsc.idioma_de_mercado("br") == "portugués"
     assert gsc.idioma_de_mercado("en-gb") == "inglés"
     assert gsc.idioma_de_mercado("ni") == "español"
+
+
+# ---------------------------------------------------------------------------
+# El embudo, que es el que decide el ingreso (no el tráfico).
+# ---------------------------------------------------------------------------
+
+from tools import analizar_embudo as emb  # noqa: E402
+
+
+def test_la_conversion_cuenta_a_pago_es_la_del_titular():
+    """41 cuentas y 4 pagos: 9,8 %. Es el número que ordena las prioridades."""
+    datos = emb.embudo(cuentas=41, pagos=4)
+    assert round(datos["conversion_cuenta_pago"], 1) == 9.8
+    assert datos["sin_pagar"] == 37
+
+
+def test_el_ltv_usa_los_precios_publicados():
+    valor = emb.ltv(emb.PRECIO_ANUAL, emb.PRECIO_MENSUAL, meses_activo=12)
+    assert valor["anual"] == 89.0
+    assert valor["mensual"] > emb.PRECIO_ANUAL  # el mensual sale más caro al año
+
+
+def test_el_cac_permitido_es_un_tercio_del_ltv():
+    assert emb.cac_permitido(90.0) == 30.0
+
+
+def test_duplicar_clientes_por_conversion_es_la_mitad_de_trabajo():
+    datos = emb.embudo(cuentas=41, pagos=4, visitas=49)
+    # Doblar la conversión exige el doble; doblar visitas exige el doble.
+    assert round(datos["conversion_para_doblar"], 1) == 19.5
+    assert datos["visitas_para_doblar"] == 98
+
+
+def test_el_informe_incluye_las_preguntas_que_faltan_por_responder():
+    texto = emb.informe(41, 4, None, 12)
+    assert "9.8 %" in texto
+    assert "crear un presupuesto" in texto
+    assert "las 4 que pagan" in texto
