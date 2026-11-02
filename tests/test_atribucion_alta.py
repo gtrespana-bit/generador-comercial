@@ -184,8 +184,8 @@ def test_el_registro_anota_el_origen_en_la_telemetria(monkeypatch):
             "/registro",
             data={
                 "email": "alguien@example.com",
-                "password": "unaClaveLarga123",
-                "password_confirmation": "unaClaveLarga123",
+                "password": "unaClaveLarga123",  # pragma: allowlist secret
+                "password_confirmation": "unaClaveLarga123",  # pragma: allowlist secret
                 "acepto_terminos": "1",
                 "pais": "ES",
                 "origen": "precios_ficha",
