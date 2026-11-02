@@ -71,6 +71,41 @@ def embudo(cuentas: int, pagos: int, visitas: int | None = None) -> dict:
     return datos
 
 
+def mayor_caida(pasos: list[tuple[str, int]]) -> dict | None:
+    """El salto que más gente pierde entre dos pasos consecutivos.
+
+    ``pasos`` es una lista ordenada ``[(nombre, empresas), …]``. Devuelve el
+    paso donde se cae el mayor número absoluto de empresas —que es el que hay
+    que arreglar primero, no el de mayor porcentaje.
+    """
+    mejor = None
+    for (nombre_previo, antes), (nombre, despues) in zip(pasos, pasos[1:]):
+        perdidas = antes - despues
+        if mejor is None or perdidas > mejor["perdidas"]:
+            mejor = {
+                "desde": nombre_previo,
+                "hasta": nombre,
+                "antes": antes,
+                "despues": despues,
+                "perdidas": perdidas,
+                "pct_retencion": (100 * despues / antes) if antes else 0.0,
+            }
+    return mejor
+
+
+#: Embudo medido en producción el 02/11/2026, descontando las cuentas de prueba
+#: del dueño (`gtrespana@gmail.com`, `lanzareformas@icloud.com` y sus empresas
+#: `testing*`, `remodelat*`, `remodelt*`). Se guarda aquí para que el documento
+#: y las pruebas usen exactamente la misma secuencia.
+EMBUDO_MEDIDO_2026_11_02: list[tuple[str, int]] = [
+    ("cuenta creada", 41),
+    ("empezó a usar", 40),
+    ("presupuesto real", 7),
+    ("enviado al cliente", 2),
+    ("compró", 4),
+]
+
+
 def informe(cuentas: int, pagos: int, visitas: int | None, meses: float) -> str:
     e = embudo(cuentas, pagos, visitas)
     if not e:

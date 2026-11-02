@@ -203,6 +203,12 @@ def test_mercado_e_idioma_de_una_url():
 # ---------------------------------------------------------------------------
 
 from tools import analizar_embudo as emb  # noqa: E402
+from tools.analizar_embudo import (  # noqa: E402
+    EMBUDO_MEDIDO_2026_11_02,
+    cac_permitido,
+    ltv,
+    mayor_caida,
+)
 
 
 def test_la_conversion_cuenta_a_pago_es_la_del_titular():
@@ -234,3 +240,41 @@ def test_el_informe_incluye_las_preguntas_que_faltan_por_responder():
     assert "9.8 %" in texto
     assert "crear un presupuesto" in texto
     assert "las 4 que pagan" in texto
+
+
+# --- Embudo medido en producción (02/11/2026) ------------------------------
+
+def test_el_embudo_medido_cuadra_con_la_base():
+    """41 cuentas → 4 pagos, con los pasos intermedios medidos, no estimados."""
+    pasos = dict(EMBUDO_MEDIDO_2026_11_02)
+    assert pasos["cuenta creada"] == 41
+    assert pasos["compró"] == 4
+
+
+def test_la_mayor_caida_es_el_primer_presupuesto_real():
+    """El hueco no está en el registro: está entre usar y tener un presupuesto."""
+    caida = mayor_caida(EMBUDO_MEDIDO_2026_11_02)
+    assert caida is not None
+    assert caida["hasta"] == "presupuesto real"
+    assert caida["perdidas"] == 33
+    assert caida["desde"] == "empezó a usar"
+
+
+def test_la_caida_del_registro_a_uso_es_casi_nula():
+    """40 de 41 guardaron partidas o usaron la IA: ahí no se pierde nadie."""
+    caida = mayor_caida(list(EMBUDO_MEDIDO_2026_11_02)[:2])
+    assert caida is not None
+    assert caida["perdidas"] == 1
+    assert round(caida["pct_retencion"], 1) == 97.6
+
+
+def test_mayor_caida_devuelve_none_sin_pasos():
+    assert mayor_caida([]) is None
+    assert mayor_caida([("solo", 10)]) is None
+
+
+def test_ltv_mensual_da_cac_de_cuarenta_sobre_tres():
+    """Los 4 pagos son mensuales de 9,99: el LTV no es el del plan anual."""
+    valor = ltv(89.0, 9.99, 12)
+    assert round(valor["mensual"], 2) == 119.88
+    assert round(cac_permitido(valor["mensual"]), 2) == 39.96
