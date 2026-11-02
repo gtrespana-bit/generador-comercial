@@ -9,6 +9,7 @@ from starlette.responses import HTMLResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
+from app import indexnow
 from app import main as main_module
 from app.routers import common
 from app.database import get_authenticated_db, get_db, get_operator_db
@@ -277,6 +278,11 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("GET", "/pago"),
         ("GET", "/robots.txt"),
         ("GET", "/sitemap.xml"),
+        # Verificación de propiedad que exige IndexNow: es una constante
+        # pública (la clave se lee en claro en cualquier ficha del buscador) y
+        # no da acceso a nada. Se construye desde la propia constante para que
+        # rotarla no obligue a tocar la lista.
+        ("GET", f"/{indexnow.CLAVE}.txt"),
         ("GET", "/software-presupuestos"),
         ("GET", "/apu"),
         ("GET", "/remodelacion"),

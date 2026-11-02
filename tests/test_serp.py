@@ -14,6 +14,7 @@ Tres cosas que no rompen la página pero sí cuestan tráfico:
 """
 from __future__ import annotations
 
+import html
 import re
 
 import pytest
@@ -100,7 +101,9 @@ def test_ninguna_descripcion_del_sitio_se_corta_en_google():
             if respuesta.status_code != 200:
                 continue
             m = re.search(r'name="description" content="([^"]*)"', respuesta.text)
-            descripcion = m.group(1).strip() if m else ""
+            # Google cuenta caracteres del texto, no de las entidades HTML:
+            # un apóstrofo llega como &#39; y aquí inflaba la medida en 4.
+            descripcion = html.unescape(m.group(1)).strip() if m else ""
             if len(descripcion) > 160:
                 largas.append((ruta, len(descripcion)))
     assert not largas, largas
