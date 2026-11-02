@@ -1436,6 +1436,47 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
             pass
         mercado = None
 
+    _matriz_aplicada = False
+    if mercado is None or not mercado.con_precio_mercado:
+        # Sin referencias de recurso propias, manda la matriz pública: es la
+        # misma cifra que enseña el editor y la ficha pública. Si no se hiciera
+        # aquí, la ficha diría 148,93 MXN y el presupuesto cobraría 306,70.
+        from ..services.precios_partidas import precio_de_partida
+
+        _matriz = precio_de_partida(
+            partida, pais=pais_codigo, moneda_documento=moneda_vista,
+            tasa=factor_vista, con_desglose=True,
+        )
+        if _matriz.origen == "mercado":
+            _matriz_aplicada = True
+            partida_vista.precio_unitario = _matriz.precio
+            partida_vista.coste_materiales = _matriz.coste_materiales or 0.0
+            partida_vista.coste_mano_obra = _matriz.coste_mano_obra or 0.0
+            partida_vista.coste_complementarios = 0.0
+            partida_vista.coste_otros = _matriz.coste_equipo or 0.0
+            try:
+                _descomp = json.loads(partida.descomposicion_json or "[]")
+            except (TypeError, ValueError):
+                _descomp = {}
+            if not isinstance(_descomp, dict):
+                _descomp = {"origen": "manual", "filas": _descomp or []}
+            _descomp = dict(_descomp)
+            _descomp["filas"] = [
+                {
+                    "tipo": "recurso",
+                    "categoria": fila["categoria"],
+                    "codigo": fila["codigo"],
+                    "descripcion": fila["descripcion"],
+                    "unidad": fila["unidad"],
+                    "rendimiento": fila["rendimiento"],
+                    "precio": fila["precio"],
+                    "precio_unitario": fila["precio"],
+                    "importe": fila["importe"],
+                }
+                for fila in _matriz.filas
+            ]
+            partida_vista.descomposicion_json = json.dumps(_descomp, ensure_ascii=False)
+
     if mercado is not None and mercado.con_precio_mercado:
         # Debe coincidir con la fila y el editor del catálogo: mismas
         # referencias nacionales, moneda y recálculo de costes/cascada.
@@ -1455,6 +1496,10 @@ def editar_partida_form(partida_id: int, request: Request, db: Session = Depends
         descomp_vista = dict(descomp_vista)
         descomp_vista["filas"] = mercado.filas
         partida_vista.descomposicion_json = json.dumps(descomp_vista, ensure_ascii=False)
+    elif _matriz_aplicada:
+        # La matriz pública ya puso precio, costes y desglose: convertir por
+        # tasa encima lo duplicaría.
+        pass
     else:
         # Fallback de catálogo: convierte precio, costes y filas con el mismo
         # factor; nunca etiqueta importes USD como GBP si falta la tasa.
