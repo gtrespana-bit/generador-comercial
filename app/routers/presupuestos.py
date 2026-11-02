@@ -2131,6 +2131,60 @@ def _montar_presupuesto(presupuesto, capitulos, partidas, imagenes_guardadas, im
         cap.partidas.append(item)
 
 
+def _aplicar_precio_de_mercado(db, partidas: list[dict], cfg=None) -> None:
+    """Corrige en el servidor el precio de las partidas que vienen del catálogo.
+
+    El editor ya pide cada partida con su precio de mercado, pero el precio
+    viaja en el formulario: un navegador con el editor cacheado, una pestaña
+    abierta desde ayer o un cliente antiguo mandarían el precio base del
+    catálogo, que es venezolano para todos los países. El precio del mercado es
+    el punto de partida; si el usuario lo cambió a mano, manda el usuario.
+    """
+    if not partidas:
+        return
+    ids = {
+        int(p.get("catalogo_id") or 0)
+        for p in partidas
+        if p.get("catalogo_id")
+    }
+    if not ids:
+        return
+    try:
+        from ..services.precios_partidas import precio_de_partida
+        from ..services.traduccion import codigo_desde_pais
+
+        cfg = cfg or _config(db)
+        codigo_pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+        if not codigo_pais:
+            return
+        origen = {
+            fila.id: fila
+            for fila in db.query(Partida)
+            .options(load_only(Partida.id, Partida.codigo_interno, Partida.codigo_externo,
+                               Partida.codigo_legacy, Partida.unidad))
+            .filter(Partida.id.in_(ids))
+            .all()
+        }
+        for p in partidas:
+            partida = origen.get(int(p.get("catalogo_id") or 0))
+            if partida is None:
+                continue
+            resuelto = precio_de_partida(
+                partida,
+                pais=codigo_pais,
+                moneda_documento=p.get("moneda"),
+                tasa=getattr(cfg, "tasa_cambio", None),
+                con_desglose=False,
+            )
+            if resuelto.origen != "mercado":
+                continue
+            p["precio"] = resuelto.precio
+            p["moneda"] = resuelto.moneda
+            p["origen_precio"] = resuelto.origen
+    except Exception:  # guardar un presupuesto nunca puede depender de esto
+        log.exception("No se pudo aplicar el precio de mercado a las partidas.")
+
+
 @router.post("/presupuestos/nuevo")
 async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     form = await request.form()
@@ -2250,6 +2304,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     if isinstance(firma, str) and firma.startswith("data:image/png;base64,"):
         presupuesto.firma_cliente = _guardar_firma(firma, db)
 
+    _aplicar_precio_de_mercado(db, partidas)
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     db.add(presupuesto)
     # El catálogo se guarda en la moneda base: se pasan la moneda y la tasa
@@ -4201,6 +4256,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     nombres_previos = {p.nombre for cap in presupuesto.capitulos for p in cap.partidas}
     productos_previos = {p.producto_nombre for cap in presupuesto.capitulos for p in cap.partidas}
 
+    _aplicar_precio_de_mercado(db, partidas)
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     _persistir_total_calculado(presupuesto)
     db.flush()

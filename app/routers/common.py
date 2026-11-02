@@ -1664,6 +1664,10 @@ _CAMPOS_INDICE_CATALOGO = (
     Partida.coste_mano_obra,
     Partida.coste_complementarios,
     Partida.coste_otros,
+    # Sin esta columna, cada partida con precio de mercado dispara un SELECT
+    # propio para leer su descompuesto: 3.006 viajes a la base y el editor
+    # pasaba de 1 s a 3,3 s. Se carga en la misma consulta.
+    Partida.descomposicion_json,
 )
 
 _PALABRAS_VACIAS_INDICE = frozenset({
@@ -1888,6 +1892,69 @@ def _persistir_total_calculado(presupuesto) -> None:
         pass
 
 
+# Cache de proceso para el precio de cada partida en cada mercado.
+#
+# La clave es el CÓDIGO de la partida, no su id: el precio de mercado depende
+# solo de (código, país, moneda) —es la matriz pública— y el id se repite entre
+# bases de datos distintas. Indexar por id hacía que una cuenta viera el precio
+# de otra partida con el mismo número en un proceso que atiende a varias.
+# Solo se guardan los precios que vienen de la matriz: los que caen al precio
+# base del catálogo dependen de la partida y no se pueden reutilizar.
+_PRECIOS_MERCADO: dict[tuple[str, str, str], "object"] = {}
+_PRECIOS_MERCADO_MAX = 20000
+
+
+def limpiar_cache_precios_mercado() -> None:
+    """Vacía la caché de precios de partida.
+
+    Se llama al guardar el país o la moneda de la organización. La clave ya
+    los incluye, así que no es imprescindible para servir el precio correcto,
+    pero sí para no arrastrar memoria de mercados que ya no se usan y para
+    reflejar un cambio en la matriz sin reiniciar el proceso.
+    """
+    _PRECIOS_MERCADO.clear()
+
+
+def _precio_de_mercado(partida, codigo_pais: str, moneda: str | None, tasa: float | None):
+    """Precio de mercado de una partida, o ``None`` si no hay dato para su país.
+
+    Tragarse las excepciones es deliberado y está medido: esto corre dentro del
+    bucle que arma el índice de 3.000 partidas y una sola partida con un
+    descompuesto raro no puede dejar la pantalla «Nuevo presupuesto» en blanco.
+    Lo que devuelve ``None`` se queda con el precio que ya tenía.
+    """
+    codigo = str(
+        getattr(partida, "codigo_interno", "")
+        or getattr(partida, "codigo_externo", "")
+        or getattr(partida, "codigo_legacy", "")
+        or ""
+    ).strip()
+    if not codigo:
+        return None
+    clave = (codigo, str(codigo_pais or "").upper(), str(moneda or "").upper())
+    if clave in _PRECIOS_MERCADO:
+        return _PRECIOS_MERCADO[clave]
+    try:
+        from ..services.precios_partidas import precio_de_partida
+
+        resultado = precio_de_partida(
+            partida,
+            pais=codigo_pais,
+            moneda_documento=moneda,
+            tasa=tasa,
+            con_desglose=False,
+        )
+        if resultado.origen != "mercado":
+            return None
+    except Exception:
+        log.exception("No se pudo resolver el precio de mercado de la partida.")
+        return None
+    if len(_PRECIOS_MERCADO) >= _PRECIOS_MERCADO_MAX:
+        _PRECIOS_MERCADO.clear()
+    _PRECIOS_MERCADO[clave] = resultado
+    return resultado
+
+
 def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: float | None = None) -> list[dict]:
     """Índice ligero del catálogo para el editor de presupuestos.
 
@@ -1940,6 +2007,17 @@ def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: f
                 _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
                 for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
                     _d[_k] = tasa_convertir_precio(_d.get(_k, 0), _factor)
+            # Por encima de la conversión: el precio de referencia del mercado.
+            # Convertir por tasa no arregla el precio, lo desplaza: el catálogo
+            # se sembró con precios venezolanos y la matriz de cada país es la
+            # única que sabe cuánto cuesta allí el mismo trabajo.
+            _mercado = _precio_de_mercado(_pp, _cod, moneda, tasa)
+            if _mercado is not None:
+                _d["precio"] = float(_mercado.precio)
+                _d["moneda"] = str(_mercado.moneda or _d["moneda"])
+                _d["origen_precio"] = _mercado.origen
+                _d["confianza_precio"] = _mercado.confianza
+                _d["aviso_precio"] = _mercado.aviso
             if _cod:
                 # Añade términos traducidos al índice buscable para que
                 # «pañete» encuentre «friso» y «cimentaciones» encuentre

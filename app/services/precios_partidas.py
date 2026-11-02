@@ -23,13 +23,17 @@ fallback, para no inventar cifras.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from sqlalchemy.orm import Session
 
 from ..models import Partida, Recurso
+from ..paises import PAISES, resolver_mercado
+from . import precios_publicos as pp
+from .monedas import convertir, definicion
 from .recursos import normalizar
-from .tasa import tasa_convertir_precio
+from .tasa import factor_conversion_local, tasa_convertir_precio, tasa_sugerida
+from .unidades_precio import convertir_precio_entre_unidades
 
 
 @dataclass(frozen=True)
@@ -409,3 +413,618 @@ def recalcular_partidas_mercado(
         except Exception:
             continue
     return salida
+
+
+# ===========================================================================
+# Precio de venta desde la matriz pública de precios
+# ===========================================================================
+#
+# Lo de arriba resuelve el precio con las referencias de recurso que cada
+# organización tiene en ``precios_recursos_mercado``. Cuando esa tabla no tiene
+# nada para el país —el caso de la mayoría de las cuentas nuevas— la partida se
+# queda con el precio base venezolano.
+#
+# Lo de abajo lee la matriz de precios pública, que ya está en el repositorio
+# por país, y devuelve el precio de venta local. Es la misma cifra que se
+# publica en las fichas de precios, así que lo que se anuncia y lo que se
+# cobra son el mismo número. Medido el 02/11/2026, el precio base se queda
+# corto entre 2 y 3 veces en España y entre 4 y 5 en Estados Unidos.
+#
+# ===========================================================================
+
+#: Grupo de la matriz de recursos → categoría de coste del editor.
+#: La matriz usa «maquinaria»; el editor enseña ese dinero en ``coste_otros``.
+_CATEGORIA_POR_GRUPO = {
+    "materiales": "materiales",
+    "mano_obra": "mano_obra",
+    "maquinaria": "equipo",
+}
+
+#: Recargo por costes directos complementarios cuando la partida no lo declara.
+_COMPLEMENTARIOS_DEFECTO = 0.0
+
+#: Margen por defecto del catálogo propio (``catalogo_propio.MARGEN_DEFECTO``).
+_MARGEN_DEFECTO = 0.35
+
+
+@dataclass(frozen=True)
+class PrecioPartida:
+    """Precio de una partida con su desglose, ya en la unidad del catálogo.
+
+    ``origen`` vale ``"mercado"`` cuando el precio sale de la matriz del país y
+    ``"catalogo"`` cuando no hay dato y se devuelve el base tal cual.
+    """
+
+    precio: float
+    moneda: str
+    origen: str
+    confianza: str = ""
+    aviso: str = ""
+    coste_materiales: float | None = None
+    coste_mano_obra: float | None = None
+    coste_equipo: float | None = None
+    filas: tuple[dict, ...] = field(default_factory=tuple)
+
+    @property
+    def coste_total(self) -> float | None:
+        if self.coste_materiales is None:
+            return None
+        return (
+            (self.coste_materiales or 0.0)
+            + (self.coste_mano_obra or 0.0)
+            + (self.coste_equipo or 0.0)
+        )
+
+    @property
+    def margen_pct(self) -> float | None:
+        """Beneficio sobre venta (0,267 = 26,7 %), como lo enseña el editor."""
+        coste = self.coste_total
+        if not coste or not self.precio:
+            return None
+        return 1 - coste / self.precio
+
+
+# ---------------------------------------------------------------------------
+# Utilidades internas
+# ---------------------------------------------------------------------------
+
+
+def _numero(valor) -> float:
+    try:
+        return float(valor)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _codigo_de_la_partida(partida) -> str:
+    """Código con el que la partida se publica en el catálogo de precios.
+
+    El orden importa: ``codigo_interno`` es el código de la matriz pública;
+    ``codigo_externo`` y ``codigo_legacy`` solo sirven si el primero no está.
+    """
+    for atributo in ("codigo_interno", "codigo_externo", "codigo_legacy"):
+        valor = str(getattr(partida, atributo, "") or "").strip()
+        if valor:
+            return valor
+    return ""
+
+
+def _filas_de_la_partida(partida) -> list[dict]:
+    """Filas del descompuesto guardado en la partida (JSON o dict)."""
+    bruto = getattr(partida, "descomposicion_json", None)
+    if not bruto:
+        return []
+    try:
+        datos = json.loads(bruto) if isinstance(bruto, str) else bruto
+    except (TypeError, ValueError):
+        return []
+    if isinstance(datos, dict):
+        datos = datos.get("filas") or []
+    if not isinstance(datos, list):
+        return []
+    return [dict(fila) for fila in datos if isinstance(fila, dict)]
+
+
+def _es_fila_de_recurso(fila: dict) -> bool:
+    """La fila de cierre de complementarios no es un recurso: es un porcentaje.
+
+    Viene con ``codigo`` vacío, ``categoria = "complementarios"`` y un
+    ``rendimiento`` que es el porcentaje a aplicar —no una cantidad—. Pedirle
+    precio a la matriz es lo que hacía que el desglose entero se descartara.
+    """
+    categoria = str(fila.get("categoria") or "").strip().lower()
+    if categoria == "complementarios":
+        return False
+    if str(fila.get("tipo") or "").strip().lower() in ("porcentaje", "complementarios"):
+        return False
+    return bool(str(fila.get("codigo") or "").strip())
+
+
+def _complementarios_pct(filas: Iterable[dict]) -> float:
+    """Porcentaje de costes directos complementarios declarado en la partida."""
+    for fila in filas:
+        if str(fila.get("categoria") or "").strip().lower() == "complementarios":
+            return _numero(fila.get("rendimiento"))
+    for fila in filas:
+        if "complementario" in str(fila.get("grupo") or "").lower():
+            return _numero(fila.get("rendimiento"))
+    return _COMPLEMENTARIOS_DEFECTO
+
+
+def _ficha_del_mercado(codigo: str, cc: str) -> dict | None:
+    """Ficha publicada de esa partida en ese país, o ``None`` si no la publica."""
+    indice = pp._indice(cc)
+    if not indice:
+        return None
+    destino = (indice.get("por_codigo") or {}).get(codigo)
+    if not destino:
+        return None
+    ficha = (indice.get("partidas") or {}).get(tuple(destino))
+    return ficha if isinstance(ficha, dict) else None
+
+
+def _lineas_por_codigo(ficha: dict) -> dict[str, dict]:
+    """{código_recurso: línea publicada}.
+
+    Se casa **por código**, no por orden ni por nombre: unir por posición
+    cruzaba el precio de «Adhesivo» con el de «Mortero» en cuanto una partida
+    aparecía en dos apartados con líneas parecidas.
+    """
+    salida: dict[str, dict] = {}
+    for linea in ficha.get("lineas") or ():
+        ref = str(linea.get("codigo") or "").strip()
+        if ref:
+            salida[ref] = linea
+    return salida
+
+
+def _grupo_de(fila: dict) -> str:
+    grupo = str(fila.get("grupo") or "").strip().lower()
+    if grupo in _CATEGORIA_POR_GRUPO:
+        return _CATEGORIA_POR_GRUPO[grupo]
+    if "mano" in grupo:
+        return "mano_obra"
+    if "equipo" in grupo or "maquinaria" in grupo:
+        return "equipo"
+    return _CATEGORIA_POR_GRUPO.get(
+        str(fila.get("categoria") or "").strip().lower(), "materiales"
+    )
+
+
+def _margen(ficha: dict, partida) -> float:
+    """Margen del catálogo en esa partida, en tanto por uno."""
+    for valor in (ficha.get("margen"), getattr(partida, "margen", None)):
+        try:
+            numero = float(valor)
+        except (TypeError, ValueError):
+            continue
+        if 0 <= numero < 1:
+            return numero
+        if 1 <= numero <= 100:
+            return numero / 100.0
+    return _MARGEN_DEFECTO
+
+
+# ---------------------------------------------------------------------------
+# API pública
+# ---------------------------------------------------------------------------
+
+
+def precio_de_partida(
+    partida,
+    *,
+    pais: str,
+    moneda_documento: str | None = None,
+    tasa: float | None = None,
+    con_desglose: bool = True,
+) -> PrecioPartida:
+    """Precio de venta de ``partida`` en el mercado ``pais``.
+
+    ``pais`` admite nombre, código ISO o alias (``"España"``, ``"ES"``,
+    ``"Mexico"``). ``moneda_documento`` es la moneda en la que se va a emitir
+    el presupuesto; si se indica y no coincide con la del mercado, se convierte
+    con ``tasa`` (``1 USD = tasa moneda``). Sin tasa no se convierte: se
+    devuelve el precio del mercado en su moneda y **no** un número con la
+    etiqueta equivocada.
+
+    ``con_desglose=False`` se salta el cálculo de costes y líneas: es la ruta
+    del editor cuando solo quiere el precio y hay 3.000 partidas en pantalla.
+    """
+    base = _numero(getattr(partida, "precio_unitario", 0.0))
+    codigo = _codigo_de_la_partida(partida)
+    mercado = resolver_mercado(pais or "")
+    cc = str((mercado or {}).get("codigo") or "").strip().upper()
+
+    if not cc or not codigo:
+        return _sin_dato(
+            partida, base, moneda_documento, tasa,
+            "Precio del catálogo base: no hay precio de referencia para este mercado.",
+        )
+
+    moneda_mercado = str((PAISES.get(cc) or {}).get("moneda") or "USD").strip().upper()
+    ficha = _ficha_del_mercado(codigo, cc)
+    if ficha is None:
+        return _sin_dato(partida, base, moneda_documento, tasa, _aviso_sin_dato(cc, ""))
+    if str(ficha.get("moneda") or "").strip().upper() != moneda_mercado:
+        # Un mercado que publica en una moneda que no es la suya es un dato
+        # corrupto: el precio estaría bien y la etiqueta mal.
+        return _sin_dato(partida, base, moneda_documento, tasa, _aviso_sin_dato(cc, ""))
+
+    calculo = _calcular(partida, cc, ficha, con_desglose=con_desglose)
+    if calculo is None:
+        return _sin_dato(partida, base, moneda_documento, tasa, _aviso_sin_dato(cc, moneda_mercado))
+
+    precio, costes, filas = calculo
+    moneda = moneda_mercado
+    if moneda_documento:
+        destino = str(moneda_documento).strip().upper()
+        if destino and destino != moneda_mercado:
+            convertido = _convertir_todo(precio, costes, filas, moneda_mercado, destino, tasa)
+            if convertido is not None:
+                precio, costes, filas = convertido
+                moneda = destino
+        elif destino:
+            moneda = destino
+
+    return PrecioPartida(
+        precio=round(precio, 4),
+        moneda=moneda,
+        origen="mercado",
+        confianza=_confianza(ficha),
+        coste_materiales=round(costes["materiales"], 4),
+        coste_mano_obra=round(costes["mano_obra"], 4),
+        coste_equipo=round(costes["equipo"], 4),
+        filas=tuple(filas),
+    )
+
+
+def _sin_dato(
+    partida, base: float, moneda_documento: str | None, tasa: float | None, aviso: str
+) -> PrecioPartida:
+    """La partida se devuelve con su precio de catálogo y un aviso."""
+    precio = base
+    moneda = "USD"
+    destino = str(moneda_documento or "").strip().upper()
+    if destino and destino not in ("", "USD"):
+        try:
+            precio = float(convertir(base, "USD", destino, tasa_usd_destino=tasa))
+            moneda = destino
+        except ValueError:
+            aviso = (
+                f"{aviso} No hay tasa de cambio verificada: el importe está en USD."
+            ).strip()
+    return PrecioPartida(precio=round(precio, 4), moneda=moneda, origen="catalogo", aviso=aviso)
+
+
+def _aviso_sin_dato(cc: str, moneda_mercado: str) -> str:
+    if cc == "VE":
+        return "Venezuela usa el catálogo base en USD: es su propio mercado de origen."
+    pais = (PAISES.get(cc) or {}).get("nombre") or cc
+    return (
+        f"Sin precio de referencia en {pais} para esta partida: se usa el "
+        "precio del catálogo base. Revisa el precio antes de enviarlo."
+    )
+
+
+def _confianza(ficha: dict) -> str:
+    """Cómo de sólido es el precio: cuántas líneas de coste lo sostienen."""
+    lineas = ficha.get("lineas") or ()
+    if len(lineas) >= 5:
+        return "nacional"
+    if len(lineas) >= 3:
+        return "parcial"
+    return "respaldo"
+
+
+def _tasa_a_usd(moneda: str) -> float | None:
+    """Tasa verificada ``1 USD = X moneda``, o ``None`` si no hay una buena."""
+    valor = tasa_sugerida(moneda) or factor_conversion_local(moneda, tasa_sugerida(moneda))
+    try:
+        numero = float(valor or 0)
+    except (TypeError, ValueError):
+        return None
+    return numero if numero > 0 else None
+
+
+def _tasa_de(moneda: str, tasa_documento: float | None, moneda_documento: str | None) -> float | None:
+    """Tasa USD→``moneda``: la del documento si es esa moneda, si no la verificada.
+
+    La tasa del presupuesto se define como «1 USD = tasa moneda_del_presupuesto»,
+    así que solo sirve para la moneda del documento. Aplicarla a la moneda del
+    mercado es el error clásico: 17,06 (pesos por dólar) sobre un precio en
+    euros no convierte nada, solo cambia la etiqueta.
+    """
+    moneda = str(moneda or "").strip().upper()
+    if moneda in ("", "USD", "PAB"):
+        return 1.0
+    documento = str(moneda_documento or "").strip().upper()
+    if documento == moneda:
+        try:
+            numero = float(tasa_documento or 0)
+        except (TypeError, ValueError):
+            numero = 0.0
+        if numero > 0:
+            return numero
+    return _tasa_a_usd(moneda)
+
+
+def _convertir_todo(precio, costes, filas, origen: str, destino: str, tasa):
+    """Convierte precio, costes y líneas con la MISMA tasa, o ``None``.
+
+    La tasa del documento es ``1 USD = tasa moneda``, que sirve para ir y para
+    volver a USD; cuando falta una de las dos patas (presupuesto en pesos
+    sobre un precio en euros) se completa con la tasa verificada de esa
+    moneda. Si no hay ninguna de las dos, no se convierte.
+    """
+    tasa_destino = _tasa_de(destino, tasa, destino)
+    tasa_origen = _tasa_de(origen, tasa, destino)
+    if tasa_destino is None or tasa_origen is None:
+        return None
+    try:
+        precio_conv = float(
+            convertir(
+                precio, origen, destino,
+                tasa_usd_destino=tasa_destino, tasa_usd_origen=tasa_origen,
+            )
+        )
+        costes_conv = {
+            clave: float(
+                convertir(
+                    valor, origen, destino,
+                    tasa_usd_destino=tasa_destino, tasa_usd_origen=tasa_origen,
+                )
+            )
+            for clave, valor in costes.items()
+        }
+        filas_conv = [
+            {
+                **fila,
+                "precio": float(
+                    convertir(
+                        fila["precio"], origen, destino,
+                        tasa_usd_destino=tasa_destino, tasa_usd_origen=tasa_origen,
+                    )
+                ),
+                "importe": float(
+                    convertir(
+                        fila["importe"], origen, destino,
+                        tasa_usd_destino=tasa_destino, tasa_usd_origen=tasa_origen,
+                    )
+                ),
+            }
+            for fila in filas
+        ]
+    except (ValueError, KeyError, TypeError):
+        return None
+    return precio_conv, costes_conv, filas_conv
+
+
+def _calcular(partida, cc: str, ficha: dict, *, con_desglose: bool):
+    """(precio, costes, filas) en la unidad del catálogo, o ``None``.
+
+    Dos caminos, y la diferencia importa:
+
+    * **sin desglose** (ruta rápida del editor, 3.000 partidas): se toma el
+      precio de venta ya publicado y solo se cambia de unidad. No se recompone
+      nada, así que no hay ningún margen que inventar.
+    * **con desglose**: se recompone desde el descompuesto de la partida con
+      los precios de recurso del país, aplicando la misma regla que la ficha
+      pública (``coste × (1 + margen)``). Lo que se enseña como beneficio es
+      la diferencia real entre ese precio y esos costes.
+    """
+    unidad_catalogo = str(getattr(partida, "unidad", "") or "")
+    unidad_publicada = str(ficha.get("unidad") or "")
+
+    if not con_desglose:
+        factor = convertir_precio_entre_unidades(1.0, unidad_publicada, unidad_catalogo)
+        precio = _numero(ficha.get("pu"))
+        if factor is None or precio <= 0:
+            return None
+        # El desglose no hace falta para esta cifra: los costes quedan en cero
+        # para que el editor no pinte un beneficio del 100 % con datos que no
+        # ha pedido. Quien quiera el desglose lo pide.
+        return precio * factor, {"materiales": 0.0, "mano_obra": 0.0, "equipo": 0.0}, []
+
+    lineas = _lineas_por_codigo(ficha)
+    if not lineas:
+        return None
+    if any(_numero(linea.get("precio")) <= 0 for linea in lineas.values()):
+        return None
+
+    filas_partida = _filas_de_la_partida(partida)
+    margen = _margen(ficha, partida)
+
+    if filas_partida:
+        resultado = _desde_descompuesto(
+            filas_partida, lineas, unidad_catalogo, ficha
+        )
+    else:
+        resultado = _desde_ficha(lineas, unidad_catalogo, ficha, unidad_publicada)
+    if resultado is None:
+        return None
+
+    precio, costes, salida, complementarios_pct = resultado
+    if precio <= 0 or not salida:
+        return None
+    return precio, costes, salida
+
+
+def _desde_descompuesto(filas_partida, lineas, unidad_catalogo, ficha):
+    """Recompone la partida con los precios de recurso del país."""
+    salida: list[dict] = []
+    costes = {"materiales": 0.0, "mano_obra": 0.0, "equipo": 0.0}
+    directo = 0.0
+    for fila in filas_partida:
+        if not _es_fila_de_recurso(fila):
+            continue
+        ref = str(fila.get("codigo") or "").strip()
+        publicada = lineas.get(ref)
+        if publicada is None:
+            return None
+        # El precio del recurso llega en la unidad del recurso (``lb``, ``h``)
+        # y la base lo guarda en métrico: esa es la que se convierte.
+        precio_recurso = convertir_precio_entre_unidades(
+            _numero(publicada.get("precio")),
+            publicada.get("unidad"),
+            fila.get("unidad") or publicada.get("unidad"),
+        )
+        # El rendimiento guardado ya está por unidad de la partida del catálogo
+        # (``m2``): convertir otra vez lo multiplicaría por 10,76 y un
+        # alicatado saldría diez veces caro en Estados Unidos.
+        if precio_recurso is None:
+            return None
+        rendimiento = _numero(fila.get("rendimiento"))
+        if rendimiento <= 0:
+            continue
+        importe = rendimiento * precio_recurso
+        directo += importe
+        categoria = _grupo_de(fila)
+        costes[categoria] += importe
+        salida.append(
+            {
+                "codigo": ref,
+                "descripcion": str(fila.get("descripcion") or ""),
+                "categoria": categoria,
+                "unidad": str(fila.get("unidad") or ""),
+                "rendimiento": round(rendimiento, 6),
+                "precio": round(precio_recurso, 6),
+                "importe": round(importe, 6),
+            }
+        )
+    if directo <= 0 or not salida:
+        return None
+    complementarios_pct = _complementarios_pct(filas_partida) / 100.0
+    if complementarios_pct <= 0:
+        complementarios_pct = _numero(ficha.get("compl_pct")) / 100.0
+    return _cerrar(directo, costes, salida, complementarios_pct, ficha)
+
+
+def _desde_ficha(lineas, unidad_catalogo, ficha, unidad_publicada):
+    """Sin descompuesto propio: se reconstruye desde la ficha publicada."""
+    salida: list[dict] = []
+    costes = {"materiales": 0.0, "mano_obra": 0.0, "equipo": 0.0}
+    directo = 0.0
+    for publicada in lineas.values():
+        rendimiento = convertir_precio_entre_unidades(
+            _numero(publicada.get("rendimiento")), unidad_publicada, unidad_catalogo
+        )
+        precio_recurso = _numero(publicada.get("precio"))
+        if rendimiento is None or precio_recurso <= 0:
+            return None
+        importe = rendimiento * precio_recurso
+        directo += importe
+        categoria = _grupo_de(publicada)
+        costes[categoria] += importe
+        salida.append(
+            {
+                "codigo": str(publicada.get("codigo") or ""),
+                "descripcion": str(publicada.get("nombre") or ""),
+                "categoria": categoria,
+                "unidad": str(publicada.get("unidad") or ""),
+                "rendimiento": round(rendimiento, 6),
+                "precio": round(precio_recurso, 6),
+                "importe": round(importe, 6),
+            }
+        )
+    if directo <= 0 or not salida:
+        return None
+    return _cerrar(
+        directo, costes, salida, _numero(ficha.get("compl_pct")) / 100.0, ficha
+    )
+
+
+def _margen_publicado(ficha: dict) -> float:
+    """Margen que la ficha pública aplicó, deducido de sus propias cifras.
+
+    El artefacto no guarda el margen, pero sí el precio de venta y las líneas
+    que lo componen: ``margen = pu / (directo × (1 + complementarios)) − 1``.
+    Deducirlo de ahí es lo único que garantiza que el precio recompuesto no se
+    invente un margen distinto del que se publica.
+    """
+    directo = 0.0
+    for linea in ficha.get("lineas") or ():
+        directo += _numero(linea.get("rendimiento")) * _numero(linea.get("precio"))
+    pu = _numero(ficha.get("pu"))
+    complementarios_pct = _numero(ficha.get("compl_pct")) / 100.0
+    if directo <= 0 or pu <= 0:
+        return _MARGEN_DEFECTO
+    margen = pu / (directo * (1 + complementarios_pct)) - 1
+    return margen if 0 <= margen < 1 else _MARGEN_DEFECTO
+
+
+def _cerrar(directo, costes, salida, complementarios_pct, ficha):
+    """Aplica complementarios y margen, como la ficha pública."""
+    coste_directo = directo * (1 + complementarios_pct)
+    margen = _margen_publicado(ficha)
+    precio = coste_directo * (1 + margen)
+    if precio <= 0:
+        return None
+    # El recargo de complementarios no es una categoría del editor: se reparte
+    # en proporción para que materiales + mano + equipo cuadre con el coste
+    # real y el beneficio que ve el usuario sea el verdadero.
+    if complementarios_pct > 0:
+        costes = {clave: valor * (1 + complementarios_pct) for clave, valor in costes.items()}
+    # El desglose que se enseña es el de venta: cada línea lleva su parte del
+    # margen, igual que en la ficha pública. Si se enseñara el coste, las
+    # líneas sumarían 20,14 bajo un precio de 27,46 y el cliente vería un
+    # documento que no cuadra.
+    salida = _filas_de_venta(salida, precio / coste_directo)
+    return precio, costes, salida, complementarios_pct
+
+
+def _filas_de_venta(filas: list[dict], factor: float) -> list[dict]:
+    """Lleva las líneas de coste al precio de venta, con el mismo factor."""
+    if not filas or factor <= 0:
+        return filas
+    salida = []
+    for fila in filas:
+        salida.append(
+            {
+                **fila,
+                "precio": round(fila["precio"] * factor, 6),
+                "importe": round(fila["importe"] * factor, 6),
+            }
+        )
+    return salida
+
+
+def precio_de_partida_catalogo(
+    db,
+    partida,
+    *,
+    pais: str | None = None,
+    moneda: str | None = None,
+    tasa: float | None = None,
+    con_desglose: bool = True,
+) -> PrecioPartida:
+    """Como :func:`precio_de_partida`, tomando país/moneda de la configuración.
+
+    Es el atajo del editor: la organización define su mercado y su moneda en un
+    solo sitio (``Configuracion``) y no en cada llamada.
+    """
+    from ..models import Configuracion
+
+    cfg = db.query(Configuracion).first()
+    if pais is None:
+        pais = getattr(cfg, "empresa_pais", "") or ""
+    if moneda is None:
+        moneda = getattr(cfg, "moneda_default", "USD")
+    if tasa is None:
+        tasa = getattr(cfg, "tasa_cambio", None)
+    return precio_de_partida(
+        partida, pais=pais, moneda_documento=moneda, tasa=tasa, con_desglose=con_desglose
+    )
+
+
+def pais_con_matriz(codigo_pais: str | None) -> bool:
+    """Si ese mercado tiene matriz de precios propia."""
+    cc = str(codigo_pais or "").strip().upper()
+    try:
+        return cc in pp.PAISES_PRECIOS_PUBLICOS
+    except AttributeError:  # pragma: no cover - versión antigua del servicio
+        return False
+
+
+def decimales_de(moneda: str | None) -> int:
+    """Decimales con los que se enseña esa moneda."""
+    return definicion(moneda).decimales
