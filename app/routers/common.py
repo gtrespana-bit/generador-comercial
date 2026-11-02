@@ -1876,6 +1876,17 @@ def _hojas_catalogo_editor(
                 _d["precio"] = tasa_convertir_precio(_d.get("precio", 0), _factor)
                 for _k in ("coste_materiales", "coste_mano_obra", "coste_complementarios", "coste_otros"):
                     _d[_k] = tasa_convertir_precio(_d.get(_k, 0), _factor)
+            # Las hojas del árbol son la misma partida que el índice: si aquí
+            # no se aplicara la matriz, desplegar una categoría enseñaría el
+            # precio base y el buscador el del país, en la misma pantalla.
+            _mercado = _precio_de_mercado(_pp, _cod, moneda, tasa)
+            if _mercado is not None:
+                _d["precio"] = float(_mercado.precio)
+                _d["moneda"] = str(_mercado.moneda or _d["moneda"])
+                _d["origen_precio"] = _mercado.origen
+                _d["confianza_precio"] = _mercado.confianza
+                _d["aviso_precio"] = _mercado.aviso
+                _d["pais_precio"] = getattr(_mercado, "pais", "") or _nombre_pais_precio(_cod)
             out.append(_d)
         return out
     except Exception:
