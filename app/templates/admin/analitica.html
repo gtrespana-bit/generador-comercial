@@ -159,10 +159,10 @@
       <div class="kpi-label">Empresas activas hoy</div>
       <div class="muted">{{ k.activas_7d }} en 7 días · {{ k.activas_ventana }} en {{ resumen.dias }}d</div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card{% if k.telemetria_rota %} warn{% endif %}">
       <div class="kpi-value">{{ k.presupuestos_hoy }}</div>
       <div class="kpi-label">Presupuestos creados hoy</div>
-      <div class="muted">{{ k.presupuestos_semana }} esta semana · {{ k.presupuestos_mes }} este mes</div>
+      <div class="muted">{% if k.telemetria_rota %}no llegan eventos nuevos: falló {{ k.telemetria_fallos[0].accion }}{% else %}{{ k.presupuestos_semana }} esta semana · {{ k.presupuestos_mes }} este mes{% endif %}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-value">{{ k.usuarios_hoy }}</div>

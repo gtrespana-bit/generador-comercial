@@ -1171,6 +1171,23 @@ def resumen_analitica(
     # está bloqueada por RLS (migración pendiente). El panel lo dice en vez de
     # enseñar un «1» que parece un dato.
     kpis["usuarios_limitados"] = bool(kpis["organizaciones"] and not kpis["usuarios"])
+    # Segundo aviso, mismo motivo: el 02/11/2026 el panel enseñaba «0
+    # presupuestos» con 41 cuentas dadas de alta porque la escritura de
+    # `presupuesto.creado` fallaba en silencio. Si no ha llegado ningún evento
+    # crítico pero sí hay empresas, el cero es una avería, no un dato.
+    from .telemetria import ACCIONES_CRITICAS, ultimo_fallo
+
+    fallos = ultimo_fallo()
+    if isinstance(fallos, str):  # firma defensiva
+        fallos = {}
+    kpis["telemetria_rota"] = bool(
+        kpis["organizaciones"] and not kpis["presupuestos_ventana"] and fallos
+    )
+    kpis["telemetria_fallos"] = [
+        {"accion": accion, "motivo": fallos[accion]}
+        for accion in sorted(ACCIONES_CRITICAS)
+        if accion in fallos
+    ]
 
     serie = actividad["serie"]
     return {

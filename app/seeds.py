@@ -41,8 +41,15 @@ from .paises import es_ingles
 
 _EN: dict[str, str] = {
     # --- Identidad del documento -------------------------------------------------
-    "Cliente de demostración": "Demo client",
-    "Remodelación residencial de demostración": "Residential remodel \u2014 demo",
+    # El ejemplo del alta es **material de trabajo**, no una maqueta: nace
+    # editable, se puede duplicar y su PDF cuenta. Los rótulos lo dicen así
+    # porque el 02/11/2026 se midió que 36 de 36 ejemplos murieron sin
+    # convertirse en un presupuesto real: parte del motivo estaba en que el
+    # producto los llamaba «demostración».
+    "Cliente de ejemplo": "Sample client",
+    "Remodelación de vivienda \u2014 presupuesto de ejemplo": (
+        "Home renovation \u2014 sample estimate"
+    ),
     (
         "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
         "especializada, materiales de primera calidad y gestión integral del proyecto. "
@@ -240,13 +247,14 @@ def sembrar_demo(db: Session, idioma: str = "es"):
         return
 
     cliente = Cliente(
-        nombre=_t("Cliente de demostración", en),
+        nombre=_t("Cliente de ejemplo", en),
         rif="",
         pais="",
         telefono="",
         email="",
         direccion="Valencia, Carabobo",
         es_demo=True,
+        es_ejemplo=True,
     )
     db.add(cliente)
     db.flush()
@@ -256,7 +264,7 @@ def sembrar_demo(db: Session, idioma: str = "es"):
         numero=proximo_numero(db, hoy.year),
         year=hoy.year,
         fecha=hoy,
-        titulo=_t("Remodelación residencial de demostración", en),
+        titulo=_t("Remodelación de vivienda \u2014 presupuesto de ejemplo", en),
         direccion_obra="Valencia, Carabobo",
         codigo_postal="",
         validez_dias=30,
@@ -265,6 +273,7 @@ def sembrar_demo(db: Session, idioma: str = "es"):
         descuento_pct=0.0,
         estado="borrador",
         es_demo=True,
+        es_ejemplo=True,
         client_id=cliente.id,
         notas=_t(
             "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "

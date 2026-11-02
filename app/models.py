@@ -599,6 +599,9 @@ class Cliente(TenantMixin, Base):
     email = Column(String(200), default="")
     direccion = Column(Text, default="")
     es_demo = Column(Boolean, default=False)
+    #: Nació del ejemplo que el alta siembra (no es un cliente inventado por
+    #: el usuario, pero tampoco un dato de negocio). Ver ``es_demo``.
+    es_ejemplo = Column(Boolean, default=False, server_default=text("FALSE"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
     presupuestos = relationship("Presupuesto", back_populates="cliente")
@@ -631,6 +634,11 @@ class Presupuesto(TenantMixin, Base):
     descuento_pct = Column(Float, default=0.0)
     estado = Column(String(20), default="borrador")
     es_demo = Column(Boolean, default=False)
+    #: Documento de trabajo nacido del ejemplo del alta. ``es_demo`` sigue
+    #: decidiendo qué entra en los números; esto solo dice de dónde salió, y
+    #: es lo que permite medir si arrancar desde un ejemplo cargado convierte
+    #: más que arrancar de cero.
+    es_ejemplo = Column(Boolean, default=False, server_default=text("FALSE"))
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")
     con_portada = Column(Boolean, default=False)

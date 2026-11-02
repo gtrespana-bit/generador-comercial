@@ -191,7 +191,7 @@
   "Las contraseñas nuevas no coinciden.": "The new passwords do not match.",
   "Las conversaciones globales requieren una sesión de operador.": "Global conversations require an operator session.",
   "Los capítulos deben identificarse antes de guardar.": "Sections must be identified before saving.",
-  "Los clientes de demostración no cuentan para completar este paso.": "Demo clients do not count towards completing this step.",
+  "Si duplicaste el ejemplo, ya tienes un cliente real: cámbiale el nombre y los datos.": "If you copied the sample, you already have a real client: change its name and details.",
   "Los datos de demostración no se importan ({0} cliente(s) y {1} presupuesto(s) demo).": "Demo data is not imported ({0} demo client(s) and {1} demo estimate(s)).",
   "Los datos de importación no son válidos.": "The import data is invalid.",
   "Los datos de verificación no son válidos.": "The verification data is not valid.",

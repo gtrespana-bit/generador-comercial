@@ -275,7 +275,7 @@ with TestClient(app) as client:
         assert db.query(Configuracion).one().onboarding_iniciado_at is not None
     panel = client.get('/inicio')
     assert panel.status_code == 200
-    assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'Tu primer presupuesto, en dos pasos' in panel.text
     assert 'action="/recorrido/catalogo-revisado"' in panel.text
     review = client.post('/recorrido/catalogo-revisado', follow_redirects=False)
     assert review.status_code == 303 and review.headers['location'] == '/partidas'
@@ -372,7 +372,7 @@ with TestClient(app) as client:
     assert fin.status_code == 303
     panel = client.get('/inicio')
     assert panel.status_code == 200
-    assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'Tu primer presupuesto, en dos pasos' in panel.text
     assert 'action="/recorrido/omitir"' in panel.text
     omitir = client.post('/recorrido/omitir', follow_redirects=False)
     assert omitir.status_code == 303 and omitir.headers['location'] == '/inicio'
@@ -382,7 +382,7 @@ with TestClient(app) as client:
         # Omitir no es «completar»: el PDF sigue sin descargarse.
         assert cfg.onboarding_pdf_descargado is False
     panel = client.get('/inicio')
-    assert 'Llega a tu primer PDF en cinco pasos' not in panel.text
+    assert 'Tu primer presupuesto, en dos pasos' not in panel.text
 """
     env = os.environ.copy()
     env["COTIZAT_DB"] = str(db_path)

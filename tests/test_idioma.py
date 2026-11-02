@@ -453,7 +453,9 @@ def _demo(idioma):
 
 def test_la_demo_en_espanol_no_cambia():
     p, db = _demo("es")
-    assert p.titulo == "Remodelación residencial de demostración"
+    # El ejemplo del alta dejó de llamarse «de demostración» el 02/11/2026:
+    # 36 ejemplos, cero convertidos, y el rótulo era parte de la causa.
+    assert p.titulo == "Remodelación de vivienda — presupuesto de ejemplo"
     assert [c.nombre for c in p.capitulos] == [
         "MUROS Y PARTICIONES",
         "PISOS",
@@ -468,7 +470,7 @@ def test_la_demo_en_espanol_no_cambia():
 
 def test_la_demo_en_ingles_rotula_capitulos_partidas_y_mediciones():
     p, db = _demo("en")
-    assert p.titulo == "Residential remodel — demo"
+    assert p.titulo == "Home renovation — sample estimate"
     assert [c.nombre for c in p.capitulos] == [
         "WALLS AND PARTITIONS",
         "FLOORING",

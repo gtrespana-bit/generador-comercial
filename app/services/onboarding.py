@@ -162,14 +162,61 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
         and (cfg.empresa_nombre or "").strip().lower() != "mi empresa"
     )
     clientes_reales = db.query(Cliente).filter(Cliente.es_demo.is_(False)).count()
-    presupuestos_reales = db.query(Presupuesto).filter(Presupuesto.es_demo.is_(False)).count()
+    presupuestos_reales = (
+        db.query(Presupuesto).filter(Presupuesto.es_demo.is_(False)).count()
+    )
+    # El ejemplo del alta, mientras siga siendo ejemplo, no completa el paso.
+    # En cuanto el usuario lo duplica, la copia es suya y el paso se cumple.
+    ejemplo_sembrado = (
+        db.query(Presupuesto)
+        .filter(
+            Presupuesto.es_demo.is_(True),
+            Presupuesto.es_ejemplo.is_(True),
+        )
+        .first()
+    )
     partidas = db.query(Partida).count()
 
+    # Orden nuevo (02/11/2026). Antes: empresa → catálogo → cliente →
+    # presupuesto → PDF. El 17 % de las cuentas (7 de 41) llegó al presupuesto
+    # y solo el 5 % al PDF, con el 98 % habiendo abierto la herramienta: se
+    # caían justo al final, después de tres pasos de preparación. Ahora el
+    # presupuesto va primero porque quien tiene un ejemplo cargado **ya lo
+    # tiene**: abrirlo y cambiarle el nombre al cliente es el camino corto.
     pasos = [
         {
+            "clave": "presupuesto",
+            "titulo": "Abre tu presupuesto y hazlo tuyo",
+            "detalle": (
+                "Ya está montado con partidas, cantidades y precios reales. "
+                "Cámbiale el cliente y el título: el resto te sirve."
+                if ejemplo_sembrado
+                else "Crea tu primer presupuesto: añade capítulos, cantidades y precios."
+            ),
+            "completo": presupuestos_reales > 0,
+            "url": (
+                f"/presupuestos/{ejemplo_sembrado.id}"
+                if ejemplo_sembrado
+                else "/presupuestos/nuevo"
+            ),
+            "accion": "Abrir mi presupuesto" if ejemplo_sembrado else "Crear presupuesto",
+        },
+        {
+            "clave": "pdf",
+            "titulo": "Descarga el PDF",
+            "detalle": "Es lo que le vas a enseñar al cliente. Revísalo antes de enviarlo.",
+            "completo": bool(cfg.onboarding_pdf_descargado),
+            "url": (
+                f"/presupuestos/{ejemplo_sembrado.id}#documento"
+                if ejemplo_sembrado
+                else "/presupuestos"
+            ),
+            "accion": "Descargar PDF",
+        },
+        {
             "clave": "empresa",
-            "titulo": "Configura tu empresa",
-            "detalle": "Nombre, ubicación, moneda, IVA y datos que aparecerán en el PDF.",
+            "titulo": "Deja tus datos en el PDF",
+            "detalle": "Nombre, ubicación, moneda, IVA y datos de contacto que aparecen en el documento.",
             "completo": empresa_lista,
             "url": "/configuracion",
             "accion": "Revisar datos",
@@ -189,27 +236,11 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
         },
         {
             "clave": "cliente",
-            "titulo": "Crea un cliente real",
-            "detalle": "Los clientes de demostración no cuentan para completar este paso.",
+            "titulo": "Pon el nombre de tu cliente",
+            "detalle": "Si duplicaste el ejemplo, ya tienes un cliente real: cámbiale el nombre y los datos.",
             "completo": clientes_reales > 0,
             "url": "/clientes/nuevo",
             "accion": "Crear cliente",
-        },
-        {
-            "clave": "presupuesto",
-            "titulo": "Crea tu primer presupuesto",
-            "detalle": "Añade capítulos, cantidades y precios; todo seguirá siendo editable.",
-            "completo": presupuestos_reales > 0,
-            "url": "/presupuestos/nuevo",
-            "accion": "Crear presupuesto",
-        },
-        {
-            "clave": "pdf",
-            "titulo": "Descarga el primer PDF",
-            "detalle": "Revísalo antes de compartirlo con el cliente.",
-            "completo": bool(cfg.onboarding_pdf_descargado),
-            "url": "/presupuestos",
-            "accion": "Ver presupuestos",
         },
     ]
     completados = sum(1 for paso in pasos if paso["completo"])
@@ -220,5 +251,8 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
         "porcentaje": round(completados * 100 / len(pasos)),
         "completo": completados == len(pasos),
         "modo": cfg.onboarding_modo or "",
-        "presupuesto_demo": db.query(Presupuesto).filter(Presupuesto.es_demo.is_(True)).first(),
+        "presupuesto_demo": (
+            db.query(Presupuesto).filter(Presupuesto.es_demo.is_(True)).first()
+        ),
+        "ejemplo_convertible": ejemplo_sembrado,
     }
