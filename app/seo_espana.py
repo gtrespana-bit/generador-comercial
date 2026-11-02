@@ -122,7 +122,7 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "España",
         "pais_path": _PAIS_PATH,
         "kicker": "España · Presupuesto de reforma",
-        "title": "Plantilla de presupuesto de reforma en España: estructura completa y checklist",
+        "title": "Plantilla de presupuesto de reforma en España",
         "h1": "Plantilla de presupuesto de reforma: qué debe llevar en España",
         "description": (
             "Estructura completa de un presupuesto de reforma en España: capítulos (demolición, albañilería, fontanería, electricidad, revestimientos), "
@@ -226,7 +226,7 @@ ARTICULOS: dict[str, dict[str, Any]] = {
         "pais_nombre": "España",
         "pais_path": _PAIS_PATH,
         "kicker": "España · Mano de obra 2026",
-        "title": "Precio hora mano de obra construcción España 2026: coste empresa y precio venta",
+        "title": "Precio hora de mano de obra en España 2026",
         "h1": "Precio por hora de la mano de obra de construcción en España (2026)",
         "description": (
             "Coste empresa por hora facturable (no tarifa al cliente) para albañil (21 €/h), peón (15 €/h), pintor (20 €/h), fontanero (23 €/h) y electricista (24 €/h) en España 2026. "

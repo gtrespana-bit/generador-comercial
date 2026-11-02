@@ -14,7 +14,7 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Colombia",
         "pais_path": "/co/",
         "kicker": "Colombia · APU",
-        "title": "Cómo armar un APU de pañete en Colombia (COP, NIT, IVA 19 % — sin Excel roto)",
+        "title": "APU de pañete en Colombia: COP, NIT e IVA 19 %",
         "h1": "Cómo armar un APU de pañete en Colombia (sin que el Excel se rompa)",
         "description": (
             "Guía completa del análisis de precios unitarios de pañete en Colombia: recursos (cemento, arena, agua), rendimientos, COP, NIT e IVA 19 %. "
@@ -86,7 +86,7 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "México",
         "pais_path": "/mx/",
         "kicker": "México · Cotización",
-        "title": "De la visita a la cotización de remodelación en México (MXN, RFC, IVA 16 %, sin CFDI)",
+        "title": "Cotizar una remodelación en México: MXN, RFC e IVA 16 %",
         "h1": "De la visita a la cotización en México (en pesos, con tu margen)",
         "description": (
             "Cómo pasar de la visita a una cotización profesional de remodelación en México: medidas, aplanado, plafón, zoclo, opciones de producto con foto. "
@@ -220,7 +220,7 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Venezuela",
         "pais_path": "/ve/",
         "kicker": "Venezuela · USD y Bs",
-        "title": "Presupuesto de obra en Venezuela: USD con equivalente en Bs (RIF, IVA 16 %, tasa congelada)",
+        "title": "Presupuesto en Venezuela: USD, Bs (RIF) e IVA 16 %",
         "h1": "Presupuesto en USD y bolívares: la tasa se congela, el PDF no se mueve",
         "description": (
             "Cómo presupuestar remodelación y obra en Venezuela en USD o bolívares: catálogo propio, tasa de referencia congelada por documento, RIF e IVA 16 %. El PDF enviado en marzo no cambia si en abril se mueve el tipo de cambio. Nota: el cuadro base USD es referencia interna, no una encuesta salarial nacional; no sustituye factura fiscal del SENIAT."
@@ -283,7 +283,7 @@ ARTICULOS: dict[str, dict] = {
         "pais_nombre": "Ecuador",
         "pais_path": "/ec/",
         "kicker": "Ecuador · APU en USD",
-        "title": "APU de construcción en Ecuador: análisis en USD, RUC e IVA 15 % (sin factura SRI)",
+        "title": "APU de construcción en Ecuador: USD, RUC e IVA 15 %",
         "h1": "APU en Ecuador: dólares nativos, RUC e IVA 15 %",
         "description": (
             "Cómo armar un análisis de precios unitarios (APU) para construcción y remodelación en Ecuador: recursos nacionales (cemento, arena, bloques, hormigón), rendimientos por m² o unidad, precios en USD con referencia de mercado (Sodimac, Novey, GlobalGTC), RUC e IVA 15 %. No es una factura electrónica SRI ni un expediente de licitación pública. CotizaT es para obra privada y reformas residenciales/comerciales en Quito, Guayaquil o cualquier ciudad."
@@ -437,7 +437,7 @@ ARTICULOS_EN.update({
         "pais_nombre": "Colombia",
         "pais_path": "/co/",
         "kicker": "Colombia · APU",
-        "title": "How to build a render (panete) APU in Colombia (COP, NIT, 19% VAT — no broken Excel)",
+        "title": "Render (panete) APU in Colombia: COP, NIT, 19% VAT",
         "h1": "How to build a render (panete) APU in Colombia (without the spreadsheet breaking)",
         "description": (
             "Complete method for a render (panete) unit price analysis in Colombia: materials (cement, sand, water), labor (foreman, helper), productivity per m2, COP, NIT and 19% VAT. For remodelers and SAS (2-15 people) in Bogota, Medellin or any city. Not public-works AIU or SECOP tender. Includes checklist."
@@ -605,7 +605,7 @@ ARTICULOS_EN.update({
         "pais_nombre": "Venezuela",
         "pais_path": "/ve/",
         "kicker": "Venezuela · USD/Bs",
-        "title": "Estimate in Venezuela: USD with bolivar equivalent (RIF, 16% VAT, frozen rate)",
+        "title": "Estimate in Venezuela: USD, bolivars, RIF, 16% VAT",
         "h1": "Estimate in USD and bolivars: the rate freezes, the PDF does not move",
         "description": (
             "How to build commercial estimates for construction and remodels in Venezuela: USD native catalog with optional bolivar equivalent, frozen reference rate per document, RIF and 16% VAT. The March PDF does not change in April. Note: the USD base is an internal reference (not a national salary survey or validated employer cost); it does not replace a SENIAT fiscal invoice."

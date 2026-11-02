@@ -241,7 +241,14 @@ def test_articulos_de_pais_son_unicos_y_estan_en_sitemap():
     for slug in ORDEN_ARTICULOS:
         assert f"/guia/{slug}" in sm
     assert "/guia/apu-panete-colombia" in home_co
-    assert "<title>CotizaT:" in co.text
+    # Los artículos hispanos se mudaron al silo del país y `/guia/<slug>`
+    # responde 301 hacia `/co/guia/<slug>`. El título lo pinta la guía del
+    # país, no la portada: lo que hay que comprobar es que la redirección
+    # aterriza en la guía correcta y que esa página se titula.
+    assert co.history and co.history[0].status_code == 301
+    assert "/guia/" in co.url.path and co.url.path != "/guia/apu-panete-colombia"
+    titulo_guia = co.text.split("<title>")[1].split("</title>")[0].strip()
+    assert titulo_guia and "pañete" in titulo_guia.lower()
 
 
 def test_titulo_empieza_por_marca_y_describe_el_oficio():
