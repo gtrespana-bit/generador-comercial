@@ -1915,6 +1915,16 @@ def limpiar_cache_precios_mercado() -> None:
     _PRECIOS_MERCADO.clear()
 
 
+def _nombre_pais_precio(codigo_pais: str) -> str:
+    """Nombre del mercado para el aviso de origen del precio."""
+    try:
+        from ..paises import PAISES
+
+        return str((PAISES.get(str(codigo_pais or "").upper()) or {}).get("nombre") or "")
+    except Exception:
+        return ""
+
+
 def _precio_de_mercado(partida, codigo_pais: str, moneda: str | None, tasa: float | None):
     """Precio de mercado de una partida, o ``None`` si no hay dato para su país.
 
@@ -2018,6 +2028,7 @@ def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: f
                 _d["origen_precio"] = _mercado.origen
                 _d["confianza_precio"] = _mercado.confianza
                 _d["aviso_precio"] = _mercado.aviso
+                _d["pais_precio"] = getattr(_mercado, "pais", "") or _nombre_pais_precio(_cod)
             if _cod:
                 # Añade términos traducidos al índice buscable para que
                 # «pañete» encuentre «friso» y «cimentaciones» encuentre

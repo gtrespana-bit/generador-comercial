@@ -458,6 +458,7 @@ class PrecioPartida:
     precio: float
     moneda: str
     origen: str
+    pais: str = ""
     confianza: str = ""
     aviso: str = ""
     coste_materiales: float | None = None
@@ -670,6 +671,7 @@ def precio_de_partida(
         precio=round(precio, 4),
         moneda=moneda,
         origen="mercado",
+        pais=str((PAISES.get(cc) or {}).get("nombre") or cc),
         confianza=_confianza(ficha),
         coste_materiales=round(costes["materiales"], 4),
         coste_mano_obra=round(costes["mano_obra"], 4),
