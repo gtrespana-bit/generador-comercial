@@ -93,10 +93,10 @@ def mayor_caida(pasos: list[tuple[str, int]]) -> dict | None:
     return mejor
 
 
-#: Embudo medido en producción el 02/11/2026, descontando las cuentas de prueba
-#: del dueño (`gtrespana@gmail.com`, `lanzareformas@icloud.com` y sus empresas
-#: `testing*`, `remodelat*`, `remodelt*`). Se guarda aquí para que el documento
-#: y las pruebas usen exactamente la misma secuencia.
+#: Embudo medido en producción el 02/11/2026, descontando las dos cuentas del
+#: dueño (los correos viven en ``CUENTAS_DUENO``, no hace falta repetirlos) y
+#: sus empresas ``testing*``, ``remodelat*``, ``remodelt*``. Se guarda aquí para
+#: que el documento y las pruebas usen exactamente la misma secuencia.
 EMBUDO_MEDIDO_2026_11_02: list[tuple[str, int]] = [
     ("cuenta creada", 41),
     ("empezó a usar", 40),

@@ -1,0 +1,12 @@
+{
+  "_comentario": "Traducciones completas mano a mano. Existen porque el glosario por término traduce SUSTANTIVOS y la app pluraliza después: «sanitario» → «WC» dentro de «sanitarios» salía «WCes» en las fichas públicas.",
+  "cadenas": {
+    "Protección de sanitarios y grifería existente": "Protección de inodoros y grifería existente",
+    "Protección de carpintería y aparatos sanitarios que permanecen en obra": "Protección de carpintería y aparatos sanitarios que permanecen en obra",
+    "y elementos sanitarios terminados": "y elementos sanitarios terminados",
+    "aparatos WCes y elementos terminados": "aparatos sanitarios y elementos terminados",
+    "Protección de WCes y grifería existente": "Protección de inodoros y grifería existente",
+    "Protección de puertas, ventanas, aparatos WCes y elementos terminados que permanecen dentro de la zona de obra": "Protección de puertas, ventanas, aparatos sanitarios y elementos terminados que permanecen dentro de la zona de obra",
+    "la cubrición de los aparatos WCes que siguen en servicio": "la cubrición de los aparatos sanitarios que siguen en servicio"
+  }
+}

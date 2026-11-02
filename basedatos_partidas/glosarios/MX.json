@@ -312,8 +312,8 @@
     },
     {
       "de": "sanitario",
-      "a": "WC",
-      "motivo": "VE sanitario -> MX WC / taza."
+      "a": "inodoro",
+      "motivo": "VE sanitario -> MX/CL inodoro. Antes producía «WCes» al pluralizar: la app escribe «Protección de WCes y grifería»."
     },
     {
       "de": "inodoro",

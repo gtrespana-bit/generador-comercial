@@ -140,7 +140,10 @@ def completar_onboarding(
             )
         sembrar_productos(db, idioma)
         sembrar_recetas(db)
-        sembrar_demo(db, idioma)
+        # El país decide el ejemplo: precios, moneda, IVA y jerga del mercado
+        # que la persona acaba de elegir. Antes solo viajaba el idioma y el
+        # ejemplo salía siempre venezolano.
+        sembrar_demo(db, idioma, cfg.empresa_pais)
     else:
         # La opción limpia no debe inyectar contenido en arranques posteriores.
         cfg.semilla_catalogo_aplicada = True

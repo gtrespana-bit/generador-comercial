@@ -12,8 +12,8 @@ la atribución).
 
 ## 0. Cómo se contó (para que se pueda repetir)
 
-- **Cuentas de prueba excluidas:** `gtrespana@gmail.com` y
-  `lanzareformas@icloud.com`, más todas las empresas cuyo nombre empieza por
+- **Cuentas de prueba excluidas:** las dos cuentas del dueño
+  (`gtr…@gmail.com` y `lan…@icloud.com`), más todas las empresas cuyo nombre empieza por
   `testing`, `remodelat` o `remodelt` (las creó el dueño, una por país, para
   probar). Son 11 empresas y 12 licencias de cortesía.
 - **Qué es «cuenta»:** fila en `usuarios` con membresía activa en una empresa
@@ -182,7 +182,7 @@ se convirtió en presupuesto real.
   y las tres tienen `sub_` (PJP, Sermant JR y MD CONSTRUCTA). La cuarta
   (pago móvil, RemodelaT) no es de un cliente: es la cuenta del dueño.
 - **Pero el webhook no las activa solo.** Las de PJP y Sermant JR las activó
-  el dueño a mano (`revisado_por_email = gtrespana@gmail.com`); solo la de MD
+  el dueño a mano (`revisado_por_email` = la cuenta del dueño); solo la de MD
   CONSTRUCTA la activó `stripe@cotizat.local`. Con 3 compras es anécdota; con
   30 sería el negocio parado cada vez que falle un webhook.
 
@@ -200,7 +200,7 @@ impresiones. Con este LTV no hay margen para pagar tráfico.
 | `ultimo_acceso_at` casi vacío | «Usuarios activos» del panel subestima | Media |
 | Dos licencias activas solapadas en Sermant JR | Cobro duplicado, y el panel lo cuenta como 2 | Media |
 | `origen` no aparece en ninguna alta | No se puede atribuir ni el 1 % de las 41 | Media (ya desplegado, falta que lleguen altas) |
-| Solo 1 de las 3 compras de cliente la activó el webhook | PJP y Sermant JR las activó el dueño a mano (`revisado_por_email = gtrespana@gmail.com`); solo MD CONSTRUCTA la activó `stripe@cotizat.local`. Si el webhook falla en silencio, el cliente paga y se queda sin servicio | **Alta** |
+| Solo 1 de las 3 compras de cliente la activó el webhook | PJP y Sermant JR las activó el dueño a mano (`revisado_por_email` = la cuenta del dueño); solo MD CONSTRUCTA la activó `stripe@cotizat.local`. Si el webhook falla en silencio, el cliente paga y se queda sin servicio | **Alta** |
 | 5 registros sin cuenta (3 emails, 24/09–02/10) | Altas que no completaron el onboarding y no aparecen en `usuarios` | Baja |
 
 ## 7. Lo aplicado hoy (código ya en la rama)
