@@ -124,6 +124,18 @@ def test_landing_gana_a_la_hoja_diferida_y_no_apaga_el_texto():
     assert "color:var(--on-accent)" in CRITICO.replace(" ", "")
 
 
+def test_cta_fija_no_hereda_el_texto_apagado_de_la_barra():
+    # El mensaje secundario de la barra no puede volver a alcanzar al span
+    # del CTA: antes lo dejaba gris claro y pequeño sobre el fondo lima.
+    assert "body.landing-impulso .lp2-sticky-int span {" not in LANDING
+    assert "body.landing-impulso .lp2-sticky-int > div > span {" in LANDING
+    assert "body.landing-impulso .lp2-sticky .lp2-btn-primary," in LANDING
+    assert "body.landing-impulso .lp2-sticky .lp2-btn-primary [data-lp2-cta-label] { color: #000; }" in LANDING
+    etiqueta = "body.landing-impulso .lp2-sticky .lp2-btn-primary [data-lp2-cta-label] {"
+    assert "font-size: inherit;" in _bloque(LANDING[LANDING.rindex(etiqueta) :], etiqueta)
+    assert _contraste("#000", "#c9f24d") >= 4.5
+
+
 def test_resumen_movil_y_cuenta_colapsada_no_se_recortan():
     assert "#card-datos-generales #datos-generales-resumen" in CSS
     assert "#card-datos-generales #btn-toggle-datos" in CSS

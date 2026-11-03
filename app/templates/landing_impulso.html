@@ -121,9 +121,9 @@
 
       <h1><span class="lp2-h1-seo">{{ seo.h1 }}: {{ seo.h1_resalte }}.</span><span class="lp2-h1-gancho">Deja de adivinar. <em>Cobra con margen.</em></span></h1>
 
-      <p class="sub lp2-hero-sub"><strong>Tu próximo presupuesto puede salir con coste real, margen, plazo y PDF listo para enviar.</strong> No una suma de líneas: una decisión de negocio que tu cliente entiende a la primera.</p>
+      <p class="sub lp2-hero-sub"><strong>Tu próximo presupuesto puede salir con coste real, margen, tiempo de obra por partida y total, y PDF listo para enviar.</strong> No una suma de líneas: una decisión de negocio que tu cliente entiende a la primera.</p>
       <p class="sub lp2-seo-sub">{{ seo.sub }}</p>
-      <p class="hero-definicion">{{ product_name }} es un software de presupuestos de construcción: convierte tu catálogo de precios en presupuestos con coste interno, margen, plazos de cuadrilla y PDF profesional, con la moneda, el impuesto y la terminología de obra de {{ seo.nombre_pais }}.</p>
+      <p class="hero-definicion">{{ product_name }} es un software de presupuestos de construcción: convierte tu catálogo de precios en presupuestos con coste interno, margen, tiempo de obra por partida y total, y PDF profesional, con la moneda, el impuesto y la terminología de obra de {{ seo.nombre_pais }}.</p>
 
       <div class="lp2-hero-actions">
         {{ boton_alta(evento="cta_hero") }}
@@ -133,11 +133,11 @@
 
       <div class="lp2-intent" aria-label="Elige qué quieres resolver primero">
         <span class="lp2-intent-label">Yo vengo a…</span>
-        <button type="button" class="lp2-intent-chip is-active" data-lp2-intent="tiempo" data-lp2-copy="Cada tarde perdida en el Excel es una obra que no se cotiza." data-lp2-cta="Quiero dejar de perder tardes" data-ga-event="landing_intencion_tiempo">Dejar de perder tardes</button>
+        <button type="button" class="lp2-intent-chip is-active" data-lp2-intent="tiempo" data-lp2-copy="El tiempo de obra se calcula solo: horas por partida y total, con el plazo según tu cuadrilla." data-lp2-cta="Quiero calcular mis tiempos de obra" data-ga-event="landing_intencion_tiempo">Dejar de perder tardes</button>
         <button type="button" class="lp2-intent-chip" data-lp2-intent="margen" data-lp2-copy="Sabrás cuánto ganas en cada partida antes de enviar el precio." data-lp2-cta="Quiero saber mi margen real" data-ga-event="landing_intencion_margen">Saber mi margen real</button>
         <button type="button" class="lp2-intent-chip" data-lp2-intent="cierre" data-lp2-copy="Un PDF claro, con versiones y cambios explicados, evita la llamada de «¿pero esto qué era?»." data-lp2-cta="Quiero cerrar más presupuestos" data-ga-event="landing_intencion_cierre">Cerrar más presupuestos</button>
       </div>
-      <p class="lp2-intent-copy" id="lp2-intent-copy">Cada tarde perdida en el Excel es una obra que no se cotiza.</p>
+      <p class="lp2-intent-copy" id="lp2-intent-copy">El tiempo de obra se calcula solo: horas por partida y total, con el plazo según tu cuadrilla.</p>
 
       {# Accesos directos: el servidor decide el orden por mercado. #}
       <div class="hero-mercados" aria-label="Mercados disponibles">
@@ -266,7 +266,7 @@
       <span class="lp2-flow-step">Catálogo por país</span>
       <span class="lp2-flow-step">Excel / BC3 / planos</span>
       <span class="lp2-flow-step is-key">Coste + margen</span>
-      <span class="lp2-flow-step">Horas y cuadrilla</span>
+      <span class="lp2-flow-step is-key">Tiempos por partida + total</span>
       <span class="lp2-flow-step">Opciones y packs</span>
       <span class="lp2-flow-step is-key">PDF y firma</span>
       <span class="lp2-flow-step">Cambios y versiones</span>
@@ -276,12 +276,33 @@
       <article class="lp2-map-card is-featured"><span class="lp2-map-num">01 · EL NÚCLEO</span><span class="lp2-map-icon">💰</span><h3>Beneficio real, no una suma</h3><p>Cada partida guarda materiales, mano de obra, equipo y complementarios. El margen se recalcula en vivo por partida, capítulo y total.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">02 · BASE DE PRECIOS</span><span class="lp2-map-icon">📚</span><h3>{{ catalogo().lineas_precio_txt }} líneas listas</h3><p>{{ catalogo().partidas_txt }} partidas + {{ catalogo().recursos_txt }} recursos, con {{ catalogo().lineas_descomp_txt }} líneas de APU editables. No empiezas de cero.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">03 · IMPORTACIÓN</span><span class="lp2-map-icon">📥</span><h3>Excel, BC3 y tus planos</h3><p>Importa descompuestos CYPE (.xlsx), BC3 (FIEBDC-3) y mide líneas, áreas y conteos sobre PNG/JPG/PDF con escala calibrada.</p></article>
-      <article class="lp2-map-card"><span class="lp2-map-num">04 · TIEMPO</span><span class="lp2-map-icon">⏱️</span><h3>Plazos que puedes cumplir</h3><p>Horas por rol, duración de cuadrilla y conversión a días laborables a partir de los rendimientos reales de cada partida.</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">04 · TIEMPO</span><span class="lp2-map-icon">⏱️</span><h3>Tiempo automático, partida a partida</h3><p>Horas por partida desde cantidad y rendimientos; total por capítulo y obra, y duración estimada con tu jornada y cuadrilla.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">05 · VENTA</span><span class="lp2-map-icon">🧱</span><h3>Opciones, alternativas y packs</h3><p>Productos con foto, {{ catalogo().packs }} packs de estancia y capítulos completos escalados a los m² reales de la obra.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">06 · DOCUMENTO</span><span class="lp2-map-icon">📄</span><h3>PDF que da confianza</h3><p>Logo, condiciones, garantías, firmas, anexos de planos y estados. Envío por WhatsApp o email, con enlace privado opcional.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">07 · CONTROL</span><span class="lp2-map-icon">🔁</span><h3>Cambios claros y versiones</h3><p>Revisión antes de enviar, alertas de catálogo sano, versiones inmutables y resumen de cambios para reenviar sin confusión.</p></article>
       <article class="lp2-map-card"><span class="lp2-map-num">08 · NEGOCIO</span><span class="lp2-map-icon">📊</span><h3>Proyectos, cobros y equipo</h3><p>De presupuesto aprobado a proyecto: cambios de alcance, documentos de cobro, saldos, roles de equipo y reportes exportables.</p></article>
     </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-tiempos lp2-defer" id="tiempos-obra" aria-labelledby="tiempos-obra-title">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">Tiempo de obra automático</span>
+      <h2 class="lp2-section-title" id="tiempos-obra-title">De las horas de cada partida <em>al plazo total de la obra</em>.</h2>
+      <p class="lp2-lead">No tienes que sumar horas en otra hoja: {{ product_name }} calcula el tiempo de cada partida con su cantidad y sus rendimientos, lo acumula por capítulo y presupuesto, y estima la duración según la jornada y la cuadrilla.</p>
+    </div>
+    <div class="lp2-tiempos-grid">
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">1</span><h3>Por partida</h3><p>Cantidad × horas por unidad. Usa el descompuesto, el tiempo del catálogo o el ajuste manual que introduzcas.</p></article>
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">2</span><h3>Por capítulo y total</h3><p>Suma automáticamente las partidas activas. Si cambias una cantidad o un rendimiento, el total se recalcula.</p></article>
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">3</span><h3>Plazo con tu cuadrilla</h3><p>Convierte horas en jornadas de trabajo y simula composición y número de cuadrillas para estimar la duración.</p></article>
+    </div>
+    <div class="lp2-tiempos-ejemplo" role="group" aria-label="Ejemplo de tiempos del presupuesto de esta página">
+      <div><span>Ejemplo de esta página</span><strong>{{ ej.resumen.horas }}</strong><small>en las partidas del ejemplo</small></div>
+      <div><span>Duración estimada</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+      <p>La estimación parte de los datos disponibles; las partidas sin tiempo se señalan para que puedas completarlas o ajustarlas.</p>
+    </div>
+    <div class="lp2-tiempos-cta">{{ boton_alta(evento="cta_tiempos", texto="Quiero calcular mis tiempos de obra") }}</div>
   </div>
 </section>
 
@@ -346,7 +367,7 @@
             </div>
           </div>
         </div>
-        <div class="tour-caption"><span class="tour-step">Paso 1 · Tu día a día</span><h3>El total, el beneficio y el plazo en la misma pantalla.</h3><p>Nada de abrir tres hojas para saber si el precio que vas a enviar deja margen. {{ product_name }} lo calcula desde el coste de cada recurso.</p>{{ boton_alta("tour-cta", "cta_tour_1", "Quiero verlo con mis precios") }}</div>
+        <div class="tour-caption"><span class="tour-step">Paso 1 · Tu día a día</span><h3>El total, el beneficio y el tiempo de obra en la misma pantalla.</h3><p>Nada de abrir tres hojas para saber si el precio deja margen y cuánto tardará la obra. {{ product_name }} calcula costes, horas por partida y duración desde los datos de cada recurso.</p>{{ boton_alta("tour-cta", "cta_tour_1", "Quiero verlo con mis precios") }}</div>
       </div>
 
       <div class="tour-slide">
@@ -442,7 +463,7 @@
     </div>
     <div class="lp2-compare-grid">
       <article class="lp2-compare-card"><h3>Excel / generador típico</h3><ul><li><strong>Precio:</strong> una lista plana por partida.</li><li><strong>Cambios:</strong> buscar, reemplazar y rezar.</li><li><strong>Margen:</strong> fórmulas frágiles o solo el total.</li><li><strong>Plazo:</strong> a ojo, con la experiencia de quien esté ese día.</li><li><strong>Entrega:</strong> un adjunto más, sin versiones claras.</li></ul></article>
-      <article class="lp2-compare-card is-right"><h3>{{ product_name }}</h3><ul><li>APU con materiales, mano de obra, equipo y rendimientos.</li><li>Un precio de recurso recalcula toda la cascada.</li><li>Beneficio por partida, capítulo y total, con alertas.</li><li>Horas por rol y duración real con tu cuadrilla.</li><li>PDF, versiones inmutables y resumen de cambios.</li><li>Importa Excel CYPE, BC3 y mide sobre el plano.</li></ul></article>
+      <article class="lp2-compare-card is-right"><h3>{{ product_name }}</h3><ul><li>APU con materiales, mano de obra, equipo y rendimientos.</li><li>Un precio de recurso recalcula toda la cascada.</li><li>Beneficio por partida, capítulo y total, con alertas.</li><li>Tiempo automático por partida y total; horas por rol y duración con tu cuadrilla.</li><li>PDF, versiones inmutables y resumen de cambios.</li><li>Importa Excel CYPE, BC3 y mide sobre el plano.</li></ul></article>
     </div>
   </div>
 </section>
@@ -576,6 +597,10 @@
   </details>
   {% endfor %}
   <details data-ga-event="faq_abierta">
+    <summary><h3>¿Calcula el tiempo de obra automáticamente?</h3></summary>
+    <p>Sí. {{ product_name }} estima las horas de cada partida a partir de su cantidad y de los rendimientos del descompuesto, del catálogo o del tiempo que asignes manualmente. Después suma las partidas activas por capítulo y para toda la obra, y convierte esas horas en una duración estimada según la jornada y la cuadrilla. Las partidas sin datos de tiempo se señalan para que puedas completarlas.</p>
+  </details>
+  <details data-ga-event="faq_abierta">
     <summary><h3>¿Tengo que meter tarjeta para probarlo?</h3></summary>
     <p>{% if prueba_activa %}No. La prueba de {{ dias_prueba }} días no pide tarjeta y no se cobra nada automáticamente: si no eliges un plan, tus datos siguen ahí y la cuenta deja de generar presupuestos nuevos.{% else %}No hay prueba activa en este momento. Puedes ver los planes y decidir con los precios y las condiciones por delante, sin permanencia.{% endif %}</p>
   </details>
@@ -636,7 +661,7 @@
   <div class="lp2-wrap">
     <span class="lp2-eyebrow">Tu próximo presupuesto puede ser distinto</span>
     <h2>No vuelvas a enviar un precio <em>sin saber tu margen</em>.</h2>
-    <p>Catálogo de tu país, coste real, beneficio en vivo, plazos de cuadrilla y un PDF con tu logo. Todo lo que hoy te quita una tarde, en un mismo sitio.</p>
+    <p>Catálogo de tu país, coste real, beneficio en vivo, tiempo de obra por partida y total, y un PDF con tu logo. Todo lo que hoy te quita una tarde, en un mismo sitio.</p>
     <div class="lp2-final-actions">
       {{ boton_alta(evento="cta_final", texto="Sí, quiero empezar ahora") }}
       <a class="lp2-text-link" href="/pago">Ver planes con calma →</a>
@@ -648,7 +673,7 @@
 
 <div class="lp2-sticky" id="lp2-sticky" aria-hidden="true">
   <div class="lp2-sticky-int">
-    <div><strong>Tu próximo presupuesto, con margen y plazo claros.</strong><span>{{ sticky_texto }}</span></div>
+    <div><strong>Tu próximo presupuesto, con margen y tiempos de obra claros.</strong><span>{{ sticky_texto }}</span></div>
     <a class="lp2-btn lp2-btn-primary" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_sticky" tabindex="-1"><span data-lp2-cta-label>Quiero empezar ahora</span></a>
   </div>
 </div>

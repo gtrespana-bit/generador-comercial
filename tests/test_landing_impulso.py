@@ -100,4 +100,31 @@ def test_los_eventos_de_conversion_estan_instrumentados():
     assert 'data-ga-event="cta_hero"' in html
     assert 'data-ga-event="cta_final"' in html
     assert 'data-ga-event="cta_sticky"' in html
+    assert 'data-ga-event="cta_tiempos"' in html
     assert "landing_impulso.js" in html
+
+
+def test_el_tiempo_de_obra_automatico_tiene_un_argumento_propio():
+    """No basta con mencionar «plazo»: la landing debe explicar el cálculo
+    por partida, la suma por capítulo/total y el ejemplo real de la página."""
+    with _cliente() as client:
+        html = client.get("/").text
+    assert 'id="tiempos-obra"' in html
+    assert "Tiempo de obra automático" in html
+    assert "De las horas de cada partida" in html
+    assert "Por capítulo y total" in html
+    assert "Cantidad × horas por unidad" in html
+    assert "98 h-hombre" in html
+    assert "≈ 6 días" in html
+    assert "cuadrilla de 2 · 1 oficial + 1 ayudante" in html
+    assert "las partidas sin tiempo se señalan" in html
+    assert "¿Calcula el tiempo de obra automáticamente?" in html
+    assert "tiempo de obra por partida y total" in html
+
+
+def test_el_mensaje_de_tiempo_sirve_tambien_en_la_landing_de_pais():
+    with _cliente() as client:
+        html = client.get("/co/").text
+    assert 'id="tiempos-obra"' in html
+    assert 'data-ga-event="cta_tiempos"' in html
+    assert "¿Calcula el tiempo de obra automáticamente?" in html
