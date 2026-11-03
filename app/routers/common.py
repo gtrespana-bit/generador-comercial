@@ -694,7 +694,19 @@ def robots_meta(request) -> str:
 
     Ruta no indexable → ``noindex, nofollow, noarchive``; espejo de idioma →
     ``noindex, follow`` (sus enlaces sí valen); el resto, indexable.
+
+    La portada clásica (``?diseno=clasico``) es un duplicado deliberado para
+    el experimento A/B: no debe competir en el índice con la canónica, pero
+    sí debe dejar rastrear sus enlaces.
     """
+    try:
+        variante = str(
+            getattr(request, "query_params", {}).get("diseno", "") or ""
+        ).strip().lower()
+        if variante in {"clasico", "clasica", "legacy", "original"}:
+            return "noindex, follow"
+    except Exception:
+        pass
     try:
         from ..seo import es_indexable
 

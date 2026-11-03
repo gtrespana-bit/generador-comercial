@@ -67,6 +67,7 @@ def acceso(request: Request, next: str = ""):
     # hardcodearlos en la plantilla: si mañana se añade un mercado nuevo
     # (Brasil, Estados Unidos, …) aparece solo, sin tocar HTML.
     from ..paises import lista_paises
+    from ..services.atribucion import normalizar_intencion, normalizar_variante
     return TEMPLATES.TemplateResponse(
         request,
         "auth/access.html",
@@ -80,6 +81,12 @@ def acceso(request: Request, next: str = ""):
             # oculto la lleva al POST y la barra de direcciones no la arrastra
             # al resto de la navegación.
             "origen_seccion": _seccion_de_origen(request),
+            # La landing «impulso» manda variante, intención y alta=1 en la
+            # URL del CTA. Se validan contra catálogos cerrados y viajan en
+            # campos ocultos: el HTML de /acceso sigue siendo cacheable.
+            "variante_landing": normalizar_variante(request.query_params.get("variante")),
+            "intencion_landing": normalizar_intencion(request.query_params.get("intencion")),
+            "alta_directa": str(request.query_params.get("alta") or "").strip() == "1",
             "paises": lista_paises(),
             "pais_preseleccionado": (
                 str(request.query_params.get("pais", "") or "").strip().upper()
@@ -268,11 +275,21 @@ async def registrar_cuenta(request: Request):
     # las haría incacheables. Se valida contra el catálogo cerrado.
     origen_visita = {}
     try:
-        from ..services.atribucion import SECCIONES_CONOCIDAS
+        from ..services.atribucion import (
+            SECCIONES_CONOCIDAS,
+            normalizar_intencion,
+            normalizar_variante,
+        )
 
         seccion_form = str(form.get("origen") or "").strip()
         if seccion_form in SECCIONES_CONOCIDAS:
             origen_visita["origen_seccion"] = seccion_form
+        variante = normalizar_variante(form.get("variante"))
+        if variante:
+            origen_visita["variante_landing"] = variante
+        intencion = normalizar_intencion(form.get("intencion"))
+        if intencion:
+            origen_visita["intencion_landing"] = intencion
     except Exception:
         origen_visita = {}
 

@@ -119,5 +119,28 @@ SECCIONES_CONOCIDAS = frozenset(
         "planes",
         "como_funciona",
         "portada",
+        # La variante nueva de la portada se mide por separado: si el
+        # rediseño mejora o empeora el alta, tiene que verse en el panel.
+        "landing_impulso",
     }
 )
+
+#: Variantes de landing que un CTA puede declarar. Lista cerrada: la URL es
+#: pública y cualquier valor inventado acabaría ensuciando la analítica.
+VARIANTES_LANDING = frozenset({"impulso", "clasica"})
+
+#: Motivos de llegada de la variante «impulso». Los usa el copy del CTA y
+#: llegan al alta como microcompromiso, nunca como dato personal.
+INTENCIONES_LANDING = frozenset({"tiempo", "margen", "cierre"})
+
+
+def normalizar_variante(valor: str | None) -> str:
+    """Devuelve una variante del catálogo o cadena vacía."""
+    limpio = str(valor or "").strip().lower()
+    return limpio if limpio in VARIANTES_LANDING else ""
+
+
+def normalizar_intencion(valor: str | None) -> str:
+    """Devuelve una intención del catálogo o cadena vacía."""
+    limpio = str(valor or "").strip().lower()
+    return limpio if limpio in INTENCIONES_LANDING else ""

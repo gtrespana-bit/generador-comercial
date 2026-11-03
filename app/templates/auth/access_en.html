@@ -63,9 +63,12 @@
         <p class="auth-prueba">✨ Includes <strong>{{ dias_de_prueba() }} free days</strong> with full access. No card required.</p>
         {% endif %}
         <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
+        {% if origen_seccion %}<input type="hidden" name="origen" value="{{ origen_seccion }}">{% endif %}
+        {% if variante_landing %}<input type="hidden" name="variante" value="{{ variante_landing }}">{% endif %}
+        {% if intencion_landing %}<input type="hidden" name="intencion" value="{{ intencion_landing }}">{% endif %}
         <div class="field">
           <label for="signup-name">Name</label>
-          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if alta_directa %}autofocus{% endif %} {% if not auth_configured %}disabled{% endif %}>
         </div>
         <div class="field">
           <label for="signup-pais">Country <span class="hint">(configures currency, VAT and tax ID)</span></label>

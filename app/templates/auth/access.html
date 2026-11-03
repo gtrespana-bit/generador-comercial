@@ -69,9 +69,13 @@
            sigue sabiendo de dónde salió el alta. Es el nombre de una
            sección del catálogo cerrado, no una URL. #}
         {% if origen_seccion %}<input type="hidden" name="origen" value="{{ origen_seccion }}">{% endif %}
+        {# Variante e intención de la landing «impulso»: permiten medir el
+           experimento sin cookies ni identificadores. #}
+        {% if variante_landing %}<input type="hidden" name="variante" value="{{ variante_landing }}">{% endif %}
+        {% if intencion_landing %}<input type="hidden" name="intencion" value="{{ intencion_landing }}">{% endif %}
         <div class="field">
           <label for="signup-name">Nombre</label>
-          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if alta_directa %}autofocus{% endif %} {% if not auth_configured %}disabled{% endif %}>
         </div>
         <div class="field">
           <label for="signup-pais">País <span class="hint">(configura moneda, IVA e ID fiscal)</span></label>
