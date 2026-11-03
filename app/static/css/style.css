@@ -8691,7 +8691,7 @@ html:not([data-theme="dark"]) body {
 .sidebar-session,
 .sidebar-session-user,
 .idioma-toggle-row,
-.theme-toggle-btn,
+.sidebar .theme-toggle-btn,
 .sidebar-help {
   background: rgba(255, 255, 255, .06);
   border-color: rgba(255, 255, 255, .12);
@@ -8700,7 +8700,7 @@ html:not([data-theme="dark"]) body {
 .sidebar-session { border: 1px solid rgba(255, 255, 255, .12); }
 .sidebar-session-user:hover,
 .idioma-toggle-row:hover,
-.theme-toggle-btn:hover {
+.sidebar .theme-toggle-btn:hover {
   background: rgba(255, 255, 255, .1);
   border-color: rgba(255, 255, 255, .2);
   color: #fff;
@@ -8709,7 +8709,7 @@ html:not([data-theme="dark"]) body {
 .sidebar-session-org:hover { color: var(--ct-lime); text-decoration: underline; }
 .sidebar-session-sub,
 .sidebar-session-org,
-.theme-toggle-label { color: var(--ct-sidebar-muted); }
+.sidebar .theme-toggle-label { color: var(--ct-sidebar-muted); }
 .sidebar-session-avatar { background: var(--ct-lime); color: #000; }
 .sidebar-session-plan.sin { background: rgba(201, 242, 77, .16); color: var(--ct-lime); }
 .sidebar-session-plan.ok { background: rgba(52, 211, 153, .16); color: #6ee7b7; }

@@ -54,6 +54,26 @@ def test_sesion_y_footer_mantienen_contraste_sobre_superficies_oscuras():
     assert _contraste("#000000", "#c9f24d") >= 4.5
 
 
+def test_indices_publicos_no_dejan_enlaces_sin_estilo_fuera_de_pantalla():
+    # content-visibility:auto en los índices difería el estilo de los enlaces
+    # aún no visitados: en móvil aparecían con el azul del navegador y axe
+    # los medía contra el footer. Los hubs/mapa deben estar visibles ya.
+    assert ".hub-page main > section {" in PUBLIC
+    bloque = PUBLIC.split(".hub-page main > section {", 1)[1].split("}", 1)[0]
+    assert "content-visibility: visible;" in bloque
+    assert "contain-intrinsic-size: auto;" in bloque
+    assert "body:not(.landing-impulso) .hub-bloque a:visited" in PUBLIC
+
+
+def test_tema_del_menu_movil_no_hereda_el_sidebar_oscuro():
+    # El botón de tema del cajón móvil vive sobre una superficie clara; solo
+    # el botón del sidebar debe recibir tinta marina/lima.
+    assert ".sidebar .theme-toggle-btn," in APP
+    assert ".sidebar .theme-toggle-label { color: var(--ct-sidebar-muted); }" in APP
+    assert "\n.theme-toggle-btn,\n" not in APP
+    assert "\n.theme-toggle-label { color: var(--ct-sidebar-muted); }" not in APP
+
+
 def test_onboarding_y_admin_comparten_la_paleta_aprobada():
     for fuente in (ONBOARDING, ONBOARDING_EN):
         assert "--navy:#061427" in fuente

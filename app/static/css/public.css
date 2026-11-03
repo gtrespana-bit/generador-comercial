@@ -5752,6 +5752,15 @@ body:not(.landing-impulso) .site-footer .idioma-switch-opcion.is-active:hover {
 body:not(.landing-impulso) .hub-bloque a,
 body:not(.landing-impulso) .hub-bloque a:visited { color: var(--ct-navy-3); }
 body:not(.landing-impulso) .hub-bloque a:hover { color: var(--ct-navy); }
+/* Los hubs y el mapa son índices de enlaces, no una landing pesada: si sus
+   secciones quedan fuera del layout por content-visibility, los enlaces aún
+   no visitados pueden quedarse sin estilo computado (azul del navegador) y
+   los lectores de pantalla/auditorías ven un contraste falso. Aquí el
+   contenido debe estar visible y estilado desde el primer momento. */
+.hub-page main > section {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+}
 
 /* Propuesta compartida y error 404. */
 .prop-header {
