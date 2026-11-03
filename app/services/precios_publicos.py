@@ -276,6 +276,11 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
             return None
         lineas.append(
             {
+                # El código del recurso es lo único que permite casar la
+                # línea publicada con el recurso del mismo descompuesto en el
+                # editor sin cruzar precios entre líneas parecidas (hay
+                # «Adhesivo» en varios apartados).
+                "codigo": ref,
                 "nombre": nombre,
                 "grupo": recurso["grupo"],
                 "unidad": unidad_mostrada(recurso["unidad"], imperial),

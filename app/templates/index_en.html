@@ -66,8 +66,8 @@
   <div class="first-run-head">
     <div>
       <span class="section-kicker">Getting started · {{ recorrido_inicial.completados }}/{{ recorrido_inicial.total }}</span>
-      <h2 id="first-run-title">Reach your first PDF in five steps</h2>
-      <p>Progress with real data. Demo content does not complete client, estimate or PDF.</p>
+      <h2 id="first-run-title">Start with the estimate</h2>
+      <p>You already have one loaded with real items. Copy it, put your client's name on it and download the PDF: it is yours at that point. The rest of the guide can wait.</p>
     </div>
     <div class="first-run-side">
       <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% complete">
@@ -79,12 +79,6 @@
     </div>
   </div>
   <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
-  {% if recorrido_inicial.presupuesto_demo %}
-  <div class="demo-shortcut">
-    <span><strong>Example:</strong> explore the demo estimate without mixing it with your work.</span>
-    <a class="btn btn-sm" href="/presupuestos/{{ recorrido_inicial.presupuesto_demo.id }}">View example</a>
-  </div>
-  {% endif %}
   <div class="first-run-steps">
     {% for paso in recorrido_inicial.pasos %}
     <article class="first-run-step {{ 'done' if paso.completo else '' }}">

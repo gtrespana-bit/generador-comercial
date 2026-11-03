@@ -4879,8 +4879,19 @@ body.spotlight-open { overflow: hidden; }
   letter-spacing: -0.02em;
 }
 .spotlight-item-meta small {
+  display: block;
   font-size: 0.68rem;
   color: var(--text-muted);
+}
+/* Origen del precio: discreto, pero presente. El usuario tiene que poder
+   saber si ese importe es el de su mercado o el del catálogo de origen. */
+.spotlight-item-meta .spotlight-origen {
+  font-size: 0.62rem;
+  letter-spacing: 0.01em;
+  color: var(--acento-suave, var(--text-muted));
+  opacity: 0.85;
+  cursor: help;
+  white-space: nowrap;
 }
 .spotlight-foot {
   display: flex;
@@ -5486,19 +5497,6 @@ a.dash-kpi:hover {
   background: var(--accent);
   transition: width 0.35s var(--ease-out);
 }
-.demo-shortcut {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 8px;
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: 0.76rem;
-  margin-bottom: 0.7rem;
-}
 .first-run-steps { display: grid; gap: 0.4rem; }
 .first-run-step {
   display: grid;
@@ -5554,7 +5552,6 @@ a.dash-kpi:hover {
   .first-run-side { align-items: flex-start; }
   .first-run-step { grid-template-columns: 28px minmax(0, 1fr); }
   .first-run-step .btn { grid-column: 2; justify-self: start; }
-  .demo-shortcut { flex-direction: column; align-items: flex-start; }
   .mobile-nav-toggle { top: 0.65rem; left: 0.65rem; }
   .page-dashboard .content,
   .content { padding-top: 3.4rem; }

@@ -31,6 +31,7 @@ from migrations.versions import (
     p3f7a1c9d2e4_identidad_error_y_unidad_producto as identidad_error_migracion,
     q5e1c8a9d3f7_borrado_completo_de_cuenta as borrado_cuenta_migracion,
     r7f2b1d4e8a6_analitica_operativa as analitica_migracion,
+    s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -99,8 +100,59 @@ def test_registrar_nunca_lanza_si_la_base_falla(entorno):
             raise RuntimeError("base caída")
 
         db.commit = _commit_roto
-        assert telemetria.registrar(db, "presupuesto.creado") is False
-    assert _eventos(Session, accion="presupuesto.creado") == []
+        # No lanza y devuelve un booleano: eso es el contrato innegociable.
+        assert telemetria.registrar(db, "actividad.diaria") is False
+    assert _eventos(Session, accion="actividad.diaria") == []
+
+
+def test_un_evento_critico_se_recupera_por_la_via_de_emergencia(entorno):
+    """Si la sesión de la petición no puede, el paso 3 del embudo no se pierde.
+
+    El 02/11/2026 se descubrió que ningún `presupuesto.creado` de un cliente
+    real había llegado a la base: el fallo se capturaba y solo quedaba un
+    warning. Un evento crítico reintenta con sesión limpia.
+    """
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.info["auth_email"] = "cliente@example.com"
+
+        def _commit_roto():
+            raise RuntimeError("base caída")
+
+        db.commit = _commit_roto
+        assert telemetria.registrar(db, "presupuesto.creado", detalle={"partidas": 3}) is True
+
+    eventos = _eventos(Session, organizacion_id=ids[0], accion="presupuesto.creado")
+    assert len(eventos) == 1
+    assert eventos[0].detalle_dict() == {"partidas": 3}
+    # El fallo queda registrado para poder enseñarlo en el panel.
+    assert "RuntimeError" in telemetria.ultimo_fallo("presupuesto.creado")
+
+
+def test_el_ultimo_fallo_se_limpia_cuando_vuelve_a_funcionar(entorno):
+    """Un fallo viejo no debe quedarse como diagnóstico para siempre."""
+    Session, ids, _rol = entorno
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        db.commit = lambda: (_ for _ in ()).throw(RuntimeError("base caída"))
+        assert telemetria.registrar(db, "actividad.diaria") is False
+        assert "RuntimeError" in telemetria.ultimo_fallo("actividad.diaria")
+
+    with Session() as db:
+        db.info["organizacion_id"] = ids[0]
+        assert telemetria.registrar(db, "actividad.diaria") is True
+    assert telemetria.ultimo_fallo("actividad.diaria") == ""
+
+
+def test_las_acciones_criticas_son_las_del_embudo():
+    """Crítico = lo que decide una medición; el latido es ruido."""
+    assert "presupuesto.creado" in telemetria.ACCIONES_CRITICAS
+    assert "presupuesto.pdf_descargado" in telemetria.ACCIONES_CRITICAS
+    assert "licencia.activada" in telemetria.ACCIONES_CRITICAS
+    assert "actividad.diaria" not in telemetria.ACCIONES_CRITICAS
+    assert "sesion.activa" not in telemetria.ACCIONES_CRITICAS
+    assert telemetria.ACCIONES_CRITICAS <= set(telemetria.ACCIONES)
 
 
 def test_el_catalogo_de_acciones_es_estable_y_legible():
@@ -306,10 +358,13 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [analitica_migracion.revision], (
-        f"La cadena Alembic debe tener una única cabeza ({analitica_migracion.revision}); "
+    assert cabezas == [ejemplo_migracion.revision], (
+        f"La cadena Alembic debe tener una única cabeza ({ejemplo_migracion.revision}); "
         f"hay: {cabezas}"
     )
+    # La cabeza es la marca del ejemplo del alta; detrás queda la analítica
+    # operativa y el resto de la cadena.
+    assert ejemplo_migracion.down_revision == analitica_migracion.revision
     assert analitica_migracion.down_revision == borrado_cuenta_migracion.revision
     assert identidad_error_migracion.down_revision == errores_internos_migracion.revision
     assert borrado_cuenta_migracion.down_revision == identidad_error_migracion.revision

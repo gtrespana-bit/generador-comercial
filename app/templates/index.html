@@ -66,8 +66,8 @@
   <div class="first-run-head">
     <div>
       <span class="section-kicker">Guía de inicio · {{ recorrido_inicial.completados }}/{{ recorrido_inicial.total }}</span>
-      <h2 id="first-run-title">Llega a tu primer PDF en cinco pasos</h2>
-      <p>Avanza con datos reales. El contenido de demostración no completa cliente, presupuesto ni PDF.</p>
+      <h2 id="first-run-title">Empieza por el presupuesto</h2>
+      <p>Ya tienes uno cargado con partidas reales. Duplícalo, ponle el nombre de tu cliente y descarga el PDF: eso ya es tuyo. El resto de la guía lo puedes hacer después.</p>
     </div>
     <div class="first-run-side">
       <div class="first-run-progress" aria-label="{{ recorrido_inicial.porcentaje }}% completado">
@@ -79,12 +79,6 @@
     </div>
   </div>
   <div class="first-run-bar"><span data-cotizat-width="{{ recorrido_inicial.porcentaje }}"></span></div>
-  {% if recorrido_inicial.presupuesto_demo %}
-  <div class="demo-shortcut">
-    <span><strong>Ejemplo:</strong> explora el presupuesto de demostración sin mezclarlo con tu trabajo.</span>
-    <a class="btn btn-sm" href="/presupuestos/{{ recorrido_inicial.presupuesto_demo.id }}">Ver ejemplo</a>
-  </div>
-  {% endif %}
   <div class="first-run-steps">
     {% for paso in recorrido_inicial.pasos %}
     <article class="first-run-step {{ 'done' if paso.completo else '' }}">

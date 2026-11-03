@@ -8,6 +8,8 @@ import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
+PLANTILLAS = Path(__file__).resolve().parents[1] / "app" / "templates"
+
 from app.database import Base
 from app.models import (
     Cliente,
@@ -275,7 +277,7 @@ with TestClient(app) as client:
         assert db.query(Configuracion).one().onboarding_iniciado_at is not None
     panel = client.get('/inicio')
     assert panel.status_code == 200
-    assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'Empieza por el presupuesto' in panel.text
     assert 'action="/recorrido/catalogo-revisado"' in panel.text
     review = client.post('/recorrido/catalogo-revisado', follow_redirects=False)
     assert review.status_code == 303 and review.headers['location'] == '/partidas'
@@ -372,7 +374,7 @@ with TestClient(app) as client:
     assert fin.status_code == 303
     panel = client.get('/inicio')
     assert panel.status_code == 200
-    assert 'Llega a tu primer PDF en cinco pasos' in panel.text
+    assert 'Empieza por el presupuesto' in panel.text
     assert 'action="/recorrido/omitir"' in panel.text
     omitir = client.post('/recorrido/omitir', follow_redirects=False)
     assert omitir.status_code == 303 and omitir.headers['location'] == '/inicio'
@@ -382,7 +384,7 @@ with TestClient(app) as client:
         # Omitir no es «completar»: el PDF sigue sin descargarse.
         assert cfg.onboarding_pdf_descargado is False
     panel = client.get('/inicio')
-    assert 'Llega a tu primer PDF en cinco pasos' not in panel.text
+    assert 'Empieza por el presupuesto' not in panel.text
 """
     env = os.environ.copy()
     env["COTIZAT_DB"] = str(db_path)
@@ -403,3 +405,26 @@ def test_plantilla_de_bienvenida_explica_ambos_modos():
     assert "Empezar en limpio" in contenido
     assert "No añade clientes, presupuestos, productos, partidas ni packs" in contenido
     assert "no envía estos datos a un servicio de IA" in contenido
+
+
+def test_la_guia_no_tiene_dos_botones_al_mismo_sitio():
+    """El aviso «tu punto de partida» y el paso 1 llevaban al mismo presupuesto.
+
+    Dos botones para el mismo destino en la primera tarjeta del panel: uno
+    de ellos no avanza la guía, así que sobra. Se queda el paso.
+    """
+    fuente = (PLANTILLAS / "index.html").read_text(encoding="utf-8")
+    assert "demo-shortcut" not in fuente
+    assert "recorrido_inicial.presupuesto_demo" not in fuente
+
+
+def test_el_titular_de_la_guia_no_promete_pasos_que_no_son():
+    """Decía «en dos pasos» encima de una lista de cinco."""
+    for nombre, titular in (
+        ("index.html", "Empieza por el presupuesto"),
+        ("index_en.html", "Start with the estimate"),
+    ):
+        fuente = (PLANTILLAS / nombre).read_text(encoding="utf-8")
+        assert titular in fuente
+        assert "en dos pasos" not in fuente
+        assert "in two steps" not in fuente

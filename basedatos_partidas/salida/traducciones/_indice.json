@@ -1,5 +1,5 @@
 {
- "_generado": "2026-10-20",
+ "_generado": "2026-11-02",
  "_cadenas_origen": 6834,
  "_glosarios": {
   "EN": {
@@ -19,8 +19,8 @@
   },
   "CL": {
    "cadenas": 1341,
-   "bytes": 533183,
-   "huella": "4ee24c3624e0dd10"
+   "bytes": 533303,
+   "huella": "b19ac8601dddac7c"
   },
   "CO": {
    "cadenas": 1360,
@@ -59,8 +59,8 @@
   },
   "MX": {
    "cadenas": 1690,
-   "bytes": 620230,
-   "huella": "7527f5cee5c7cd12"
+   "bytes": 620350,
+   "huella": "280eeee1f7d290a4"
   },
   "NI": {
    "cadenas": 754,

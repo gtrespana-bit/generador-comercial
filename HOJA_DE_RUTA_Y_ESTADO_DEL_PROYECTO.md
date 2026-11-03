@@ -1439,7 +1439,7 @@ vez de enviar el binario por la función.
 - `app/services/pdf.py`: `generar_pdf()` orquesta medición y fusión;
   `_documento_presupuesto()` construye el documento base; `_CanvasNumerado`
   acepta `paginas_extra` para el pie «n/N».
-- `requirements.txt` + `requirements.lock`: `pypdf==6.16.1`.
+- `requirements.txt` + `requirements.lock`: `pypdf==6.21.4` (6.21.2 arrastraba 7 CVE).
 - `presupuestos.spec`: `pypdf` y `app.services.pdf_anexos` en el empaquetado.
 - Textos de interfaz en `budgets/detail.html` y `budgets/form.html`.
 - `tests/test_pdf_anexos.py` (nuevo, 10 pruebas), incluido un recorrido HTTP

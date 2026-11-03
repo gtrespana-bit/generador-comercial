@@ -198,5 +198,6 @@
   "cmp.precio_local": "Precio local",
   "cmp.desde_indice": "¿Te interesa cómo queda este catálogo frente a los otros 21 mercados?",
   "cmp.desde_indice_enlace": "Ver el comparador internacional de precios",
-  "cmp.desde_mano_obra": "Comparar los precios de obra de los 22 mercados"
+  "cmp.desde_mano_obra": "Comparar los precios de obra de los 22 mercados",
+  "precios.cta.prueba": "Sin tarjeta: {dias} días de prueba con esta partida ya cargada."
 }

@@ -2131,6 +2131,60 @@ def _montar_presupuesto(presupuesto, capitulos, partidas, imagenes_guardadas, im
         cap.partidas.append(item)
 
 
+def _aplicar_precio_de_mercado(db, partidas: list[dict], cfg=None) -> None:
+    """Corrige en el servidor el precio de las partidas que vienen del catálogo.
+
+    El editor ya pide cada partida con su precio de mercado, pero el precio
+    viaja en el formulario: un navegador con el editor cacheado, una pestaña
+    abierta desde ayer o un cliente antiguo mandarían el precio base del
+    catálogo, que es venezolano para todos los países. El precio del mercado es
+    el punto de partida; si el usuario lo cambió a mano, manda el usuario.
+    """
+    if not partidas:
+        return
+    ids = {
+        int(p.get("catalogo_id") or 0)
+        for p in partidas
+        if p.get("catalogo_id")
+    }
+    if not ids:
+        return
+    try:
+        from ..services.precios_partidas import precio_de_partida
+        from ..services.traduccion import codigo_desde_pais
+
+        cfg = cfg or _config(db)
+        codigo_pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "")
+        if not codigo_pais:
+            return
+        origen = {
+            fila.id: fila
+            for fila in db.query(Partida)
+            .options(load_only(Partida.id, Partida.codigo_interno, Partida.codigo_externo,
+                               Partida.codigo_legacy, Partida.unidad))
+            .filter(Partida.id.in_(ids))
+            .all()
+        }
+        for p in partidas:
+            partida = origen.get(int(p.get("catalogo_id") or 0))
+            if partida is None:
+                continue
+            resuelto = precio_de_partida(
+                partida,
+                pais=codigo_pais,
+                moneda_documento=p.get("moneda"),
+                tasa=getattr(cfg, "tasa_cambio", None),
+                con_desglose=False,
+            )
+            if resuelto.origen != "mercado":
+                continue
+            p["precio"] = resuelto.precio
+            p["moneda"] = resuelto.moneda
+            p["origen_precio"] = resuelto.origen
+    except Exception:  # guardar un presupuesto nunca puede depender de esto
+        log.exception("No se pudo aplicar el precio de mercado a las partidas.")
+
+
 @router.post("/presupuestos/nuevo")
 async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     form = await request.form()
@@ -2250,6 +2304,7 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
     if isinstance(firma, str) and firma.startswith("data:image/png;base64,"):
         presupuesto.firma_cliente = _guardar_firma(firma, db)
 
+    _aplicar_precio_de_mercado(db, partidas)
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     db.add(presupuesto)
     # El catálogo se guarda en la moneda base: se pasan la moneda y la tasa
@@ -4201,6 +4256,7 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     nombres_previos = {p.nombre for cap in presupuesto.capitulos for p in cap.partidas}
     productos_previos = {p.producto_nombre for cap in presupuesto.capitulos for p in cap.partidas}
 
+    _aplicar_precio_de_mercado(db, partidas)
     _montar_presupuesto(presupuesto, capitulos, partidas, imagenes, imagenes_opciones)
     _persistir_total_calculado(presupuesto)
     db.flush()
@@ -4271,6 +4327,27 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
     año_actual = date.today().year
     nuevo_num = proximo_numero(db, año_actual)
 
+    # Si se duplica el ejemplo del alta, el cliente también deja de ser el de
+    # ejemplo: si la copia quedara apuntando al «Cliente de ejemplo» marcado
+    # como demo, el usuario tendría un presupuesto real con un cliente que el
+    # producto sigue considerando maqueta, y el paso «crea un cliente real»
+    # nunca se completaría.
+    client_id = original.client_id
+    if getattr(original, "es_ejemplo", False) and original.cliente is not None:
+        cliente_propio = Cliente(
+            nombre=original.cliente.nombre,
+            rif="",
+            pais=original.cliente.pais or "",
+            telefono="",
+            email="",
+            direccion=original.cliente.direccion or "",
+            es_demo=False,
+            es_ejemplo=False,
+        )
+        db.add(cliente_propio)
+        db.flush()
+        client_id = cliente_propio.id
+
     copia = Presupuesto(
         numero=nuevo_num,
         year=año_actual,
@@ -4309,7 +4386,15 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         # Y la estadounidense: la copia de una obra en Texas no puede nacer
         # cobrando un «sales tax» que el original no cobraba.
         estado_codigo=original.estado_codigo, us_tax_base=original.us_tax_base, us_tax_fraccion=original.us_tax_fraccion,
-        client_id=original.client_id,
+        client_id=client_id,
+        # Duplicar un ejemplo del alta tiene que producir **trabajo del
+        # usuario**, no otra copia de la maqueta. Antes heredaba `es_demo` y
+        # `es_ejemplo`, así que el usuario tocaba «Duplicar», creía que ya
+        # tenía su presupuesto y el producto le seguía diciendo que era demo
+        # (y su PDF no contaba para el recorrido). Es lo que explica 36
+        # ejemplos y cero presupuestos reales en la base el 02/11/2026.
+        es_demo=False,
+        es_ejemplo=False,
     )
 
     for cap_o in original.capitulos:
@@ -4380,6 +4465,28 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
     _persistir_total_calculado(copia)
     db.add(copia)
     db.commit()
+    # Telemetría (E5-012): duplicar **también** crea un presupuesto, y hasta el
+    # 02/11/2026 esta ruta no emitía nada. Importa porque es la vía por la que
+    # se convierte una plantilla (o el ejemplo del alta) en trabajo propio: si
+    # no se mide, el paso 3 del embudo sale más bajo de lo que es.
+    if not copia.es_demo:
+        telemetria.registrar(
+            db,
+            "presupuesto.creado",
+            detalle={
+                "primero": (
+                    db.query(Presupuesto.id)
+                    .filter(
+                        Presupuesto.id != copia.id,
+                        Presupuesto.es_demo.is_(False),
+                    )
+                    .first()
+                    is None
+                ),
+                "partidas": sum(len(c.partidas) for c in copia.capitulos),
+                "origen": "duplicado",
+            },
+        )
     return _redirect(f"/presupuestos/{copia.id}/editar", msg=f"Presupuesto duplicado correctamente como {copia.numero}.")
 
 
@@ -4491,12 +4598,38 @@ def eliminar_anexo(presupuesto_id: int, anexo_id: int, db: Session = Depends(get
     return _redirect(f"/presupuestos/{presupuesto_id}#anexos", msg="Anexo eliminado.")
 
 
+def _ejemplo_ya_es_suyo(presupuesto) -> bool:
+    """¿El usuario hizo suyo el ejemplo que sembró el alta?
+
+    El ejemplo nace con un cliente llamado «Cliente de ejemplo» y un título
+    que lo identifica. Cuando el usuario cambia cualquiera de los dos, el
+    documento deja de ser una maqueta aunque ``es_demo`` siga a TRUE (la
+    bandera protege los KPI: este documento no entra en recuentos de negocio).
+    Se usa solo para el recorrido de inicio y para la telemetría del PDF.
+    """
+    cliente = getattr(presupuesto, "cliente", None)
+    nombre_cliente = (getattr(cliente, "nombre", "") or "").strip().lower()
+    titulo = (presupuesto.titulo or "").strip().lower()
+    cliente_es_ejemplo = getattr(cliente, "es_ejemplo", False) or nombre_cliente in {
+        "cliente de ejemplo",
+        "sample client",
+        "cliente de demostración",
+        "demo client",
+    }
+    titulo_es_ejemplo = "presupuesto de ejemplo" in titulo or "sample estimate" in titulo
+    return not cliente_es_ejemplo or not titulo_es_ejemplo
+
+
 @router.post("/presupuestos/{presupuesto_id}/pdf-descargado")
 def registrar_pdf_descargado(request: Request, presupuesto_id: int, db: Session = Depends(get_db)):
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return JSONResponse({"ok": False, "error": mensaje_request(request, "Presupuesto no encontrado.")}, status_code=404)
-    if es_lectura(db) or presupuesto.es_demo:
+    # Un ejemplo sin tocar no es trabajo del usuario y no completa el paso.
+    # Pero si el usuario ya hizo suyo ese documento (le puso su cliente, su
+    # título o descargó su PDF), dejar de contarlo sería castigarle por haber
+    # empezado justo donde el producto le dijo que empezara.
+    if es_lectura(db) or (presupuesto.es_demo and not _ejemplo_ya_es_suyo(presupuesto)):
         return {"ok": True, "registrado": False}
     cfg = _config(db)
     if not cfg.onboarding_pdf_descargado:
@@ -4518,8 +4651,10 @@ def descargar_pdf(presupuesto_id: int, inline: int = 0, request: Request = None,
     )
     if isinstance(resultado, Response) and resultado.status_code != 200:
         return resultado
-    # Telemetría (E5-012): uso del generador de PDF (el de muestra no cuenta).
-    if not getattr(presupuesto, "es_demo", False):
+    # Telemetría (E5-012): uso del generador de PDF. El ejemplo del alta no
+    # cuenta mientras siga siendo una maqueta; cuenta en cuanto el usuario lo
+    # hizo suyo (misma regla que el recorrido de inicio).
+    if not getattr(presupuesto, "es_demo", False) or _ejemplo_ya_es_suyo(presupuesto):
         telemetria.registrar(db, "presupuesto.pdf_descargado")
     return _respuesta_pdf(resultado, f"presupuesto_{presupuesto.numero}.pdf", inline)
 

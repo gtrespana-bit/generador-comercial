@@ -11,6 +11,7 @@ Terminología del catálogo y del presupuesto de demostración: venezolana
 (concreto, plomería, cielo raso, mesón, afirmado, tomacorriente…).
 """
 import json
+import logging
 from datetime import date
 
 from sqlalchemy.orm import Session
@@ -28,6 +29,8 @@ from .models import (
 )
 from .paises import es_ingles
 
+log = logging.getLogger(__name__)
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Demostración en inglés
@@ -41,8 +44,15 @@ from .paises import es_ingles
 
 _EN: dict[str, str] = {
     # --- Identidad del documento -------------------------------------------------
-    "Cliente de demostración": "Demo client",
-    "Remodelación residencial de demostración": "Residential remodel \u2014 demo",
+    # El ejemplo del alta es **material de trabajo**, no una maqueta: nace
+    # editable, se puede duplicar y su PDF cuenta. Los rótulos lo dicen así
+    # porque el 02/11/2026 se midió que 36 de 36 ejemplos murieron sin
+    # convertirse en un presupuesto real: parte del motivo estaba en que el
+    # producto los llamaba «demostración».
+    "Cliente de ejemplo": "Sample client",
+    "Remodelación de vivienda \u2014 presupuesto de ejemplo": (
+        "Home renovation \u2014 sample estimate"
+    ),
     (
         "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "
         "especializada, materiales de primera calidad y gestión integral del proyecto. "
@@ -226,27 +236,31 @@ def _partida(nombre, descripcion, unidad, precio, mediciones=None, cantidad=0.0,
     return p
 
 
-def sembrar_demo(db: Session, idioma: str = "es"):
-    """Crea cliente, catálogo y un presupuesto de ejemplo si no hay datos.
+def _sembrar_ejemplo_del_pais(db: Session, pais: str, idioma: str) -> bool:
+    """Siembra el ejemplo del mercado. Devuelve False si no hay matriz."""
+    from .services.ejemplo_pais import ejemplo_para_pais
+    from .services.traduccion import codigo_desde_pais
 
-    ``idioma`` decide el rótulo de la demostración: capítulos, partidas,
-    descripciones, conceptos de medición, notas y condiciones. Las cifras
-    (precios, cantidades, unidades) son exactamente las mismas en los dos
-    idiomas, porque son el contenido que la persona va a inspeccionar y
-    sólo pueden vivir en un sitio.
-    """
-    en = _es_ingles(idioma)
-    if db.query(Presupuesto).count() > 0:
-        return
+    codigo = codigo_desde_pais(pais) or str(pais or "").strip().upper()
+    if not codigo:
+        return False
+    try:
+        ejemplo = ejemplo_para_pais(codigo, idioma, pais_nombre=pais)
+    except Exception:  # el ejemplo genérico siempre debe poder sembrarse
+        log.warning("No se pudo construir el ejemplo de %s; se usa el genérico.", codigo)
+        return False
+    if ejemplo is None or not ejemplo.partidas:
+        return False
 
     cliente = Cliente(
-        nombre=_t("Cliente de demostración", en),
+        nombre="Cliente de ejemplo" if ejemplo.idioma != "en" else "Sample client",
         rif="",
-        pais="",
+        pais=codigo,
         telefono="",
         email="",
-        direccion="Valencia, Carabobo",
+        direccion=ejemplo.ciudad,
         es_demo=True,
+        es_ejemplo=True,
     )
     db.add(cliente)
     db.flush()
@@ -256,7 +270,88 @@ def sembrar_demo(db: Session, idioma: str = "es"):
         numero=proximo_numero(db, hoy.year),
         year=hoy.year,
         fecha=hoy,
-        titulo=_t("Remodelación residencial de demostración", en),
+        titulo=ejemplo.titulo,
+        direccion_obra=ejemplo.ciudad,
+        codigo_postal="",
+        validez_dias=30,
+        moneda=ejemplo.moneda,
+        impuesto_pct=ejemplo.impuesto_pct,
+        descuento_pct=0.0,
+        estado="borrador",
+        es_demo=True,
+        es_ejemplo=True,
+        client_id=cliente.id,
+        notas=ejemplo.notas,
+        condiciones=ejemplo.condiciones,
+    )
+
+    capitulos: dict[str, Capitulo] = {}
+    for partida in ejemplo.partidas:
+        nombre_cap = partida.capitulo or "General"
+        capitulo = capitulos.get(nombre_cap)
+        if capitulo is None:
+            capitulo = Capitulo(nombre=nombre_cap, orden=len(capitulos) + 1)
+            capitulos[nombre_cap] = capitulo
+            presupuesto.capitulos.append(capitulo)
+        item = _partida(
+            partida.nombre,
+            partida.descripcion,
+            partida.unidad,
+            partida.precio,
+            mediciones=[(partida.medicion, partida.cantidad)] if partida.medicion else None,
+            cantidad=partida.cantidad if not partida.medicion else 0.0,
+            orden=len(capitulo.partidas) + 1,
+        )
+        item.moneda = ejemplo.moneda
+        item.codigo_externo = partida.codigo
+        capitulo.partidas.append(item)
+
+    db.add(presupuesto)
+    db.commit()
+    return True
+
+
+def sembrar_demo(db: Session, idioma: str = "es", pais: str = ""):
+    """Crea cliente, catálogo y un presupuesto de ejemplo si no hay datos.
+
+    ``idioma`` decide el rótulo del ejemplo; ``pais`` decide **el ejemplo
+    entero**. Hasta el 02/11/2026 esta función solo recibía el idioma y el
+    presupuesto salía siempre venezolano (USD, IVA 16 %, «Cabilla», «Valencia,
+    Carabobo»), aunque el país elegido en el alta estuviera guardado tres
+    líneas antes en la misma configuración. Un mexicano abría su ejemplo y
+    leía un presupuesto de Caracas.
+
+    Con ``pais`` se intenta primero el ejemplo de ``services.ejemplo_pais``,
+    construido con los precios, la moneda y la jerga de ese mercado. Si el
+    país no tiene matriz de precios publicada (Venezuela hoy), se cae al
+    ejemplo escrito aquí abajo, que se conserva intacto: es el único que
+    existe para esos mercados y no hay motivo para perderlo.
+    """
+    en = _es_ingles(idioma)
+    if db.query(Presupuesto).count() > 0:
+        return
+    if _sembrar_ejemplo_del_pais(db, pais, idioma):
+        return
+
+    cliente = Cliente(
+        nombre=_t("Cliente de ejemplo", en),
+        rif="",
+        pais="",
+        telefono="",
+        email="",
+        direccion="Valencia, Carabobo",
+        es_demo=True,
+        es_ejemplo=True,
+    )
+    db.add(cliente)
+    db.flush()
+
+    hoy = date.today()
+    presupuesto = Presupuesto(
+        numero=proximo_numero(db, hoy.year),
+        year=hoy.year,
+        fecha=hoy,
+        titulo=_t("Remodelación de vivienda \u2014 presupuesto de ejemplo", en),
         direccion_obra="Valencia, Carabobo",
         codigo_postal="",
         validez_dias=30,
@@ -265,6 +360,7 @@ def sembrar_demo(db: Session, idioma: str = "es"):
         descuento_pct=0.0,
         estado="borrador",
         es_demo=True,
+        es_ejemplo=True,
         client_id=cliente.id,
         notas=_t(
             "Presupuesto elaborado con mediciones tomadas en obra. Incluye mano de obra "

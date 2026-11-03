@@ -113,6 +113,34 @@ def convertir_precio_unidad(
         return None
 
 
+def convertir_precio_entre_unidades(
+    precio: float, unidad_origen: str | None, unidad_destino: str | None
+) -> float | None:
+    """Pasa un precio unitario entre dos unidades del mismo tipo, en los dos sentidos.
+
+    ``convertir_precio_unidad`` va solo de imperial a métrico (es lo que
+    necesita el editor al leer una ficha). Aquí se necesita también el camino
+    de vuelta: la matriz de mercados como Estados Unidos publica en ``sq ft`` y
+    ``lb``, y la base de datos guarda ``m2`` y ``kg``. Sin esto, un precio en
+    libras se aplicaría a un rendimiento en kilos y saldría 2,2 veces caro.
+
+    Devuelve ``None`` si las unidades no son del mismo tipo: no se adivina.
+    """
+    origen = normalizar_unidad(unidad_origen)
+    destino = normalizar_unidad(unidad_destino)
+    if not origen or not destino:
+        return None
+    if origen == destino:
+        return float(precio)
+    directo = _CONVERSION.get((origen, destino))
+    if directo is not None:
+        return float(precio) * directo
+    inverso = _CONVERSION.get((destino, origen))
+    if inverso:
+        return float(precio) / inverso
+    return None
+
+
 def sistema_unidades_pais(codigo_pais: str | None) -> str:
     """Sistema de medida de un mercado: ``metrico`` o ``imperial``.
 

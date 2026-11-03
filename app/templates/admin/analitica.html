@@ -52,6 +52,7 @@
 
   /* Embudo */
   .embudo { display: flex; flex-direction: column; gap: 14px; }
+  .origen-nota { margin-top: 10px; }
   .paso { display: grid; grid-template-columns: 200px 1fr 120px; gap: 14px; align-items: center; }
   .paso .nombre { font-size: 0.87rem; font-weight: 800; color: var(--text-main); }
   .paso .nombre small { display: block; color: var(--text-muted); font-weight: 600; font-size: 0.72rem; margin-top: 3px; }
@@ -158,10 +159,10 @@
       <div class="kpi-label">Empresas activas hoy</div>
       <div class="muted">{{ k.activas_7d }} en 7 días · {{ k.activas_ventana }} en {{ resumen.dias }}d</div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card{% if k.telemetria_rota %} warn{% endif %}">
       <div class="kpi-value">{{ k.presupuestos_hoy }}</div>
       <div class="kpi-label">Presupuestos creados hoy</div>
-      <div class="muted">{{ k.presupuestos_semana }} esta semana · {{ k.presupuestos_mes }} este mes</div>
+      <div class="muted">{% if k.telemetria_rota %}no llegan eventos nuevos: falló {{ k.telemetria_fallos[0].accion }}{% else %}{{ k.presupuestos_semana }} esta semana · {{ k.presupuestos_mes }} este mes{% endif %}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-value">{{ k.usuarios_hoy }}</div>
@@ -534,6 +535,39 @@
         {% endfor %}
         {% else %}
         <p class="muted text-center">Sin registros en esta ventana.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Qué página trae los registros</h2>
+        <span class="badge badge-neutral">últimos {{ resumen.dias }} días</span>
+      </div>
+      <div class="card-body">
+        {% if resumen.origenes %}
+        {% set max_origen = resumen.origenes[0].total %}
+        {% for o in resumen.origenes %}
+        <div class="pais-fila">
+          <b>{{ o.etiqueta }}</b>
+          <div class="barra">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+              <rect x="0" y="1" width="{{ (o.total * 100.0 / max_origen)|round(1) }}" height="6"></rect>
+            </svg>
+          </div>
+          <span>{{ o.total }} · {{ "%.0f"|format(o.pct) }}%</span>
+        </div>
+        {% endfor %}
+        <p class="muted origen-nota">
+          Cada registro llega con el <code>?origen=</code> del botón que lo
+          trajo. «Sin atribuir» son registros anteriores a la medición: no se
+          les inventa un origen. Sirve para decidir qué página merece el
+          trabajo: hoy el catálogo es la mayoría de las impresiones y las
+          consultas comerciales no traen clics.
+        </p>
+        {% else %}
+        <p class="muted text-center">Sin registros atribuidos en esta ventana.</p>
         {% endif %}
       </div>
     </div>

@@ -233,6 +233,12 @@ async def guardar_configuracion(request: Request, db: Session = Depends(get_db))
         )
 
     db.commit()
+    # El país o la moneda cambian el precio de TODO el catálogo: si no se
+    # vacía, la caché de proceso seguiría sirviendo los precios del mercado
+    # anterior y el usuario vería el cambio al día siguiente.
+    from .common import limpiar_cache_precios_mercado
+
+    limpiar_cache_precios_mercado()
     # E4-026: rastro del cambio (después del commit, best-effort).
     auditoria.registrar_evento(db, "configuracion.actualizada", entidad="configuracion")
     if org_nombre_anterior:

@@ -640,7 +640,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
     # La cabeza vigente es la analítica operativa (presencia y lectura de
     # operador sobre usuarios/membresías).
     assert analitica_migracion.down_revision == borrado_cuenta_migracion.revision
-    assert analitica_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    from migrations.versions import s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion
+
+    assert ejemplo_migracion.down_revision == analitica_migracion.revision
+    assert ejemplo_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

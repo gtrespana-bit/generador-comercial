@@ -198,5 +198,6 @@
   "cmp.precio_local": "Local price",
   "cmp.desde_indice": "Wondering how this catalog compares with the other 21 markets?",
   "cmp.desde_indice_enlace": "See the international price comparison",
-  "cmp.desde_mano_obra": "Compare construction prices across the 22 markets"
+  "cmp.desde_mano_obra": "Compare construction prices across the 22 markets",
+  "precios.cta.prueba": "No card needed: {dias}-day trial with this item already loaded."
 }

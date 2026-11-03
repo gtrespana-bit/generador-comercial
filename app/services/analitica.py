@@ -555,6 +555,60 @@ def _paises(db, *, desde: datetime) -> list[dict]:
     ]
 
 
+def _origenes(db, *, desde: datetime) -> list[dict]:
+    """Qué sección pública trajo cada registro (atribución del alta).
+
+    Es la pieza que decide dónde invertir el trabajo: el sitio recibe el 76 %
+    de sus impresiones en el catálogo de precios y 0 clics en las consultas
+    comerciales. Sin este dato, «más partidas» y «una página de producto»
+    parecen igual de urgentes; con él se ve qué sección convierte.
+
+    Se lee del detalle de ``cuenta.registrada`` (``origen_seccion``), que
+    escribe el alta desde el ``?origen=`` del CTA. Los registros anteriores a
+    este cambio no lo traen: se agrupan como «sin atribuir» en vez de
+    inventarles un origen.
+    """
+    filas = (
+        db.query(EventoProducto.detalle)
+        .filter(
+            EventoProducto.accion == "cuenta.registrada",
+            EventoProducto.created_at >= desde,
+        )
+        .all()
+    )
+    etiquetas = {
+        "precios_ficha": "Ficha de precio (catálogo)",
+        "precios_hub": "Listado de apartado",
+        "precios_indice": "Índice de precios",
+        "comparador": "Comparador de países",
+        "mano_obra": "Mano de obra",
+        "calculadora": "Calculadora",
+        "guia": "Guía",
+        "landing_pais": "Landing de país",
+        "planes": "Planes y precios",
+        "como_funciona": "Cómo funciona",
+        "portada": "Portada",
+    }
+    contador: dict[str, int] = defaultdict(int)
+    for (detalle,) in filas:
+        try:
+            datos = json.loads(detalle or "{}")
+        except (TypeError, ValueError):
+            datos = {}
+        clave = str((datos or {}).get("origen_seccion") or "").strip()
+        contador[clave or "sin_atribuir"] += 1
+    total = sum(contador.values())
+    return [
+        {
+            "origen": clave,
+            "etiqueta": etiquetas.get(clave, "Sin atribuir"),
+            "total": n,
+            "pct": _pct(n, total),
+        }
+        for clave, n in sorted(contador.items(), key=lambda kv: -kv[1])[:10]
+    ]
+
+
 def _horas_punta(db, *, desde: datetime) -> dict:
     """Cuándo se trabaja: distribución por hora UTC y por día de la semana.
 
@@ -1117,6 +1171,23 @@ def resumen_analitica(
     # está bloqueada por RLS (migración pendiente). El panel lo dice en vez de
     # enseñar un «1» que parece un dato.
     kpis["usuarios_limitados"] = bool(kpis["organizaciones"] and not kpis["usuarios"])
+    # Segundo aviso, mismo motivo: el 02/11/2026 el panel enseñaba «0
+    # presupuestos» con 41 cuentas dadas de alta porque la escritura de
+    # `presupuesto.creado` fallaba en silencio. Si no ha llegado ningún evento
+    # crítico pero sí hay empresas, el cero es una avería, no un dato.
+    from .telemetria import ACCIONES_CRITICAS, ultimo_fallo
+
+    fallos = ultimo_fallo()
+    if isinstance(fallos, str):  # firma defensiva
+        fallos = {}
+    kpis["telemetria_rota"] = bool(
+        kpis["organizaciones"] and not kpis["presupuestos_ventana"] and fallos
+    )
+    kpis["telemetria_fallos"] = [
+        {"accion": accion, "motivo": fallos[accion]}
+        for accion in sorted(ACCIONES_CRITICAS)
+        if accion in fallos
+    ]
 
     serie = actividad["serie"]
     return {
@@ -1133,6 +1204,7 @@ def resumen_analitica(
         "cohortes": _cohortes(db, hoy=hoy),
         "riesgo": _riesgo(db, hoy=hoy),
         "paises": _paises(db, desde=desde),
+        "origenes": _origenes(db, desde=desde),
         "horas": _horas_punta(db, desde=desde),
         "organizaciones": tabla_organizaciones,
         "eventos": explorador["eventos"],

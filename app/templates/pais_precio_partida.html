@@ -167,8 +167,18 @@
 <section class="franja cta-final">
   <h2>{{ 'precios.cta' | t(_idioma) }}</h2>
   <p class="intro">{{ 'precios.cta.texto' | t(_idioma) }}</p>
+  {# La prueba gratis, junto al botón: el 90 % de las cuentas que se activan
+     no acaban pagando (41 → 4), así que lo que decide es que la prueba se
+     EMPIECE y llegue al primer presupuesto, no que exista. #}
+  {% if hay_prueba_gratuita() %}
+  <p class="intro cta-prueba">{{ 'precios.cta.prueba' | t(_idioma) | replace('{dias}', dias_de_prueba()|string) }}</p>
+  {% endif %}
   <div class="acciones mt-3">
-    <a class="btn btn-primary" href="/acceso">{{ 'precios.cta.boton' | t(_idioma) }}</a>
+    {# Los CTA llevan la sección y el país en la URL, no en una cookie: estas
+       páginas se sirven desde el CDN y una respuesta con Set-Cookie dejaría
+       de cachearse (y con Vary: Cookie, Vercel no cachea nada). El
+       ``?origen=`` sobrevive porque el HTML es igual para todos. #}
+    <a class="btn btn-primary" href="/acceso?origen={{ origen_seccion|default('precios_ficha') }}{% if request.url.path.split('/')[1] %}&pais={{ request.url.path.split('/')[1]|upper }}{% endif %}">{{ 'precios.cta.boton' | t(_idioma) }}</a>
     <a class="btn btn-secondary" href="{{ '/en/pago' if _idioma == 'en' else '/pago' }}">{{ 'precios.cta.planes' | t(_idioma) }}</a>
   </div>
 </section>

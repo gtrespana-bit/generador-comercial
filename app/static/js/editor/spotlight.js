@@ -227,6 +227,23 @@
     activos.forEach(function (item, i) {
       var p = item.p;
       var codigo = p.codigo_externo || p.codigo_interno || p.codigo || "";
+      function origenDelPrecio(p) {
+        if (p.aviso_precio) {
+          return {
+            texto: "⚠ " + (p.moneda || "USD"),
+            titulo: p.aviso_precio,
+          };
+        }
+        if (p.origen_precio === "mercado") {
+          return {
+            texto: "precio del país",
+            titulo: "Precio de referencia del mercado en " + (p.pais_precio || "tu país") +
+              " (matriz de precios locales).",
+          };
+        }
+        return null;
+      }
+
       var ruta = [p.categoria, p.subcategoria, p.apartado].filter(Boolean).join(" › ");
 
       var btn = crearElemento("button", {
@@ -254,6 +271,15 @@
         : (Number(p.precio) || 0).toFixed(2);
       metadatos.appendChild(crearElemento("strong", null, importe));
       metadatos.appendChild(crearElemento("small", null, "/" + (p.unidad || "ud")));
+      // De dónde sale el precio. El catálogo se siembra con precios de
+      // Venezuela y el de cada país sale de su matriz; cuando no hay dato se
+      // queda el base y el usuario tiene que saberlo antes de cobrar.
+      var origen = origenDelPrecio(p);
+      if (origen) {
+        var aviso = crearElemento("small", { className: "spotlight-origen" }, origen.texto);
+        aviso.title = origen.titulo;
+        metadatos.appendChild(aviso);
+      }
       btn.appendChild(metadatos);
 
       btn.addEventListener("mouseenter", function () {

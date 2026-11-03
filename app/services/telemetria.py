@@ -113,32 +113,46 @@ def registrar(
     operador (activación manual) y en el alta de empresa, donde el contexto
     de tenant acaba de nacer. Llamar **después** del commit principal.
     """
+    accion = str(accion or "").strip()
+    if accion not in ACCIONES or accion in ACCIONES_GLOBALES:
+        return False
+    org_id = int(organizacion_id or db.info.get("organizacion_id") or 0)
+    if org_id <= 0:
+        return False
+    actor = str(email or db.info.get("auth_email") or "")[:254]
+    cuerpo = _serializar_detalle(detalle)
     try:
-        accion = str(accion or "").strip()
-        if accion not in ACCIONES or accion in ACCIONES_GLOBALES:
-            return False
-        org_id = int(organizacion_id or db.info.get("organizacion_id") or 0)
-        if org_id <= 0:
-            return False
         db.add(
             EventoProducto(
                 organizacion_id=org_id,
-                actor_email=str(
-                    email or db.info.get("auth_email") or ""
-                )[:254],
+                actor_email=actor,
                 accion=accion,
-                detalle=_serializar_detalle(detalle),
+                detalle=cuerpo,
             )
         )
         db.commit()
+        _ULTIMO_FALLO.pop(accion, None)
         return True
-    except Exception:
-        log.warning("No se pudo registrar el evento de producto %r.", accion)
+    except Exception as exc:
+        _anotar_fallo(accion, exc)
         try:
             db.rollback()
         except Exception:
             pass
-        return False
+    # Segundo intento, solo para lo que decide una medición del negocio.
+    if accion in ACCIONES_CRITICAS:
+        try:
+            if _insertar_en_sesion_nueva(accion, dict(db.info), cuerpo, _bind_de(db)):
+                log.warning(
+                    "El evento %r se recuperó por la vía de emergencia: la "
+                    "sesión de la petición no pudo escribirlo. Revisar el "
+                    "estado de la conexión, no es normal.",
+                    accion,
+                )
+                return True
+        except Exception as exc:
+            _anotar_fallo(accion, exc)
+    return False
 
 
 def registrar_global(
@@ -189,23 +203,35 @@ def registrar_global(
         return False
 
 
-def anotar_registro(*, email: str, pais: str = "") -> bool:
+def anotar_registro(
+    *, email: str, pais: str = "", detalle_extra: dict | None = None
+) -> bool:
     """``cuenta.registrada`` con sesión propia y efímera.
 
     La ruta de registro no depende de ``get_db`` (todavía no hay
     organización); el mismo patrón que el consentimiento y las sesiones de
     auditoría. El país llega del selector del formulario y solo se usa
     agregado en el panel.
+
+    ``detalle_extra`` lleva la atribución de la visita (``origen_mercado``,
+    ``origen_seccion``): de qué página pública vino quien se registra. Son
+    dos cadenas cortas elegidas de un catálogo cerrado, nunca una URL.
     """
     try:
         from ..database import SessionLocal
 
+        detalle: dict = {}
+        if pais:
+            detalle["pais"] = pais
+        for clave, valor in (detalle_extra or {}).items():
+            if isinstance(valor, str) and valor:
+                detalle[str(clave)[:32]] = valor[:64]
         with SessionLocal() as db:
             return registrar_global(
                 db,
                 "cuenta.registrada",
                 email=email,
-                detalle={"pais": pais} if pais else None,
+                detalle=detalle or None,
             )
     except Exception:
         log.warning("No se pudo anotar el registro de %r.", email)
@@ -231,6 +257,107 @@ def _memo_latidos() -> set[int]:
         _LATIDOS.clear()  # cambió el día: no acumula memoria indefinida
         _LATIDOS[hoy] = registro = set()
     return registro
+
+
+#: Acciones cuyo fallo de escritura **sí** hay que poder reconstruir después.
+#: El latido y la presencia son ruido: si se pierden, no se pierde una decisión
+#: de negocio. Que alguien cree su primer presupuesto, en cambio, es el paso 3
+#: del embudo: si se pierde, el panel miente y se optimiza a ciegas.
+ACCIONES_CRITICAS = frozenset(
+    {
+        "presupuesto.creado",
+        "presupuesto.aprobado",
+        "presupuesto.enviado_email",
+        "presupuesto.pdf_descargado",
+        "licencia.activada",
+        "pago.compra_registrada",
+    }
+)
+
+#: Motivo del último fallo por acción (para el diagnóstico del panel).
+_ULTIMO_FALLO: dict[str, str] = {}
+
+
+def ultimo_fallo(accion: str | None = None) -> str | dict[str, str]:
+    """Por qué falló la última escritura de una acción crítica.
+
+    Existe porque el 02/11/2026 se descubrió que **ningún** evento de cliente
+    real había llegado a la base y el sistema no se quejó: ``registrar``
+    captura la excepción y devuelve ``False``, así que el panel enseñaba el
+    embudo de las cuentas del dueño como si fuera el del negocio. Se conserva
+    el motivo en memoria para que ``/admin/analitica`` pueda enseñarlo en vez
+    de un cero que parece un dato.
+    """
+    if accion is None:
+        return dict(_ULTIMO_FALLO)
+    return _ULTIMO_FALLO.get(str(accion), "")
+
+
+def _anotar_fallo(accion: str, exc: BaseException | None) -> None:
+    """Guarda el motivo y lo deja en el log con nivel warning."""
+    motivo = f"{type(exc).__name__}: {exc}" if exc is not None else "desconocido"
+    if len(motivo) > 300:
+        motivo = motivo[:300] + "…"
+    _ULTIMO_FALLO[accion] = motivo
+    log.warning(
+        "No se pudo registrar el evento de producto %r (%s).",
+        accion,
+        "crítico para el embudo" if accion in ACCIONES_CRITICAS else "no crítico",
+    )
+
+
+def _bind_de(db):
+    """Motor de la sesión, sin abrir transacción ni conexión nueva."""
+    try:
+        return db.get_bind()
+    except Exception:
+        return None
+
+
+def _insertar_en_sesion_nueva(
+    accion: str, info_origen: dict, detalle: str, bind=None
+) -> bool:
+    """Segundo intento del evento crítico, con su propia sesión y transacción.
+
+    El primer intento usa la sesión de la petición que acaba de escribir el
+    presupuesto: si esa sesión quedó en una transacción abortada (o el commit
+    del evento choca con un ``SAVEPOINT`` ya en vuelo), el evento se pierde sin
+    que nadie se entere. Aquí se abre una conexión limpia solo para la
+    telemetría y se le reinstalan **los mismos claims de RLS** de la sesión
+    original, porque sin `auth_user_id` la política de escritura del tenant
+    rechaza el INSERT y el segundo intento fallaría por el mismo motivo.
+    """
+    from sqlalchemy.orm import sessionmaker
+
+    from ..database import SessionLocal
+
+    # Mismo motor que la sesión original (en pruebas y en escritorio el bind
+    # no es el global); el pool es el de siempre, así que esto no abre una
+    # conexión nueva al servidor salvo que la anterior esté rota.
+    fabrica = sessionmaker(bind=bind) if bind is not None else SessionLocal
+    sesion = fabrica()
+    try:
+        for clave in (
+            "auth_user_id",
+            "auth_email",
+            "organizacion_id",
+            "es_operador",
+            "operador_rol",
+        ):
+            if info_origen.get(clave) not in (None, ""):
+                sesion.info[clave] = info_origen[clave]
+        sesion.add(
+            EventoProducto(
+                organizacion_id=int(sesion.info.get("organizacion_id") or 0),
+                actor_email=str(sesion.info.get("auth_email") or "")[:254],
+                accion=accion,
+                detalle=detalle,
+            )
+        )
+        sesion.commit()
+        return True
+    finally:
+        sesion.close()
 
 
 def latido_diario(db) -> bool:
