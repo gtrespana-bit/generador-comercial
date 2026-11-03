@@ -11,25 +11,26 @@
   <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
   <style nonce="{{ request.state.csp_nonce }}">
     :root {
-      --bg-body: #f4f7f5;
-      --bg-sidebar: #0e2b20;
-      --bg-sidebar-2: #0b241a;
-      --text-sidebar: #a7bfb1;
-      --text-sidebar-hover: #f4fbf7;
-      --bg-sidebar-hover: #173b2c;
-      --bg-sidebar-active: #0b5b38;
-      --text-sidebar-active: #ffffff;
-      --brand-color: #0b5b38;
-      --brand-hover: #0a4d2f;
-      --text-main: #17211d;
-      --text-muted: #66776f;
-      --border-color: #dfe9e3;
+      --bg-body: #f3f6fb;
+      --bg-sidebar: #061427;
+      --bg-sidebar-2: #0a2244;
+      --text-sidebar: #c5d2e4;
+      --text-sidebar-hover: #ffffff;
+      --bg-sidebar-hover: #123b72;
+      --bg-sidebar-active: #c9f24d;
+      --text-sidebar-active: #000000;
+      --brand-color: #123b72;
+      --brand-hover: #0a2244;
+      --accent-lime: #c9f24d;
+      --text-main: #101828;
+      --text-muted: #5d6b82;
+      --border-color: #dbe3ee;
       --card-bg: #ffffff;
       --danger: #b34048;
       --danger-hover: #99373e;
       --danger-bg: #fbe7e8;
-      --success: #0b5b38;
-      --success-bg: #e6f2ec;
+      --success: #087452;
+      --success-bg: #ecfdf5;
       --warn: #b07b16;
       --warn-bg: #fbf0dc;
       --blue: #2b5b9b;
@@ -52,7 +53,7 @@
     }
 
     a { color: var(--brand-color); }
-    code { background: #eef3f0; border-radius: 5px; padding: 2px 6px; font-size: 0.85rem; }
+    code { background: #eef2f8; border-radius: 5px; padding: 2px 6px; font-size: 0.85rem; }
     .svg-inline { vertical-align: middle; margin-right: 4px; }
     .svg-fix { flex-shrink: 0; }
 
@@ -107,7 +108,7 @@
     .brand svg { flex-shrink: 0; }
     .brand-tag {
       background: rgba(255,255,255,0.12);
-      color: #bfe2cf;
+      color: var(--accent-lime);
       font-size: 0.6rem;
       font-weight: 800;
       padding: 3px 7px;
@@ -116,7 +117,7 @@
     }
     .sidebar-hint {
       margin: 12px 0 0;
-      color: #7fa08d;
+      color: #8fa3c0;
       font-size: 0.72rem;
       line-height: 1.5;
     }
@@ -165,7 +166,7 @@
     }
     .nav-sub {
       display: block;
-      color: #7fa08d;
+      color: #8fa3c0;
       font-size: 0.7rem;
       font-weight: 600;
       padding: 0 12px 8px 43px;
@@ -351,7 +352,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: var(--radio);
-      box-shadow: 0 6px 22px rgba(10,48,34,0.05);
+      box-shadow: 0 6px 22px rgba(6,20,39,0.07);
       margin-bottom: 20px;
       overflow: hidden;
     }
@@ -415,10 +416,10 @@
       transition: background 0.18s, transform 0.08s, box-shadow 0.18s;
       box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     }
-    .btn:hover { background: var(--brand-hover); box-shadow: 0 6px 14px rgba(11,91,56,0.2); }
+    .btn:hover { background: var(--brand-hover); box-shadow: 0 6px 14px rgba(6,20,39,0.18); }
     .btn:active { transform: translateY(1px); }
     .btn-secondary { background: #fff; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none; }
-    .btn-secondary:hover { background: #f4f7f5; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .btn-secondary:hover { background: #eef2f8; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .btn-danger { background: var(--danger); }
     .btn-danger:hover { background: var(--danger-hover); box-shadow: 0 6px 14px rgba(179,64,72,0.22); }
     .btn-sm { padding: 6px 11px; font-size: 0.78rem; }
@@ -497,7 +498,7 @@
     .kpi-card.danger::before { background: var(--danger); }
     .kpi-card.info::before { background: var(--blue); }
     .kpi-card.enlaza { transition: box-shadow 0.18s, transform 0.08s; text-decoration: none; color: inherit; }
-    .kpi-card.enlaza:hover { box-shadow: 0 10px 24px rgba(10,48,34,0.12); transform: translateY(-1px); }
+    .kpi-card.enlaza:hover { box-shadow: 0 10px 24px rgba(6,20,39,0.12); transform: translateY(-1px); }
     .kpi-value {
       font-size: 1.75rem;
       font-weight: 900;
@@ -528,7 +529,7 @@
       font-size: 0.86rem;
     }
     th {
-      background: #f4f7f5;
+      background: #eef2f8;
       padding: 11px 14px;
       text-align: left;
       font-size: 0.71rem;
@@ -580,7 +581,7 @@
     .form-control:focus {
       outline: none;
       border-color: var(--brand-color);
-      box-shadow: 0 0 0 3px rgba(11,91,56,0.1);
+      box-shadow: 0 0 0 3px rgba(18,59,114,0.14);
     }
     select.form-control { appearance: auto; }
     textarea.form-control { min-height: 70px; resize: vertical; }

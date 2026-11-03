@@ -8566,6 +8566,311 @@ body { -webkit-tap-highlight-color: transparent; }
 }
 
 
+
+/* ==========================================================================
+   COTIZAT — APLICACIÓN «IMPULSO»
+   La misma marca que la portada, llevada al trabajo diario: barra marina,
+   acento lima, papel frío, tarjetas amplias y acciones principales negras
+   sobre lima. El modo oscuro conserva sus superficies semánticas.
+   ========================================================================== */
+:root {
+  --ct-navy: #061427;
+  --ct-navy-2: #0a2244;
+  --ct-navy-3: #123b72;
+  --ct-ink: #101828;
+  --ct-muted: #5d6b82;
+  --ct-on-dark: #c5d2e4;
+  --ct-line: #dbe3ee;
+  --ct-paper: #f3f6fb;
+  --ct-lime: #c9f24d;
+  --ct-lime-2: #e4ff8f;
+  --ct-radius: 18px;
+  --ct-radius-sm: 12px;
+  --ct-sidebar-bg: #061427;
+  --ct-sidebar-bg-2: #0a2244;
+  --ct-sidebar-line: rgba(255, 255, 255, .09);
+  --ct-sidebar-muted: #9fb1ca;
+}
+[data-theme="dark"] {
+  --ct-sidebar-bg: #0b1220;
+  --ct-sidebar-bg-2: #061427;
+  --ct-sidebar-line: rgba(255, 255, 255, .08);
+  --ct-sidebar-muted: #9fb1ca;
+}
+
+html:not([data-theme="dark"]) body {
+  background:
+    radial-gradient(1000px 480px at 8% -12%, rgba(18, 59, 114, .07), transparent 55%),
+    var(--ct-paper);
+}
+.content { padding: 2rem 2.4rem 4rem; }
+.page-head { margin-bottom: 1.6rem; align-items: flex-end; }
+.page-head h1,
+.dash-hero h1 {
+  font-size: clamp(1.7rem, 2.6vw, 2.25rem);
+  font-weight: 850;
+  letter-spacing: -.045em;
+  line-height: 1.08;
+}
+.page-eyebrow,
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .45rem;
+  color: var(--ct-navy-3);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.page-eyebrow::before,
+.section-kicker::before {
+  content: "";
+  width: 22px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--ct-lime);
+  box-shadow: 0 0 0 4px rgba(201, 242, 77, .2);
+}
+[data-theme="dark"] .page-eyebrow,
+[data-theme="dark"] .section-kicker { color: var(--accent); }
+.subtitle { font-size: .9rem; line-height: 1.55; color: var(--text-soft); }
+
+/* Sidebar oscuro: la aplicación entra en la misma marca que la web. */
+.sidebar {
+  background: linear-gradient(180deg, var(--ct-sidebar-bg-2), var(--ct-sidebar-bg) 72%);
+  border-right: 1px solid var(--ct-sidebar-line);
+  color: var(--ct-on-dark);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.sidebar .brand strong { color: #fff; font-weight: 800; letter-spacing: -.03em; }
+.sidebar .brand strong svg rect { fill: var(--ct-lime); }
+.sidebar .brand strong svg path { stroke: var(--ct-navy); }
+.sidebar .brand strong svg path:last-child { stroke: var(--ct-navy); }
+.sidebar-toggle-btn {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(255, 255, 255, .16);
+  color: var(--ct-on-dark);
+}
+.sidebar-toggle-btn:hover {
+  background: var(--ct-lime);
+  border-color: var(--ct-lime);
+  color: #000;
+}
+.sidebar nav .nav-section {
+  color: var(--ct-sidebar-muted);
+  font-weight: 800;
+  letter-spacing: .12em;
+  opacity: 1;
+}
+.sidebar nav a {
+  color: var(--ct-on-dark);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.sidebar nav a .nav-icon { opacity: .78; }
+.sidebar nav a:hover {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 255, 255, .08);
+  color: #fff;
+}
+.sidebar nav a.active {
+  background: rgba(201, 242, 77, .14);
+  border-color: rgba(201, 242, 77, .35);
+  color: #fff;
+  box-shadow: none;
+}
+.sidebar nav a.active .nav-icon { color: var(--ct-lime); opacity: 1; }
+.sidebar nav a.active::before { background: var(--ct-lime); }
+.sidebar-footer {
+  background: rgba(0, 0, 0, .18);
+  border-top: 1px solid var(--ct-sidebar-line);
+}
+.sidebar-session,
+.sidebar-session-user,
+.idioma-toggle-row,
+.theme-toggle-btn,
+.sidebar-help {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .12);
+  color: var(--ct-on-dark);
+}
+.sidebar-session { border: 1px solid rgba(255, 255, 255, .12); }
+.sidebar-session-user:hover,
+.idioma-toggle-row:hover,
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+.sidebar-session-nombre { color: #fff; }
+.sidebar-session-org:hover { color: var(--ct-lime); text-decoration: underline; }
+.sidebar-session-sub,
+.sidebar-session-org,
+.theme-toggle-label { color: var(--ct-sidebar-muted); }
+.sidebar-session-avatar { background: var(--ct-lime); color: #000; }
+.sidebar-session-plan.sin { background: rgba(201, 242, 77, .16); color: var(--ct-lime); }
+.sidebar-session-plan.ok { background: rgba(52, 211, 153, .16); color: #6ee7b7; }
+.sidebar-session-salir button { color: var(--ct-on-dark); }
+.sidebar-session-salir button:hover { background: rgba(251, 113, 133, .16); color: #fda4af; }
+.sidebar .idioma-switch { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .14); }
+.sidebar .idioma-switch-opcion { color: var(--ct-on-dark); }
+.sidebar .idioma-switch-opcion.is-active,
+.sidebar .idioma-switch-opcion.is-active:hover { background: var(--ct-lime); color: #000; }
+.sidebar-float-tip { background: var(--ct-navy); color: #fff; border-color: rgba(255,255,255,.14); }
+
+/* Acción principal: lima con tinta negra, también en modo oscuro. */
+.btn { border-radius: var(--ct-radius-sm); font-weight: 700; }
+.btn-primary:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--ct-lime);
+  border-color: var(--ct-lime);
+  color: #000;
+  box-shadow: 0 8px 20px rgba(201, 242, 77, .24);
+}
+.btn-primary:not(:disabled):not([aria-disabled="true"]):hover {
+  background: var(--ct-lime-2);
+  border-color: var(--ct-lime-2);
+  color: #000;
+  box-shadow: 0 10px 24px rgba(201, 242, 77, .3);
+}
+.btn-primary:not(:disabled):not([aria-disabled="true"]):active { color: #000; }
+.btn-secondary { background: var(--accent-soft); color: var(--accent-h); }
+[data-theme="dark"] .btn-secondary { color: var(--accent); }
+
+/* Tarjetas, tablas y formularios con el mismo aire que la portada. */
+.card,
+.card-stat,
+.dash-kpi,
+.first-run-card,
+.cat-section,
+.arbol-catalogo,
+.editor-command-bar,
+.catalog-editor-section,
+.catalog-breakdown,
+.catalog-price-sale,
+.catalog-advanced-fields {
+  border-radius: var(--ct-radius);
+  border-color: var(--ct-line);
+}
+[data-theme="dark"] .card,
+[data-theme="dark"] .card-stat,
+[data-theme="dark"] .dash-kpi,
+[data-theme="dark"] .first-run-card,
+[data-theme="dark"] .cat-section,
+[data-theme="dark"] .arbol-catalogo,
+[data-theme="dark"] .editor-command-bar,
+[data-theme="dark"] .catalog-editor-section,
+[data-theme="dark"] .catalog-breakdown,
+[data-theme="dark"] .catalog-price-sale,
+[data-theme="dark"] .catalog-advanced-fields { border-color: var(--border); }
+.card { padding: 1.4rem 1.5rem; box-shadow: 0 8px 24px rgba(6, 20, 39, .05); }
+.card h2 { font-size: 1.05rem; font-weight: 800; letter-spacing: -.025em; }
+.card-stat::after,
+.dash-kpi::before { background: linear-gradient(90deg, var(--ct-lime), transparent 75%); opacity: .9; }
+.stat-num,
+.dash-kpi-value { font-weight: 850; letter-spacing: -.05em; }
+.filters {
+  padding: .8rem;
+  border: 1px solid var(--ct-line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 6px 18px rgba(6, 20, 39, .04);
+}
+[data-theme="dark"] .filters { border-color: var(--border); }
+.filters input[type="text"],
+.filters input[type="date"],
+.filters select { border-radius: 10px; min-height: 40px; }
+.table th {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.table td { padding: .8rem .9rem; }
+.table tbody tr:hover { background: color-mix(in srgb, var(--ct-lime) 7%, var(--surface)); }
+.badge { border-radius: 999px; font-weight: 750; }
+.empty {
+  padding: 2.4rem 1.2rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  background: var(--surface-alt);
+}
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.field label { font-weight: 700; color: var(--text-secondary); }
+.field input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.field select,
+.field textarea {
+  min-height: 42px;
+  border-radius: 10px;
+  border-color: var(--border-control);
+}
+.field textarea { min-height: 104px; }
+.modal-content,
+.modal-card { border-radius: 20px; }
+
+/* Dashboard: cabecera de marca y guía de inicio con acento lima. */
+.page-dashboard .dash-hero {
+  padding: 1.6rem 1.7rem;
+  border-radius: 22px;
+  background:
+    radial-gradient(600px 280px at 100% 0%, rgba(201, 242, 77, .16), transparent 60%),
+    linear-gradient(145deg, var(--ct-navy-2), var(--ct-navy) 78%);
+  color: #fff;
+  margin-bottom: 1.4rem;
+}
+.page-dashboard .dash-hero h1 {
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: #fff;
+}
+.page-dashboard .dash-hero .page-eyebrow { color: var(--ct-lime); }
+.page-dashboard .dash-hero .subtitle { color: var(--ct-on-dark); }
+.page-dashboard .dash-hero .btn:not(.btn-primary) {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+.page-dashboard .dash-hero .btn:not(.btn-primary):hover { background: rgba(255, 255, 255, .16); }
+.dash-kpi { padding: 1.15rem 1.2rem; }
+.first-run-card { padding: 1.5rem 1.6rem; }
+.first-run-bar span { background: var(--ct-lime); }
+.first-run-step .step-state { background: var(--ct-navy); color: var(--ct-lime); }
+.first-run-step.done .step-state { background: var(--green); color: var(--on-success); }
+.first-run-progress { border-color: var(--ct-lime); }
+.quick-guide-strip { border-radius: 16px; }
+
+/* Móvil: barra inferior clara con CTA lima; menú conserva la marca. */
+.bottom-nav {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border-top: 1px solid var(--ct-line);
+}
+[data-theme="dark"] .bottom-nav { border-top-color: var(--border); }
+.bottom-nav a.active,
+.bottom-nav button.bottom-nav-menu[aria-expanded="true"] { color: var(--ct-navy-3); }
+[data-theme="dark"] .bottom-nav a.active,
+[data-theme="dark"] .bottom-nav button.bottom-nav-menu[aria-expanded="true"] { color: var(--ct-lime); }
+.bottom-nav-cta-icon { background: var(--ct-lime); color: #000; box-shadow: 0 8px 20px rgba(201, 242, 77, .3); }
+.bottom-nav-cta span:last-child { color: var(--ct-navy-3); }
+[data-theme="dark"] .bottom-nav-cta span:last-child { color: var(--ct-lime); }
+.bottom-nav button.bottom-nav-menu .menu-movil-punto { background: var(--ct-lime); }
+.mobile-nav-toggle {
+  background: var(--ct-navy);
+  border-color: var(--ct-navy);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .content { padding: 1.2rem 1rem 6rem; }
+  .page-head { align-items: flex-start; }
+  .page-head h1 { font-size: 1.65rem; }
+  .page-dashboard .dash-hero { padding: 1.3rem 1.2rem; border-radius: 18px; }
+  .card { padding: 1.15rem 1.1rem; }
+  .filters { padding: .7rem; }
+}
+
 /* ==========================================================================
    INTERACTION & LEGIBILITY CONTRACT
    Keep after component overrides: states must win over the resting variant.
