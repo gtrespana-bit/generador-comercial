@@ -74,6 +74,44 @@
     if (output) output.textContent = String(element.value || "") + " pt";
   });
 
+  // Varias pantallas históricas muestran <label>Texto</label><input> sin `for`.
+  // Las enlazamos al cargar para que el clic en la etiqueta y el lector de
+  // pantalla funcionen igual que en los formularios nuevos.
+  document.addEventListener("DOMContentLoaded", function () {
+    var contador = 0;
+    document.querySelectorAll("label:not([for])").forEach(function (label) {
+      if (label.querySelector("input, select, textarea")) return;
+      var control = null;
+      var hermano = label.nextElementSibling;
+      while (hermano && !control) {
+        var tag = hermano.tagName;
+        if ((tag === "INPUT" && hermano.type !== "hidden") || tag === "SELECT" || tag === "TEXTAREA") {
+          control = hermano;
+          break;
+        }
+        if (tag === "LABEL" || tag === "FIELDSET" || tag === "FORM" || tag === "SECTION") break;
+        if (hermano.querySelectorAll) {
+          var internos = hermano.querySelectorAll("input:not([type=hidden]), select, textarea");
+          if (internos.length === 1) { control = internos[0]; break; }
+        }
+        hermano = hermano.nextElementSibling;
+      }
+      if (!control) {
+        var campo = label.closest(".field, .tasa-fecha-col, .tasa-flex-1");
+        if (campo) {
+          var candidatos = campo.querySelectorAll("input:not([type=hidden]), select, textarea");
+          if (candidatos.length === 1) control = candidatos[0];
+        }
+      }
+      if (!control) return;
+      if (!control.id) {
+        contador += 1;
+        control.id = "campo-" + (control.name || "sin-nombre") + "-" + contador;
+      }
+      label.setAttribute("for", control.id);
+    });
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
     if (!document.body || document.body.dataset.refreshExpired !== "1") return;
     fetch("/presupuestos/actualizar-vencidos", {

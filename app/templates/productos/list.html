@@ -80,7 +80,7 @@
         <tbody>
           {% for p in cat_productos %}
           <tr draggable="true" class="producto-tr" data-id="{{ p.id }}" data-nombre="{{ (p.nombre ~ ' ' ~ p.descripcion ~ ' ' ~ p.categoria ~ ' ' ~ p.marca ~ ' ' ~ p.modelo ~ ' ' ~ p.sku ~ ' ' ~ p.proveedor ~ ' ' ~ p.color ~ ' ' ~ p.acabado) | lower }}">
-            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check"> <td>
+            <td><input type="checkbox" class="row-check" data-id="{{ p.id }}" data-cotizat-change="productos-row-check" aria-label="Seleccionar producto {{ p.nombre }}"> <td>
               {% if p.imagen %}
               <img src="{{ p.imagen | archivo_url }}" alt="{{ p.nombre }}" loading="lazy" decoding="async" class="csp-s-55a1a17655">
               {% else %}
@@ -135,8 +135,8 @@
 <style nonce="{{ request.state.csp_nonce }}">
 .category-btn { transition: all 0.15s ease; }
 .category-btn:hover { background: var(--bg) !important; color: var(--text) !important; }
-.category-btn.active { background: var(--accent) !important; color: #fff !important; }
-.category-btn.active .badge { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
+.category-btn.active { background: var(--accent) !important; color: var(--on-accent) !important; }
+.category-btn.active .badge { background: color-mix(in srgb, var(--on-accent) 16%, transparent) !important; color: var(--on-accent) !important; }
 .drop-product-category.drag-over { outline:2px dashed var(--accent); outline-offset:-3px; background:var(--accent-soft) !important; }
 .producto-tr[draggable="true"] { cursor:grab; } .producto-tr.dragging { opacity:.4; }
 @media (max-width: 1024px) {

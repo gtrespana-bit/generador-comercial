@@ -21,12 +21,14 @@
   --gold: #e5ae3c;
   --gold-soft: rgba(229, 174, 60, 0.14);
 
-  --rose: #e11d48;
+  --rose: #be123c;
   --rose-soft: #fff1f2;
-  --amber: #b45309;
+  --amber: #92400e;
   --amber-soft: #fffbeb;
   --green: #047857;
   --green-soft: #ecfdf5;
+  --on-accent: #ffffff;
+  --border-control: #7b8798;
 
   --bg: #f4f5f7;
   --surface: #ffffff;
@@ -161,17 +163,32 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   text-decoration: none;
 }
 .btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text-soft);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+.btn:disabled:hover,
+.btn[aria-disabled="true"]:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text-soft);
+}
 
 .btn-primary {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%), var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 82%, #000);
-  color: #fff;
+  border-color: var(--accent);
+  color: var(--on-accent);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 6px 16px var(--accent-glow);
 }
 .btn-primary:hover {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%), var(--accent-h);
   border-color: var(--accent-h);
+  color: var(--on-accent);
   transform: translateY(-1px);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 10px 22px var(--accent-glow);
 }
@@ -209,6 +226,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   letter-spacing: 0.005em;
 }
 .field input,
+.field select,
 .field textarea {
   width: 100%;
   padding: 0.66rem 0.85rem;
@@ -223,6 +241,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .field textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
 .field input::placeholder, .field textarea::placeholder { color: var(--text-muted); }
 .field input:focus,
+.field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: var(--accent);
@@ -230,6 +249,15 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .field .hint { margin-top: 0.4rem; }
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  border-color: var(--border);
+  opacity: 1;
+  cursor: not-allowed;
+}
 
 /* Aceptación de términos en el registro (E4-038): el checkbox es un campo
    más, pero su etiqueta va en línea con la casilla, no encima. */
@@ -834,8 +862,10 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 /* ────────────────────────── Footer público premium ──────────────────────── */
 
 .site-footer {
+  --footer-muted: #b7c5d9;
+  --footer-heading: #e2e8f0;
   background: var(--accent-h);
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--footer-muted);
   font-size: 0.875rem;
   line-height: 1.6;
   margin-top: 0;
@@ -881,7 +911,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   color: #fff;
 }
 .footer-tagline {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--footer-muted);
   font-size: 0.84rem;
   line-height: 1.65;
   max-width: 320px;
@@ -898,11 +928,11 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   align-items: center;
   gap: 0.35rem;
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--footer-muted);
 }
 .footer-trust-item svg {
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* Perfiles sociales: discreto, bajo la marca. No compite con las columnas
@@ -916,7 +946,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .footer-social a {
   font-size: 0.8rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--footer-muted);
   text-decoration: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
   padding-bottom: 1px;
@@ -925,7 +955,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .footer-social a:hover,
 .footer-social a:focus-visible {
   color: #fff;
-  border-bottom-color: rgba(255, 255, 255, 0.55);
+  border-bottom-color: var(--footer-muted);
 }
 
 /* Columnas de enlaces */
@@ -938,7 +968,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--footer-heading);
   margin: 0 0 0.9rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -958,7 +988,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   display: inline-block;
   min-height: 28px;
   line-height: 28px;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--footer-muted);
   text-decoration: none;
   transition: color 0.15s, padding-left 0.15s;
   border-radius: 4px;
@@ -988,7 +1018,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--footer-muted);
   flex-shrink: 0;
 }
 .footer-paises {
@@ -1002,7 +1032,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   gap: 0.2rem;
   padding: 0.25rem 0.55rem;
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--footer-muted);
   text-decoration: none;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.04);
@@ -1034,11 +1064,11 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
 .site-footer .footer-copy { margin-right: auto; }
 .footer-copy {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--footer-muted);
 }
 .footer-made {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--footer-muted);
   font-style: italic;
 }
 
@@ -4742,8 +4772,9 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   border-color: rgba(18,63,120,.18);
 }
 .landing .btn-primary {
-  background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0) 55%), linear-gradient(135deg, #123f78 0%, #2f6bd8 62%, #1a4a8c 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,0) 55%), linear-gradient(135deg, #123f78 0%, #2459b0 62%, #1a4a8c 100%);
   border-color: #0e3261;
+  color: #fff;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 12px 26px rgba(18,63,120,.28);
   position: relative;
   overflow: hidden;
@@ -5268,7 +5299,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--brand, #1a4a8c);
+  background: var(--accent);
   opacity: 0.6;
 }
 .fuentes-lista a { font-weight: 600; }
@@ -5276,7 +5307,7 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   margin-top: 0.9rem;
   font-size: 0.86rem;
   color: var(--text-soft);
-  opacity: 0.85;
+  opacity: 1;
 }
 
 /* Respuesta corta bajo el H1: se lee como entradilla, no compite con el
@@ -5289,3 +5320,47 @@ h1, h2, h3, h4 { letter-spacing: -0.025em; color: var(--text); }
   font-weight: 500;
   color: var(--text-soft);
 }
+
+
+/* ── Readable prose links and resilient action states ────────────────── */
+.legal-main :is(p, li) a:not(.btn),
+.landing .seo-cuerpo :is(p, li) a:not(.btn),
+.sub a:not(.btn),
+.calc-nota a:not(.btn),
+.fuentes-lista a:not(.btn),
+.legal-main .aviso a:not(.btn) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+.field input:not([type="checkbox"]):not([type="radio"]),
+.field select,
+.field textarea,
+.pago-pais select,
+.compra-pais select {
+  border-color: var(--border-control);
+}
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.btn:is(:disabled, [aria-disabled="true"]),
+button.btn:disabled,
+.landing .btn:is(:disabled, [aria-disabled="true"]),
+.btn:is(:disabled, [aria-disabled="true"]):hover,
+button.btn:disabled:hover,
+.landing .btn:is(:disabled, [aria-disabled="true"]):hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text-soft);
+  box-shadow: none;
+  transform: none;
+  opacity: 1;
+  cursor: not-allowed;
+}
+.btn:is(:disabled, [aria-disabled="true"]) > *,
+button.btn:disabled > * { color: inherit; }
+.btn:is(:disabled, [aria-disabled="true"])::after { display: none; }

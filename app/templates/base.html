@@ -167,8 +167,8 @@
   <div class="sidebar-footer">
     {% if request.state.usuario is defined %}
     <div class="sidebar-session">
-      <a class="sidebar-session-user" href="/cuenta" title="Mi cuenta">
-        <span class="sidebar-session-avatar" aria-hidden="true">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</span>
+      <div class="sidebar-session-user">
+        <a class="sidebar-session-avatar" href="/cuenta" aria-label="Mi cuenta" data-label="Mi cuenta">{{ (request.state.usuario.nombre or request.state.usuario.email)[:1] | upper }}</a>
         <span class="sidebar-session-info">
           <strong class="sidebar-session-nombre">{{ request.state.usuario.nombre or request.state.usuario.email }}</strong>
           <span class="sidebar-session-sub">
@@ -182,7 +182,7 @@
             {% endif %}
           </span>
         </span>
-      </a>
+      </div>
       <form class="sidebar-session-salir" action="/salir" method="post">
         <button type="submit" aria-label="Cerrar sesión" title="Cerrar sesión">
           <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15H3.5A1.5 1.5 0 012 13.5v-9A1.5 1.5 0 013.5 3H7"/><path d="M11 5.5L14.5 9l-3.5 3.5"/><path d="M14 9H6.5"/></svg>
@@ -408,7 +408,13 @@
     var tip = document.createElement('div');
     tip.className = 'sidebar-float-tip';
     tip.setAttribute('role', 'tooltip');
+    tip.hidden = true;
     document.body.appendChild(tip);
+
+    // En modo iconos el texto visual se oculta; el nombre accesible permanece.
+    document.querySelectorAll('#app-sidebar a[data-label]').forEach(function (enlace) {
+      enlace.setAttribute('aria-label', enlace.getAttribute('data-label'));
+    });
 
     var candidatos = document.querySelectorAll('#app-sidebar a, #app-sidebar .sidebar-session-salir button, #app-sidebar .theme-toggle-btn');
 
@@ -429,6 +435,7 @@
       var texto = etiqueta(el);
       if (!texto) return;
       tip.textContent = texto;
+      tip.hidden = false;
       var r = el.getBoundingClientRect();
       CotizatStyles.set(tip, 'left', Math.round(r.right + 10) + 'px');
       CotizatStyles.set(tip, 'top', Math.round(r.top + r.height / 2) + 'px');
@@ -437,6 +444,7 @@
 
     function ocultar() {
       tip.classList.remove('visible');
+      tip.hidden = true;
     }
 
     function sincronizarTitulos() {

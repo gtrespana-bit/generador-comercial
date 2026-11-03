@@ -129,6 +129,7 @@
       var td = document.createElement("td");
       var select = document.createElement("select");
       select.dataset.importField = campo;
+      select.setAttribute("aria-label", campos[campo]);
       var vacio = document.createElement("option");
       vacio.value = "";
       vacio.textContent = "— No importar —";

@@ -35,7 +35,7 @@
       <div><span class="section-kicker">Cost analysis</span><h3>Unit price analysis</h3><p class="hint">Add the real resources. Each amount is <strong>Productivity × Unit price</strong>.</p></div>
       <button type="button" class="btn btn-sm btn-primary" data-action="add-recurso-catalogo">+ Add resource</button>
     </div>
-    <div class="table-wrap catalog-breakdown-table-wrap">
+    <div class="table-wrap catalog-breakdown-table-wrap" tabindex="0" role="region" aria-label="Line item breakdown">
       <table class="table tabla-descomposicion-catalogo" data-role="tabla-descomposicion-catalogo">
         <thead><tr><th>Group</th><th>Code</th><th>Unit</th><th>Description</th><th class="right">Productivity</th><th class="right">Output %</th><th class="right">Unit price ({{ moneda_local | default('USD') }})</th><th class="right">Amount ({{ moneda_local | default('USD') }})</th><th class="right">% of cost</th><th></th></tr></thead>
         <tbody></tbody>

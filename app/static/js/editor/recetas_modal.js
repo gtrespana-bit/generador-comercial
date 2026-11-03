@@ -210,7 +210,7 @@
           ? " · " + importe(parseFloat(item.prod_precio) || 0)
           : "";
         prodLine.textContent = "📦 " + (String(item.prod_nombre || "").trim() || "Producto") + precioProdTxt;
-        CotizatStyles.setCssText(prodLine, "display:block; font-size:.72rem; opacity:.75;");
+        CotizatStyles.setCssText(prodLine, "display:block; font-size:.72rem;");
         nameCell.appendChild(prodLine);
       }
       var typeCell = cell("", "receta-preview-center");

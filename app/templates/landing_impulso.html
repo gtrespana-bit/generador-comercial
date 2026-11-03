@@ -84,7 +84,7 @@
     <a class="lp2-nav-cta" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_nav">{% if prueba_activa %}Empezar mis {{ dias_prueba }} días gratis{% else %}Ver planes{% endif %}</a>
   </div>
   <details class="lp2-nav-mobile">
-    <summary aria-label="Abrir menú">☰</summary>
+    <summary aria-label="Abrir menú"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></summary>
     <div class="lp2-nav-mobile-panel">
       <a href="/como-funciona">Cómo funciona</a>
       <a href="/calculadora">Calculadora</a>
@@ -262,7 +262,7 @@
       <h2 class="lp2-section-title">Del catálogo al cobro, <em>sin cambiar de herramienta</em>.</h2>
       <p class="lp2-lead">Esto es lo que realmente incluye {{ product_name }}. No es una lista de funciones sueltas: es el recorrido completo de una venta de obra.</p>
     </div>
-    <div class="lp2-flow" aria-label="Recorrido completo del producto">
+    <div class="lp2-flow" role="region" aria-label="Recorrido completo del producto" tabindex="0">
       <span class="lp2-flow-step">Catálogo por país</span>
       <span class="lp2-flow-step">Excel / BC3 / planos</span>
       <span class="lp2-flow-step is-key">Coste + margen</span>
@@ -649,7 +649,7 @@
 <div class="lp2-sticky" id="lp2-sticky" aria-hidden="true">
   <div class="lp2-sticky-int">
     <div><strong>Tu próximo presupuesto, con margen y plazo claros.</strong><span>{{ sticky_texto }}</span></div>
-    {{ boton_alta(evento="cta_sticky", texto="Quiero empezar ahora") }}
+    <a class="lp2-btn lp2-btn-primary" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_sticky" tabindex="-1"><span data-lp2-cta-label>Quiero empezar ahora</span></a>
   </div>
 </div>
 

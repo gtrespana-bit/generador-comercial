@@ -458,7 +458,7 @@
     <div class="field">
       <label>Restaurar copia</label>
       <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data" data-confirm="⚠️ Se reemplazarán TODOS los datos actuales por los de la copia. ¿Continuar?">
-        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62">
+        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62" aria-label="Seleccionar copia de seguridad">
         <button class="btn" type="submit">↩️ Restaurar copia</button>
       </form>
       <p class="hint">Selecciona el .zip de copia de seguridad (o un .db). Antes de restaurar se guarda automáticamente una copia de lo actual en la carpeta <code>backups/</code> de la aplicación.</p>

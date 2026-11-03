@@ -109,6 +109,8 @@
       var visible = entradas.some(function (entrada) { return entrada.isIntersecting; });
       sticky.classList.toggle("is-visible", !visible);
       sticky.setAttribute("aria-hidden", visible ? "true" : "false");
+      var enlace = sticky.querySelector("a");
+      if (enlace) enlace.setAttribute("tabindex", visible ? "-1" : "0");
     }, {threshold: 0.08});
     observador.observe(hero);
   }
