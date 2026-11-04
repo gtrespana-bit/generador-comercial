@@ -448,6 +448,10 @@
         <button type="button" class="tour-dot" role="tab" aria-selected="false" aria-label="{{ L('Paso 4', 'Step 4') }}"></button>
       </div>
       <button type="button" class="tour-btn" id="tour-next" aria-label="{{ L('Paso siguiente', 'Next step') }}">›</button>
+      <button type="button" class="tour-btn" id="tour-pause" hidden
+        aria-label="{{ L('Pausar recorrido', 'Pause tour') }}"
+        data-label-pause="{{ L('Pausar recorrido', 'Pause tour') }}"
+        data-label-play="{{ L('Reanudar recorrido', 'Resume tour') }}">❚❚</button>
     </div>
 
     <div class="lp2-partidas" role="group" aria-label="{{ L('Partidas reales del ejemplo, con la terminología de', 'Real example items, with the trade terms of') }} {{ seo.nombre_pais }}">

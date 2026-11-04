@@ -11,6 +11,7 @@
   var dots = document.querySelectorAll(".tour-dot");
   var prev = document.getElementById("tour-prev");
   var next = document.getElementById("tour-next");
+  var pauseBtn = document.getElementById("tour-pause");
 
   if (!stage || slides.length === 0) {
     return;
@@ -19,6 +20,8 @@
   var current = 0;
   var timer = null;
   var INTERVAL = 6000;
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var paused = reduceMotion;
 
   function show(index) {
     var n = slides.length;
@@ -42,7 +45,36 @@
 
   function restart() {
     stop();
+    if (paused) {
+      return;
+    }
     timer = window.setInterval(function () { show(current + 1); }, INTERVAL);
+  }
+
+  function updatePauseButton() {
+    if (!pauseBtn) {
+      return;
+    }
+    var label = paused ? pauseBtn.getAttribute("data-label-play") : pauseBtn.getAttribute("data-label-pause");
+    if (label) {
+      pauseBtn.setAttribute("aria-label", label);
+      pauseBtn.setAttribute("title", label);
+    }
+    pauseBtn.textContent = paused ? "▶" : "❚❚";
+  }
+
+  if (pauseBtn) {
+    pauseBtn.hidden = false;
+    updatePauseButton();
+    pauseBtn.addEventListener("click", function () {
+      paused = !paused;
+      updatePauseButton();
+      if (paused) {
+        stop();
+      } else {
+        restart();
+      }
+    });
   }
 
   if (prev) {

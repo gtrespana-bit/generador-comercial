@@ -135,3 +135,15 @@ def test_la_portada_inglesa_mantiene_seis_jsonld_despues_del_main(ruta):
         html = client.get(ruta).text
     assert html.count('type="application/ld+json"') == 6
     assert html.rfind("</main>") < html.find('type="application/ld+json"')
+
+
+@pytest.mark.parametrize("ruta", RUTAS_EN)
+def test_el_tour_ingles_ofrece_pausa_accesible(ruta):
+    with _cliente() as client:
+        html = client.get(ruta).text
+    assert 'id="tour-pause"' in html
+    assert 'data-label-pause="Pause tour"' in html
+    assert 'data-label-play="Resume tour"' in html
+    js = (RAIZ / "app/static/js/landing-tour.js").read_text(encoding="utf-8")
+    assert "prefers-reduced-motion" in js
+    assert "paused" in js

@@ -167,3 +167,11 @@ def test_el_mensaje_de_tiempo_sirve_tambien_en_la_landing_de_pais():
     assert 'id="tiempos-obra"' in html
     assert 'data-ga-event="cta_tiempos"' in html
     assert "¿Calcula el tiempo de obra automáticamente?" in html
+
+
+def test_el_tour_impulso_ofrece_pausa_accesible():
+    with TestClient(app, base_url="https://cotizat.test") as client:
+        html = client.get("/").text
+    assert 'id="tour-pause"' in html
+    assert 'data-label-pause="Pausar recorrido"' in html
+    assert 'data-label-play="Reanudar recorrido"' in html
