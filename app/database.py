@@ -193,6 +193,22 @@ def _restaurar_contexto_postgresql(db, _transaction, connection):
     _aplicar_contexto_postgresql(connection, db.info)
 
 
+@event.listens_for(OrmSession, "before_flush")
+def _recortar_textos_a_la_anchura_de_su_columna(db, _flush_context, _instancias):
+    """Ningún texto sale hacia PostgreSQL más largo que su columna.
+
+    PostgreSQL no recorta: un nombre de partida de 400 caracteres aborta el
+    INSERT con ``StringDataRightTruncation`` y tumba el guardado completo
+    (incidente del 3/11/2026: el usuario perdió el presupuesto entero). SQLite
+    ignora el ancho declarado, así que la suite no lo veía. Este escucha es la
+    red única: recorta lo que no cabe, en cualquier modelo, antes de que se
+    envíe la sentencia. Ver ``app/services/limites_columnas.py``.
+    """
+    from .services.limites_columnas import ajustar_sesion
+
+    ajustar_sesion(db)
+
+
 def _establecer_contexto_identidad(db, identidad) -> None:
     from .operadores import es_operador, rol_operador
 
