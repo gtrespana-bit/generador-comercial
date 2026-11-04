@@ -1475,6 +1475,11 @@ class Configuracion(TenantMixin, Base):
     # recorrido como completo (sigue sin PDF real): solo deja de mostrarse
     # la tarjeta, para quienes ya conocen la app o crean otra organización.
     recorrido_inicial_oculto = Column(Boolean, default=False)
+    # La empresa ya pasó por «revisa tus precios». El recorrido lo pide **antes**
+    # de cotizar y no se da por hecho: quien entra por primera vez y acepta el
+    # catálogo tal cual está generando precios con tarifas de otro mercado (o de
+    # un país distinto al suyo, que es peor).
+    onboarding_precios_revisados = Column(Boolean, default=False)
     primer_pdf_at = Column(DateTime, nullable=True)
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)
@@ -1873,6 +1878,11 @@ class Recurso(TenantMixin, Base):
     usos = Column(Integer, default=0)
     ultimo_uso = Column(DateTime, nullable=True)
     fecha_actualizacion_precio = Column(DateTime, default=datetime.utcnow)
+    # «Miré esta tarifa y es la mía»: distinto de «tiene precio». El catálogo
+    # llega con referencias de mercado que pueden ser de otro país o de hace
+    # meses, y el generador cotiza con ellas tal cual. Con la fecha se puede
+    # pedir que se revise de nuevo pasado un tiempo sin molestar cada día.
+    precio_revisado_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     precios_mercado = relationship("PrecioRecursoMercado", back_populates="recurso", cascade="all, delete-orphan")
 
@@ -2413,6 +2423,9 @@ def migrar(engine):
             ("pais", "VARCHAR(80) DEFAULT 'Venezuela'"),
             ("es_demo", "BOOLEAN DEFAULT 0"),
         ],
+        "recursos": [
+            ("precio_revisado_at", "DATETIME"),
+        ],
         "presupuestos": [
             ("titulo", "VARCHAR(250) DEFAULT ''"),
             ("es_demo", "BOOLEAN DEFAULT 0"),
@@ -2450,6 +2463,7 @@ def migrar(engine):
             ("onboarding_catalogo_revisado", "BOOLEAN DEFAULT 0"),
             ("onboarding_pdf_descargado", "BOOLEAN DEFAULT 0"),
             ("recorrido_inicial_oculto", "BOOLEAN DEFAULT 0"),
+            ("onboarding_precios_revisados", "BOOLEAN DEFAULT 0"),
             ("primer_pdf_at", "DATETIME"),
             ("condiciones_default", "TEXT DEFAULT ''"),
             ("pdf_color", "VARCHAR(10) DEFAULT '#04265D'"),

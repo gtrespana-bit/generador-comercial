@@ -3116,6 +3116,23 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
     )
     ultima_version = (presupuesto.versiones or [None])[0]
     cambios_reenvio = comparar_version_con_presupuesto(ultima_version, presupuesto) if ultima_version is not None else None
+    # Aviso de tarifas sin confirmar EN ESTE presupuesto: es donde se decide el
+    # precio, no en una pantalla de ajustes que nadie abre. Solo cuenta los
+    # recursos que este documento usa de verdad.
+    tarifas_sin_confirmar = None
+    try:
+        from ..services.revision_precios import aviso_presupuesto
+        from ..services.traduccion import codigo_desde_pais
+
+        tarifas_sin_confirmar = aviso_presupuesto(
+            db,
+            presupuesto,
+            organizacion_id=int(db.info.get("organizacion_id") or 0),
+            pais=codigo_desde_pais(cfg.empresa_pais or "") or "VE",
+        )
+    except Exception:
+        db.rollback()
+        tarifas_sin_confirmar = None
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/detail.html",
@@ -3123,6 +3140,7 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             "p": presupuesto,
             "estados": ESTADOS,
             "cfg": cfg,
+            "tarifas_sin_confirmar": tarifas_sin_confirmar,
             "versiones": presupuesto.versiones,
             "fecha_vencimiento": fecha_vencimiento,
             "dias_restantes": (fecha_vencimiento - hoy).days,

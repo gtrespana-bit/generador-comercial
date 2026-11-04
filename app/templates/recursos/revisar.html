@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Revisar tarifas · Recursos{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="crumb">🧱 <a href="/recursos">Recursos</a> › Revisar tarifas</p>
+    <h1>Revisa tus tarifas antes de cotizar</h1>
+    <p class="subtitle">
+      El generador compone cada precio con estas tarifas. Una empresa que paga
+      <strong>15 {{ moneda_vista }}/h</strong> por un oficial y otra que paga
+      <strong>25 {{ moneda_vista }}/h</strong> deben cotizar distinto: los mismos
+      metros, importes diferentes. Por eso lo primero es que estas cifras sean
+      <strong>las tuyas</strong> y no una referencia genérica de {{ mercado_codigo }}.
+    </p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/recursos">Volver a recursos</a>
+  </div>
+</div>
+
+<div class="alert {{ 'alert-warn' if resumen.pendientes else 'alert-ok' }}">
+  {% if resumen.pendientes %}
+    <strong>{{ resumen.pendientes }} de {{ resumen.total }}</strong> tarifas siguen siendo
+    referencia de mercado y no las has confirmado.
+    {% if resumen.mano_obra_pendientes %}
+      De ellas, <strong>{{ resumen.mano_obra_pendientes }}</strong> son de mano de obra:
+      es la que más mueve el importe y la que cada empresa negocia distinto.
+    {% endif %}
+    Confirmar sin cambiar el precio también vale: significa «la miré y es la mía».
+  {% else %}
+    Las {{ resumen.total }} tarifas de tu catálogo están confirmadas. Se vuelven a
+    pedir a los {{ resumen.dias_vigencia }} días, que es cuando un precio de mano de
+    obra deja de ser un dato y pasa a ser una suposición.
+  {% endif %}
+</div>
+
+{% if filas %}
+<form method="post" action="/recursos/revisar" id="form-revision">
+  <div class="card">
+    <div class="card-head">
+      <h2>Tarifas por confirmar</h2>
+      <span class="hint">Ordenadas por familia: primero la mano de obra y, dentro de cada una, lo que más entra en los presupuestos.</span>
+    </div>
+
+    <div class="toolbar-row">
+      <div class="toolbar-actions">
+        <button type="button" class="btn btn-sm" data-revisar="todas">Marcar todas</button>
+        <button type="button" class="btn btn-sm" data-revisar="mano-obra">Solo mano de obra</button>
+        <button type="button" class="btn btn-sm" data-revisar="ninguna">Desmarcar</button>
+      </div>
+      <span class="hint">Escribe un precio solo donde no coincida. Las filas marcadas quedan con la fecha de hoy.</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table table-mobile-cards">
+        <thead>
+          <tr>
+            <th class="col-check-revision">Revisar</th>
+            <th>Recurso</th>
+            <th>Familia</th>
+            <th class="right">Precio actual</th>
+            <th class="right">Tu precio ({{ moneda_vista }})</th>
+            <th class="right">Usos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in filas %}
+          <tr data-categoria="{{ fila.categoria }}">
+            <td data-label="Revisar">
+              <input type="checkbox" name="revisar" value="{{ fila.id }}" checked
+                     aria-label="Confirmar {{ fila.descripcion }}">
+            </td>
+            <td data-label="Recurso">
+              <strong>{{ fila.descripcion }}</strong>
+              <div class="hint">
+                {{ fila.codigo or 'Sin código' }} · por {{ fila.unidad }}
+                {% if fila.detalle %} · {{ fila.detalle }}{% endif %}
+              </div>
+            </td>
+            <td data-label="Familia">
+              <span class="badge {{ 'badge-mano-obra' if fila.es_mano_obra else 'badge-sin-datos' }}">
+                {{ etiquetas.get(fila.categoria, fila.categoria) }}
+              </span>
+            </td>
+            <td data-label="Precio actual" class="right">
+              {% if fila.precio_vista is not none %}
+                <strong>{{ fila.precio_vista | money_iso(moneda_vista) }}</strong>
+                <div class="hint">{% if fila.origen == 'nacional' %}Referencia {{ mercado_codigo }}{% elif fila.origen == 'organizacion' %}Tu precio{% else %}Del catálogo base{% endif %}</div>
+              {% else %}
+                <span class="badge badge-rechazado">Sin precio</span>
+                <div class="hint">Cárgalo aquí mismo: sin precio no puede cotizarlo</div>
+              {% endif %}
+            </td>
+            <td data-label="Tu precio" class="right">
+              <label class="visualmente-oculto" for="precio-{{ fila.id }}">Tu precio para {{ fila.descripcion }}</label>
+              <input id="precio-{{ fila.id }}" type="number" step="0.01" min="0"
+                     name="precio_{{ fila.id }}" placeholder="{{ 'Igual' if fila.precio_vista is not none else 'Obligatorio' }}"
+                     class="campo-precio">
+            </td>
+            <td data-label="Usos" class="right">
+              {% if fila.usos %}<span title="Aparece en {{ fila.usos }} partidas o líneas">{{ fila.usos }}</span>{% else %}<span class="hint">—</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="toolbar-actions">
+      <span class="hint">
+        Al escribir un precio propio se recalcularán las partidas que usan ese
+        recurso, igual que si lo editaras en el catálogo.
+      </span>
+      <div class="toolbar-actions">
+        <button type="submit" class="btn btn-primary">Confirmar seleccionadas</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<form method="post" action="/recursos/revisar/confirmar-todas" class="card"
+      data-confirm="Se darán por buenas TODAS las tarifas pendientes. Podrás cambiarlas cuando quieras.">
+  <div class="card-head">
+    <h2>¿Ya las revisaste todas?</h2>
+  </div>
+  <p class="hint">
+    Si tu catálogo ya está a tus precios y no hay nada que corregir, dilo una vez
+    y sigue trabajando: queda registrado con la fecha de hoy y no se te vuelve a
+    pedir hasta dentro de {{ resumen.dias_vigencia }} días.
+  </p>
+  <div class="toolbar-actions">
+    <button type="submit" class="btn">Ya están revisadas</button>
+  </div>
+</form>
+{% else %}
+<div class="card">
+  <div class="card-head"><h2>Nada pendiente</h2></div>
+  <p class="hint">
+    Todas las tarifas de tu catálogo están confirmadas. Cuando tu proveedor cambie
+    un precio, edítalo en <a href="/recursos">Recursos</a> y se propagará a las
+    partidas que lo usan.
+  </p>
+  <div class="toolbar-actions">
+    <a class="btn btn-primary" href="/presupuestos/nuevo">Crear un presupuesto</a>
+    <a class="btn" href="/recursos">Ver recursos</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  /* Marcar en bloque: revisar 300 filas una a una es lo que hace que nadie
+     revise nada. Sin JavaScript los checkboxes ya vienen marcados y el
+     formulario funciona igual. */
+  document.querySelectorAll('[data-revisar]').forEach(function (boton) {
+    boton.addEventListener('click', function () {
+      var modo = boton.getAttribute('data-revisar');
+      document.querySelectorAll('#form-revision tbody tr').forEach(function (fila) {
+        var casilla = fila.querySelector('input[name="revisar"]');
+        if (!casilla) return;
+        if (modo === 'ninguna') casilla.checked = false;
+        else if (modo === 'todas') casilla.checked = true;
+        else casilla.checked = fila.getAttribute('data-categoria') === 'mano_obra';
+      });
+    });
+  });
+  /* Un precio escrito sin marcar la fila es un despiste silencioso: si hay
+     valor, se confirma. */
+  document.querySelectorAll('#form-revision input[name^="precio_"]').forEach(function (campo) {
+    campo.addEventListener('input', function () {
+      var casilla = campo.closest('tr').querySelector('input[name="revisar"]');
+      if (casilla && campo.value.trim()) casilla.checked = true;
+    });
+  });
+})();
+</script>
+{% endblock %}

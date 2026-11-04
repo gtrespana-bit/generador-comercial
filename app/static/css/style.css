@@ -6882,21 +6882,36 @@ body { -webkit-tap-highlight-color: transparent; }
   font-weight: 700;
 }
 .salud-chip.active { background: var(--accent-soft); border-color: var(--accent-light); color: var(--accent); }
-.dashboard-catalog-health {
+.dashboard-catalog-health,
+.dashboard-tarifas {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
 }
+/* Revisión de tarifas: pesa más que el diagnóstico del catálogo porque un
+   catálogo «sano» con precios de otro mercado sigue cotizando mal. */
+/* Rojo y no ámbar: en el tema claro ``--amber`` es un pardo de texto y en el
+   oscuro un amarillo flojo, poco serio para lo que decide el importe entero.
+   ``--rose`` se lee en los dos temas. */
+.dashboard-tarifas { border-left: 3px solid var(--rose); }
+.dashboard-tarifas h2 { margin: 0 0 .2rem; font-size: 1rem; }
+.dashboard-tarifas .hint { margin: 0; }
 .catalog-health-main { display: flex; align-items: center; gap: .9rem; }
 .dashboard-catalog-health h2 { margin: 0 0 .2rem; font-size: 1rem; }
 .dashboard-catalog-health .hint { margin: 0; }
+.dashboard-tarifas .badge { margin-left: .3rem; }
+/* Campo de precio de la revisión de tarifas: estrecho y alineado a la derecha
+   para que la columna se lea como una cifra, no como un formulario. */
+.campo-precio { max-width: 140px; text-align: right; }
+.col-check-revision { width: 56px; }
 @media (max-width: 820px) {
   .salud-main { grid-template-columns: 1fr; }
   .salud-score { width: 100%; min-height: 54px; }
   .salud-actions { justify-content: flex-start; }
-  .dashboard-catalog-health { align-items: flex-start; flex-direction: column; }
+  .dashboard-catalog-health,
+  .dashboard-tarifas { align-items: flex-start; flex-direction: column; }
 }
 
 /* ───────────────────── Ajuste seguro / impacto recursos ───────────────────── */

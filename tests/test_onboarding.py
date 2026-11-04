@@ -151,6 +151,10 @@ def test_guia_no_cuenta_registros_demo_como_trabajo_real():
         ))
         cfg.onboarding_catalogo_revisado = True
         cfg.onboarding_pdf_descargado = True
+        # Las tarifas son un paso propio desde el 04/11/2026: una guía
+        # «completa» con precios sin confirmar sería una guía que miente sobre
+        # lo único que decide el importe.
+        cfg.onboarding_precios_revisados = True
         db.commit()
 
         estado = estado_recorrido_inicial(db, cfg)

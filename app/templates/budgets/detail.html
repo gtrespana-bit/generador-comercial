@@ -77,6 +77,35 @@
   </div>
 </div>
 
+{# Tarifas sin confirmar EN ESTE presupuesto. Va antes de la revisión de envío
+   porque no es un aviso de forma: es el importe entero el que está calculado
+   con precios que la empresa no ha confirmado. #}
+{% if tarifas_sin_confirmar %}
+<div class="card dashboard-tarifas" id="tarifas-presupuesto">
+  <div class="catalog-health-main">
+    <div class="catalog-health-score">
+      <strong>{{ tarifas_sin_confirmar.total }}</strong><span>tarifas</span>
+    </div>
+    <div>
+      <h2>Este presupuesto usa precios que no has confirmado</h2>
+      <p class="hint">
+        {% if tarifas_sin_confirmar.mano_obra %}
+        <strong>{{ tarifas_sin_confirmar.mano_obra }}</strong> de ellas son de mano de obra,
+        la partida que más cambia de una empresa a otra.
+        {% endif %}
+        {% for fila in tarifas_sin_confirmar.filas %}
+        <span class="badge badge-sin-datos">{{ fila.descripcion }} · {{ fila.unidad }}</span>
+        {% endfor %}
+        {% if tarifas_sin_confirmar.total > tarifas_sin_confirmar.filas|length %}
+        <span class="badge badge-sin-datos">+{{ tarifas_sin_confirmar.total - tarifas_sin_confirmar.filas|length }} más</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  <a class="btn btn-sm" href="/recursos/revisar">Confirmar tarifas</a>
+</div>
+{% endif %}
+
 {% if revision_envio %}
 <div class="card revision-envio revision-{{ revision_envio.estado }}" id="revision-envio">
   <div class="revision-head">

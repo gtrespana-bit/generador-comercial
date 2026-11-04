@@ -5,11 +5,19 @@
   <div>
     <h1 class="csp-s-93f4d4c3fe">Precios Unitarios <span class="csp-s-20db78cd99">{{ recursos|length }}</span> <span class="csp-s-2ebe03a855">· Recursos</span></h1>
     <p class="subtitle">Mano de obra, materiales y equipos organizados por familia. <strong>Cambia un precio aquí y se aplica automáticamente a todas las partidas que usan ese recurso</strong> (catálogo y presupuestos), recalculando costes directos. Importes en <strong>{{ moneda_vista }}</strong>.</p>
+    {% if tarifas_pendientes %}
+    <p class="hint">
+      <strong>{{ tarifas_pendientes }}</strong> de estas tarifas siguen siendo referencia de
+      mercado y no las has confirmado: el generador cotizará con ellas tal cual.
+      <a href="/recursos/revisar">Revisarlas</a>.
+    </p>
+    {% endif %}
   </div>
   <div class="csp-s-33ff8b3e89">
     <form method="post" action="/recursos/sincronizar" class="csp-s-a91548c594">
       <button class="btn" title="Extrae recursos automáticamente desde las descomposiciones existentes de partidas y presupuestos">↻ Sincronizar desde partidas</button>
     </form>
+    <a href="/recursos/revisar" class="btn" title="Confirma que estas tarifas son las de tu empresa antes de cotizar">✓ Revisar tarifas{% if tarifas_pendientes %} <span class="badge badge-coste">{{ tarifas_pendientes }}</span>{% endif %}</a>
     <a href="/recursos/nuevo" class="btn btn-primary">Nuevo recurso</a>
   </div>
 </div>
