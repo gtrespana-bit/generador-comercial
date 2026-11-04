@@ -1457,8 +1457,6 @@ def _registrar_usos(db: Session, partidas: list, nombres_previos: set | None = N
     que la maestra se localiza por el índice que reconoce ambas formas (y por
     el id de catálogo cuando la línea lo trae).
     """
-    from ..services.busqueda_catalogo import normalizar
-
     previos = set(nombres_previos or [])
     indice: dict[str, int] | None = None
     for pd in partidas:
@@ -1475,7 +1473,7 @@ def _registrar_usos(db: Session, partidas: list, nombres_previos: set | None = N
         if part is None:
             if indice is None:
                 indice = _indice_nombres_catalogo(db)
-            maestra_id = indice.get(normalizar(nombre))
+            maestra_id = indice.get(_clave_catalogo(nombre))
             part = db.get(Partida, maestra_id) if maestra_id else None
         if part:
             part.usos = (part.usos or 0) + 1
@@ -1511,6 +1509,21 @@ def _categorias(db: Session) -> list[str]:
         if c:
             cats.add(c)
     return sorted(cats)
+
+
+def _clave_catalogo(nombre: str) -> str:
+    """Nombre normalizado **tal y como vive en el catálogo**.
+
+    ``presupuesto_items.nombre`` admite 250 caracteres y ``partidas.nombre``
+    solo 200, así que una línea larga se guarda recortada en el catálogo. Para
+    localizar esa partida maestra hay que buscar por la misma forma recortada;
+    si no, el vínculo y el contador de usos se quedan vacíos justo en las
+    partidas con nombre largo.
+    """
+    from ..services.busqueda_catalogo import normalizar
+    from ..services.limites_columnas import recortar_campo
+
+    return normalizar(recortar_campo(Partida, "nombre", str(nombre or "").strip()))
 
 
 def _indice_nombres_catalogo(db: Session) -> dict[str, int]:
@@ -1554,8 +1567,6 @@ def _vincular_partidas_catalogo(db: Session, presupuesto: Presupuesto):
     catálogo. Esta pasada lo asigna por nombre (el del catálogo o el traducido
     al país de la organización) sin modificar el precio propio de la línea.
     """
-    from ..services.busqueda_catalogo import normalizar
-
     pendientes = [
         p for cap in presupuesto.capitulos for p in cap.partidas
         if not p.partida_catalogo_id and str(p.nombre or "").strip()
@@ -1564,7 +1575,7 @@ def _vincular_partidas_catalogo(db: Session, presupuesto: Presupuesto):
         return
     indice = _indice_nombres_catalogo(db)
     for item in pendientes:
-        maestra_id = indice.get(normalizar(item.nombre or ""))
+        maestra_id = indice.get(_clave_catalogo(item.nombre))
         if maestra_id:
             item.partida_catalogo_id = maestra_id
 
@@ -1593,7 +1604,14 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict,
         return _a_moneda_base(float(valor or 0.0), factor)
 
     from ..services.busqueda_catalogo import normalizar
+    from ..services.limites_columnas import recortar_campo
 
+    # El nombre de la línea cabe en 250 (``presupuesto_items.nombre``) pero el
+    # del catálogo solo en 200 (``partidas.nombre``). Se recorta ANTES de
+    # calcular la clave de deduplicación: si se recortara después, dos nombres
+    # que solo difieren a partir del carácter 201 llegarían idénticos a la base
+    # y chocarían contra ``uq_partida_organizacion_nombre`` (mismo 500, otra
+    # forma). Ver el incidente del 3/11/2026 en ``limites_columnas``.
     # La sesión trabaja sin autoflush: recordar las altas de este mismo
     # formulario evita chocar con la restricción UNIQUE si una partida o un
     # producto se repite en dos líneas antes del primer commit.
@@ -1601,7 +1619,7 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict,
     partidas_nuevas = set()
     productos_nuevos = set()
     for i, pd in enumerate(partidas):
-        nombre = str(pd.get("nombre", "")).strip()
+        nombre = recortar_campo(Partida, "nombre", str(pd.get("nombre", "")).strip())
         clave = normalizar(nombre)
         # Una línea que viene del catálogo ya tiene su maestra: no se duplica
         # aunque el usuario le haya retocado el texto.
@@ -1632,7 +1650,9 @@ def _guardar_en_catalogos(db: Session, partidas: list, imagenes_guardadas: dict,
                 ))
                 partidas_nuevas.add(clave)
 
-        prod_nombre = str(pd.get("prod_nombre", "")).strip()
+        prod_nombre = recortar_campo(
+            Producto, "nombre", str(pd.get("prod_nombre", "")).strip()
+        )
         if (prod_nombre and prod_nombre not in productos_nuevos
                 and not db.query(Producto).filter(Producto.nombre == prod_nombre).first()):
             imagen = imagenes_guardadas.get(i) or str(pd.get("prod_imagen_actual", "")).strip()

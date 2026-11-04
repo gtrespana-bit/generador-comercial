@@ -1574,7 +1574,15 @@
       nombreWrap.appendChild(num);
       var dot = editor.FMT.h("span", "partida-dot");
       nombreWrap.insertBefore(dot, num);
-      var nombreInput = editor.FMT.crearInput("text", datos.nombre || "", "Nombre de la partida…", "p_nombre");
+      // ``maxlength`` = ancho de ``presupuesto_items.nombre``. Sin tope, pegar
+      // aquí un texto largo (condiciones de pago, notas) hacía que el nombre
+      // enviado no cupiera en el catálogo y el guardado fallara con un 500
+      // (incidente del 3/11/2026). El servidor recorta igual, pero así el
+      // usuario ve en el campo lo mismo que se va a guardar.
+      var nombreInput = editor.FMT.crearInput(
+        "text", datos.nombre || "", "Nombre de la partida…", "p_nombre",
+        { maxlength: "250" }
+      );
       nombreInput.className = "partida-nombre-input";
       nombreInput.addEventListener("input", function () {
         var catId = wrap.querySelector('[data-f="p_catalogo_id"]');
@@ -2660,7 +2668,11 @@
       var pgrid = editor.FMT.h("div", "prod-grid");
       var g1 = editor.FMT.h("div", "field");
       g1.appendChild(editor.FMT.h("label", null, "Nombre"));
-      var prodNombreInput = editor.FMT.crearInput("text", datos.prod_nombre || "", "p. ej. Porcelanato Calacatta 60x120", "p_prod_nombre");
+      // ``productos.nombre`` es VARCHAR(250): el campo no deja escribir más.
+      var prodNombreInput = editor.FMT.crearInput(
+        "text", datos.prod_nombre || "", "p. ej. Porcelanato Calacatta 60x120",
+        "p_prod_nombre", { maxlength: "250" }
+      );
       g1.appendChild(prodNombreInput);
       pgrid.appendChild(g1);
 

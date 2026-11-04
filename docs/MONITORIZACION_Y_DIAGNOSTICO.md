@@ -144,3 +144,59 @@ rama (hasta entonces `/readyz` del entorno migrado responde 503, esperado) y
 ensayar el flujo real en staging. Después, según la puerta de salida del plan:
 endurecimiento técnico de la Etapa 4 o el bloque funcional que el titular
 decida. Validación comercial y catálogo real siguen aplazados (D-017).
+
+## 8. `StringDataRightTruncation`: texto más largo que su columna (3/11/2026)
+
+**Qué se vio.** El panel de errores registró un 500 en `POST
+/presupuestos/nuevo` con
+`psycopg.errors.StringDataRightTruncation: value too long for type character
+varying(200)`. El `INSERT` que fallaba era el de `partidas`: el primer nombre
+del lote (`Retirar juntas de piso en terraza de coralina`) era correcto, pero
+otra línea del mismo presupuesto llevaba **el texto completo de las condiciones
+de pago** (~400 caracteres) en el campo «nombre de la partida».
+
+**Por qué tumba el guardado entero.** Los nombres viajan a dos columnas de
+ancho distinto: `presupuesto_items.nombre` (`VARCHAR(250)`) y, por el guardado
+automático del catálogo, `partidas.nombre` (`VARCHAR(200)`). PostgreSQL no
+recorta: aborta la sentencia y el `flush` completo falla, así que el usuario
+**pierde el presupuesto** y ve un 500. SQLite ignora el ancho declarado, de ahí
+que la suite no lo detectara: el fallo solo existía en producción.
+
+**Qué se hizo.** Una red única en `Session` (`before_flush`) recorta cualquier
+texto a la anchura declarada en su columna antes de enviar la sentencia
+(`app/services/limites_columnas.py`). Se recorta, no se rechaza: el presupuesto
+se guarda con el nombre abreviado en vez de perderse. Cada recorte deja un
+`WARNING` en los logs con el campo y la longitud original (nunca el texto), y
+`_guardar_en_catalogos` recorta además **antes** de deduplicar para no chocar
+contra `uq_partida_organizacion_nombre` cuando dos nombres largos solo difieren
+a partir del carácter 201. En el editor, los campos de nombre llevan `maxlength`
+para que el usuario vea el mismo tope que aplica el servidor.
+
+**Diagnóstico rápido.** Si vuelve a aparecer un `DataError` de este tipo, la
+columna culpable está en el mensaje (`character varying(N)`) y el campo, en el
+primer parámetro del `INSERT` cuya longitud se pasa de `N`. El `WARNING
+cotizat.limites_columnas` de los minutos previos dice qué cliente está usando
+un campo corto para guardar un texto largo.
+
+**Sobre el acceso del usuario afectado.** En el mismo caso se planteó por qué
+una organización «sin cuenta activa» había podido guardar. El corte por
+licencia (`COTIZAT_EXIGIR_LICENCIA`) comprueba
+`estado = 'activa' AND inicio <= CURRENT_DATE AND vence >= CURRENT_DATE`, y
+`vence` es un día **inclusivo** evaluado en UTC. La petición entró a las 23:55
+UTC del 3/11: si la licencia (o la prueba de 7 días) vencía ese mismo día,
+seguía vigente y el corte actuó a las 00:00 UTC del 4/11, que es cuando el
+panel pasó a mostrarla como «Vencida». No hubo acceso indebido. Para
+verificarlo:
+
+```sql
+SELECT id, estado, origen, inicio, vence, CURRENT_DATE AS hoy_utc,
+       (estado = 'activa' AND inicio <= CURRENT_DATE AND vence >= CURRENT_DATE)
+         AS daba_acceso_hoy
+FROM public.licencias
+WHERE organizacion_id = 43
+ORDER BY inicio DESC, id DESC;
+```
+
+Se compara con la fecha/hora del error (`errores_internos.ultima_vez`) y no con
+la de la consulta: un día de diferencia cambia la respuesta. El estado del
+interruptor se ve en `/readyz` (`"licencias": "exigida"`).

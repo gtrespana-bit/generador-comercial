@@ -18,7 +18,11 @@
       var chevron = Partida.crearElemento("span", "cap-chevron", "⌄");
       head.appendChild(chevron);
 
-      var nombreInput = Partida.crearInput("text", datos.nombre || "", "NOMBRE DEL CAPÍTULO", "cap_nombre");
+      // ``capitulos.nombre`` es VARCHAR(200): mismo tope que el servidor.
+      var nombreInput = Partida.crearInput(
+        "text", datos.nombre || "", "NOMBRE DEL CAPÍTULO", "cap_nombre",
+        { maxlength: "200" }
+      );
       nombreInput.className = "capitulo-name";
       head.appendChild(nombreInput);
 
