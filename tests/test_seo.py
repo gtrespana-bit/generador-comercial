@@ -328,7 +328,7 @@ def test_la_faq_esta_visible_si_el_schema_la_anuncia():
     with _cliente() as client:
         html = client.get("/en-us/").text
     assert 'id="preguntas-seo"' in html
-    assert "<details>" in html
+    assert "<details" in html
     assert "Does it include unit price analysis?" in html
 
 

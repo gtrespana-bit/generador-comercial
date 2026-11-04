@@ -2,13 +2,13 @@
 .receta-preview-empty { text-align: center; padding: 2rem; }
 .receta-preview-center { text-align: center; }
 .receta-preview-right { text-align: right; }
-.receta-preview-muted { color: var(--muted); }
+.receta-preview-muted { color: var(--text-muted); }
 .receta-preview-strong { font-weight: 600; }
 .receta-preview-badge { font-size: .75rem; }
 .product-option-card { border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: var(--bg); box-shadow: none; }
 .product-option-card-selected { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 1px var(--accent); }
 .product-option-badge { font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--bg-soft); color: var(--text-soft); border: 1px solid var(--border); }
-.product-option-badge-selected { background: var(--accent); color: #fff; border-color: transparent; }
+.product-option-badge-selected { background: var(--accent); color: var(--on-accent); border-color: transparent; }
 .text-rose { color: var(--rose); }
 .text-accent { color: var(--accent); }
 .text-default { color: var(--text); }
@@ -16,7 +16,7 @@
 .coverage-good { background: #059669; }
 .coverage-warning { background: #d97706; }
 .coverage-danger { background: #e11d48; }
-.cat-dot-mano_obra { background: #123f78; }
+.cat-dot-mano_obra { background: var(--accent); }
 .cat-dot-materiales { background: #0d9488; }
 .cat-dot-complementarios { background: #8b5cf6; }
 .cat-dot-otros { background: #64748b; }
@@ -62,7 +62,7 @@
 .csp-s-1a46806bde:not(#cotizat-csp-never) { margin:0;font-size:0.88rem; }
 .csp-s-1b5784f27a:not(#cotizat-csp-never) { font-size:.75rem;color:var(--text-soft);margin-bottom:6px; }
 .csp-s-1d436efc1f:not(#cotizat-csp-never) { margin-top:6px; }
-.csp-s-20db78cd99:not(#cotizat-csp-never) { font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px; }
+.csp-s-20db78cd99:not(#cotizat-csp-never) { font-size:.78rem;font-weight:600;background:var(--accent);color: var(--on-accent);padding:2px 8px;border-radius:999px; }
 .csp-s-20dc2ddb47:not(#cotizat-csp-never) { margin:5px 0 10px; }
 .csp-s-232f9fa610:not(#cotizat-csp-never) { font-size:0.95rem; }
 .csp-s-2346c4facf:not(#cotizat-csp-never) { margin-bottom:1rem;font-size:0.9rem; }
@@ -74,7 +74,7 @@
 .csp-s-284473c560:not(#cotizat-csp-never) { text-align:center;padding:2rem; }
 .csp-s-28b29075b5:not(#cotizat-csp-never) { background:var(--bg-alt); }
 .csp-s-2968716aac:not(#cotizat-csp-never) { font-family:monospace;font-size:13px;color:var(--text-muted);min-width:52px; }
-.csp-s-29d4ad1ec3:not(#cotizat-csp-never) { background:#123f78; }
+.csp-s-29d4ad1ec3:not(#cotizat-csp-never) { background:var(--accent); }
 .csp-s-2cd1543b50:not(#cotizat-csp-never) { background:var(--green-soft);color:var(--green);font-weight:800;flex:0 0 auto; }
 .csp-s-2ebe03a855:not(#cotizat-csp-never) { font-size:.85rem;font-weight:500;color:var(--text-soft); }
 .csp-s-30e51cbec9:not(#cotizat-csp-never) { border-top:1px solid var(--border);padding-top:14px; }
@@ -214,7 +214,7 @@
 .csp-s-9f32b4b1a6:not(#cotizat-csp-never) { font-size:.70rem;background:var(--bg); }
 .csp-s-9fda40b045:not(#cotizat-csp-never) { min-width:220px; }
 .csp-s-a01f14dd06:not(#cotizat-csp-never) { margin-bottom:1rem;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap; }
-.csp-s-a0688da494:not(#cotizat-csp-never) { background:#ecfdf5;border-color:rgba(13,148,136,.18);color:#0f766e; }
+.csp-s-a0688da494:not(#cotizat-csp-never) { background:var(--green-soft);border-color:color-mix(in srgb, var(--green) 24%, transparent);color:var(--green); }
 .csp-s-a0a5f73abb:not(#cotizat-csp-never) { z-index:1300; }
 .csp-s-a25ae6e557:not(#cotizat-csp-never) { display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding:1rem 1.5rem; }
 .csp-s-a33b8fc2ff:not(#cotizat-csp-never) { margin-top:8px; }
@@ -272,7 +272,7 @@
 .csp-s-d6241da47c:not(#cotizat-csp-never) { display:flex;gap:8px; }
 .csp-s-d66c3f479a:not(#cotizat-csp-never) { border:1px solid var(--border);padding:12px;border-radius:10px; }
 .csp-s-d6e98c0fe2:not(#cotizat-csp-never) { text-align:center;padding:2.5rem 1.5rem; }
-.csp-s-d703051526:not(#cotizat-csp-never) { margin-top:6px;font-size:.76rem;background:var(--green-soft);border:1px solid rgba(5,150,105,.15);padding:4px 8px;border-radius:6px;display:inline-block; }
+.csp-s-d703051526:not(#cotizat-csp-never) { margin-top:6px;font-size:.76rem;background:var(--green-soft);color:var(--green);border:1px solid color-mix(in srgb, var(--green) 24%, transparent);padding:4px 8px;border-radius:6px;display:inline-block; }
 .csp-s-d7d9b47f7a:not(#cotizat-csp-never) { font-size:1rem;font-weight:600;margin:0 0 0.5rem 0;color:var(--text); }
 .csp-s-d932cc6d8c:not(#cotizat-csp-never) { padding-top:1rem; }
 .csp-s-db3f92d314:not(#cotizat-csp-never) { font-size:0.88rem;margin-top:2px; }
@@ -290,7 +290,7 @@
 .csp-s-e2bc274868:not(#cotizat-csp-never) { width:110px;text-align:center; }
 .csp-s-e42b1fb4b3:not(#cotizat-csp-never) { display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem; }
 .csp-s-e4bfd0f716:not(#cotizat-csp-never) { background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:0.82rem;padding:0.2rem 0.6rem;border-radius:999px; }
-.csp-s-e6fd6b5ab2:not(#cotizat-csp-never) { color:#e11d48; }
+.csp-s-e6fd6b5ab2:not(#cotizat-csp-never) { color:var(--rose); }
 .csp-s-e71e28dc61:not(#cotizat-csp-never) { margin:0;font-size:1.15rem;color:var(--text);display:flex;align-items:center;gap:8px; }
 .csp-s-ea8cf769a3:not(#cotizat-csp-never) { width:100%;max-width:580px; }
 .csp-s-eb1a6b0356:not(#cotizat-csp-never) { display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap; }
@@ -301,7 +301,7 @@
 .csp-s-f18d2d509a:not(#cotizat-csp-never) { margin-bottom:0.5rem; }
 .csp-s-f25d241cb3:not(#cotizat-csp-never) { font-size:0.82rem;color:var(--text-soft); }
 .csp-s-f4600e914e:not(#cotizat-csp-never) { min-width:140px; }
-.csp-s-f4cd63326c:not(#cotizat-csp-never) { color:#0f766e; }
+.csp-s-f4cd63326c:not(#cotizat-csp-never) { color:var(--green); }
 .csp-s-f827bdca4f:not(#cotizat-csp-never) { display:flex;flex-direction:column;gap:10px;margin-bottom:1rem; }
 .csp-s-fbff25e9fc:not(#cotizat-csp-never) { overflow-x:auto; }
 .csp-s-fc756b900f:not(#cotizat-csp-never) { width:30%; }

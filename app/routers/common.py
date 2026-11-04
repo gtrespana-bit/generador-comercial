@@ -312,8 +312,28 @@ def _seccion_para_enlace(request) -> str:
 TEMPLATES = _CotizaTemplates(directory=str(BASE_DIR / "app" / "templates"))
 # Filtro de traducción por clave (i18n). Fallback a español si falta la clave.
 try:
+    from jinja2 import Undefined as _JinjaUndefined
     from ..i18n import t as _t, normalizar_idioma as _norm_lang
-    TEMPLATES.env.filters["t"] = lambda clave, idioma=None, **kw: _t(clave, idioma, **kw)
+
+    def _idioma_de_contexto(ctx, idioma):
+        """Resuelve el idioma cuando la plantilla no lo pasa explícito.
+
+        Muchas plantillas EN escriben ``| t(_idioma)`` / ``| mensaje(_idioma)``,
+        pero ``_idioma`` solo se define dentro del include ``_idioma_switch.html``
+        y Jinja no propaga esas asignaciones al padre: llegaba ``Undefined`` y
+        todo caía a español. Sin idioma explícito, usamos el del request.
+        """
+        if idioma is None or isinstance(idioma, _JinjaUndefined):
+            req = ctx.get("request") if hasattr(ctx, "get") else None
+            estado = getattr(req, "state", None)
+            idioma = getattr(estado, "lang", None)
+        return idioma
+
+    @pass_context
+    def _filtro_t(ctx, clave, idioma=None, **kw):
+        return _t(clave, _idioma_de_contexto(ctx, idioma), **kw)
+
+    TEMPLATES.env.filters["t"] = _filtro_t
     TEMPLATES.env.globals["t"] = _t
     TEMPLATES.env.globals["normalizar_idioma"] = _norm_lang
     # Conmutador de idioma: construye el enlace a la misma página en el otro
@@ -336,7 +356,12 @@ try:
     TEMPLATES.env.globals["texto_impuesto"] = _texto_impuesto
     TEMPLATES.env.globals["url_cambio_idioma"] = _url_cambio_idioma
     TEMPLATES.env.globals["mensaje"] = _mensaje
-    TEMPLATES.env.filters["mensaje"] = lambda texto, idioma=None: _mensaje(texto, idioma)
+
+    @pass_context
+    def _filtro_mensaje(ctx, texto, idioma=None):
+        return _mensaje(texto, _idioma_de_contexto(ctx, idioma))
+
+    TEMPLATES.env.filters["mensaje"] = _filtro_mensaje
     # Tabla de garantías: se calcula desde el presupuesto, así que el idioma
     # llega en el momento de pintarla (el modelo no sabe de requests).
     from ..services.garantias import familias_para_pdf as _familias_garantia
@@ -694,7 +719,19 @@ def robots_meta(request) -> str:
 
     Ruta no indexable → ``noindex, nofollow, noarchive``; espejo de idioma →
     ``noindex, follow`` (sus enlaces sí valen); el resto, indexable.
+
+    La portada clásica (``?diseno=clasico``) es un duplicado deliberado para
+    el experimento A/B: no debe competir en el índice con la canónica, pero
+    sí debe dejar rastrear sus enlaces.
     """
+    try:
+        variante = str(
+            getattr(request, "query_params", {}).get("diseno", "") or ""
+        ).strip().lower()
+        if variante in {"clasico", "clasica", "legacy", "original"}:
+            return "noindex, follow"
+    except Exception:
+        pass
     try:
         from ..seo import es_indexable
 

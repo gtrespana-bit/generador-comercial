@@ -905,6 +905,7 @@
         var selCat = document.createElement("select");
         selCat.dataset.f = "d_categoria";
         selCat.title = "Categoría de coste";
+        selCat.setAttribute("aria-label", "Categoría de coste");
         CATEGORIAS_COSTE.forEach(function (op) {
           var o = document.createElement("option");
           o.value = op[0];
@@ -1801,6 +1802,7 @@
       var undSelect = document.createElement("select");
       undSelect.className = "partida-unidad-select";
       undSelect.dataset.f = "p_unidad";
+      undSelect.setAttribute("aria-label", "Unidad de la partida");
       var unidades = window.COTIZAT_UNIDADES_IMPERIALES
         ? ["ud", "sq ft", "ft", "cu yd", "lb", "gal", "glb", "juego", "h", "hora"]
         : ["ud", "m2", "m²", "m", "ml", "m3", "m³", "glb", "juego", "kg", "h", "hora"];
@@ -2075,10 +2077,7 @@
 
     function crearResumenProducto(partidaWrap, datos, editorInst) {
       var wrapRes = editor.FMT.h("div", "partida-producto-resumen-wrap");
-      var resumen = editor.FMT.h("button", "partida-producto-resumen");
-      resumen.type = "button";
-      resumen.title = "Cambiar o revisar el producto asociado";
-      resumen.setAttribute("aria-label", "Cambiar producto asociado");
+      var resumen = editor.FMT.h("div", "partida-producto-resumen");
 
       var imagen = editor.FMT.h("img", "partida-producto-imagen");
       imagen.alt = "";
@@ -2092,7 +2091,9 @@
       var accionesWrap = editor.FMT.h("div", "partida-producto-acciones");
       CotizatStyles.setCssText(accionesWrap, "display:flex; align-items:center; gap:8px; margin-left:auto;");
 
-      var accion = editor.FMT.h("span", "partida-producto-accion", "Cambiar ›");
+      var accion = editor.FMT.h("button", "partida-producto-accion", "Cambiar ›");
+      accion.type = "button";
+      accion.setAttribute("aria-label", "Cambiar producto asociado");
       var btnQuitarProd = editor.FMT.h("button", "btn btn-xs btn-danger", "🗑 Eliminar producto");
       btnQuitarProd.type = "button";
       btnQuitarProd.title = "Eliminar y desasociar este producto de la partida";
@@ -2216,7 +2217,12 @@
           CotizatStyles.set(galeria, "display", "none");
         }
       }
+      accion.addEventListener("click", function (evento) {
+        evento.stopPropagation();
+        if (typeof editorInst.abrirEditorPartida === "function") editorInst.abrirEditorPartida(partidaWrap, "producto");
+      });
       resumen.addEventListener("click", function (evento) {
+        if (evento.target.closest("button")) return;
         evento.stopPropagation();
         if (typeof editorInst.abrirEditorPartida === "function") editorInst.abrirEditorPartida(partidaWrap, "producto");
       });
@@ -2414,6 +2420,7 @@
         tipoBox.appendChild(editor.FMT.h("label", null, "Tipo de partida"));
         var tipo = document.createElement("select");
         tipo.dataset.f = "p_tipo_partida";
+        tipo.setAttribute("aria-label", "Tipo de partida");
         [
           ["included", "Incluida"]
         ].concat(window.MOSTRAR_ALTERNATIVAS ? [
@@ -2437,6 +2444,7 @@
         selBox.appendChild(editor.FMT.h("label", null, "Estado"));
         var sel = document.createElement("select");
         sel.dataset.f = "p_seleccionada";
+        sel.setAttribute("aria-label", "Estado de selección de la partida");
         [
           ["0", "No seleccionada"],
           ["1", "Seleccionada"]

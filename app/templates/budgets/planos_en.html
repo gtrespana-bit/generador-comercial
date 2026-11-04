@@ -412,7 +412,7 @@ body.planos-workspace-page { background: var(--bg); }
 .plano-editor-ayuda { color:var(--text-soft); font-size:.6rem; line-height:1.35; }
 .plano-editor-tools { display:grid; grid-template-columns:repeat(4,1fr); gap:.3rem; }
 .plano-editor-tool { min-height:34px; padding:.35rem .3rem; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:.62rem; font-weight:600; cursor:pointer; }
-.plano-editor-tool.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.plano-editor-tool.active { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
 .plano-editor-grosor { display:flex; flex-direction:column; gap:.2rem; font-size:.62rem; color:var(--text-soft); }
 .plano-editor-grosor input { width:100%; accent-color:var(--accent); }
 .plano-editor-acciones { display:flex; flex-wrap:wrap; gap:.3rem; }
@@ -441,8 +441,11 @@ body.planos-workspace-page { background: var(--bg); }
 .planos-tool-group { display:flex; align-items:center; gap:.2rem; }
 .planos-tool { min-height:32px; display:inline-flex; align-items:center; justify-content:center; gap:.3rem; padding:.35rem .5rem; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:.68rem; font-weight:600; line-height:1.1; white-space:nowrap; cursor:pointer; }
 .planos-tool:hover:not(:disabled) { background:var(--surface); border-color:var(--border); color:var(--text); }
-.planos-tool.btn-primary { color:#fff; background:var(--accent); border-color:var(--accent); box-shadow:none; }
-.planos-tool:disabled { opacity:.4; cursor:not-allowed; }
+.planos-tool.btn-primary { color:var(--on-accent); background:var(--accent); border-color:var(--accent); box-shadow:none; }
+.planos-tool.btn-primary:hover:not(:disabled) { color:var(--on-accent); background:var(--accent-h); border-color:var(--accent-h); }
+.planos-tool.btn-primary:disabled { color:var(--text-muted); background:var(--surface-hover); border-color:var(--border-strong); }
+.planos-tool:disabled { background:var(--surface-hover); border-color:var(--border-strong); color:var(--text-soft); opacity:1; cursor:not-allowed; }
+    .planos-tool.is-active:hover:not(:disabled) { background:var(--accent-h); border-color:var(--accent-h); color:var(--on-accent); }
 .planos-tool-divider { width:1px; height:24px; flex:0 0 auto; background:var(--border); }
 .planos-zoom-controls { display:flex; align-items:center; gap:.18rem; margin-left:auto; padding-left:.35rem; }
 .planos-zoom-label { color:var(--text-muted); font-size:.61rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }

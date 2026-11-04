@@ -31,6 +31,7 @@
         <p>Estimates, line items and prices organized by company. Each organization is an isolated workspace, with team roles and immutable versions of every document.</p>
         <ul>
           <li><span class="check">✓</span> Clear estimates ready to present as PDF</li>
+          <li><span class="check">✓</span> Margin and work time per item and total</li>
           <li><span class="check">✓</span> Reusable catalog of line items and prices</li>
           <li><span class="check">✓</span> Your team, with roles and approval control</li>
         </ul>
@@ -63,9 +64,12 @@
         <p class="auth-prueba">✨ Includes <strong>{{ dias_de_prueba() }} free days</strong> with full access. No card required.</p>
         {% endif %}
         <input type="hidden" name="next" value="{{ next or '/organizaciones/nueva' }}">
+        {% if origen_seccion %}<input type="hidden" name="origen" value="{{ origen_seccion }}">{% endif %}
+        {% if variante_landing %}<input type="hidden" name="variante" value="{{ variante_landing }}">{% endif %}
+        {% if intencion_landing %}<input type="hidden" name="intencion" value="{{ intencion_landing }}">{% endif %}
         <div class="field">
           <label for="signup-name">Name</label>
-          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if not auth_configured %}disabled{% endif %}>
+          <input id="signup-name" name="nombre" autocomplete="name" maxlength="200" required {% if alta_directa %}autofocus{% endif %} {% if not auth_configured %}disabled{% endif %}>
         </div>
         <div class="field">
           <label for="signup-pais">Country <span class="hint">(configures currency, VAT and tax ID)</span></label>

@@ -218,6 +218,24 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
     return ctx
 
 
+def _plantilla_portada(request: Request) -> str:
+    """Plantilla de la portada: «impulso» por defecto, clásica a petición.
+
+    Español e inglés comparten la misma portada «Impulso»: el diseño completo
+    (hero, tour, calculadora, tiempos, comparativa, precios y CTA móvil) se
+    traduce en la propia plantilla. La variante clásica sigue viva con
+    ``?diseno=clasico`` para comparar; en inglés el resolvedor de Jinja sirve
+    ``landing_en.html`` para esa variante legacy.
+    """
+    try:
+        variante = str(request.query_params.get("diseno") or "").strip().lower()
+    except Exception:
+        variante = ""
+    if variante in {"clasico", "clasica", "legacy", "original"}:
+        return "landing.html"
+    return "landing_impulso.html"
+
+
 def _landing_con_pais(request: Request, codigo: str):
     """Renderiza la landing para un subdirectorio /co/, /us/ ... y fija cookie."""
     from ..paises import PAISES
@@ -240,7 +258,7 @@ def _landing_con_pais(request: Request, codigo: str):
     # La cookie de país la escribe el navegador (_cookies_publicas.html): el
     # contenido depende solo de la ruta, y una respuesta con Set-Cookie deja
     # la landing fuera del caché del CDN.
-    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+    return TEMPLATES.TemplateResponse(request, _plantilla_portada(request), ctx)
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -282,7 +300,7 @@ def home_publica(request: Request):
     # El copy, la canónica y el hreflang en inglés los resuelve contexto_seo()
     # a partir de request.state.lang (ver app/seo_en.py).
     ctx = _contexto_landing(request)
-    return TEMPLATES.TemplateResponse(request, "landing.html", ctx)
+    return TEMPLATES.TemplateResponse(request, _plantilla_portada(request), ctx)
 
 
 @router.get("/conocer", include_in_schema=False)

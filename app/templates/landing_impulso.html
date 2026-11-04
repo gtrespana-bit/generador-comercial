@@ -1,0 +1,709 @@
+{%- set _en = (request.state.lang | default('es')) == 'en' -%}
+{%- macro L(es, enTxt) %}{{ (enTxt if _en else es) | safe }}{% endmacro -%}
+<!doctype html>
+<html lang="{{ seo.lang if seo is defined else 'es' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  {# GA4 va antes del CSS: el detector de Google busca gtag.js en los primeros KB. #}
+  {% include "_ga.html" %}
+  {# CSS crítico histórico (contrato de velocidad) + sistema visual nuevo.
+     public.css sigue diferida; el hero se pinta sin esperarla. #}
+  <style nonce="{{ request.state.csp_nonce }}">{% include "_landing_critical.css" %}</style>
+  <style nonce="{{ request.state.csp_nonce }}">{% include "_landing_impulso.css" %}</style>
+  <link rel="preload" href="{{ 'css/public.css' | asset }}" as="style">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}" media="print" id="css-publico">
+  <script nonce="{{ request.state.csp_nonce }}">
+  (function () {
+    var el = document.getElementById("css-publico");
+    if (!el) return;
+    var activar = function () { el.media = "all"; };
+    el.addEventListener("load", activar);
+    if (el.sheet) activar();
+  })();
+  </script>
+  {% set seo_skip_ga = true %}
+  {% set seo_skip_fonts = true %}
+  {% set seo_defer_jsonld = true %}
+  {% include "_seo_head.html" %}
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/pais_selector.js' | asset }}"></script>
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing-tour.js' | asset }}"></script>
+  <script nonce="{{ request.state.csp_nonce }}" defer src="{{ 'js/landing_impulso.js' | asset }}"></script>
+</head>
+<body class="landing landing-impulso">
+
+{% set nav_precios = ruta_precios_nav(request.state.ruta_original or request.url.path) %}
+{% set prueba_activa = hay_prueba_gratuita() %}
+{% set dias_prueba = dias_de_prueba() %}
+{% if prueba_activa %}
+  {% set cta_query = "origen=landing_impulso&alta=1&variante=impulso&intencion=tiempo" ~ ("&pais=" ~ pais_codigo if pais_codigo else "") %}
+  {% set cta_href = ("/en/acceso?" if _en else "/acceso?") ~ cta_query %}
+  {% set cta_texto = "I want my first estimate today" if _en else "Quiero mi primer presupuesto hoy" %}
+  {% set cta_micro = ("Start with " ~ dias_prueba ~ " free days · no card · no automatic charge") if _en else ("Empieza con " ~ dias_prueba ~ " días gratis · sin tarjeta · sin cobro automático") %}
+  {% set sticky_texto = ("Start with " ~ dias_prueba ~ " free days · no card") if _en else ("Empieza con " ~ dias_prueba ~ " días gratis · sin tarjeta") %}
+{% else %}
+  {% set cta_href = "/en/pago" if _en else "/pago" %}
+  {% set cta_texto = "I want to see the plans" if _en else "Quiero ver los planes" %}
+  {% set cta_micro = "Full access · no commitment · export your data anytime" if _en else "Acceso completo · sin permanencia · exporta tus datos cuando quieras" %}
+  {% set sticky_texto = "Choose your plan and start with your catalog already loaded" if _en else "Elige tu plan y empieza con tu catálogo ya cargado" %}
+{% endif %}
+
+{% macro boton_alta(clase="", evento="cta_registro", texto="") -%}
+<a class="lp2-btn lp2-btn-primary {{ clase }}" href="{{ cta_href }}" data-lp2-cta data-ga-event="{{ evento }}"><span data-lp2-cta-label>{{ texto or cta_texto }}</span></a>
+{%- endmacro %}
+
+{# Barra de país: 23 mercados, moneda/impuesto/terminología propios. #}
+<div class="pais-bar" id="pais-bar">
+  <div class="pais-bar-int">
+    <span class="pais-bar-label" aria-hidden="true">🌍</span>
+    <span class="pais-bar-strong">{{ L("Tu obra, tus precios", "Your work, your prices") }}</span>
+    <select id="pais-select" aria-label="{{ L('Elige tu país. Cada país tiene su propio catálogo de precios.', 'Choose your country. Each country has its own price catalog.') }}">
+      <option value="" {% if not pais_codigo %}selected{% endif %}>{{ L("Todos los países (genérico)", "All countries (generic)") }}</option>
+      {% for p in paises %}
+      <option value="{{ p.codigo }}" {% if p.codigo == pais_codigo %}selected{% endif %}>{{ p.bandera }} {{ (p.nombre_en if _en else p.nombre) }}</option>
+      {% endfor %}
+    </select>
+    <span class="pais-bar-badge">✨ {{ paises|length }} {{ L("mercados listos", "markets ready") }}</span>
+    <span class="pais-bar-hint" id="pais-bar-hint">{% if pais_actual %}{{ pais_actual.bandera }} {{ L("Catálogo de", "Catalog of") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }} · {{ pais_actual.id_fiscal }} · {{ texto_impuesto(pais_codigo, 'en' if _en else 'es') }}{% else %}{{ L("Elige tu país para ver su catálogo de precios (España · LatAm · Reino Unido · Estados Unidos · Australia)", "Choose your country to see its price catalog (Spain · LatAm · United Kingdom · United States · Australia)") }}{% endif %}</span>
+  </div>
+</div>
+
+{# Navegación propia: menos salidas, una única acción principal. #}
+<nav class="lp2-nav" aria-label="{{ L('Principal', 'Main') }}">
+  <a class="lp2-brand" href="{{ '/en-us/' if _en else '/' }}" aria-label="{{ product_name }} — {{ 'Home' if _en else 'Inicio' }}">
+    <span class="lp2-brand-mark" aria-hidden="true">C</span>
+    {{ product_name }}
+  </a>
+  <div class="lp2-nav-links">
+    {% include "_idioma_switch.html" %}
+    <a href="{{ '/en/como-funciona' if _en else '/como-funciona' }}">{{ L("Cómo funciona", "How it works") }}</a>
+    <a href="{{ '/en/calculadora' if _en else '/calculadora' }}">{{ L("Calculadora", "Calculator") }}</a>
+    <a class="nav-item" href="{{ nav_precios }}">{{ L("Precios", "Prices") }}</a>
+    <a href="{{ '/en/guia/presupuesto-de-obra' if _en else '/guia/presupuesto-de-obra' }}">{{ L("Guías", "Guides") }}</a>
+    <a href="{{ '/en/legal/preguntas' if _en else '/legal/preguntas' }}">{{ L("Preguntas frecuentes", "FAQ") }}</a>
+    <a href="{{ '/en/pago' if _en else '/pago' }}">{{ L("Planes", "Plans") }}</a>
+    <a href="{{ '/en/acceso' if _en else '/acceso' }}">{{ L("Iniciar sesión", "Sign in") }}</a>
+    <a class="lp2-nav-cta" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_nav">{% if prueba_activa %}{{ L("Empezar mis", "Start my") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}{% else %}{{ L("Ver planes", "See plans") }}{% endif %}</a>
+  </div>
+  <details class="lp2-nav-mobile">
+    <summary aria-label="{{ L('Abrir menú', 'Open menu') }}"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></summary>
+    <div class="lp2-nav-mobile-panel">
+      <a href="{{ '/en/como-funciona' if _en else '/como-funciona' }}">{{ L("Cómo funciona", "How it works") }}</a>
+      <a href="{{ '/en/calculadora' if _en else '/calculadora' }}">{{ L("Calculadora", "Calculator") }}</a>
+      <a href="{{ '/en/prices-comparison' if _en else '/precios' }}">{{ L("Precios y planes", "Pricing and plans") }}</a>
+      <a href="{{ '/en/guia/presupuesto-de-obra' if _en else '/guia/presupuesto-de-obra' }}">{{ L("Guías", "Guides") }}</a>
+      <a href="{{ '/en/legal/preguntas' if _en else '/legal/preguntas' }}">{{ L("Preguntas frecuentes", "FAQ") }}</a>
+      <a href="{{ '/en/acceso' if _en else '/acceso' }}">{{ L("Iniciar sesión", "Sign in") }}</a>
+      <a href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_menu_movil">{% if prueba_activa %}{{ L("Quiero empezar ya", "I want to start now") }}{% else %}{{ L("Ver planes", "See plans") }}{% endif %}</a>
+      {% include "_idioma_switch.html" %}
+    </div>
+  </details>
+</nav>
+
+{% if web is defined and web.avisos and web.avisos[0] %}
+{% set aviso = web.avisos[0] %}
+<div class="aviso-web aviso-{{ aviso.nivel }}" role="status">
+  <span aria-hidden="true">📢</span>
+  <div><strong>{{ aviso.titulo }}</strong>{% if aviso.mensaje %} — {{ aviso.mensaje }}{% endif %}</div>
+</div>
+{% endif %}
+
+<main>
+<header class="hero lp2-hero" id="lp2-hero">
+  <div class="lp2-hero-int">
+    <div class="lp2-hero-copy">
+      {% if pais_actual %}
+      <span class="hero-kicker" id="hero-kicker">{{ pais_actual.bandera }} {{ L("Sistema comercial para", "Commercial system for") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }} {{ L("· Construcción y reformas · catálogo de precios propio", "· Construction and remodeling · own price catalog") }}</span>
+      {% else %}
+      <span class="hero-kicker" id="hero-kicker">{{ L("🇪🇸 España · 🌎 Latinoamérica · 🇬🇧🇺🇸 Mercados de habla inglesa — Sistema comercial de obra y reformas · catálogo de precios por país", "🇪🇸 Spain · 🌎 Latin America · 🇬🇧🇺🇸 English-speaking markets — Commercial system for building and remodeling · price catalog by country") }}</span>
+      {% endif %}
+      {% if prueba_activa %}
+      <span class="hero-prueba">✨ {{ dias_prueba }} {{ L("días gratis · sin tarjeta de crédito", "free days · no credit card") }}</span>
+      {% endif %}
+
+      <h1><span class="lp2-h1-seo">{{ seo.h1 }}{% if _en and pais_actual and seo.nombre_pais not in seo.h1 %} — {{ seo.nombre_pais }}{% endif %}: {{ seo.h1_resalte }}.</span><span class="lp2-h1-gancho">{{ L("Deja de adivinar.", "Stop guessing.") }} <em>{{ L("Cobra con margen.", "Get paid with margin.") }}</em></span></h1>
+
+      <p class="sub lp2-hero-sub"><strong>{{ L("Tu próximo presupuesto puede salir con coste real, margen, tiempo de obra por partida y total, y PDF listo para enviar.", "Your next estimate can go out with real cost, margin, work time per item and total, and a PDF ready to send.") }}</strong> {{ L("No una suma de líneas: una decisión de negocio que tu cliente entiende a la primera.", "Not a sum of lines: a business decision your client understands the first time.") }}</p>
+      <p class="sub lp2-seo-sub">{{ seo.sub }}</p>
+      <p class="hero-definicion">{{ product_name }} {{ L("es un software de presupuestos de construcción: convierte tu catálogo de precios en presupuestos con coste interno, margen, tiempo de obra por partida y total, y PDF profesional, con la moneda, el impuesto y la terminología de obra de", "is construction estimating software: it turns your price catalog into estimates with internal cost, margin, work time per item and total, and a professional PDF, with the currency, tax and trade terms of") }} {{ seo.nombre_pais }}.</p>
+
+      <div class="lp2-hero-actions">
+        {{ boton_alta(evento="cta_hero") }}
+        <a class="lp2-text-link" href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Ver un presupuesto real antes de registrarte →", "See a real estimate before you sign up →") }}</a>
+      </div>
+      <p class="lp2-hero-micro">{{ cta_micro }}</p>
+
+      <div class="lp2-intent" aria-label="{{ L('Elige qué quieres resolver primero', 'Choose what you want to solve first') }}">
+        <span class="lp2-intent-label">{{ L("Yo vengo a…", "I'm here to…") }}</span>
+        <button type="button" class="lp2-intent-chip is-active" data-lp2-intent="tiempo" data-lp2-copy="{{ L('El tiempo de obra se calcula solo: horas por partida y total, con el plazo según tu cuadrilla.', 'Work time is calculated automatically: hours per item and total, with the duration based on your crew.') }}" data-lp2-cta="{{ L('Quiero calcular mis tiempos de obra', 'I want to calculate my work times') }}" data-ga-event="landing_intencion_tiempo">{{ L("Dejar de perder tardes", "Stop losing afternoons") }}</button>
+        <button type="button" class="lp2-intent-chip" data-lp2-intent="margen" data-lp2-copy="{{ L('Sabrás cuánto ganas en cada partida antes de enviar el precio.', 'You will know how much you earn on each item before sending the price.') }}" data-lp2-cta="{{ L('Quiero saber mi margen real', 'I want to know my real margin') }}" data-ga-event="landing_intencion_margen">{{ L("Saber mi margen real", "Know my real margin") }}</button>
+        <button type="button" class="lp2-intent-chip" data-lp2-intent="cierre" data-lp2-copy="{{ L('Un PDF claro, con versiones y cambios explicados, evita la llamada de «¿pero esto qué era?».', 'A clear PDF, with versions and explained changes, avoids the “wait, what was this?” call.') }}" data-lp2-cta="{{ L('Quiero cerrar más presupuestos', 'I want to win more estimates') }}" data-ga-event="landing_intencion_cierre">{{ L("Cerrar más presupuestos", "Win more estimates") }}</button>
+      </div>
+      <p class="lp2-intent-copy" id="lp2-intent-copy">{{ L("El tiempo de obra se calcula solo: horas por partida y total, con el plazo según tu cuadrilla.", "Work time is calculated automatically: hours per item and total, with the duration based on your crew.") }}</p>
+
+      {# Accesos directos: el servidor decide el orden por mercado. #}
+      <div class="hero-mercados" aria-label="{{ L('Mercados disponibles', 'Available markets') }}">
+        {% set accesos = destacados | default(paises[:6]) %}
+        {% for p in accesos %}
+        <a class="hero-mercado" href="{{ ruta_mercado(p.codigo) }}" {% if p.codigo == pais_codigo %}aria-current="true"{% endif %}><span>{{ p.bandera }}</span>{{ (p.nombre_en if _en else p.nombre) }}<small>{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en' if _en else 'es') }}</small></a>
+        {% endfor %}
+        {% if paises|length > accesos|length %}
+        <span class="hero-mercado hero-mercado-mas">+ {{ paises|length - accesos|length }} {{ L("mercados", "markets") }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="lp2-hero-visual" aria-hidden="true">
+      <div class="lp2-demo">
+        <div class="lp2-demo-top">
+          <div>
+            <span>{{ L("Presupuesto ·", "Estimate ·") }} {{ product_name }}</span>
+            <strong>{{ ej.obra }}</strong>
+            <small>{{ ej.residencia }} · {{ ej.iva_txt }} {{ L("· PR-2026-014", "· PR-2026-014") }}</small>
+          </div>
+          <span class="lp2-demo-status">{{ L("listo para enviar", "ready to send") }}</span>
+        </div>
+        <div class="lp2-demo-total">
+          <span>{{ L("Presupuesto total", "Total estimate") }}</span>
+          <strong>{{ ej.hero.total }}</strong>
+          <em>{{ L("con coste interno, beneficio y plazo ya calculados", "with internal cost, profit and duration already calculated") }}</em>
+        </div>
+        <div class="lp2-demo-kpis">
+          <div class="lp2-demo-kpi is-profit"><span>{{ L("Beneficio", "Profit") }}</span><strong>{{ ej.resumen.beneficio }}</strong><small>{{ ej.resumen.margen }} {{ L("s/coste", "on cost") }}</small></div>
+          <div class="lp2-demo-kpi"><span>{{ L("Mano de obra", "Labor") }}</span><strong>{{ ej.resumen.horas }}</strong><small>{{ ej.resumen.horas_split }}</small></div>
+          <div class="lp2-demo-kpi"><span>{{ L("Duración", "Duration") }}</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+          <div class="lp2-demo-kpi"><span>{{ L("Catálogo", "Catalog") }}</span><strong>{{ catalogo().partidas_txt }}</strong><small>{{ L("partidas descompuestas", "broken-down items") }}</small></div>
+        </div>
+        <div class="lp2-demo-flow"><span>{{ L("Catálogo", "Catalog") }}</span><i></i><span>{{ L("Costes", "Costs") }}</span><i></i><span>{{ L("Margen", "Margin") }}</span><i></i><span>{{ L("Plazo", "Duration") }}</span><i></i><span>PDF</span></div>
+        <div class="lp2-demo-lines">
+          {% for c in ej.hero.caps[:4] %}
+          <div class="lp2-demo-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>
+          {% endfor %}
+        </div>
+        <div class="lp2-demo-foot">{{ L("Ejemplo en", "Example in") }} {{ ej.moneda }}{% if ej.convierte %} {{ L("· tasa de referencia", "· reference rate") }} {{ ej.tasa_txt }} {{ ej.moneda }}{{ L("/US$ (", "/US$ (") }}{{ ej.tasa_fecha }}){% endif %} · {{ catalogo().lineas_precio_txt }} {{ L("líneas de precio listas para usar.", "price lines ready to use.") }}</div>
+      </div>
+      <div class="lp2-float lp2-float-a">💰 <strong>{{ ej.margen_txt }}</strong> {{ L("margen automático", "automatic margin") }}</div>
+      <div class="lp2-float lp2-float-b">⏱️ <strong>{{ ej.resumen.duracion }}</strong> {{ L("con tu cuadrilla", "with your crew") }}</div>
+    </div>
+  </div>
+
+  <div class="lp2-proof" aria-label="{{ L('Pruebas verificables del producto', 'Verifiable product proof') }}">
+    <div class="lp2-proof-item"><strong>{{ catalogo().lineas_precio_txt }}</strong><span>{{ L("líneas de precio: partidas + recursos", "price lines: items + resources") }}</span></div>
+    <div class="lp2-proof-item"><strong>{{ catalogo().lineas_descomp_txt }}</strong><span>{{ L("líneas de APU editables", "editable unit-price lines") }}</span></div>
+    <div class="lp2-proof-item"><strong><em>{{ paises|length }}</em></strong><span>{{ L("mercados con moneda, impuesto y vocabulario propios", "markets with their own currency, tax and vocabulary") }}</span></div>
+    <div class="lp2-proof-item"><strong>{% if prueba_activa %}{{ dias_prueba }} {{ L("días", "days") }}{% else %}{{ L("2 planes", "2 plans") }}{% endif %}</strong><span>{% if prueba_activa %}{{ L("para probarlo con tus datos, sin tarjeta", "to try it with your data, no card") }}{% else %}{{ L("claros y sin permanencia para decidir", "clear and no commitment to decide") }}{% endif %}</span></div>
+  </div>
+</header>
+
+<div class="lp2-ticker" aria-hidden="true">
+  <div class="lp2-ticker-track">
+    <span>{{ L("Coste real", "Real cost") }}</span><span>{{ L("Margen en vivo", "Live margin") }}</span><span>{{ L("Plazos de cuadrilla", "Crew durations") }}</span><span>{{ L("APU editable", "Editable unit prices") }}</span><span>{{ L("Excel y BC3", "Excel and BC3") }}</span><span>{{ L("Planos medidos", "Measured plans") }}</span><span>{{ L("PDF con tu logo", "PDF with your logo") }}</span><span>{{ L("Versiones y cambios", "Versions and changes") }}</span><span>{{ L("Proyectos y cobros", "Projects and payments") }}</span><span>{{ L("Tus datos son tuyos", "Your data is yours") }}</span>
+    <span>{{ L("Coste real", "Real cost") }}</span><span>{{ L("Margen en vivo", "Live margin") }}</span><span>{{ L("Plazos de cuadrilla", "Crew durations") }}</span><span>{{ L("APU editable", "Editable unit prices") }}</span><span>{{ L("Excel y BC3", "Excel and BC3") }}</span><span>{{ L("Planos medidos", "Measured plans") }}</span><span>{{ L("PDF con tu logo", "PDF with your logo") }}</span><span>{{ L("Versiones y cambios", "Versions and changes") }}</span><span>{{ L("Proyectos y cobros", "Projects and payments") }}</span><span>{{ L("Tus datos son tuyos", "Your data is yours") }}</span>
+  </div>
+</div>
+
+<section class="lp2-section lp2-pain lp2-defer" id="problema">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("El coste de seguir igual", "The cost of staying the same") }}</span>
+      <h2 class="lp2-section-title">{{ L("No es «hacer presupuestos». Es", "It's not “making estimates”. It's") }} <em>{{ L("no saber si estás ganando dinero", "not knowing if you're making money") }}</em> {{ L("hasta que es tarde.", "until it's too late.") }}</h2>
+      <p class="lp2-lead">{{ L("El problema no te quita una hora: te quita la capacidad de decir que sí a la obra correcta, con un precio que puedas defender.", "The problem doesn't take an hour from you: it takes away your ability to say yes to the right job, at a price you can defend.") }}</p>
+    </div>
+    <div class="lp2-pain-grid">
+      <article class="lp2-pain-card is-bad">
+        <h3>{{ L("Hoy, con Excel y plantillas", "Today, with Excel and templates") }}</h3>
+        <ul>
+          <li>{{ L("Precios que viven en la cabeza de una sola persona.", "Prices that live in one person's head.") }}</li>
+          <li>{{ L("Cambia el cemento y hay que buscar y reemplazar a mano.", "Cement changes and you have to find and replace by hand.") }}</li>
+          <li>{{ L("El cliente pide dos ajustes y rehaces el documento entero.", "The client asks for two adjustments and you redo the whole document.") }}</li>
+          <li>{{ L("Nadie recuerda qué versión se aprobó ni con qué margen.", "Nobody remembers which version was approved or with what margin.") }}</li>
+        </ul>
+      </article>
+      <article class="lp2-pain-card is-good">
+        <h3>{{ L("Con", "With") }} {{ product_name }}{{ L(", desde el primer presupuesto", ", from the first estimate") }}</h3>
+        <ul>
+          <li>{{ L("Catálogo de", "Catalog of") }} {{ catalogo().partidas_txt }} {{ L("partidas ya descompuestas.", "items already broken down.") }}</li>
+          <li>{{ L("Un precio de recurso recalcula todas sus partidas en cascada.", "One resource price recalculates all its items in cascade.") }}</li>
+          <li>{{ L("Beneficio por partida, capítulo y total, visible antes de enviar.", "Profit per item, section and total, visible before sending.") }}</li>
+          <li>{{ L("PDF con tu logo, versiones inmutables y resumen de cambios.", "PDF with your logo, immutable versions and change summary.") }}</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="lp2-calc">
+      <div>
+        <span class="lp2-eyebrow lp2-kicker">{{ L("calcúlalo con tus números", "calculate it with your numbers") }}</span>
+        <h3>{{ L("¿Cuántas horas se te van al mes?", "How many hours do you lose each month?") }}</h3>
+        <p>{{ L("Introduce tu ritmo real. Esto no sale de nuestros servidores ni se guarda: es una cuenta en tu navegador, antes de pedirte nada.", "Enter your real pace. This doesn't leave our servers or get saved: it's a calculation in your browser, before asking you for anything.") }}</p>
+      </div>
+      <div>
+        <div class="lp2-calc-fields">
+          <div class="lp2-calc-field">
+            <label for="lp2-presupuestos">{{ L("Presupuestos por semana", "Estimates per week") }}</label>
+            <input id="lp2-presupuestos" type="number" inputmode="numeric" min="0" max="200" step="1" value="4">
+          </div>
+          <div class="lp2-calc-field">
+            <label for="lp2-horas">{{ L("Horas por presupuesto", "Hours per estimate") }}</label>
+            <input id="lp2-horas" type="number" inputmode="decimal" min="0" max="40" step="0.5" value="3">
+          </div>
+        </div>
+        <div class="lp2-calc-result">
+          <div><span>{{ L("Tiempo dedicado a armar, revisar y rehacer", "Time spent building, reviewing and redoing") }}</span><strong id="lp2-horas-perdidas">{{ L("52 h/mes", "52 h/month") }}</strong></div>
+          <a class="lp2-btn lp2-btn-primary" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_calculadora"><span id="lp2-calc-cta-label" data-lp2-cta-label>{{ L("Quiero recuperar esas horas", "I want those hours back") }}</span></a>
+        </div>
+        <p class="lp2-calc-note" id="lp2-calc-frase">{{ L("Son tus números, no una promesa nuestra: tiempo que hoy se va en armar, revisar y rehacer presupuestos.", "These are your numbers, not our promise: time that today goes into building, reviewing and redoing estimates.") }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-map lp2-defer" id="todo">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("Todo, de un vistazo", "Everything at a glance") }}</span>
+      <h2 class="lp2-section-title">{{ L("Del catálogo al cobro,", "From catalog to payment,") }} <em>{{ L("sin cambiar de herramienta", "without switching tools") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("Esto es lo que realmente incluye", "This is what") }} {{ product_name }}{{ L(". No es una lista de funciones sueltas: es el recorrido completo de una venta de obra.", "actually includes. It's not a list of loose features: it's the full journey of a construction sale.") }}</p>
+    </div>
+    <div class="lp2-flow" role="region" aria-label="{{ L('Recorrido completo del producto', 'Full product tour') }}" tabindex="0">
+      <span class="lp2-flow-step">{{ L("Catálogo por país", "Catalog by country") }}</span>
+      <span class="lp2-flow-step">{{ L("Excel / BC3 / planos", "Excel / BC3 / plans") }}</span>
+      <span class="lp2-flow-step is-key">{{ L("Coste + margen", "Cost + margin") }}</span>
+      <span class="lp2-flow-step is-key">{{ L("Tiempos por partida + total", "Times per item + total") }}</span>
+      <span class="lp2-flow-step">{{ L("Opciones y packs", "Options and packs") }}</span>
+      <span class="lp2-flow-step is-key">{{ L("PDF y firma", "PDF and signature") }}</span>
+      <span class="lp2-flow-step">{{ L("Cambios y versiones", "Changes and versions") }}</span>
+      <span class="lp2-flow-step">{{ L("Proyecto y cobros", "Project and payments") }}</span>
+    </div>
+    <div class="lp2-map-grid">
+      <article class="lp2-map-card is-featured"><span class="lp2-map-num">{{ L("01 · EL NÚCLEO", "01 · THE CORE") }}</span><span class="lp2-map-icon">💰</span><h3>{{ L("Beneficio real, no una suma", "Real profit, not a sum") }}</h3><p>{{ L("Cada partida guarda materiales, mano de obra, equipo y complementarios. El margen se recalcula en vivo por partida, capítulo y total.", "Each item stores materials, labor, equipment and complements. Margin recalculates live per item, section and total.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("02 · BASE DE PRECIOS", "02 · PRICE BASE") }}</span><span class="lp2-map-icon">📚</span><h3>{{ catalogo().lineas_precio_txt }} {{ L("líneas listas", "lines ready") }}</h3><p>{{ catalogo().partidas_txt }} {{ L("partidas +", "items +") }} {{ catalogo().recursos_txt }} {{ L("recursos, con", "resources, with") }} {{ catalogo().lineas_descomp_txt }} {{ L("líneas de APU editables. No empiezas de cero.", "editable unit-price lines. You don't start from zero.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("03 · IMPORTACIÓN", "03 · IMPORT") }}</span><span class="lp2-map-icon">📥</span><h3>{{ L("Excel, BC3 y tus planos", "Excel, BC3 and your plans") }}</h3><p>{{ L("Importa descompuestos CYPE (.xlsx), BC3 (FIEBDC-3) y mide líneas, áreas y conteos sobre PNG/JPG/PDF con escala calibrada.", "Import CYPE breakdowns (.xlsx), BC3 (FIEBDC-3) and measure lines, areas and counts on PNG/JPG/PDF with calibrated scale.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("04 · TIEMPO", "04 · TIME") }}</span><span class="lp2-map-icon">⏱️</span><h3>{{ L("Tiempo automático, partida a partida", "Automatic time, item by item") }}</h3><p>{{ L("Horas por partida desde cantidad y rendimientos; total por capítulo y obra, y duración estimada con tu jornada y cuadrilla.", "Hours per item from quantity and productivity; total per section and job, and estimated duration with your workday and crew.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("05 · VENTA", "05 · SALES") }}</span><span class="lp2-map-icon">🧱</span><h3>{{ L("Opciones, alternativas y packs", "Options, alternatives and packs") }}</h3><p>{{ L("Productos con foto,", "Products with photo,") }} {{ catalogo().packs }} {{ L("packs de estancia y capítulos completos escalados a los m² reales de la obra.", "room packs and full sections scaled to the real area of the job.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("06 · DOCUMENTO", "06 · DOCUMENT") }}</span><span class="lp2-map-icon">📄</span><h3>{{ L("PDF que da confianza", "A PDF that builds trust") }}</h3><p>{{ L("Logo, condiciones, garantías, firmas, anexos de planos y estados. Envío por WhatsApp o email, con enlace privado opcional.", "Logo, conditions, warranties, signatures, plan annexes and statuses. Send by WhatsApp or email, with optional private link.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("07 · CONTROL", "07 · CONTROL") }}</span><span class="lp2-map-icon">🔁</span><h3>{{ L("Cambios claros y versiones", "Clear changes and versions") }}</h3><p>{{ L("Revisión antes de enviar, alertas de catálogo sano, versiones inmutables y resumen de cambios para reenviar sin confusión.", "Review before sending, healthy-catalog alerts, immutable versions and change summary to resend without confusion.") }}</p></article>
+      <article class="lp2-map-card"><span class="lp2-map-num">{{ L("08 · NEGOCIO", "08 · BUSINESS") }}</span><span class="lp2-map-icon">📊</span><h3>{{ L("Proyectos, cobros y equipo", "Projects, payments and team") }}</h3><p>{{ L("De presupuesto aprobado a proyecto: cambios de alcance, documentos de cobro, saldos, roles de equipo y reportes exportables.", "From approved estimate to project: scope changes, payment documents, balances, team roles and exportable reports.") }}</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-tiempos lp2-defer" id="tiempos-obra" aria-labelledby="tiempos-obra-title">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("Tiempo de obra automático", "Automatic work time") }}</span>
+      <h2 class="lp2-section-title" id="tiempos-obra-title">{{ L("De las horas de cada partida", "From the hours of each item") }} <em>{{ L("al plazo total de la obra", "to the total job duration") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("No tienes que sumar horas en otra hoja:", "You don't have to add hours in another sheet:") }} {{ product_name }} {{ L("calcula el tiempo de cada partida con su cantidad y sus rendimientos, lo acumula por capítulo y presupuesto, y estima la duración según la jornada y la cuadrilla.", "calculates the time of each item from its quantity and productivity, accumulates it by section and estimate, and estimates duration based on workday and crew.") }}</p>
+    </div>
+    <div class="lp2-tiempos-grid">
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">1</span><h3>{{ L("Por partida", "Per item") }}</h3><p>{{ L("Cantidad × horas por unidad. Usa el descompuesto, el tiempo del catálogo o el ajuste manual que introduzcas.", "Quantity × hours per unit. Uses the breakdown, catalog time or the manual adjustment you enter.") }}</p></article>
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">2</span><h3>{{ L("Por capítulo y total", "Per section and total") }}</h3><p>{{ L("Suma automáticamente las partidas activas. Si cambias una cantidad o un rendimiento, el total se recalcula.", "Automatically sums active items. If you change a quantity or productivity, the total recalculates.") }}</p></article>
+      <article class="lp2-tiempos-card"><span class="lp2-tiempos-step">3</span><h3>{{ L("Plazo con tu cuadrilla", "Duration with your crew") }}</h3><p>{{ L("Convierte horas en jornadas de trabajo y simula composición y número de cuadrillas para estimar la duración.", "Converts hours into workdays and simulates composition and number of crews to estimate duration.") }}</p></article>
+    </div>
+    <div class="lp2-tiempos-ejemplo" role="group" aria-label="{{ L('Ejemplo de tiempos del presupuesto de esta página', 'Work time example for this page\'s estimate') }}">
+      <div><span>{{ L("Ejemplo de esta página", "Example on this page") }}</span><strong>{{ ej.resumen.horas }}</strong><small>{{ L("en las partidas del ejemplo", "in the example items") }}</small></div>
+      <div><span>{{ L("Duración estimada", "Estimated duration") }}</span><strong>{{ ej.resumen.duracion }}</strong><small>{{ ej.resumen.cuadrilla }}</small></div>
+      <p>{{ L("La estimación parte de los datos disponibles; las partidas sin tiempo se señalan para que puedas completarlas o ajustarlas.", "The estimate starts from available data; items without time are flagged so you can complete or adjust them.") }}</p>
+    </div>
+    <div class="lp2-tiempos-cta">{{ boton_alta(evento="cta_tiempos", texto=("I want to calculate my work times" if _en else "Quiero calcular mis tiempos de obra")) }}</div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-value lp2-defer" id="valor-antes">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("valor antes del registro", "value before signup") }}</span>
+      <h2 class="lp2-section-title">{{ L("No te pedimos que confíes a ciegas.", "We don't ask you to trust blindly.") }} <em>{{ L("Compruébalo antes", "Check it first") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("Tres cosas que puedes hacer ahora, sin cuenta: son la mejor manera de decidir si esto encaja con tu forma de trabajar.", "Three things you can do now, without an account: the best way to decide if this fits how you work.") }}</p>
+    </div>
+    <div class="lp2-value-grid">
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Mira un presupuesto completo", "See a full estimate") }}</h3><p>{{ L("Abre el PDF de ejemplo: capítulos, mediciones, coste interno, beneficio, impuesto de tu mercado y un documento con aspecto profesional.", "Open the sample PDF: sections, measurements, internal cost, profit, your market's tax and a professional-looking document.") }}</p><a href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Abrir el PDF de ejemplo →", "Open the sample PDF →") }}</a></article>
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Revisa precios y APU reales", "Review real prices and unit prices") }}</h3><p>{{ L("El catálogo público muestra partidas con su descompuesto: materiales, mano de obra y equipo. Puedes comprobar de dónde sale cada número.", "The public catalog shows items with their breakdown: materials, labor and equipment. You can check where each number comes from.") }}</p><a href="{{ catalogo_precios.indice if catalogo_precios else '/precios-comparados' }}">{{ L("Explorar precios de obra →", "Explore construction prices →") }}</a></article>
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Calcula tu coste de oportunidad", "Calculate your opportunity cost") }}</h3><p>{{ L("Usa tus propios presupuestos por semana y horas por documento. El resultado es inmediato y no se envía a ningún servidor.", "Use your own estimates per week and hours per document. The result is immediate and isn't sent to any server.") }}</p><a href="#problema" data-ga-event="ir_calculadora">{{ L("Usar la calculadora de arriba →", "Use the calculator above →") }}</a></article>
+    </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-activation lp2-defer" id="primer-valor">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("ya has empezado", "you've already started") }}</span>
+      <h2 class="lp2-section-title">{{ L("Tu primer presupuesto no empieza en cero.", "Your first estimate doesn't start at zero.") }} <em>{{ L("El catálogo ya está", "The catalog is already there") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("La causa número uno de abandono en una herramienta así es llegar a una pantalla vacía. Por eso el paso más pesado viene resuelto de fábrica.", "The number one cause of abandonment in a tool like this is arriving at an empty screen. That's why the heaviest step comes solved from the factory.") }}</p>
+    </div>
+    <div class="lp2-progress" role="img" aria-label="{{ L('Paso 1 de 3 ya completado: catálogo listo', 'Step 1 of 3 already complete: catalog ready') }}"><span></span></div>
+    <div class="lp2-steps">
+      <article class="lp2-step is-done"><span class="lp2-step-mark">✓</span><h3>{{ L("1 · Catálogo de tu país", "1 · Your country's catalog") }}</h3><p>{{ catalogo().partidas_txt }} {{ L("partidas,", "items,") }} {{ catalogo().recursos_txt }} {{ L("precios de recursos,", "resource prices,") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) if pais_actual else seo.nombre_pais }} {{ L("con su moneda, impuesto y terminología. Ya incluido al crear tu espacio.", "with its currency, tax and terminology. Already included when you create your space.") }}</p></article>
+      <article class="lp2-step"><span class="lp2-step-mark">2</span><h3>{{ L("2 · Tu primer cliente y obra", "2 · Your first client and job") }}</h3><p>{{ L("Elige un pack de estancia, pega partidas desde Excel o importa tu BC3. Los totales, el beneficio y las horas aparecen mientras escribes.", "Choose a room pack, paste items from Excel or import your BC3. Totals, profit and hours appear as you type.") }}</p></article>
+      <article class="lp2-step"><span class="lp2-step-mark">3</span><h3>{{ L("3 · PDF con tu logo", "3 · PDF with your logo") }}</h3><p>{{ L("Revisa, descarga y envía por WhatsApp o email. Ese es el momento de valor: un documento que puedes presentar, no una configuración interminable.", "Review, download and send by WhatsApp or email. That's the value moment: a document you can present, not endless setup.") }}</p></article>
+    </div>
+    <div class="lp2-activation-cta">
+      {{ boton_alta(evento="cta_activacion", texto=("I want to finish those 2 steps" if _en else "Quiero terminar esos 2 pasos")) }}
+      <p>{% if prueba_activa %}{{ L("Tu prueba empieza con el catálogo cargado, no con un tutorial.", "Your trial starts with the catalog loaded, not a tutorial.") }}{% else %}{{ L("El plan incluye el catálogo cargado, no un tutorial.", "The plan includes the loaded catalog, not a tutorial.") }}{% endif %}</p>
+    </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-showcase lp2-defer" id="producto">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("producto real", "real product") }}</span>
+      <h2 class="lp2-section-title">{{ L("Mira el dato que más importa:", "Look at the number that matters most:") }} <em>{{ L("cuánto ganas", "how much you earn") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("Un presupuesto de remodelación de baño con partidas y precios reales del catálogo, en", "A bathroom remodel estimate with real catalog items and prices, in") }} {{ ej.moneda }}{{ L(". Cada cifra sale de las filas visibles.", ". Every figure comes from the visible rows.") }}</p>
+    </div>
+
+    <div class="tour-stage" id="tour-stage">
+      <div class="tour-slide active">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span>{{ L("Presupuesto PR-2026-014", "Estimate PR-2026-014") }}</span><strong>{{ ej.obra }} · {{ ej.residencia }}</strong></div><span class="t-pill t-pill-primary">{{ ej.hero.total }}</span></div>
+              <div class="t-summary">
+                <div class="t-sum"><span>{{ L("Margen", "Margin") }}</span><strong class="pos">{{ ej.resumen.margen }}</strong></div>
+                <div class="t-sum"><span>{{ L("Beneficio", "Profit") }}</span><strong class="pos">{{ ej.resumen.beneficio }}</strong></div>
+                <div class="t-sum"><span>{{ L("Duración", "Duration") }}</span><strong>{{ ej.resumen.duracion }}</strong></div>
+              </div>
+              <div class="t-list-head">{{ L("Capítulos del presupuesto", "Estimate sections") }}</div>
+              {% for c in ej.hero.caps[:4] %}<div class="t-line"><span>{{ c.nombre }}</span><strong>{{ c.importe }}</strong></div>{% endfor %}
+              <div class="t-total"><span>{{ L("PRESUPUESTO TOTAL ·", "TOTAL ESTIMATE ·") }} {{ ej.iva_txt }}</span><strong>{{ ej.tot.total }}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption"><span class="tour-step">{{ L("Paso 1 · Tu día a día", "Step 1 · Your day to day") }}</span><h3>{{ L("El total, el beneficio y el tiempo de obra en la misma pantalla.", "Total, profit and work time on the same screen.") }}</h3><p>{{ L("Nada de abrir tres hojas para saber si el precio deja margen y cuánto tardará la obra.", "No opening three sheets to know if the price leaves margin and how long the job will take.") }} {{ product_name }} {{ L("calcula costes, horas por partida y duración desde los datos de cada recurso.", "calculates costs, hours per item and duration from each resource's data.") }}</p>{{ boton_alta("tour-cta", "cta_tour_1", ("I want to see it with my prices" if _en else "Quiero verlo con mis precios")) }}</div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span>{{ L("Constructor ·", "Builder ·") }} {{ ej.tour.cap4_titulo }}</span><strong>{{ L("Partidas y productos", "Items and products") }}</strong></div><span class="t-pill">{{ L("Editable", "Editable") }}</span></div>
+              {% for p in ej.tour.cap4[:4] %}<div class="t-line"><span>{{ (p.nombre_en if _en else p.nombre) }}</span><strong>{{ p.importe }}</strong></div>{% endfor %}
+              <div class="t-list-head">{{ L("Productos a elección del cliente", "Products chosen by the client") }}</div>
+              <div class="t-productos">
+                {% for pr in ej.productos[:3] %}
+                <div class="t-producto"><img src="{{ pr.img | asset }}" alt="{{ pr.nombre }}" width="120" height="78" loading="lazy" decoding="async"><span>{{ pr.nombre }}</span><strong>{{ pr.precio }}</strong></div>
+                {% endfor %}
+              </div>
+              <div class="t-total"><span>{{ L("TOTAL CON OPCIONES", "TOTAL WITH OPTIONS") }}</span><strong>{{ ej.tour.total }}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption"><span class="tour-step">{{ L("Paso 2 · Arma y vende", "Step 2 · Build and sell") }}</span><h3>{{ L("Inserta un pack, pega desde Excel y ofrece alternativas.", "Insert a pack, paste from Excel and offer alternatives.") }}</h3><p>{{ L("Capítulos, partidas, mediciones, productos con foto y totales en vivo. Todo editable, con autosave y atajos para escribir sin ratón.", "Sections, items, measurements, products with photo and live totals. Everything editable, with autosave and shortcuts to type without a mouse.") }}</p>{{ boton_alta("tour-cta", "cta_tour_2", "I want to build mine" if _en else "Quiero armar el mío") }}</div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span>{{ L("APU real del catálogo", "Real catalog unit price") }}</span><strong>{{ ej.apu.titulo if ej.apu.disponible else 'Análisis de precios unitarios' }}</strong></div><span class="t-pill t-pill-primary">{{ ej.apu.margen if ej.apu.disponible else ej.margen_txt }}</span></div>
+              {% if ej.apu.disponible %}
+              <div class="t-apu">
+                {% for f in ej.apu.filas[:5] %}<div class="t-apu-row"><span>{{ f.nombre }}</span><span>{{ f.rend }}</span><strong>{{ f.importe }}</strong></div>{% endfor %}
+                <div class="apu-fila apu-sub apu-sub-comp" role="row" hidden><span>{{ L("Complementarios", "Complements") }}</span><span>{{ ej.apu.comp_pct }} %</span><span>{{ ej.apu.comp }}</span></div>
+                <div class="t-apu-row is-total"><span>{{ L("COSTE DIRECTO", "DIRECT COST") }}</span><span>{{ ej.apu.coste }}</span><span>{{ ej.apu.precio }}</span></div>
+              </div>
+              {% endif %}
+              <div class="t-list-head">{{ L("Cambia un precio → se recalcula toda la cascada", "Change one price → the whole cascade recalculates") }}</div>
+              <div class="t-ben"><span>{{ L("Materiales:", "Materials:") }} {{ ej.apu.materiales if ej.apu.disponible else ej.tot.obra }}</span><strong class="pos">{{ L("Beneficio:", "Profit:") }} {{ ej.resumen.beneficio }}</strong></div>
+              <div class="t-ben"><span>{{ L("Mano de obra:", "Labor:") }} {{ ej.apu.mano_obra if ej.apu.disponible else ej.resumen.horas }}</span><strong class="pos">{{ L("Margen:", "Margin:") }} {{ ej.resumen.margen }}</strong></div>
+              <div class="t-total"><span>{{ L("PRECIO DE VENTA", "SELLING PRICE") }}</span><strong>{{ ej.tot.total }}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption"><span class="tour-step">{{ L("Paso 3 · Coste conectado", "Step 3 · Connected cost") }}</span><h3>{{ L("Sube el cemento una vez. Todo lo demás se ajusta solo.", "Raise cement once. Everything else adjusts itself.") }}</h3><p>{{ L("El APU de cada partida lleva recursos, rendimientos y precios. Editar un recurso actualiza partidas, capítulos y presupuesto sin buscar y reemplazar.", "Each item's unit price carries resources, productivity and prices. Editing a resource updates items, sections and estimate without find and replace.") }}</p>{{ boton_alta("tour-cta", "cta_tour_3", ("I want to try that cascade" if _en else "Quiero probar esa cascada")) }}</div>
+      </div>
+
+      <div class="tour-slide">
+        <div class="tour-visual">
+          <div class="t-window">
+            <div class="t-bar"><i></i><i></i><i></i></div>
+            <div class="t-body">
+              <div class="t-head"><div><span>{{ L("Documento comercial", "Commercial document") }}</span><strong>{{ L("PDF con tu logo", "PDF with your logo") }}</strong></div><span class="t-pill">{{ L("Listo para enviar", "Ready to send") }}</span></div>
+              <div class="t-summary">
+                <div class="t-sum"><span>{{ L("Obra", "Job") }}</span><strong>{{ ej.tot.obra }}</strong></div>
+                <div class="t-sum"><span>{{ ej.iva_txt }}</span><strong>{{ ej.tot.iva }}</strong></div>
+                <div class="t-sum"><span>{{ L("Total", "Total") }}</span><strong>{{ ej.tot.total }}</strong></div>
+              </div>
+              <div class="t-list-head">{{ L("Incluye", "Includes") }}</div>
+              <div class="t-line"><span>{{ L("Capítulos, mediciones y condiciones", "Sections, measurements and conditions") }}</span><strong>✓</strong></div>
+              <div class="t-line"><span>{{ L("Firmas, garantías y anexos de planos", "Signatures, warranties and plan annexes") }}</span><strong>✓</strong></div>
+              <div class="t-line"><span>{{ L("Versiones y resumen de cambios", "Versions and change summary") }}</span><strong>✓</strong></div>
+              <div class="t-line"><span>{{ L("WhatsApp y email, como ya trabajas", "WhatsApp and email, as you already work") }}</span><strong>✓</strong></div>
+              <div class="t-total"><span>{{ L("ENVÍO", "SEND") }}</span><strong>{{ L("1 clic", "1 click") }}</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-caption"><span class="tour-step">{{ L("Paso 4 · Cierra", "Step 4 · Close") }}</span><h3>{{ L("Un PDF que tu cliente entiende y tú puedes defender.", "A PDF your client understands and you can defend.") }}</h3><p>{{ L("Si llama con cambios, reenvías una versión clara con el total anterior, el nuevo y lo que cambió. Sin «¿cuál era la buena?».", "If they call with changes, you resend a clear version with the previous total, the new one and what changed. No “which one was the right one?”.") }}</p>{{ boton_alta("tour-cta", "cta_tour_4", "I want to send mine" if _en else "Quiero enviar el mío") }}</div>
+      </div>
+    </div>
+
+    <div class="tour-nav">
+      <button type="button" class="tour-btn" id="tour-prev" aria-label="{{ L('Paso anterior', 'Previous step') }}">‹</button>
+      <div class="tour-dots" role="tablist" aria-label="{{ L('Pasos del recorrido', 'Tour steps') }}">
+        <button type="button" class="tour-dot active" role="tab" aria-selected="true" aria-label="{{ L('Paso 1', 'Step 1') }}"></button>
+        <button type="button" class="tour-dot" role="tab" aria-selected="false" aria-label="{{ L('Paso 2', 'Step 2') }}"></button>
+        <button type="button" class="tour-dot" role="tab" aria-selected="false" aria-label="{{ L('Paso 3', 'Step 3') }}"></button>
+        <button type="button" class="tour-dot" role="tab" aria-selected="false" aria-label="{{ L('Paso 4', 'Step 4') }}"></button>
+      </div>
+      <button type="button" class="tour-btn" id="tour-next" aria-label="{{ L('Paso siguiente', 'Next step') }}">›</button>
+      <button type="button" class="tour-btn" id="tour-pause" hidden
+        aria-label="{{ L('Pausar recorrido', 'Pause tour') }}"
+        data-label-pause="{{ L('Pausar recorrido', 'Pause tour') }}"
+        data-label-play="{{ L('Reanudar recorrido', 'Resume tour') }}">❚❚</button>
+    </div>
+
+    <div class="lp2-partidas" role="group" aria-label="{{ L('Partidas reales del ejemplo, con la terminología de', 'Real example items, with the trade terms of') }} {{ seo.nombre_pais }}">
+      {% for c in ej.caps %}{% for p in c.partidas[:2] %}<span>{{ (p.nombre_en if _en else p.nombre) }}</span>{% endfor %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="lp2-section lp2-compare lp2-defer" id="comparativa">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("la diferencia, sin letra pequeña", "the difference, no fine print") }}</span>
+      <h2 class="lp2-section-title">{{ L("Un generador suma líneas.", "A generator adds lines.") }} <em>{{ product_name }} {{ L("baja hasta el recurso", "goes down to the resource") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("Aquí no compares cantidad de botones, compara si puedes responder tres preguntas antes de enviar un precio: ¿cuánto me cuesta?, ¿cuánto gano?, ¿cuánto tardo?", "Here don't compare number of buttons; compare whether you can answer three questions before sending a price: how much does it cost me?, how much do I earn?, how long does it take?") }}</p>
+    </div>
+    <div class="lp2-compare-grid">
+      <article class="lp2-compare-card"><h3>{{ L("Excel / generador típico", "Excel / typical generator") }}</h3><ul><li><strong>{{ L("Precio:", "Price:") }}</strong> {{ L("una lista plana por partida.", "a flat list per item.") }}</li><li><strong>{{ L("Cambios:", "Changes:") }}</strong> {{ L("buscar, reemplazar y rezar.", "find, replace and pray.") }}</li><li><strong>{{ L("Margen:", "Margin:") }}</strong> {{ L("fórmulas frágiles o solo el total.", "fragile formulas or only the total.") }}</li><li><strong>{{ L("Plazo:", "Duration:") }}</strong> {{ L("a ojo, con la experiencia de quien esté ese día.", "by eye, with the experience of whoever is there that day.") }}</li><li><strong>{{ L("Entrega:", "Delivery:") }}</strong> {{ L("un adjunto más, sin versiones claras.", "one more attachment, without clear versions.") }}</li></ul></article>
+      <article class="lp2-compare-card is-right"><h3>{{ product_name }}</h3><ul><li>{{ L("APU con materiales, mano de obra, equipo y rendimientos.", "Unit price with materials, labor, equipment and productivity.") }}</li><li>{{ L("Un precio de recurso recalcula toda la cascada.", "One resource price recalculates the whole cascade.") }}</li><li>{{ L("Beneficio por partida, capítulo y total, con alertas.", "Profit per item, section and total, with alerts.") }}</li><li>{{ L("Tiempo automático por partida y total; horas por rol y duración con tu cuadrilla.", "Automatic time per item and total; hours by role and duration with your crew.") }}</li><li>{{ L("PDF, versiones inmutables y resumen de cambios.", "PDF, immutable versions and change summary.") }}</li><li>{{ L("Importa Excel CYPE, BC3 y mide sobre el plano.", "Import CYPE Excel, BC3 and measure on the plan.") }}</li></ul></article>
+    </div>
+  </div>
+</section>
+
+{# Puente al catálogo público de precios: enlaces internos de autoridad. #}
+{% if catalogo_precios %}
+<section class="mercados-precios" aria-label="{{ L('Precios unitarios publicados', 'Published unit prices') }}">
+  <div class="mercados-precios-int">
+    <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
+    <h2>{{ L("Precios unitarios de obra en", "Construction unit prices in") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) if pais_actual else 'tu mercado' }}{{ L(", con su descompuesto.", ", with their breakdown.") }}</h2>
+    <p class="intro">{{ L("Cada partida se publica con su precio de referencia y su APU completo —materiales, mano de obra y maquinaria— para que compruebes de dónde sale el número antes de confiar en él.", "Each item is published with its reference price and full unit price —materials, labor and machinery— so you can check where the number comes from before trusting it.") }}</p>
+    <ul class="mercados-precios-lista">
+      <li><a href="{{ catalogo_precios.indice }}">{{ L("Todos los precios unitarios de", "All unit prices in") }} {{ catalogo_precios.nombre }} ({{ catalogo_precios.moneda }})</a></li>
+      {% if catalogo_precios.mano_obra %}<li><a href="{{ catalogo_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=catalogo_precios.nombre) }}</a></li>{% endif %}
+      {% for a in catalogo_precios.apartados %}<li><a href="{{ a.ruta }}">{{ a.nombre }}</a></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% elif indices_catalogos %}
+<section class="mercados-precios" aria-label="{{ L('Catálogos de precios publicados', 'Published price catalogs') }}">
+  <div class="mercados-precios-int">
+    <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
+    <h2>{{ L("Precios unitarios de obra, país por país, con su descompuesto.", "Construction unit prices, country by country, with their breakdown.") }}</h2>
+    <p class="intro">{{ L("Cada partida se publica con su precio de referencia y el descompuesto completo —materiales, mano de obra y maquinaria—. Elige el catálogo de tu mercado:", "Each item is published with its reference price and full breakdown —materials, labor and machinery—. Choose your market's catalog:") }}</p>
+    <ul class="mercados-precios-lista">
+      {% for c in indices_catalogos %}<li><a href="{{ c.indice }}">{{ L("Precios de", "Prices in") }} {{ c.nombre }} ({{ c.moneda }})</a>{% if c.mano_obra %} · <a href="{{ c.mano_obra }}">{{ L("mano de obra", "labor") }}</a>{% endif %}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+<section class="lp2-markets lp2-defer" id="catalogo-paises" aria-label="{{ L('Catálogo de precios por país', 'Price catalog by country') }}">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("23 mercados, 23 catálogos", "23 markets, 23 catalogs") }}</span>
+      <h2 class="lp2-section-title">{{ L("España no cotiza igual que México ni que Reino Unido.", "Spain doesn't quote like Mexico or the United Kingdom.") }} <em>{{ L("Tu país cambia el presupuesto entero", "Your country changes the whole estimate") }}</em>.</h2>
+    </div>
+    {% for rotulo, lista in mercados_bloques %}
+    <h3 class="mercado-bloque-titulo">{{ rotulo }}</h3>
+    <div class="mercado-tabla" role="table" aria-label="{{ rotulo }}">
+      <div class="mercado-cab" role="row"><span role="columnheader">{{ L("Mercado", "Market") }}</span><span role="columnheader">{{ L("Moneda", "Currency") }}</span><span role="columnheader">{{ L("ID fiscal", "Tax ID") }}</span><span role="columnheader">{{ L("Habla tu obra", "Speaks your trade") }}</span></div>
+      {% for p in lista %}
+      <a class="mercado-fila{% if p.codigo == pais_codigo %} es-activo{% endif %}" role="row" href="{{ ruta_mercado(p.codigo) }}"><span role="cell" class="mercado-nombre">{{ p.bandera }} {{ (p.nombre_en if _en else p.nombre) }}</span><span role="cell" class="mercado-moneda">{{ p.moneda }} · {{ texto_impuesto(p.codigo, 'en' if _en else 'es') }}</span><span role="cell" class="mercado-fiscal">{{ p.id_fiscal }}</span><span role="cell" class="mercado-vocab">{{ (p.vocab_en if _en else p.vocab) }}</span></a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="banner-catalogo lp2-defer">
+  <div class="banner-int">
+    <div class="banner-texto">
+      {% if pais_actual %}
+      <h2 id="banner-h2">{{ L("El catálogo más completo para presupuestar en", "The most complete catalog for estimating in") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}.</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} {{ L("partidas descompuestas y", "broken-down items and") }} {{ catalogo().recursos_txt }} {{ L("precios de recursos (", "resource prices (") }}{{ catalogo().materiales }} {{ L("materiales,", "materials,") }} {{ catalogo().mano_obra }} {{ L("de mano de obra,", "labor,") }} {{ catalogo().equipo }} {{ L("de equipo), organizadas en", "equipment), organized in") }} {{ catalogo().capitulos }} {{ L("capítulos y", "sections and") }} {{ catalogo().subcapitulos }} {{ L("subcapítulos.", "subsections.") }} {{ catalogo().lineas_descomp_txt }} {{ L("líneas de recursos y rendimientos listas para usar, contrastadas con el mercado", "resource and productivity lines ready to use, checked against the") }} {{ (pais_actual.nombre_en if _en else pais_actual.mercado) }} {{ L("y en revisión continua. No empiezas de cero: llegas con una base de precios real y propia.", "market and under continuous review. You don't start from zero: you arrive with a real price base of your own.") }}</p>
+      <ul class="banner-lista">
+        <li id="banner-vocab"><span class="check">✓</span> {{ L("Terminología de", "Terminology of") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}: {{ (pais_actual.vocab_en if _en else pais_actual.vocab) }}.</li>
+        <li id="banner-moneda"><span class="check">✓</span> {% if ej.convierte %}{{ L("Precios convertidos a", "Prices converted to") }} {{ ej.moneda }} ({{ ej.simbolo }}{{ L(") con la tasa de referencia", ") at the reference rate") }} {{ ej.tasa_txt }} {{ ej.moneda }}{{ L("/US$ · o en US$ si prefieres. Cada presupuesto congela su tasa.", "/US$ · or in US$ if you prefer. Each estimate locks its rate.") }}{% else %}{{ L("Precios en", "Prices in") }} {{ ej.moneda }} {{ L("de referencia. Cada presupuesto congela su tasa si cambias de moneda.", "as reference. Each estimate locks its rate if you change currency.") }}{% endif %}</li>
+        <li><span class="check">✓</span> {{ L("Descomposición técnica de cada partida: materiales, mano de obra y equipo.", "Technical breakdown of each item: materials, labor and equipment.") }}</li>
+        <li><span class="check">✓</span> {{ L("Cambia un precio de recurso y se recalculan todas las partidas que lo usan.", "Change a resource price and every item that uses it recalculates.") }}</li>
+        <li><span class="check">✓</span> {{ L("Se actualiza periódicamente para seguir el mercado.", "Updated periodically to follow the market.") }}</li>
+      </ul>
+      {% else %}
+      <h2 id="banner-h2">{{ L("El catálogo más completo para presupuestar en España y Latinoamérica.", "The most complete catalog for estimating in Spain and Latin America.") }}</h2>
+      <p id="banner-p">{{ catalogo().partidas_txt }} {{ L("partidas descompuestas y", "broken-down items and") }} {{ catalogo().recursos_txt }} {{ L("precios de recursos (", "resource prices (") }}{{ catalogo().materiales }} {{ L("materiales,", "materials,") }} {{ catalogo().mano_obra }} {{ L("de mano de obra,", "labor,") }} {{ catalogo().equipo }} {{ L("de equipo), organizadas en", "equipment), organized in") }} {{ catalogo().capitulos }} {{ L("capítulos y", "sections and") }} {{ catalogo().subcapitulos }} {{ L("subcapítulos.", "subsections.") }} {{ catalogo().lineas_descomp_txt }} {{ L("líneas de recursos y rendimientos listas para usar, con precios de referencia por país: España en EUR y cada mercado latino con su moneda. En revisión continua. No empiezas de cero: llegas con una base de precios real de tu mercado.", "resource and productivity lines ready to use, with reference prices by country: Spain in EUR and each Latin market in its currency. Under continuous review. You don't start from zero: you arrive with a real price base for your market.") }}</p>
+      <ul class="banner-lista">
+        <li id="banner-vocab"><span class="check">✓</span> {{ L("España: hormigón, pladur, falso techo, alicatado, fontanero. Cada país con su terminología.", "Spain: concrete, plasterboard, suspended ceiling, wall tiling, plumber. Each country with its own terminology.") }}</li>
+        <li id="banner-moneda"><span class="check">✓</span> {{ L("España en EUR con NIF e IVA 21 % · Latinoamérica en USD o su moneda local (MXN, COP, PEN…) con tasa congelada por presupuesto.", "Spain in EUR with NIF and 21% VAT · Latin America in USD or its local currency (MXN, COP, PEN…) with rate locked per estimate.") }}</li>
+        <li><span class="check">✓</span> {{ L("Descomposición técnica de cada partida: materiales, mano de obra y equipo.", "Technical breakdown of each item: materials, labor and equipment.") }}</li>
+        <li><span class="check">✓</span> {{ L("Cambia un precio de recurso y se recalculan todas las partidas que lo usan.", "Change a resource price and every item that uses it recalculates.") }}</li>
+        <li><span class="check">✓</span> {{ L("Se actualiza periódicamente para seguir el mercado de cada país.", "Updated periodically to follow each country's market.") }}</li>
+      </ul>
+      {% endif %}
+    </div>
+    <div class="banner-cifras">
+      <div class="cifra"><strong>{{ catalogo().partidas_txt }}</strong><span>{{ L("partidas", "items") }}</span></div>
+      <div class="cifra"><strong>{{ catalogo().recursos_txt }}</strong><span>{{ L("precios de recursos", "resource prices") }}</span></div>
+      <div class="cifra"><strong>{{ catalogo().lineas_descomp_txt }}</strong><span>{{ L("líneas de descomposición", "breakdown lines") }}</span></div>
+      {% if catalogo().packs %}<div class="cifra"><strong>{{ catalogo().packs }}</strong><span>{{ L("packs de estancia", "room packs") }}</span></div>{% endif %}
+      <div class="cifra" id="stat-moneda"><strong>{{ ej.moneda if pais_actual else 'EUR / USD' }}</strong><span>{{ L("moneda del presupuesto", "estimate currency") }}</span></div>
+      <span id="stat-moneda-nota">{% if pais_actual %}{{ (pais_actual.nombre_en if _en else pais_actual.nombre) }} · {{ texto_impuesto(pais_codigo, 'en' if _en else 'es') }}{% else %}{{ L("España en EUR · Latinoamérica en su moneda", "Spain in EUR · Latin America in its own currency") }}{% endif %}</span>
+    </div>
+  </div>
+</section>
+
+<section class="lp2-fiscal lp2-defer" id="franja-pais">
+  <div class="lp2-wrap">
+    {% if pais_actual %}
+    <h2 id="franja-h2">{{ L("Pensado para", "Built for") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}{{ L(", no adaptado después.", ", not adapted afterwards.") }}</h2>
+    <p class="intro" id="franja-intro">{{ L("No es una herramienta genérica traducida.", "It's not a generic translated tool.") }} {{ product_name }} {{ L("habla el idioma de la obra en", "speaks the language of the trade in") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}{{ L(": precios, vocabulario y fiscalidad de aquí. Hasta el ejemplo de esta página está en", ": prices, vocabulary and tax from here. Even the example on this page is in") }} {{ ej.moneda }}.</p>
+    {% else %}
+    <h2 id="franja-h2">{{ L("Pensado para España y Latinoamérica, no adaptado después.", "Built for Spain and Latin America, not adapted afterwards.") }}</h2>
+    <p class="intro" id="franja-intro">{{ L("No es una herramienta genérica traducida.", "It's not a generic translated tool.") }} {{ product_name }} {{ L("nace para reformar en España (EUR, NIF, IVA 21 %, pladur y fontanería) y para construir en Latinoamérica (USD o moneda local, con su IVA y su ID fiscal). Cada país, su catálogo.", "was born to remodel in Spain (EUR, NIF, 21% VAT, plasterboard and plumbing) and to build in Latin America (USD or local currency, with its VAT and tax ID). Each country, its own catalog.") }}</p>
+    {% endif %}
+    <div class="lp2-fiscal-grid">
+      <article class="lp2-fiscal-card" id="fiscal-card"><h3 id="fiscal-h3">{{ L("Fiscal a tu medida ·", "Tax settings to match ·") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) if pais_actual else L('España y Latinoamérica', 'Spain and Latin America') }}</h3><p id="fiscal-p">{% if pais_actual %}{{ texto_impuesto(pais_codigo, 'en' if _en else 'es') }}, {{ pais_actual.id_fiscal }}{{ L(", retención, operación exenta, número de control y cláusula cambiaria. Moneda", ", withholding, tax-exempt operation, control number and currency clause. Currency") }} {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} {{ L("o USD, con tasa de referencia.", "or USD, at the reference rate.") }}{% else %}{{ L("IVA configurable por país, tu ID fiscal (NIF, RIF, NIT, RUT, CUIT, RUC, RFC…), retención, operación exenta y cláusula cambiaria. Moneda en tu divisa local o USD, con tasa de referencia.", "VAT configurable per country, your tax ID (NIF, RIF, NIT, RUT, CUIT, RUC, RFC…), withholding, tax-exempt operation and currency clause. Currency in your local currency or USD, at the reference rate.") }}{% endif %}</p></article>
+      <article class="lp2-fiscal-card"><h3 id="franja-precio-h3">{{ L("Precios en", "Prices in") }} {% if pais_actual %}{{ pais_actual.moneda }}{% else %}{{ L("tu moneda", "your currency") }}{% endif %}</h3><p id="franja-precio-p">{% if pais_actual %}{{ L("Cotiza en", "Quote in") }} {{ pais_actual.moneda }}{% if pais_actual.moneda != 'USD' %} ({{ pais_actual.simbolo_local }}){% endif %} {{ L("o en USD como referencia regional. Sin conversiones improvisadas: tu tasa queda guardada en cada presupuesto.", "or in USD as a regional reference. No improvised conversions: your rate is saved in each estimate.") }}{% else %}{{ L("España en euros con NIF e IVA 21 %; Latinoamérica en US$ o su moneda local (MXN, COP, PEN…). Tu tasa queda guardada en cada presupuesto.", "Spain in euros with NIF and 21% VAT; Latin America in US$ or its local currency (MXN, COP, PEN…). Your rate is saved in each estimate.") }}{% endif %}</p></article>
+      <article class="lp2-fiscal-card"><h3>{{ L("Vocabulario de aquí", "Local vocabulary") }}</h3><p id="franja-vocab-p">{% if pais_actual %}{{ (pais_actual.vocab_en if _en else pais_actual.vocab) }}{{ L(", y todos los nombres que usa tu cliente y tu cuadrilla en", ", and all the names your client and crew use in") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}{{ L(", no los de otro país. La traducción se aplica al mostrar, sin duplicar el catálogo.", ", not another country's. Translation is applied at display time, without duplicating the catalog.") }}{% else %}{{ L("Hormigón, pladur, falso techo, alicatado, fontanero en España; concreto/pañete/cielo raso en LatAm. Elige tu país y la landing habla tu obra.", "Concrete, plasterboard, suspended ceiling, wall tiling, plumber in Spain; concrete/render/suspended ceiling in LatAm. Choose your country and the landing speaks your trade.") }}{% endif %}</p></article>
+    </div>
+  </div>
+</section>
+
+{% if seo.cuerpo %}
+<section class="seo-cuerpo lp2-defer" id="{{ 'for-your-market' if _en else 'para-tu-pais' }}">
+  {% for titulo, pars in seo.cuerpo %}
+  <h2>{{ titulo }}</h2>
+  {% for parrafo in pars %}<p>{{ parrafo }}</p>{% endfor %}
+  {% endfor %}
+  <p class="intro">
+    <a href="{{ '/en/guia/presupuesto-de-obra' if _en else '/guia/presupuesto-de-obra' }}">{{ L("Cómo hacer un presupuesto de obra", "How to make a construction estimate") }}</a>
+    · <a href="{{ '/en/guia/analisis-precios-unitarios' if _en else '/guia/analisis-precios-unitarios' }}">{{ L("Qué es un APU", "What is a unit price") }}</a>
+    · <a href="{{ '/en/guia/presupuesto-remodelacion' if _en else '/guia/presupuesto-remodelacion' }}">{{ L("Presupuestar una reforma", "Estimating a remodel") }}</a>
+    {% if pais_codigo %}
+    · <a href="{{ ruta_mercado(pais_codigo, 'software-presupuestos') }}">{{ L("Software en", "Software in") }} {{ seo.nombre_pais }}</a>
+    · <a href="{{ ruta_mercado(pais_codigo, 'apu') }}">{{ L("APU en", "Unit prices in") }} {{ seo.nombre_pais }}</a>
+    {% for guia in (seo.guias | default([])) if _en %}
+    · <a href="{{ guia.ruta }}">{{ guia.h1 }}</a>
+    {% endfor %}
+    {% for articulo in seo.articulos_mercado | default([]) %}
+    · <a href="{{ articulo.ruta }}">{{ articulo.h1 }}</a>
+    {% endfor %}
+    {% endif %}
+  </p>
+</section>
+{% endif %}
+
+<section class="seo-faq lp2-defer" id="preguntas-seo">
+  <span class="lp2-eyebrow lp2-kicker">{{ L("Objeciones, resueltas", "Objections, resolved") }}</span>
+  <h2>{{ L("Lo que preguntan las empresas de", "What companies in") }} {{ seo.nombre_pais }}.</h2>
+  {% for item in seo.faq %}
+  <details data-ga-event="faq_abierta">
+    <summary><h3>{{ item.q }}</h3></summary>
+    <p>{{ item.a }}</p>
+  </details>
+  {% endfor %}
+  <details data-ga-event="faq_abierta">
+    <summary><h3>{{ L("¿Calcula el tiempo de obra automáticamente?", "Does it calculate work time automatically?") }}</h3></summary>
+    <p>{{ L("Sí.", "Yes.") }} {{ product_name }} {{ L("estima las horas de cada partida a partir de su cantidad y de los rendimientos del descompuesto, del catálogo o del tiempo que asignes manualmente. Después suma las partidas activas por capítulo y para toda la obra, y convierte esas horas en una duración estimada según la jornada y la cuadrilla. Las partidas sin datos de tiempo se señalan para que puedas completarlas.", "estimates the hours of each item from its quantity and the productivity of the breakdown, catalog or the time you assign manually. Then it sums active items by section and for the whole job, and converts those hours into an estimated duration based on workday and crew. Items without time data are flagged so you can complete them.") }}</p>
+  </details>
+  <details data-ga-event="faq_abierta">
+    <summary><h3>{{ L("¿Tengo que meter tarjeta para probarlo?", "Do I have to enter a card to try it?") }}</h3></summary>
+    <p>{% if prueba_activa %}{{ L("No. La prueba de", "No. The") }} {{ dias_prueba }} {{ L("días no pide tarjeta y no se cobra nada automáticamente: si no eliges un plan, tus datos siguen ahí y la cuenta deja de generar presupuestos nuevos.", "-day trial doesn't ask for a card and nothing is charged automatically: if you don't choose a plan, your data stays there and the account stops generating new estimates.") }}{% else %}{{ L("No hay prueba activa en este momento. Puedes ver los planes y decidir con los precios y las condiciones por delante, sin permanencia.", "There is no active trial right now. You can see the plans and decide with prices and conditions up front, no commitment.") }}{% endif %}</p>
+  </details>
+  <details data-ga-event="faq_abierta">
+    <summary><h3>{{ L("¿Mis datos quedan atrapados?", "Does my data get trapped?") }}</h3></summary>
+    <p>{{ L("No. Puedes exportar catálogos, presupuestos e informes a Excel/CSV y descargar una copia de seguridad completa. Tus documentos son tuyos y cada organización vive en un espacio aislado.", "No. You can export catalogs, estimates and reports to Excel/CSV and download a full backup. Your documents are yours and each organization lives in an isolated space.") }}</p>
+  </details>
+  <details data-ga-event="faq_abierta">
+    <summary><h3>{{ L("¿Es un producto terminado?", "Is it a finished product?") }}</h3></summary>
+    <p>{{ L("Estamos en acceso anticipado y lo decimos por delante. Los documentos que genera son documentos comerciales,", "We're in early access and we say it up front. The documents it generates are commercial documents,") }} <strong>{{ L("no facturas fiscales", "not tax invoices") }}</strong>{{ L(", y no sustituyen a tu asesoría fiscal ni a tu software de facturación.", ", and they don't replace your tax advisor or your invoicing software.") }}</p>
+  </details>
+</section>
+
+<section class="fuentes" id="fuentes">
+  <h2>{{ L("De dónde salen las reglas que aplica", "Where the rules it applies come from") }} {{ product_name }}</h2>
+  <p class="intro">{{ L("El producto no inventa fiscalidad ni normativa: aplica lo que publican las fuentes oficiales de cada mercado. Estas son las de referencia en España, las puedes consultar tú mismo.", "The product doesn't invent tax or regulations: it applies what official sources in each market publish. These are the reference sources in Spain, you can check them yourself.") }}</p>
+  <ul class="fuentes-lista">
+    <li><a href="https://www.codigotecnico.org/" target="_blank" rel="noopener">{{ L("Código Técnico de la Edificación (CTE)", "Spanish Building Code (CTE)") }}</a> {{ L("— marco normativo de la edificación española: estructura, aislamiento y seguridad que condicionan muchas partidas del catálogo.", "— regulatory framework for Spanish building: structure, insulation and safety that condition many catalog items.") }}</li>
+    <li><a href="https://www.boe.es/" target="_blank" rel="noopener">{{ L("Boletín Oficial del Estado (BOE)", "Official State Gazette (BOE)") }}</a> {{ L("— textos consolidados que fijan tipos de IVA y obligaciones de facturación que el presupuesto refleja.", "— consolidated texts that set VAT rates and invoicing obligations that the estimate reflects.") }}</li>
+  </ul>
+  <p class="fuentes-nota">{{ L("En los mercados de Latinoamérica y de habla inglesa, el catálogo aplica la moneda, el impuesto y el identificador fiscal de cada país; la fuente de cada dato se indica en la página del mercado.", "In Latin American and English-speaking markets, the catalog applies each country's currency, tax and tax ID; the source of each figure is stated on the market's page.") }}</p>
+</section>
+
+<section class="lp2-section lp2-pricing lp2-defer" id="precios">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("precio claro", "clear price") }}</span>
+      <h2 class="lp2-section-title">{{ L("Primero comprueba el valor.", "First check the value.") }} <em>{{ L("Después decides", "Then decide") }}</em>.</h2>
+      <p class="lp2-lead">{{ L("Precio de lanzamiento para las primeras empresas. El precio contratado se respeta durante todo el período pagado.", "Launch price for the first companies. The contracted price is respected for the whole paid period.") }}</p>
+    </div>
+    {% if prueba_activa %}
+    <div class="prueba-destacada">
+      <div><h3>{{ L("Empieza con", "Start with") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}</h3><p>{{ L("Acceso completo a todas las funciones, con tus propios datos.", "Full access to all features, with your own data.") }} <strong>{{ L("No pedimos tarjeta de crédito", "We don't ask for a credit card") }}</strong> {{ L("y no se cobra nada al terminar.", "and nothing is charged at the end.") }}</p></div>
+      {{ boton_alta(evento="cta_prueba", texto=("I want to create my account" if _en else "Quiero crear mi cuenta")) }}
+    </div>
+    {% endif %}
+    <div class="precios">
+      <a class="plan destacado" href="{{ '/en/pago' if _en else '/pago' }}" data-ga-event="plan_anual">
+        <span class="etiqueta">{{ L("PROMOCIÓN INICIAL", "INITIAL PROMOTION") }}</span>
+        <h3>{{ L("Plan anual", "Annual plan") }}</h3>
+        {% if pais_codigo == 'ES' %}<div class="cifra">89 € <small>{{ L("/ año", "/ year") }}</small></div><p><span class="antes">{{ L("109 € / año", "€109 / year") }}</span> {{ L("— precio habitual", "— regular price") }}</p>
+        {% else %}<div class="cifra">{{ L("89 US$", "US$89") }} <small>{{ L("/ año", "/ year") }}</small></div><p><span class="antes">{{ L("109 US$ / año", "US$109 / year") }}</span> {{ L("— precio habitual", "— regular price") }}</p>{% endif %}
+        <ul>{% if prueba_activa %}<li>{{ L("Empieza con", "Start with") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}</li>{% endif %}<li>{{ L("Todas las funciones: catálogo por país, APU, packs, PDF, versiones y cobros", "All features: catalog by country, unit prices, packs, PDF, versions and payments") }}</li><li>{{ L("Configuración asistida de tu empresa y catálogo", "Assisted setup of your company and catalog") }}</li><li>{{ L("Soporte directo por email", "Direct support by email") }}</li><li>{{ L("Actualizaciones incluidas", "Updates included") }}</li></ul>
+      </a>
+      <a class="plan" href="{{ '/en/pago' if _en else '/pago' }}" data-ga-event="plan_mensual">
+        <span class="etiqueta">{{ L("PROMOCIÓN INICIAL", "INITIAL PROMOTION") }}</span>
+        <h3>{{ L("Plan mensual", "Monthly plan") }}</h3>
+        {% if pais_codigo == 'ES' %}<div class="cifra">9,99 € <small>{{ L("/ mes el primer año", "/ month the first year") }}</small></div><p><span class="antes">{{ L("12,99 € / mes", "€12.99 / month") }}</span> {{ L("— precio habitual", "— regular price") }}</p>
+        {% else %}<div class="cifra">{{ L("9,99 US$", "US$9.99") }} <small>{{ L("/ mes el primer año", "/ month the first year") }}</small></div><p><span class="antes">{{ L("12,99 US$ / mes", "US$12.99 / month") }}</span> {{ L("— precio habitual", "— regular price") }}</p>{% endif %}
+        <ul>{% if prueba_activa %}<li>{{ L("Empieza con", "Start with") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}</li>{% endif %}<li>{{ L("Todas las funciones incluidas", "All features included") }}</li><li>{{ L("Sin permanencia: cancela cuando quieras", "No commitment: cancel anytime") }}</li><li>{{ L("Soporte directo por email", "Direct support by email") }}</li></ul>
+      </a>
+    </div>
+    <div class="nota-honesta"><strong>{{ L("Honestidad por delante:", "Honesty up front:") }}</strong> {{ product_name }} {{ L("está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales.", "is in early access. The documents it generates are commercial documents, not tax invoices.") }}{% if prueba_activa %} {{ L("Pruébalo", "Try it") }} {{ dias_prueba }} {{ L("días con tus propios datos antes de pagar nada: sabrás exactamente qué recibes.", "days with your own data before paying anything: you'll know exactly what you get.") }}{% endif %}</div>
+  </div>
+</section>
+
+<section class="lp2-final lp2-defer" id="pago">
+  <div class="lp2-wrap">
+    <span class="lp2-eyebrow">{{ L("Tu próximo presupuesto puede ser distinto", "Your next estimate can be different") }}</span>
+    <h2>{{ L("No vuelvas a enviar un precio", "Don't send another price") }} <em>{{ L("sin saber tu margen", "without knowing your margin") }}</em>.</h2>
+    <p>{{ L("Catálogo de tu país, coste real, beneficio en vivo, tiempo de obra por partida y total, y un PDF con tu logo. Todo lo que hoy te quita una tarde, en un mismo sitio.", "Your country's catalog, real cost, live profit, work time per item and total, and a PDF with your logo. Everything that takes an afternoon today, in one place.") }}</p>
+    <div class="lp2-final-actions">
+      {{ boton_alta(evento="cta_final", texto=("Yes, I want to start now" if _en else "Sí, quiero empezar ahora")) }}
+      <a class="lp2-text-link" href="{{ '/en/pago' if _en else '/pago' }}">{{ L("Ver planes con calma →", "See plans at your pace →") }}</a>
+    </div>
+    <p class="lp2-final-micro">{% if prueba_activa %}{{ cta_micro }}{% else %}{{ L("Sin permanencia · exporta tus datos cuando quieras · soporte directo por email", "No commitment · export your data anytime · direct support by email") }}{% endif %}</p>
+  </div>
+</section>
+</main>
+
+<div class="lp2-sticky" id="lp2-sticky" aria-hidden="true">
+  <div class="lp2-sticky-int">
+    <div><strong>{{ L("Tu próximo presupuesto, con margen y tiempos de obra claros.", "Your next estimate, with clear margin and work times.") }}</strong><span>{{ sticky_texto }}</span></div>
+    <a class="lp2-btn lp2-btn-primary" href="{{ cta_href }}" data-lp2-cta data-ga-event="cta_sticky" tabindex="-1"><span data-lp2-cta-label>{{ L("Quiero empezar ahora", "I want to start now") }}</span></a>
+  </div>
+</div>
+
+{% include "_footer_publico_en.html" if _en else "_footer_publico.html" %}
+
+<script id="paises-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ paises | tojson }}</script>
+<script id="pais-actual-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ (pais_actual or {}) | tojson }}</script>
+<script id="pais-generico-data" type="application/json" nonce="{{ request.state.csp_nonce }}">{{ pais_generico | tojson }}</script>
+<script id="ejemplo-monedas" type="application/json" nonce="{{ request.state.csp_nonce }}">{
+  "moneda": {{ ej.moneda | tojson }},
+  "simbolo": {{ ej.simbolo | tojson }},
+  "convierte": {{ ej.convierte | tojson }},
+  "tasa_txt": {{ ej.tasa_txt | tojson }},
+  "tasa_fecha": {{ ej.tasa_fecha | tojson }},
+  "iva": {{ ej.iva | tojson }}
+}</script>
+{% if seo is defined %}
+{% for bloque in jsonld_bloques %}
+<script type="application/ld+json" nonce="{{ request.state.csp_nonce }}">{{ bloque | tojson }}</script>
+{% endfor %}
+{% endif %}
+</body>
+</html>

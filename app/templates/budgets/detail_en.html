@@ -203,7 +203,7 @@
   <div class="card-head">
     <h2>Sections and line items</h2>
     <form method="post" action="/presupuestos/{{ p.id }}/estado" class="inline">
-      <select name="estado" class="select-inline">
+      <select name="estado" class="select-inline" aria-label="Budget status">
         {% for e in estados %}
         <option value="{{ e }}" {{ 'selected' if p.estado == e else '' }}>{{ e | mensaje(_idioma) }}</option>
         {% endfor %}
@@ -385,7 +385,7 @@
 
 <div class="card no-print" id="anexos">
   <h2>📎 Document attachments</h2><p class="hint">Add spec sheets, drawings, photographs converted to PDF or supplier documents. When you turn on «Include attachments» in Edit, their pages are appended to the end of the estimate PDF and the index states which page each one starts on; those that do not fit by size are announced as a separate delivery.</p>
-  <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" placeholder="Visible name of the attachment" class="csp-s-6253876a64"><input type="file" name="archivo" accept="application/pdf" required><button class="btn btn-sm" type="submit">Add PDF</button></form>
+  <form method="post" action="/presupuestos/{{ p.id }}/anexos" enctype="multipart/form-data" class="form-actions"><input name="nombre" aria-label="Visible name of the attachment" placeholder="Visible name of the attachment" class="csp-s-6253876a64"><input type="file" name="archivo" accept="application/pdf" required aria-label="Select PDF attachment"><button class="btn btn-sm" type="submit">Add PDF</button></form>
   {% if p.anexos %}<ul>{% for a in p.anexos %}<li><a class="link" target="_blank" href="{{ a.archivo | archivo_url(true) }}">{{ a.nombre }}</a> <form class="inline" method="post" action="/presupuestos/{{ p.id }}/anexos/{{ a.id }}/eliminar" data-confirm="Delete attachment?"><button class="btn btn-sm btn-danger" type="submit">Delete</button></form></li>{% endfor %}</ul>{% endif %}
 </div>
 

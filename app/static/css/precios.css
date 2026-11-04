@@ -82,7 +82,7 @@
 .cmp-tabla td:first-child,
 .cmp-tabla th:first-child {
   width: 3.5rem;
-  color: var(--color-texto-suave, #5b6472);
+  color: var(--text-soft);
 }
 
 .cmp-tabla .cmp-mas-caro th,
@@ -99,14 +99,14 @@
 }
 
 .cmp-codigo {
-  color: var(--color-texto-suave, #5b6472);
+  color: var(--text-soft);
   font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .cmp-extremos {
-  color: var(--color-texto-suave, #5b6472);
+  color: var(--text-soft);
   display: block;
   font-size: 0.8rem;
 }

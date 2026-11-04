@@ -107,6 +107,37 @@
     var p = codigo ? mapa[codigo] : null;
     var nom = p ? nombre(p) : null;
 
+    // La portada «Impulso» ya viene renderizada por el servidor en el idioma
+    // y mercado correctos. El selector solo persiste la elección y navega al
+    // canónico; no reescribe sus secciones ni su SEO con copy legacy/genérico.
+    if (document.body && document.body.classList.contains("landing-impulso")) {
+      if (hint) hint.textContent = p
+        ? p.bandera + " " + t("Catálogo de ", "Catalog of ") + nom + " · " + p.id_fiscal + " · " + impuesto(p)
+        : t("Elige tu país para ver su catálogo de precios (España · LatAm · Reino Unido · Estados Unidos · Australia)",
+            "Choose your country to see its price catalog (Spain · LatAm · United Kingdom · United States · Australia)");
+      if (select && select.value !== (codigo || "")) select.value = codigo || "";
+      if (!persist) return;
+      try {
+        document.cookie = "cotizat_pais=" + encodeURIComponent(codigo || "") + "; path=/; max-age=" + (codigo ? 365 * 24 * 3600 : 0) + "; samesite=lax";
+        if (codigo) localStorage.setItem("cotizat_pais", codigo);
+        else localStorage.removeItem("cotizat_pais");
+      } catch (_) {}
+      try {
+        var destImpulso = p && p.ruta ? p.ruta : (EN ? "/en-us/" : "/");
+        if (window.location.pathname !== destImpulso) {
+          window.location.href = destImpulso;
+          return;
+        }
+      } catch (_) {}
+      try {
+        var urlImpulso = new URL(window.location.href);
+        if (codigo) urlImpulso.searchParams.set("pais", codigo);
+        else urlImpulso.searchParams.delete("pais");
+        history.replaceState(null, "", urlImpulso.pathname + urlImpulso.search + urlImpulso.hash);
+      } catch (_) {}
+      return;
+    }
+
     // Textos dinámicos por id
     texto("hero-kicker", p
       ? p.bandera + " " + t("Sistema comercial para ", "Commercial system for ") + nom + " · " + t("Construcción y reformas", "Construction and remodeling") + " · " + t("catálogo de precios propio", "own price catalog")

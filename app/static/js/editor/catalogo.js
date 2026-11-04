@@ -574,7 +574,7 @@
     if (Math.abs(diffPct) < 0.1) return;
     var indicator = document.createElement("span");
     indicator.className = "precio-indicator";
-    CotizatStyles.setCssText(indicator, "font-size:0.65rem; margin-left:6px; opacity:0.8;");
+    CotizatStyles.setCssText(indicator, "font-size:0.65rem; margin-left:6px;");
     if (diff > 0) { indicator.textContent = "↑ " + diffPct.toFixed(1) + "% vs catálogo"; CotizatStyles.set(indicator, "color", "var(--rose)"); }
     else { indicator.textContent = "↓ " + Math.abs(diffPct).toFixed(1) + "% vs catálogo"; CotizatStyles.set(indicator, "color", "var(--green)"); }
     importeCell.appendChild(indicator);

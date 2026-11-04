@@ -458,7 +458,7 @@
     <div class="field">
       <label>Restore backup</label>
       <form method="post" action="/configuracion/restaurar" enctype="multipart/form-data" data-confirm="⚠️ All current data will be replaced by the backup. Continue?">
-        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62">
+        <input type="file" name="archivo" accept=".zip,.db" required class="csp-s-c500155b62" aria-label="Select backup file">
         <button class="btn" type="submit">↩️ Restore backup</button>
       </form>
       <p class="hint">Select the backup .zip (or a .db). Before restoring, a copy of the current data is automatically saved in the application <code>backups/</code> folder.</p>

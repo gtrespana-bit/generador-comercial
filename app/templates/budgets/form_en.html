@@ -38,6 +38,10 @@
         <summary class="btn btn-sm btn-ghost ecb-more-btn" title="More tools">More</summary>
         <div class="ecb-more-panel">
       <div class="ecb-tools">
+        <button type="button" class="btn btn-sm btn-ghost editor-ia-chat-btn" data-cotizat-click="toggle-ia-chat" title="Open the CotizaT assistant">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5l1.7 4.3L14 7.5l-4.3 1.7L8 13.5 6.3 9.2 2 7.5l4.3-1.7z"/></svg>
+          <span class="ecb-label">Assistant</span>
+        </button>
         <button type="button" id="btn-ai-dictation" class="btn btn-sm btn-ghost" title="Dictate into the active field">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 7.5a5 5 0 0010 0M8 12.5V14.5"/></svg>
           <span class="ecb-label">Dictate</span>
@@ -735,7 +739,7 @@
           <strong class="csp-s-232f9fa610">Live preview of the section to be inserted:</strong>
           <span class="badge csp-s-7f2747e2b8" id="badge-total-pack">Estimated total: $0.00</span>
         </div>
-        <div class="csp-s-de0b2c84f6">
+        <div class="csp-s-de0b2c84f6" tabindex="0" role="region" aria-label="Room pack preview">
           <table class="table csp-s-1a46806bde">
             <thead>
               <tr class="csp-s-28b29075b5">
