@@ -270,8 +270,14 @@
   var bellList = document.querySelector("[data-admin-bell-list]");
 
   function crearNotificacion(a) {
+    /* Un aviso tiene dos destinos posibles: el hecho concreto (este cliente,
+       esta compra) y la lista con el mismo criterio. El primero es el enlace
+       del aviso; el segundo, un botón pequeño al lado. */
+    var fila = document.createElement("div");
+    fila.className = "admin-notify-item";
+
     var enlace = document.createElement("a");
-    enlace.className = "admin-notify-item";
+    enlace.className = "admin-notify-destino";
     enlace.setAttribute("href", a.url || "#");
     enlace.setAttribute("title", a.detalle || a.titulo || "");
 
@@ -282,7 +288,16 @@
 
     enlace.appendChild(titulo);
     enlace.appendChild(detalle);
-    return enlace;
+    fila.appendChild(enlace);
+
+    if (a.url_lista) {
+      var lista = document.createElement("a");
+      lista.className = "admin-notify-mas";
+      lista.setAttribute("href", a.url_lista);
+      lista.textContent = a.etiqueta_lista || "Ver la lista";
+      fila.appendChild(lista);
+    }
+    return fila;
   }
 
   function renderNotif(avisos) {
@@ -309,14 +324,29 @@
   }
 
   function cargarNotif() {
+    if (bellList && !bellList.getAttribute("data-cargado")) {
+      vaciar(bellList);
+      var espera = document.createElement("div");
+      espera.className = "admin-notify-empty";
+      espera.textContent = "Leyendo los pendientes…";
+      bellList.appendChild(espera);
+    }
     fetch("/admin/notificaciones", { headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         var avisos = data.avisos || [];
+        if (bellList) bellList.setAttribute("data-cargado", "1");
         renderNotif(avisos);
         actualizarContador(avisos);
       })
-      .catch(function () {});
+      .catch(function () {
+        if (!bellList) return;
+        vaciar(bellList);
+        var error = document.createElement("div");
+        error.className = "admin-notify-empty";
+        error.textContent = "No se pudieron leer los avisos. Recarga la página.";
+        bellList.appendChild(error);
+      });
   }
 
   if (bell) bell.addEventListener("click", function () {

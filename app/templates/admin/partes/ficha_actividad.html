@@ -1,24 +1,133 @@
-{# Ficha › Actividad: qué hizo el cliente en la app y qué se hizo desde el
-   panel, en una sola cronología. #}
+{# Ficha › Actividad (A6). La pregunta del operador al abrir una cuenta no es
+   «¿cuánto paga?» sino «¿esto se está usando y qué le molesta?». Aquí se
+   responde con cifras de uso, un recuento de lo que modifica y una cronología
+   en castellano: nunca códigos internos como `presupuesto.editado`. #}
+
+{% set datos = actividad.datos if actividad else None %}
+
+{% if actividad and actividad.error %}
+<div class="alert alert-danger" role="alert">
+  <div>No se pudo leer la actividad de este cliente ahora mismo. El resto de la ficha sigue disponible.</div>
+</div>
+{% elif datos %}
+<div class="kpis">
+  <div class="kpi-card info">
+    <div class="kpi-value">{{ datos.kpis.presupuestos_creados }}</div>
+    <div class="kpi-label">Presupuestos creados</div>
+    <p class="note-sub">Últimos {{ datos.dias }} días</p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ datos.kpis.presupuestos_editados }}</div>
+    <div class="kpi-label">Veces que los modificó</div>
+    <p class="note-sub">
+      {% if datos.kpis.presupuestos_creados %}
+      {{ "%.0f"|format(datos.kpis.tasa_edicion * 100) }}% de los creados
+      {% else %}
+      Sin presupuestos nuevos en la ventana
+      {% endif %}
+    </p>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ datos.kpis.dias_uso }}<small> / {{ datos.dias }}</small></div>
+    <div class="kpi-label">Días con actividad</div>
+    <p class="note-sub">{{ datos.kpis.usuarios_activos }} usuario{{ 's' if datos.kpis.usuarios_activos != 1 else '' }} trabajando</p>
+  </div>
+  <div class="kpi-card {{ 'warn' if datos.kpis.presupuestos_enviados else '' }}">
+    <div class="kpi-value">{{ datos.kpis.presupuestos_enviados }}</div>
+    <div class="kpi-label">Enviados al cliente final</div>
+    <p class="note-sub">{{ datos.kpis.pdfs }} PDF descargado{{ 's' if datos.kpis.pdfs != 1 else '' }}</p>
+  </div>
+</div>
+
+{% if datos.cambios.ediciones %}
+<div class="card">
+  <div class="card-header">
+    <h2>Qué modifica cuando guarda</h2>
+    <span class="badge badge-neutral">{{ datos.cambios.ediciones }} edición{{ 'es' if datos.cambios.ediciones != 1 else '' }}</span>
+  </div>
+  <div class="card-body">
+    <p class="hint">
+      Sobre {{ datos.cambios.total }} cambio{{ 's' if datos.cambios.total != 1 else '' }} detectado{{ 's' if datos.cambios.total != 1 else '' }}
+      ({{ "%.1f"|format(datos.cambios.media_partidas) }} partidas por edición de media).
+      Si predomina un campo, es donde el producto le está obligando a corregir.
+    </p>
+    <div class="kpis">
+      {% for clave, etiqueta, ayuda in [
+        ('precios', 'Precios corregidos', 'revisar la referencia de precio'),
+        ('textos', 'Textos reescritos', 'nombre o descripción de la partida'),
+        ('cantidades', 'Cantidades corregidas', 'mediciones o cantidad directa'),
+        ('unidades', 'Unidades cambiadas', 'm²/ud/ml mal elegidos'),
+        ('partidas_nuevas', 'Partidas añadidas', 'faltaba en el catálogo'),
+        ('partidas_eliminadas', 'Partidas quitadas', 'sobraba o no aplicaba')
+      ] %}
+      <div class="kpi-card {{ 'warn' if datos.cambios[clave] else '' }}">
+        <div class="kpi-value">{{ datos.cambios[clave] }}</div>
+        <div class="kpi-label">{{ etiqueta }}</div>
+        <p class="note-sub">{{ ayuda }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">
+    <h2>Cronología</h2>
+    <span class="badge badge-neutral">{{ datos.cronologia|length }}</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>Cuándo</th><th>Quién</th><th>Qué</th><th>Detalle</th><th></th></tr></thead>
+      <tbody>
+        {% for e in datos.cronologia %}
+        <tr>
+          <td class="muted">{{ e.cuando.strftime('%d/%m/%Y %H:%M') if e.cuando else '—' }}</td>
+          <td class="muted">{{ e.actor or '—' }}</td>
+          <td>
+            <span class="badge {{ 'badge-warning' if e.tono == 'warn' else ('badge-success' if e.tono == 'ok' else 'badge-info') }}">{{ e.etiqueta }}</span>
+          </td>
+          <td class="muted detalle-celda">{{ e.detalle }}</td>
+          <td>
+            {% if e.url %}<a class="btn btn-sm btn-secondary" href="{{ e.url }}">Abrir</a>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5">
+            <div class="vacio">
+              <b>Todavía no hay actividad registrada en {{ datos.dias }} días.</b>
+              <p>
+                Se anota lo que hace dentro de la app (presupuestos, cambios de precio,
+                envíos) y lo que se hace desde el panel. Una cuenta sin actividad es la
+                señal más temprana de abandono.
+              </p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <div class="grid-2">
   <div class="card">
     <div class="card-header">
-      <h2>Actividad del cliente</h2>
-      <span class="badge badge-neutral">{{ ficha.eventos_cliente|length }}</span>
+      <h2>Qué hace más</h2>
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th>Fecha</th><th>Actor</th><th>Acción</th></tr></thead>
+        <thead><tr><th>Acción</th><th class="tabla-num">Veces</th><th>Última</th></tr></thead>
         <tbody>
-          {% for e in ficha.eventos_cliente %}
+          {% for fila in datos.por_accion %}
           <tr>
-            <td class="muted">{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
-            <td>{{ e.actor_email or '—' }}</td>
-            <td><code class="accion-code">{{ e.accion }}</code></td>
+            <td>{{ fila.etiqueta }}</td>
+            <td class="tabla-num">{{ fila.veces }}</td>
+            <td class="muted">{{ fila.ultima.strftime('%d/%m/%Y') if fila.ultima else '—' }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="3"><div class="vacio"><b>Sin eventos de auditoría del cliente.</b><p>Se registran dentro de la organización; el panel solo ve el nombre de la acción, no su contenido.</p></div></td></tr>
+          <tr><td colspan="3" class="muted">Sin datos en la ventana.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -32,20 +141,20 @@
     </div>
     <div class="table-container">
       <table>
-        <thead><tr><th>Fecha</th><th>Operador</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Operador</th><th>Acción</th></tr></thead>
         <tbody>
-          {% for e in ficha.eventos_admin %}
+          {% for e in ficha.eventos_admin[:10] %}
           <tr>
             <td class="muted">{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
             <td>{{ e.operador_email or '—' }}</td>
             <td><code class="accion-code">{{ e.accion }}</code></td>
-            <td class="muted detalle-celda">{{ e.detalle }}</td>
           </tr>
           {% else %}
-          <tr><td colspan="4"><div class="vacio"><b>El panel no ha tocado a este cliente todavía.</b><p>Cada concesión, suspensión, aviso o cambio de CRM queda anotado aquí.</p></div></td></tr>
+          <tr><td colspan="3"><div class="vacio"><b>El panel no ha tocado a este cliente todavía.</b><p>Cada concesión, suspensión, aviso o cambio de CRM queda anotado aquí.</p></div></td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
+{% endif %}

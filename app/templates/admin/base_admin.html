@@ -750,6 +750,13 @@
     }
     .admin-kit-item:last-child, .admin-notify-item:last-child { border-bottom: 0; }
     .admin-kit-item.sel, .admin-kit-item:hover, .admin-notify-item:hover { background: var(--success-bg); }
+    .admin-notify-destino { flex: 1 1 auto; min-width: 0; color: inherit; text-decoration: none; }
+    .admin-notify-mas {
+      flex: 0 0 auto; font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+      padding: 5px 9px; border-radius: 7px; border: 1px solid var(--border-color);
+      color: var(--brand-color); background: #fff; text-decoration: none;
+    }
+    .admin-notify-mas:hover { background: var(--success-bg); }
     .admin-kit-item .ico { width: 28px; text-align: center; }
     .admin-kit-item b, .admin-notify-item b { display: block; font-size: 0.9rem; }
     .admin-kit-item small, .admin-notify-item small { display: block; color: var(--text-muted); font-size: 0.78rem; }
@@ -1093,7 +1100,7 @@
           <div class="admin-notify-pop" data-admin-bell-pop>
             <h3>Centro de notificaciones</h3>
             <div class="admin-notify-list" data-admin-bell-list><div class="admin-notify-empty">Cargando…</div></div>
-            <div class="admin-notify-pie"><a class="btn btn-sm btn-secondary" href="/admin">Ver los pendientes de hoy</a></div>
+            <div class="admin-notify-pie"><a class="btn btn-sm btn-secondary" href="/admin#pendientes">Ver la agenda de hoy</a></div>
           </div>
         </div>
         {% block topbar_actions %}{% endblock %}

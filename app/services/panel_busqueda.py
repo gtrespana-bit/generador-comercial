@@ -6,7 +6,15 @@ from sqlalchemy import or_
 from urllib.parse import quote
 from sqlalchemy.orm import joinedload
 
-from ..models import CompraPlan, EventoAdmin, Licencia, OperadorProducto, Organizacion
+from ..models import (
+    CompraPlan,
+    EventoAdmin,
+    Licencia,
+    Membresia,
+    OperadorProducto,
+    Organizacion,
+    Usuario,
+)
 
 #: Límite por categoría para que la paleta sea instantánea.
 LIMITE_CATEGORIA = 8
@@ -29,6 +37,20 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
         return []
     resultados: list[dict] = []
 
+    # El email era el gran agujero del buscador: el operador tiene el correo del
+    # cliente en la mano (un ticket, una transferencia) y escribirlo no devolvía
+    # nada porque `usuarios` no estaba en ninguna categoría. Se busca por el
+    # correo del usuario y se devuelve la EMPRESA, que es lo que se administra.
+    orgs_por_email: dict[int, list[str]] = {}
+    for usuario_id, email, organizacion_id in db.query(
+        Usuario.id, Usuario.email, Membresia.organizacion_id
+    ).join(
+        Membresia, Membresia.usuario_id == Usuario.id
+    ).filter(
+        _filtro_like(Usuario.email, q)
+    ).order_by(Usuario.email).limit(LIMITE_CATEGORIA * 4).all():
+        orgs_por_email.setdefault(organizacion_id, []).append(email)
+
     for org in db.query(Organizacion).filter(
         _filtro_like(Organizacion.nombre, q)
         | _filtro_like(Organizacion.slug, q)
@@ -38,6 +60,20 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
             "titulo": org.nombre,
             "subtitulo": org.slug,
             "url": f"/admin/clientes/{org.id}",
+        })
+
+    encontradas = {r["url"] for r in resultados}
+    for organizacion_id, emails in orgs_por_email.items():
+        org = db.get(Organizacion, organizacion_id)
+        if org is None or f"/admin/clientes/{org.id}" in encontradas:
+            continue
+        resultados.insert(0, {
+            "tipo": "cliente",
+            "titulo": org.nombre,
+            "subtitulo": f"por email · {emails[0]}",
+            # Lleva al directorio ya filtrado por ese correo: si la persona
+            # administra dos empresas, se ven las dos juntas.
+            "url": f"/admin/clientes?tab=directorio&q={quote(emails[0], safe='')}",
         })
 
     for lic in db.query(Licencia).join(

@@ -44,6 +44,7 @@ from ..services.panel_contextos import (
     DESCRIPCIONES_CRM,
     ESTADOS_ACCESO,
     ESTADOS_COMPRA,
+    FILTROS_DIAS,
     FILTROS_PLAN,
     NOTAS_CHEQUEOS,
     ORDENES,
@@ -292,7 +293,7 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     pestana = pestana_valida("clientes", _texto(request, "tab")["tab"])
     if pestana == "soporte":
         return _respuesta(request, "clientes.html", _clientes_soporte(request, db, pestana))
-    pedidos = _texto(request, "q", "estado", "plan", "crm", "orden", "dir")
+    pedidos = _texto(request, "q", "estado", "plan", "crm", "orden", "dir", "dias")
     vista_id = _entero(request.query_params.get("vista"))
     guardados = _filtros_guardados(db, vista_id)
     filtros = {**guardados, **{k: v for k, v in pedidos.items() if v}}
@@ -301,6 +302,7 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     filtros["dir"] = "desc" if pedidos["dir"] == "desc" else "asc"
     filtros["estado"] = _seleccionar(ESTADOS_ACCESO, filtros.get("estado", ""))
     filtros["plan"] = _seleccionar(FILTROS_PLAN, filtros.get("plan", ""))
+    filtros["dias"] = _seleccionar(FILTROS_DIAS, filtros.get("dias", ""))
     filtros["crm"] = _seleccionar(
         _opciones_crm(),
         filtros.get("crm", ""),
@@ -316,6 +318,7 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
         plan=filtros.get("plan", ""),
         crm=filtros.get("crm", ""),
         crm_por_org=crm_por_org,
+        dias=filtros.get("dias", ""),
     )
     visibles = ordenar_filas(visibles, filtros["orden"], filtros["dir"])
     resumen = {
@@ -340,6 +343,8 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
         "estados_crm": _estados_crm(),
         "opciones_estado": ESTADOS_ACCESO,
         "opciones_plan": FILTROS_PLAN,
+        "opciones_dias": FILTROS_DIAS,
+        "filtro_dias": filtros.get("dias", ""),
         "opciones_crm": _opciones_crm(),
         "q": filtros.get("q", ""),
         "filtro_estado": filtros.get("estado", ""),
@@ -348,7 +353,9 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
         "orden": filtros["orden"],
         "dir": filtros["dir"],
         "etiquetas_orden": ORDENES,
-        "hay_filtros": any(filtros.get(k) for k in ("q", "estado", "plan", "crm", "vista")),
+        "hay_filtros": any(
+            filtros.get(k) for k in ("q", "estado", "plan", "crm", "dias", "vista")
+        ),
         "filtros_activos": _filtros_como_etiquetas(filtros),
         "ruta_filtro": enlace_filtro(ruta, actuales),
         "enlace_orden": enlace_orden(ruta, actuales),
@@ -438,9 +445,13 @@ def _opciones_crm() -> list:
 
 def _filtros_como_etiquetas(filtros: dict) -> dict:
     """Resumen legible de lo filtrado, para el badge de la cabecera."""
-    etiquetas = dict(ESTADOS_ACCESO) | dict(FILTROS_PLAN) | dict(_opciones_crm())
+    etiquetas = (
+        dict(ESTADOS_ACCESO) | dict(FILTROS_PLAN) | dict(FILTROS_DIAS) | dict(_opciones_crm())
+    )
     salida = {}
-    for clave, nombre in (("estado", "Acceso"), ("plan", "Plan"), ("crm", "Comercial")):
+    for clave, nombre in (
+        ("estado", "Acceso"), ("plan", "Plan"), ("crm", "Comercial"), ("dias", "Vence en"),
+    ):
         valor = filtros.get(clave) or ""
         if valor:
             salida[nombre] = etiquetas.get(valor, valor)
@@ -481,7 +492,7 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
     """CSV del directorio **con los filtros activos** (antes exportaba siempre todo)."""
     from ..services.panel_admin import resumen_admin
 
-    pedidos = _texto(request, "q", "estado", "plan", "crm")
+    pedidos = _texto(request, "q", "estado", "plan", "crm", "dias")
     crm_por_org = _crm_por_organizacion(db)
     filas = filtrar_filas(
         resumen_admin(db)["filas"],
@@ -490,6 +501,7 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
         plan=pedidos["plan"],
         crm=pedidos["crm"],
         crm_por_org=crm_por_org,
+        dias=pedidos["dias"],
     )
     contenido = [[
         "Cliente", "Slug", "Emails", "Alta", "Estado", "Plan", "Inicio", "Vence", "Días",
@@ -558,6 +570,11 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
         contexto["uso_presupuestos"] = _uso_presupuestos_cliente(db, request, organizacion_id)
     else:
         contexto["uso_presupuestos"] = None
+    # «Actividad» responde a la pregunta que el operador se hace al abrir una
+    # cuenta: ¿esto se está usando? ¿qué toca cuando algo no le cuadra?
+    contexto["actividad"] = (
+        _actividad_cliente(db, organizacion_id) if pestana == "actividad" else None
+    )
     return _respuesta(request, "cliente_detalle.html", contexto)
 
 
@@ -668,6 +685,30 @@ def _uso_presupuestos_cliente(db: Session, request: Request, organizacion_id: in
         },
     )
     return datos
+
+
+def _actividad_cliente(db: Session, organizacion_id: int) -> dict:
+    """Uso de la empresa en los últimos 30 días, calculado en el servidor.
+
+    Mismo criterio defensivo que la pestaña de presupuestos: si la lectura
+    falla (función sin migrar, permiso revocado), se revierte y la ficha se
+    pinta con un aviso en vez de caerse entera.
+    """
+    from ..services.actividad import actividad_organizacion
+
+    try:
+        return {"datos": actividad_organizacion(db, organizacion_id, dias=30)}
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        log.error(
+            "No se pudo cargar la actividad del cliente %s:\n%s",
+            organizacion_id,
+            _traza(),
+        )
+        return {"error": True}
 
 
 def _auditar_lectura(
@@ -1537,6 +1578,7 @@ def pagina_analitica(
     escriba el navegador. El resto se normaliza en el servicio (acción fuera
     del catálogo = sin filtro, fechas ISO o nada).
     """
+    from ..services.actividad import totales_cambios
     from ..services.analitica import resumen_analitica
 
     ventana = dias if dias in (7, 30, 90) else 30
@@ -1556,10 +1598,48 @@ def pagina_analitica(
     contexto.update(
         {
             "resumen": resumen_analitica(db, dias=ventana, filtros=filtros),
+            # «¿Qué se toca más al guardar?» es la pregunta que decide qué
+            # arreglar del editor; el dato vive en el detalle de los eventos.
+            "cambios": _cambios_globales(db, totales_cambios, ventana),
             "dias": ventana,
         }
     )
     return _respuesta(request, "analitica.html", contexto)
+
+
+#: Qué significa cada campo que se corrige al guardar, en castellano.
+ETIQUETAS_CAMBIO = {
+    "precios": "Precios corregidos",
+    "textos": "Textos reescritos (nombre o descripción)",
+    "cantidades": "Cantidades corregidas",
+    "unidades": "Unidades cambiadas",
+    "partidas_nuevas": "Partidas añadidas",
+    "partidas_eliminadas": "Partidas quitadas",
+}
+
+
+def _etiquetas_cambio() -> dict:
+    return ETIQUETAS_CAMBIO
+
+
+def _cambios_globales(db, lector, dias: int) -> dict:
+    """«Qué se modifica más» de todas las empresas, con su reparto.
+
+    Best-effort: si la lectura falla (tabla sin migrar, columna nueva), la
+    analítica pierde este bloque y sigue sirviendo el resto.
+    """
+    vacio = {"dias": dias, "ediciones": 0, "filas": [], "etiquetas": _etiquetas_cambio()}
+    try:
+        datos = lector(db, dias=dias)
+        datos["etiquetas"] = _etiquetas_cambio()
+        return datos
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        log.warning("La analítica no pudo agregar los cambios de presupuesto.\n%s", _traza())
+        return vacio
 
 
 def _fecha_chat(valor: str, *, final: bool = False) -> datetime | None:

@@ -41,6 +41,17 @@ ESTADOS_ACCESO = (
     ("sin_licencia", "Sin plan"),
 )
 
+#: Ventana del vencimiento. Existe porque «por vencer» era un cajón único de 15
+#: días y la campana avisa también a 1 día: el operador necesita la misma
+#: lista que el aviso, no una parecida.
+FILTROS_DIAS = (
+    ("", "Cualquier fecha"),
+    ("3", "≤3 días"),
+    ("7", "≤7 días"),
+    ("15", "≤15 días"),
+    ("30", "≤30 días"),
+)
+
 FILTROS_PLAN = (
     ("", "Todos los planes"),
     ("anual", "Anual"),
@@ -354,17 +365,41 @@ def _encaja_plan(fila, plan: str) -> bool:
     return True
 
 
+def _dias_limite(dias: str) -> int | None:
+    """Días de una ventana de vencimiento de la URL, o ``None`` si no hay."""
+    texto = str(dias or "").strip()
+    if not texto.isdigit():
+        return None
+    valor = int(texto)
+    return valor if valor > 0 else None
+
+
 def filtrar_filas(
     filas, *, q: str = "", estado: str = "", plan: str = "", crm: str = "",
-    crm_por_org: dict | None = None,
+    crm_por_org: dict | None = None, dias: str = "",
 ):
-    """Deja las filas de cliente que pasan todos los filtros activos."""
+    """Deja las filas de cliente que pasan todos los filtros activos.
+
+    El texto busca en nombre, slug **y correos de los usuarios de la empresa**:
+    hasta ahora escribir el email de un cliente no devolvía nada y había que
+    adivinar el nombre de la organización. ``dias`` acota el vencimiento para
+    que un contador de la cabecera pueda abrir exactamente su lista.
+    """
     texto = (q or "").strip().lower()
+    limite = _dias_limite(dias)
     salida = []
     for fila in filas:
         org = fila["organizacion"]
-        if texto and texto not in f"{org.nombre} {org.slug}".lower():
-            continue
+        if texto:
+            heno = f"{org.nombre} {org.slug} {' '.join(fila.get('emails') or [])}".lower()
+            if texto not in heno:
+                continue
+        if limite is not None:
+            dias_restantes = fila.get("dias_restantes")
+            if not fila.get("vigente") or dias_restantes is None:
+                continue
+            if dias_restantes > limite:
+                continue
         if estado and fila.get("estado") != estado:
             continue
         if plan and not _encaja_plan(fila, plan):

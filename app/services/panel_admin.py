@@ -162,6 +162,12 @@ def resumen_admin(
         "con_plan": sum(1 for f in filas if f["vigente"]),
         "sin_plan": sum(1 for f in filas if not f["vigente"]),
         "por_vencer": sum(1 for f in filas if f["estado"] == "por_vencer"),
+        # El aviso de la campana salta a 3 días y el contador decía «≤15»: son
+        # dos preguntas distintas y ahora cada una tiene su número.
+        "por_vencer_3": sum(
+            1 for f in filas
+            if f["estado"] == "por_vencer" and f["dias_restantes"] <= 3
+        ),
         "pendientes": len(pendientes),
         "ingresos": sum(f["ingresos"] for f in filas),
     }
