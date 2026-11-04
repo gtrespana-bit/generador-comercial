@@ -106,18 +106,42 @@
     calcular();
   }
 
-  /* ── 3. CTA persistente: aparece solo cuando el hero ya no está visible ─ */
+  /* ── 3. CTA persistente ────────────────────────────────────────────────
+   * En escritorio aparece cuando el hero deja de estar visible. En móvil
+   * acompaña antes: aparece cuando el CTA principal del hero sale de la
+   * pantalla, para no dejar un tramo largo de lectura sin acción. */
   var hero = document.getElementById("lp2-hero");
   var sticky = document.getElementById("lp2-sticky");
+  var ctaHero = document.querySelector(".lp2-hero-cta-block");
   if (hero && sticky && "IntersectionObserver" in window) {
+    var mqMovil = window.matchMedia ? window.matchMedia("(max-width: 640px)") : null;
+    var objetivoActual = null;
+
+    function objetivoSticky() {
+      return mqMovil && mqMovil.matches && ctaHero ? ctaHero : hero;
+    }
+
     var observador = new IntersectionObserver(function (entradas) {
       var visible = entradas.some(function (entrada) { return entrada.isIntersecting; });
       sticky.classList.toggle("is-visible", !visible);
       sticky.setAttribute("aria-hidden", visible ? "true" : "false");
       var enlace = sticky.querySelector("a");
       if (enlace) enlace.setAttribute("tabindex", visible ? "-1" : "0");
-    }, {threshold: 0.08});
-    observador.observe(hero);
+    }, {threshold: 0});
+
+    function observarObjetivo() {
+      var objetivo = objetivoSticky();
+      if (objetivo === objetivoActual) return;
+      if (objetivoActual) observador.unobserve(objetivoActual);
+      objetivoActual = objetivo;
+      observador.observe(objetivoActual);
+    }
+
+    observarObjetivo();
+    if (mqMovil) {
+      if (typeof mqMovil.addEventListener === "function") mqMovil.addEventListener("change", observarObjetivo);
+      else if (typeof mqMovil.addListener === "function") mqMovil.addListener(observarObjetivo);
+    }
   }
 
   /* ── 4. Profundidad de lectura: una señal por tramo, sin identificadores ─ */

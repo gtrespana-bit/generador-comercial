@@ -70,7 +70,7 @@
 
 {# Navegación propia: menos salidas, una única acción principal. #}
 <nav class="lp2-nav" aria-label="{{ L('Principal', 'Main') }}">
-  <a class="lp2-brand" href="{{ '/en-us/' if _en else '/' }}" aria-label="{{ product_name }} — {{ 'Home' if _en else 'Inicio' }}">
+  <a class="lp2-brand" href="{{ '/en-us/' if _en else '/' }}">
     <span class="lp2-brand-mark" aria-hidden="true">C</span>
     {{ product_name }}
   </a>
@@ -117,6 +117,11 @@
       {% else %}
       <span class="hero-kicker" id="hero-kicker">{{ L("🇪🇸 España · 🌎 Latinoamérica · 🇬🇧🇺🇸 Mercados de habla inglesa — Sistema comercial de obra y reformas · catálogo de precios por país", "🇪🇸 Spain · 🌎 Latin America · 🇬🇧🇺🇸 English-speaking markets — Commercial system for building and remodeling · price catalog by country") }}</span>
       {% endif %}
+      {% if pais_actual %}
+      <span class="hero-kicker-mobile">{{ pais_actual.bandera }} {{ L("Presupuestos de obra en", "Construction estimates in") }} {{ (pais_actual.nombre_en if _en else pais_actual.nombre) }}</span>
+      {% else %}
+      <span class="hero-kicker-mobile">{{ L("Software de presupuestos de obra", "Construction estimating software") }}</span>
+      {% endif %}
       {% if prueba_activa %}
       <span class="hero-prueba">✨ {{ dias_prueba }} {{ L("días gratis · sin tarjeta de crédito", "free days · no credit card") }}</span>
       {% endif %}
@@ -124,14 +129,25 @@
       <h1><span class="lp2-h1-seo">{{ seo.h1 }}{% if _en and pais_actual and seo.nombre_pais not in seo.h1 %} — {{ seo.nombre_pais }}{% endif %}: {{ seo.h1_resalte }}.</span><span class="lp2-h1-gancho">{{ L("Deja de adivinar.", "Stop guessing.") }} <em>{{ L("Cobra con margen.", "Get paid with margin.") }}</em></span></h1>
 
       <p class="sub lp2-hero-sub"><strong>{{ L("Tu próximo presupuesto puede salir con coste real, margen, tiempo de obra por partida y total, y PDF listo para enviar.", "Your next estimate can go out with real cost, margin, work time per item and total, and a PDF ready to send.") }}</strong> {{ L("No una suma de líneas: una decisión de negocio que tu cliente entiende a la primera.", "Not a sum of lines: a business decision your client understands the first time.") }}</p>
+      <p class="sub lp2-hero-sub-mobile"><strong>{{ L("Coste real, margen y tiempo de obra por partida y total. PDF listo para enviar.", "Real cost, margin and work time per item and total. PDF ready to send.") }}</strong></p>
       <p class="sub lp2-seo-sub">{{ seo.sub }}</p>
       <p class="hero-definicion">{{ product_name }} {{ L("es un software de presupuestos de construcción: convierte tu catálogo de precios en presupuestos con coste interno, margen, tiempo de obra por partida y total, y PDF profesional, con la moneda, el impuesto y la terminología de obra de", "is construction estimating software: it turns your price catalog into estimates with internal cost, margin, work time per item and total, and a professional PDF, with the currency, tax and trade terms of") }} {{ seo.nombre_pais }}.</p>
 
       <div class="lp2-hero-actions">
-        {{ boton_alta(evento="cta_hero") }}
-        <a class="lp2-text-link" href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Ver un presupuesto real antes de registrarte →", "See a real estimate before you sign up →") }}</a>
+        <div class="lp2-hero-cta-block">
+          {{ boton_alta(evento="cta_hero") }}
+          <p class="lp2-hero-micro">{{ cta_micro }}</p>
+        </div>
+        <div class="lp2-mobile-proof" role="group" aria-label="{{ L('Ejemplo de presupuesto con margen y tiempo de obra', 'Example estimate with margin and work time') }}">
+          <span class="lp2-mobile-proof-title">{{ L("Ejemplo del producto", "Product example") }} · {{ ej.obra }}</span>
+          <div class="lp2-mobile-proof-grid">
+            <div><span>{{ L("Total", "Total") }}</span><strong>{{ ej.hero.total }}</strong></div>
+            <div><span>{{ L("Margen", "Margin") }}</span><strong>{{ ej.margen_txt }}</strong></div>
+            <div><span>{{ L("Plazo", "Duration") }}</span><strong>{{ ej.resumen.duracion }}</strong></div>
+          </div>
+        </div>
+        <a class="lp2-text-link lp2-hero-sample" href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Ver un presupuesto real antes de registrarte →", "See a real estimate before you sign up →") }}</a>
       </div>
-      <p class="lp2-hero-micro">{{ cta_micro }}</p>
 
       <div class="lp2-intent" aria-label="{{ L('Elige qué quieres resolver primero', 'Choose what you want to solve first') }}">
         <span class="lp2-intent-label">{{ L("Yo vengo a…", "I'm here to…") }}</span>
