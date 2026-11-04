@@ -39,11 +39,50 @@ def test_la_variante_clasica_sigue_disponible_y_no_compite_en_el_indice():
     assert 'name="robots" content="index,follow,max-image-preview:large"' in nueva
 
 
-def test_los_mercados_en_ingles_conservan_su_plantilla_traducida():
+def test_los_mercados_en_ingles_usan_la_misma_portada_impulso():
+    """El inglés no puede volver a la portada clásica: comparte el diseño nuevo."""
     with _cliente() as client:
         html = client.get("/en-us/").text
-    assert "landing-impulso" not in html
+    assert "landing-impulso" in html
     assert "English-speaking markets" in html
+    assert "Stop guessing." in html
+    assert "Get paid with margin." in html
+    assert 'id="lp2-hero"' in html
+    assert 'id="lp2-presupuestos"' in html
+    assert 'id="tiempos-obra"' in html
+    assert 'id="tour-stage"' in html
+    assert 'id="lp2-sticky"' in html
+    assert "landing_impulso.js" in html
+    assert "presupuesto-ejemplo-en.pdf" in html
+    assert 'href="/static/pdf/presupuesto-ejemplo.pdf"' not in html
+
+
+def test_la_portada_impulso_inglesa_y_espanola_comparten_estructura():
+    """Misma página, mismo diseño: cambian los textos, no los componentes."""
+    with _cliente() as client:
+        es = client.get("/").text
+        en = client.get("/en-us/").text
+
+    def estructura(html: str) -> list[str]:
+        ids = re.findall(r'<(?:section|header|nav|div)[^>]*\bid="([^"]+)"', html)
+        # El ancla del cuerpo SEO está traducida; el componente es el mismo.
+        return ["para-tu-pais" if i == "for-your-market" else i for i in ids]
+
+    assert estructura(es) == estructura(en)
+    for clase in (
+        "lp2-hero",
+        "lp2-demo",
+        "lp2-intent",
+        "lp2-pain-grid",
+        "lp2-calc",
+        "lp2-map-grid",
+        "lp2-tiempos",
+        "tour-stage",
+        "lp2-compare-grid",
+        "lp2-pricing",
+        "lp2-sticky",
+    ):
+        assert clase in es and clase in en, clase
 
 
 def test_el_cta_declara_variante_intencion_pais_y_alta_directa():

@@ -221,14 +221,12 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
 def _plantilla_portada(request: Request) -> str:
     """Plantilla de la portada: «impulso» por defecto, clásica a petición.
 
-    La variante clásica sigue viva con ``?diseno=clasico`` para poder
-    comparar las dos en el mismo despliegue. Los mercados en inglés siguen
-    usando ``landing_en.html`` vía el resolvedor de plantillas de Jinja:
-    no existe todavía una traducción de «impulso», y servir español en
-    /en-us/ rompería el contrato de idioma.
+    Español e inglés comparten la misma portada «Impulso»: el diseño completo
+    (hero, tour, calculadora, tiempos, comparativa, precios y CTA móvil) se
+    traduce en la propia plantilla. La variante clásica sigue viva con
+    ``?diseno=clasico`` para comparar; en inglés el resolvedor de Jinja sirve
+    ``landing_en.html`` para esa variante legacy.
     """
-    if _idioma_de(request) != "es":
-        return "landing.html"
     try:
         variante = str(request.query_params.get("diseno") or "").strip().lower()
     except Exception:

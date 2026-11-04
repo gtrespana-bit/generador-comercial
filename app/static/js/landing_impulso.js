@@ -13,6 +13,9 @@
 (function () {
   "use strict";
 
+  var EN = /^en(?:\b|-)/i.test(document.documentElement.lang || "");
+  function t(es, en) { return EN ? en : es; }
+
   function ga(nombre, params) {
     if (typeof window.gtag === "function") {
       window.gtag("event", nombre, params || {});
@@ -77,16 +80,18 @@
     var porSemana = numero(presupuestos, 0, 200);
     var porPresupuesto = numero(horas, 0, 40);
     var alMes = Math.round(porSemana * porPresupuesto * 4.33);
-    var formato = new Intl.NumberFormat("es", {maximumFractionDigits: 0});
-    texto("lp2-horas-perdidas", formato.format(alMes) + " h/mes");
+    var formato = new Intl.NumberFormat(EN ? "en" : "es", {maximumFractionDigits: 0});
+    texto("lp2-horas-perdidas", formato.format(alMes) + t(" h/mes", " h/month"));
     texto(
       "lp2-calc-frase",
       alMes === 0
-        ? "Ajusta los datos para ver el tamaño real del problema."
-        : "Son tus números, no una promesa nuestra: tiempo que hoy se va en armar, revisar y rehacer presupuestos."
+        ? t("Ajusta los datos para ver el tamaño real del problema.",
+            "Adjust the numbers to see the real size of the problem.")
+        : t("Son tus números, no una promesa nuestra: tiempo que hoy se va en armar, revisar y rehacer presupuestos.",
+            "These are your numbers, not our promise: time that today goes into building, reviewing and redoing estimates.")
     );
     var boton = document.getElementById("lp2-calc-cta-label");
-    if (boton) boton.textContent = alMes > 0 ? "Quiero recuperar esas horas" : "Quiero preparar mi próximo presupuesto";
+    if (boton) boton.textContent = alMes > 0 ? t("Quiero recuperar esas horas", "I want those hours back") : t("Quiero preparar mi próximo presupuesto", "I want to prepare my next estimate");
     if (!calculado && alMes > 0) {
       calculado = true;
       ga("landing_calculo_tiempo", {horas_mes: alMes});

@@ -1332,7 +1332,7 @@ body.landing-impulso .mercados-precios-lista a { display: inline-flex; min-heigh
 body.landing-impulso .mercados-precios-lista a:hover { border-color: var(--lp2-navy-3); }
 
 body.landing-impulso .lp2-markets { padding: clamp(3rem, 6vw, 5rem) 0; background: var(--lp2-paper); }
-body.landing-impulso .mercado-bloque-titulo { margin: 2rem 0 .7rem; color: var(--lp2-navy-3); font-size: .78rem; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
+body.landing-impulso .mercado-bloque-titulo { display: inline-block; margin: 2rem 0 .7rem; padding: .25rem .6rem; border-radius: 8px; background: var(--lp2-paper); color: var(--lp2-navy-3); font-size: .78rem; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
 body.landing-impulso .mercado-tabla { display: grid; }
 body.landing-impulso .mercado-cab { display: grid; grid-template-columns: 1.2fr .8fr .7fr 2fr; gap: .5rem; padding: .5rem .8rem; color: var(--lp2-muted); font-size: .68rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 body.landing-impulso .mercado-fila { display: grid; grid-template-columns: 1.2fr .8fr .7fr 2fr; gap: .5rem; align-items: center; min-height: 46px; padding: .5rem .8rem; border-top: 1px solid var(--lp2-line); background: #fff; color: var(--lp2-ink); font-size: .8rem; text-decoration: none; }
