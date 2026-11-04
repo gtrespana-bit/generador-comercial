@@ -193,7 +193,10 @@ def test_la_guia_empieza_por_el_presupuesto_y_no_por_configurar_la_empresa(entor
     Sesion, db, org_id = entorno
     estado = estado_recorrido_inicial(db)
     claves = [paso["clave"] for paso in estado["pasos"]]
-    assert claves[:2] == ["presupuesto", "pdf"]
+    # Desde el 04/11/2026 delante del presupuesto va un solo paso: confirmar
+    # las tarifas. No es preparación, es el dato del que sale el importe; el
+    # resto de la configuración sigue después del PDF.
+    assert claves[:3] == ["tarifas", "presupuesto", "pdf"]
     assert claves.index("empresa") > claves.index("pdf")
 
 

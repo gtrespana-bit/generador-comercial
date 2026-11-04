@@ -169,8 +169,21 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     except Exception:
         pass
     # Agrupar por categoría; las claves internas no se traducen ni se guardan.
+    # Cuántas tarifas siguen sin confirmar: el contador de la cabecera y la
+    # página de revisión tienen que decir lo mismo.
+    tarifas_pendientes = 0
+    try:
+        from ..services.revision_precios import resumen_revision
+
+        tarifas_pendientes = resumen_revision(
+            db, organizacion_id=org_id, pais=pais
+        ).get("pendientes", 0)
+    except Exception:
+        db.rollback()
+        tarifas_pendientes = 0
     return TEMPLATES.TemplateResponse(request, "recursos/list.html", {
         "recursos": recursos,
+        "tarifas_pendientes": tarifas_pendientes,
         "q": q,
         "categoria": categoria,
         "categorias": CATEGORIAS_RECURSO,
@@ -719,6 +732,10 @@ def actualizar_recurso(
     org_id = int(db.info.get("organizacion_id") or 0)
     if precio_mercado_base is not None:
         guardar_precio(db, recurso.id, pais, precio_mercado_base, cfg.moneda_default or "USD", organizacion_id=org_id, fuente="Empresa")
+        # Escribir el precio propio es la revisión más explícita que existe:
+        # la empresa acaba de decir cuánto le cuesta. No se le pide confirmarlo
+        # otra vez.
+        recurso.precio_revisado_at = datetime.utcnow()
     else:
         # El usuario borró su precio propio: a partir de ahora manda la
         # referencia nacional de mercado.
@@ -911,8 +928,256 @@ def guardar_precio_mercado(
             db, recurso_id, pais_codigo, _f(precio), moneda,
             organizacion_id=org_id, fuente=fuente, confianza=confianza,
         )
+        if org_id:  # precio propio de la empresa: la tarifa queda confirmada
+            recurso = db.get(Recurso, recurso_id)
+            if recurso is not None:
+                recurso.precio_revisado_at = datetime.utcnow()
         db.commit()
     except ValueError as exc:
         db.rollback()
         return _redirect("/recursos/mercado", error=str(exc))
     return _redirect("/recursos/mercado", msg="Precio de mercado guardado.")
+
+
+# ---------------------------------------------------------------------------
+# Revisión de tarifas antes de cotizar
+# ---------------------------------------------------------------------------
+
+
+def _pais_revision(db) -> str:
+    """Mercado con el que se resuelven los precios de la organización."""
+    from ..services.traduccion import codigo_desde_pais
+
+    try:
+        cfg = _config(db)
+    except Exception:
+        return "VE"
+    return codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+
+
+def _fila_revision(recurso: Recurso) -> dict:
+    """Datos de una tarifa para la pantalla de revisión (sin precios)."""
+    return {
+        "id": recurso.id,
+        "codigo": recurso.codigo or "",
+        "descripcion": recurso.descripcion or "",
+        "unidad": recurso.unidad or "",
+        "categoria": recurso.categoria or "otros",
+        "usos": int(recurso.usos or 0),
+        "revisado_at": getattr(recurso, "precio_revisado_at", None),
+    }
+
+
+@router.get("/recursos/revisar", response_class=HTMLResponse)
+def revisar_tarifas(request: Request, db: Session = Depends(get_db)):
+    """«Revisa tus precios»: la mano de obra primero, en una sola pantalla.
+
+    El catálogo tiene cientos de filas y revisarlas una a una no lo hace
+    nadie. Aquí se ven solo las que están por confirmar, ordenadas por lo que
+    más pesa en un presupuesto, con el precio tal como se usa hoy y un campo
+    para escribir el propio. Confirmar sin cambiar el precio también es una
+    respuesta válida (y la más común): significa «lo miré y es el mío».
+    """
+    from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
+    from ..services.revision_precios import resumen_revision
+
+    # El catálogo se sincroniza igual que en la lista: si no, la pantalla de
+    # revisión podría no ver un recurso que el usuario acaba de usar.
+    try:
+        _sincronizar_recursos(db, forzar=False)
+    except Exception:
+        db.rollback()
+    pais = _pais_revision(db)
+    org_id = int(db.info.get("organizacion_id") or 0)
+    resumen = resumen_revision(db, organizacion_id=org_id, pais=pais)
+    pendientes = resumen.pop("filas", [])
+
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    ids = [fila["id"] for fila in pendientes]
+    recursos = db.query(Recurso).filter(Recurso.id.in_(ids)).all() if ids else []
+    por_id = {recurso.id: recurso for recurso in recursos}
+    try:
+        efectivos = resolver_precios_para_presupuesto_lote(
+            db, recursos, pais, org_id or None, moneda_vista,
+            tasa_usd_presupuesto=factor_vista,
+        )
+    except Exception:
+        efectivos = {}
+    filas = []
+    for datos in pendientes:
+        recurso = por_id.get(datos["id"])
+        if recurso is None:
+            continue
+        efectivo = efectivos.get(recurso.id) or {}
+        precio_actual = None
+        if efectivo.get("precio") is not None and not efectivo.get("requiere_tasa"):
+            precio_actual = float(efectivo["precio"])
+        filas.append({
+            **_fila_revision(recurso),
+            "precio_vista": precio_actual,
+            "origen": efectivo.get("origen", "base"),
+            "detalle": efectivo.get("aviso", ""),
+            "es_mano_obra": datos["categoria"] == "mano_obra",
+        })
+    # La mano de obra arriba: es la que cambia de una empresa a otra.
+    filas.sort(key=lambda fila: (0 if fila["es_mano_obra"] else 1, -fila["usos"], fila["descripcion"].lower()))
+    return TEMPLATES.TemplateResponse(request, "recursos/revisar.html", {
+        "filas": filas,
+        "resumen": resumen,
+        "moneda_vista": moneda_vista,
+        "mercado_codigo": pais,
+        "categorias": CATEGORIAS_RECURSO,
+        "etiquetas": _etiquetas_vista(request),
+        "es_mano_obra_total": resumen.get("mano_obra_pendientes", 0),
+    })
+
+
+@router.post("/recursos/revisar")
+async def guardar_revision_tarifas(request: Request, db: Session = Depends(get_db)):
+    """Confirmar tarifas en lote: «estas son mis tarifas» (con o sin cambio).
+
+    Dos gestos en una sola pasada porque es como se revisa de verdad: se mira
+    la lista, se escriben los dos o tres precios que no cuadran y el resto se
+    confirma tal cual. Cada precio escrito se guarda como precio propio de la
+    organización (con su propagación a las partidas) y todas las filas
+    marcadas quedan con fecha de revisión.
+    """
+    from ..services.precios_mercado import guardar_precio
+
+    form = await request.form()
+    pais = _pais_revision(db)
+    org_id = int(db.info.get("organizacion_id") or 0)
+    if org_id <= 0:
+        return _redirect("/recursos", error="No hay una organización activa.")
+    marcados = [int(valor) for valor in form.getlist("revisar") if str(valor).isdigit()]
+    if not marcados:
+        return _redirect(
+            "/recursos/revisar",
+            error="Marca al menos una tarifa para confirmar o escribe un precio.",
+        )
+    cfg = _config(db)
+    moneda_org = cfg.moneda_default or "USD"
+    # El formulario escribe en la moneda de la vista: se revierte igual que en
+    # la ficha del recurso para no guardar un precio convertido dos veces.
+    from ..utils import normalizar_moneda
+    from ..services.tasa import tasa_convertir_precio
+
+    moneda_vista, factor_vista = _contexto_moneda(db)
+    confirmadas = 0
+    con_precio_nuevo = 0
+    ahora = datetime.utcnow()
+    for recurso_id in marcados:
+        recurso = db.get(Recurso, recurso_id)
+        if recurso is None:
+            continue
+        precio_texto = str(form.get(f"precio_{recurso_id}", "") or "").strip().replace(",", ".")
+        if precio_texto:
+            try:
+                precio_vista = float(precio_texto)
+            except ValueError:
+                continue
+            if precio_vista > 0:
+                # El override se guarda en la moneda de la organización; si la
+                # vista ya es esa moneda no se toca nada.
+                moneda_guardado = normalizar_moneda(moneda_org, "USD")
+                # ``factor_vista`` convierte USD → moneda visible; el catálogo
+                # guarda el override en la moneda de la organización, así que
+                # solo se deshace la conversión cuando son distintas.
+                valor = precio_vista
+                if (
+                    normalizar_moneda(moneda_vista, "USD") != moneda_guardado
+                    and factor_vista
+                ):
+                    valor = valor / factor_vista
+                try:
+                    guardar_precio(
+                        db, recurso.id, pais, valor, moneda_guardado,
+                        organizacion_id=org_id, fuente="Empresa (revisión de tarifas)",
+                    )
+                    con_precio_nuevo += 1
+                except ValueError:
+                    continue
+        recurso.precio_revisado_at = ahora
+        confirmadas += 1
+        # No se propaga el precio BASE del catálogo: no cambia. Lo que cambia
+        # es el precio propio de la empresa, y el catálogo de partidas ya
+        # recalcula con él al vuelo (``recalcular_partidas_mercado``). Propagar
+        # aquí movería la plantilla base de todas las empresas.
+    # La organización ya pasó por aquí: la guía de inicio deja de pedirlo y el
+    # aviso del editor solo vuelve con las tarifas que caduquen.
+    try:
+        cfg.onboarding_precios_revisados = True
+    except Exception:
+        pass
+    db.commit()
+    auditoria.registrar_evento(
+        db,
+        "catalogo.tarifas_revisadas",
+        entidad="recurso",
+        detalle={
+            "confirmadas": confirmadas,
+            "con_precio_propio": con_precio_nuevo,
+            "mercado": pais,
+        },
+    )
+    mensaje = f"{confirmadas} tarifa(s) confirmada(s)."
+    if con_precio_nuevo:
+        mensaje += (
+            f" {con_precio_nuevo} con tu precio propio: las partidas que usan "
+            "ese recurso se recalculan con él al abrirlas."
+        )
+    return _redirect("/recursos/revisar", msg=mensaje)
+
+
+@router.post("/recursos/revisar/confirmar-todas")
+def confirmar_todas_las_tarifas(request: Request, db: Session = Depends(get_db)):
+    """«Ya las miré todas»: cierra la revisión sin tocar ningún precio.
+
+    Existe porque el paso no puede ser un muro: una empresa que ya trabaja con
+    sus precios necesita decir «hecho» una vez y seguir. Queda auditado y con
+    fecha por tarifa, así que dentro de seis meses se vuelve a preguntar.
+    """
+    from ..services.revision_precios import resumen_revision
+
+    pais = _pais_revision(db)
+    org_id = int(db.info.get("organizacion_id") or 0)
+    resumen = resumen_revision(db, organizacion_id=org_id, pais=pais)
+    ids = [fila["id"] for fila in resumen.get("filas", [])]
+    ahora = datetime.utcnow()
+    if ids:
+        db.query(Recurso).filter(Recurso.id.in_(ids)).update(
+            {Recurso.precio_revisado_at: ahora}, synchronize_session=False
+        )
+    cfg = _config(db)
+    try:
+        cfg.onboarding_precios_revisados = True
+    except Exception:
+        pass
+    db.commit()
+    auditoria.registrar_evento(
+        db,
+        "catalogo.tarifas_revisadas",
+        entidad="recurso",
+        detalle={"confirmadas": len(ids), "con_precio_propio": 0, "mercado": pais, "en_bloque": True},
+    )
+    return _redirect(
+        "/recursos",
+        msg=(
+            f"{len(ids)} tarifa(s) dadas por buenas. Vuelve a revisarlas si "
+            "cambian tus costes."
+        ),
+    )
+
+
+@router.post("/recursos/{recurso_id}/revisado")
+def marcar_recurso_revisado(recurso_id: int, db: Session = Depends(get_db)):
+    """Una tarifa concreta: «esta es la mía»."""
+    recurso = db.get(Recurso, recurso_id)
+    if recurso is None:
+        return _redirect("/recursos", error="Recurso no encontrado.")
+    recurso.precio_revisado_at = datetime.utcnow()
+    db.commit()
+    return _redirect(
+        f"/recursos/{recurso_id}/editar",
+        msg="Tarifa confirmada con la fecha de hoy.",
+    )

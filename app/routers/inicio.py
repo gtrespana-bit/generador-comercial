@@ -107,6 +107,26 @@ def inicio(request: Request, db: Session = Depends(get_db)):
     # El recuento de precios absurdos recorre otra vez las 3.000 partidas:
     # en el panel basta el diagnóstico de columnas (precio/coste/tiempo).
     salud_catalogo = analizar_salud_catalogo(db, incluir_anomalias=False)
+    # «¿Estoy cotizando con MIS precios?» se responde en el panel y no dentro de
+    # un ajuste: es la diferencia entre un presupuesto rentable y uno que
+    # trabaja por debajo de coste. Best-effort: si falla, el panel sigue.
+    try:
+        from ..services.revision_precios import resumen_revision
+        from ..services.traduccion import codigo_desde_pais
+
+        revision_precios = resumen_revision(
+            db,
+            organizacion_id=int(db.info.get("organizacion_id") or 0),
+            pais=codigo_desde_pais(cfg.empresa_pais or "") or "VE",
+        )
+        revisadas = [
+            {**fila, "precio_vista": None}
+            for fila in revision_precios.pop("filas", [])[:5]
+        ]
+        revision_precios["muestra"] = revisadas
+    except Exception:
+        db.rollback()
+        revision_precios = None
     recorrido_inicial = (
         estado_recorrido_inicial(db, cfg)
         if cfg.onboarding_modo in {"demo", "limpio"} and not getattr(cfg, "recorrido_inicial_oculto", False)
@@ -153,6 +173,7 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             "proyectos_activos": proyectos_activos,
             "analisis_precios": analisis_precios,
             "salud_catalogo": salud_catalogo,
+            "revision_precios": revision_precios,
             "recorrido_inicial": recorrido_inicial,
             "compra_pendiente": compra_pendiente,
             "compra_pendiente_ficha": compra_pendiente_ficha,

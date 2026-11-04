@@ -780,7 +780,10 @@ def test_inicio_sobrevive_a_una_base_sin_la_columna_de_la_guia(entorno_postgres)
             analizar_salud_catalogo(db)           # se traga el UndefinedColumn
             recorrido = estado_recorrido_inicial(db, cfg)  # antes: 500
 
-            assert recorrido["total"] == 5
+            # Seis pasos desde que «Confirma tus tarifas» va primero: es el
+            # dato del que sale el importe, no una pantalla de ajustes.
+            assert recorrido["total"] == 6
+            assert recorrido["pasos"][0]["clave"] == "tarifas"
             # El cliente real se contó: la consulta que fallaba ahora responde.
             assert any(
                 paso["clave"] == "cliente" and paso["completo"]

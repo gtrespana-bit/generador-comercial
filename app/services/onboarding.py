@@ -180,6 +180,14 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
     )
     partidas = db.query(Partida).count()
 
+    # Las tarifas mandan en el importe: el generador compone cada precio con
+    # lo que cuesta aquí un oficial, un peón o el metro de arena. Una empresa
+    # que paga 15 US$/h y otra que paga 25 US$/h DEBEN cotizar distinto, así
+    # que confirmar las tarifas es el primer paso real del producto: sin él,
+    # el primer presupuesto sale con precios de otro mercado y el margen se
+    # pierde sin que nadie lo note.
+    tarifas = _estado_tarifas(db, cfg)
+
     # Orden nuevo (02/11/2026). Antes: empresa → catálogo → cliente →
     # presupuesto → PDF. El 17 % de las cuentas (7 de 41) llegó al presupuesto
     # y solo el 5 % al PDF, con el 98 % habiendo abierto la herramienta: se
@@ -187,6 +195,14 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
     # presupuesto va primero porque quien tiene un ejemplo cargado **ya lo
     # tiene**: abrirlo y cambiarle el nombre al cliente es el camino corto.
     pasos = [
+        {
+            "clave": "tarifas",
+            "titulo": "Confirma tus tarifas",
+            "detalle": tarifas["detalle"],
+            "completo": tarifas["completo"],
+            "url": "/recursos/revisar",
+            "accion": "Revisar tarifas" if tarifas["completo"] else "Revisar mis precios",
+        },
         {
             "clave": "presupuesto",
             "titulo": "Abre tu presupuesto y hazlo tuyo",
@@ -249,6 +265,7 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
     completados = sum(1 for paso in pasos if paso["completo"])
     return {
         "pasos": pasos,
+        "tarifas": tarifas,
         "completados": completados,
         "total": len(pasos),
         "porcentaje": round(completados * 100 / len(pasos)),
@@ -258,4 +275,65 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
             db.query(Presupuesto).filter(Presupuesto.es_demo.is_(True)).first()
         ),
         "ejemplo_convertible": ejemplo_sembrado,
+    }
+
+
+def _estado_tarifas(db: Session, cfg: Configuracion) -> dict:
+    """Cuántas tarifas del catálogo siguen siendo referencia y no precio propio.
+
+    Se lee del servicio de revisión, que ya distingue «tiene precio» de «la
+    empresa confirmó que es el suyo». Aun así el paso también se cierra con la
+    marca de la configuración: quien confirma en bloque sin tocar ningún precio
+    no debe seguir viendo el paso pendiente.
+    """
+    vacio = {
+        "completo": bool(getattr(cfg, "onboarding_precios_revisados", False)),
+        "pendientes": 0,
+        "mano_obra": 0,
+        "total": 0,
+        "detalle": "Comprueba que la mano de obra y los materiales básicos están a tus precios.",
+    }
+    try:
+        from ..services.traduccion import codigo_desde_pais
+        from .revision_precios import resumen_revision
+
+        organizacion_id = int(db.info.get("organizacion_id") or 0)
+        pais = codigo_desde_pais(getattr(cfg, "empresa_pais", "") or "") or "VE"
+        resumen = resumen_revision(db, organizacion_id=organizacion_id, pais=pais)
+    except Exception:
+        return vacio
+    if not resumen.get("total"):
+        # Instalación limpia: no hay catálogo, así que no hay tarifas que
+        # confirmar. El paso se da por bueno (no se puede pedir revisar una
+        # lista vacía) y su detalle dice cuándo aparecerá.
+        return {
+            **vacio,
+            "completo": True,
+            "detalle": (
+                "Aún no tienes tarifas: aparecerán aquí en cuanto crees tu "
+                "primera partida o cargues tu catálogo."
+            ),
+        }
+    pendientes = int(resumen.get("pendientes") or 0)
+    mano_obra = int(resumen.get("mano_obra_pendientes") or 0)
+    completo = bool(vacio["completo"]) or pendientes == 0
+    if pendientes == 0:
+        detalle = (
+            f"Tus {resumen['total']} tarifas están confirmadas: el generador ya "
+            "cotiza con tus precios, no con una media de mercado."
+        )
+    else:
+        detalle = f"{pendientes} de {resumen['total']} tarifas siguen siendo referencia"
+        if mano_obra:
+            detalle += f" ({mano_obra} de mano de obra)"
+        detalle += (
+            ". Es lo que separa un presupuesto rentable de uno que trabaja "
+            "por debajo de coste."
+        )
+    return {
+        "completo": completo,
+        "pendientes": pendientes,
+        "mano_obra": mano_obra,
+        "total": int(resumen.get("total") or 0),
+        "detalle": detalle,
     }

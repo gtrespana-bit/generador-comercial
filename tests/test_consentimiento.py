@@ -558,10 +558,17 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     # usuarios/membresías) cuelga el ejemplo del alta convertido en trabajo
     # real, que es la cabeza vigente.
     assert analitica_migracion.down_revision == borrado_cuenta_migracion.revision
-    from migrations.versions import s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion
+    from migrations.versions import (
+        s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion,
+        t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migracion,
+    )
 
     assert ejemplo_migracion.down_revision == analitica_migracion.revision
-    assert ejemplo_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # Sobre el ejemplo del alta cuelga la revisión de tarifas, que es la cabeza
+    # vigente: la columna con la que se pide confirmar los precios antes de
+    # cotizar con ellos.
+    assert revision_tarifas_migracion.down_revision == ejemplo_migracion.revision
+    assert revision_tarifas_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

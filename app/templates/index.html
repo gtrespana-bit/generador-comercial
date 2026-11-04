@@ -96,6 +96,33 @@
 {% endif %}
 
 
+{# Las tarifas van ANTES que el estado del catálogo: un catálogo «sano» con
+   precios de otro mercado sigue generando presupuestos equivocados. Es la
+   tarjeta que explica por qué dos empresas cotizan distinto el mismo trabajo. #}
+{% if revision_precios and revision_precios.requiere_atencion %}
+<section class="card dashboard-tarifas" aria-labelledby="tarifas-title">
+  <div class="catalog-health-main">
+    <div class="catalog-health-score">
+      <strong>{{ revision_precios.porcentaje }}%</strong><span>tarifas</span>
+    </div>
+    <div>
+      <h2 id="tarifas-title">Tu catálogo aún cotiza con precios de referencia</h2>
+      <p class="hint">
+        <strong>{{ revision_precios.pendientes }} de {{ revision_precios.total }}</strong>
+        tarifas no las has confirmado{% if revision_precios.mano_obra_pendientes %} y
+        <strong>{{ revision_precios.mano_obra_pendientes }}</strong> son de mano de obra{%
+        endif %}. El generador usa lo que cuesta aquí un oficial o un peón: si esas
+        cifras no son las tuyas, el presupuesto sale barato o caro sin que se note.
+        {% for fila in revision_precios.muestra %}
+        <span class="badge badge-sin-datos">{{ fila.descripcion }}{% if fila.usos %} · {{ fila.usos }} usos{% endif %}</span>
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+  <a class="btn btn-sm btn-primary" href="/recursos/revisar">Revisar mis tarifas</a>
+</section>
+{% endif %}
+
 {% if salud_catalogo and salud_catalogo.requiere_atencion %}
 <section class="card dashboard-catalog-health" aria-labelledby="catalog-health-title">
   <div class="catalog-health-main">
