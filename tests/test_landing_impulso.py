@@ -175,3 +175,26 @@ def test_el_tour_impulso_ofrece_pausa_accesible():
     assert 'id="tour-pause"' in html
     assert 'data-label-pause="Pausar recorrido"' in html
     assert 'data-label-play="Reanudar recorrido"' in html
+
+
+def test_el_hero_movil_prioriza_cta_y_prueba_compacta():
+    """Opción B: en móvil el CTA y una prueba compacta no pueden quedar
+    enterrados bajo los párrafos SEO del hero de escritorio."""
+    with _cliente() as client:
+        html = client.get("/").text
+    for componente in (
+        "hero-kicker-mobile",
+        "lp2-hero-sub-mobile",
+        "lp2-hero-cta-block",
+        "lp2-mobile-proof",
+        "lp2-hero-sample",
+    ):
+        assert componente in html, componente
+    assert "Coste real, margen y tiempo de obra por partida y total. PDF listo para enviar." in html
+    assert 'data-ga-event="cta_hero"' in html
+    css = open("app/templates/_landing_impulso.css", encoding="utf-8").read()
+    assert "body.landing-impulso .lp2-mobile-proof { display: block; }" in css
+    assert "body.landing-impulso .lp2-hero-actions {\n    order: 4;" in css
+    js = open("app/static/js/landing_impulso.js", encoding="utf-8").read()
+    assert ".lp2-hero-cta-block" in js
+    assert "(max-width: 640px)" in js

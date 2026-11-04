@@ -147,3 +147,24 @@ def test_el_tour_ingles_ofrece_pausa_accesible(ruta):
     js = (RAIZ / "app/static/js/landing-tour.js").read_text(encoding="utf-8")
     assert "prefers-reduced-motion" in js
     assert "paused" in js
+
+
+@pytest.mark.parametrize("ruta", RUTAS_EN)
+def test_el_hero_movil_ingles_prioriza_cta_y_prueba_compacta(ruta):
+    with _cliente() as client:
+        html = client.get(ruta).text
+    for componente in (
+        "hero-kicker-mobile",
+        "lp2-hero-sub-mobile",
+        "lp2-hero-cta-block",
+        "lp2-mobile-proof",
+        "lp2-hero-sample",
+    ):
+        assert componente in html, (ruta, componente)
+    assert "Real cost, margin and work time per item and total. PDF ready to send." in html
+    assert "Construction estimates in" in html
+    visible = _visible(html)
+    assert "Product example" in visible
+    assert "Margin" in visible
+    assert "Duration" in visible
+    assert "Margen" not in re.sub(r"<[^>]+>", " ", visible)
