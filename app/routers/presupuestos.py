@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request
 from . import common
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
 from ..i18n import mensaje_request
-from ..services import auditoria, telemetria
+from ..services import actividad, auditoria, telemetria
 from ..utils import normalizar_moneda
 from ..services.monedas import convertir as convertir_moneda
 from ..services.revision_presupuesto import revisar_presupuesto_antes_de_enviar
@@ -2335,6 +2335,10 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
             "partidas": len(partidas),
         },
     )
+    # Auditoría (A6): el alta también es actividad del cliente. Antes solo
+    # existía la telemetría agregada, así que la ficha del cliente no podía
+    # contar «creó un presupuesto» ni desde cuándo trabaja.
+    actividad.anotar_creacion(db, presupuesto)
     return _redirect(f"/presupuestos/{presupuesto.id}", msg=f"Presupuesto {presupuesto.numero} creado.")
 
 
@@ -4114,6 +4118,9 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
     form = await request.form()
+    # Copia del estado previo para poder contar QUÉ cambió al guardar (A6).
+    # Se toma antes de reconstruir capítulos y partidas: después ya no existe.
+    antes_actividad = actividad.instantanea(presupuesto)
     estaba_congelado = presupuesto.estado in ESTADOS_CONGELABLES
     moneda_nueva = normalizar_moneda(form.get("moneda"), "USD")
     moneda_anterior = normalizar_moneda(presupuesto.moneda, "USD")
@@ -4288,6 +4295,13 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     # autoguardado (ya no hay cambios pendientes que recuperar).
     db.query(BorradorPresupuesto).filter(BorradorPresupuesto.presupuesto_id == presupuesto_id).delete()
     db.commit()
+    # Auditoría (A6): resumen de lo que se tocó (partidas, precios, textos,
+    # cantidades). Sin esto el panel sabía que el presupuesto existía, pero no
+    # que el cliente lo reescribía ni qué campo le obligaba a hacerlo. Va
+    # después del commit del cambio real: el registro es best-effort.
+    resumen_actividad = actividad.resumen_cambios(antes_actividad, partidas, capitulos)
+    resumen_actividad["total_despues"] = float(presupuesto.total_calculado or 0)
+    actividad.anotar_edicion(db, presupuesto, antes_actividad, resumen_actividad)
     _sincronizar_recursos(db)
     return _redirect(f"/presupuestos/{presupuesto_id}", msg="Presupuesto actualizado.")
 
@@ -4487,6 +4501,9 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
                 "origen": "duplicado",
             },
         )
+        # La copia también es actividad: para la ficha del cliente, «duplicó el
+        # ejemplo del alta» es la señal de activación que de verdad importa.
+        actividad.anotar_creacion(db, copia, origen="duplicado")
     return _redirect(f"/presupuestos/{copia.id}/editar", msg=f"Presupuesto duplicado correctamente como {copia.numero}.")
 
 

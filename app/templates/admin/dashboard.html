@@ -155,7 +155,7 @@
   {# --------------------------------------------------------------- #}
   {# 1. Lo que espera: la agenda del día, no un catálogo de opciones #}
   {# --------------------------------------------------------------- #}
-  <div class="card">
+  <div class="card" id="pendientes">
     <div class="card-header">
       <h2>Requiere tu acción hoy</h2>
       <div class="card-header-acc">
@@ -175,6 +175,9 @@
       </div>
       <div class="pend-acc">
         <a class="btn btn-sm btn-secondary" href="{{ aviso.url }}">Atender</a>
+        {% if aviso.url_lista %}
+        <a class="btn btn-sm btn-secondary" href="{{ aviso.url_lista }}">{{ aviso.etiqueta_lista or 'Ver la lista' }}</a>
+        {% endif %}
       </div>
     </div>
     {% else %}
@@ -216,7 +219,7 @@
       <div class="kpi-label">Ingresos del mes</div>
       <p class="note-sub">Renovaciones {{ "%.2f"|format(finanzas.renovaciones_mes) }} US$ · {{ finanzas.licencias_renovando_mes }} licencias</p>
     </a>
-    <a class="kpi-card enlaza warn" href="/admin/ingresos?tab=renovaciones">
+    <a class="kpi-card enlaza warn" href="/admin/clientes?tab=directorio&estado=por_vencer">
       <div class="kpi-value">{{ resumen.totales.por_vencer }}</div>
       <div class="kpi-label">Clientes por vencer</div>
       <p class="note-sub">En 15 días o menos · {{ "%.2f"|format(finanzas.renovaciones_mes) }} US$ en juego este mes</p>
@@ -231,12 +234,12 @@
       <div class="kpi-label">Soporte sin atender</div>
       <p class="note-sub">{{ soporte.todos }} mensaje(s) en el buzón</p>
     </a>
-    <a class="kpi-card enlaza" href="/admin/clientes?estado=sin_licencia">
+    <a class="kpi-card enlaza" href="/admin/clientes?tab=directorio&plan=sin">
       <div class="kpi-value">{{ resumen.totales.sin_plan }}</div>
       <div class="kpi-label">Clientes sin plan</div>
       <p class="note-sub">{{ registros.mes }} alta(s) de cuenta este mes</p>
     </a>
-    <a class="kpi-card enlaza" href="/admin/clientes">
+    <a class="kpi-card enlaza" href="/admin/clientes?tab=directorio">
       <div class="kpi-value">{{ resumen.totales.clientes }}</div>
       <div class="kpi-label">Clientes</div>
       <p class="note-sub">{{ resumen.totales.con_plan }} con plan activo · {{ "%.2f"|format(resumen.totales.ingresos) }} US$ acumulados</p>
