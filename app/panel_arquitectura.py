@@ -326,42 +326,57 @@ FICHA_PESTANAS: tuple[Pestana, ...] = (
         "Qué tiene contratado, cuánto paga y desde cuándo.",
     ),
     Pestana(
+        "timeline",
+        "Timeline",
+        "Todo lo que ha pasado con este cliente: licencias, pagos, notas, cambios de estado y uso del producto, en una sola línea cronológica.",
+    ),
+    Pestana(
         "presupuestos",
         "Presupuestos y precios",
         "Uso real del cliente: presupuestos, partidas, precios modificados y ajustes (solo lectura).",
+        roles_permitidos=("superadmin",),
     ),
     Pestana(
         "acceso",
         "Acceso y licencias",
         "La cadena de licencias completa: conceder, renovar, recibo y suspensión.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "cobros",
         "Cobros",
         "Compras de plan, facturas y pagos del cliente.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "gestion",
         "CRM y notas",
         "Estado comercial, próximo contacto y notas internas del equipo.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "actividad",
         "Actividad",
         "Últimos movimientos del cliente y acciones tomadas desde el panel.",
+        roles_permitidos=("superadmin", "admin", "soporte", "analista"),
     ),
 )
 
 
-def pestana_ficha_valida(pestana: str) -> str:
+def pestana_ficha_valida(pestana: str, rol: str | None = None) -> str:
     pedida = (pestana or "").strip().lower()
-    for definida in FICHA_PESTANAS:
+    definidas = tuple(
+        p for p in FICHA_PESTANAS if _rol_permite(rol, p.roles_permitidos)
+    )
+    for definida in definidas:
         if definida.id == pedida:
             return definida.id
-    return FICHA_PESTANAS[0].id
+    return definidas[0].id if definidas else ""
 
 
-def ficha_pestanas_panel(organizacion_id: int, activa: str) -> list[dict]:
+def ficha_pestanas_panel(
+    organizacion_id: int, activa: str, rol: str | None = None
+) -> list[dict]:
     base = f"/admin/clientes/{int(organizacion_id)}"
     return [
         {
@@ -374,6 +389,7 @@ def ficha_pestanas_panel(organizacion_id: int, activa: str) -> list[dict]:
             "modulo_vistas": "",
         }
         for definida in FICHA_PESTANAS
+        if _rol_permite(rol, definida.roles_permitidos)
     ]
 
 
