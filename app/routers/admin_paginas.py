@@ -571,14 +571,15 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
 
 @router.get("/admin/clientes/{organizacion_id}", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)):
-    """Ficha del cliente en seis pestañas (antes: ocho tarjetas apiladas)."""
+    """Ficha del cliente con timeline unificado como pestaña principal."""
     from ..services.panel_admin import ETIQUETA_ORIGEN, PLAN_POR_IMPORTE
-    from ..services.panel_clientes import resumen_cliente
+    from ..services.panel_clientes import resumen_cliente, timeline_cliente
 
     ficha = resumen_cliente(db, organizacion_id)
     if ficha is None:
         return _redirect_cliente_inexistente()
-    pestana = pestana_ficha_valida(_texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_ficha_valida(_texto(request, "tab")["tab"], rol=rol_operador)
 
     vigente = ficha.get("vigente")
     if vigente is None:
@@ -590,8 +591,12 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
 
     hoy = date.today()
     contexto = contexto_base(request, db, seccion="clientes")
+    # Timeline unificado: siempre disponible, sea cual sea la pestaña activa.
+    # Así el operador ve la cronología completa sin cambiar de pestaña.
+    filtro_activo = (request.query_params.get("filtro") or "todos").strip().lower()
+    timeline = timeline_cliente(db, organizacion_id, hoy=hoy, limite=40)
     contexto.update({
-        "pestanas": _pestanas_ficha(organizacion_id, pestana),
+        "pestanas": _pestanas_ficha(organizacion_id, pestana, rol=rol_operador),
         "pestana": pestana,
         "pestana_nombre": _nombre_ficha(pestana),
         "cabecera": {"titulo": "", "subtitulo": "", "migas": [], "seccion": "clientes"},
@@ -604,6 +609,9 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
             for fila in _crm_por_organizacion(db).values()
             if fila.get("proximo_contacto") and fila["proximo_contacto"] <= hoy
         ][:20],
+        "timeline": timeline,
+        "filtro_activo": filtro_activo,
+        "operador_rol": rol_operador,
     })
     # La pestaña «Presupuestos y precios» abre el contenido real de la
     # organización: solo lectura, auditada y reservada al superadmin.
@@ -673,7 +681,9 @@ def pagina_detalle_presupuesto_cliente(
     )
     contexto = contexto_base(request, db, seccion="clientes")
     contexto.update({
-        "pestanas": _pestanas_ficha(organizacion_id, "presupuestos"),
+        "pestanas": _pestanas_ficha(
+            organizacion_id, "presupuestos", rol=str(db.info.get("operador_rol") or "").lower()
+        ),
         "pestana": "presupuestos",
         "pestana_nombre": _nombre_ficha("presupuestos"),
         "cabecera": {"titulo": "", "subtitulo": "", "migas": [], "seccion": "clientes"},
@@ -785,10 +795,10 @@ def _redirect_cliente_inexistente() -> RedirectResponse:
     return _redirect(ruta_panel("clientes"), error="El cliente indicado no existe.")
 
 
-def _pestanas_ficha(organizacion_id: int, activa: str) -> list[dict]:
+def _pestanas_ficha(organizacion_id: int, activa: str, rol: str | None = None) -> list[dict]:
     from ..panel_arquitectura import ficha_pestanas_panel
 
-    return ficha_pestanas_panel(organizacion_id, activa)
+    return ficha_pestanas_panel(organizacion_id, activa, rol=rol)
 
 
 def _nombre_ficha(pestana: str) -> str:
