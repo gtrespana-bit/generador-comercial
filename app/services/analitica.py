@@ -850,11 +850,18 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
         ultimo_acceso_datos = datos.get("ultimo_acceso")
         senales_vida = [s for s in (ultima_evento, ultimo_login.get(org.id), ultimo_acceso_datos) if s]
         vida = max(senales_vida) if senales_vida else None
+        # «Hoy» incluye a quien entró AYER: la señal de vida llega con la
+        # última actividad de la jornada anterior y el operador agrupa por día
+        # natural, no por 24 h exactas. Con `< 1` un inicio de sesión de ayer a
+        # esta misma hora caía en «semana» y la empresa parecía más dormida de
+        # lo que está (regresión que ve `test_una_empresa_solo_con_inicio_de_
+        # sesion_esta_hoy_no_inactiva`).
+        dias_vida = (datetime.utcnow() - vida).days if vida else None
         if presencia:
             estado = "en_linea"
-        elif vida and (datetime.utcnow() - vida).days < 1:
+        elif dias_vida is not None and dias_vida <= 1:
             estado = "hoy"
-        elif vida and (datetime.utcnow() - vida).days <= 7:
+        elif dias_vida is not None and dias_vida <= 7:
             estado = "semana"
         elif vida:
             estado = "inactiva"

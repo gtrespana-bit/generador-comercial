@@ -38,8 +38,33 @@ def _existe() -> bool:
         return False
 
 
+def _postgres() -> bool:
+    return op.get_bind().dialect.name == "postgresql"
+
+
+def _permisos_aplicacion() -> None:
+    """Concede al rol de aplicación acceso a la tabla y a su secuencia.
+
+    Sin esto la migración crea la tabla como ``postgres`` y en producción el
+    runtime (``cotizat_app``) recibe ``permission denied for table
+    visitas_pagina`` en cada lectura del panel: las políticas por omisión de
+    PostgreSQL no incluyen a ese rol. Es el mismo bloque que llevan el resto
+    de migraciones que crean tablas (``planos_obra``, ``pruebas_concedidas``).
+    """
+    if not _postgres():
+        return
+    op.execute(f"REVOKE ALL ON TABLE public.{TABLE} FROM PUBLIC")
+    op.execute(
+        f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.{TABLE} TO cotizat_app"
+    )
+    op.execute(
+        f"GRANT USAGE, SELECT ON SEQUENCE public.{TABLE}_id_seq TO cotizat_app"
+    )
+
+
 def upgrade() -> None:
     if _existe():
+        _permisos_aplicacion()
         return
     op.create_table(
         TABLE,
@@ -71,6 +96,7 @@ def upgrade() -> None:
     op.create_index(f"ix_{TABLE}_ruta", TABLE, ["ruta"])
     op.create_index(f"ix_{TABLE}_ip_hash", TABLE, ["ip_hash"])
     op.create_index(f"ix_{TABLE}_created_at", TABLE, ["created_at"])
+    _permisos_aplicacion()
 
 
 def downgrade() -> None:

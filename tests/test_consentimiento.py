@@ -563,6 +563,7 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
         t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migracion,
         u1c5e8b3d7a9_recordatorio_de_tarifas as recordatorio_migracion,
         v2d7f1a6b9c3_datos_bancarios_del_presupuesto as bancarios_migracion,
+        w3m9k2p8v1n4_visitas_pagina_audiencia as visitas_migracion,
     )
 
     assert ejemplo_migracion.down_revision == analitica_migracion.revision
@@ -576,7 +577,9 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     # Sobre el recordatorio cuelga la columna de datos bancarios por
     # presupuesto, que es la cabeza vigente.
     assert bancarios_migracion.down_revision == recordatorio_migracion.revision
-    assert bancarios_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # La cabeza vigente es el agregado de audiencia de la web pública.
+    assert visitas_migracion.down_revision == bancarios_migracion.revision
+    assert visitas_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision
