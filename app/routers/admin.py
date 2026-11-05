@@ -45,8 +45,10 @@ from ..services.web_admin import (
     crear_aviso,
     crear_release,
     descartar_contenido,
+    alternar_vista_favorita,
     eliminar_vista,
     guardar_contenido,
+    listar_vistas_favoritas,
     guardar_crm,
     guardar_vista,
     listar_api_keys,
@@ -1578,6 +1580,32 @@ def vistas_eliminar(
         db.rollback()
         return _redirect(destino, error=str(exc))
     return _redirect(destino, msg="Vista eliminada.")
+
+
+@router.post("/admin/vistas/{vista_id}/favorita", include_in_schema=False)
+def vistas_favorita(
+    vista_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    """Marca o desmarca una vista guardada como favorita."""
+    destino = _volver_valor(volver, VOLVER_DIRECTORIO)
+    try:
+        es_favorita = alternar_vista_favorita(db, vista_id)
+        db.commit()
+        _auditar_admin(
+            db,
+            request,
+            accion="admin.vista_favorita",
+            entidad="vistas_guardadas",
+            entidad_id=vista_id,
+            detalle={"favorita": es_favorita},
+        )
+    except GestionWebError as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    return _redirect(destino, msg=("Vista marcada como favorita." if es_favorita else "Vista quitada de favoritas."))
 
 
 @router.post("/admin/api-keys/crear", include_in_schema=False)

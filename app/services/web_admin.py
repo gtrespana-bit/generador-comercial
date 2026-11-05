@@ -616,6 +616,29 @@ def eliminar_vista(db: Session, vista_id: int) -> None:
     db.flush()
 
 
+def alternar_vista_favorita(db: Session, vista_id: int) -> bool:
+    """Marca o desmarca una vista guardada como favorita.
+
+    Devuelve el nuevo estado (True = favorita, False = no favorita).
+    """
+    vista = db.get(VistaGuardada, vista_id)
+    if vista is None:
+        raise GestionWebError("La vista indicada no existe.")
+    vista.favorita = not bool(vista.favorita)
+    db.flush()
+    return vista.favorita
+
+
+def listar_vistas_favoritas(db: Session) -> list[VistaGuardada]:
+    """Vistas guardadas marcadas como favorita, ordenadas por nombre."""
+    return (
+        db.query(VistaGuardada)
+        .filter(VistaGuardada.favorita.is_(True))
+        .order_by(VistaGuardada.modulo, VistaGuardada.nombre)
+        .all()
+    )
+
+
 # ---------------------------------------------------------------------------
 # Lectura pública (RLS deja ver solo publicado/activo)
 # ---------------------------------------------------------------------------
