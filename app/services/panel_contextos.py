@@ -313,19 +313,20 @@ def contexto_base(
     """Menú, pestañas, título, mensajes y opciones compartidas de los formularios."""
     if contadores is None:
         contadores = contadores_panel(db)
-    pestana_activa = pestana_valida(seccion, pestana)
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana_activa = pestana_valida(seccion, pestana, rol=rol_operador)
     from ..services.licencias import DURACIONES
 
     return {
         "request": request,
-        "secciones": nav_panel(contadores),
+        "secciones": nav_panel(contadores, rol=rol_operador),
         "seccion_activa": seccion,
-        "pestanas": pestanas_panel(seccion, pestana_activa, contadores),
+        "pestanas": pestanas_panel(seccion, pestana_activa, contadores, rol=rol_operador),
         "pestana": pestana_activa,
-        "pestana_nombre": _nombre_pestanas(seccion, pestana_activa),
+        "pestana_nombre": _nombre_pestanas(seccion, pestana_activa, rol_operador),
         "cabecera": cabecera or cabecera_panel(seccion, pestana_activa),
         "operador": db.info.get("auth_email", ""),
-        "operador_rol": str(db.info.get("operador_rol") or "").lower(),
+        "operador_rol": rol_operador,
         "hoy": date.today(),
         "contadores": contadores,
         "msg": msg or request.query_params.get("msg", ""),
@@ -338,8 +339,8 @@ def contexto_base(
     }
 
 
-def _nombre_pestanas(seccion: str, pestana: str) -> str:
-    for definida in pestanas_panel(seccion, ""):
+def _nombre_pestanas(seccion: str, pestana: str, rol: str | None = None) -> str:
+    for definida in pestanas_panel(seccion, "", rol=rol):
         if definida["id"] == pestana:
             return definida["nombre"]
     return ""

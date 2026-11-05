@@ -330,7 +330,8 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     """
     from ..services.panel_admin import resumen_admin
 
-    pestana = pestana_valida("clientes", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("clientes", _texto(request, "tab")["tab"], rol=rol_operador)
     if pestana == "soporte":
         return _respuesta(request, "clientes.html", _clientes_soporte(request, db, pestana))
     pedidos = _texto(request, "q", "estado", "plan", "crm", "orden", "dir", "dias")
@@ -807,8 +808,9 @@ def _nombre_ficha(pestana: str) -> str:
 @router.get("/admin/ingresos", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ingresos(request: Request, db: Session = Depends(get_operator_db)):
     """Lo que se vendió, lo que vence, lo que espera, lo que se cobró y lo contratado."""
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
     pedidos = _texto(request, "tab")
-    pestana = pestana_valida("ingresos", pedidos["tab"])
+    pestana = pestana_valida("ingresos", pedidos["tab"], rol=rol_operador)
     contexto = _constructor[pestana](request, db, pestana)
     return _respuesta(request, "ingresos.html", contexto)
 
@@ -1173,7 +1175,8 @@ _constructor.update({
 @router.get("/admin/ingresos.csv", include_in_schema=False)
 def exportar_ingresos_csv(request: Request, db: Session = Depends(get_operator_db)):
     """CSV de la pestaña activa (ventas, renovaciones, cobros, compras o contratos)."""
-    pestana = pestana_valida("ingresos", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("ingresos", _texto(request, "tab")["tab"], rol=rol_operador)
     if pestana not in _EXPORTADORES:
         pestana = "ventas"
     filas, nombre = _EXPORTADORES[pestana](request, db)
@@ -1662,7 +1665,8 @@ def pagina_web(request: Request, db: Session = Depends(get_operator_db)):
     """La web del producto se edita y se publica desde un solo sitio."""
     from ..services.web_admin import listar_contenido
 
-    pestana = pestana_valida("web", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("web", _texto(request, "tab")["tab"], rol=rol_operador)
     contexto = contexto_base(request, db, seccion="web", pestana=pestana)
     if pestana == "contenido":
         contexto.update(_web_contenido(db, listar_contenido(db)))
@@ -2096,7 +2100,8 @@ def contexto_sistema(
     Antes cada bloque tenía su página —y su copia del menú—; ahora son pestañas
     del mismo área y comparten el constructor de contexto.
     """
-    activa = pestana_valida("sistema", pestana)
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    activa = pestana_valida("sistema", pestana, rol=rol_operador)
     contexto = contexto_base(request, db, seccion="sistema", pestana=activa, msg=msg, error=error)
     try:
         _RELLENOS[activa](request, db, contexto)
