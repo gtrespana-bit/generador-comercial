@@ -170,6 +170,11 @@
       <div class="muted">{{ k.usuarios_7d }} en 7 días</div>
     </div>
     <div class="kpi-card">
+      <div class="kpi-value">{{ k.usuarios_activos_hoy }}</div>
+      <div class="kpi-label">Usuarios activos hoy</div>
+      <div class="muted">con al menos un evento del producto</div>
+    </div>
+    <div class="kpi-card">
       <div class="kpi-value">{{ k.organizaciones }}</div>
       <div class="kpi-label">Empresas</div>
       <div class="muted">{% if k.org_recientes %}+{{ k.org_recientes }} en {{ resumen.dias }}d{% else %}sin altas en {{ resumen.dias }}d{% endif %}</div>
@@ -193,6 +198,17 @@
       <div class="kpi-value">{{ "%.2f"|format(k.ingresos) }} <small>US$</small></div>
       <div class="kpi-label">Ingresos acumulados</div>
       <div class="muted">{{ k.orgs_que_pagaron }} empresa{{ 's' if k.orgs_que_pagaron != 1 else '' }} han pagado</div>
+    </div>
+    {% set aud = resumen.audiencia %}
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ aud.visitantes_hoy if aud.disponible else 0 }}</div>
+      <div class="kpi-label">Visitantes hoy (web pública)</div>
+      <div class="muted">{{ aud.visitantes_7d if aud.disponible else 0 }} en 7 días</div>
+    </div>
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ aud.vistas_hoy if aud.disponible else 0 }}</div>
+      <div class="kpi-label">Vistas de página hoy</div>
+      <div class="muted">{{ aud.vistas_ventana if aud.disponible else 0 }} en {{ resumen.dias }}d</div>
     </div>
   </div>
 
@@ -274,6 +290,7 @@
             <th class="num">Clientes</th>
             <th class="num">Presupuestado</th>
             <th class="num">Días de uso</th>
+            <th>Último acceso</th>
             <th>Última actividad</th>
             <th>Plan</th>
           </tr>
@@ -303,6 +320,7 @@
             <td class="num">{{ fila.clientes }}</td>
             <td class="num">{{ "%.0f"|format(fila.total_presupuestado) }}</td>
             <td class="num"><span title="{{ fila.eventos }} acciones registradas en la ventana">{{ fila.dias_uso }}<small class="muted">/{{ resumen.dias }}</small></span></td>
+            <td class="muted">{% if fila.ultimo_acceso %}{{ fila.ultimo_acceso.strftime("%d/%m %H:%M") }}{% else %}—{% endif %}</td>
             <td class="muted">{% if fila.ultima_actividad %}{{ fila.ultima_actividad.strftime("%d/%m %H:%M") }}{% else %}—{% endif %}</td>
             <td>{% if fila.pagando %}<span class="badge badge-success">Paga · {{ fila.dias_plan }}d</span>{% elif fila.plan_vence %}<span class="badge badge-neutral">Vence {{ fila.plan_vence.strftime("%d/%m") }}</span>{% else %}<span class="badge badge-neutral">Sin plan</span>{% endif %}</td>
           </tr>
@@ -422,6 +440,60 @@
       </div>
     </div>
     {% endfor %}
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Audiencia de la web pública</h2>
+      <span class="badge badge-neutral">últimos {{ resumen.dias }} días · sin cookies de terceros</span>
+    </div>
+    <div class="card-body grid-2">
+      <div class="chart">
+        <div class="chart-info">
+          <b>{{ aud.visitantes_ventana if aud.disponible else 0 }}</b>
+          <span>visitantes únicos en {{ resumen.dias }}d · máx. {% set _mv = aud.serie|map(attribute="visitantes")|max(list=[0]) if aud.disponible else 0 %}{{ _mv }}/día</span>
+        </div>
+        <svg viewBox="0 0 720 150" role="img" aria-label="Visitantes únicos por día">
+          <line class="eje" x1="0" y1="132" x2="720" y2="132"></line>
+          {% if aud.disponible and aud.serie %}
+            {% set _n = aud.serie|length %}
+            {% set _paso = 720 / _n %}
+            {% set _ancho = _paso * 0.68 %}
+            {% set _max = aud.serie|map(attribute="visitantes")|max(list=[0]) or 1 %}
+            {% for p in aud.serie %}
+            <rect class="bar" x="{{ (loop.index0 * _paso + (_paso - _ancho) / 2)|round(1) }}" y="{{ (132 - p.visitantes / _max * 110)|round(1) }}" width="{{ _ancho|round(1) }}" height="{{ (p.visitantes / _max * 110)|round(1) }}" rx="2">
+              <title>{{ p.fecha.strftime("%d/%m") }} · {{ p.visitantes }} visitantes · {{ p.vistas }} vistas</title>
+            </rect>
+            {% endfor %}
+          {% endif %}
+        </svg>
+        <p class="muted" style="font-size:0.72rem; margin-top:8px;">Barras: visitantes únicos (IP hash) por día. Área bajo la barra: vistas de página ese día.</p>
+      </div>
+      <div>
+        {% if aud.disponible and aud.paginas_top %}
+        <div class="funciones">
+          {% for pagina in aud.paginas_top %}
+          <div class="funcion">
+            <div class="nombre" title="{{ pagina.ruta }}">{{ pagina.ruta }}</div>
+            <div class="barra">
+              <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+                <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+                {% set _mp = aud.paginas_top[0].vistas %}
+                <rect x="0" y="1" width="{{ [(pagina.vistas * 100.0 / _mp)|round(1), 1.2]|max }}" height="6"></rect>
+              </svg>
+            </div>
+            <div class="total">{{ pagina.vistas }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted text-center">Sin visitas medidas todavía.</p>
+        {% endif %}
+        {% if aud.disponible and aud.referentes_top %}
+        <p class="note-sub" style="margin-top:10px;">Páginas de origen medidas: {% for r in aud.referentes_top %}{{ r.origen }}{{ ", " if not loop.last }}{% endfor %}</p>
+        {% endif %}
+      </div>
+    </div>
   </div>
 
   <div class="card">

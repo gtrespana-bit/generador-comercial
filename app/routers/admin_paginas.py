@@ -1462,6 +1462,61 @@ def exportar_soporte_csv(request: Request, db: Session = Depends(get_operator_db
     return _csv_response(filas, nombre)
 
 
+@router.get("/admin/analitica.csv", include_in_schema=False)
+def exportar_analitica_csv(
+    request: Request, db: Session = Depends(get_operator_db)
+):
+    """Informe ejecutivo de analítica: KPIs, serie diaria y tabla de empresas.
+
+    Un CSV con la misma medición que se ve en /admin/analitica, para llevar a
+    una reunión o cruzar con otras fuentes (E5-012 / D4: informe ejecutivo).
+    """
+    from ..services.analitica import resumen_analitica
+
+    resumen = resumen_analitica(db)
+    k = resumen["kpis"]
+    contenido = [
+        [
+            "Métrica",
+            "Valor",
+        ],
+        ["Empresas totales", k["organizaciones"]],
+        ["Cuentas totales", k["usuarios"]],
+        ["Cuentas registradas en ventana", k["usuarios_recientes"]],
+        ["Sesiones iniciadas hoy", k["usuarios_hoy"]],
+        ["Cuentas con uso hoy", k["usuarios_activos_hoy"]],
+        ["Empresas activas hoy", k["activas_hoy"]],
+        ["Empresas activas 7d", k["activas_7d"]],
+        ["Empresas activas en ventana", k["activas_ventana"]],
+        ["Empresas que presupuestan", k["empresa_a_presupuesto"]],
+        ["Empresas sin presupuesto", k["orgs_sin_presupuesto"]],
+        ["Presupuestos hoy", k["presupuestos_hoy"]],
+        ["Presupuestos esta semana", k["presupuestos_semana"]],
+        ["Presupuestos este mes", k["presupuestos_mes"]],
+        ["Presupuestos en ventana", k["presupuestos_ventana"]],
+        ["Ingresos acumulados (licencias de pago)", k["ingresos"]],
+        ["Empresas que han pagado", k["orgs_que_pagaron"]],
+        [
+            "Visitantes hoy",
+            resumen["audiencia"]["visitantes_hoy"]
+            if resumen["audiencia"]["disponible"]
+            else 0,
+        ],
+        [
+            "Vistas de página hoy",
+            resumen["audiencia"]["vistas_hoy"]
+            if resumen["audiencia"]["disponible"]
+            else 0,
+        ],
+        ["Visitantes en ventana", resumen["audiencia"]["visitantes_ventana"] if resumen["audiencia"]["disponible"] else 0],
+        ["Vistas de página en ventana", resumen["audiencia"]["vistas_ventana"] if resumen["audiencia"]["disponible"] else 0],
+        ["Ventana (días)", resumen["dias"]],
+        ["Generado", datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")],
+    ]
+    nombre = f"analitica_{resumen['hoy']:%Y%m%d}.csv"
+    return _csv_response(contenido, nombre)
+
+
 @router.get("/admin/auditoria.csv", include_in_schema=False)
 def exportar_auditoria_csv(request: Request, db: Session = Depends(get_operator_db)):
     """URL nueva de Fase 1: el registro se podía leer pero no descargar."""

@@ -47,6 +47,7 @@ from .database import (  # noqa: E402
 )
 from .models import LicenciaSuspendidaError, PermisoOrganizacionError  # noqa: E402
 from .security import AuthRateLimitMiddleware, WebSecurityMiddleware, confia_en_proxy  # noqa: E402
+from .services.prueba_gratuita import hash_ip  # noqa: E402
 from .services.invitations import GestionEquipoError  # noqa: E402
 from .services.operacion import RegistroErroresMiddleware  # noqa: E402
 from .storage import StorageError  # noqa: E402
@@ -231,6 +232,130 @@ class FormulariosUTF8Middleware:
 #: Mercados de habla inglesa cuyo prefijo interno (/us/) no es una URL
 #: pública: la pública lleva el idioma delante (/en-us/).
 _PREFIJOS_INTERNOS_EN = frozenset({"us", "gb", "ca", "au", "ie"})
+
+#: Rutas que nunca cuentan como visita de audiencia: el panel, la API, los
+#: activos estáticos, los diagnósticos y las rutas de sesión. El resto de la
+#: web pública sí se mide (landings, precios, guías, artículos…).
+_RUTAS_SIN_AUDIENCIA = (
+    "/admin",
+    "/api",
+    "/static",
+    "/favicon.ico",
+    "/healthz",
+    "/readyz",
+    "/acceso",
+    "/registro",
+    "/recuperar-acceso",
+    "/restablecer-clave",
+    "/salir",
+    "/sitemap.xml",
+    "/robots.txt",
+    # Rutas de la app de cliente (tras el login): eso es uso del producto,
+    # medida por telemetría, no audiencia de la web pública.
+    "/inicio",
+    "/organizaciones",
+    "/presupuestos",
+    "/partidas",
+    "/planos",
+    "/productos",
+    "/recursos",
+    "/plantillas",
+    "/recetas",
+    "/cuenta",
+    "/pago",
+    "/clientes",
+    "/facturas",
+)
+
+
+def _es_visita_audiencia(scope) -> bool:
+    """¿Esta petición merece contarse como visitante de la web pública?"""
+    if scope.get("type") != "http":
+        return False
+    if scope.get("method") not in ("GET", "HEAD"):
+        return False
+    path = scope.get("path") or ""
+    if path in _RUTAS_SIN_AUDIENCIA or any(
+        path.startswith(prefijo) for prefijo in _RUTAS_SIN_AUDIENCIA
+    ):
+        return False
+    aceptar = ""
+    for nombre, valor in scope.get("headers", []):
+        if nombre.decode("latin-1").lower() == "accept":
+            aceptar = valor.decode("latin-1").lower()
+            break
+    if aceptar and "text/html" not in aceptar and "*/*" not in aceptar:
+        return False
+    # Los buscadores y bots no son visitantes: su user-agent lo delata.
+    agente = ""
+    for nombre, valor in scope.get("headers", []):
+        if nombre.decode("latin-1").lower() == "user-agent":
+            agente = valor.decode("latin-1").lower()
+            break
+    if "bot" in agente or "spider" in agente or "crawler" in agente:
+        return False
+    return True
+
+
+class AudienciaMiddleware:
+    """Cuenta una visita por página vista de la web pública.
+
+    Escribir aquí nunca retrasa la respuesta (se hace tras enviarla) y nunca
+    la rompe: si la base no está disponible, la visita simplemente no se
+    cuenta. La IP se guarda hasheada, nunca en claro.
+    """
+
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if not _es_visita_audiencia(scope):
+            await self.app(scope, receive, send)
+            return
+
+        request = Request(scope)
+        ruta = scope.get("path") or "/"
+
+        # La respuesta ya se ha enviado cuando call_next devuelve: registrar
+        # la visita después no retrasa al visitante.
+        await self.app(scope, receive, send)
+
+        # Usuarios con sesión válida: eso es uso del producto (telemetría),
+        # no audiencia anónima de la web pública.
+        if getattr(request.state, "supabase_identity", None):
+            return
+
+        try:
+            from .database import SessionLocal
+            from .models import VisitaPagina
+
+            db = SessionLocal()
+            try:
+                db.add(
+                    VisitaPagina(
+                        ruta=str(ruta)[:300],
+                        ip_hash=hash_ip(ip_de_request(request)),
+                        usuario_agent=(
+                            str(request.headers.get("user-agent", "") or "")[:300]
+                            or None
+                        ),
+                        referente=(
+                            str(request.headers.get("referer", "") or "")[:300]
+                            or None
+                        ),
+                    )
+                )
+                db.commit()
+            except Exception:
+                try:
+                    db.rollback()
+                except Exception:
+                    pass
+            finally:
+                db.close()
+        except Exception:
+            # La audiencia es un adorno, nunca un obstáculo.
+            pass
 
 
 class HostCanonicoMiddleware:
@@ -503,6 +628,7 @@ app.add_middleware(RegistroErroresMiddleware)
 from .cache_publico import CachePublicoMiddleware  # noqa: E402
 
 app.add_middleware(CachePublicoMiddleware)
+app.add_middleware(AudienciaMiddleware)
 # Compresión gzip de HTML/CSS/JS/JSON: la página de partidas (~5 MB sin
 # comprimir) viaja a una fracción de su tamaño y la carga se percibe mucho
 # más rápida. Queda en la capa más exterior para envolver el resto.

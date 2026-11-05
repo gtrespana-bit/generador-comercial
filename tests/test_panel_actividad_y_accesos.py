@@ -356,6 +356,29 @@ def test_la_campana_avisa_de_quien_paga_y_no_usa_el_producto(panel):
     assert "Obras Norte" not in silencio[0]["titulo"]
 
 
+def test_el_inicio_de_sesion_cuenta_como_dia_de_uso(panel):
+    _cliente, Session, datos = panel
+    from app.models import EventoAuditoria
+    from app.services.actividad import actividad_organizacion
+
+    with Session() as db:
+        db.add(
+            EventoAuditoria(
+                organizacion_id=datos["sin_plan"],
+                accion="sesion.login",
+                actor_email="cliente@example.com",
+                detalle="{}",
+                created_at=datetime.utcnow() - timedelta(days=1),
+            )
+        )
+        db.commit()
+        datos_act = actividad_organizacion(db, datos["sin_plan"], dias=30)
+
+    # Sin este inicio de sesión la empresa tendría 0 días de uso.
+    assert datos_act["kpis"]["dias_uso"] >= 1
+    assert datos_act["kpis"]["ultima_actividad"] is not None
+
+
 def test_la_campana_avisa_de_un_alta_que_no_ha_probado_nada(panel):
     _cliente, Session, _datos = panel
     from app.services.panel_notificaciones import notificaciones_admin

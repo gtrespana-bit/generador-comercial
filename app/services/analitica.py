@@ -39,6 +39,7 @@ from sqlalchemy import func, or_, text
 from ..models import (
     Cliente,
     CompraPlan,
+    EventoAuditoria,
     EventoProducto,
     Factura,
     Licencia,
@@ -47,6 +48,7 @@ from ..models import (
     Presupuesto,
     Usuario,
 )
+from .audiencia import resumen_audiencia
 from .licencias import vence_cadena
 from .telemetria import (
     ACCIONES,
@@ -145,6 +147,16 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
         .scalar()
         or 0
     )
+    # Cuentas con al menos un evento de producto hoy: uso real, no solo acceso.
+    usuarios_activos_hoy = int(
+        db.query(func.count(func.distinct(EventoProducto.actor_email)))
+        .filter(
+            EventoProducto.created_at >= inicio_hoy,
+            EventoProducto.actor_email != "",
+        )
+        .scalar()
+        or 0
+    )
     usuarios_7d = (
         db.query(func.count(Usuario.id))
         .filter(Usuario.ultimo_acceso_at >= _inicio_dia(hoy - timedelta(days=6)))
@@ -163,6 +175,7 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
         # Los activos por ventana salen de los latidos (ver _actividad).
         "registro_a_empresa": _pct(organizaciones, usuarios),
         "empresa_a_pago": _pct(len(orgs_que_pagaron), organizaciones),
+        "usuarios_activos_hoy": usuarios_activos_hoy,
     }
 
 
@@ -787,11 +800,23 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
         .group_by(EventoProducto.organizacion_id)
         .all()
     )
-    ultima_actividad = dict(
+    # Último evento de producto por empresa (uso dentro de la app).
+    ultimo_evento = dict(
         db.query(
             EventoProducto.organizacion_id, func.max(EventoProducto.created_at)
         )
         .group_by(EventoProducto.organizacion_id)
+        .all()
+    )
+    # Último inicio de sesión por empresa. Vive en la auditoría, no en la
+    # telemetría, y es una señal de vida tan válida como un latido: una
+    # empresa que solo entró ayer no es «inactiva».
+    ultimo_login = dict(
+        db.query(
+            EventoAuditoria.organizacion_id, func.max(EventoAuditoria.created_at)
+        )
+        .filter(EventoAuditoria.accion == "sesion.login")
+        .group_by(EventoAuditoria.organizacion_id)
         .all()
     )
     # Días de uso de la ventana (latidos): el DAU por empresa, que es más
@@ -818,15 +843,20 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
         datos = agregados.get(org.id, {})
         vigentes = [l for l in licencias.get(org.id, []) if l.vigente(hoy)]
         vence = vence_cadena(vigentes, hoy)
-        ultima = ultima_actividad.get(org.id)
         presencia = en_linea.get(org.id)
+        # Señal de vida unificada: lo más reciente entre eventos de producto,
+        # inicio de sesión (auditoría) y último acceso de sus miembros.
+        ultima_evento = ultimo_evento.get(org.id)
+        ultimo_acceso_datos = datos.get("ultimo_acceso")
+        senales_vida = [s for s in (ultima_evento, ultimo_login.get(org.id), ultimo_acceso_datos) if s]
+        vida = max(senales_vida) if senales_vida else None
         if presencia:
             estado = "en_linea"
-        elif ultima and (datetime.utcnow() - ultima).days < 1:
+        elif vida and (datetime.utcnow() - vida).days < 1:
             estado = "hoy"
-        elif ultima and (datetime.utcnow() - ultima).days <= 7:
+        elif vida and (datetime.utcnow() - vida).days <= 7:
             estado = "semana"
-        elif ultima:
+        elif vida:
             estado = "inactiva"
         else:
             estado = "nunca"
@@ -841,10 +871,12 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
                 "clientes": int(datos.get("clientes") or 0),
                 "facturas": int(datos.get("facturas") or 0),
                 "total_presupuestado": float(datos.get("total_presupuestado") or 0),
-                "ultimo_acceso": datos.get("ultimo_acceso"),
+                "ultimo_acceso": ultimo_acceso_datos,
                 "eventos": int(eventos.get(org.id) or 0),
                 "dias_uso": len(dias_por_org.get(org.id, ())),
-                "ultima_actividad": ultima,
+                # «Última actividad» = mejor señal de vida disponible, no solo
+                # el último evento de producto.
+                "ultima_actividad": vida,
                 "en_linea": bool(presencia),
                 "visto": presencia["visto"] if presencia else None,
                 "plan_vence": vence,
@@ -1150,6 +1182,8 @@ def resumen_analitica(
     filtros_normalizados = _filtros_eventos(filtros)
     explorador = _eventos(db, filtros=filtros_normalizados, dias=dias)
     tabla_organizaciones = _tabla_organizaciones(db, desde=desde, en_vivo=en_vivo)
+    # Audiencia de la web pública: visitantes únicos por día y páginas vistas.
+    audiencia = resumen_audiencia(db, dias=dias, hoy=hoy)
 
     kpis["activas_hoy"] = actividad["activas_hoy"]
     kpis["activas_7d"] = actividad["activas_7d"]
@@ -1210,4 +1244,5 @@ def resumen_analitica(
         "eventos": explorador["eventos"],
         "explorador": explorador,
         "acciones_catalogo": sorted(ACCIONES),
+        "audiencia": audiencia,
     }

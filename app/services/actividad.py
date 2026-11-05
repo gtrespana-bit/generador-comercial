@@ -31,6 +31,8 @@ import logging
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 
+from sqlalchemy import func
+
 from ..models import EventoAuditoria, EventoProducto
 from .auditoria import registrar_evento
 
@@ -382,6 +384,10 @@ def actividad_organizacion(db, organizacion_id: int, *, dias: int = 30) -> dict:
     cronologia: list[dict] = []
     actores = Counter()
     dias_uso = set()
+    # Señales de «vida» reales de la empresa: eventos de negocio, latidos,
+    # presencia e inicios de sesión. Un cliente que solo entró ayer no es una
+    # empresa inactiva aunque no haya tocado ningún presupuesto.
+    senales_vida: list[datetime] = []
 
     for evento in eventos:
         etiqueta, tono = etiqueta_accion(evento.accion)
@@ -446,6 +452,29 @@ def actividad_organizacion(db, organizacion_id: int, *, dias: int = 30) -> dict:
             "origen": "producto",
         })
 
+    # Los inicios de sesión se leen por separado: nunca ensucian la cronología
+    # de acciones de negocio, pero cuentan como uso real para los días de uso
+    # y la última señal de vida de la empresa.
+    try:
+        ultimo_login = (
+            db.query(func.max(EventoAuditoria.created_at))
+            .filter(
+                EventoAuditoria.organizacion_id == organizacion_id,
+                EventoAuditoria.accion == "sesion.login",
+                EventoAuditoria.created_at >= desde,
+            )
+            .scalar()
+        )
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        ultimo_login = None
+    if ultimo_login:
+        dias_uso.add(ultimo_login.date())
+        senales_vida.append(ultimo_login)
+
     cronologia.sort(key=lambda fila: (fila["cuando"] or datetime.min), reverse=True)
 
     creados = por_accion.get("presupuesto.creado", {}).get("veces", 0)
@@ -460,7 +489,15 @@ def actividad_organizacion(db, organizacion_id: int, *, dias: int = 30) -> dict:
         "pdfs": pdfs,
         "dias_uso": len(dias_uso),
         "usuarios_activos": len(actores),
-        "ultima_actividad": cronologia[0]["cuando"] if cronologia else None,
+        "ultima_actividad": max(
+            [
+                s
+                for s in ([cronologia[0]["cuando"]] if cronologia else [])
+                + senales_vida
+                if s
+            ],
+            default=None,
+        ),
         "tasa_edicion": (ediciones / creados) if creados else 0.0,
     }
     total_cambios = sum(cambios.get(clave, 0) for clave in (

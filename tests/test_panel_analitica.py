@@ -296,6 +296,50 @@ def test_la_tabla_de_empresas_mezcla_uso_y_datos_comerciales(entorno_panel):
     assert dormida["estado"] in ("inactiva", "semana", "hoy")
 
 
+def test_una_empresa_solo_con_inicio_de_sesion_esta_hoy_no_inactiva(
+    entorno_panel,
+):
+    """El bug reportado: entró ayer (solo inició sesión) y el panel decía
+    "inactiva" porque el estado solo miraba eventos de producto. Ahora el
+    inicio de sesión es una señal de vida y la empresa se lee como "hoy".
+    """
+    Session, ids, _estado = entorno_panel
+    with Session() as db:
+        from app.models import EventoAuditoria
+
+        db.add(
+            EventoAuditoria(
+                organizacion_id=ids["dormida"],
+                accion="sesion.login",
+                actor_email="remodeladora@example.com",
+                detalle="{}",
+                created_at=datetime.utcnow() - timedelta(days=1),
+            )
+        )
+        db.commit()
+    with Session() as db:
+        resumen = resumen_analitica(db, hoy=HOY, dias=30)
+
+    filas = {fila["nombre"]: fila for fila in resumen["organizaciones"]["filas"]}
+    assert filas["Remodeladora Dormida"]["estado"] == "hoy"
+    assert filas["Remodeladora Dormida"]["ultima_actividad"] is not None
+    # La activa, con presencia reciente, sigue primero en la tabla.
+    assert resumen["organizaciones"]["filas"][0]["nombre"] == "Constructora Activa"
+
+
+def test_la_analitica_lleva_el_resumen_de_audiencia(entorno_panel):
+    Session, ids, _estado = entorno_panel
+    with Session() as db:
+        resumen = resumen_analitica(db, hoy=HOY, dias=30)
+
+    assert "audiencia" in resumen
+    audiencia = resumen["audiencia"]
+    assert {"dias", "visitantes_hoy", "visitantes_ventana", "serie", "disponible"} <= set(
+        audiencia
+    )
+    assert audiencia["dias"] == 30
+
+
 def test_el_explorador_filtra_por_empresa_accion_actor_y_fechas(entorno_panel):
     Session, ids, _estado = entorno_panel
     with Session() as db:

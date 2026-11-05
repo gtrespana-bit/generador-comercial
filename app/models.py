@@ -4245,3 +4245,45 @@ def _proteger_escrituras_por_organizacion(db, _flush_context, _instances):
             raise ContextoOrganizacionError(
                 "No se puede modificar un registro de otra organización."
             )
+
+
+class VisitaPagina(Base):
+    """Audiencia de la capa pública: una fila por visita de página.
+
+    Se escribe desde ``AudienciaMiddleware`` con su propia sesión y nunca
+    rompe la petición del visitante: si la base no responde, la visita no se
+    cuenta y el navegador sigue recibiendo su página igual.
+
+    La IP nunca se guarda: solo su hash (sal del despliegue), igual que el
+    registro de pruebas gratuitas. El resto es métrica de agregado (ruta,
+    usuario/referente, fecha) para responder «cuántos visitantes por día» y
+    «qué páginas traen gente» desde el panel, sin cookies de terceros.
+    """
+
+    __tablename__ = "visitas_pagina"
+
+    id = Column(Integer, primary_key=True)
+    ruta = Column(String(300), nullable=False, index=True)
+    ip_hash = Column(String(64), nullable=False, index=True)
+    usuario_agent = Column(String(300), nullable=True)
+    referente = Column(String(300), nullable=True)
+    #: Usuario autenticado si la visita viene de sesión iniciada; None para
+    #: visitantes anónimos de la web pública.
+    usuario_id = Column(
+        Integer,
+        ForeignKey("usuarios.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+        index=True,
+    )
