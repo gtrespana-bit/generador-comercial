@@ -211,6 +211,7 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
         s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migration,
         t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migration,
         u1c5e8b3d7a9_recordatorio_de_tarifas as recordatorio_migration,
+        v2d7f1a6b9c3_datos_bancarios_del_presupuesto as bancarios_migration,
     )
     assert identidad_error_migration.down_revision == errores_internos_migration.revision
     assert borrado_cuenta_migration.down_revision == identidad_error_migration.revision
@@ -224,7 +225,10 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     assert revision_tarifas_migration.down_revision == ejemplo_migration.revision
     # La cabeza es el recordatorio de tarifas posponible/silenciable.
     assert recordatorio_migration.down_revision == revision_tarifas_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == recordatorio_migration.revision
+    # Sobre el recordatorio cuelga la columna de datos bancarios por
+    # presupuesto, que es la cabeza exigida por el arranque.
+    assert bancarios_migration.down_revision == recordatorio_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == bancarios_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

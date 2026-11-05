@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "u1c5e8b3d7a9"
+EXPECTED_ALEMBIC_HEAD = "v2d7f1a6b9c3"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -1000,6 +1000,13 @@ def _asegurar_esquema_postgres() -> None:
             # Date y no contador: el aviso vuelve aunque nadie entre a la app.
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tarifas_recordatorio_pospuesto_hasta DATE",
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tarifas_recordatorio_silenciado BOOLEAN DEFAULT false",
+            # Datos bancarios por presupuesto (head v2d7f1a6b9c3). Sin la
+            # columna, el SELECT completo de Presupuesto falla con
+            # ``UndefinedColumn`` y el editor no abre: la misma lección de los
+            # despliegues que llegaron sin migrar.
+            # NULL = heredar los de Configuración, que es lo que ya hacía todo
+            # el mundo: la columna nace vacía y ningún documento cambia.
+            "ALTER TABLE presupuestos ADD COLUMN IF NOT EXISTS datos_bancarios TEXT",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:

@@ -641,6 +641,21 @@ class Presupuesto(TenantMixin, Base):
     es_ejemplo = Column(Boolean, default=False, server_default=text("FALSE"))
     notas = Column(Text, default="")
     condiciones = Column(Text, default="")
+    #: Datos bancarios y métodos de pago **de este presupuesto**.
+    #:
+    #: En Configuración hay unos datos generales de la empresa. Antes, el PDF
+    #: los copiaba siempre de ahí, así que un presupuesto que se cobra en otra
+    #: cuenta (un anticipo por transferencia distinta, un cliente que paga por
+    #: Zelle porque es de otro país) obligaba a cambiar los datos de la empresa
+    #: o a corregir el PDF a mano.
+    #:
+    #: ``NULL`` (lo que queda todo lo ya guardado) significa **heredar** los de
+    #: Configuración: el documento se comporta exactamente como antes. ``""``
+    #: explícito significa «este presupuesto no muestra datos de pago», y
+    #: cualquier otro texto son los datos propios. Esa distinción es la que
+    #: permite volver a los generales sin perder el histórico de las versiones
+    #: ya congeladas.
+    datos_bancarios = Column(Text, nullable=True, default=None)
     con_portada = Column(Boolean, default=False)
     foto_proyecto = Column(String(300), default="")
     mostrar_firmas = Column(Boolean, default=False)

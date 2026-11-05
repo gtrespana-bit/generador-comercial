@@ -53,7 +53,12 @@ def serializar_presupuesto(p):
         "direccion_obra": p.direccion_obra, "codigo_postal": p.codigo_postal,
         "validez_dias": p.validez_dias, "moneda": p.moneda, "tipo_cambio": p.tipo_cambio,
         "impuesto_pct": p.impuesto_pct, "descuento_pct": p.descuento_pct, "estado": p.estado,
+        # Textos resueltos, no la elección: si mañana cambian los datos
+        # bancarios de la empresa, esta versión debe seguir mostrando la cuenta
+        # a la que se comprometió al enviarla. ``None`` = el presupuesto no
+        # tenía datos propios, así que la instantánea guarda solo el hecho.
         "notas": p.notas, "condiciones": p.condiciones,
+        "datos_bancarios": p.__dict__.get("datos_bancarios"),
         "mostrar_garantias": bool(getattr(p, "mostrar_garantias", False)),
         "garantias_familias": p.garantias_familias if getattr(p, "mostrar_garantias", False) else [],
         "garantias_nota_legal": p.garantias_nota_legal if getattr(p, "mostrar_garantias", False) else "",

@@ -2068,7 +2068,13 @@ def _documento_presupuesto(presupuesto, config, texto_anexos="", paginas_extra=0
         except Exception:
             pass
     if getattr(config, "mostrar_retenciones", False) and (getattr(presupuesto, "retencion_pct", 0) or getattr(presupuesto, "operacion_exenta", False)): regional.append(_rot('Operación exenta', 'Tax-exempt operation', lang) if presupuesto.operacion_exenta else (_rot('Retención aplicable: ', 'Applicable withholding: ', lang) + f"{fmt_num(presupuesto.retencion_pct, mercado=mercado)} %"))
-    if getattr(config, "datos_bancarios", ""): regional.append(_rot('Datos de pago:\n', 'Payment data:\n', lang) + config.datos_bancarios)
+    # Los datos de pago pueden ser los de la empresa (heredados) o los propios
+    # de este presupuesto: la regla vive en ``textos_documento`` para que el
+    # PDF, la vista previa y las versiones congeladas no puedan discrepar.
+    from .textos_documento import datos_bancarios_documento
+
+    _pago = datos_bancarios_documento(presupuesto, config)
+    if _pago: regional.append(_rot('Datos de pago:\n', 'Payment data:\n', lang) + _pago)
     if regional: story.append(Spacer(1, 16)); story.append(_seccion(_rot('Datos fiscales y pago', 'Tax and payment data', lang), "\n".join(regional), st, azul_color, lang=lang))
     if getattr(config, "mostrar_clausula_cambiaria", False) and getattr(presupuesto, "clausula_cambiaria", ""): story.append(Spacer(1, 12)); story.append(_seccion(_rot('Cláusula de ajuste cambiario', 'Exchange rate adjustment clause', lang), presupuesto.clausula_cambiaria, st, azul_color, lang=lang))
 

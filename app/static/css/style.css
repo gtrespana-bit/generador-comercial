@@ -3405,6 +3405,52 @@ button:focus-visible, a:focus-visible {
   width: 100%;
   margin: 0;
 }
+/* Textos del documento: heredados de Configuración o propios del presupuesto.
+   La cabecera junta la etiqueta con el estado y con el botón de volver a los
+   datos generales, para que se vea de un vistazo qué es prestado y qué no. */
+.texto-doc-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-bottom: .3rem;
+}
+.texto-doc-cabecera label { margin: 0; }
+.texto-doc-estado {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  padding: .12rem .45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.texto-doc-estado[data-estado="heredar"] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+}
+.texto-doc-estado[data-estado="propio"] {
+  border-color: color-mix(in srgb, #d97706 40%, var(--border));
+  background: color-mix(in srgb, #d97706 12%, transparent);
+  color: #b45309;
+}
+.texto-doc-estado[data-estado="vacio"] {
+  border-style: dashed;
+  color: var(--text-soft);
+}
+.texto-doc-acciones {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-top: .35rem;
+}
+.texto-doc-acciones .hint { margin: 0; }
+.builder-texto-card > .hint { margin: 0 0 .6rem; }
 /* Compatibilidad por si queda la clase antigua en caché */
 .builder-review-grid {
   display: flex;
