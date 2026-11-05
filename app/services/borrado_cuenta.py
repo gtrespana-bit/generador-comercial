@@ -259,8 +259,11 @@ def reintentar_borrados_pendientes(db: Session, limite: int = 50) -> dict[str, i
             completados += 1
         except Exception:
             db.rollback()
+            # ``fila`` no existe en este ámbito: el aviso lanzaba NameError
+            # dentro del propio except y abortaba el resto del lote. El
+            # identificador que hay es ``usuario_id``.
             log.warning(
                 "No se pudo completar un borrado pendiente de cuenta (perfil interno #%s).",
-                fila.id,
+                usuario_id,
             )
     return {"intentados": intentados, "completados": completados}
