@@ -1480,6 +1480,12 @@ class Configuracion(TenantMixin, Base):
     # catálogo tal cual está generando precios con tarifas de otro mercado (o de
     # un país distinto al suyo, que es peor).
     onboarding_precios_revisados = Column(Boolean, default=False)
+    # Recordatorio de tarifas pospuesto o silenciado (migración u1c5e8b3d7a9).
+    # Ninguna de las dos confirma precios: son la decisión de *cuándo* se ve el
+    # aviso, no la de si las tarifas son las correctas. Sin ellas el aviso
+    # reaparecía cada día y la única salida era confirmar a ciegas.
+    tarifas_recordatorio_pospuesto_hasta = Column(Date, nullable=True)
+    tarifas_recordatorio_silenciado = Column(Boolean, default=False)
     primer_pdf_at = Column(DateTime, nullable=True)
     # Valores por defecto para presupuestos nuevos
     iva_default = Column(Float, default=16.0)

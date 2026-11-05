@@ -124,6 +124,14 @@ def inicio(request: Request, db: Session = Depends(get_db)):
             for fila in revision_precios.pop("filas", [])[:5]
         ]
         revision_precios["muestra"] = revisadas
+        # Silenciar o posponer no cambia lo que falta por revisar: cambia si el
+        # panel lo interrumpe. La tarjeta se guarda con su estado para que el
+        # usuario pueda reactivarla desde el propio panel.
+        from ..services.revision_precios import estado_recordatorio
+
+        revision_precios["recordatorio"] = estado_recordatorio(cfg)
+        if revision_precios["recordatorio"]["estado"] != "visible":
+            revision_precios["requiere_atencion"] = False
     except Exception:
         db.rollback()
         revision_precios = None

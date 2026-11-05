@@ -1,0 +1,43 @@
+{# Aviso de resultado de una acción, al principio del contenido.
+   Casi todos los redirects del producto terminan en ``?msg=`` o ``?error=``
+   (``common._redirect``), pero ninguna plantilla los pintaba: el usuario
+   pulsaba «Confirmar» y la pantalla volvía sin decir si había hecho algo. Este
+   partial cierra ese hueco en todas las vistas que lo incluyen.
+
+   Se oculta solo a los pocos segundos (ver el script del final) y no se puede
+   cerrar con un botón que dependa de JavaScript: la X es un enlace al mismo
+   path sin los parámetros, así que funciona igual sin JS. #}
+{% set _msg = request.query_params.get('msg', '') if request is defined else '' %}
+{% set _error = request.query_params.get('error', '') if request is defined else '' %}
+{% if _msg or _error %}
+<div class="aviso-flash {{ 'aviso-flash-error' if _error else 'aviso-flash-ok' }}"
+     id="aviso-flash" role="{{ 'alert' if _error else 'status' }}">
+  <span>{{ (_error or _msg) | mensaje(_idioma) }}</span>
+  <a class="aviso-flash-cerrar" id="aviso-flash-cerrar"
+     href="{{ request.url.path }}"
+     aria-label="{{ 'Cerrar el aviso' if _idioma == 'es' else 'Dismiss' }}">✕</a>
+</div>
+<script nonce="{{ request.state.csp_nonce }}">
+(function () {
+  var aviso = document.getElementById('aviso-flash');
+  if (!aviso) return;
+  function cerrar() {
+    aviso.classList.add('aviso-flash-oculto');
+    // Se limpia la URL para que al recargar no vuelva a salir un mensaje de
+    // una acción que ya se hizo.
+    try {
+      var url = new URL(window.location.href);
+      url.searchParams.delete('msg');
+      url.searchParams.delete('error');
+      window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+    } catch (e) { /* navegador antiguo: el aviso se oculta igual */ }
+  }
+  aviso.querySelector('.aviso-flash-cerrar').addEventListener('click', function (evento) {
+    evento.preventDefault();
+    cerrar();
+  });
+  // Un error no se retira solo: el usuario tiene que poder leerlo.
+  {% if not _error %}setTimeout(cerrar, 7000);{% endif %}
+})();
+</script>
+{% endif %}

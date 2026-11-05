@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "t9b4d7e2c5f8"
+EXPECTED_ALEMBIC_HEAD = "u1c5e8b3d7a9"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).
@@ -931,6 +931,10 @@ def _asegurar_esquema_postgres() -> None:
             # por una sola columna ausente.
             "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS onboarding_precios_revisados BOOLEAN DEFAULT false",
             "ALTER TABLE recursos ADD COLUMN IF NOT EXISTS precio_revisado_at TIMESTAMP",
+            # Recordatorio de tarifas (head u1c5e8b3d7a9): posponer y silenciar.
+            # Date y no contador: el aviso vuelve aunque nadie entre a la app.
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tarifas_recordatorio_pospuesto_hasta DATE",
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS tarifas_recordatorio_silenciado BOOLEAN DEFAULT false",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:
@@ -1001,6 +1005,20 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_schema = 'public'
                       AND table_name = 'recursos'
                       AND column_name = 'precio_revisado_at'
+                """)).first() is not None
+                # Recordatorio de tarifas (u1c5e8b3d7a9): las dos columnas de
+                # «ahora no» y «no me lo recuerdes».
+                recordatorio_pospuesto_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'configuracion'
+                      AND column_name = 'tarifas_recordatorio_pospuesto_hasta'
+                """)).first() is not None
+                recordatorio_silenciado_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'configuracion'
+                      AND column_name = 'tarifas_recordatorio_silenciado'
                 """)).first() is not None
                 # Bloque del editor vectorial (head f1b2c3d4e5a6): origen y
                 # grosor de tabique en planos_obra + tablero planos_elementos.
@@ -1146,6 +1164,19 @@ def _asegurar_esquema_postgres() -> None:
                     else:
                         logging.getLogger("cotizat").warning(
                             "Faltan columnas de la revisión de tarifas: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
+                elif cur == "t9b4d7e2c5f8":
+                    # La revisión u solo añade las dos columnas del recordatorio
+                    # (pospuesto_hasta y silenciado). Se avanza solo si ambas
+                    # existen: marcar la revisión sin las columnas haría que
+                    # `alembic upgrade head` la diera por aplicada.
+                    if recordatorio_pospuesto_creada and recordatorio_silenciado_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 'u1c5e8b3d7a9'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de t9b4d7e2c5f8 a u1c5e8b3d7a9 tras crear las columnas del recordatorio de tarifas.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Faltan columnas del recordatorio de tarifas: no se avanza "
                             "alembic_version (ejecuta `alembic upgrade head`)."
                         )
                 elif cur is None:

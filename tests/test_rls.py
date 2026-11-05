@@ -210,6 +210,7 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
         r7f2b1d4e8a6_analitica_operativa as analitica_migration,
         s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migration,
         t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migration,
+        u1c5e8b3d7a9_recordatorio_de_tarifas as recordatorio_migration,
     )
     assert identidad_error_migration.down_revision == errores_internos_migration.revision
     assert borrado_cuenta_migration.down_revision == identidad_error_migration.revision
@@ -221,7 +222,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     # La cabeza vigente es la revisión de tarifas: la columna que permite pedir
     # «¿son estos tus precios?» antes de que la empresa cotice con ellos.
     assert revision_tarifas_migration.down_revision == ejemplo_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == revision_tarifas_migration.revision
+    # La cabeza es el recordatorio de tarifas posponible/silenciable.
+    assert recordatorio_migration.down_revision == revision_tarifas_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == recordatorio_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

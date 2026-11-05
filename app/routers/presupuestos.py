@@ -3130,6 +3130,12 @@ def ver_presupuesto(presupuesto_id: int, request: Request, db: Session = Depends
             organizacion_id=int(db.info.get("organizacion_id") or 0),
             pais=codigo_desde_pais(cfg.empresa_pais or "") or "VE",
         )
+        # Si la empresa pidió que no se le interrumpa, el aviso no aparece en
+        # la ficha. El documento se cotiza igual: silenciar no cambia precios.
+        from ..services.revision_precios import recordatorio_visible
+
+        if tarifas_sin_confirmar and not recordatorio_visible(cfg):
+            tarifas_sin_confirmar = None
     except Exception:
         db.rollback()
         tarifas_sin_confirmar = None

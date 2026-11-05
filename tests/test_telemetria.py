@@ -33,6 +33,7 @@ from migrations.versions import (
     r7f2b1d4e8a6_analitica_operativa as analitica_migracion,
     s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion,
     t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migracion,
+    u1c5e8b3d7a9_recordatorio_de_tarifas as recordatorio_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -359,12 +360,14 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [revision_tarifas_migracion.revision], (
+    assert cabezas == [recordatorio_migracion.revision], (
         f"La cadena Alembic debe tener una única cabeza "
-        f"({revision_tarifas_migracion.revision}); hay: {cabezas}"
+        f"({recordatorio_migracion.revision}); hay: {cabezas}"
     )
-    # La cabeza es la revisión de tarifas; detrás queda la marca del ejemplo
-    # del alta, la analítica operativa y el resto de la cadena.
+    # La cabeza es el recordatorio de tarifas posponible; detrás queda la
+    # revisión de tarifas, la marca del ejemplo del alta, la analítica
+    # operativa y el resto de la cadena.
+    assert recordatorio_migracion.down_revision == revision_tarifas_migracion.revision
     assert revision_tarifas_migracion.down_revision == ejemplo_migracion.revision
     assert ejemplo_migracion.down_revision == analitica_migracion.revision
     assert analitica_migracion.down_revision == borrado_cuenta_migracion.revision

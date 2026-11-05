@@ -188,11 +188,14 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
     pasos = [
         {
             "clave": "tarifas",
-            "titulo": "Confirma tus tarifas",
+            # Lenguaje de oportunidad, no de obligación: el paso informa y
+            # ofrece; no bloquea nada. Quien no lo haga cotiza igual, con las
+            # referencias del mercado.
+            "titulo": "Ajusta tus tarifas",
             "detalle": tarifas["detalle"],
             "completo": tarifas["completo"],
             "url": "/recursos/revisar",
-            "accion": "Revisar tarifas" if tarifas["completo"] else "Revisar mis precios",
+            "accion": "Revisar tarifas" if tarifas["completo"] else "Ajustar mis precios",
         },
         {
             "clave": "presupuesto",

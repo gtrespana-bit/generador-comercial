@@ -1,5 +1,7 @@
 """Catálogo de recursos (precios unitarios)."""  # E4-001 — router por dominio
 
+from datetime import date, timedelta
+
 from fastapi import APIRouter, Request
 
 from .common import *  # noqa: F401,F403  (re-exporta modelos, servicios y utilidades)
@@ -179,11 +181,13 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     # página de revisión tienen que decir lo mismo.
     tarifas_pendientes = 0
     try:
-        from ..services.revision_precios import resumen_revision
+        from ..services.revision_precios import recordatorio_visible, resumen_revision
 
         tarifas_pendientes = resumen_revision(
             db, organizacion_id=org_id, pais=pais
         ).get("pendientes", 0)
+        if not recordatorio_visible(cfg, pendientes=tarifas_pendientes):
+            tarifas_pendientes = 0
     except Exception:
         db.rollback()
         tarifas_pendientes = 0
@@ -644,6 +648,10 @@ def editar_recurso_form(recurso_id: int, request: Request, db: Session = Depends
         "precio_mercado_vista": precio_mercado_vista,
         "precio_referencia_nacional_vista": precio_referencia_nacional_vista,
         "unidades_imperiales": pais == "US",
+        # Fecha del «sí, esta es mi tarifa». None = todavía se cotiza con la
+        # referencia de mercado. Se pinta junto al precio, que es donde el
+        # usuario decide si confirmar o cambiarlo.
+        "revisado_at": atributo(recurso, "precio_revisado_at"),
     })
 
 @router.post("/recursos/{recurso_id}/editar")
@@ -957,6 +965,15 @@ def atributo(obj, nombre: str, defecto=None):
     return _atributo(obj, nombre, defecto)
 
 
+#: «Ahora no» de la pantalla de revisión. Las etiquetas viven aquí para que el
+#: formulario y el mensaje de confirmación digan exactamente lo mismo.
+POSPOSICIONES_REVISION = (
+    ("semana", "Una semana"),
+    ("mes", "Un mes"),
+    ("trimestre", "Tres meses"),
+)
+
+
 def _pais_revision(db) -> str:
     """Mercado con el que se resuelven los precios de la organización."""
     from ..services.traduccion import codigo_desde_pais
@@ -977,6 +994,7 @@ def _fila_revision(recurso: Recurso) -> dict:
         "unidad": recurso.unidad or "",
         "categoria": recurso.categoria or "otros",
         "usos": int(recurso.usos or 0),
+        "precio_base": float(recurso.precio or 0),
         # ``getattr`` no basta: con la columna sin migrar, el primer acceso
         # dispara un SELECT que falla en vez de devolver el valor por defecto.
         "revisado_at": atributo(recurso, "precio_revisado_at"),
@@ -994,7 +1012,7 @@ def revisar_tarifas(request: Request, db: Session = Depends(get_db)):
     respuesta válida (y la más común): significa «lo miré y es el mío».
     """
     from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
-    from ..services.revision_precios import resumen_revision
+    from ..services.revision_precios import estado_recordatorio, resumen_revision
 
     # El catálogo se sincroniza igual que en la lista: si no, la pantalla de
     # revisión podría no ver un recurso que el usuario acaba de usar.
@@ -1005,6 +1023,12 @@ def revisar_tarifas(request: Request, db: Session = Depends(get_db)):
     pais = _pais_revision(db)
     org_id = int(db.info.get("organizacion_id") or 0)
     resumen = resumen_revision(db, organizacion_id=org_id, pais=pais)
+    # El estado del recordatorio se muestra aquí aunque esté silenciado: esta
+    # pantalla es donde se decide, así que es donde hay que poder revertirlo.
+    try:
+        recordatorio = estado_recordatorio(_config(db))
+    except Exception:
+        recordatorio = {"estado": "visible", "hasta": None, "silenciado": False}
     pendientes = resumen.pop("filas", [])
 
     moneda_vista, factor_vista = _contexto_moneda(db)
@@ -1044,6 +1068,8 @@ def revisar_tarifas(request: Request, db: Session = Depends(get_db)):
         "categorias": CATEGORIAS_RECURSO,
         "etiquetas": _etiquetas_vista(request),
         "es_mano_obra_total": resumen.get("mano_obra_pendientes", 0),
+        "recordatorio": recordatorio,
+        "posposiciones": POSPOSICIONES_REVISION,
     })
 
 
@@ -1068,7 +1094,11 @@ async def guardar_revision_tarifas(request: Request, db: Session = Depends(get_d
     if not marcados:
         return _redirect(
             "/recursos/revisar",
-            error="Marca al menos una tarifa para confirmar o escribe un precio.",
+            error=(
+                "Marca las tarifas que quieras confirmar (o escribe un precio "
+                "en la fila). Si prefieres dejarlo para otro momento, usa "
+                "«Ahora no»."
+            ),
         )
     cfg = _config(db)
     moneda_org = cfg.moneda_default or "USD"
@@ -1185,14 +1215,214 @@ def confirmar_todas_las_tarifas(request: Request, db: Session = Depends(get_db))
 
 
 @router.post("/recursos/{recurso_id}/revisado")
-def marcar_recurso_revisado(recurso_id: int, db: Session = Depends(get_db)):
-    """Una tarifa concreta: «esta es la mía»."""
+async def marcar_recurso_revisado(
+    recurso_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """Una tarifa concreta: «esta es la mía» (con un solo clic).
+
+    Es el gesto más pequeño que ofrece el producto y el que de verdad se usa:
+    desde la lista de recursos o desde la ficha, sin abrir el formulario ni
+    entrar en la pantalla de revisión. No cambia ningún precio; solo deja la
+    fecha de hoy en esa tarifa, que es lo que la saca de «pendientes».
+
+    Admite un ``precio`` opcional: si el usuario escribe el suyo en la ficha y
+    pulsa «Guardar mi precio», se guarda como precio propio de la organización
+    (con su propagación a las partidas) y la tarifa queda confirmada en el
+    mismo gesto. Sin precio, confirmar es no tocar nada.
+    """
+    from ..services.precios_mercado import guardar_precio
+
     recurso = db.get(Recurso, recurso_id)
     if recurso is None:
         return _redirect("/recursos", error="Recurso no encontrado.")
+
+    try:
+        form = await request.form()
+    except Exception:
+        form = {}
+    precio_texto = str(form.get("precio_propio", "") or "").strip().replace(",", ".")
+    # ``volver=lista`` devuelve a la lista de recursos (el botón de cada fila);
+    # sin él, se vuelve a la ficha, que es donde está el campo de precio.
+    destino = str(form.get("volver", "")).strip()
+    vuelta = {
+        "lista": "/recursos",
+        "revisar": "/recursos/revisar",
+    }.get(destino, f"/recursos/{recurso_id}/editar")
+
+    if precio_texto:
+        try:
+            valor = float(precio_texto)
+        except ValueError:
+            valor = 0.0
+        if valor <= 0:
+            return _redirect(vuelta, error="El precio debe ser mayor que cero.")
+        org_id = int(db.info.get("organizacion_id") or 0)
+        if org_id <= 0:
+            return _redirect(vuelta, error="No hay una organización activa.")
+        from ..utils import normalizar_moneda
+
+        moneda_vista, factor_vista = _contexto_moneda(db)
+        moneda_org = normalizar_moneda(moneda_vista, "USD")
+        # Igual que en la pantalla de revisión: el importe se escribe en la
+        # moneda de la vista y se guarda en la de la organización.
+        guardado = valor
+        if moneda_vista != moneda_org and factor_vista:
+            guardado = valor / factor_vista
+        try:
+            guardar_precio(
+                db, recurso.id, _pais_revision(db), guardado, moneda_org,
+                organizacion_id=org_id, fuente="Empresa (confirmación de tarifa)",
+            )
+        except ValueError as exc:
+            return _redirect(vuelta, error=str(exc))
+
     recurso.precio_revisado_at = datetime.utcnow()
     db.commit()
+    auditoria.registrar_evento(
+        db, "catalogo.tarifa_confirmada", entidad="recurso", entidad_id=recurso.id,
+        detalle={"con_precio_propio": bool(precio_texto)},
+    )
+    mensaje = "Tarifa confirmada con la fecha de hoy."
+    if precio_texto:
+        mensaje = "Tu precio guardado y la tarifa confirmada con la fecha de hoy."
+    return _redirect(vuelta, msg=mensaje)
+
+
+# ---------------------------------------------------------------------------
+# El recordatorio: posponer, silenciar y volver a activarlo
+# ---------------------------------------------------------------------------
+#
+# La revisión de tarifas decide el importe entero de un presupuesto, así que
+# tiene que poder pedirse; pero un aviso que no se puede posponer deja de ser
+# un consejo y pasa a ser un muro. Estas tres rutas son la respuesta a «ahora
+# no» y a «no me lo vuelvas a pedir», sin confirmar ninguna tarifa: lo que
+# cambia es cuándo se enseña, no lo que se ha revisado.
+
+
+def _guardar_decision_recordatorio(db, cfg, **cambios) -> bool:
+    """Escribe la decisión del recordatorio tolerando el esquema atrasado.
+
+    Si las columnas aún no existen (despliegue sin migración) la acción no
+    puede guardarse; se devuelve ``False`` para que la ruta lo diga en vez de
+    fingir que se guardó. No se hace DDL desde aquí: el arranque ya intenta
+    crearlas y el rol web no es dueño de las tablas.
+    """
+    for nombre, valor in cambios.items():
+        try:
+            setattr(cfg, nombre, valor)
+        except Exception:
+            return False
+    try:
+        db.commit()
+        return True
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return False
+
+
+@router.post("/recursos/revisar/posponer")
+async def posponer_recordatorio_tarifas(request: Request, db: Session = Depends(get_db)):
+    """«Ahora no»: el aviso vuelve en la fecha elegida y hasta entonces calla.
+
+    No confirma ninguna tarifa ni cambia la fecha de revisión de ningún
+    recurso: quien pospone sigue teniendo las mismas tarifas por mirar, solo
+    que no se le interrumpe mientras tanto. Se guarda una fecha concreta (no un
+    contador) para que el aviso vuelva aunque nadie entre a la aplicación.
+    """
+    from ..services.revision_precios import POSPOSICIONES, fecha_posposicion
+
+    form = await request.form()
+    hasta = fecha_posposicion(str(form.get("plazo", "") or ""))
+    if hasta is None:
+        return _redirect(
+            "/recursos/revisar",
+            error="Elige cuándo quieres que te lo recuerde.",
+        )
+    cfg = _config(db)
+    if not _guardar_decision_recordatorio(
+        db,
+        cfg,
+        tarifas_recordatorio_pospuesto_hasta=hasta,
+        tarifas_recordatorio_silenciado=False,
+    ):
+        return _redirect(
+            "/recursos/revisar",
+            error="No se pudo guardar: falta aplicar la migración pendiente.",
+        )
+    dias = next(
+        (dias for clave, (etiqueta, dias) in POSPOSICIONES.items()
+         if (date.today() + timedelta(days=dias)) == hasta),
+        None,
+    )
+    auditoria.registrar_evento(
+        db,
+        "catalogo.recordatorio_tarifas_pospuesto",
+        entidad="configuracion",
+        detalle={"hasta": hasta.isoformat(), "dias": dias},
+    )
     return _redirect(
-        f"/recursos/{recurso_id}/editar",
-        msg="Tarifa confirmada con la fecha de hoy.",
+        "/recursos",
+        msg=(
+            f"De acuerdo: no volveremos a insistir hasta el "
+            f"{hasta.strftime('%d/%m/%Y')}. Puedes revisarlas cuando quieras en "
+            "Recursos › Revisar tarifas."
+        ),
+    )
+
+
+@router.post("/recursos/revisar/silenciar")
+def silenciar_recordatorio_tarifas(db: Session = Depends(get_db)):
+    """«No me lo vuelvas a pedir»: deja de interrumpir, sin confirmar nada.
+
+    Es distinto de confirmar las tarifas: la fecha de cada recurso no se toca y
+    la pantalla de revisión sigue mostrando lo mismo. Solo desaparece el aviso
+    del panel, del catálogo y de la ficha del presupuesto, que es lo que
+    interrumpe. Se puede deshacer desde la propia pantalla de revisión.
+    """
+    cfg = _config(db)
+    if not _guardar_decision_recordatorio(
+        db, cfg, tarifas_recordatorio_silenciado=True,
+        tarifas_recordatorio_pospuesto_hasta=None,
+    ):
+        return _redirect(
+            "/recursos/revisar",
+            error="No se pudo guardar: falta aplicar la migración pendiente.",
+        )
+    auditoria.registrar_evento(
+        db,
+        "catalogo.recordatorio_tarifas_silenciado",
+        entidad="configuracion",
+        detalle={},
+    )
+    return _redirect(
+        "/recursos",
+        msg=(
+            "Aviso desactivado. Tus tarifas no cambian: puedes revisarlas "
+            "cuando quieras en Recursos › Revisar tarifas."
+        ),
+    )
+
+
+@router.post("/recursos/revisar/reactivar")
+def reactivar_recordatorio_tarifas(db: Session = Depends(get_db)):
+    """Vuelve a mostrar el aviso cuando la empresa cambie de idea."""
+    cfg = _config(db)
+    if not _guardar_decision_recordatorio(
+        db,
+        cfg,
+        tarifas_recordatorio_silenciado=False,
+        tarifas_recordatorio_pospuesto_hasta=None,
+    ):
+        return _redirect(
+            "/recursos/revisar",
+            error="No se pudo guardar: falta aplicar la migración pendiente.",
+        )
+    return _redirect(
+        "/recursos/revisar",
+        msg="El recordatorio vuelve a estar activo.",
     )

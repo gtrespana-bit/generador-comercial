@@ -8,8 +8,10 @@
     {% if tarifas_pendientes %}
     <p class="hint">
       <strong>{{ tarifas_pendientes }}</strong> de estas tarifas siguen siendo referencia de
-      mercado y no las has confirmado: el generador cotizará con ellas tal cual.
-      <a href="/recursos/revisar">Revisarlas</a>.
+      mercado: el generador cotizará con ellas tal cual. Puedes
+      <a href="/recursos/revisar">ajustarlas a tus precios</a> cuando quieras, o
+      <a href="/recursos/revisar#revisar-salidas">quitar el aviso</a> si prefieres
+      no verlo más.
     </p>
     {% endif %}
   </div>
@@ -180,6 +182,14 @@
                     <td class="col-actions right">
                       <div class="row-actions">
                         <a href="/recursos/{{ r.id }}/impacto" class="btn btn-sm btn-ghost" title="Ver partidas afectadas">Impacto</a>
+                        {# Confirmar la tarifa sin abrir nada: es el gesto mínimo y
+                           el que hace que la revisión se complete de verdad. No
+                           cambia el precio, solo deja la fecha de hoy. #}
+                        <form method="post" action="/recursos/{{ r.id }}/revisado" class="csp-s-a91548c594">
+                          <input type="hidden" name="volver" value="lista">
+                          <button type="submit" class="btn btn-sm btn-ghost"
+                                  title="Dar esta tarifa por buena con el precio actual">✓</button>
+                        </form>
                         <a href="/recursos/{{ r.id }}/editar" class="btn btn-sm btn-ghost" title="Editar">✏️</a>
                         <form method="post" action="/recursos/{{ r.id }}/eliminar" class="csp-s-a91548c594" data-confirm="¿Eliminar recurso «{{ r.descripcion }}»?">
                           <button type="submit" class="btn btn-sm btn-ghost csp-s-be52c7a071" title="Eliminar">✕</button>

@@ -339,3 +339,37 @@ SELECT relname, relrowsecurity, relforcerowsecurity
 SELECT has_table_privilege('cotizat_app', 'public.alembic_version', 'SELECT'),
        has_table_privilege('anon', 'public.alembic_version', 'SELECT');  -- t | f
 ```
+
+## Recordatorio de tarifas: posponer y silenciar (04/11/2026)
+
+La revisión `u1c5e8b3d7a9` es la cabeza vigente y no toca datos de negocio:
+añade dos columnas a `public.configuracion` para que la revisión de tarifas
+pueda posponerse o quitarse sin confirmar ningún precio.
+
+- `tarifas_recordatorio_pospuesto_hasta` (DATE): «ahora no». El aviso vuelve
+  solo a partir de esa fecha, aunque el usuario no entre a la aplicación.
+- `tarifas_recordatorio_silenciado` (BOOLEAN, `FALSE`): «no me lo vuelvas a
+  pedir». Desaparece el aviso del panel, del catálogo y de la ficha del
+  presupuesto; la pantalla de revisión sigue accesible desde *Recursos* y ahí se
+  puede reactivar.
+
+Por qué: la revisión de tarifas solo tenía dos desenlaces —confirmar o no hacer
+nada—, así que quien decidía mirarlo más tarde veía el mismo aviso cada día y
+quien ya trabajaba con sus precios tenía que confirmar a ciegas para quitarlo.
+Silenciar **no** es confirmar: la fecha de cada tarifa no se toca y la pantalla
+de revisión sigue diciendo lo mismo.
+
+Se aplica con `docs/staging_upgrade_u1c5e8b3d7a9.sql` solo si el remoto está en
+`t9b4d7e2c5f8`; el script aborta si la versión no coincide y termina marcando la
+revisión. Si el despliegue llega antes que el SQL, la aplicación sigue
+funcionando: las dos columnas se leen con valor por defecto y las acciones de
+posponer/silenciar responden con un aviso claro en lugar de fingir que se
+guardaron.
+
+Verificación posterior (en el SQL Editor):
+
+```sql
+SELECT version_num FROM public.alembic_version;                          -- u1c5e8b3d7a9
+SELECT count(*) FROM public.configuracion
+ WHERE tarifas_recordatorio_silenciado IS TRUE;                          -- 0 al aplicar
+```
