@@ -61,6 +61,18 @@ CREATE INDEX IF NOT EXISTS ix_visitas_pagina_created_at ON public.visitas_pagina
 --    La secuencia necesita USAGE propio o el INSERT falla con «permission
 --    denied for sequence visitas_pagina_id_seq».
 REVOKE ALL ON TABLE public.visitas_pagina FROM PUBLIC;
+-- En Supabase los privilegios por omisión de `public` incluyen `anon` y
+-- `authenticated` (roles de la Data API). Esta tabla guarda hashes de IP y
+-- rutas visitadas: no puede ser legible desde la API pública.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.visitas_pagina FROM anon';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    EXECUTE 'REVOKE ALL ON TABLE public.visitas_pagina FROM authenticated';
+  END IF;
+END $$;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.visitas_pagina TO cotizat_app;
 GRANT USAGE, SELECT ON SEQUENCE public.visitas_pagina_id_seq TO cotizat_app;
 

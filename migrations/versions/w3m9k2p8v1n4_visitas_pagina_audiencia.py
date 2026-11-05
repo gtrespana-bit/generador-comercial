@@ -54,6 +54,23 @@ def _permisos_aplicacion() -> None:
     if not _postgres():
         return
     op.execute(f"REVOKE ALL ON TABLE public.{TABLE} FROM PUBLIC")
+    # En Supabase los privilegios por omisión del esquema ``public`` incluyen
+    # ``anon`` y ``authenticated`` (los roles de la Data API). Esta tabla
+    # guarda hashes de IP y rutas visitadas: no debe ser legible desde la API
+    # pública. En un PostgreSQL sin esos roles el bloque no hace nada.
+    op.execute(
+        f"""
+        DO $$
+        BEGIN
+          IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+            EXECUTE 'REVOKE ALL ON TABLE public.{TABLE} FROM anon';
+          END IF;
+          IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+            EXECUTE 'REVOKE ALL ON TABLE public.{TABLE} FROM authenticated';
+          END IF;
+        END $$
+        """
+    )
     op.execute(
         f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.{TABLE} TO cotizat_app"
     )
