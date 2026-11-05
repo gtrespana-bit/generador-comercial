@@ -70,6 +70,14 @@ def _datos_recurso(form):
     }
 @router.get("/recursos", response_class=HTMLResponse)
 def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Session = Depends(get_db)):
+    # La configuración se lee ANTES de cargar el catálogo. Si el esquema va por
+    # detrás del código, esa lectura falla una vez y hace ``rollback`` para
+    # reintentar sin la columna ausente; un rollback expira todos los objetos de
+    # la sesión, así que hacerlo después obligaría a recargar cada recurso
+    # (``SELECT ... WHERE id = ?``), que es justo la consulta que falla.
+    from ..services.traduccion import codigo_desde_pais
+
+    cfg = _config(db)
     # Si aún está el catálogo de prueba, se migra al propio (con recursos).
     from ..services.catalogo_propio import asegurar_catalogo_propio
     asegurar_catalogo_propio(db)
@@ -80,7 +88,7 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     # web con base remota, era la mayor parte del tiempo de carga de la
     # página. Los guardados siguen forzándola para reflejar cambios al instante.
     _sincronizar_recursos(db, forzar=False)
-    query = db.query(Recurso)
+    query = consulta_catalogo(db, Recurso)
     if q.strip():
         like = f"%{q.strip()}%"
         query = query.filter(or_(
@@ -92,9 +100,7 @@ def listar_recursos(request: Request, q: str = "", categoria: str = "", db: Sess
     if categoria and categoria in CATEGORIAS_RECURSO:
         query = query.filter(Recurso.categoria == categoria)
     recursos = query.order_by(Recurso.categoria, Recurso.descripcion).all()
-    from ..services.traduccion import codigo_desde_pais
     from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
-    cfg = _config(db)
     pais = codigo_desde_pais(cfg.empresa_pais or "") or "VE"
     org_id = int(db.info.get("organizacion_id") or 0)
     # UNA consulta para todos los recursos (antes: dos SELECT por recurso).
@@ -208,7 +214,7 @@ def api_buscar_recursos(request: Request, q: str = "", db: Session = Depends(get
 
     asegurar_catalogo_propio(db)
     _sincronizar_recursos(db, forzar=False)
-    query = db.query(Recurso)
+    query = consulta_catalogo(db, Recurso)
     if q.strip():
         like = f"%{q.strip()}%"
         query = query.filter(or_(
@@ -315,7 +321,7 @@ def exportar_recursos(request: Request, formato: str = "csv", db: Session = Depe
     existe: el precio exportado debe ser el del mercado del país, no el precio
     base (Partida Venezuela) convertido con la tasa.
     """
-    recursos = db.query(Recurso).order_by(Recurso.categoria, Recurso.descripcion).all()
+    recursos = consulta_catalogo(db, Recurso).order_by(Recurso.categoria, Recurso.descripcion).all()
     from ..services.traduccion import codigo_desde_pais
     from ..services.precios_mercado import resolver_precios_para_presupuesto_lote
 
@@ -944,6 +950,13 @@ def guardar_precio_mercado(
 # ---------------------------------------------------------------------------
 
 
+def atributo(obj, nombre: str, defecto=None):
+    """Lee un campo del modelo sin romper si su columna no está migrada."""
+    from ..services.configuracion_tolerante import atributo as _atributo
+
+    return _atributo(obj, nombre, defecto)
+
+
 def _pais_revision(db) -> str:
     """Mercado con el que se resuelven los precios de la organización."""
     from ..services.traduccion import codigo_desde_pais
@@ -964,7 +977,9 @@ def _fila_revision(recurso: Recurso) -> dict:
         "unidad": recurso.unidad or "",
         "categoria": recurso.categoria or "otros",
         "usos": int(recurso.usos or 0),
-        "revisado_at": getattr(recurso, "precio_revisado_at", None),
+        # ``getattr`` no basta: con la columna sin migrar, el primer acceso
+        # dispara un SELECT que falla en vez de devolver el valor por defecto.
+        "revisado_at": atributo(recurso, "precio_revisado_at"),
     }
 
 
@@ -994,7 +1009,7 @@ def revisar_tarifas(request: Request, db: Session = Depends(get_db)):
 
     moneda_vista, factor_vista = _contexto_moneda(db)
     ids = [fila["id"] for fila in pendientes]
-    recursos = db.query(Recurso).filter(Recurso.id.in_(ids)).all() if ids else []
+    recursos = consulta_catalogo(db, Recurso).filter(Recurso.id.in_(ids)).all() if ids else []
     por_id = {recurso.id: recurso for recurso in recursos}
     try:
         efectivos = resolver_precios_para_presupuesto_lote(

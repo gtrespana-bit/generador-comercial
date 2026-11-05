@@ -21,7 +21,9 @@ class PrecioResuelto:
 
 def resolver_precio(db: Session, recurso_id: int, pais_codigo: str,
                     organizacion_id: int | None = None) -> PrecioResuelto:
-    recurso = db.get(Recurso, recurso_id)
+    from .configuracion_tolerante import obtener
+
+    recurso = obtener(db, Recurso, recurso_id)
     pais = str(pais_codigo or "").upper()
     q = db.query(PrecioRecursoMercado).filter(
         PrecioRecursoMercado.pais_codigo == pais,
@@ -154,7 +156,9 @@ def guardar_precio(db: Session, recurso_id: int, pais_codigo: str, precio: float
             "organizacion_id debe ser una organización real o None (precio nacional)."
         )
     codigo = str(pais_codigo or "").strip().upper()
-    recurso = db.get(Recurso, recurso_id)
+    from .configuracion_tolerante import obtener
+
+    recurso = obtener(db, Recurso, recurso_id)
     codigo_recurso = str(getattr(recurso, "codigo", "") or "").strip()
     query = db.query(PrecioRecursoMercado).filter(
         PrecioRecursoMercado.pais_codigo == codigo,

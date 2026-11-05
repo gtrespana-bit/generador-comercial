@@ -487,7 +487,11 @@ def sembrar_catalogo_propio(db: Session) -> dict:
     nodos = _sembrar_categorias(db, datos["categorias"])
     n_rec = _sembrar_recursos(db, datos["recursos"])
     n_par = _sembrar_partidas(db, datos["partidas"], nodos)
-    cfg = db.query(Configuracion).first()
+    # Después de sembrar: la migración puede ir por detrás del código y esta
+    # lectura no debe tumbar el alta del catálogo por una columna nueva.
+    from .configuracion_tolerante import leer_configuracion
+
+    cfg = leer_configuracion(db)
     if cfg is not None:
         cfg.version_catalogo = CATALOGO_VERSION
     db.commit()
@@ -517,7 +521,9 @@ def actualizar_taxonomia_catalogo_propio(db: Session) -> dict:
     if not datos.get("ok"):
         return {"ok": False, "actualizadas": 0}
     nodos = _sembrar_categorias(db, datos["categorias"])
-    cfg = db.query(Configuracion).first()
+    from .configuracion_tolerante import leer_configuracion
+
+    cfg = leer_configuracion(db)
     version_previa = int(getattr(cfg, "version_catalogo", 0) or 0)
 
     # Escaneo ligero: columnas de identidad únicamente (sin JSON pesados).
@@ -928,7 +934,9 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
         # catálogo. La versión > 0 demuestra una siembra anterior: aunque el
         # usuario haya borrado todo, nunca se debe reponer por sorpresa.
         if total == 0 and version == 0:
-            cfg = db.query(Configuracion).first()
+            from .configuracion_tolerante import leer_configuracion
+
+            cfg = leer_configuracion(db)
             if (
                 cfg is not None
                 and cfg.onboarding_completado
@@ -1018,8 +1026,10 @@ def _normalizar_nombres_patron(db: Session) -> int:
         total += 1
     # Recursos: el mapa crece poco, pero se consulta también de forma agrupada.
     descripciones_viejas = tuple(_RECURSOS_RENOMBRADOS)
+    from .configuracion_tolerante import consulta
+
     recursos = (
-        db.query(Recurso)
+        consulta(db, Recurso)
         .filter(Recurso.descripcion.in_(descripciones_viejas))
         .all()
     ) if descripciones_viejas else []

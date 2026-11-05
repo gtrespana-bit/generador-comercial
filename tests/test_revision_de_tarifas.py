@@ -412,3 +412,90 @@ def test_sin_la_columna_de_revision_no_se_rompe_la_pantalla(entorno, monkeypatch
     assert pagina.status_code == 200
     monkeypatch.setattr(servicio, "resumen_revision", original)
     assert ids["org"]
+
+
+# ---------------------------------------------------------------------------
+# Despliegue sin migración: el 500 real del 04/11/2026
+# ---------------------------------------------------------------------------
+
+
+def _sin_migrar(db):
+    """Deja la base como estaba producción: en s8a3c6d1f7b9.
+
+    Es el estado del 04/11/2026: el código ya leía ``Configuracion`` entera y
+    la base no tenía ``onboarding_precios_revisados``, así que cualquier
+    pantalla respondía 500 con ``UndefinedColumn``.
+    """
+    from sqlalchemy import text
+
+    from app.services.configuracion_tolerante import olvidar_columnas
+
+    db.execute(text("ALTER TABLE recursos DROP COLUMN precio_revisado_at"))
+    db.execute(text("ALTER TABLE configuracion DROP COLUMN onboarding_precios_revisados"))
+    db.commit()
+    olvidar_columnas("configuracion")
+
+
+def _migrar(db):
+    from sqlalchemy import text
+
+    from app.services.configuracion_tolerante import olvidar_columnas
+
+    db.execute(text(
+        "ALTER TABLE configuracion ADD COLUMN onboarding_precios_revisados BOOLEAN DEFAULT false"
+    ))
+    db.execute(text("ALTER TABLE recursos ADD COLUMN precio_revisado_at DATETIME"))
+    db.commit()
+    olvidar_columnas("configuracion")
+
+
+def test_sin_la_columna_nueva_el_panel_no_devuelve_500(entorno):
+    """El error reportado: «column configuracion.onboarding_precios_revisados
+    does not exist» en ``GET /inicio``.
+
+    El código se publicó antes de pegar el SQL de la migración, así que el
+    ``SELECT`` con todas las columnas del modelo fallaba. La lectura tolerante
+    pide solo las columnas que existen: el panel se pinta con los datos reales.
+    """
+    web, db, _ids = entorno
+    _sin_migrar(db)
+    try:
+        respuesta = web.get("/inicio", follow_redirects=False)
+        assert respuesta.status_code == 200, respuesta.text[:400]
+        # El panel se pinta entero: si la lectura de configuración hubiera
+        # seguido pidiendo la columna ausente, esta respuesta sería un 500.
+        assert "text/html" in respuesta.headers.get("content-type", "")
+    finally:
+        _migrar(db)
+
+
+def test_sin_la_columna_nueva_las_pantallas_de_tarifas_siguen_abriendo(entorno):
+    """Sin migración, ni /recursos ni /recursos/revisar pueden reventar."""
+    web, db, _ids = entorno
+    _sin_migrar(db)
+    try:
+        for ruta in ("/recursos", "/recursos/revisar"):
+            respuesta = web.get(ruta, follow_redirects=False)
+            assert respuesta.status_code == 200, (ruta, respuesta.text[:400])
+    finally:
+        _migrar(db)
+
+
+def test_sin_la_columna_no_se_confirma_nada_por_accidente(entorno):
+    """La lectura tolerante no puede inventar «revisado».
+
+    La columna ausente se completa con su valor por defecto (False). Si eso se
+    interpretara como «esta empresa ya revisó», el consejo de revisar precios
+    desaparecería justo cuando la base ni siquiera puede guardar la fecha.
+    """
+    from app.services.configuracion_tolerante import leer_configuracion
+
+    _web, db, _ids = entorno
+    _sin_migrar(db)
+    try:
+        cfg = leer_configuracion(db)
+        assert cfg is not None
+        assert cfg.empresa_nombre == "Obras Norte"
+        assert cfg.onboarding_precios_revisados is False
+    finally:
+        _migrar(db)

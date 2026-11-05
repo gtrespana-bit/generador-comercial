@@ -55,7 +55,9 @@ def _limite(hoy: date | None = None) -> datetime:
 
 def revisada(recurso, hoy: date | None = None) -> bool:
     """¿La empresa dio esta tarifa por buena hace menos de seis meses?"""
-    marca = getattr(recurso, "precio_revisado_at", None)
+    from .configuracion_tolerante import atributo
+
+    marca = atributo(recurso, "precio_revisado_at")
     if marca is None:
         return False
     try:
@@ -98,6 +100,18 @@ def _con_precio_propio(db, organizacion_id: int, pais: str) -> set[int]:
     return ids
 
 
+def _consulta_recursos(db):
+    """``db.query(Recurso)`` sin las columnas que la base aún no tiene.
+
+    Si el despliegue llegó antes que la migración, ``SELECT recursos.*`` falla
+    entero por ``precio_revisado_at``; esto deja leer el catálogo igual y el
+    resumen cuenta esas tarifas como «sin confirmar», que es la verdad.
+    """
+    from .configuracion_tolerante import consulta
+
+    return consulta(db, Recurso)
+
+
 def resumen_revision(db, *, organizacion_id: int, pais: str, hoy: date | None = None) -> dict:
     """Fotografía de las tarifas: cuántas son propias y cuántas están por ver.
 
@@ -130,7 +144,7 @@ def resumen_revision(db, *, organizacion_id: int, pais: str, hoy: date | None = 
             pass
         recursos = [
             (r.id, r.descripcion, r.codigo, r.unidad, r.categoria, r.usos, None)
-            for r in db.query(Recurso).all()
+            for r in _consulta_recursos(db).all()
         ]
 
     total = len(recursos)

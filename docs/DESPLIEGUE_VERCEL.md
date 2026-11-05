@@ -60,6 +60,46 @@ MIGRATION_DATABASE_URL=postgresql://administrador:…@host:5432/cotizat \
 alembic upgrade head
 ```
 
+### Orden: primero la migración, después el despliegue
+
+Un despliegue de Vercel publica el código en menos de un minuto; la migración
+la pega una persona. Cuando el código va por delante del esquema, cualquier
+`SELECT configuracion.*` o `SELECT recursos.*` pide una columna que aún no
+existe y PostgreSQL responde `UndefinedColumn`: **500 en `/inicio`**, panel de
+salud en rojo y usuarios que no pueden cotizar. Ha pasado tres veces
+(`b1c2d3e4f5a6` con `recorrido_inicial_oculto`, `h1c4b7e9a3d2` con
+`mostrar_desglose_precio` y `t9b4d7e2c5f8` con
+`onboarding_precios_revisados`, el 04/11/2026).
+
+El procedimiento, siempre en este orden:
+
+1. **Antes de fusionar** una revisión de Alembic que añada columnas, pega el
+   SQL equivalente en la base de producción (o ejecuta
+   `alembic upgrade head` con `MIGRATION_DATABASE_URL`). Son `ALTER TABLE …
+   ADD COLUMN IF NOT EXISTS`, compatibles con el código anterior: añadir una
+   columna no rompe el despliegue que ya está sirviendo.
+2. **Después**, fusiona el PR. Vercel despliega con el esquema ya listo.
+3. Comprueba `/readyz` (debe dar 200) y `/inicio`.
+
+La aplicación se protege sola mientras el orden se respete a medias:
+
+- `app/services/configuracion_tolerante.py` lee `configuracion` con las
+  columnas que la base **sí** tiene y completa las ausentes con su valor por
+  defecto. No inventa datos ni escribe nada: la página abre con lo que hay.
+- `consulta(db, modelo)` hace lo mismo con `recursos` (`defer` de la columna
+  que falta), de modo que el catálogo y la revisión de tarifas siguen
+  funcionando y esas tarifas cuentan como «sin confirmar», que es la verdad.
+- `init_db()` intenta los `ALTER TABLE … ADD COLUMN IF NOT EXISTS` del último
+  head. Si el rol no tiene permisos de DDL (habitual en Vercel), falla en
+  silencio y solo avanza `alembic_version` cuando comprueba en
+  `information_schema` que **todas** las columnas existen.
+- `lifespan` registra un aviso si detecta desfase, para que el log diga la
+  causa en vez de dejar un 500 sin explicación.
+
+Esto es una red de seguridad, no una alternativa a migrar: si el desfase se
+queda, la columna nueva nunca se guarda (la fecha de revisión de precios se
+pierde) y `/readyz` sigue avisando. La reparación es `alembic upgrade head`.
+
 ## Endpoints de salud
 
 - `GET /healthz` — liveness: responde 200 si el proceso está vivo (no toca la

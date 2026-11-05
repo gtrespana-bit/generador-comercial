@@ -17,24 +17,15 @@ class ErrorOnboarding(ValueError):
 
 
 def _configuracion(db: Session) -> Configuracion:
-    asegurar_config(db)
-    try:
-        return db.query(Configuracion).first()
-    except Exception as exc:
-        # Fallback si la columna del último merge aún no existe (deploy sin migrate)
-        msg = str(exc).lower()
-        if "recorrido_inicial_oculto" not in msg and "undefinedcolumn" not in msg:
-            raise
-        try:
-            db.rollback()
-        except Exception:
-            pass
-        from sqlalchemy.orm import defer
+    """Configuración del tenant, tolerante a un despliegue sin migración.
 
-        cfg = db.query(Configuracion).options(defer(Configuracion.recorrido_inicial_oculto)).first()
-        if cfg is not None and "recorrido_inicial_oculto" not in cfg.__dict__:
-            cfg.__dict__["recorrido_inicial_oculto"] = False
-        return cfg
+    Antes el rescate era ``defer(recorrido_inicial_oculto)``, escrito a mano
+    para una columna concreta: la siguiente que llegó sin migrar volvió a
+    romper el panel. Ahora la tolerancia es genérica y vive en un solo sitio.
+    """
+    from .configuracion_tolerante import leer_configuracion
+
+    return leer_configuracion(db, crear=asegurar_config)
 
 
 def marcar_instalacion_anterior(db: Session) -> Configuracion:

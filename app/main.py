@@ -106,6 +106,23 @@ async def lifespan(_app: FastAPI):
         init_db()
     except Exception as exc:
         log.error("Fallo al inicializar la base de datos en lifespan: %s", exc)
+    # Un despliegue puede llegar antes que su migración (04/11/2026: el código
+    # pedía ``configuracion.onboarding_precios_revisados`` y la base estaba en
+    # la revisión anterior, con 500 en /inicio). Se comprueba una vez aquí para
+    # que, mientras el esquema vaya por detrás, las lecturas no pidan columnas
+    # que no existen en lugar de tumbar la página.
+    try:
+        from .database import SessionLocal
+        from .services.configuracion_tolerante import detectar_desfase
+
+        with SessionLocal() as _db:
+            if detectar_desfase(_db):
+                log.warning(
+                    "El esquema va por detrás del modelo: se sirve degradado "
+                    "hasta aplicar la migración pendiente (`alembic upgrade head`)."
+                )
+    except Exception as exc:
+        log.warning("No se pudo comprobar el desfase de esquema: %s", exc)
     # Carpetas locales históricas. En PostgreSQL los archivos viven en el
     # backend privado (Supabase) y en despliegues de solo lectura crear estas
     # carpetas fallaría: se intentan únicamente en SQLite y un fallo no debe
