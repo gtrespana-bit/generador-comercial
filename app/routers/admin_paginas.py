@@ -216,6 +216,11 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
             "dias_restantes": max((licencia.vence - hoy_fecha).days, 0) if licencia and licencia.vence else 0,
         })
 
+    # Alertas críticas y de advertencia separadas del resto de avisos:
+    # se muestran en una banda arriba del dashboard, antes que cualquier KPI.
+    alertas_criticas = [a for a in avisos if a["severidad"] in {"critical", "warning"}]
+    alertas_info = [a for a in avisos if a["severidad"] == "info"]
+
     contexto.update({
         "resumen": resumen_admin(db),
         "finanzas": resumen_financiero(db),
@@ -223,6 +228,8 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
         "eventos": resumen_auditoria_admin(db, limite=6),
         "pendientes": pendientes_agenda,
         "avisos": avisos,
+        "alertas_criticas": alertas_criticas,
+        "alertas_info": alertas_info,
         "riesgo_churn": riesgo_churn,
         "ventas": resumen_ventas(db, periodo="mes"),
         "ultimas_ventas": ultimas_ventas(db, limite=5),
