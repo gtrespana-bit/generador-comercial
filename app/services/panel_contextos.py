@@ -313,19 +313,32 @@ def contexto_base(
     """Menú, pestañas, título, mensajes y opciones compartidas de los formularios."""
     if contadores is None:
         contadores = contadores_panel(db)
-    pestana_activa = pestana_valida(seccion, pestana)
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana_activa = pestana_valida(seccion, pestana, rol=rol_operador)
     from ..services.licencias import DURACIONES
+
+    # Vistas favoritas del operador, para el acceso rápido del sidebar.
+    vistas_fav = []
+    try:
+        from ..services.web_admin import listar_vistas_favoritas
+
+        vistas_fav = listar_vistas_favoritas(db)
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
 
     return {
         "request": request,
-        "secciones": nav_panel(contadores),
+        "secciones": nav_panel(contadores, rol=rol_operador),
         "seccion_activa": seccion,
-        "pestanas": pestanas_panel(seccion, pestana_activa, contadores),
+        "pestanas": pestanas_panel(seccion, pestana_activa, contadores, rol=rol_operador),
         "pestana": pestana_activa,
-        "pestana_nombre": _nombre_pestanas(seccion, pestana_activa),
+        "pestana_nombre": _nombre_pestanas(seccion, pestana_activa, rol_operador),
         "cabecera": cabecera or cabecera_panel(seccion, pestana_activa),
         "operador": db.info.get("auth_email", ""),
-        "operador_rol": str(db.info.get("operador_rol") or "").lower(),
+        "operador_rol": rol_operador,
         "hoy": date.today(),
         "contadores": contadores,
         "msg": msg or request.query_params.get("msg", ""),
@@ -335,11 +348,30 @@ def contexto_base(
         # si mañana hay una duración nueva, el panel la ofrece sin tocar nada.
         "duraciones": [(clave, texto) for clave, (texto, _) in DURACIONES.items()],
         "origenes": [(origen, ETIQUETAS_ORIGEN[origen]) for origen in ORIGENES_LICENCIA],
+        # Vistas favoritas para el sidebar (acceso rápido).
+        "vistas_favoritas": [
+            {
+                "id": v.id,
+                "nombre": v.nombre,
+                "modulo": v.modulo,
+                "url": url_panel(
+                    {
+                        "clientes": "/admin/clientes",
+                        "cobros": "/admin/ingresos",
+                        "renovaciones": "/admin/ingresos",
+                        "compras": "/admin/ingresos",
+                        "automatizaciones": "/admin/sistema",
+                    }.get(v.modulo, "/admin"),
+                    **({"tab": "directorio"} if v.modulo == "clientes" else {}),
+                ),
+            }
+            for v in vistas_fav
+        ],
     }
 
 
-def _nombre_pestanas(seccion: str, pestana: str) -> str:
-    for definida in pestanas_panel(seccion, ""):
+def _nombre_pestanas(seccion: str, pestana: str, rol: str | None = None) -> str:
+    for definida in pestanas_panel(seccion, "", rol=rol):
         if definida["id"] == pestana:
             return definida["nombre"]
     return ""
@@ -475,6 +507,7 @@ def vistas_en_barra(db, modulo: str, *, ruta: str, pestana: str) -> list:
         vistas.append({
             "id": vista.id,
             "nombre": vista.nombre,
+            "favorita": bool(vista.favorita),
             "url": url,
             "filtros_texto": ", ".join(f"{k}: {v}" for k, v in filtros.items()) or "sin filtros",
         })

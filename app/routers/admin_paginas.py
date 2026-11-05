@@ -216,6 +216,11 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
             "dias_restantes": max((licencia.vence - hoy_fecha).days, 0) if licencia and licencia.vence else 0,
         })
 
+    # Alertas críticas y de advertencia separadas del resto de avisos:
+    # se muestran en una banda arriba del dashboard, antes que cualquier KPI.
+    alertas_criticas = [a for a in avisos if a["severidad"] in {"critical", "warning"}]
+    alertas_info = [a for a in avisos if a["severidad"] == "info"]
+
     contexto.update({
         "resumen": resumen_admin(db),
         "finanzas": resumen_financiero(db),
@@ -223,6 +228,8 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
         "eventos": resumen_auditoria_admin(db, limite=6),
         "pendientes": pendientes_agenda,
         "avisos": avisos,
+        "alertas_criticas": alertas_criticas,
+        "alertas_info": alertas_info,
         "riesgo_churn": riesgo_churn,
         "ventas": resumen_ventas(db, periodo="mes"),
         "ultimas_ventas": ultimas_ventas(db, limite=5),
@@ -323,7 +330,8 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     """
     from ..services.panel_admin import resumen_admin
 
-    pestana = pestana_valida("clientes", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("clientes", _texto(request, "tab")["tab"], rol=rol_operador)
     if pestana == "soporte":
         return _respuesta(request, "clientes.html", _clientes_soporte(request, db, pestana))
     pedidos = _texto(request, "q", "estado", "plan", "crm", "orden", "dir", "dias")
@@ -563,14 +571,15 @@ def exportar_clientes_csv(request: Request, db: Session = Depends(get_operator_d
 
 @router.get("/admin/clientes/{organizacion_id}", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = Depends(get_operator_db)):
-    """Ficha del cliente en seis pestañas (antes: ocho tarjetas apiladas)."""
+    """Ficha del cliente con timeline unificado como pestaña principal."""
     from ..services.panel_admin import ETIQUETA_ORIGEN, PLAN_POR_IMPORTE
-    from ..services.panel_clientes import resumen_cliente
+    from ..services.panel_clientes import resumen_cliente, timeline_cliente
 
     ficha = resumen_cliente(db, organizacion_id)
     if ficha is None:
         return _redirect_cliente_inexistente()
-    pestana = pestana_ficha_valida(_texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_ficha_valida(_texto(request, "tab")["tab"], rol=rol_operador)
 
     vigente = ficha.get("vigente")
     if vigente is None:
@@ -582,8 +591,12 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
 
     hoy = date.today()
     contexto = contexto_base(request, db, seccion="clientes")
+    # Timeline unificado: siempre disponible, sea cual sea la pestaña activa.
+    # Así el operador ve la cronología completa sin cambiar de pestaña.
+    filtro_activo = (request.query_params.get("filtro") or "todos").strip().lower()
+    timeline = timeline_cliente(db, organizacion_id, hoy=hoy, limite=40)
     contexto.update({
-        "pestanas": _pestanas_ficha(organizacion_id, pestana),
+        "pestanas": _pestanas_ficha(organizacion_id, pestana, rol=rol_operador),
         "pestana": pestana,
         "pestana_nombre": _nombre_ficha(pestana),
         "cabecera": {"titulo": "", "subtitulo": "", "migas": [], "seccion": "clientes"},
@@ -596,6 +609,9 @@ def pagina_ficha_cliente(organizacion_id: int, request: Request, db: Session = D
             for fila in _crm_por_organizacion(db).values()
             if fila.get("proximo_contacto") and fila["proximo_contacto"] <= hoy
         ][:20],
+        "timeline": timeline,
+        "filtro_activo": filtro_activo,
+        "operador_rol": rol_operador,
     })
     # La pestaña «Presupuestos y precios» abre el contenido real de la
     # organización: solo lectura, auditada y reservada al superadmin.
@@ -665,7 +681,9 @@ def pagina_detalle_presupuesto_cliente(
     )
     contexto = contexto_base(request, db, seccion="clientes")
     contexto.update({
-        "pestanas": _pestanas_ficha(organizacion_id, "presupuestos"),
+        "pestanas": _pestanas_ficha(
+            organizacion_id, "presupuestos", rol=str(db.info.get("operador_rol") or "").lower()
+        ),
         "pestana": "presupuestos",
         "pestana_nombre": _nombre_ficha("presupuestos"),
         "cabecera": {"titulo": "", "subtitulo": "", "migas": [], "seccion": "clientes"},
@@ -777,10 +795,10 @@ def _redirect_cliente_inexistente() -> RedirectResponse:
     return _redirect(ruta_panel("clientes"), error="El cliente indicado no existe.")
 
 
-def _pestanas_ficha(organizacion_id: int, activa: str) -> list[dict]:
+def _pestanas_ficha(organizacion_id: int, activa: str, rol: str | None = None) -> list[dict]:
     from ..panel_arquitectura import ficha_pestanas_panel
 
-    return ficha_pestanas_panel(organizacion_id, activa)
+    return ficha_pestanas_panel(organizacion_id, activa, rol=rol)
 
 
 def _nombre_ficha(pestana: str) -> str:
@@ -800,8 +818,9 @@ def _nombre_ficha(pestana: str) -> str:
 @router.get("/admin/ingresos", response_class=HTMLResponse, include_in_schema=False)
 def pagina_ingresos(request: Request, db: Session = Depends(get_operator_db)):
     """Lo que se vendió, lo que vence, lo que espera, lo que se cobró y lo contratado."""
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
     pedidos = _texto(request, "tab")
-    pestana = pestana_valida("ingresos", pedidos["tab"])
+    pestana = pestana_valida("ingresos", pedidos["tab"], rol=rol_operador)
     contexto = _constructor[pestana](request, db, pestana)
     return _respuesta(request, "ingresos.html", contexto)
 
@@ -1166,7 +1185,8 @@ _constructor.update({
 @router.get("/admin/ingresos.csv", include_in_schema=False)
 def exportar_ingresos_csv(request: Request, db: Session = Depends(get_operator_db)):
     """CSV de la pestaña activa (ventas, renovaciones, cobros, compras o contratos)."""
-    pestana = pestana_valida("ingresos", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("ingresos", _texto(request, "tab")["tab"], rol=rol_operador)
     if pestana not in _EXPORTADORES:
         pestana = "ventas"
     filas, nombre = _EXPORTADORES[pestana](request, db)
@@ -1655,7 +1675,8 @@ def pagina_web(request: Request, db: Session = Depends(get_operator_db)):
     """La web del producto se edita y se publica desde un solo sitio."""
     from ..services.web_admin import listar_contenido
 
-    pestana = pestana_valida("web", _texto(request, "tab")["tab"])
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    pestana = pestana_valida("web", _texto(request, "tab")["tab"], rol=rol_operador)
     contexto = contexto_base(request, db, seccion="web", pestana=pestana)
     if pestana == "contenido":
         contexto.update(_web_contenido(db, listar_contenido(db)))
@@ -2089,7 +2110,8 @@ def contexto_sistema(
     Antes cada bloque tenía su página —y su copia del menú—; ahora son pestañas
     del mismo área y comparten el constructor de contexto.
     """
-    activa = pestana_valida("sistema", pestana)
+    rol_operador = str(db.info.get("operador_rol") or "").lower()
+    activa = pestana_valida("sistema", pestana, rol=rol_operador)
     contexto = contexto_base(request, db, seccion="sistema", pestana=activa, msg=msg, error=error)
     try:
         _RELLENOS[activa](request, db, contexto)
