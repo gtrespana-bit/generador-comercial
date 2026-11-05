@@ -46,7 +46,16 @@ from .database import (  # noqa: E402
     init_db,
 )
 from .models import LicenciaSuspendidaError, PermisoOrganizacionError  # noqa: E402
-from .security import AuthRateLimitMiddleware, WebSecurityMiddleware, confia_en_proxy  # noqa: E402
+from .security import (  # noqa: E402
+    AuthRateLimitMiddleware,
+    WebSecurityMiddleware,
+    confia_en_proxy,
+    # La audiencia de la web pública hashea la IP del visitante. Sin este
+    # import el middleware lanzaba NameError en cada página vista y, como
+    # captura todo para no romper la respuesta, la visita se descartaba en
+    # silencio: /admin/analitica mostraba cero audiencia desde siempre.
+    ip_de_request,
+)
 from .services.prueba_gratuita import hash_ip  # noqa: E402
 from .services.invitations import GestionEquipoError  # noqa: E402
 from .services.operacion import RegistroErroresMiddleware  # noqa: E402
@@ -297,6 +306,24 @@ def _es_visita_audiencia(scope) -> bool:
     return True
 
 
+_AUDIENCIA_AVISO_EMITIDO = False
+
+
+def _avisar_fallo_audiencia(exc: Exception) -> None:
+    """Deja UNA traza por proceso cuando no se puede contar una visita.
+
+    La audiencia nunca debe romper la respuesta del visitante (por eso se
+    captura todo), pero callarlo del todo convirtió un fallo de esquema en un
+    panel con ceros y ninguna pista. Se avisa una sola vez por proceso para no
+    escribir un log por página vista.
+    """
+    global _AUDIENCIA_AVISO_EMITIDO
+    if _AUDIENCIA_AVISO_EMITIDO:
+        return
+    _AUDIENCIA_AVISO_EMITIDO = True
+    log.warning("No se pudo registrar una visita de audiencia: %s", exc)
+
+
 class AudienciaMiddleware:
     """Cuenta una visita por página vista de la web pública.
 
@@ -346,16 +373,21 @@ class AudienciaMiddleware:
                     )
                 )
                 db.commit()
-            except Exception:
+            except Exception as exc:
                 try:
                     db.rollback()
                 except Exception:
                     pass
+                # Antes se descartaba en silencio absoluto: cuando la tabla no
+                # existía (o RLS la cerraba) el panel mostraba ceros y no había
+                # ni una línea de log que lo explicara. Un aviso por proceso
+                # basta para diagnosticarlo sin llenar el registro.
+                _avisar_fallo_audiencia(exc)
             finally:
                 db.close()
-        except Exception:
+        except Exception as exc:
             # La audiencia es un adorno, nunca un obstáculo.
-            pass
+            _avisar_fallo_audiencia(exc)
 
 
 class HostCanonicoMiddleware:
