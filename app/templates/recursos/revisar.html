@@ -9,14 +9,39 @@
       El generador compone cada precio con estas tarifas. Una empresa que paga
       <strong>15 {{ moneda_vista }}/h</strong> por un oficial y otra que paga
       <strong>25 {{ moneda_vista }}/h</strong> deben cotizar distinto: los mismos
-      metros, importes diferentes. Por eso lo primero es que estas cifras sean
-      <strong>las tuyas</strong> y no una referencia genérica de {{ mercado_codigo }}.
+      metros, importes diferentes. Ajustar estas cifras es <strong>opcional</strong>,
+      pero es lo que hace que tus presupuestos se parezcan a tu empresa y no a
+      una media de {{ mercado_codigo }}.
     </p>
   </div>
   <div class="actions">
     <a class="btn" href="/recursos">Volver a recursos</a>
   </div>
 </div>
+
+{% if recordatorio.estado == 'silenciado' %}
+<div class="alert alert-info revisar-recordatorio">
+  <div>
+    <strong>Recordatorio desactivado.</strong> No volverás a ver el aviso en el
+    panel, en el catálogo ni en la ficha de tus presupuestos. Puedes seguir
+    ajustando tarifas aquí cuando quieras.
+  </div>
+  <form method="post" action="/recursos/revisar/reactivar">
+    <button type="submit" class="btn btn-sm">Volver a activarlo</button>
+  </form>
+</div>
+{% elif recordatorio.estado == 'pospuesto' %}
+<div class="alert alert-info revisar-recordatorio">
+  <div>
+    <strong>En pausa hasta el {{ recordatorio.hasta.strftime('%d/%m/%Y') }}.</strong>
+    Hasta entonces no te interrumpimos con este aviso. Si cambias de idea,
+    puedes activarlo de nuevo.
+  </div>
+  <form method="post" action="/recursos/revisar/reactivar">
+    <button type="submit" class="btn btn-sm">Activar ahora</button>
+  </form>
+</div>
+{% endif %}
 
 <div class="alert {{ 'alert-warn' if resumen.pendientes else 'alert-ok' }}">
   {% if resumen.pendientes %}
@@ -36,19 +61,32 @@
 
 {% if filas %}
 <form method="post" action="/recursos/revisar" id="form-revision">
+  {# Los botones «Confirmar» de cada fila envían a otra ruta reutilizando este
+     formulario; este campo les dice que vuelvan aquí y no a la ficha. #}
+  <input type="hidden" name="volver" value="revisar">
   <div class="card">
     <div class="card-head">
-      <h2>Tarifas por confirmar</h2>
+      <h2>Tarifas por ajustar</h2>
       <span class="hint">Ordenadas por familia: primero la mano de obra y, dentro de cada una, lo que más entra en los presupuestos.</span>
     </div>
 
-    <div class="toolbar-row">
-      <div class="toolbar-actions">
+    {# La selección arranca vacía a propósito: confirmar es una decisión, no un
+       efecto secundario de pulsar «Guardar». Las filas que ya están a tu precio
+       se confirman de una vez con «He revisado todas», y las que quieras tocar
+       se marcan (o se escribe su precio directamente). #}
+    <div class="revisar-toolbar">
+      <div class="revisar-seleccion">
+        <span class="revisar-contador" id="revisar-contador">
+          <strong id="revisar-contador-num">0</strong> seleccionadas
+        </span>
         <button type="button" class="btn btn-sm" data-revisar="todas">Marcar todas</button>
+        <button type="button" class="btn btn-sm" data-revisar="ninguna">Desmarcar todas</button>
         <button type="button" class="btn btn-sm" data-revisar="mano-obra">Solo mano de obra</button>
-        <button type="button" class="btn btn-sm" data-revisar="ninguna">Desmarcar</button>
       </div>
-      <span class="hint">Escribe un precio solo donde no coincida. Las filas marcadas quedan con la fecha de hoy.</span>
+      <span class="hint">
+        Escribe un precio solo donde no coincida. Lo que marques queda con la
+        fecha de hoy; lo que no, se queda como está.
+      </span>
     </div>
 
     <div class="table-wrap">
@@ -61,13 +99,14 @@
             <th class="right">Precio actual</th>
             <th class="right">Tu precio ({{ moneda_vista }})</th>
             <th class="right">Usos</th>
+            <th class="right"><span class="visualmente-oculto">Confirmar esta tarifa</span></th>
           </tr>
         </thead>
         <tbody>
           {% for fila in filas %}
           <tr data-categoria="{{ fila.categoria }}">
             <td data-label="Revisar">
-              <input type="checkbox" name="revisar" value="{{ fila.id }}" checked
+              <input type="checkbox" name="revisar" value="{{ fila.id }}"
                      aria-label="Confirmar {{ fila.descripcion }}">
             </td>
             <td data-label="Recurso">
@@ -100,38 +139,81 @@
             <td data-label="Usos" class="right">
               {% if fila.usos %}<span title="Aparece en {{ fila.usos }} partidas o líneas">{{ fila.usos }}</span>{% else %}<span class="hint">—</span>{% endif %}
             </td>
+            <td data-label="Confirmar" class="right revisar-fila-accion">
+              {# El gesto mínimo: esta tarifa es la mía. No cambia el precio ni
+                 depende del formulario grande, así que funciona igual con el
+                 resto de filas sin tocar y sin JavaScript. #}
+              <button type="submit" class="btn btn-sm btn-ghost"
+                      formaction="/recursos/{{ fila.id }}/revisado"
+                      formnovalidate
+                      title="Dar esta tarifa por buena con la fecha de hoy, sin cambiar su precio">Confirmar</button>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
 
-    <div class="toolbar-actions">
+    <div class="revisar-pie">
       <span class="hint">
-        Al escribir un precio propio se recalcularán las partidas que usan ese
-        recurso, igual que si lo editaras en el catálogo.
+        Al escribir un precio propio se recalculan las partidas que usan ese
+        recurso, igual que si lo editaras en el catálogo. Confirmar sin cambiar
+        el precio no genera ningún precio nuevo: solo deja constancia de que lo
+        miraste.
       </span>
       <div class="toolbar-actions">
-        <button type="submit" class="btn btn-primary">Confirmar seleccionadas</button>
+        <button type="submit" class="btn btn-primary" id="revisar-confirmar" disabled
+                title="Marca al menos una tarifa o escribe un precio">Confirmar seleccionadas</button>
       </div>
     </div>
   </div>
 </form>
 
-<form method="post" action="/recursos/revisar/confirmar-todas" class="card"
-      data-confirm="Se darán por buenas TODAS las tarifas pendientes. Podrás cambiarlas cuando quieras.">
-  <div class="card-head">
-    <h2>¿Ya las revisaste todas?</h2>
+{# ── Salidas opcionales ──────────────────────────────────────────────────────
+   Ninguna de estas acciones confirma precios: son la respuesta a «esto no lo
+   voy a mirar ahora» y «no me lo vuelvas a pedir». Van juntas y en segundo
+   plano porque el camino principal es confirmar, pero tienen que existir: sin
+   ellas, la única forma de quitar el aviso era confirmar tarifas que nadie
+   había mirado. #}
+<div class="revisar-salidas" id="revisar-salidas">
+  <div class="card revisar-salida">
+    <div class="card-head"><h2>¿Lo miras en otro momento?</h2></div>
+    <p class="hint">
+      El aviso desaparece del panel hasta la fecha que elijas y vuelve solo.
+      Tus tarifas no cambian.
+    </p>
+    <form method="post" action="/recursos/revisar/posponer" class="revisar-plazos">
+      {% for clave, etiqueta in posposiciones %}
+      <button type="submit" name="plazo" value="{{ clave }}" class="btn btn-sm">{{ etiqueta }}</button>
+      {% endfor %}
+    </form>
   </div>
-  <p class="hint">
-    Si tu catálogo ya está a tus precios y no hay nada que corregir, dilo una vez
-    y sigue trabajando: queda registrado con la fecha de hoy y no se te vuelve a
-    pedir hasta dentro de {{ resumen.dias_vigencia }} días.
-  </p>
-  <div class="toolbar-actions">
-    <button type="submit" class="btn">Ya están revisadas</button>
+
+  <div class="card revisar-salida">
+    <div class="card-head"><h2>Lo hago por mi cuenta</h2></div>
+    <p class="hint">
+      Ya trabajas con tus precios y no quieres que se te recuerde. El aviso
+      desaparece de la aplicación; esta pantalla sigue disponible en
+      <a href="/recursos">Recursos</a> y podrás reactivarlo cuando quieras.
+    </p>
+    <form method="post" action="/recursos/revisar/silenciar">
+      <button type="submit" class="btn btn-sm">No volver a recordármelo</button>
+    </form>
   </div>
-</form>
+
+  <div class="card revisar-salida">
+    <div class="card-head"><h2>Ya están todas bien</h2></div>
+    <p class="hint">
+      Si tu catálogo ya está a tus precios y no hay nada que corregir, dilo una
+      vez: todas las tarifas quedan con la fecha de hoy y no se te vuelve a
+      pedir hasta dentro de {{ resumen.dias_vigencia }} días.
+    </p>
+    <form method="post" action="/recursos/revisar/confirmar-todas"
+          data-confirm="Se darán por buenas TODAS las tarifas pendientes. Podrás cambiarlas cuando quieras.">
+      <button type="submit" class="btn btn-sm">He revisado todas</button>
+    </form>
+  </div>
+</div>
 {% else %}
 <div class="card">
   <div class="card-head"><h2>Nada pendiente</h2></div>
@@ -143,6 +225,11 @@
   <div class="toolbar-actions">
     <a class="btn btn-primary" href="/presupuestos/nuevo">Crear un presupuesto</a>
     <a class="btn" href="/recursos">Ver recursos</a>
+    {% if recordatorio.estado != 'visible' %}
+    <form method="post" action="/recursos/revisar/reactivar">
+      <button type="submit" class="btn btn-sm">Activar el recordatorio</button>
+    </form>
+    {% endif %}
   </div>
 </div>
 {% endif %}
@@ -151,9 +238,22 @@
 {% block scripts %}
 <script nonce="{{ request.state.csp_nonce }}">
 (function () {
-  /* Marcar en bloque: revisar 300 filas una a una es lo que hace que nadie
-     revise nada. Sin JavaScript los checkboxes ya vienen marcados y el
-     formulario funciona igual. */
+  /* Marcar en bloque. Sin JavaScript no hay atajos, pero el formulario sigue
+     funcionando y nada queda marcado por defecto: confirmar es una decisión. */
+  var contador = document.getElementById('revisar-contador-num');
+  var confirmar = document.getElementById('revisar-confirmar');
+
+  function actualizarContador() {
+    var marcadas = document.querySelectorAll(
+      '#form-revision input[name="revisar"]:checked'
+    ).length;
+    if (contador) contador.textContent = marcadas;
+    /* El botón sigue el estado: pulsarlo sin nada marcado solo podía acabar
+       en un error del servidor. Sin JavaScript se queda activo y el servidor
+       responde con el mensaje que explica qué hacer. */
+    if (confirmar) confirmar.disabled = marcadas === 0;
+  }
+
   document.querySelectorAll('[data-revisar]').forEach(function (boton) {
     boton.addEventListener('click', function () {
       var modo = boton.getAttribute('data-revisar');
@@ -164,16 +264,24 @@
         else if (modo === 'todas') casilla.checked = true;
         else casilla.checked = fila.getAttribute('data-categoria') === 'mano_obra';
       });
+      actualizarContador();
     });
   });
+
+  document.querySelectorAll('#form-revision input[name="revisar"]').forEach(function (casilla) {
+    casilla.addEventListener('change', actualizarContador);
+  });
+
   /* Un precio escrito sin marcar la fila es un despiste silencioso: si hay
      valor, se confirma. */
   document.querySelectorAll('#form-revision input[name^="precio_"]').forEach(function (campo) {
     campo.addEventListener('input', function () {
       var casilla = campo.closest('tr').querySelector('input[name="revisar"]');
-      if (casilla && campo.value.trim()) casilla.checked = true;
+      if (casilla && campo.value.trim()) { casilla.checked = true; actualizarContador(); }
     });
   });
+
+  actualizarContador();
 })();
 </script>
 {% endblock %}

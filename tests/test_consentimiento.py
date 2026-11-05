@@ -561,6 +561,7 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     from migrations.versions import (
         s8a3c6d1f7b9_el_ejemplo_es_trabajo as ejemplo_migracion,
         t9b4d7e2c5f8_revision_de_tarifas as revision_tarifas_migracion,
+        u1c5e8b3d7a9_recordatorio_de_tarifas as recordatorio_migracion,
     )
 
     assert ejemplo_migracion.down_revision == analitica_migracion.revision
@@ -568,7 +569,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     # vigente: la columna con la que se pide confirmar los precios antes de
     # cotizar con ellos.
     assert revision_tarifas_migracion.down_revision == ejemplo_migracion.revision
-    assert revision_tarifas_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # Sobre la revisión de tarifas cuelga el recordatorio que se puede posponer
+    # y silenciar, que es la cabeza vigente.
+    assert recordatorio_migracion.down_revision == revision_tarifas_migracion.revision
+    assert recordatorio_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

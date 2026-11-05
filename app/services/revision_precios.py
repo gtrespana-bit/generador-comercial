@@ -360,3 +360,86 @@ def _marca_de(db, recurso_id: int):
             pass
         return None
     return fila[0] if fila else None
+
+
+# ---------------------------------------------------------------------------
+# Cuándo se enseña el recordatorio: posponer y silenciar
+# ---------------------------------------------------------------------------
+
+#: Opciones de «ahora no» que ofrece la pantalla. Se guarda siempre una fecha
+#: concreta (no un contador) para que el aviso vuelva aunque nadie entre a la
+#: aplicación: un recordatorio que depende de que el usuario vuelva a abrirla
+#: no es un recordatorio.
+POSPOSICIONES = {
+    "semana": ("Una semana", 7),
+    "mes": ("Un mes", 30),
+    "trimestre": ("Tres meses", 90),
+}
+
+
+def fecha_posposicion(opcion: str, hoy: date | None = None) -> date | None:
+    """Fecha en la que vuelve el aviso para una opción de posposición.
+
+    ````None`` es «no es una opción válida»: quien llama responde con un error
+    en vez de silenciar el aviso por accidente.
+    """
+    clave = str(opcion or "").strip().lower()
+    if clave not in POSPOSICIONES:
+        return None
+    return (hoy or date.today()) + timedelta(days=POSPOSICIONES[clave][1])
+
+
+def estado_recordatorio(cfg, hoy: date | None = None) -> dict:
+    """Qué decisión tiene tomada la empresa sobre el aviso de tarifas.
+
+    No confirma nada: separa «las tarifas están bien» (eso lo dice la fecha de
+    cada tarifa) de «cuándo quiero que se me recuerde». Tres estados:
+
+    ``silenciado``   la empresa pidió no volver a verlo. La revisión sigue
+                     accesible desde *Recursos*, solo deja de interrumpir.
+    ``pospuesto``    se pidió «ahora no» con fecha; hasta entonces no se
+                     interrumpe.
+    ``visible``      toca enseñarlo (o nunca se decidió).
+
+    Los tres son compatibles con tener tarifas pendientes: silenciar no las
+    confirma ni las borra.
+    """
+    hoy = hoy or date.today()
+    silenciado = bool(_leer(cfg, "tarifas_recordatorio_silenciado", False))
+    hasta = _leer(cfg, "tarifas_recordatorio_pospuesto_hasta", None)
+    if silenciado:
+        return {"estado": "silenciado", "hasta": None, "silenciado": True}
+    if hasta is not None:
+        try:
+            if hasta > hoy:
+                return {"estado": "pospuesto", "hasta": hasta, "silenciado": False}
+        except TypeError:
+            # ``datetime`` en vez de ``date`` en algún motor.
+            try:
+                if hasta.date() > hoy:
+                    return {"estado": "pospuesto", "hasta": hasta.date(), "silenciado": False}
+            except Exception:
+                pass
+    return {"estado": "visible", "hasta": None, "silenciado": False}
+
+
+def _leer(cfg, nombre: str, defecto=None):
+    """Atributo de configuración sin romper si su columna no está migrada."""
+    from .configuracion_tolerante import atributo
+
+    return atributo(cfg, nombre, defecto)
+
+
+def recordatorio_visible(cfg, *, pendientes: int | None = None, hoy: date | None = None) -> bool:
+    """¿Toca interrumpir con el aviso de tarifas?
+
+    Una sola pregunta para el panel, el catálogo, la ficha del presupuesto y la
+    guía de inicio: si cada pantalla decidiera por su cuenta, silenciar en una
+    no silenciaría en las demás.
+
+    ``pendientes`` en ``None`` significa «no se sabe» (la consulta no se hizo):
+    entonces manda solo la decisión de la empresa.
+    """
+    if pendientes is not None and int(pendientes) <= 0:
+        return False
+    return estado_recordatorio(cfg, hoy)["estado"] == "visible"

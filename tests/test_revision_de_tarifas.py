@@ -499,3 +499,187 @@ def test_sin_la_columna_no_se_confirma_nada_por_accidente(entorno):
         assert cfg.onboarding_precios_revisados is False
     finally:
         _migrar(db)
+
+
+# ---------------------------------------------------------------------------
+# 6. El recordatorio se puede posponer y silenciar (u1c5e8b3d7a9)
+# ---------------------------------------------------------------------------
+#
+# La revisión de tarifas decide el importe entero, así que tiene que poder
+# pedirse; pero un aviso que no se puede quitar deja de ser un consejo. Estas
+# pruebas fijan el contrato de las dos salidas: no confirman precios, solo
+# deciden cuándo se enseña el aviso — y se pueden deshacer.
+
+
+def _cfg(db):
+    db.expire_all()
+    return db.query(Configuracion).one()
+
+
+def test_posponer_silencia_el_aviso_hasta_la_fecha_elegida(entorno):
+    web, db, ids = entorno
+    respuesta = web.post(
+        "/recursos/revisar/posponer", data={"plazo": "semana"}, follow_redirects=False
+    )
+
+    assert respuesta.status_code in (303, 307)
+    cfg = _cfg(db)
+    assert cfg.tarifas_recordatorio_pospuesto_hasta == date.today() + timedelta(days=7)
+    assert not cfg.tarifas_recordatorio_silenciado
+
+    # No confirma nada: las tres tarifas siguen pendientes.
+    resumen = resumen_revision(db, organizacion_id=ids["org"], pais="ES")
+    assert resumen["pendientes"] == 3
+    assert db.get(Recurso, ids["oficial"]).precio_revisado_at is None
+
+    # Y el aviso deja de interrumpir en el panel, en el catálogo y en la ficha.
+    inicio = web.get("/inicio").text
+    assert "Tu catálogo aún cotiza con precios de referencia" not in inicio
+    assert "siguen siendo referencia de" not in web.get("/recursos").text
+    ficha = web.get(f"/presupuestos/{ids['presupuesto']}").text
+    assert "Este presupuesto usa precios que no has confirmado" not in ficha
+
+
+def test_el_aviso_vuelve_solo_cuando_pasa_la_fecha(entorno):
+    """Se guarda una fecha, no un contador: sin volver a entrar, el aviso vuelve."""
+    web, db, _ids = entorno
+    web.post("/recursos/revisar/posponer", data={"plazo": "semana"}, follow_redirects=False)
+
+    cfg = _cfg(db)
+    # Se simula el paso del tiempo dejando la fecha en el pasado.
+    cfg.tarifas_recordatorio_pospuesto_hasta = date.today() - timedelta(days=1)
+    db.commit()
+
+    assert "Tu catálogo aún cotiza con precios de referencia" in web.get("/inicio").text
+
+
+def test_silenciar_no_confirma_tarifas_y_se_puede_deshacer(entorno):
+    web, db, ids = entorno
+    respuesta = web.post("/recursos/revisar/silenciar", follow_redirects=False)
+
+    assert respuesta.status_code in (303, 307)
+    cfg = _cfg(db)
+    assert cfg.tarifas_recordatorio_silenciado is True
+    assert cfg.onboarding_precios_revisados in (False, None)
+
+    resumen = resumen_revision(db, organizacion_id=ids["org"], pais="ES")
+    assert resumen["pendientes"] == 3
+    assert db.get(Recurso, ids["oficial"]).precio_revisado_at is None
+    assert "Tu catálogo aún cotiza con precios de referencia" not in web.get("/inicio").text
+
+    # La pantalla de revisión sigue disponible y es donde se reactiva.
+    revisar = web.get("/recursos/revisar")
+    assert revisar.status_code == 200
+    assert "Recordatorio desactivado" in revisar.text
+
+    assert web.post("/recursos/revisar/reactivar", follow_redirects=False).status_code in (303, 307)
+    assert _cfg(db).tarifas_recordatorio_silenciado is False
+    assert "Tu catálogo aún cotiza con precios de referencia" in web.get("/inicio").text
+
+
+def test_la_pantalla_ofrece_las_tres_salidas_y_ninguna_obliga(entorno):
+    """Sin muro: posponer, silenciar y «he revisado todas» conviven.
+
+    Además, la selección arranca vacía: confirmar es una decisión del usuario,
+    no el efecto de pulsar «Guardar» sin mirar.
+    """
+    web, _db, _ids = entorno
+    pagina = web.get("/recursos/revisar")
+
+    assert pagina.status_code == 200
+    assert 'action="/recursos/revisar/posponer"' in pagina.text
+    assert 'action="/recursos/revisar/silenciar"' in pagina.text
+    assert 'action="/recursos/revisar/confirmar-todas"' in pagina.text
+    assert "Marcar todas" in pagina.text
+    assert "Desmarcar todas" in pagina.text
+    # Las casillas nacen sin marcar: el único «checked» del HTML es el selector
+    # ``:checked`` del contador en JavaScript.
+    assert 'type="checkbox" name="revisar"' in pagina.text
+    assert 'value="' in pagina.text and 'checked>' not in pagina.text
+
+
+def test_posponer_con_un_plazo_inventado_no_cambia_nada(entorno):
+    web, db, _ids = entorno
+    respuesta = web.post(
+        "/recursos/revisar/posponer", data={"plazo": "siempre"}, follow_redirects=False
+    )
+
+    assert respuesta.status_code in (303, 307)
+    assert "error=" in respuesta.headers["location"]
+    assert _cfg(db).tarifas_recordatorio_pospuesto_hasta is None
+
+
+def test_confirmar_una_tarifa_desde_su_ficha(entorno):
+    """El gesto mínimo: un botón en la ficha, sin formulario ni pantalla aparte."""
+    web, db, ids = entorno
+
+    respuesta = web.post(f"/recursos/{ids['oficial']}/revisado", follow_redirects=False)
+
+    assert respuesta.status_code in (303, 307)
+    assert f"/recursos/{ids['oficial']}/editar" in respuesta.headers["location"]
+    db.expire_all()
+    assert db.get(Recurso, ids["oficial"]).precio_revisado_at is not None
+    # Y no se inventó ningún precio propio: solo se dio por buena.
+    assert db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.organizacion_id == ids["org"]
+    ).first() is None
+
+
+def test_confirmar_desde_la_lista_devuelve_a_la_lista(entorno):
+    web, db, ids = entorno
+
+    respuesta = web.post(
+        f"/recursos/{ids['peon']}/revisado", data={"volver": "lista"},
+        follow_redirects=False,
+    )
+
+    assert respuesta.status_code in (303, 307)
+    assert respuesta.headers["location"].startswith("/recursos?")
+    db.expire_all()
+    assert db.get(Recurso, ids["peon"]).precio_revisado_at is not None
+
+
+def test_confirmar_una_tarifa_con_tu_precio_guarda_el_override(entorno):
+    """Un clic en la ficha: guardar mi precio y darlo por bueno, sin dos pasos."""
+    web, db, ids = entorno
+
+    respuesta = web.post(
+        f"/recursos/{ids['oficial']}/revisado",
+        data={"precio_propio": "25", "volver": "revisar"},
+        follow_redirects=False,
+    )
+
+    assert respuesta.status_code in (303, 307)
+    assert respuesta.headers["location"].startswith("/recursos/revisar?")
+    db.expire_all()
+    propio = db.query(PrecioRecursoMercado).filter(
+        PrecioRecursoMercado.organizacion_id == ids["org"],
+        PrecioRecursoMercado.recurso_id == ids["oficial"],
+    ).one()
+    assert propio.precio == 25.0
+    assert db.get(Recurso, ids["oficial"]).precio_revisado_at is not None
+
+
+def test_una_tarifa_confirmada_ya_no_aparece_en_la_pantalla(entorno):
+    web, db, ids = entorno
+    web.post(f"/recursos/{ids['oficial']}/revisado", follow_redirects=False)
+    db.expire_all()
+
+    resumen = resumen_revision(db, organizacion_id=ids["org"], pais="ES")
+    assert resumen["pendientes"] == 2
+    assert "Oficial de primera" not in [f["descripcion"] for f in resumen["filas"]]
+    assert "2 de 3" in web.get("/recursos/revisar").text
+
+
+def test_la_ficha_del_recurso_ofrece_confirmar_y_dice_si_ya_lo_esta(entorno):
+    web, db, ids = entorno
+
+    sin_confirmar = web.get(f"/recursos/{ids['oficial']}/editar").text
+    assert "Sin confirmar" in sin_confirmar
+    assert f'formaction="/recursos/{ids["oficial"]}/revisado"' in sin_confirmar
+
+    web.post(f"/recursos/{ids['oficial']}/revisado", follow_redirects=False)
+    db.expire_all()
+    confirmada = web.get(f"/recursos/{ids['oficial']}/editar").text
+    assert "Confirmada el" in confirmada
+    assert "Sin confirmar" not in confirmada

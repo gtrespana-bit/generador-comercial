@@ -113,13 +113,21 @@
         <strong>{{ revision_precios.mano_obra_pendientes }}</strong> son de mano de obra{%
         endif %}. El generador usa lo que cuesta aquí un oficial o un peón: si esas
         cifras no son las tuyas, el presupuesto sale barato o caro sin que se note.
+        Ajustarlas es <strong>opcional</strong>: puedes cotizar tal cual.
         {% for fila in revision_precios.muestra %}
         <span class="badge badge-sin-datos">{{ fila.descripcion }}{% if fila.usos %} · {{ fila.usos }} usos{% endif %}</span>
         {% endfor %}
       </p>
     </div>
   </div>
-  <a class="btn btn-sm btn-primary" href="/recursos/revisar">Revisar mis tarifas</a>
+  <div class="dashboard-tarifas-acciones">
+    <a class="btn btn-sm btn-primary" href="/recursos/revisar">Revisar mis tarifas</a>
+    {# Quitar el aviso sin confirmar nada: posponer o silenciar. Las dos
+       acciones viven en la pantalla de revisión; desde el panel basta un
+       enlace a ellas para no meter un formulario de tres botones en el inicio. #}
+    <a class="btn btn-sm btn-ghost" href="/recursos/revisar#revisar-salidas"
+       title="Posponer el aviso o desactivarlo sin tocar tus precios">Ahora no</a>
+  </div>
 </section>
 {% endif %}
 
