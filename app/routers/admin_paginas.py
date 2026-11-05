@@ -184,6 +184,38 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
     # propia tarjeta: una venta ya está cobrada y no pide nada.
     avisos = notificaciones_admin(db)
     pendientes_agenda = [a for a in avisos if a["tipo"] not in {"venta", "registro"}]
+
+    # Riesgo de churn: empresas con licencia vigente de pago pero sin uso del
+    # producto en los últimos 14 días. Señal temprana de posible baja.
+    from ..models import EventoProducto, Licencia, Organizacion
+
+    hoy_fecha = date.today()
+    hace_14 = datetime.utcnow() - timedelta(days=14)
+    licencias_vigentes = db.query(Licencia).filter(
+        Licencia.origen == "pago",
+        Licencia.estado == "activa",
+        Licencia.inicio <= hoy_fecha,
+        Licencia.vence >= hoy_fecha,
+    ).all()
+    orgs_pagando = {l.organizacion_id for l in licencias_vigentes}
+    orgs_con_uso = {
+        r[0] for r in db.query(EventoProducto.organizacion_id).distinct()
+        .filter(EventoProducto.created_at >= hace_14)
+        .filter(EventoProducto.accion.notin_(("actividad.diaria", "sesion.activa", "sesion.login")))
+        .all()
+    }
+    riesgo_churn = []
+    for org_id in sorted(orgs_pagando - orgs_con_uso):
+        org = db.get(Organizacion, org_id)
+        if org is None:
+            continue
+        licencia = next((l for l in licencias_vigentes if l.organizacion_id == org_id), None)
+        riesgo_churn.append({
+            "organizacion": org,
+            "vence": licencia.vence if licencia else None,
+            "dias_restantes": max((licencia.vence - hoy_fecha).days, 0) if licencia and licencia.vence else 0,
+        })
+
     contexto.update({
         "resumen": resumen_admin(db),
         "finanzas": resumen_financiero(db),
@@ -191,6 +223,7 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
         "eventos": resumen_auditoria_admin(db, limite=6),
         "pendientes": pendientes_agenda,
         "avisos": avisos,
+        "riesgo_churn": riesgo_churn,
         "ventas": resumen_ventas(db, periodo="mes"),
         "ultimas_ventas": ultimas_ventas(db, limite=5),
         "registros": resumen_registros(db),
@@ -1462,11 +1495,154 @@ def exportar_soporte_csv(request: Request, db: Session = Depends(get_operator_db
     return _csv_response(filas, nombre)
 
 
+@router.get("/admin/analitica.csv", include_in_schema=False)
+def exportar_analitica_csv(
+    request: Request, db: Session = Depends(get_operator_db)
+):
+    """Informe ejecutivo de analítica: KPIs, serie diaria y tabla de empresas.
+
+    Un CSV con la misma medición que se ve en /admin/analitica, para llevar a
+    una reunión o cruzar con otras fuentes (E5-012 / D4: informe ejecutivo).
+    """
+    from ..services.analitica import resumen_analitica
+
+    resumen = resumen_analitica(db)
+    k = resumen["kpis"]
+    contenido = [
+        [
+            "Métrica",
+            "Valor",
+        ],
+        ["Empresas totales", k["organizaciones"]],
+        ["Cuentas totales", k["usuarios"]],
+        ["Cuentas registradas en ventana", k["usuarios_recientes"]],
+        ["Sesiones iniciadas hoy", k["usuarios_hoy"]],
+        ["Cuentas con uso hoy", k["usuarios_activos_hoy"]],
+        ["Empresas activas hoy", k["activas_hoy"]],
+        ["Empresas activas 7d", k["activas_7d"]],
+        ["Empresas activas en ventana", k["activas_ventana"]],
+        ["Empresas que presupuestan", k["empresa_a_presupuesto"]],
+        ["Empresas sin presupuesto", k["orgs_sin_presupuesto"]],
+        ["Presupuestos hoy", k["presupuestos_hoy"]],
+        ["Presupuestos esta semana", k["presupuestos_semana"]],
+        ["Presupuestos este mes", k["presupuestos_mes"]],
+        ["Presupuestos en ventana", k["presupuestos_ventana"]],
+        ["Ingresos acumulados (licencias de pago)", k["ingresos"]],
+        ["Empresas que han pagado", k["orgs_que_pagaron"]],
+        [
+            "Visitantes hoy",
+            resumen["audiencia"]["visitantes_hoy"]
+            if resumen["audiencia"]["disponible"]
+            else 0,
+        ],
+        [
+            "Vistas de página hoy",
+            resumen["audiencia"]["vistas_hoy"]
+            if resumen["audiencia"]["disponible"]
+            else 0,
+        ],
+        ["Visitantes en ventana", resumen["audiencia"]["visitantes_ventana"] if resumen["audiencia"]["disponible"] else 0],
+        ["Vistas de página en ventana", resumen["audiencia"]["vistas_ventana"] if resumen["audiencia"]["disponible"] else 0],
+        ["Ventana (días)", resumen["dias"]],
+        ["Generado", datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")],
+    ]
+    nombre = f"analitica_{resumen['hoy']:%Y%m%d}.csv"
+    return _csv_response(contenido, nombre)
+
+
 @router.get("/admin/auditoria.csv", include_in_schema=False)
 def exportar_auditoria_csv(request: Request, db: Session = Depends(get_operator_db)):
     """URL nueva de Fase 1: el registro se podía leer pero no descargar."""
     filas, nombre = _csv_auditoria(request, db)
     return _csv_response(filas, nombre)
+
+
+@router.get("/admin/clientes/{organizacion_id}/csv", include_in_schema=False)
+def exportar_ficha_cliente_csv(
+    organizacion_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),
+):
+    """Exportación CSV de la ficha completa de un cliente.
+
+    Toda la información de gestión de un cliente en un solo archivo:
+    licencias, compras, cobros, notas, última actividad y uso. Útil para
+    llevar a una reunión o para archivar el estado de la cuenta en un punto
+    dado del tiempo.
+    """
+    from ..services.panel_clientes import resumen_cliente
+
+    ficha = resumen_cliente(db, organizacion_id)
+    if ficha is None:
+        return Response("Cliente no encontrado.", status_code=404)
+
+    org = ficha["organizacion"]
+    vigente = ficha["vigente"]
+    hoy = ficha["hoy"]
+    agregados = ficha["agregados"]
+    cobros = ficha["cobros"] or []
+    notas = ficha["notas"] or []
+
+    contenido = [
+        ["Campo", "Valor"],
+        ["Organización", org.nombre],
+        ["Slug", org.slug],
+        ["ID", str(org.id)],
+        ["Fecha de alta", org.created_at.strftime("%Y-%m-%d") if org.created_at else ""],
+        ["Activa", "Sí" if org.activa else "No"],
+        ["Emails administrativos", "; ".join(ficha["emails"])],
+        ["Plan vigente", vigente.origen if vigente else "—"],
+        ["Importe plan", f"{vigente.importe:.2f} {vigente.moneda}" if vigente and vigente.importe else ""],
+        ["Vence", vigente.vence.strftime("%Y-%m-%d") if vigente and vigente.vence else ""],
+        ["Días restantes", str(ficha["dias_restantes"])],
+        ["Ingresos acumulados (licencias)", f"{ficha['ingresos']:.2f} US$"],
+        ["Clientes suyos", str(agregados["clientes"])],
+        ["Presupuestos", str(agregados["presupuestos"])],
+        ["Total presupuestado", f"{agregados['total_presupuestado']:.2f} US$"],
+        ["Facturas", str(agregados["facturas"])],
+        ["Pagos registrados", str(agregados["pagos"])],
+        ["Total cobrado", f"{agregados['total_cobrado']:.2f} US$"],
+        ["Último acceso", agregados["ultimo_acceso"].strftime("%Y-%m-%d %H:%M") if agregados.get("ultimo_acceso") else ""],
+    ]
+
+    contenido.append([])
+    contenido.append(["Compras (historial)"])
+    contenido.append(["Fecha", "Plan", "Importe", "Moneda", "Estado", "Método"])
+    for c in ficha["compras"]:
+        contenido.append([
+            c.created_at.strftime("%Y-%m-%d %H:%M") if c.created_at else "",
+            c.plan or "",
+            f"{c.importe:.2f}" if c.importe is not None else "",
+            c.moneda or "",
+            c.estado or "",
+            c.metodo_pago or "",
+        ])
+
+    contenido.append([])
+    contenido.append(["Cobros (facturas y pagos)"])
+    contenido.append(["Fecha", "Tipo", "Número", "Importe", "Moneda", "Estado"])
+    for cobro in cobros:
+        contenido.append([
+            cobro.get("fecha", "").strftime("%Y-%m-%d") if hasattr(cobro.get("fecha", ""), "strftime") else str(cobro.get("fecha", "")),
+            cobro.get("tipo", ""),
+            cobro.get("numero", ""),
+            f"{cobro.get('importe', 0):.2f}",
+            cobro.get("moneda", ""),
+            cobro.get("estado", ""),
+        ])
+
+    contenido.append([])
+    contenido.append(["Notas internas de gestión"])
+    contenido.append(["Fecha", "Autor", "Contenido"])
+    for nota in notas:
+        contenido.append([
+            nota.created_at.strftime("%Y-%m-%d %H:%M") if nota.created_at else "",
+            nota.autor_email or "",
+            (nota.contenido or "").replace("\n", " "),
+        ])
+
+    nombre = f"cliente-{org.slug}-{hoy:%Y%m%d}.csv"
+    return _csv_response(contenido, nombre)
 
 
 # ---------------------------------------------------------------------------
