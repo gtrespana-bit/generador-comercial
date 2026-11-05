@@ -22,6 +22,7 @@ from ..services.operadores_admin import (
     activar_operador,
     cambiar_rol_operador,
     crear_operador,
+    exigir_rol,
     exigir_superadmin,
     listar_operadores,
     suspender_operador,
@@ -404,6 +405,7 @@ async def conceder_licencia_rapida(
     Cuando el caso es raro —importe atípico, referencia, notas— sigue estando
     el formulario completo.
     """
+    exigir_rol(db, "superadmin", "admin")
     form = await request.form()
     destino = _volver_a(form, "/admin")
     origen = str(form.get("origen") or "").strip().lower()
@@ -883,6 +885,7 @@ def activar_compra_web(
     volver: str = Form(""),
 ):
     """Verifica el comprobante y concede la licencia del plan comprado."""
+    exigir_rol(db, "superadmin", "admin")
     from ..services.compras import GestionCompraError, activar_compra
 
     destino = _volver_valor(volver, VOLVER_COMPRAS)
@@ -1091,6 +1094,7 @@ def rechazar_compra_web(
     db: Session = Depends(get_operator_db),
     volver: str = Form(""),
 ):
+    exigir_rol(db, "superadmin", "admin")
     from ..services.compras import GestionCompraError, rechazar_compra
 
     destino = _volver_valor(volver, VOLVER_COMPRAS)
@@ -1331,6 +1335,7 @@ def _fecha_desde_form(valor: str | None):
 
 @router.post("/admin/web/guardar", include_in_schema=False)
 async def web_guardar(request: Request, db: Session = Depends(get_operator_db)):
+    exigir_rol(db, "superadmin", "admin")
     form = await request.form()
     clave = str(form.get("clave") or "")
     try:
@@ -1355,6 +1360,7 @@ async def web_guardar(request: Request, db: Session = Depends(get_operator_db)):
 
 @router.post("/admin/web/{clave}/publicar", include_in_schema=False)
 def web_publicar(clave: str, request: Request, db: Session = Depends(get_operator_db)):
+    exigir_rol(db, "superadmin", "admin")
     try:
         publicar_contenido(db, clave=clave, operador_email=str(db.info.get("auth_email") or ""))
         db.commit()
@@ -1478,6 +1484,7 @@ def releases_alternar(
 
 @router.post("/admin/flags/{clave}/alternar", include_in_schema=False)
 def flags_alternar(clave: str, request: Request, db: Session = Depends(get_operator_db)):
+    exigir_rol(db, "superadmin")
     from ..services.web_admin import actualizar_flag
 
     activo = str(request.query_params.get("activo", "")).lower() in {"1", "true", "on", "si"}

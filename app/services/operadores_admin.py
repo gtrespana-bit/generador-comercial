@@ -22,10 +22,22 @@ class GestionEquipoError(RuntimeError):
 #: No se puede suspender ni rebajar al último superadmin: el panel podría
 #: quedarse sin nadie capaz de nombrar a un reemplazo.
 def exigir_superadmin(db) -> None:
+    exigir_rol(db, "superadmin")
+
+
+def exigir_rol(db, *roles_permitidos: str) -> None:
+    """Exige que el operador de la sesión tenga uno de los roles indicados.
+
+    Si no es operador en absoluto, o su rol no está entre los permitidos,
+    levanta ``GestionEquipoError``. Las rutas de escritura del panel deben
+    llamar a esto antes de mutar datos.
+    """
     rol = str(db.info.get("operador_rol") or "").strip().lower()
-    if rol != "superadmin":
+    permitidos = {r.strip().lower() for r in roles_permitidos}
+    if not rol or rol not in permitidos:
+        lista = ", ".join(sorted(permitidos)) or "ninguno"
         raise GestionEquipoError(
-            "Solo un superadmin puede gestionar el equipo de operadores."
+            f"Se requiere el rol {lista} para esta acción."
         )
 
 
