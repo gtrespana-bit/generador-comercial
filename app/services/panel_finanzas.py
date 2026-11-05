@@ -147,6 +147,11 @@ def resumen_financiero(
     ltv_clients = list(ingresos_por_org.values())
     ltv_medio = round(sum(ltv_clients) / len(ltv_clients), 2) if ltv_clients else 0.0
 
+    # Agrupa licencias por organización para calcular clientes activos por mes.
+    lic_por_org: dict[int, list] = defaultdict(list)
+    for lic in licencias:
+        lic_por_org[lic.organizacion_id].append(lic)
+
     # Clientes con licencia de pago vigente este mes vs mes anterior.
     clientes_con_pago_mes = len(
         {
