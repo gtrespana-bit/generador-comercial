@@ -315,6 +315,36 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-header">
+        <h2>⚠️ Riesgo de baja (churn)</h2>
+        <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver detalle de uso</a>
+      </div>
+      <div class="table-container">
+        {% if riesgo_churn %}
+        <table>
+          <thead><tr><th>Empresa</th><th class="tabla-num">Días sin uso</th><th class="tabla-num">Plan vence</th><th class="tabla-num">Días restantes</th><th></th></tr></thead>
+          <tbody>
+            {% for r in riesgo_churn %}
+            <tr>
+              <td class="org-name"><a href="/admin/clientes/{{ r.organizacion.id }}">{{ r.organizacion.nombre }}</a></td>
+              <td class="tabla-num"><span class="badge badge-danger">14+ días</span></td>
+              <td class="tabla-num">{{ r.vence.strftime('%d/%m/%Y') if r.vence else '—' }}</td>
+              <td class="tabla-num">{{ r.dias_restantes }}</td>
+              <td><a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ r.organizacion.id }}?tab=actividad">Ver actividad</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="vacio">
+          <b>Sin empresas en riesgo de baja.</b>
+          <p>Todas las empresas con licencia de pago han usado el producto en los últimos 14 días.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
     <div class="ficha-lado">
       <div class="card">
         <div class="card-header"><h2>Ir a</h2></div>
