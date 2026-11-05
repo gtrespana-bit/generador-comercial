@@ -103,7 +103,25 @@
     return peticionCatalogo("", limite || 15);
   }
 
+  // Cuándo se puede volver a pedir al servidor tras un 503. Mientras esté en el
+  // futuro, el buscador trabaja solo con el índice local que ya tiene cargado.
+  var reanudarBusquedaEn = 0;
+
+  function pausarBusquedaRemota(respuesta) {
+    var segundos = 5;
+    try {
+      var indicado = parseInt(respuesta.headers.get("Retry-After"), 10);
+      if (!isNaN(indicado) && indicado > 0) segundos = Math.min(indicado, 30);
+    } catch (e) {}
+    reanudarBusquedaEn = Date.now() + segundos * 1000;
+  }
+
+  function busquedaRemotaPausada() {
+    return Date.now() < reanudarBusquedaEn;
+  }
+
   function peticionCatalogo(consulta, limite) {
+    if (busquedaRemotaPausada()) return Promise.resolve([]);
     var clave = String(consulta).toLowerCase() + "|" + String(limite);
     if (peticionesBusqueda[clave]) return peticionesBusqueda[clave];
     peticionesBusqueda[clave] = fetch(
@@ -114,7 +132,17 @@
       { headers: { "Accept": "application/json" }, credentials: "same-origin" }
     )
       .then(function (respuesta) {
-        if (!respuesta.ok) throw new Error("No se pudo buscar en el catálogo");
+        if (!respuesta.ok) {
+          // 503 = el servidor está saturado (pool de conexiones agotado). Se
+          // respeta ``Retry-After`` y se deja de insistir durante ese rato: sin
+          // esta pausa, el rebote de 140 ms reintentaba en cada tecla y cada
+          // reintento competía por la misma conexión que faltaba, alargando el
+          // incidente en lugar de esperar a que se despejara.
+          if (respuesta.status === 503) {
+            pausarBusquedaRemota(respuesta);
+          }
+          throw new Error("No se pudo buscar en el catálogo");
+        }
         return respuesta.json();
       })
       .then(function (datos) {

@@ -391,11 +391,24 @@ def organizacion_tiene_acceso(
                 {"org": int(organizacion_id)},
             ).scalar()
             return bool(resultado)
-        except Exception:
+        except Exception as exc:
             try:
                 db.rollback()
             except Exception:
                 pass
+            from .operacion import error_de_infraestructura
+
+            if error_de_infraestructura(exc):
+                # No poder **preguntar** no es lo mismo que la respuesta sea
+                # «no». El 5/11/2026 el pooler empezó a devolver
+                # ``ECHECKOUTTIMEOUT``; con el ``return False`` anterior eso se
+                # traducía en «tu licencia venció» y el cliente veía la pantalla
+                # de suspensión teniendo su plan pagado y vigente. Se propaga
+                # para que la petición acabe en un 503 honesto (ver
+                # ``operacion.error_de_infraestructura``), no en una mentira.
+                raise
+            # Cualquier otro fallo (permisos, función ausente) mantiene el
+            # criterio de siempre: sin licencia comprobable, no se concede paso.
             return False
     return licencia_vigente(db, organizacion_id, hoy=hoy) is not None
 

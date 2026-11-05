@@ -103,6 +103,14 @@ def _variantes_ortograficas(token: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(salida))
 
 
+#: Tope de variantes por palabra. Cada variante cuesta condiciones en el SQL,
+#: y el coste crece con el producto palabras × variantes × campos: 6 palabras
+#: con 20 variantes y 8 campos son 960 comparaciones por fila. Doce variantes
+#: cubren de sobra los sinónimos de un término de obra y mantienen la consulta
+#: por debajo del umbral donde el pooler de Supabase empieza a cortar.
+VARIANTES_MAXIMAS_POR_GRUPO = 12
+
+
 def variantes_consulta(consulta: str) -> list[list[str]]:
     """Grupos AND de variantes OR para una búsqueda SQL.
 
@@ -126,7 +134,7 @@ def variantes_consulta(consulta: str) -> list[list[str]]:
                     for variante in _variantes_ortograficas(termino):
                         if variante not in variantes:
                             variantes.append(variante)
-        resultado.append(variantes[:20])
+        resultado.append(variantes[:VARIANTES_MAXIMAS_POR_GRUPO])
     return resultado
 
 

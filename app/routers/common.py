@@ -2044,26 +2044,109 @@ def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: f
     return [_partida_catalogo_indice(partida) for partida in partidas]
 
 
-def _aplicar_busqueda_catalogo(query, consulta: str):
-    """Aplica AND entre palabras y OR entre sinónimos/campos."""
-    from ..services.busqueda_catalogo import variantes_consulta
-    grupos = variantes_consulta(consulta)
-    campos = (
-        Partida.nombre,
-        Partida.descripcion,
-        Partida.categoria,
-        Partida.subcategoria,
-        Partida.apartado,
-        Partida.codigo_interno,
-        Partida.codigo_legacy,
-        Partida.proveedor,
+#: Campos que forman el texto buscable del catálogo, en el mismo orden que
+#: ``_texto_indice_catalogo``: nombre primero (lo que la persona recuerda) y la
+#: descripción al final (la columna más pesada).
+_CAMPOS_TEXTO_CATALOGO = (
+    Partida.nombre,
+    Partida.categoria,
+    Partida.subcategoria,
+    Partida.apartado,
+    Partida.codigo_interno,
+    Partida.codigo_legacy,
+    Partida.proveedor,
+)
+
+#: Recorte de la descripción que entra en la búsqueda. El nombre de la partida
+#: es lo que la gente busca; la descripción solo aporta el material o la técnica
+#: cuando el nombre no la dice. Un tope de 600 caracteres conserva ese valor sin
+#: arrastrar el texto completo de cada fila (que además vive en TOAST).
+_DESCRIPCION_BUSCABLE = 600
+
+
+def _texto_buscable_catalogo():
+    """Expresión SQL con el texto libre de una partida, en **una sola** cadena.
+
+    Antes, cada palabra de la consulta se traducía a ``len(campos) ×
+    len(variantes)`` comparaciones ``ILIKE`` sueltas (64 por palabra, hasta 384
+    por consulta). PostgreSQL paga cada posición de evaluación contra ocho
+    columnas, varias de ellas TOAST, y con el catálogo real (15.000 partidas)
+    la búsqueda del editor tardaba **segundos**: el 5/11/2026 llegó a 60 s,
+    agotó el pool del pooler y devolvió ``ECHECKOUTTIMEOUT``.
+
+    Concatenar los campos una vez y comparar con una única condición por palabra
+    conserva la semántica (la palabra puede estar en cualquier campo) con una
+    fracción del trabajo: medido en producción, 11 s → 23 ms.
+    """
+    from sqlalchemy import cast, func, literal
+    from sqlalchemy.types import Text
+
+    partes = [
+        func.coalesce(cast(campo, Text), literal("")) for campo in _CAMPOS_TEXTO_CATALOGO
+    ]
+    partes.append(
+        func.coalesce(
+            func.substr(Partida.descripcion, 1, _DESCRIPCION_BUSCABLE), literal("")
+        )
     )
+    texto = partes[0]
+    for parte in partes[1:]:
+        texto = texto + literal(" ") + parte
+    return texto
+
+
+def _condicion_de_un_grupo(texto, variantes, *, dialecto: str):
+    """Una sola condición SQL para «esta palabra, en cualquiera de sus formas».
+
+    En PostgreSQL se compone **una expresión regular** con todas las variantes:
+    el motor evalúa el texto concatenado una vez por fila y decide con un único
+    autómata. Es lo que baja la búsqueda de 11 s a 23 ms en el catálogo real.
+    Con ``ILIKE`` sueltos, cada variante obligaba a rehacer la concatenación
+    (ocho columnas, una de ellas TOAST) y el coste crecía con el número de
+    sinónimos.
+
+    SQLite (escritorio y pruebas) no trae ``REGEXP``: allí se mantiene el
+    ``OR`` de ``ILIKE``, que con catálogos de escritorio —miles de filas y una
+    sola persona usando la aplicación— sigue siendo instantáneo.
+    """
+    limpios = [str(v)[:40] for v in variantes if str(v or "").strip()]
+    if not limpios:
+        return None
+    if dialecto == "postgresql":
+        # Las variantes ya vienen normalizadas (solo letras, dígitos y guiones),
+        # pero se escapan igual: la consulta la escribe el usuario.
+        from sqlalchemy import literal as _literal
+
+        alternativas = "|".join(re.escape(v) for v in limpios)
+        return texto.op("~*")(_literal(f"({alternativas})"))
+    patrones = [texto.ilike(f"%{v}%") for v in limpios]
+    return or_(*patrones) if len(patrones) > 1 else patrones[0]
+
+
+def _aplicar_busqueda_catalogo(query, consulta: str):
+    """Aplica AND entre palabras y OR entre sinónimos dentro de cada palabra.
+
+    La condición por palabra es **una sola** sobre el texto concatenado (ver
+    :func:`_texto_buscable_catalogo`), no ``campos × variantes`` comparaciones
+    sueltas: es la diferencia entre 11 s y 23 ms en el catálogo real.
+    ``grupos`` se devuelve igual porque la puntuación en Python sigue
+    necesitando saber qué variantes se buscaron.
+    """
+    from ..services.busqueda_catalogo import variantes_consulta
+
+    grupos = variantes_consulta(consulta)
+    if not grupos:
+        return query, grupos
+    texto = _texto_buscable_catalogo()
+    dialecto = ""
+    try:
+        dialecto = query.session.get_bind().dialect.name
+    except Exception:  # pragma: no cover - sesión sin bind identificable
+        dialecto = ""
     for variantes in grupos:
-        condiciones = []
-        for variante in variantes:
-            like = f"%{variante[:40]}%"
-            condiciones.extend(campo.ilike(like) for campo in campos)
-        query = query.filter(or_(*condiciones))
+        condicion = _condicion_de_un_grupo(texto, variantes, dialecto=dialecto)
+        if condicion is not None:
+            query = query.filter(condicion)
     return query, grupos
 
 

@@ -31,6 +31,32 @@ necesita la configuración PostgreSQL + Supabase descrita en
 > `MIGRATION_DATABASE_URL` es solo para migrar localmente; **no** debe
 > configurarse en Vercel.
 
+### Conexiones: qué límite manda y cuál se puede ajustar
+
+En Vercel (`VERCEL` definido) el motor usa **`NullPool`**: cada petición abre su
+conexión y la cierra, y el reparto lo hace el pooler de Supabase en modo
+Transaction (puerto 6543). Ese pooler tiene un tope de conexiones simultáneas
+**por proyecto**; cuando se llena, quien espera recibe
+`ECHECKOUTTIMEOUT … after 60000ms` a los 60 s y la petición acaba en error.
+
+La lección del 5/11/2026 es que ese tope no se arregla con más conexiones: se
+arregla con consultas rápidas. Aun así, hay tres ajustes por si hacen falta:
+
+| Variable | Por omisión | Para qué |
+| --- | --- | --- |
+| `COTIZAT_DB_POOL_CLASS` | `nullpool` en Vercel | `nullpool` o vacío. Un pool propio solo tiene sentido en un proceso de vida larga (fuera de serverless). |
+| `COTIZAT_DB_POOL_TIMEOUT` | 10 s (solo con pool propio) | Espera máxima por una conexión libre. `0` la desactiva. Se mantiene **por debajo** de los 60 s del pooler para poder responder un 503 rápido. |
+| `COTIZAT_DB_POOL_RECYCLE` | 300 s | Renueva sockets antes de que el proveedor los cierre. |
+
+`COTIZAT_DB_POOL_SIZE` y `COTIZAT_DB_MAX_OVERFLOW` solo aplican al pool propio
+(no con `NullPool`). Subirlos en Vercel **empeora** el problema: multiplican las
+conexiones que compiten por el mismo tope del pooler.
+
+Cuando la saturación ocurre, la aplicación responde **503 con `Retry-After`** y
+deja el fallo en `/admin/operacion` **sin** mandar correo (no es un bug que el
+titular pueda arreglar). El diagnóstico y las consultas para encontrar la
+culpable están en `docs/MONITORIZACION_Y_DIAGNOSTICO.md`, sección 9.
+
 > Las tres últimas variables no son opcionales en Vercel. Sin ellas el límite
 > de intentos de acceso se cuenta en la memoria de cada invocación, y como cada
 > invocación puede ser un proceso nuevo, el contador arranca de cero y deja de

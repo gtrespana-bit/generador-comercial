@@ -97,8 +97,21 @@ def persistir_y_avisar(datos: dict) -> None:
     try:
         if not registro_bd_activado():
             return
-        if _persistir(datos):
+        avisar = _persistir(datos)
+        # Un fallo de infraestructura (pool agotado, pooler que corta la espera)
+        # se conserva en el panel —con su traza— pero **no** manda correo: no es
+        # un bug que el titular pueda arreglar, llega a ráfagas y, al escribir su
+        # propia fila, consume justamente la conexión que falta. Se avisa una vez
+        # y en el panel; el correo queda para las huellas que sí son del código.
+        if avisar and not datos.get("transitorio"):
             _avisar(datos)
+        elif avisar:
+            log.warning(
+                "Error de infraestructura registrado sin correo: %s %s (%s)",
+                datos.get("metodo"),
+                datos.get("ruta"),
+                datos.get("tipo"),
+            )
     except Exception:  # el diagnóstico jamás rompe nada
         log.debug("No se pudo persistir un error interno.", exc_info=True)
 
