@@ -69,7 +69,15 @@ def resumen_audiencia(db, *, dias: int = 30, hoy: date | None = None) -> dict:
         )
     except Exception:
         # Tabla sin migrar o base no disponible: el panel sigue sin este
-        # bloque, sin romper el resto de la analítica.
+        # bloque, sin romper el resto de la analítica. El rollback es
+        # obligatorio: sin él la sesión queda en transacción abortada y
+        # cualquier consulta posterior falla con
+        # ``psycopg.errors.InFailedSqlTransaction`` (el bug que tiraba
+        # /admin/analitica entera cuando la tabla visitas_pagina no existe).
+        try:
+            db.rollback()
+        except Exception:
+            pass
         return vacio
 
     hoy = hoy or date.today()
