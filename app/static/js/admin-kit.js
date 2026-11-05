@@ -370,4 +370,77 @@
       if (aviso && !window.confirm(aviso)) ev.preventDefault();
     });
   });
+
+  /* ---------- Modo oscuro ---------- *
+   * La preferencia se guarda en localStorage y se aplica como clase
+   * .dark-mode en <html>. Sin JS, el panel se ve en modo claro siempre. */
+  var darkBtn = document.querySelector("[data-admin-dark]");
+  var htmlRoot = document.documentElement;
+
+  function modoOscuroActivo() {
+    return htmlRoot.classList.contains("dark-mode");
+  }
+
+  function aplicarModoOscuro(activar) {
+    if (activar) htmlRoot.classList.add("dark-mode");
+    else htmlRoot.classList.remove("dark-mode");
+    try {
+      localStorage.setItem("cotizat_dark", activar ? "1" : "0");
+    } catch (_e) { /* localStorage no disponible */ }
+  }
+
+  function cargarModoOscuro() {
+    try {
+      var guardado = localStorage.getItem("cotizat_dark");
+      if (guardado !== null) {
+        aplicarModoOscuro(guardado === "1");
+        return;
+      }
+      // Sin preferencia guardada: respetar el sistema.
+      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        aplicarModoOscuro(true);
+      }
+    } catch (_e) { /* fallback: modo claro */ }
+  }
+
+  if (darkBtn) {
+    darkBtn.addEventListener("click", function () {
+      aplicarModoOscuro(!modoOscuroActivo());
+    });
+  }
+  cargarModoOscuro();
+
+  /* ---------- Cheatsheet de teclado ---------- *
+   * Se abre con `?` y se cierra con Esc, clic fuera o el botón Cerrar. */
+  var modal = document.querySelector("[data-admin-cheatsheet-modal]");
+  var modalBtn = document.querySelector("[data-admin-cheatsheet]");
+  var modalCerrar = document.querySelector("[data-admin-cheatsheet-cerrar]");
+
+  function cheatsheetAbrir() {
+    if (!modal) return;
+    modal.classList.add("open");
+    document.body.classList.add("admin-kit-abierto");
+  }
+
+  function cheatsheetCerrar() {
+    if (!modal) return;
+    modal.classList.remove("open");
+    document.body.classList.remove("admin-kit-abierto");
+  }
+
+  if (modalBtn) modalBtn.addEventListener("click", cheatsheetAbrir);
+  if (modalCerrar) modalCerrar.addEventListener("click", cheatsheetCerrar);
+  if (modal) modal.addEventListener("click", function (ev) {
+    if (ev.target === modal) cheatsheetCerrar();
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (!modal) return;
+    if (ev.key === "?" && !seEstaEscribiendo(ev)) {
+      ev.preventDefault();
+      modal.classList.contains("open") ? cheatsheetCerrar() : cheatsheetAbrir();
+    }
+    if (ev.key === "Escape" && modal && modal.classList.contains("open")) {
+      cheatsheetCerrar();
+    }
+  });
 })();
