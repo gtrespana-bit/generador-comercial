@@ -771,10 +771,41 @@ Estado: **COMPLETADA, OPCIONAL Y CONFIGURABLE** (2026-08-07).
 
 - Activación global de capacidades regionales sin afectar el modo básico.
 - Número de control, fecha de tasa, equivalente en bolívares, retenciones, operación exenta y cláusula cambiaria por documento.
-- Datos bancarios y métodos de pago configurables en el PDF.
+- Datos bancarios y métodos de pago configurables en el PDF, **por presupuesto**:
+  cada documento hereda los de Configuración o escribe los suyos (ver §14.1).
 - La tasa y su fecha se almacenan en el presupuesto para preservar documentos históricos.
 
 Estas funciones no deben aparecer en el creador si están desactivadas.
+
+## 14.1 Datos de pago, información adicional y condiciones: heredar o propio
+
+Estado: **COMPLETADA** (2026-11-04).
+
+Los tres textos del documento empezaban siempre en Configuración y eran de la
+empresa. Eso deja fuera casos reales: una obra que se cobra en otra cuenta, un
+cliente que paga por Zelle o USDT, unas condiciones distintas para un
+particular. La única salida era cambiar los datos de la empresa —afectando a
+todos los presupuestos— o corregir el PDF a mano.
+
+Regla única, en `app/services/textos_documento.py`:
+
+- `Presupuesto.datos_bancarios` vale **NULL** (hereda los de Configuración; es
+  lo que tienen todos los presupuestos anteriores, así que ningún documento
+  cambia), **""** (este presupuesto no muestra datos de pago) o **texto**
+  (propios).
+- El campo del editor llega relleno con lo general y una etiqueta dice si es
+  «heredado» o «propio». El botón «volver a los datos de Configuración» repone
+  el texto general al instante y avisa de que falta guardar.
+- Lo que no se toca no se copia: se guarda NULL para que un cambio futuro en
+  Configuración siga llegando. Copiar el texto lo congelaría.
+- Las versiones enviadas guardan el texto ya resuelto en su instantánea, y la
+  página de versión los muestra: una propuesta enviada sigue enseñando la
+  cuenta a la que se comprometió.
+- Información adicional y condiciones ya eran por presupuesto; ahora el editor
+  también ofrece el botón para volver a los textos generales.
+
+Migración: `v2d7f1a6b9c3` (antes `u1c5e8b3d7a9`). SQL manual para Supabase en
+`docs/staging_upgrade_v2d7f1a6b9c3.sql`, **antes** de desplegar el código.
 
 Opciones:
 

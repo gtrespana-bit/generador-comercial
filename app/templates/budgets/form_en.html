@@ -84,6 +84,19 @@
   </div>
   {% endif %}
 
+  {# The general texts the "back to Settings" button restores. They travel as
+     JSON and not as `data-*` attributes because the HTML parser turns newlines
+     inside an attribute into spaces: the comparison with the field would fail
+     every time and untouched details would be saved as custom ones. `tojson`
+     escapes `<`, `>` and `&`, so the block cannot close the script. #}
+  <script nonce="{{ request.state.csp_nonce }}" id="textos-documento-generales" type="application/json">
+    {{ {
+      "datos_bancarios": textos_doc.datos_bancarios_generales,
+      "notas": textos_doc.notas_generales,
+      "condiciones": textos_doc.condiciones_generales,
+    } | tojson }}
+  </script>
+
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
     <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
@@ -406,16 +419,61 @@
       </div>
     </div>
 
-    <div class="card builder-texto-card">
+    <div class="card builder-texto-card" data-textos-doc>
       <h2>Estimate text</h2>
+      <p class="hint">
+        These texts come from <strong>Settings</strong>. You can change them for
+        this estimate only without touching the company defaults; every other
+        estimate stays the same.
+      </p>
       <div class="form-grid">
-        <div class="field">
-          <label>Additional information (scope of work)</label>
-          <textarea name="notas" rows="4" placeholder="General description, inclusions and exclusions…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+        <div class="field field-full">
+          <div class="texto-doc-cabecera">
+            <label for="campo-datos-bancarios">Bank details and payment methods</label>
+            <span class="texto-doc-estado" id="estado-datos-bancarios" data-estado="{{ textos_doc.datos_bancarios_eleccion }}">
+              {{ {'heredar': 'Using the Settings text',
+                  'propio': 'Specific to this estimate',
+                  'vacio': 'No payment details'}[textos_doc.datos_bancarios_eleccion] }}
+            </span>
+          </div>
+          <textarea id="campo-datos-bancarios" name="datos_bancarios" rows="3"
+                    placeholder="Bank, account, mobile payment, Zelle, USDT…">{{ textos_doc.datos_bancarios }}</textarea>
+          <input type="hidden" name="datos_bancarios_eleccion" id="datos-bancarios-eleccion"
+                 value="{{ textos_doc.datos_bancarios_eleccion }}">
+          <div class="texto-doc-acciones">
+            <button type="button" class="btn btn-xs" id="btn-bancarios-generales"
+                    data-cotizat-click="budget-payment-reset">
+              ↺ Back to the Settings details
+            </button>
+            <span class="hint" id="aviso-bancarios"></span>
+          </div>
+          <p class="hint">
+            Leave it as it is and the PDF keeps using the Settings details, so any
+            future change there also reaches this estimate. Clear it completely if
+            this job is paid another way and no payment details should appear.
+          </p>
         </div>
         <div class="field">
-          <label>Terms</label>
-          <textarea name="condiciones" rows="4" placeholder="Payment method, deposit, schedule, warranty…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+          <div class="texto-doc-cabecera">
+            <label for="campo-notas">Additional information (scope of work)</label>
+            <button type="button" class="btn btn-xs" data-cotizat-click="budget-text-default"
+                    data-destino="notas" data-fuente="notas">
+              ↺ Settings text
+            </button>
+          </div>
+          <textarea id="campo-notas" name="notas" rows="4" data-texto-propio="notas"
+                    placeholder="General description, inclusions and exclusions…">{{ textos_doc.notas }}</textarea>
+        </div>
+        <div class="field">
+          <div class="texto-doc-cabecera">
+            <label for="campo-condiciones">Terms</label>
+            <button type="button" class="btn btn-xs" data-cotizat-click="budget-text-default"
+                    data-destino="condiciones" data-fuente="condiciones">
+              ↺ Settings text
+            </button>
+          </div>
+          <textarea id="campo-condiciones" name="condiciones" rows="4" data-texto-propio="condiciones"
+                    placeholder="Payment method, deposit, schedule, warranty…">{{ textos_doc.condiciones }}</textarea>
         </div>
       </div>
     </div>
@@ -1291,6 +1349,104 @@
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Document texts: inherit from Settings or write your own for this estimate.
+  //
+  // The server owns the rule (``services/textos_documento.py``); here we only
+  // record the intent in ``datos_bancarios_eleccion``:
+  //   heredar → keep using the Settings details (stored as NULL)
+  //   propio  → details specific to this estimate
+  //   vacio   → this estimate shows no payment details at all
+  // Without that hint the server could not tell "I did not touch it" from "I
+  // meant to keep it exactly like the general text", and would freeze today's
+  // details forever.
+  // ---------------------------------------------------------------------------
+  function initTextosDocumento() {
+    var tarjeta = document.querySelector("[data-textos-doc]");
+    if (!tarjeta) return;
+    var campo = document.getElementById("campo-datos-bancarios");
+    var eleccion = document.getElementById("datos-bancarios-eleccion");
+    var estado = document.getElementById("estado-datos-bancarios");
+    var aviso = document.getElementById("aviso-bancarios");
+    if (!campo || !eleccion) return;
+
+    // The general texts exactly as Settings saved them, newlines included: the
+    // carrier is JSON, not a DOM attribute.
+    var generales = {datos_bancarios: "", notas: "", condiciones: ""};
+    var fuente = document.getElementById("textos-documento-generales");
+    if (fuente) {
+      try {
+        var crudo = JSON.parse(fuente.textContent || "{}");
+        if (crudo && typeof crudo === "object") {
+          generales = {
+            datos_bancarios: String(crudo.datos_bancarios || ""),
+            notas: String(crudo.notas || ""),
+            condiciones: String(crudo.condiciones || "")
+          };
+        }
+      } catch (e) {
+        generales = {datos_bancarios: "", notas: "", condiciones: ""};
+      }
+    }
+
+    function marcar(valor, etiqueta, nota) {
+      eleccion.value = valor;
+      if (estado) {
+        estado.setAttribute("data-estado", valor);
+        estado.textContent = etiqueta;
+      }
+      if (aviso) aviso.textContent = nota || "";
+    }
+
+    function reflejar() {
+      var texto = campo.value.trim();
+      if (texto === generales.datos_bancarios.trim() && generales.datos_bancarios.trim()) {
+        // Same as the general text: inheriting is the right call, so a future
+        // change in Settings still reaches this estimate.
+        marcar("heredar", "Using the Settings text", "");
+      } else if (!texto) {
+        marcar("vacio", "No payment details in this estimate",
+               "The PDF will not show the payment block.");
+      } else {
+        marcar("propio", "Specific to this estimate",
+               "Only for this estimate; the Settings details stay untouched.");
+      }
+    }
+
+    campo.addEventListener("input", reflejar);
+    // ``reflejar()`` is not called on load: the server's choice wins. If
+    // someone wrote custom details identical to the general ones, the editor
+    // must not turn that into inheritance on its own —the PDF would change the
+    // moment the company account changes—.
+
+    window.CotizatActions.register("budget-payment-reset", function () {
+      // Puts the general text back in the field; saving is still the save
+      // button, so nothing is written until then.
+      campo.value = generales.datos_bancarios;
+      marcar("heredar", "Using the Settings text",
+             "Press save so this estimate uses the general details again.");
+      campo.focus();
+    });
+
+    window.CotizatActions.register("budget-text-default", function (element) {
+      // Additional information and terms: the estimate field IS the document.
+      // Restoring the general text is one more edit, so from that moment this
+      // estimate has its own copy.
+      var destino = element.getAttribute("data-destino") || "";
+      var fuente = element.getAttribute("data-fuente") || "";
+      var area = document.getElementById("campo-" + destino);
+      var base = generales[fuente] || "";
+      if (!area) return;
+      if (area.value.trim() && area.value.trim() !== base.trim()
+          && !window.confirm("This replaces the estimate text with the Settings text. Continue?")) {
+        return;
+      }
+      area.value = base;
+      area.dispatchEvent(new Event("input", {bubbles: true}));
+      area.focus();
+    });
+  }
+
   window.CotizatActions.register("budget-toggle-general", function () {
     toggleDatosGenerales();
   });
@@ -1308,6 +1464,7 @@
   });
 
   document.addEventListener("DOMContentLoaded", function() {
+    initTextosDocumento();
     var fields = ['client_id', 'titulo', 'moneda', 'fecha', 'estado'];
     fields.forEach(function(fName) {
       var el = document.querySelector('[name="' + fName + '"]');

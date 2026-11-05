@@ -1505,6 +1505,8 @@ def _estados_eeuu():
 @router.get("/presupuestos/nuevo", response_class=HTMLResponse)
 def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
     cfg = _config(db)
+    from ..services.textos_documento import textos_para_formulario
+
     return TEMPLATES.TemplateResponse(
         request,
         "budgets/form.html",
@@ -1515,6 +1517,9 @@ def nuevo_presupuesto_form(request: Request, db: Session = Depends(get_db)):
             # selector de planos pide guardar primero (mensaje explícito).
             "budget_id": None,
             "tiempos_catalogo": {},
+            # Los tres textos del documento salen de Configuración, pero se
+            # pueden cambiar solo para este presupuesto sin tocar lo general.
+            "textos_doc": textos_para_formulario(None, cfg),
         },
     )
 
@@ -2241,6 +2246,8 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         foto_proyecto = await _guardar_imagen(foto_file, f"projects/p_new_{date.today().isoformat()}", db)
 
     cfg = _config(db)
+    from ..services.textos_documento import datos_bancarios_desde_formulario
+
     presupuesto = Presupuesto(
         numero=proximo_numero(db, f.year),
         year=f.year,
@@ -2257,6 +2264,10 @@ async def crear_presupuesto(request: Request, db: Session = Depends(get_db)):
         estado=estado if _estado_valido(estado) else "borrador",
         notas=str(form.get("notas", "")).strip(),
         condiciones=str(form.get("condiciones", "")).strip(),
+        # NULL = heredar los de Configuración. Si el usuario no los tocó, se
+        # guarda NULL y un cambio de cuenta en Configuración seguirá llegando a
+        # este presupuesto; guardar el texto copiado lo congelaría hoy.
+        datos_bancarios=datos_bancarios_desde_formulario(form, cfg),
         con_portada=con_portada,
         foto_proyecto=foto_proyecto,
         mostrar_firmas=mostrar_firmas,
@@ -4089,6 +4100,8 @@ def leer_borrador_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)
 
 @router.get("/presupuestos/{presupuesto_id}/editar", response_class=HTMLResponse)
 def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session = Depends(get_db)):
+    from ..services.textos_documento import textos_para_formulario
+
     presupuesto = db.get(Presupuesto, presupuesto_id)
     if presupuesto is None:
         return _redirect("/presupuestos", error="Presupuesto no encontrado.")
@@ -4132,6 +4145,10 @@ def editar_presupuesto_form(presupuesto_id: int, request: Request, db: Session =
             "borrador_servidor": borrador_servidor,
             "presupuesto_compartido": presupuesto_compartido,
             "tiempos_catalogo": _tiempos_catalogo(db, presupuesto),
+            # Valores de los tres textos del documento ya resueltos: si el
+            # presupuesto hereda, el campo se pinta con lo general (para que se
+            # vea qué va a salir) y ``*_heredados`` dice de dónde viene.
+            "textos_doc": textos_para_formulario(presupuesto, cfg),
         },
     )
 
@@ -4198,6 +4215,8 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.codigo_postal = str(form.get("codigo_postal", "")).strip()
     presupuesto.validez_dias = int(_f(form.get("validez_dias"), 30))
     cfg = _config(db)
+    from ..services.textos_documento import datos_bancarios_desde_formulario
+
     presupuesto.moneda = "USD" if str(cfg.empresa_pais or "").strip().lower() == "venezuela" and normalizar_moneda(form.get("moneda"), "USD") == "VES" else normalizar_moneda(form.get("moneda"), "USD")
     presupuesto.tipo_cambio = _f(form.get("tipo_cambio"), None) if str(form.get("tipo_cambio", "")).strip() else None
     presupuesto.fuente_tipo_cambio = str(form.get("fuente_tipo_cambio", "") or "").strip()[:120]
@@ -4206,6 +4225,12 @@ async def actualizar_presupuesto(presupuesto_id: int, request: Request, db: Sess
     presupuesto.estado = estado if _estado_valido(estado) else presupuesto.estado
     presupuesto.notas = str(form.get("notas", "")).strip()
     presupuesto.condiciones = str(form.get("condiciones", "")).strip()
+    # ``None`` = sigue heredando los de Configuración; ``""`` = este presupuesto
+    # no muestra datos de pago; texto = datos propios. Ver
+    # ``services/textos_documento.py``.
+    presupuesto.datos_bancarios = datos_bancarios_desde_formulario(
+        form, cfg, actual=presupuesto.datos_bancarios
+    )
     presupuesto.con_portada = bool(form.get("con_portada"))
     presupuesto.mostrar_firmas = bool(form.get("mostrar_firmas"))
     presupuesto.mostrar_resumen_capitulos = bool(form.get("mostrar_resumen_capitulos"))
@@ -4401,6 +4426,10 @@ def duplicar_presupuesto(presupuesto_id: int, db: Session = Depends(get_db)):
         estado="borrador",
         notas=original.notas,
         condiciones=original.condiciones,
+        # La copia hereda igual que el original: si aquel usaba los datos de
+        # Configuración, la copia también (y un cambio de cuenta futuro le
+        # llega a las dos). Si tenía unos propios, se copian tal cual.
+        datos_bancarios=original.datos_bancarios,
         con_portada=original.con_portada,
         foto_proyecto=_copiar_imagen(original.foto_proyecto, "projects/dup", db) or original.foto_proyecto,
         mostrar_firmas=original.mostrar_firmas,

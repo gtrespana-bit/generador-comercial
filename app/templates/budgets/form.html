@@ -84,6 +84,19 @@
   </div>
   {% endif %}
 
+  {# Los textos generales que repone el botón «volver a Configuración». Van en
+     JSON y no en atributos `data-*` porque el parser HTML convierte los saltos
+     de línea de un atributo en espacios: la comparación con el campo fallaría
+     siempre y se guardaría como propio lo que nadie tocó. `tojson` escapa `<`,
+     `>` y `&`, así que el bloque no puede cerrar el script. #}
+  <script nonce="{{ request.state.csp_nonce }}" id="textos-documento-generales" type="application/json">
+    {{ {
+      "datos_bancarios": textos_doc.datos_bancarios_generales,
+      "notas": textos_doc.notas_generales,
+      "condiciones": textos_doc.condiciones_generales,
+    } | tojson }}
+  </script>
+
   <!-- DATOS GENERALES -->
   <div class="card collapsible-card builder-general-card" id="card-datos-generales">
     <div class="card-header-toggle csp-s-4c4a58cb34" data-cotizat-click="budget-toggle-general">
@@ -406,16 +419,62 @@
       </div>
     </div>
 
-    <div class="card builder-texto-card">
+    <div class="card builder-texto-card" data-textos-doc>
       <h2>Texto del presupuesto</h2>
+      <p class="hint">
+        Estos textos salen de <strong>Configuración</strong>. Puedes cambiarlos
+        solo para este presupuesto sin tocar los datos generales de la empresa;
+        los demás presupuestos siguen igual.
+      </p>
       <div class="form-grid">
-        <div class="field">
-          <label>Información adicional (alcance del trabajo)</label>
-          <textarea name="notas" rows="4" placeholder="Descripción general, inclusiones y exclusiones…">{{ presupuesto.notas if presupuesto else cfg.notas_default }}</textarea>
+        <div class="field field-full">
+          <div class="texto-doc-cabecera">
+            <label for="campo-datos-bancarios">Datos bancarios y métodos de pago</label>
+            <span class="texto-doc-estado" id="estado-datos-bancarios" data-estado="{{ textos_doc.datos_bancarios_eleccion }}">
+              {{ {'heredar': 'Usando los de Configuración',
+                  'propio': 'Propios de este presupuesto',
+                  'vacio': 'Sin datos de pago'}[textos_doc.datos_bancarios_eleccion] }}
+            </span>
+          </div>
+          <textarea id="campo-datos-bancarios" name="datos_bancarios" rows="3"
+                    placeholder="Banco, cuenta, pago móvil, Zelle, USDT…">{{ textos_doc.datos_bancarios }}</textarea>
+          <input type="hidden" name="datos_bancarios_eleccion" id="datos-bancarios-eleccion"
+                 value="{{ textos_doc.datos_bancarios_eleccion }}">
+          <div class="texto-doc-acciones">
+            <button type="button" class="btn btn-xs" id="btn-bancarios-generales"
+                    data-cotizat-click="budget-payment-reset">
+              ↺ Volver a los datos de Configuración
+            </button>
+            <span class="hint" id="aviso-bancarios"></span>
+          </div>
+          <p class="hint">
+            Si lo dejas como está, el documento usa los datos de Configuración y
+            cualquier cambio futuro ahí llegará también a este presupuesto.
+            Vacíalo del todo si esta obra se cobra por otro medio y no debe salir
+            ningún dato de pago.
+          </p>
         </div>
         <div class="field">
-          <label>Condiciones</label>
-          <textarea name="condiciones" rows="4" placeholder="Forma de pago, anticipo, plazos, garantía…">{{ presupuesto.condiciones if presupuesto else cfg.condiciones_default }}</textarea>
+          <div class="texto-doc-cabecera">
+            <label for="campo-notas">Información adicional (alcance del trabajo)</label>
+            <button type="button" class="btn btn-xs" data-cotizat-click="budget-text-default"
+                    data-destino="notas" data-fuente="notas">
+              ↺ Datos de Configuración
+            </button>
+          </div>
+          <textarea id="campo-notas" name="notas" rows="4" data-texto-propio="notas"
+                    placeholder="Descripción general, inclusiones y exclusiones…">{{ textos_doc.notas }}</textarea>
+        </div>
+        <div class="field">
+          <div class="texto-doc-cabecera">
+            <label for="campo-condiciones">Condiciones</label>
+            <button type="button" class="btn btn-xs" data-cotizat-click="budget-text-default"
+                    data-destino="condiciones" data-fuente="condiciones">
+              ↺ Datos de Configuración
+            </button>
+          </div>
+          <textarea id="campo-condiciones" name="condiciones" rows="4" data-texto-propio="condiciones"
+                    placeholder="Forma de pago, anticipo, plazos, garantía…">{{ textos_doc.condiciones }}</textarea>
         </div>
       </div>
     </div>
@@ -1291,6 +1350,103 @@
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Textos del documento: heredar de Configuración o escribir unos propios
+  //
+  // El modelo lo resuelve el servidor (``services/textos_documento.py``); aquí
+  // solo se marca la intención en ``datos_bancarios_eleccion``:
+  //   heredar → seguir usando los de Configuración (se guarda NULL)
+  //   propio  → datos de este presupuesto
+  //   vacio   → este presupuesto no muestra datos de pago
+  // Sin esa marca, el servidor no podría distinguir «no lo toqué» de «lo dejé
+  // igual que el general a propósito», y acabaría congelando los datos de hoy.
+  // ---------------------------------------------------------------------------
+  function initTextosDocumento() {
+    var tarjeta = document.querySelector("[data-textos-doc]");
+    if (!tarjeta) return;
+    var campo = document.getElementById("campo-datos-bancarios");
+    var eleccion = document.getElementById("datos-bancarios-eleccion");
+    var estado = document.getElementById("estado-datos-bancarios");
+    var aviso = document.getElementById("aviso-bancarios");
+    if (!campo || !eleccion) return;
+
+    // Textos generales tal cual los guardó Configuración, con sus saltos de
+    // línea: el portador es JSON, no un atributo del DOM.
+    var generales = {datos_bancarios: "", notas: "", condiciones: ""};
+    var fuente = document.getElementById("textos-documento-generales");
+    if (fuente) {
+      try {
+        var crudo = JSON.parse(fuente.textContent || "{}");
+        if (crudo && typeof crudo === "object") {
+          generales = {
+            datos_bancarios: String(crudo.datos_bancarios || ""),
+            notas: String(crudo.notas || ""),
+            condiciones: String(crudo.condiciones || "")
+          };
+        }
+      } catch (e) {
+        generales = {datos_bancarios: "", notas: "", condiciones: ""};
+      }
+    }
+
+    function marcar(valor, etiqueta, nota) {
+      eleccion.value = valor;
+      if (estado) {
+        estado.setAttribute("data-estado", valor);
+        estado.textContent = etiqueta;
+      }
+      if (aviso) aviso.textContent = nota || "";
+    }
+
+    function reflejar() {
+      var texto = campo.value.trim();
+      if (texto === generales.datos_bancarios.trim() && generales.datos_bancarios.trim()) {
+        // Igual que el general: heredar es lo correcto, y así un cambio futuro
+        // en Configuración seguirá llegando a este presupuesto.
+        marcar("heredar", "Usando los de Configuración", "");
+      } else if (!texto) {
+        marcar("vacio", "Sin datos de pago en este presupuesto",
+               "El documento no mostrará el bloque de pago.");
+      } else {
+        marcar("propio", "Propios de este presupuesto",
+               "Solo para este presupuesto; no cambia los de Configuración.");
+      }
+    }
+
+    campo.addEventListener("input", reflejar);
+    // No se llama a ``reflejar()`` al abrir: la elección del servidor manda.
+    // Si alguien escribió unos datos propios iguales a los generales, el
+    // editor no puede convertirlos en herencia por su cuenta —eso cambiaría
+    // el documento en cuanto cambie la cuenta de la empresa—.
+
+    window.CotizatActions.register("budget-payment-reset", function () {
+      // Repone el texto general en el campo; el guardado sigue siendo el botón
+      // de guardar, así que hasta entonces no se escribe nada.
+      campo.value = generales.datos_bancarios;
+      marcar("heredar", "Usando los de Configuración",
+             "Pulsa guardar para que este presupuesto vuelva a usar los generales.");
+      campo.focus();
+    });
+
+    window.CotizatActions.register("budget-text-default", function (element) {
+      // Información adicional y condiciones: su campo del presupuesto ES el
+      // documento. Reponer el texto general es una edición más del campo, y
+      // desde ese momento este presupuesto tiene el suyo.
+      var destino = element.getAttribute("data-destino") || "";
+      var fuente = element.getAttribute("data-fuente") || "";
+      var area = document.getElementById("campo-" + destino);
+      var base = generales[fuente] || "";
+      if (!area) return;
+      if (area.value.trim() && area.value.trim() !== base.trim()
+          && !window.confirm("Se reemplazará el texto de este presupuesto por el de Configuración. ¿Continuar?")) {
+        return;
+      }
+      area.value = base;
+      area.dispatchEvent(new Event("input", {bubbles: true}));
+      area.focus();
+    });
+  }
+
   window.CotizatActions.register("budget-toggle-general", function () {
     toggleDatosGenerales();
   });
@@ -1308,6 +1464,7 @@
   });
 
   document.addEventListener("DOMContentLoaded", function() {
+    initTextosDocumento();
     var fields = ['client_id', 'titulo', 'moneda', 'fecha', 'estado'];
     fields.forEach(function(fName) {
       var el = document.querySelector('[name="' + fName + '"]');
