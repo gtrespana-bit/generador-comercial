@@ -451,7 +451,7 @@
       <div class="chart">
         <div class="chart-info">
           <b>{{ aud.visitantes_ventana if aud.disponible else 0 }}</b>
-          <span>visitantes únicos en {{ resumen.dias }}d · máx. {% set _mv = aud.serie|map(attribute="visitantes")|max(list=[0]) if aud.disponible else 0 %}{{ _mv }}/día</span>
+          <span>visitantes únicos en {{ resumen.dias }}d · máx. {% set _mv = ((aud.serie|map(attribute="visitantes")|list) or [0])|max if aud.disponible else 0 %}{{ _mv }}/día</span>
         </div>
         <svg viewBox="0 0 720 150" role="img" aria-label="Visitantes únicos por día">
           <line class="eje" x1="0" y1="132" x2="720" y2="132"></line>
@@ -459,7 +459,7 @@
             {% set _n = aud.serie|length %}
             {% set _paso = 720 / _n %}
             {% set _ancho = _paso * 0.68 %}
-            {% set _max = aud.serie|map(attribute="visitantes")|max(list=[0]) or 1 %}
+            {% set _max = (aud.serie|map(attribute="visitantes")|list)|max or 1 %}
             {% for p in aud.serie %}
             <rect class="bar" x="{{ (loop.index0 * _paso + (_paso - _ancho) / 2)|round(1) }}" y="{{ (132 - p.visitantes / _max * 110)|round(1) }}" width="{{ _ancho|round(1) }}" height="{{ (p.visitantes / _max * 110)|round(1) }}" rx="2">
               <title>{{ p.fecha.strftime("%d/%m") }} · {{ p.visitantes }} visitantes · {{ p.vistas }} vistas</title>
@@ -467,7 +467,7 @@
             {% endfor %}
           {% endif %}
         </svg>
-        <p class="muted" style="font-size:0.72rem; margin-top:8px;">Barras: visitantes únicos (IP hash) por día. Área bajo la barra: vistas de página ese día.</p>
+        <p class="note-sub">Barras: visitantes únicos (IP hash) por día. Área bajo la barra: vistas de página ese día.</p>
       </div>
       <div>
         {% if aud.disponible and aud.paginas_top %}
@@ -490,7 +490,7 @@
         <p class="muted text-center">Sin visitas medidas todavía.</p>
         {% endif %}
         {% if aud.disponible and aud.referentes_top %}
-        <p class="note-sub" style="margin-top:10px;">Páginas de origen medidas: {% for r in aud.referentes_top %}{{ r.origen }}{{ ", " if not loop.last }}{% endfor %}</p>
+        <p class="note-sub">Páginas de origen medidas: {% for r in aud.referentes_top %}{{ r.origen }}{{ ", " if not loop.last }}{% endfor %}</p>
         {% endif %}
       </div>
     </div>

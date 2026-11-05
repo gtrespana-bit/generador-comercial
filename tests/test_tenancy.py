@@ -27,6 +27,7 @@ from app.models import (
     ErrorInterno,
     MensajeSoporte,
     VistaGuardada,
+    VisitaPagina,
     Membresia,
     Organizacion,
     PrecioRecursoMercado,
@@ -115,6 +116,13 @@ def test_todo_modelo_comercial_declara_propietario():
       puede ocurrir sin ninguna sesión (un 500 anónimo) y entra por la
       función SECURITY DEFINER `registrar_error_interno`; la lectura es solo
       del operador con políticas `cotizat_ei_*` (revisión `o2e4a6c8b1d3`).
+    - `VisitaPagina` es la audiencia de la **web pública** (revisión
+      `w3m9k2p8v1n4`): una fila por página vista, sin IP (solo su hash), que
+      escribe el middleware con su propia sesión y lee el operador. No es un
+      dato de negocio de ningún cliente: guarda `organizacion_id` nullable
+      solo como atribución de la visita, así que `TenantMixin` (que lo exige
+      NOT NULL) no encaja. La tabla es global a propósito y no lleva políticas
+      de inquilino porque no se consulta desde la sesión del cliente.
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
     no_tenant_justificados = {
@@ -137,6 +145,7 @@ def test_todo_modelo_comercial_declara_propietario():
         ApiKeyOperador,
         MensajeSoporte,
         ErrorInterno,
+        VisitaPagina,
     }
     sin_propietario = []
     for mapper in Base.registry.mappers:
