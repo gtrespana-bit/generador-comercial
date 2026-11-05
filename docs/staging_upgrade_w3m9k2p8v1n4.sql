@@ -76,6 +76,24 @@ END $$;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.visitas_pagina TO cotizat_app;
 GRANT USAGE, SELECT ON SEQUENCE public.visitas_pagina_id_seq TO cotizat_app;
 
+-- 4) Políticas para el rol de la aplicación.
+--    Supabase activa RLS automáticamente en toda tabla nueva de `public`
+--    (disparador `ensure_rls`). Con RLS y sin políticas, `cotizat_app` no
+--    puede escribir ni leer: el middleware contaría la visita, recibiría
+--    «new row violates row-level security policy» y el panel vería ceros.
+DROP POLICY IF EXISTS cotizat_visitas_select ON public.visitas_pagina;
+CREATE POLICY cotizat_visitas_select ON public.visitas_pagina
+  FOR SELECT TO cotizat_app USING (true);
+DROP POLICY IF EXISTS cotizat_visitas_insert ON public.visitas_pagina;
+CREATE POLICY cotizat_visitas_insert ON public.visitas_pagina
+  FOR INSERT TO cotizat_app WITH CHECK (true);
+DROP POLICY IF EXISTS cotizat_visitas_update ON public.visitas_pagina;
+CREATE POLICY cotizat_visitas_update ON public.visitas_pagina
+  FOR UPDATE TO cotizat_app USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS cotizat_visitas_delete ON public.visitas_pagina;
+CREATE POLICY cotizat_visitas_delete ON public.visitas_pagina
+  FOR DELETE TO cotizat_app USING (true);
+
 UPDATE public.alembic_version
    SET version_num = 'w3m9k2p8v1n4'
  WHERE version_num = 'v2d7f1a6b9c3';

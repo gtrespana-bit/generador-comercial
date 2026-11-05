@@ -78,6 +78,27 @@ def _permisos_aplicacion() -> None:
         f"GRANT USAGE, SELECT ON SEQUENCE public.{TABLE}_id_seq TO cotizat_app"
     )
 
+    # Supabase crea un disparador (``ensure_rls``) que activa RLS en toda tabla
+    # nueva del esquema ``public``. Con RLS y sin políticas, ``cotizat_app`` no
+    # puede escribir ni leer: el middleware cuenta la visita, recibe
+    # «new row violates row-level security policy», la descarta en silencio y
+    # el panel se queda viendo ceros. Las políticas son deliberadamente
+    # abiertas porque la tabla no tiene dueño por inquilino (ver el docstring
+    # de la migración): el aislamiento lo dan los GRANT, que dejan fuera a
+    # ``anon`` y ``authenticated``.
+    for nombre, clausula in (
+        ("cotizat_visitas_select", " FOR SELECT TO cotizat_app USING (true)"),
+        ("cotizat_visitas_insert", " FOR INSERT TO cotizat_app WITH CHECK (true)"),
+        (
+            "cotizat_visitas_update",
+            " FOR UPDATE TO cotizat_app USING (true) WITH CHECK (true)",
+        ),
+        ("cotizat_visitas_delete", " FOR DELETE TO cotizat_app USING (true)"),
+    ):
+        op.execute(f"DROP POLICY IF EXISTS {nombre} ON public.{TABLE}")
+        op.execute(f"CREATE POLICY {nombre} ON public.{TABLE}{clausula}")
+
+
 
 def upgrade() -> None:
     if _existe():
