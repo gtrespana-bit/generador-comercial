@@ -204,7 +204,7 @@ interruptor se ve en `/readyz` (`"licencias": "exigida"`).
 ## 9. `ECHECKOUTTIMEOUT`: la cola del pooler y la búsqueda de 11 s (5/11/2026)
 
 **Qué se vio.** Dos 500 seguidos en el panel y en el buzón del titular, con el
-mismo usuario (`miguelmata121@gmail.com`, organización 43) y el mismo mensaje:
+misma organización (43) y el mismo mensaje:
 
 ```
 (psycopg.errors.InternalError) ECHECKOUTTIMEOUT: checkout timeout
