@@ -50,6 +50,58 @@ MAXIMO_ERRORES = 200
 MAXIMO_POR_PAGINA = 50
 _INICIO_PROCESO = datetime.utcnow()
 
+#: Marcas de que quien falló fue la **infraestructura de conexiones**, no el
+#: código: el pool propio esperó y se rindió (``TimeoutError`` de SQLAlchemy),
+#: el pooler de Supabase cortó la espera (``ECHECKOUTTIMEOUT``), o la base
+#: rechazó abrir más conexiones. El 5/11/2026 estos fallos abrieron un incidente
+#: con correos al titular y filas en el panel por cada petición.
+_MARCAS_POOL = (
+    "echeckouttimeout",
+    "queuepool limit",
+    "connection pool",
+    "pool_size",
+    "too many connections",
+    "sorry, too many clients",
+    "remaining connection slots",
+    "max client connections",
+    "connection timeout",
+    "timeout expired",
+    "could not connect",
+    "server closed the connection unexpectedly",
+    "connection already closed",
+    "connection is closed",
+)
+
+
+def error_de_infraestructura(exc: BaseException | None) -> bool:
+    """¿El fallo viene de agotar conexiones y no de un bug de la aplicación?
+
+    Cuando el pool se satura, *todas* las peticiones en vuelo fallan a la vez y
+    cada una parece un error distinto. Tratarlas como bugs de producto tiene dos
+    efectos caros: el titular recibe una tormenta de correos (y el propio correo
+    abre otra conexión, agravando la saturación) y el panel de admin se llena de
+    ruido que esconde el fallo de verdad. Se reconocen aquí una sola vez.
+    """
+    if exc is None:
+        return False
+    vistos: set[int] = set()
+    actual: BaseException | None = exc
+    # ``SQLAlchemyError`` encadena el error del driver en ``.orig``, y el
+    # ``TimeoutError`` del pool no encadena nada: se recorren ambas formas.
+    while actual is not None and id(actual) not in vistos:
+        vistos.add(id(actual))
+        tipo = type(actual).__name__
+        if tipo in {"TimeoutError", "PoolTimeout"}:
+            return True
+        try:
+            texto = f"{tipo} {actual}".lower()
+        except Exception:  # pragma: no cover - un __str__ roto no decide
+            texto = tipo.lower()
+        if any(marca in texto for marca in _MARCAS_POOL):
+            return True
+        actual = getattr(actual, "orig", None) or actual.__cause__
+    return False
+
 
 def _saneamiento_mensaje(exc: Exception) -> str:
     """Mensaje sin credenciales: se corta lo que siga a user:pass en URLs."""
@@ -225,14 +277,51 @@ def capturar_excepcion(scope: dict, exc: Exception) -> dict:
     return datos
 
 
-class RegistroErroresMiddleware:
-    """Captura excepciones no manejadas y las vuelve a lanzar intactas.
+async def _respuesta_de_saturacion(scope, receive, send) -> None:
+    """503 breve para cuando el pool de conexiones se agota.
 
-    No cambia la semántica HTTP: el 500 lo sigue produciendo el servidor
-    como hasta ahora. Solo deja constancia para el diagnóstico: en el
-    buffer en memoria de siempre y, desde la Fase 0.2, en la tabla
-    ``errores_internos`` vía un hilo (la persistencia es síncrona y no
-    debe bloquear el bucle; solo ocurre cuando ya hay un 500).
+    Un cuerpo mínimo y sin redirecciones: si la base está saturada, la página
+    de error tampoco puede consultar nada. ``Retry-After`` es lo honesto: no es
+    un fallo del usuario ni del producto, es «ahora mismo no hay hueco».
+    """
+    from starlette.responses import JSONResponse, PlainTextResponse
+
+    mensaje = (
+        "El servicio está recibiendo más peticiones de las que puede atender "
+        "en este instante. Vuelve a intentarlo en unos segundos."
+    )
+    acepta = ""
+    for clave, valor in scope.get("headers") or []:
+        if clave.lower() == b"accept":
+            acepta = valor.decode("latin-1", "ignore")
+            break
+    if "application/json" in acepta:
+        respuesta = JSONResponse(
+            {"ok": False, "error": mensaje, "reintentar": True},
+            status_code=503,
+            headers={"Retry-After": "3"},
+        )
+    else:
+        respuesta = PlainTextResponse(
+            mensaje, status_code=503, headers={"Retry-After": "3"}
+        )
+    await respuesta(scope, receive, send)
+
+
+class RegistroErroresMiddleware:
+    """Captura excepciones no manejadas y las deja registradas.
+
+    Se instala como la capa **más externa**, justo por debajo de ``ServerError``
+    de Starlette. Esa posición es la que permite dos cosas a la vez:
+
+    - **Ver** cualquier excepción que escape de las rutas y del resto de
+      middlewares (el 500 lo produce ``ServerError``, que está por encima).
+    - **Responder** un 503 cuando el fallo es de conexiones: aquí la respuesta
+      todavía no ha salido. Un manejador de excepciones de FastAPI no serviría:
+      los middlewares de dentro ya construyeron el 500 y, en ese punto, solo se
+      puede relanzar.
+
+    El resto de excepciones se relanza intacta: la semántica del 500 no cambia.
     """
 
     def __init__(self, app) -> None:
@@ -242,19 +331,30 @@ class RegistroErroresMiddleware:
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
-            if scope.get("type") == "http":
+            if scope.get("type") != "http":
+                raise
+            transitorio = error_de_infraestructura(exc)
+            try:
+                datos = capturar_excepcion(scope, exc)
+                datos["transitorio"] = transitorio
+                from .errores_internos import (
+                    persistir_y_avisar,
+                    registro_bd_activado,
+                )
+
+                if registro_bd_activado():
+                    from starlette.concurrency import run_in_threadpool
+
+                    await run_in_threadpool(persistir_y_avisar, datos)
+            except Exception:  # pragma: no cover - el diagnóstico nunca rompe
+                pass
+            if transitorio:
+                # La base no dio una conexión a tiempo: 503 con ``Retry-After``
+                # en lugar de un 500 que parezca un producto roto.
                 try:
-                    datos = capturar_excepcion(scope, exc)
-                    from .errores_internos import (
-                        persistir_y_avisar,
-                        registro_bd_activado,
-                    )
-
-                    if registro_bd_activado():
-                        from starlette.concurrency import run_in_threadpool
-
-                        await run_in_threadpool(persistir_y_avisar, datos)
-                except Exception:  # pragma: no cover - el diagnóstico nunca rompe
+                    await _respuesta_de_saturacion(scope, receive, send)
+                    return
+                except Exception:  # pragma: no cover - sin respuesta posible
                     pass
             raise
 

@@ -200,3 +200,96 @@ ORDER BY inicio DESC, id DESC;
 Se compara con la fecha/hora del error (`errores_internos.ultima_vez`) y no con
 la de la consulta: un día de diferencia cambia la respuesta. El estado del
 interruptor se ve en `/readyz` (`"licencias": "exigida"`).
+
+## 9. `ECHECKOUTTIMEOUT`: la cola del pooler y la búsqueda de 11 s (5/11/2026)
+
+**Qué se vio.** Dos 500 seguidos en el panel y en el buzón del titular, con el
+misma organización (43) y el mismo mensaje:
+
+```
+(psycopg.errors.InternalError) ECHECKOUTTIMEOUT: checkout timeout
+(server_id: ...) after 60000ms in Transaction mode
+```
+
+Uno en `GET /partidas/api/buscar` y otro en `POST /presupuestos/98/borrador`,
+lanzados con **9 ms de diferencia**: las dos peticiones de la misma pestaña
+cayeron a la vez. El mensaje del pooler aparecía en el `set_config` de
+`app/database.py`, que es donde el listener `after_begin` reinstala los claims
+de RLS: era el primer `execute` de la transacción, no la causa.
+
+**Qué no era.** El tamaño del pool. En Vercel el motor ya usa `NullPool`
+(`VERCEL` está definido), de modo que cada petición abre y cierra su propia
+conexión y el reparto lo hace el pooler. El culpable era el **tiempo** de una
+consulta, no el número de conexiones.
+
+**Qué era.** `_aplicar_busqueda_catalogo` traducía cada palabra escrita a
+`8 campos × N variantes` comparaciones `ILIKE` **sueltas**. Con sinónimos, una
+búsqueda de seis palabras generaba **más de 250 condiciones**: la consulta que
+falló en producción tiene exactamente 250 marcadores `$n`. Cada una obliga a
+rehacer la concatenación de ocho columnas (una de ellas TOAST) por fila, y el
+catálogo real tiene 15.000 partidas. Medido en la base de producción con
+`EXPLAIN (ANALYZE)`:
+
+| Forma de la condición | Tiempo |
+| --- | --- |
+| 250 condiciones `ILIKE` sueltas (la que falló) | **7.028 ms** |
+| 48 condiciones `ILIKE` sueltas | 441 ms |
+| Texto concatenado + una `~*` por palabra | **23–49 ms** |
+
+Y `pg_stat_statements` lo confirma en tráfico real: esa consulta acumulaba
+**95 ejecuciones con 11,1 s de media** (17 minutos de base de datos para una
+sola forma de consulta). El editor la dispara en cada pausa del tecleo (rebote
+de 140 ms), así que las peticiones se apilaban más rápido de lo que se
+vaciaban, el pooler en modo Transaction se quedó sin huecos y, pasados 60 s de
+cola, empezó a rechazar a todos. De ahí que el fallo fuera «siempre el mismo
+usuario»: era el que estaba escribiendo en el buscador.
+
+**Qué se hizo.**
+
+1. **Una condición por palabra.** `common._texto_buscable_catalogo` concatena
+   los campos una vez y `_condicion_de_un_grupo` compone **una expresión
+   regular** con las variantes (`~* '(cable|conductor|cableado)'`). Misma
+   semántica —la palabra puede estar en cualquier campo—, dos órdenes de
+   magnitud menos de trabajo. En SQLite se mantiene el `OR` de `ILIKE`, que no
+   tiene `REGEXP`. La descripción entra recortada a 600 caracteres.
+2. **Tope de variantes** (`VARIANTES_MAXIMAS_POR_GRUPO = 12`): un grupo de
+   sinónimos grande ya no puede volver a inflar la consulta.
+3. **Un fallo de infraestructura no es un bug de producto.** `operacion.
+   error_de_infraestructura` reconoce el `ECHECKOUTTIMEOUT`, el `TimeoutError`
+   del pool y los «too many connections». Con eso: la respuesta es **503 con
+   `Retry-After`** en lugar de un 500 (el middleware de registro ocupa la capa
+   exterior, la única desde la que todavía se puede responder), **no se manda
+   correo** —el fallo se sigue viendo en el panel con su traza— y el buscador
+   del editor respeta el `Retry-After` en vez de reintentar con cada tecla.
+4. **Un fallo de base no se disfraza de licencia vencida.** `licencias.
+   organizacion_tiene_acceso` devolvía `False` ante cualquier excepción; con el
+   pooler caído eso significaba «tu plan venció». Ahora un fallo de
+   infraestructura se propaga (acaba en el 503) y solo los fallos de permisos o
+   de esquema mantienen el criterio fail-closed.
+5. **Una transacción por petición.** El latido diario y la presencia hacían cada
+   uno su `commit`; cada commit cerraba la transacción y la lectura siguiente
+   abría otra con sus seis `set_config`. Ahora se confirman juntos en la puerta
+   de `get_db` (`_anotar_telemetria`). En una petición de solo lectura: de tres
+   transacciones a una.
+6. **Tope de espera propio**, `COTIZAT_DB_POOL_TIMEOUT` (10 s por omisión, `0`
+   lo desactiva; no aplica con `NullPool`). Menor que los 60 s del pooler a
+   propósito: mejor un 503 rápido que un minuto de pantalla colgada.
+
+**Sobre el acceso de esta organización.** La organización 43 **no** tiene la
+prueba caducada como acceso: su prueba venció el 17/10/2026 y el 20/10 compró
+el plan mensual (`id 54`, `origen = 'pago'`, `vence 18/11/2026`).
+`cotizat_security.organization_has_license(43)` devuelve `true`. Es decir, el
+usuario tenía derecho a estar dentro y, además, estaba pagando. Lo que fallaba
+era el producto bajo su uso normal, no un acceso indebido.
+
+**Cómo se vigila ahora.** `/readyz` y el panel de operación siguen mostrando el
+estado de la base. Un 503 de saturación deja fila en `errores_internos` (sin
+correo) y el cliente recibe `Retry-After: 3`. Si el panel vuelve a llenarse de
+`ECHECKOUTTIMEOUT`, la consulta culpable está en `pg_stat_statements`:
+
+```sql
+SELECT calls, round(mean_exec_time) AS media_ms, left(query, 120)
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 10;
+```

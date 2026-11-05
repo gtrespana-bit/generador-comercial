@@ -360,7 +360,22 @@ def _insertar_en_sesion_nueva(
         sesion.close()
 
 
-def latido_diario(db) -> bool:
+def _confirmar(db, confirmar: bool) -> None:
+    """Confirma la anotación, o la deja pendiente para el llamante.
+
+    ``confirmar=False`` la usa la puerta de ``get_db``: anota latido y presencia
+    y confirma **una sola vez** al final, para que la petición no pague tres
+    transacciones (con sus tres checkouts del pool y sus seis ``set_config`` de
+    RLS) donde basta una. El valor por omisión mantiene el contrato de siempre:
+    quien llama a estas funciones por su cuenta obtiene una fila persistida.
+    """
+    if confirmar:
+        db.commit()
+    else:
+        db.flush()
+
+
+def latido_diario(db, *, confirmar: bool = True) -> bool:
     """Garantiza una fila ``actividad.diaria`` por organización y día.
 
     Se llama al abrir la sesión de organización (``get_db``): es el dato
@@ -390,7 +405,12 @@ def latido_diario(db) -> bool:
                     accion="actividad.diaria",
                 )
             )
-            db.commit()
+            # ``confirmar=False`` (la puerta de ``get_db``) deja la fila
+            # pendiente y confirma latido y presencia juntos: cada commit extra
+            # cerraba la transacción y la siguiente consulta abría otra, con sus
+            # seis ``set_config`` de RLS. En una petición de solo lectura eso
+            # eran tres transacciones y tres checkouts del pool donde basta uno.
+            _confirmar(db, confirmar)
         _memo_latidos().add(org_id)
         return True
     except Exception:
@@ -425,7 +445,13 @@ _PRESENCIA: dict[int, datetime] = {}
 _PRESENCIA_MAXIMO = 5000
 
 
-def marcar_presencia(db, *, pagina: str = "", ahora: datetime | None = None) -> bool:
+def marcar_presencia(
+    db,
+    *,
+    pagina: str = "",
+    ahora: datetime | None = None,
+    confirmar: bool = True,
+) -> bool:
     """Anota que alguien de la organización está usando el producto **ahora**.
 
     Es la señal que faltaba para responder «qué empresas están en línea»: el
@@ -469,7 +495,8 @@ def marcar_presencia(db, *, pagina: str = "", ahora: datetime | None = None) -> 
                     created_at=ahora,
                 )
             )
-            db.commit()
+            # Igual que el latido: ``confirmar=False`` lo confirma la puerta.
+            _confirmar(db, confirmar)
         if len(_PRESENCIA) > _PRESENCIA_MAXIMO:
             _PRESENCIA.clear()
         _PRESENCIA[org_id] = ahora

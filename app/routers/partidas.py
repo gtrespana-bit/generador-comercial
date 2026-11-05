@@ -656,7 +656,15 @@ def buscar_partidas_catalogo_api(
     tasa: str = "",
     db: Session = Depends(get_db),
 ):
-    """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos."""
+    """Búsqueda técnica bajo demanda sin descargar fichas/descompuestos.
+
+    La llama el editor en **cada** pausa del tecleo (rebote de 140 ms), así que
+    su presupuesto es de milisegundos. La condición se compone como una sola
+    expresión regular sobre el texto concatenado (ver
+    ``common._aplicar_busqueda_catalogo``): con ``campos × variantes`` comparaciones
+    sueltas esta misma consulta llegaba a 11 s en el catálogo real y su cola
+    agotó el pooler de Supabase el 5/11/2026 (``ECHECKOUTTIMEOUT``).
+    """
     consulta = str(q or "").strip()[:120]
     limite = max(1, min(int(limite or 60), 100))
     query = db.query(Partida).filter(

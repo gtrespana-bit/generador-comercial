@@ -110,6 +110,40 @@ UPLOADS_DIR = (
 # incluso en desarrollo pasan por el proxy autorizado /archivos/....
 PRIVATE_STORAGE_DIR = DATA_DIR / "private_storage"
 
+#: Espera por defecto (segundos) antes de rendir una petición sin conexión.
+#: Menor que los 60 s del pooler de Supabase a propósito: es preferible un 503
+#: rápido y honesto a una pantalla colgada un minuto que acaba en el mismo sitio.
+POOL_TIMEOUT_POR_DEFECTO = 10
+
+
+def _pool_timeout_configurado(*, usa_pool_propio: bool) -> int:
+    """Segundos de espera por una conexión libre (``0`` = sin límite propio).
+
+    Por omisión SQLAlchemy espera **30 s**; con un pool propio y saturado eso
+    son medio minuto de pantalla colgada. Pero el 5/11/2026 el aviso real era
+    ``ECHECKOUTTIMEOUT ... after 60000ms in Transaction mode``: quien cortaba
+    era el *pooler* de Supabase, no SQLAlchemy. En modo Transaction el pooler
+    limita las conexiones simultáneas del proyecto, y cuando una consulta se
+    eterniza (aquella búsqueda del catálogo llegaba a 11 s) las demás hacen
+    cola hasta que el pooler rechaza sin devolver la conexión.
+
+    Un tope propio **menor** que el del pooler convierte ese corte opaco en un
+    503 claro y rápido. Se configura con ``COTIZAT_DB_POOL_TIMEOUT`` (segundos;
+    ``0`` lo desactiva) y no aplica con ``NullPool``, donde no hay cola propia
+    que esperar: ahí el límite lo pone el pooler y el ``connect`` del driver.
+    """
+    valor = os.environ.get("COTIZAT_DB_POOL_TIMEOUT", "").strip()
+    if not valor:
+        return POOL_TIMEOUT_POR_DEFECTO if usa_pool_propio else 0
+    try:
+        segundos = int(valor)
+    except ValueError:
+        return POOL_TIMEOUT_POR_DEFECTO if usa_pool_propio else 0
+    if segundos <= 0 or not usa_pool_propio:
+        return 0
+    return segundos
+
+
 _engine_options = {"pool_pre_ping": True}
 if DATABASE_IS_SQLITE:
     _engine_options["connect_args"] = {"check_same_thread": False}
@@ -142,6 +176,11 @@ else:
                 _engine_options["max_overflow"] = int(max_overflow_cfg)
             except ValueError:
                 pass
+    pool_timeout = _pool_timeout_configurado(
+        usa_pool_propio=_engine_options.get("poolclass") is None
+    )
+    if pool_timeout:
+        _engine_options["pool_timeout"] = pool_timeout
 engine = create_engine(DATABASE_URL, **_engine_options)
 
 
@@ -436,6 +475,43 @@ def get_db(request: Request = None):
     yield from _abrir_sesion_de_organizacion(request, exigir_licencia=True)
 
 
+def _anotar_telemetria(db, request) -> None:
+    """Anota latido diario y presencia en **una sola** transacción.
+
+    El latido (E5-012) deja una fila ``actividad.diaria`` al día; la presencia
+    (E5-012 ampliado) deja una fila ``sesion.activa`` cada
+    ``PRESENCIA_ESCRITURA_MINUTOS`` para que «en línea ahora» signifique algo.
+    Se anotan **después** de superar la puerta de licencia: una organización
+    suspendida no cuenta como uso del producto.
+
+    Antes cada una hacía su propio ``commit()``, y cada ``commit`` cerraba la
+    transacción: la siguiente lectura del handler abría otra, el listener
+    ``after_begin`` reinstalaba los seis claims de RLS y el pool volvía a
+    entregar conexión. En una petición de solo lectura eso eran hasta tres
+    transacciones (y tres checkouts) donde basta una. El 5/11/2026, con el
+    catálogo tardando segundos, esa multiplicación por petición fue parte del
+    camino hasta ``ECHECKOUTTIMEOUT``.
+
+    Best-effort y nunca rompe la petición: si algo falla se descarta solo lo
+    anotado aquí y la sesión sigue viva para el handler.
+    """
+    from .services.telemetria import latido_diario, marcar_presencia
+
+    try:
+        latido_diario(db, confirmar=False)
+        marcar_presencia(
+            db,
+            pagina=getattr(getattr(request, "url", None), "path", ""),
+            confirmar=False,
+        )
+        db.commit()
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:  # pragma: no cover - conexión ya perdida
+            pass
+
+
 def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
     db = SessionLocal()
     try:
@@ -445,11 +521,9 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
             # Best-effort: si falla, la petición sigue exactamente igual.
             from .services.telemetria import latido_diario, marcar_presencia
 
-            latido_diario(db)
-            # Presencia en vivo: alimenta «empresas en línea ahora» del panel.
-            marcar_presencia(
-                db, pagina=getattr(getattr(request, "url", None), "path", "")
-            )
+            # Una sola transacción para las dos señales (ver
+            # ``_anotar_telemetria``): en escritorio también se nota.
+            _anotar_telemetria(db, request)
             if request is not None:
                 # SQLite (escritorio/desarrollo) no tiene Supabase Auth: exponemos
                 # una organización y usuario sintéticos para que la barra lateral
@@ -548,16 +622,7 @@ def _abrir_sesion_de_organizacion(request: Request, *, exigir_licencia: bool):
         # como uso). Best-effort: nunca puede romper la petición, y el listener
         # ``after_begin`` reinstala los claims de RLS en la transacción que
         # abra el handler después del commit del latido.
-        from .services.telemetria import latido_diario, marcar_presencia
-
-        latido_diario(db)
-        # Presencia en vivo (E5-012 ampliado): el latido solo deja una fila al
-        # día y no permite distinguir una empresa trabajando ahora mismo. Se
-        # anota con freno de escritura, después de superar la puerta de
-        # licencia, para que «en línea» signifique «puede usar el producto».
-        marcar_presencia(
-            db, pagina=getattr(getattr(request, "url", None), "path", "")
-        )
+        _anotar_telemetria(db, request)
         yield db
     finally:
         db.close()
