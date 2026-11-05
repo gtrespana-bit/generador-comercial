@@ -2139,8 +2139,15 @@ def asegurar_config(db):
         usar_organizacion(db, organizacion_id)
     from sqlalchemy.exc import DBAPIError, OperationalError, ProgrammingError
 
+    # Lectura tolerante: si la base va por detrás del modelo (deploy sin
+    # ``alembic upgrade head``), el SELECT completo falla en cuanto falta una
+    # columna; el helper reintenta solo con las que existen, que es lo que
+    # evitaba el 500 de /inicio. El resto del rescate específico se queda como
+    # red de seguridad para instalaciones antiguas.
+    from .services.configuracion_tolerante import leer_configuracion
+
     try:
-        cfg = db.query(Configuracion).first()
+        cfg = leer_configuracion(db)
     except (ProgrammingError, OperationalError, DBAPIError, Exception) as exc:
         msg = str(exc).lower()
         is_missing = (

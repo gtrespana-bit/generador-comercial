@@ -325,3 +325,28 @@ def test_recalcular_partidas_mercado_resuelve_lote_sin_consultas_n_mas_uno(entor
             assert resultado.filas[0]["precio"] == 24
             assert resultado.coste_mano_obra == 24
             assert resultado.precio_unitario == 36
+
+
+def test_guardar_precio_no_pierde_el_recurso_pendiente_de_la_sesion(entorno):
+    """Regresión del 04/11/2026: `FOREIGN KEY constraint failed` al guardar.
+
+    La comprobación de columnas del esquema pedía una conexión al *pool*
+    (`inspect(bind)`) para leer `information_schema`. Al devolverla, SQLAlchemy
+    hace `rollback`; con `StaticPool` (SQLite en pruebas) esa conexión es la de
+    la propia sesión, así que el `INSERT` del recurso recién añadido se perdía y
+    el precio que venía detrás rompía por clave foránea. La inspección debe usar
+    la conexión de la sesión, no una nueva.
+    """
+    from sqlalchemy import text
+
+    Session, ids, _ = entorno
+    db = Session(); db.info["organizacion_id"] = ids[0]
+    recurso = Recurso(organizacion_id=ids[0], descripcion="Cemento", unidad="saco", precio=5, moneda="USD")
+    db.add(recurso); db.flush()
+
+    guardar_precio(db, recurso.id, "CO", 32000, "COP")
+    db.flush()
+
+    assert db.execute(text("SELECT count(*) FROM recursos")).scalar() >= 1
+    assert db.query(Recurso).filter(Recurso.id == recurso.id).first() is not None
+    assert resolver_precio(db, recurso.id, "CO", ids[0]).precio == 32000

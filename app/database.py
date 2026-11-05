@@ -925,6 +925,12 @@ def _asegurar_esquema_postgres() -> None:
             "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS grosor_tabique_cm DOUBLE PRECISION NOT NULL DEFAULT 10",
             "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS ancho_lienzo_m DOUBLE PRECISION",
             "ALTER TABLE planos_obra ADD COLUMN IF NOT EXISTS alto_lienzo_m DOUBLE PRECISION",
+            # Revisión de tarifas (head t9b4d7e2c5f8). Es la columna que, sin
+            # migración, devolvía 500 en /inicio el 04/11/2026: el código lee
+            # ``Configuracion`` entera y PostgreSQL rechaza el SELECT completo
+            # por una sola columna ausente.
+            "ALTER TABLE configuracion ADD COLUMN IF NOT EXISTS onboarding_precios_revisados BOOLEAN DEFAULT false",
+            "ALTER TABLE recursos ADD COLUMN IF NOT EXISTS precio_revisado_at TIMESTAMP",
         )
         sin_permiso_ddl = False
         for sentencia in sentencias:
@@ -979,6 +985,22 @@ def _asegurar_esquema_postgres() -> None:
                     WHERE table_schema = 'public'
                       AND table_name = 'presupuestos'
                       AND column_name = 'mostrar_desglose_precio'
+                """)).first() is not None
+                # Revisión de tarifas (t9b4d7e2c5f8): la columna boolean de
+                # configuracion y la fecha por recurso. Se comprueban las dos
+                # antes de avanzar la marca; verificado el 04/11/2026, cuando
+                # producción quedó en s8a3c6d1f7b9 con el código nuevo.
+                precios_revisados_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'configuracion'
+                      AND column_name = 'onboarding_precios_revisados'
+                """)).first() is not None
+                precio_revisado_creada = conn.execute(text("""
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'recursos'
+                      AND column_name = 'precio_revisado_at'
                 """)).first() is not None
                 # Bloque del editor vectorial (head f1b2c3d4e5a6): origen y
                 # grosor de tabique en planos_obra + tablero planos_elementos.
@@ -1110,6 +1132,20 @@ def _asegurar_esquema_postgres() -> None:
                     else:
                         logging.getLogger("cotizat").warning(
                             "Falta public.mensajes_soporte: no se avanza "
+                            "alembic_version (ejecuta `alembic upgrade head`)."
+                        )
+                elif cur == "s8a3c6d1f7b9":
+                    # La revisión t solo añade estas dos columnas, exactamente
+                    # los ALTER de arriba. Se avanza solo si AMBAS existen: si
+                    # el ALTER falló por permisos, marcar la revisión haría que
+                    # `alembic upgrade head` la diera por aplicada y el 500 se
+                    # quedaría para siempre.
+                    if precios_revisados_creada and precio_revisado_creada:
+                        conn.execute(text("UPDATE public.alembic_version SET version_num = 't9b4d7e2c5f8'"))
+                        logging.getLogger("cotizat").info("alembic_version avanzada de s8a3c6d1f7b9 a t9b4d7e2c5f8 tras crear las columnas de revisión de tarifas.")
+                    else:
+                        logging.getLogger("cotizat").warning(
+                            "Faltan columnas de la revisión de tarifas: no se avanza "
                             "alembic_version (ejecuta `alembic upgrade head`)."
                         )
                 elif cur is None:
