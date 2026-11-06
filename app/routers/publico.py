@@ -782,9 +782,11 @@ def sitemap_index(request: Request):
 
     Es lo que se envía una sola vez a Search Console y Bing: cualquier país
     que se encienda mañana entra solo, sin reenviar nada ni tocar el alta.
-    Solo se listan los mercados cuyo catálogo se anuncia
-    (``MERCADOS_FICHAS_INDEXABLES``); el resto de mercados publicados sirven
-    sus páginas con ``noindex`` y no tienen sitemap.
+    Solo se listan los mercados que anuncian algo (``paises_con_sitemap``):
+    los encendidos enteros y los que van a medio localizar. El resto sirve sus
+    páginas con ``noindex`` y no tiene sitemap. Si este índice no listara a un
+    mercado a medias, su sitemap hijo quedaría huérfano: existe, se puede
+    enviar a mano, pero Google no lo descubriría solo.
     """
     from ..seo import SITEMAP_LASTMOD, origen_canonico
 
@@ -797,7 +799,7 @@ def sitemap_index(request: Request):
     try:
         from ..services import precios_publicos as pp
 
-        for cc in pp.paises_con_catalogo_indexable():
+        for cc in pp.paises_con_sitemap():
             resumen = pp.resumen(cc) or {}
             hijos.append(
                 (
