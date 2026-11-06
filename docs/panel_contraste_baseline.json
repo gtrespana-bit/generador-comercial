@@ -1,8 +1,9 @@
 {
-  "_comentario": "Deuda de contraste aceptada del panel admin, medida por tools/auditar_contraste_panel.py. El tramo A (2026-11-06) la dejó en cero: las listas vacías significan que cualquier par nuevo por debajo de WCAG AA rompe la suite. Los techos solo pueden bajar.",
+  "_comentario": "Deuda de contraste aceptada del panel admin, medida por tools/auditar_contraste_panel.py. El tramo A (2026-11-06) la dejó en cero: las listas vacías significan que cualquier par nuevo por debajo de WCAG AA rompe la suite. Los techos solo pueden bajar. Desde el tramo D la auditoría lee de verdad la paleta del modo oscuro (antes encontraba el selector dentro de un comentario y medía el tema claro) y también los elementos no textuales de WCAG 1.4.11, con un mínimo de 3:1.",
   "claro": [],
   "oscuro": [],
   "superficies_literales_max": 0,
   "colores_literales_max": 1,
-  "tamanos_fuente_max": 9
+  "tamanos_fuente_max": 9,
+  "componentes_no_textuales_min": 3.0
 }

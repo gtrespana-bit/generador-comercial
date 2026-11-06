@@ -388,3 +388,79 @@ ver cada bloque que antes estaba en la página única.
 
 Validación: **3373 pruebas en verde**, 249 plantillas parseadas, contraste
 **0 violaciones** en claro y en oscuro.
+
+---
+
+## Resultado del tramo D (mismo día)
+
+Objetivo: cerrar lo que no se ve en una captura — el modo oscuro a medias, el
+móvil, la señal al navegar y el contraste de los elementos que no son texto.
+
+### El hallazgo: la auditoría del modo oscuro estaba ciega
+
+Al empezar el tramo, el auditor seguía informando «0 violaciones en oscuro».
+Era mentira. `paleta()` buscaba el texto `html.dark-mode` y lo encontraba
+**primero dentro de un comentario** del encabezado de `admin.css` (la propia
+documentación de la hoja dice «su versión en `html.dark-mode`»), así que
+devolvía el bloque `:root` siguiente: desde el tramo B, el modo oscuro se
+medía con la **paleta clara**.
+
+- Arreglado: los comentarios se quitan antes de buscar y un selector se compara
+  como conjunto (`html.dark-mode, body.dark-mode`), no como texto exacto.
+- Con la medición real, el oscuro aporta **63 tokens propios** (antes: 0).
+- La buena noticia: los colores del CSS ya eran correctos. **0 violaciones en
+  ambos modos** con la paleta buena. Lo que faltaba era todo lo demás.
+- `test_el_modo_oscuro_se_mide_con_su_propia_paleta` impide que la medición
+  vuelva a quedarse ciega en silencio.
+
+### Modo oscuro de verdad
+
+Los tokens estaban, pero el navegador no sabía en qué tema estaba:
+
+| Antes | Ahora |
+|---|---|
+| Calendario de un campo de fecha en blanco | `color-scheme: dark` por tema |
+| Desplegables, casillas y scrollbars claros | `accent-color` + `scrollbar-color` con tokens |
+| Selección de texto azul del sistema | `::selection` con el navy y `--on-brand` |
+| Borde de campo a 1,29:1 (invisible) | `--borde-control` a **3,26:1** (WCAG 1.4.11) |
+| Anillo de foco navy sobre panel oscuro | `--anillo-brand`, con versión oscura |
+
+### Responsive
+
+- **19 rejillas** usaban `minmax(420px, 1fr)`: 42 px más anchas que un móvil de
+  360, y por tanto scroll horizontal. Ahora `minmax(min(420px, 100%), 1fr)`, que
+  encoge en vez de desbordar. Una prueba prohíbe volver al mínimo fijo.
+- **`@media (max-width: 480px)`**: menos relleno, KPIs en dos columnas legibles,
+  y botones de **40 px** de alto (con 26 px no se pulsa con el pulgar).
+
+### Señal al navegar (en vez de esqueletos)
+
+El panel se renderiza en el servidor: no llegan datos después del HTML, así que
+un esqueleto de tarjetas grises prometería algo que no va a pasar. Lo que sí
+faltaba es saber que el clic contó: **barra de progreso de 3 px** arriba, con
+`aria-busy` en la región principal mientras se navega. Sin estilos en línea y
+respetando `prefers-reduced-motion`.
+
+### Elementos no textuales (WCAG 1.4.11)
+
+El auditor ahora mide también lo que un ojo cansado no ve fallar: bordes de
+control, anillo de foco y series de gráfico, con mínimo 3:1.
+
+- Encontró una barra de gráfico al 85 % de opacidad que se quedaba en **2,95:1**.
+  La opacidad se va; el énfasis pasa al `:hover`.
+- Resultado: 6 mediciones × 2 modos, **todas por encima de 3:1** (la más justa,
+  3,01:1; la del anillo de foco, 11,09:1 en claro y 7,79:1 en oscuro).
+
+### Cifras
+
+| | Tramo C | Tramo D |
+|---|---|---|
+| Tokens (claro / oscuro) | 85 / 0 medidos | **86 / 63** |
+| Reglas | 634 | 658 |
+| Violaciones de texto (claro / oscuro) | 0 / 0 (ciego) | **0 / 0 (real)** |
+| Elementos no textuales | sin medir | **12 mediciones, 0 fallos** |
+| Pruebas | 3373 | **3382** |
+
+Tramo D cerrado. Lo que queda para más adelante, ya fuera del plan acordado:
+pantalla de carga por sección (requiere datos por `fetch`), impresión de fichas
+y pruebas en navegador real.
