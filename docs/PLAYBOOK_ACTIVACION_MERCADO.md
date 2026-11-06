@@ -489,17 +489,18 @@ porcelanato en paredes (18), `07-07-01` Canceles de baño (16) y `12-05-05` Piso
 de madera y laminados (7), que cierran el catálogo de acabados antes de entrar
 en instalaciones.
 
-## 14. /cl/ y /es/ compiten por «precios», no por «software» (06/11/2026)
+## 14. /cl/ y /es/: captación SEO de precios subordinada a vender el software (06/11/2026)
 
 ### El diagnóstico
 
 `www.cotizat.online/cl/` (212 impresiones, 2 clics, posición **67,3**) y
 `www.cotizat.online/es/` (140, 0, **63,5**) son las dos URL con más
 impresiones del sitio y las que peor rankean. Su título era «CotizaT:
-software de presupuestos y APU en Chile/España»: perseguían consultas de
-*software*, y esas consultas se miden en §10 —se mueven en las posiciones
-44–87 sin un clic, contra Opus, Neodata y Presto, con un dominio de días.
-Ahí no se gana; es la batalla equivocada, no falta de esfuerzo.
+software de presupuestos y APU en Chile/España»: las consultas de
+*software* medidas en §10 se mueven en posiciones 44–87 y no han dado
+clics, frente a Opus, Neodata y Presto. La hipótesis es captar visitas con
+búsquedas de precios unitarios y convertirlas en clientes del software; no
+cambiar la meta comercial ni presentar el catálogo como producto principal.
 
 Dato que cerraba el diagnóstico: **`/cl/` es la única URL de Chile que Google
 puede posicionar** (su catálogo entero está en `noindex, follow` hasta que se
@@ -510,7 +511,9 @@ unitarios…»; no se toca).
 
 ### La decisión
 
-La landing del país se convierte en **hub de precios del mercado**:
+La landing conserva su **relato comercial y de conversión como prioridad**;
+el catálogo es un apoyo de captación SEO, no el producto ni el contenido que
+interrumpe la explicación de beneficios:
 
 * **Título con el recuento real**, patrón de las fichas (§10): «Precios de
   construcción en Chile: 2.000 partidas en CLP | CotizaT» (65 caracteres;
@@ -518,13 +521,16 @@ La landing del país se convierte en **hub de precios del mercado**:
   de ~60). Nada de cifra clavada a mano: el recuento sale del artefacto del
   mercado y cambia solo al publicar uno nuevo.
 * **H1, description y sub** responden a «precios de construcción en <país>»;
-  el sub mantiene la línea fiscal (NIF/RUT, IVA) y el PDF: el CTA de la
-  aplicación no se toca y los FAQ comerciales siguen.
-* **Índice completo de apartados con cifras justo tras el hero**
-  (`#precios-mercado`): cada apartado es una pastilla-enlace con la cifra que
-  promete su propia página («40–264 EUR/m²», «desde 10 EUR», «103 EUR de
-  media», §9). La cifra de la lista y la del título de destino salen de la
-  misma cuenta (`_medidas_apartado`), así que el enlace nunca miente.
+  el sub mantiene la línea fiscal (NIF/RUT, IVA), el CTA de la aplicación y
+  los FAQ comerciales siguen.
+* **El orden de la página pone primero el producto**: problema del cliente,
+  beneficios, propuesta de valor, flujo del producto y comparativa aparecen
+  antes del catálogo. El índice completo con cifras (`#precios-mercado`) queda
+  después de la comparativa, como recurso secundario para quien busca precios.
+* Cada apartado es una pastilla-enlace con la cifra que promete su propia
+  página («40–264 EUR/m²», «desde 10 EUR», «103 EUR de media», §9). La cifra de
+  la lista y la del título de destino salen de la misma cuenta
+  (`_medidas_apartado`), así que el enlace nunca miente.
 * El antiguo «puente al catálogo» de 5 enlaces se suprime solo en estas dos
   páginas: el hub ya enlaza todo.
 
