@@ -124,18 +124,21 @@ la política CSP.
    en `/admin` (`tests/test_licencias.py:605`) — el rediseño de la agenda se
    llevó por delante el bloque de vencimientos.
 7. **RBAC demasiado estricto en tests de licencias** (5 ×
-   `GestionEquipoError: Se requiere el rol admin, superadmin`): hay que decidir
-   si soporte y analista deben poder conceder pruebas/activar compras. Es una
-   **decisión de producto**, no un bug: si el RBAC es el correcto, se actualizan
-   las pruebas; si no, se ajusta la matriz de permisos.
+   `GestionEquipoError: Se requiere el rol admin, superadmin`).
+   **Decisión de producto (06/11/2026): solo `admin` puede otorgar** —conceder
+   pruebas y activar compras—, y `superadmin` por serlo. `soporte` y `analista`
+   no. Conclusión: la matriz de permisos de #188 **es la correcta** y lo que hay
+   que actualizar son las pruebas que operaban con otro rol, no el RBAC.
 
 ## Lo que hay que hacer antes de reintentar la restauración
 
-1. **Red de seguridad** (el hueco que permitió esto): una prueba que arranque
-   `app.main` en un subproceso limpio y pida `/healthz`, y un humo que recorra
-   **todas** las páginas del panel con sesión de operador y datos sembrados
-   exigiendo `< 500`. `tests/test_importacion_modulos.py` ya cubre el caso de
-   este apagón (162 módulos), pero solo si la suite puede arrancar.
+1. **Red de seguridad** (el hueco que permitió esto): `tests/test_humo_panel.py`
+   —arranque de la app en un proceso limpio con `/healthz`, y humo de todas las
+   páginas del panel (mapa del panel + todas las rutas GET de `app/routers`) con
+   sesión de operador y datos sembrados—. Validado por inyección: un `raise` en
+   `resumen_audiencia` se reporta como `500 /admin/analitica`, y un nombre sin
+   importar en el nivel de módulo tumba la colección de la suite.
+   `tests/test_importacion_modulos.py` cubre además los 162 módulos.
 2. **Rebasar #188 sobre `main`** (no reaplicar el diff), resolviendo los
    conflictos por grupos: C se descarta (lo de `main` manda), D se arregla.
 3. **Reordenar la migración:** `x9m2k4p8v1n6` debe colgar de
