@@ -185,10 +185,14 @@ def test_la_landing_sirve_el_hub_con_cifras_del_mercado(cc, moneda):
     assert pais["id_fiscal"] in html  # NIF / RUT no desaparecen del copy
 
     # La página vende primero el software: problema, propuesta de valor,
-    # producto y comparativa preceden al recurso de precios.
+    # producto, comparativa y planes preceden al recurso de precios; el CTA
+    # final queda después para cerrar el recorrido de conversión.
     hub_pos = html.index('id="precios-mercado"')
-    for section_id in ("problema", "valor-antes", "producto", "comparativa"):
+    for section_id in (
+        "problema", "valor-antes", "producto", "comparativa", "precios"
+    ):
         assert html.index(f'id="{section_id}"') < hub_pos
+    assert hub_pos < html.index('id="pago"')
 
     hub = _seccion_hub(html)
     # Todos los apartados del mercado enlazados desde el hub.

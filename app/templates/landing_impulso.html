@@ -490,37 +490,6 @@
   </div>
 </section>
 
-{# Recurso SEO secundario (solo CL y ES, §14 del playbook): primero se
-   presenta el problema, los beneficios y el producto; el catálogo completo
-   aparece después de la comparativa, como apoyo para quien busca precios. #}
-{% if hub_precios %}
-<section class="lp2-section lp2-hub" id="precios-mercado" aria-labelledby="hub-precios-h2">
-  <div class="lp2-wrap">
-    <div class="lp2-section-head">
-      <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
-      <h2 class="lp2-section-title" id="hub-precios-h2">{{ L("Precios de construcción en", "Construction prices in") }} {{ hub_precios.nombre }}: <em>{{ hub_precios.total_txt }} {{ L("partidas con su descompuesto", "items with their cost breakdown") }}</em></h2>
-      <p class="lp2-lead">{{ L("Cada apartado lleva su cifra en", "Each section shows its figure in") }} {{ hub_precios.moneda }} {{ L("y enlaza a la tabla con el precio de cada partida. Precios revisados en", "and links to the table with every item's price. Prices checked in") }} {{ hub_precios.mes }}.</p>
-    </div>
-    <div class="lp2-hub-capitulos">
-      {% for capitulo in hub_precios.capitulos %}
-      <div class="lp2-hub-capitulo">
-        <h3>{{ capitulo.nombre }}</h3>
-        <ul class="lp2-hub-lista">
-          {% for ap in capitulo.apartados %}
-          <li><a href="{{ ap.ruta }}"><span class="lp2-hub-nombre">{{ ap.nombre }}</span>{% if ap.cifra %} <span class="lp2-hub-cifra">{{ ap.cifra }}</span>{% endif %}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endfor %}
-    </div>
-    <p class="lp2-hub-mas">
-      <a href="{{ hub_precios.indice }}">{{ L("Índice completo de precios de", "Full price index for") }} {{ hub_precios.nombre }} →</a>{% if hub_precios.mano_obra %}
-      · <a href="{{ hub_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=hub_precios.nombre) }}</a>{% endif %}
-    </p>
-  </div>
-</section>
-{% endif %}
-
 {# Puente al catálogo público de precios: enlaces internos de autoridad.
    Con landing-hub (CL y ES) no se repite: el índice completo con cifras ya
    enlaza cada apartado y el índice del mercado desde arriba de la página. #}
@@ -715,6 +684,36 @@
     <div class="nota-honesta"><strong>{{ L("Honestidad por delante:", "Honesty up front:") }}</strong> {{ product_name }} {{ L("está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales.", "is in early access. The documents it generates are commercial documents, not tax invoices.") }}{% if prueba_activa %} {{ L("Pruébalo", "Try it") }} {{ dias_prueba }} {{ L("días con tus propios datos antes de pagar nada: sabrás exactamente qué recibes.", "days with your own data before paying anything: you'll know exactly what you get.") }}{% endif %}</div>
   </div>
 </section>
+
+{# Recurso SEO secundario (solo CL y ES, §14 del playbook): aparece después
+   de los beneficios y de los planes del software, antes del CTA final. #}
+{% if hub_precios %}
+<section class="lp2-section lp2-hub" id="precios-mercado" aria-labelledby="hub-precios-h2">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
+      <h2 class="lp2-section-title" id="hub-precios-h2">{{ L("Precios de construcción en", "Construction prices in") }} {{ hub_precios.nombre }}: <em>{{ hub_precios.total_txt }} {{ L("partidas con su descompuesto", "items with their cost breakdown") }}</em></h2>
+      <p class="lp2-lead">{{ L("Cada apartado lleva su cifra en", "Each section shows its figure in") }} {{ hub_precios.moneda }} {{ L("y enlaza a la tabla con el precio de cada partida. Precios revisados en", "and links to the table with every item's price. Prices checked in") }} {{ hub_precios.mes }}.</p>
+    </div>
+    <div class="lp2-hub-capitulos">
+      {% for capitulo in hub_precios.capitulos %}
+      <div class="lp2-hub-capitulo">
+        <h3>{{ capitulo.nombre }}</h3>
+        <ul class="lp2-hub-lista">
+          {% for ap in capitulo.apartados %}
+          <li><a href="{{ ap.ruta }}"><span class="lp2-hub-nombre">{{ ap.nombre }}</span>{% if ap.cifra %} <span class="lp2-hub-cifra">{{ ap.cifra }}</span>{% endif %}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="lp2-hub-mas">
+      <a href="{{ hub_precios.indice }}">{{ L("Índice completo de precios de", "Full price index for") }} {{ hub_precios.nombre }} →</a>{% if hub_precios.mano_obra %}
+      · <a href="{{ hub_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=hub_precios.nombre) }}</a>{% endif %}
+    </p>
+  </div>
+</section>
+{% endif %}
 
 <section class="lp2-final lp2-defer" id="pago">
   <div class="lp2-wrap">

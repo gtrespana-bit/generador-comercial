@@ -523,10 +523,11 @@ interrumpe la explicación de beneficios:
 * **H1, description y sub** responden a «precios de construcción en <país>»;
   el sub mantiene la línea fiscal (NIF/RUT, IVA), el CTA de la aplicación y
   los FAQ comerciales siguen.
-* **El orden de la página pone primero el producto**: problema del cliente,
-  beneficios, propuesta de valor, flujo del producto y comparativa aparecen
-  antes del catálogo. El índice completo con cifras (`#precios-mercado`) queda
-  después de la comparativa, como recurso secundario para quien busca precios.
+* **El orden de la página pone primero la conversión**: problema del cliente,
+  beneficios, propuesta de valor, flujo del producto, comparativa y planes
+  aparecen antes del catálogo. El índice completo con cifras
+  (`#precios-mercado`) queda después de los planes y antes del CTA final, como
+  recurso secundario para quien busca precios.
 * Cada apartado es una pastilla-enlace con la cifra que promete su propia
   página («40–264 EUR/m²», «desde 10 EUR», «103 EUR de media», §9). La cifra de
   la lista y la del título de destino salen de la misma cuenta
