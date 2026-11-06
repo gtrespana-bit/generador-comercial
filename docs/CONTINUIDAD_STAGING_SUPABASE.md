@@ -295,11 +295,11 @@ el bucket privado `cotizat-private`), que es la primera prueba real de
 Los dos últimos fallos (`alembic_version` y bootstrap RLS) se detectaron en
 staging, no antes de fusionar. Se añadió la puerta automática que faltaba:
 
-- `docs/ci/ci.yml` se ejecuta en cada pull request y push a `main` o
-  `arena/**`, e incluye instalación del lock, coherencia del bloqueo,
-  `compileall`, parseo Jinja con el entorno real, `node --check`, revisión de
-  espacios en blanco acotada al cambio, simulación del sistema de archivos de
-  solo lectura de Vercel (PostgreSQL y SQLite) y `pytest -q`;
+- `docs/ci/ci.yml` se ejecuta en cada pull request y push a `main` (más un
+  barrido semanal completo), e incluye instalación del lock, coherencia del
+  bloqueo, `compileall`, parseo Jinja con el entorno real, `node --check`,
+  revisión de espacios en blanco acotada al cambio, simulación del sistema de
+  archivos de solo lectura de Vercel (PostgreSQL y SQLite) y `pytest -q`;
 - `requirements.txt` y `requirements-dev.txt` fijan cada dependencia con `==`;
   `requirements.lock` guarda el cierre transitivo (41 paquetes). Antes, los
   rangos abiertos permitían que **cada build de Vercel resolviera versiones

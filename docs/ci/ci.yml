@@ -6,9 +6,14 @@ name: CI
 
 on:
   push:
-    branches: ["main", "arena/**"]
+    branches: ["main"]
   pull_request:
     branches: ["main"]
+  # Barrido semanal completo: la red que garantiza que, aunque en cada PR solo
+  # se escaneen los archivos del cambio, el repositorio entero pasa por
+  # detect-secrets y por la suite al menos una vez por semana.
+  schedule:
+    - cron: "0 4 * * 1"
   workflow_dispatch:
 
 # Si se empuja varias veces seguidas a la misma rama, cancela la ejecución
@@ -64,14 +69,40 @@ jobs:
         run: pip-audit -r requirements.lock
 
       - name: Escanear secretos en el repositorio (E4-030)
-        # detect-secrets fusiona en el baseline los hallazgos nuevos (guardados
-        # como hash, nunca en claro) y renueva generated_at. La guarda compara
-        # el conjunto de secretos con el baseline versionado: cualquier hallazgo
-        # nuevo rompe CI. El baseline admite los fixtures deliberados (URLs de
-        # ejemplo, claves falsas de tests, hashes de revisiones de migraciones).
+        # Recorrer los ~9.000 archivos versionados costaba 227 s, el 32 % del
+        # job. Ahora, cuando el disparador es un pull_request, se escanean solo
+        # los archivos que toca el cambio (completos, no solo las líneas del
+        # diff): el resto ya pasó por este paso antes de entrar en `main` y su
+        # estado aceptado vive en `.secrets.baseline` (hallazgos guardados como
+        # hash, nunca en claro). El barrido completo sigue ocurriendo en cada
+        # push a `main`, en workflow_dispatch y en el cron semanal.
+        #
+        # El criterio de fallo no cambia: cualquier hallazgo cuyo hash no esté
+        # en el baseline rompe CI. El baseline admite los fixtures deliberados
+        # (URLs de ejemplo, claves falsas de tests, hashes de migraciones). Se
+        # escanea sobre una COPIA del baseline porque `--baseline` reescribe el
+        # archivo que recibe y aquí solo interesa el conjunto resultante; por eso
+        # además se excluye `.secrets.baseline` del recorrido (con la copia deja
+        # de ser "el baseline" y se escanearía a sí mismo, con hallazgos nuevos
+        # que son solo sus propios hashes).
         run: |
+          set -euo pipefail
           cp .secrets.baseline /tmp/secretos-baseline-original.json
-          detect-secrets scan --baseline .secrets.baseline >/dev/null
+          cp .secrets.baseline /tmp/secretos-escaneo.json
+          base="${{ github.event.pull_request.base.sha }}"
+          archivos=()
+          if [ -n "$base" ]; then
+            mapfile -t archivos < <(git diff --name-only --diff-filter=ACMR "$base" HEAD -- .)
+            echo "Pull request: ${#archivos[@]} archivo(s) cambiados frente a $base."
+          fi
+          if [ "${#archivos[@]}" -gt 0 ]; then
+            detect-secrets scan --baseline /tmp/secretos-escaneo.json \
+              --exclude-files '\.secrets\.baseline$' "${archivos[@]}" >/dev/null
+          else
+            echo "Barrido completo del repositorio."
+            detect-secrets scan --baseline /tmp/secretos-escaneo.json \
+              --exclude-files '\.secrets\.baseline$' >/dev/null
+          fi
           python3 - <<'PY'
           import json
           import sys
@@ -86,7 +117,7 @@ jobs:
               }
 
           original = claves("/tmp/secretos-baseline-original.json")
-          actual = claves(".secrets.baseline")
+          actual = claves("/tmp/secretos-escaneo.json")
           nuevas = actual - original
           if nuevas:
               print("::error::Secretos nuevos detectados (E4-030)")
@@ -137,4 +168,54 @@ jobs:
           python tools/simular_vercel_rofs.py sqlite
 
       - name: Ejecutar la suite automatizada
-        run: pytest -q
+        # `-n auto` reparte la suite entre los núcleos del runner (pytest-xdist,
+        # fijado en requirements.lock): ~3.370 pruebas bajan de ~7-9 min a ~2.
+        # Si algún día aparece un fallo de aislamiento, `-n 2` es el primer
+        # diagnóstico.
+        run: pytest -q -n auto
+
+  pruebas-postgresql:
+    name: Pruebas PostgreSQL (RLS real)
+    # Fase 0.1 de la hoja de ruta 2026-10-20. La suite general corre en
+    # SQLite, donde no hay RLS ni booleanos estrictos: tres incidentes de
+    # producción del 20/10/2026 fueron invisibles para ella. Este job
+    # reconstruye el esquema con la cadena de migraciones desde una base
+    # vacía y ejercita los servicios como el rol real (cotizat_runtime).
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.lock
+
+      - name: Instalar dependencias fijadas
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+
+      - name: Ejecutar la batería PostgreSQL/RLS
+        # Incluye test_rls_postgres.py, la batería del bootstrap que llevaba
+        # escrita y saltándose desde siempre por falta de este servicio.
+        env:
+          COTIZAT_TEST_ADMIN_DATABASE_URL: postgresql+psycopg://postgres@localhost:5432/postgres
+        run: pytest -q tests/test_postgresql_rls.py tests/test_rls_postgres.py
