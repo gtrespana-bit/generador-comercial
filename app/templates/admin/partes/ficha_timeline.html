@@ -4,15 +4,15 @@
 
 <div class="timeline-cabecera">
   <div>
-    <h2 style="margin:0 0 4px 0;">Timeline de {{ ficha.organizacion.nombre }}</h2>
-    <p class="muted" style="margin:0;">
+    <h2 class="timeline-titulo">Timeline de {{ ficha.organizacion.nombre }}</h2>
+    <p class="muted timeline-subtitulo">
       {{ timeline|length }} evento{{ 's' if timeline|length != 1 else '' }} en los últimos 30 días
       · <span class="badge {{ 'badge-success' if ficha.vigente else 'badge-danger' }}">
         {{ 'Acceso vigente' if ficha.vigente else 'Sin acceso activo' }}
       </span>
     </p>
   </div>
-  <div class="timeline-filtros" style="display:flex; gap:8px; flex-wrap:wrap;">
+  <div class="timeline-filtros">
     <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'todos' else 'btn-outline' }}"
        href="?tab=timeline&filtro=todos">Todos</a>
     <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'licencia' else 'btn-outline' }}"

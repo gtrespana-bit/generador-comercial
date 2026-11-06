@@ -34,7 +34,7 @@
   {% if alertas_criticas %}
   <div class="alerta-banda">
     <div class="alerta-banda-cabecera">
-      <h2 style="margin:0;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.06em;">Requiere tu atención ahora</h2>
+      <h2 class="alerta-banda-titulo">Requiere tu atención ahora</h2>
       <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver todas las alertas</a>
     </div>
     <div class="alerta-banda-items">
@@ -58,7 +58,7 @@
   {% else %}
   <div class="alerta-banda alerta-banda-vacia">
     <div class="alerta-banda-cabecera">
-      <h2 style="margin:0;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.06em;">Requiere tu atención ahora</h2>
+      <h2 class="alerta-banda-titulo">Requiere tu atención ahora</h2>
     </div>
     <div class="alerta-item alerta-success">
       <span class="alerta-punto alerta-punto-success" aria-hidden="true"></span>
@@ -111,6 +111,18 @@
         {% else %}
         <span class="kpi-anterior">Sin dato mes anterior</span>
         {% endif %}
+      </div>
+    </a>
+
+    {# Ventas del mes #}
+    <a class="kpi-card enlaza" href="/admin/ingresos?tab=ventas">
+      <div class="kpi-meta">
+        <span class="kpi-titulo">Ventas del mes</span>
+        <span class="kpi-periodo">cerradas este mes</span>
+      </div>
+      <div class="kpi-valor">{{ ventas.kpis.ventas_mes }}</div>
+      <div class="kpi-comparativa">
+        <span class="kpi-anterior">{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$ cobrados</span>
       </div>
     </a>
 
@@ -282,7 +294,7 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>Van a vencer</h2>
+          <h2>Clientes por vencer</h2>
           <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=renovaciones">Ver el mes completo</a>
         </div>
         <div class="table-container">
@@ -307,6 +319,54 @@
               {% endfor %}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Últimas ventas</h2>
+          <div class="card-header-acc">
+            {% if ventas.kpis.ventas_hoy %}
+            <span class="badge badge-success">{{ ventas.kpis.ventas_hoy }} hoy</span>
+            {% endif %}
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=ventas">Libro de ventas</a>
+          </div>
+        </div>
+        {% for v in ultimas_ventas %}
+        <div class="venta-item">
+          <div class="venta-importe">
+            <b>{{ "%.2f"|format(v.importe) }}</b>
+            <small>{{ v.moneda }}</small>
+          </div>
+          <div class="venta-info">
+            <b>
+              <a href="{{ v.url_cliente }}">{{ v.organizacion_nombre }}</a>
+              {% if v.es_novedad %}<span class="badge badge-warning">Nueva</span>{% endif %}
+            </b>
+            <small>
+              {{ v.plan_nombre }} · {{ v.metodo_nombre }}
+              {% if v.renovacion %}· renovación{% endif %}
+              · {{ v.fecha.strftime('%d/%m/%Y %H:%M') }}
+            </small>
+          </div>
+          <div class="venta-acc">
+            <span class="badge {{ 'badge-success' if v.automatica else 'badge-info' }}">
+              {{ 'Automática' if v.automatica else 'Manual' }}
+            </span>
+          </div>
+        </div>
+        {% else %}
+        <div class="vacio">
+          <b>Todavía no hay ventas confirmadas.</b>
+          <p>Cuando alguien pague con tarjeta (lo confirma Stripe) o actives un comprobante en «Compras por revisar», la venta aparece aquí y en el libro completo.</p>
+          <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras">Compras por revisar</a>
+        </div>
+        {% endfor %}
+        <div class="card-pie">
+          <span class="muted-note">
+            Este mes: <b>{{ ventas.kpis.ventas_mes }}</b> venta(s) ·
+            <b>{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$</b>
+          </span>
         </div>
       </div>
     </div>
@@ -338,6 +398,28 @@
             <b>Sin empresas en riesgo de baja.</b>
             <p>Todas las empresas con licencia de pago han usado el producto en los últimos 14 días.</p>
           </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Buzón de soporte</h2>
+          <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=soporte">Abrir</a>
+        </div>
+        <div class="card-body">
+          {% if soporte.nuevo %}
+          <p class="soporte-aviso"><b>{{ soporte.nuevo }} mensaje(s) sin atender.</b></p>
+          <ul class="lista-registros">
+            {% for m in soporte_ultimos %}
+            <li>
+              <b>{{ m.etiqueta_tipo }} · {{ m.nombre or m.email }}</b>
+              <small class="muted">{{ (m.asunto or m.mensaje)[:80] }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="muted-note">Nada pendiente. {{ soporte.todos }} mensaje(s) recibidos en total.</p>
           {% endif %}
         </div>
       </div>

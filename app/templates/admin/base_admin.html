@@ -1106,6 +1106,26 @@
     .sidebar-favoritas {
       margin: 20px 0 0 0;
     }
+    /* Estilos que estaban en línea en las plantillas del rediseño: con la CSP
+       vigente sólo valen las clases de este bloque de estilos. */
+    .alerta-banda-titulo {
+      margin: 0;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .timeline-titulo { margin: 0 0 4px 0; }
+    .timeline-subtitulo { margin: 0; }
+    .timeline-filtros { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Título de grupo del sidebar (antes iba en línea, que la CSP bloquea). */
+    .sidebar-grupo-titulo {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 0 0 8px 14px;
+    }
     .sidebar-favoritas .nav-item {
       font-size: 0.82rem;
     }
@@ -1231,7 +1251,7 @@
 
     {% if vistas_favoritas %}
     <div class="sidebar-favoritas">
-      <h3 style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin:0 0 8px 14px;">Favoritas</h3>
+      <h3 class="sidebar-grupo-titulo">Favoritas</h3>
       <nav class="sidebar-nav">
         {% for v in vistas_favoritas %}
         <a class="nav-item" href="{{ v.url }}" title="{{ v.nombre }}">

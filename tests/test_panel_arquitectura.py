@@ -171,7 +171,10 @@ def test_las_pestanas_de_la_ficha_no_dependen_del_area():
     assert pestana_ficha_valida("cobros") == "cobros"
     assert pestana_ficha_valida("presupuestos") == "presupuestos"
     assert pestana_ficha_valida("inventada") == "resumen"
-    assert len(FICHA_PESTANAS) == 6
+    # Seis pestañas históricas + el timeline unificado del punto 3.
+    assert [p.id for p in FICHA_PESTANAS] == [
+        "resumen", "timeline", "presupuestos", "acceso", "cobros", "gestion", "actividad",
+    ]
 
 
 def test_el_breadcrumb_sale_del_mapa_no_de_cada_plantilla():

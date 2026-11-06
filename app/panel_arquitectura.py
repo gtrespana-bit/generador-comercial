@@ -28,6 +28,8 @@ import re
 from dataclasses import dataclass
 from urllib.parse import parse_qs, urlsplit
 
+from .models import ROLES_OPERADOR
+
 #: Trazado SVG (viewBox 0 0 24 24, trazo, sin relleno) de cada icono del menú.
 #: Se guardan aquí y no en las plantillas para que el sidebar se dibuje solo a
 #: partir de la definición de secciones.
@@ -73,8 +75,13 @@ ICONOS: dict[str, tuple[str, ...]] = {
 }
 
 
-#: Roles que no ven ninguna sección del panel (se usa como valor por omisión
-#: cuando no se especifica roles_permitidos: todos los roles operadores válidos).
+#: Valor por omisión de ``roles_permitidos``: todos los roles operadores
+#: válidos (es decir, sin restricción; ver ``_rol_permite``).
+#:
+#: El import de ``ROLES_OPERADOR`` es obligatorio: usarlo sin importarlo fue el
+#: ``NameError`` de nivel de módulo del 05/11/2026 que impidió construir
+#: ``app.main`` —y con ello tumbó **todas** las rutas, no solo el panel—.
+#: ``tests/test_humo_panel.py`` arranca la app para que no vuelva a pasar.
 ROLES_TODOS = ROLES_OPERADOR
 
 
@@ -120,12 +127,19 @@ class Seccion:
 def _rol_permite(rol: str | None, roles_permitidos: tuple[str, ...]) -> bool:
     """Indica si un rol puede ver un elemento con ``roles_permitidos``.
 
-    Tupla vacía significa «todos los roles autenticados». Si no hay rol
-    (sesión no operadora), nunca se permite.
+    Este filtro es de **presentación**: decide qué enlaces del menú y qué
+    pestañas se enseñan. La autorización de verdad —quién puede entrar y qué
+    puede escribir— la deciden ``get_operator_db`` + ``es_operador``,
+    ``exigir_rol`` y las políticas RLS; nunca esta función.
+
+    Tupla vacía significa «todos los roles». Sin rol declarado tampoco se
+    filtra: devolver ``False`` dejaba el sidebar vacío y rompía la ficha con
+    ``TemplateNotFound: 'admin/partes/ficha_.html'`` (500 del 05/11/2026 cuando
+    la sesión no traía ``operador_rol``).
     """
-    if not rol:
-        return False
     if not roles_permitidos:
+        return True
+    if not rol:
         return True
     return rol in roles_permitidos
 
@@ -371,7 +385,11 @@ def pestana_ficha_valida(pestana: str, rol: str | None = None) -> str:
     for definida in definidas:
         if definida.id == pedida:
             return definida.id
-    return definidas[0].id if definidas else ""
+    if definidas:
+        return definidas[0].id
+    # Sin ninguna pestaña visible se usa la primera definida: un id vacío se
+    # convierte en ``admin/partes/ficha_.html`` y tira la ficha con un 500.
+    return FICHA_PESTANAS[0].id
 
 
 def ficha_pestanas_panel(
@@ -440,7 +458,14 @@ def pestana_valida(seccion_id: str, pestana: str, rol: str | None = None) -> str
     for definida in definidas:
         if definida.id == pedida:
             return definida.id
-    return definidas[0].id if definidas else ""
+    if definidas:
+        return definidas[0].id
+    # Mismo criterio que en la ficha: sin pestañas visibles se usa la primera
+    # definida para que la plantilla exista siempre.
+    try:
+        return seccion(seccion_id).pestanas[0].id
+    except (KeyError, IndexError):
+        return ""
 
 
 def ruta_panel(seccion_id: str, pestana: str = "") -> str:

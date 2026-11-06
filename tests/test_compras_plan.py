@@ -620,6 +620,12 @@ def _operador_override(db, email, es_operador_flag):
             raise OrganizationAccessDenied("No tienes acceso a esta sección.")
         db.info["auth_email"] = email
         db.info["es_operador"] = True
+        # El rol viaja en la sesión, como hace `_establecer_contexto_identidad`.
+        from app.operadores import rol_operador
+
+        db.info["operador_rol"] = rol_operador(
+            email, email_verificado=identidad.email_verified, db=db
+        )
         try:
             yield db
         finally:
