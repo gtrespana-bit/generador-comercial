@@ -1,8 +1,207 @@
 {
-  "_comentario": "Texto propio del mercado de México.",
+  "_comentario": "Texto propio del mercado. Solo se anuncia a buscadores la partida con titulo y descripcion validos (>=120 caracteres) y distintos del español. Lo que no cumpla eso es un borrador: no enciende nada.",
   "_mercado": "MX",
   "_revision": "2026-11-06",
   "partidas": {
+    "02.01.01.010": {
+      "titulo": "Demolición de losa de cimentación de concreto armado, con equipo hidráulico",
+      "descripcion": "Demolición de losa de cimentación de concreto armado con martillo hidráulico montado en retroexcavadora, troceando el concreto y cortando el acero con oxicorte. Incluye la revisión previa de que no haya instalaciones enterradas en servicio, el corte perimetral que separa la losa de lo que se conserva, la fragmentación, el acopio del escombro y la limpieza del terreno. No incluye el acarreo al tiro ni el pago de la descarga. Se cuantifica por metro cúbico realmente demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.020": {
+      "titulo": "Demolición de trabe de liga, viga de riostra o muro de contención de concreto",
+      "descripcion": "Demolición de viga de riostra, trabe de liga o murete de contención de concreto armado con martillo neumático y corte del acero. Incluye el apuntalamiento provisional de lo que ese elemento sostiene —una riostra suele amarrar dos dados, y quitarla sin apuntalar mueve la cimentación—, el corte de extremos, la fragmentación del concreto, el acopio y la limpieza. No incluye el acarreo al tiro. Se cuantifica por metro cúbico realmente demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.030": {
+      "titulo": "Demolición de zapata o dado de concreto armado",
+      "descripcion": "Demolición de zapata aislada o pedestal de concreto armado con martillo neumático y corte de la armadura. Incluye el despalme alrededor para ver el elemento completo, la demolición desde el perímetro hacia el centro, el corte del acero, el acopio del escombro y el relleno y compactación del hueco cuando el proyecto lo pide. No incluye el acarreo al tiro. Se cuantifica por metro cúbico realmente demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.040": {
+      "titulo": "Demolición de muro de sótano de concreto armado, por bataches",
+      "descripcion": "Demolición de muro de sótano o de contención de concreto armado con medios mecánicos y corte de acero. Aquí la demolición se hace por bataches y con apuntalamiento previo: el muro está conteniendo tierra y, si se tumba de golpe, se lleva el terreno de al lado. Incluye el apuntalamiento, la demolición por tramos alternados, el corte del acero y el retiro del escombro. No incluye el acarreo al tiro. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.050": {
+      "titulo": "Demolición de losa de cimentación por franjas",
+      "descripcion": "Demolición de platea o losa de cimentación de concreto armado con medios mecánicos, por franjas alternadas para no dejar la estructura sin apoyo de una vez. Incluye el corte perimetral, el corte del acero, la demolición por franjas y la retirada del escombro al acopio. No incluye el acarreo al tiro. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.060": {
+      "titulo": "Corte y demolición de viga de cimentación",
+      "descripcion": "Corte y demolición de viga de cimentación o de riostra, con corte de acero y demolición mecánica. Incluye el corte de los extremos con disco de diamante para dejar el plano limpio, el despunte del concreto, el corte de la armadura y la retirada del escombro. Se cuantifica por metro lineal demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.070": {
+      "titulo": "Demolición de cabezal de pilote",
+      "descripcion": "Demolición del cabezal de pilote de concreto armado, con medios mecánicos y remate a mano. Incluye el picado del concreto hasta dejar expuesta la armadura del pilote, el corte del acero del cabezal sin dañar el refuerzo que se va a reaprovechar, la nivelación del remate y la retirada del escombro. El remate se hace a mano para no fracturar el pilote. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.080": {
+      "titulo": "Demolición de cimentación de mampostería de piedra",
+      "descripcion": "Demolición de cimentación de mampostería de piedra braza o de tabique con medios mecánicos. Incluye la demolición, la separación de la piedra que se pueda reutilizar, el acopio del escombro y la limpieza. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.090": {
+      "titulo": "Corte de muro de cimentación con disco de diamante",
+      "descripcion": "Corte de muro de cimentación con disco de diamante, para abrir hueco de paso o separar un tramo antes de demoler. Incluye el replanteo del corte a plomo y a nivel, el corte con agua o en seco con captación de polvo y la limpieza del lodo. Se cuantifica por metro lineal cortado.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MQ-CORT-AGUA": "Cortadora con disco de diamante y agua",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.100": {
+      "titulo": "Demolición de sobrecimiento o arranque de muro de concreto",
+      "descripcion": "Demolición de sobrecimiento o arranque de muro de concreto con medios mecánicos. Incluye la demolición por tramos, el troceo del material, el acopio en sacos y la limpieza del área. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.110": {
+      "titulo": "Demolición de base de concreto ciclópeo",
+      "descripcion": "Demolición de base de concreto ciclópeo (concreto con piedra braza) con medios mecánicos. Este concreto rompe distinto al armado: la piedra se desprende en bloques y hay que trocearla aparte. Incluye la demolición, el troceo, el acopio del escombro y la limpieza. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.120": {
+      "titulo": "Apertura de hueco en losa de cimentación para paso de instalaciones",
+      "descripcion": "Apertura de hueco en losa de cimentación para paso de instalaciones, con corte perimetral y demolición del paño. Incluye el replanteo del hueco según el plano de instalaciones, el corte con disco de diamante y agua, la demolición del interior con martillo, el corte del acero que aparezca y el retiro del escombro. Se cuantifica por metro cuadrado de hueco.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-CORT-AGUA": "Cortadora con disco de diamante y agua",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.130": {
+      "titulo": "Demolición de muro de piedra de cimentación",
+      "descripcion": "Demolición de muro de piedra braza de cimentación con medios mecánicos. Incluye la demolición de arriba hacia abajo, el retiro de la piedra suelta, el acopio del escombro y la limpieza. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.140": {
+      "titulo": "Desmontaje y retiro de cimbra perdida en cimentación",
+      "descripcion": "Desmontaje y retiro de cimbra perdida o de restos de madera embebidos en la cimentación. Incluye el corte de la madera que sobresale, el retiro de los restos y la limpieza de la zona. La madera dejada dentro se pudre y deja hueco: se retira antes de cualquier reparación. Se cuantifica por metro lineal desmontado.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-SIERRA": "Sierra circular o motosierra"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.150": {
+      "titulo": "Demolición de cadena de cerramiento o amarre de cimentación",
+      "descripcion": "Demolición de cadena de cerramiento o amarre de cimentación, con corte de acero. Incluye el corte del acero de la cadena, la demolición del concreto, el troceo y la retirada del escombro. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.160": {
+      "titulo": "Demolición de pedestal de concreto armado",
+      "descripcion": "Demolición de pedestal de concreto armado con medios mecánicos. Incluye el corte del acero, la demolición del concreto desde el remate hacia abajo, el troceo y la retirada del escombro al acopio. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.170": {
+      "titulo": "Demolición de losa de piso de sótano",
+      "descripcion": "Demolición de losa de piso de sótano o de cimentación con medios mecánicos. Incluye el corte perimetral para no dañar muros ni dados, la demolición por paños, el corte del acero y la retirada del escombro. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-OXI-CONS": "Consumibles de oxicorte (oxígeno, acetileno, boquillas)",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.01.01.180": {
+      "titulo": "Demolición de contrapiso o relleno de cimentación",
+      "descripcion": "Demolición de contrapiso o de relleno de cimentación con medios mecánicos. Incluye la demolición, la separación del material de relleno aprovechable, el acopio y la limpieza. Se cuantifica por metro cúbico demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de corte y demolición",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-RETRO": "Retroexcavadora con martillo hidráulico"
+      },
+      "revisado": "2026-11-06"
+    },
     "02.04.01.010": {
       "titulo": "Demolición de muro de block o tabique, con sus aplanados",
       "descripcion": "Demolición de muro interior no estructural de block de concreto o tabique, incluyendo el aplanado de ambas caras, con martillo demoledor eléctrico y sin comprometer la estabilidad de los elementos vecinos. Incluye revisar antes que el muro no sea de carga y que no tenga instalaciones en servicio, proteger el entorno con plástico y cartón, apuntalar donde haga falta, trocear el escombro a tamaño manejable, sacarlo en sacos de rafia hasta el sitio de acopio y dejar limpia el área. No incluye el acarreo al tiro ni el pago de la descarga. Se cuantifica por metro cuadrado realmente demolido.",
@@ -217,6 +416,550 @@
       },
       "revisado": "2026-11-06"
     },
+    "05.06.01.010": {
+      "titulo": "Cimbra de losa maciza con tablero y puntales, incluye descimbrado",
+      "descripcion": "Cimbra de losa maciza con tablero de triplay sobre barrotes, soleras y puntales metálicos telescópicos, nivelada y engrasada antes del armado. Incluye el trazo de ejes y niveles, el apuntalamiento sobre durmientes de reparto, la colocación de la cimbra y sus contraflechas, el desmoldante, el descimbrado escalonado hasta que el concreto alcanza la resistencia de proyecto y la limpieza y acopio del material. Se cuantifica por metro cuadrado de cimbra en contacto con el concreto.",
+      "recursos": {
+        "MT-FORM-MADERA": "Tablero de cimbra (triplay de 16 mm) con barrote y solera",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-CLAVOS": "Clavos y alambre recocido",
+        "MT-DESMOLD": "Desmoldante para cimbra"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.020": {
+      "titulo": "Acero de refuerzo en losa maciza, habilitado y armado en su sitio",
+      "descripcion": "Habilitado y armado del acero de refuerzo de losa maciza con varilla corrugada grado 42: corte, doblado, amarres con alambre recocido y colocación con los separadores que garantizan el recubrimiento. Incluye el trazo de la separación de varillas, los bastones y refuerzos sobre apoyos, el refuerzo perimetral de los huecos y la revisión de la posición del armado justo antes del colado, que es donde se mueve todo. Se cuantifica por kilogramo de acero realmente colocado.",
+      "recursos": {
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MT-ALAMBRE": "Alambre recocido para amarres",
+        "MT-SEPARADOR": "Separadores (calzas) para recubrimiento",
+        "MQ-CIZALLA": "Cizalla o cortadora de varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.030": {
+      "titulo": "Colado de losa maciza con concreto premezclado f'c=250 kg/cm²",
+      "descripcion": "Suministro y colado de concreto premezclado f'c=250 kg/cm² en losa maciza de entrepiso o techo, con bomba y vibrado de aguja. Incluye el colado por franjas, la compactación con vibrador sin sobrevibrar, el regleado a la cota con maestras, el flotado de la superficie, el curado con membrana o agua durante los primeros días y la protección contra secado rápido por sol o viento. Se cuantifica por metro cúbico según las dimensiones de proyecto.",
+      "recursos": {
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-CURADOR": "Membrana de curado",
+        "MQ-VIBRADOR": "Vibrador de aguja",
+        "MQ-BOMBA-CONC": "Bomba de concreto"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.040": {
+      "titulo": "Losa nervada con casetones de arcilla, incluida loseta de compresión",
+      "descripcion": "Losa nervada de entrepiso o techo con nervios de concreto armado y casetones de arcilla de aliviano, apoyada en muros o trabes. Incluye la cimbra y el apuntalamiento, la colocación de los casetones, el armado de los nervios y de los negativos sobre apoyos, la malla electrosoldada de la loseta de compresión, el colado y vibrado, el regleado, el curado y el descimbrado escalonado. Se cuantifica por metro cuadrado de losa realmente ejecutada.",
+      "recursos": {
+        "MT-BLOQUE-ALIV": "Casetón de arcilla (block de aliviano) 15x20x40",
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MT-ALAMBRE": "Alambre recocido para amarres",
+        "MT-FORM-MADERA": "Tablero de cimbra (triplay de 16 mm) con barrote y solera",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-CLAVOS": "Clavos y alambre recocido",
+        "MT-DESMOLD": "Desmoldante para cimbra",
+        "MT-CURADOR": "Membrana de curado",
+        "MQ-VIBRADOR": "Vibrador de aguja",
+        "MQ-CIZALLA": "Cizalla o cortadora de varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.050": {
+      "titulo": "Losa nervada con casetones de poliestireno (anime), incluida loseta",
+      "descripcion": "Losa nervada de entrepiso o techo con nervios de concreto armado y casetones de poliestireno expandido, que aligeran más que el casetón de arcilla y no aportan peso muerto. Incluye la cimbra y el apuntalamiento, la colocación de los casetones siguiendo el eje de los nervios, el armado, la malla de la loseta de compresión, el colado y vibrado, el regleado, el curado y el descimbrado escalonado. Se cuantifica por metro cuadrado de losa realmente ejecutada.",
+      "recursos": {
+        "MT-ANIME-ALIV": "Casetón de poliestireno expandido (anime)",
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MT-ALAMBRE": "Alambre recocido para amarres",
+        "MT-FORM-MADERA": "Tablero de cimbra (triplay de 16 mm) con barrote y solera",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-CLAVOS": "Clavos y alambre recocido",
+        "MT-DESMOLD": "Desmoldante para cimbra",
+        "MT-CURADOR": "Membrana de curado",
+        "MQ-VIBRADOR": "Vibrador de aguja",
+        "MQ-CIZALLA": "Cizalla o cortadora de varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.060": {
+      "titulo": "Losa con viguetas pretensadas y casetones, incluida loseta de compresión",
+      "descripcion": "Losa de entrepiso o techo con viguetas prefabricadas pretensadas apoyadas en muros o trabes y casetones de aliviano entre ellas, con loseta de compresión colada en obra. Incluye el apuntalamiento provisional, la colocación de viguetas y casetones, el armado de negativos sobre apoyos, la malla de la loseta, el colado y vibrado, el curado y el desapuntalamiento escalonado. No incluye la trabe de apoyo. Se cuantifica por metro cuadrado de losa realmente ejecutada.",
+      "recursos": {
+        "MT-VIGUETA": "Vigueta pretensada de concreto",
+        "MT-BLOQUE-ALIV": "Casetón de arcilla (block de aliviano) 15x20x40",
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MT-ALAMBRE": "Alambre recocido para amarres",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-CURADOR": "Membrana de curado",
+        "MQ-VIBRADOR": "Vibrador de aguja",
+        "MQ-MONTAC": "Montacargas o grúa de pluma"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.070": {
+      "titulo": "Apuntalamiento de losa con puntales para colado y fraguado",
+      "descripcion": "Apuntalamiento de losa con puntales metálicos telescópicos sobre durmientes de reparto, dimensionado para el peso del concreto fresco más la carga de trabajo. Incluye el cálculo de la separación de puntales, la verificación de que la carga baja a un nivel con capacidad suficiente, el ajuste a la cota, la revisión durante el colado —cuando se ve si algo se está moviendo— y el desapuntalamiento escalonado. Se cuantifica por metro cuadrado de losa realmente apuntalada.",
+      "recursos": {
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-MADERA-LISTON": "Madera de listón y durmientes de reparto"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.080": {
+      "titulo": "Losa mixta con lámina colaborante sobre estructura metálica",
+      "descripcion": "Losa de entrepiso con lámina colaborante galvanizada sobre estructura metálica, con conectores de cortante soldados y malla de retracción en el concreto. Incluye el trazo y corte de la lámina, el cierre de bordes y remates, la soldadura de los conectores para que acero y concreto trabajen juntos, la malla, el colado y regleado del concreto y el curado. Sin los conectores, la lámina es solo cimbra perdida y la losa no es mixta. Se cuantifica por metro cuadrado realmente ejecutado.",
+      "recursos": {
+        "MT-STEELDECK": "Lámina colaborante galvanizada (steel deck)",
+        "MT-CONECTOR-CORTE": "Conectores de cortante (clavos Nelson)",
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MT-CURADOR": "Membrana de curado",
+        "MT-TORN-TECHO": "Tornillería autotaladrante para lámina",
+        "MQ-SOLDADORA": "Soldadora de electrodo",
+        "MQ-VIBRADOR": "Vibrador de aguja",
+        "MQ-MONTAC": "Montacargas o grúa de pluma"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.090": {
+      "titulo": "Ampliación de losa en voladizo o formación de balcón, anclada a la estructura",
+      "descripcion": "Ampliación de una losa existente en voladizo o formación de balcón, conectada a la estructura con anclaje químico. Incluye la perforación y el anclaje epóxico de las barras con la profundidad que indica el fabricante, el armado del negativo —que es lo que sostiene el voladizo—, la cimbra sobre puntales, el colado y vibrado, el curado y el desapeo escalonado. Requiere revisión estructural previa: el voladizo nuevo carga sobre la losa vieja. Se cuantifica por metro cuadrado realmente ejecutado.",
+      "recursos": {
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MT-EPOXI-ANCLA": "Adhesivo epóxico de anclaje",
+        "MT-FORM-MADERA": "Tablero de cimbra (triplay de 16 mm) con barrote y solera",
+        "MT-APEO": "Puntales metálicos telescópicos",
+        "MT-VIGA-APEO": "Largueros metálicos de apeo",
+        "MT-CLAVOS": "Clavos y alambre recocido",
+        "MT-CURADOR": "Membrana de curado",
+        "MQ-TALADRO": "Taladro con broca de diamante",
+        "MQ-CIZALLA": "Cizalla o cortadora de varilla",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.100": {
+      "titulo": "Losa nervada con casetón de arcilla, versión básica",
+      "descripcion": "Ejecución de losa nervada con casetones de arcilla de aliviano y concreto f'c=210 kg/cm². Incluye la colocación de los casetones entre nervios y el colado con vibrado, sobre la cimbra y el armado que se cotizan en sus propias partidas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-BLOQUE-ALIV": "Casetón de arcilla (block de aliviano) 15x20x40",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.110": {
+      "titulo": "Losa nervada con casetón de poliestireno, versión básica",
+      "descripcion": "Ejecución de losa nervada con casetones de poliestireno expandido, que bajan el peso propio de la losa y por tanto la carga sobre muros y trabes. Incluye la colocación de los casetones alineados al eje de los nervios y el colado con vibrado. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-ANIME-ALIV": "Casetón de poliestireno expandido (anime)",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.120": {
+      "titulo": "Losa con viguetas pretensadas, versión básica",
+      "descripcion": "Ejecución de losa con viguetas prefabricadas pretensadas, un sistema que ahorra cimbra porque la vigueta ya trae su armado y se apoya en los muros. Incluye la colocación de las viguetas a la separación de proyecto y el colado de la loseta de compresión. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-VIGUETA": "Vigueta pretensada de concreto",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.130": {
+      "titulo": "Losa mixta con lámina colaborante, versión básica",
+      "descripcion": "Ejecución de losa mixta con lámina colaborante sobre estructura metálica y concreto f'c=210 kg/cm². Incluye la colocación de la lámina, la malla electrosoldada de retracción y el colado con vibrado. Los conectores de cortante y la soldadura se cotizan aparte. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-STEELDECK": "Lámina colaborante galvanizada (steel deck)",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.150": {
+      "titulo": "Losa aligerada con anime (poliestireno)",
+      "descripcion": "Ejecución de losa aligerada con casetones de anime de poliestireno, el aligerante más ligero de los tres habituales. Incluye la colocación de los casetones y el colado. Al ser tan ligero, hay que lastrarlo o fijarlo antes del colado: tiende a flotar con el concreto fresco. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-ANIME-ALIV": "Casetón de poliestireno expandido (anime)",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.160": {
+      "titulo": "Losa de entrepiso con aislamiento térmico incorporado",
+      "descripcion": "Ejecución de losa de entrepiso con capa de aislamiento térmico de poliestireno expandido y malla electrosoldada. Incluye la colocación del aislamiento y el colado. Sirve para separar térmicamente un entrepiso de una cubierta o de un espacio no habitable. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-POLIESTIRENO-EXT": "Poliestireno expandido para aislamiento",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.190": {
+      "titulo": "Losa de concreto aligerada con casetones, versión básica",
+      "descripcion": "Ejecución de losa de concreto aligerada con casetones, con concreto f'c=210 kg/cm² y el armado de los nervios. Incluye la colocación de los casetones y el colado con vibrado. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-BLOQUE-ALIV": "Casetón de arcilla (block de aliviano) 15x20x40",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.200": {
+      "titulo": "Losa de techo con viguetas y casetones",
+      "descripcion": "Ejecución de losa de techo (azotea) con viguetas pretensadas y casetones de aliviano. Incluye la colocación del sistema y el colado. En techo, el cuidado del curado pesa más que en entrepiso: la cara superior está expuesta al sol y al viento desde el primer día. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-VIGUETA": "Vigueta pretensada de concreto",
+        "MT-BLOQUE-ALIV": "Casetón de arcilla (block de aliviano) 15x20x40",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.210": {
+      "titulo": "Losa de concreto con acero de temperatura",
+      "descripcion": "Ejecución de losa de concreto f'c=210 kg/cm² con armado de temperatura, el mínimo que lleva una losa que no trabaja a flexión y solo debe controlar la contracción. Incluye el acero y el colado con vibrado. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.220": {
+      "titulo": "Losa de concreto aligerada con casetones de poliestireno",
+      "descripcion": "Ejecución de losa de concreto aligerada con casetones de poliestireno (anime), con concreto f'c=210 kg/cm² y armado en los nervios. Incluye la colocación de los casetones y el colado con vibrado. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-ANIME-ALIV": "Casetón de poliestireno expandido (anime)",
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-ACERO-CAB": "Varilla corrugada grado 42 para refuerzo",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.230": {
+      "titulo": "Losa de entrepiso con malla electrosoldada",
+      "descripcion": "Ejecución de losa de entrepiso de concreto f'c=250 kg/cm² reforzada con malla electrosoldada 6x6-10/10, para losas de poco claro y carga ligera. Incluye la colocación de la malla sobre separadores y el colado con vibrado. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MT-CONC-250": "Concreto premezclado f'c=250 kg/cm²",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "05.06.01.250": {
+      "titulo": "Losa de concreto con pendiente de evacuación",
+      "descripcion": "Ejecución de losa de concreto con pendiente formada en el colado, para azotea o cubierta que recibe impermeabilización. Incluye la formación de la pendiente hacia los drenajes con maestras a la cota, la malla electrosoldada y el colado. Una pendiente mal hecha se convierte en encharcamiento y el encharcamiento se lleva la membrana. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-CONC-210": "Concreto premezclado f'c=210 kg/cm²",
+        "MT-MALLA-ELEC": "Malla electrosoldada 6x6-10/10",
+        "MQ-VIBRADOR": "Vibrador de aguja"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.010": {
+      "titulo": "Impermeabilización de piso de baño o regadera con membrana cementosa, bajo el recubrimiento",
+      "descripcion": "Impermeabilización del piso de baño, regadera o lavadero con membrana cementosa flexible de dos componentes, aplicada con brocha y llana antes de colocar la loseta. Incluye el chaflán o media caña en las esquinas, la banda de refuerzo embebida en el encuentro de piso con muro y en la base del brocal, el collarín sellado alrededor de la coladera, dos manos cruzadas y la prueba de estanqueidad por inundación de 24 horas antes de enchapar. No incluye la loseta ni el piso de acabado. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.020": {
+      "titulo": "Impermeabilización de jardinera o maceta de obra, con capa drenante",
+      "descripcion": "Impermeabilización interior de jardinera o maceta de obra con membrana cementosa flexible y capa drenante, para que la tierra no tenga contacto directo con el concreto. Incluye el chaflán de las esquinas, las manos de membrana con remonte hasta el borde superior, el tratamiento del pase de drenaje, el geotextil de separación y la gravilla de drenaje antes del sustrato. La tierra y las plantas las pone el cliente. Se cuantifica por metro cuadrado realmente ejecutado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-GEOTEXTIL": "Geotextil no tejido de poliéster",
+        "MT-GRAVILLA": "Gravilla de río lavada para drenaje",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.030": {
+      "titulo": "Sellado de pase de tubería que atraviesa la impermeabilización",
+      "descripcion": "Sellado del paso de tubería, soporte o cualquier elemento que atraviesa la impermeabilización, con collarín pasamuros y masilla elástica. Es el punto donde más falla una impermeabilización: el refuerzo tiene que quedar embebido entre manos de membrana, no pegado encima, porque la tubería trabaja con la dilatación y con el uso. Incluye la limpieza del pase, la colocación del collarín, el refuerzo con banda, el sellado elástico compatible y la comprobación de que no queda hueco. Se cuantifica por pase realmente sellado.",
+      "recursos": {
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-CONS-DEM": "Consumibles de corte y demolición"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.040": {
+      "titulo": "Impermeabilización interior de tanque o cisterna de agua potable",
+      "descripcion": "Impermeabilización interior de tanque de agua potable con mortero cementoso apto para contacto con agua de consumo, aplicado en dos capas y curado húmedo. Es un trabajo de sanidad, no solo de estanqueidad: el producto debe estar certificado para agua potable y el lavado final no es opcional. Incluye la preparación del soporte con hidrolavado y reparación de oquedades, el chaflán de las esquinas, el curado, la prueba de estanqueidad por llenado y el lavado y desinfección antes de la puesta en servicio. Se cuantifica por metro cuadrado realmente ejecutado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MT-CONS-LIMP": "Consumibles de limpieza y desinfección",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla",
+        "MQ-HIDROLAV": "Hidrolavadora eléctrica"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.050": {
+      "titulo": "Impermeabilización de balcón o terraza transitable con membrana cementosa",
+      "descripcion": "Impermeabilización de balcón o terraza transitable con membrana cementosa flexible bajo el piso de acabado, con remonte perimetral hasta el nivel del pretil. Incluye la revisión de la pendiente de desagüe existente, la banda de refuerzo en los encuentros con muro y en el borde del pretil, el tratamiento de la salida de agua, las manos de membrana con el remonte, la prueba de estanqueidad y la protección de la membrana hasta que se recibe el piso. El piso de acabado se cotiza aparte. Se cuantifica por metro cuadrado realmente ejecutado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.060": {
+      "titulo": "Impermeabilización de muro de regadera antes del recubrimiento",
+      "descripcion": "Impermeabilización del muro de la zona de regadera con membrana cementosa flexible, previa a la colocación de la loseta. El muro recibe agua a presión y por capilaridad: aquí la membrana se aplica hasta la altura del brazo de la regadera como mínimo, no solo en la franja baja. Incluye la preparación y humedecido del soporte, el refuerzo de esquinas y del encuentro con la tina o el piso, dos manos cruzadas y el remonte en el borde de la regadera. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.070": {
+      "titulo": "Impermeabilización de piso de cocina con membrana cementosa",
+      "descripcion": "Impermeabilización del piso de cocina con membrana cementosa flexible antes del acabado, para proteger la losa de fugas de la tarja y del mueble. Incluye la preparación del soporte, el refuerzo en el encuentro con muros y en el paso de la tubería de la tarja, el collarín si hay coladera, dos manos cruzadas y la prueba de estanqueidad. No incluye el acabado de piso ni la plomería. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.080": {
+      "titulo": "Impermeabilización de piso de lavandería o cuarto de lavado",
+      "descripcion": "Impermeabilización del piso de lavandería con membrana cementosa flexible, antes de la loseta. Incluye la preparación del soporte, el refuerzo en esquinas y en el encuentro con muros, el sellado del pase de la descarga de la lavadora y de la tarja, dos manos cruzadas y la prueba de estanqueidad. En lavandería el riesgo no es el agua derramada sino la fuga lenta y continua de una conexión, que se descubre cuando el piso de abajo ya tiene mancha. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.090": {
+      "titulo": "Impermeabilización del entorno de la bañera o tina",
+      "descripcion": "Impermeabilización del entorno de la bañera con membrana cementosa flexible, previa al recubrimiento: piso, faldón y muro perimetral hasta 30 cm por encima del borde. Incluye la preparación del soporte, la banda de refuerzo en la unión de la tina con el piso y con el muro, el sellado elástico de esa junta y dos manos de membrana. El sellado de la junta tina-muro se hace con silicón sanitario y se repone cada cierto tiempo: es mantenimiento, no obra. El recubrimiento se cotiza aparte. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.100": {
+      "titulo": "Impermeabilización de piso de cuarto de máquinas o área técnica",
+      "descripcion": "Impermeabilización del piso de cuarto de máquinas o área técnica con membrana cementosa flexible, para contener derrames y goteos de equipos. Incluye la preparación del soporte, el refuerzo en esquinas y encuentros, el remonte perimetral de al menos 10 cm, el tratamiento de los pasos de tubería y la prueba de estanqueidad. No incluye el brocal ni la rejilla de contención, que se cotizan en el capítulo de drenaje. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.110": {
+      "titulo": "Sellado perimetral de regadera con banda de refuerzo",
+      "descripcion": "Sellado perimetral de la zona de regadera con banda de refuerzo en los encuentros de piso con muro, antes del recubrimiento. La banda se embebe en la membrana o se aloja en la junta y se cubre con sellador elástico, nunca con mortero rígido: la junta piso-muro se mueve y un material rígido termina abriéndose. Incluye la limpieza de la junta, la colocación de la banda, el sellado con silicón sanitario fungicida y el perfilado. Se cuantifica por metro lineal realmente sellado.",
+      "recursos": {
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SIL-SAN": "Silicón sanitario fungicida",
+        "MQ-TALADRO": "Taladro con broca de diamante"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.120": {
+      "titulo": "Impermeabilización de azotea de baño o zona húmeda",
+      "descripcion": "Impermeabilización de la azotea del baño o de una zona húmeda con membrana cementosa flexible, reforzada en las juntas del firme. Incluye la preparación del soporte, la malla de fibra de vidrio sobre las juntas y cambios de plano, las manos de membrana con el remonte perimetral y la prueba de estanqueidad. La losa de azotea trabaja con asentamientos y cambios de temperatura: por eso el refuerzo va en las juntas y no solo en las esquinas. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.130": {
+      "titulo": "Impermeabilización de piso de regadera con pendiente hacia la coladera",
+      "descripcion": "Impermeabilización del piso de regadera formando la pendiente hacia la coladera y aplicando la membrana encima. Incluye el relleno y la pendiente mínima del 1.5 % al 2 % hacia el drenaje, el chaflán perimetral, la banda de refuerzo, el collarín de la coladera, dos manos de membrana y la prueba de estanqueidad por inundación. Si la pendiente queda a favor del muro, el agua se estanca aunque la membrana esté bien puesta. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.140": {
+      "titulo": "Impermeabilización de muro de cocina antes del recubrimiento",
+      "descripcion": "Impermeabilización del muro de cocina con membrana cementosa flexible, previa a la loseta o al recubrimiento de la zona de tarja. Incluye la preparación del soporte, el refuerzo en el encuentro con la barra o la tarja, dos manos de membrana y el remonte hasta el nivel del mueble alto. Se aplica donde hay salpicadura y lavado, no en todo el muro: la zona húmeda real es la de la tarja y la estufa. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.150": {
+      "titulo": "Impermeabilización de piso de baño existente antes de renovar el acabado",
+      "descripcion": "Impermeabilización del piso de un baño existente antes de renovar la loseta, con membrana cementosa flexible sobre el firme ya preparado. Incluye la revisión del soporte y el retiro de la loseta suelta, el resane de oquedades, la banda de refuerzo en los encuentros y en el collarín de la coladera, dos manos de membrana y la prueba de estanqueidad. No incluye la demolición del piso existente, que se cotiza en el capítulo de demoliciones. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.160": {
+      "titulo": "Impermeabilización de sauna o baño de vapor con membrana de poliuretano",
+      "descripcion": "Impermeabilización de los paramentos de sauna o baño de vapor con membrana líquida de poliuretano elastomérica, aplicada sobre puente de adherencia. Aquí la membrana cementosa no basta: el vapor a temperatura alta y los ciclos de calentamiento exigen un elastómero y juntas tratadas con malla. Incluye la preparación del soporte, el puente de adherencia, la malla en juntas y cambios de plano, dos manos cruzadas y la prueba de estanqueidad. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-POLIUR-LIQ": "Membrana líquida de poliuretano elastomérica",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-RODILLO": "Rodillo de pelo corto y brocha"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.170": {
+      "titulo": "Impermeabilización de piscina interior con membrana cementosa",
+      "descripcion": "Impermeabilización de piscina interior con membrana cementosa flexible, bajo el recubrimiento cerámico. Incluye la preparación del soporte, el chaflán en todas las aristas, la banda de refuerzo en el encuentro de muro con piso y en las esquinas, la malla en juntas estructurales, dos manos cruzadas y la prueba de estanqueidad por llenado. La piscina se llena para probar antes de enchapar; si se enchapa primero, la fuga se busca rompiendo loseta. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.180": {
+      "titulo": "Impermeabilización de área de piscina o spa antes del recubrimiento",
+      "descripcion": "Impermeabilización del área de piscina o spa, incluyendo andador perimetral y zona de duchas, con membrana cementosa flexible antes del recubrimiento. Incluye la preparación del soporte, la malla en juntas, el refuerzo en todos los encuentros y aristas, el tratamiento de los pases de tubería y la prueba de estanqueidad. El andador se impermeabiliza igual que la piscina: es la parte que más se moja y la que nadie impermeabiliza. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.190": {
+      "titulo": "Impermeabilización de balcón con manta asfáltica",
+      "descripcion": "Impermeabilización de balcón con manta asfáltica prefabricada adherida con soplete o con membrana líquida, según el acceso y el riesgo de fuego en el inmueble. Incluye la imprimación asfáltica del soporte, la banda de refuerzo en encuentros y aristas, los traslapes entre rollos, el remonte perimetral y la prueba de estanqueidad. No incluye la protección pesada ni el piso de acabado encima de la manta. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MANTO-ASF": "Manta asfáltica prefabricada",
+        "MT-IMPRIM-ASF": "Imprimante asfáltico",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.200": {
+      "titulo": "Impermeabilización de zona de riego o macetero interior",
+      "descripcion": "Impermeabilización de zona de riego o macetero interior con membrana cementosa flexible, para que el riego no migre al muro ni al piso vecino. Incluye la preparación del soporte, la banda de refuerzo en el encuentro con muro y piso, el remonte perimetral, el tratamiento del pase de drenaje y dos manos de membrana. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.210": {
+      "titulo": "Impermeabilización de baño con membrana líquida de poliuretano",
+      "descripcion": "Impermeabilización de baño con membrana líquida de poliuretano elastomérica, aplicada con rodillo sobre puente de adherencia. Incluye la preparación del soporte, la malla de fibra de vidrio en juntas y cambios de plano, dos manos cruzadas con el espesor de película que indica el fabricante, el refuerzo en el encuentro con muro y en la coladera, y la prueba de estanqueidad. Es un sistema sin juntas: donde no hay costura no hay por dónde entrar el agua. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-POLIUR-LIQ": "Membrana líquida de poliuretano elastomérica",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-RODILLO": "Rodillo de pelo corto y brocha"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.220": {
+      "titulo": "Impermeabilización de cocina con membrana líquida de poliuretano",
+      "descripcion": "Impermeabilización de cocina con membrana líquida de poliuretano sobre puente de adherencia, cubriendo piso y remonte perimetral. Incluye la preparación del soporte, la malla en juntas y encuentros, el sellado de los pases de tubería, dos manos cruzadas y la prueba de estanqueidad. Se usa donde la membrana cementosa no agarra bien o donde se quiere evitar el polvo de la obra húmeda. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-POLIUR-LIQ": "Membrana líquida de poliuretano elastomérica",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-RODILLO": "Rodillo de pelo corto y brocha"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.230": {
+      "titulo": "Impermeabilización de regadera con membrana de PVC armado",
+      "descripcion": "Impermeabilización de la zona de regadera con membrana de PVC armado, fijada mecánicamente en el perímetro y sellada en los encuentros. Incluye la preparación del soporte, la colocación de la membrana con sus traslapes termosoldados o pegados, la fijación perimetral con taladro y taquete, el sellado sanitario en bordes y pases, y la prueba de estanqueidad. No incluye el mortero de protección ni la loseta. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MEMBRANA-PVC": "Membrana de PVC armado",
+        "MT-SIL-SAN": "Silicón sanitario fungicida",
+        "MQ-TALADRO": "Taladro con broca de diamante"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.240": {
+      "titulo": "Impermeabilización de cuarto húmedo o área de servicio con membrana cementosa",
+      "descripcion": "Impermeabilización de cuarto húmedo, cuarto de servicio o área de lavado con membrana cementosa flexible, en piso y remonte perimetral. Incluye la preparación del soporte, el chaflán de las esquinas, la banda de refuerzo en encuentros y en los pases de tubería, el collarín de coladera si existe, dos manos cruzadas y la prueba de estanqueidad. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.250": {
+      "titulo": "Impermeabilización de piso de baño con pendiente y membrana",
+      "descripcion": "Impermeabilización del piso de baño formando la pendiente hacia el drenaje y aplicando membrana cementosa encima. Incluye el relleno para dar la pendiente, el chaflán perimetral, la banda de refuerzo, el collarín de la coladera, dos manos de membrana y la prueba de estanqueidad por inundación. La pendiente y la membrana se hacen en la misma operación: si se corrige la pendiente después, se rompe la membrana. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Membrana cementosa flexible de dos componentes",
+        "MT-BANDA-REF": "Banda de refuerzo de malla para esquinas y encuentros",
+        "MT-SELLA-PASE": "Collarín pasamuros con sello elástico",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla"
+      },
+      "revisado": "2026-11-06"
+    },
+    "10.05.01.260": {
+      "titulo": "Impermeabilización de baño existente con membrana líquida, antes de renovar",
+      "descripcion": "Impermeabilización de un baño existente con membrana líquida de poliuretano antes de renovar el acabado, sin demoler el piso. Incluye la revisión del soporte, el resane de grietas y oquedades, el puente de adherencia, la malla en juntas y encuentros, dos manos cruzadas y la prueba de estanqueidad. Es la opción cuando el baño se remodela sin tumbar el firme. No incluye la demolición de la loseta existente. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "recursos": {
+        "MT-POLIUR-LIQ": "Membrana líquida de poliuretano elastomérica",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico",
+        "MT-MALLA-JUNTA": "Malla de fibra de vidrio para juntas y cambios de plano",
+        "MQ-RODILLO": "Rodillo de pelo corto y brocha"
+      },
+      "revisado": "2026-11-06"
+    },
     "12.05.03.010": {
       "titulo": "Piso de loseta cerámica o porcelanato de formato estándar, pegado en capa fina",
       "descripcion": "Suministro y colocación de piso con loseta cerámica o porcelanato de formato estándar, hasta 60x60 cm, sobre firme o losa previamente nivelada y limpia. Se pega en capa fina con pegazulejo mejorado tipo C2 TE aplicado con llana dentada y doble encolado en la pieza, se nivela con cuñas y crucetas desechables y se boquillea con mortero para junta tipo CG2 en el color que elija el cliente. Incluye trazo y modulación del despiece para centrar la loseta, cortes en orillas y en pasos de instalaciones, limpieza final de la superficie y retiro de recortes. La loseta la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado, descontando claros mayores a 1 m².",
@@ -286,6 +1029,645 @@
         "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
         "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
         "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.010": {
+      "titulo": "Plafón continuo de tablaroca a una placa, con bastidor oculto",
+      "descripcion": "Plafón continuo de una placa de tablaroca de 12.7 mm atornillada a bastidor oculto de perfilera galvanizada calibre 26, suspendido con alambre y omega. Incluye el trazo de niveles con manguera o nivel láser, la fijación de canales perimetrales, la modulación de los omega, la colocación de la placa con las juntas contrapeadas, el tratamiento de juntas con cinta y pasta, el lijado hasta dejar listo para pintar y la previsión de huecos de luminarias y rejillas. Se cuantifica por metro cuadrado realmente ejecutado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa",
+        "MQ-LIJAD": "Lijadora de muro con mango"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.020": {
+      "titulo": "Plafón de tablaroca con placa resistente a la humedad (verde)",
+      "descripcion": "Plafón continuo con placa de yeso resistente a la humedad de 12.7 mm sobre bastidor oculto suspendido, para baños, cocinas y lavaderos. Incluye el bastidor, la placa verde con juntas contrapeadas, el tratamiento de juntas con cinta y pasta, el lijado y la previsión de huecos. La placa verde resiste la humedad ambiente, no una fuga: si hay filtración arriba, el plafón se mancha igual. Se cuantifica por metro cuadrado realmente ejecutado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-PYL-PLACA-RH": "Placa de yeso resistente a la humedad (verde) de 12.7 mm",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa",
+        "MQ-LIJAD": "Lijadora de muro con mango",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.030": {
+      "titulo": "Plafón acústico de doble placa con lana mineral y horquillas antivibratorias",
+      "descripcion": "Plafón continuo de doble placa de tablaroca sobre bastidor suspendido con horquillas antivibratorias y panel de lana mineral en la cámara, para reducir ruido de impacto y ruido aéreo entre niveles. Incluye la suspensión elástica, la colocación de la lana, el atornillado de las dos capas con juntas contrapeadas, el tratamiento de juntas y el lijado. Se cuantifica por metro cuadrado realmente ejecutado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-LANA": "Panel de lana mineral",
+        "MT-PYL-BANDA": "Banda acústica perimetral",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa",
+        "MQ-LIJAD": "Lijadora de muro con mango",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.040": {
+      "titulo": "Foso o cajón de cortinero en plafón de tablaroca",
+      "descripcion": "Formación de foso o cajón perimetral en plafón de tablaroca para alojar cortinero, persiana o iluminación oculta. Incluye la estructura de refuerzo del cajón, el forrado con placa por sus tres caras, el remate de aristas con perfil guardacantos, el tratamiento de juntas, el lijado y la previsión del registro para el mecanismo. Se cuantifica por metro lineal realmente ejecutado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-PERFIL-REMATE": "Perfil guardacantos (esquinero metálico)",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa",
+        "MQ-LIJAD": "Lijadora de muro con mango",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.050": {
+      "titulo": "Registro practicable en plafón de tablaroca",
+      "descripcion": "Suministro y colocación de tapa de registro practicable en plafón de tablaroca, para acceso a llaves de paso, cajas de conexión o extractores. Incluye la localización exacta del elemento a registrar, el corte del hueco, el refuerzo del borde con perfilera, el montaje del marco enrasado con la placa y el ajuste de la tapa. Un plafón sin registro obliga a romper para cambiar una llave. Se cuantifica por unidad colocada.",
+      "recursos": {
+        "MT-REGISTRO": "Tapa y marco de registro practicable",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.060": {
+      "titulo": "Plafón de tablaroca a doble nivel con escalón o bandeja",
+      "descripcion": "Plafón de tablaroca con dos o más niveles, formando escalones, nichos o bandejas, con su estructura de refuerzo independiente. Incluye el trazo de ambos niveles, el bastidor del nivel inferior, el forrado, el remate de aristas con perfil, el tratamiento de juntas, el lijado y la previsión de registros e iluminación. Se cuantifica por metro cuadrado realmente ejecutado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-PERFIL-REMATE": "Perfil guardacantos (esquinero metálico)",
+        "MT-TORN": "Tornillos para placa",
+        "MQ-ATORN": "Atornilladora para placa",
+        "MQ-LIJAD": "Lijadora de muro con mango",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.070": {
+      "titulo": "Plafón continuo de tablaroca con aislamiento acústico",
+      "descripcion": "Plafón continuo de placa de tablaroca con panel de lana mineral en la cámara para aislamiento acústico. Incluye el bastidor suspendido, la colocación de la lana sobre el bastidor, la placa con juntas contrapeadas y su tratamiento. La lana va encima de la placa, no debajo: es lo que absorbe el sonido dentro de la cámara. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-LANA": "Panel de lana mineral",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.080": {
+      "titulo": "Plafón continuo de tablaroca con placa de alta dureza",
+      "descripcion": "Plafón continuo con placa de yeso de alta dureza, para zonas de tránsito, pasillos y áreas comunes donde el plafón recibe golpes. Incluye el bastidor suspendido, la placa de alta dureza y el tratamiento de juntas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA-HD": "Placa de yeso de alta dureza",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.090": {
+      "titulo": "Plafón continuo de tablaroca con placa ignífuga",
+      "descripcion": "Plafón continuo con placa de yeso resistente al fuego, para protección de estructura e instalaciones en locales con requisito de resistencia al fuego. Incluye el bastidor suspendido, la placa ignífuga y el tratamiento de juntas. El grado de protección depende del conjunto y del espesor: se toma de proyecto. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA-IG": "Placa de yeso ignífuga (roja)",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.100": {
+      "titulo": "Plafón continuo curvo de tablaroca",
+      "descripcion": "Plafón continuo curvo de placa de tablaroca, con el bastidor conformado al radio del diseño. Incluye la plantilla del trazo, la estructura curva con perfilera cortada y doblada, la placa humedecida y conformada o placa de espesor delgado, y el tratamiento de juntas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.110": {
+      "titulo": "Cenefa o foso de iluminación indirecta en plafón",
+      "descripcion": "Ejecución de cenefa o foso perimetral integrado en el plafón de tablaroca para iluminación indirecta. Incluye la estructura del foso, el forrado con placa, el remate interior del canto, el tratamiento de juntas y la previsión del espacio para la tira LED y su fuente. Se cuantifica por metro lineal de cenefa.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.120": {
+      "titulo": "Plafón continuo de tablaroca a una pendiente",
+      "descripcion": "Plafón continuo de tablaroca inclinado a una pendiente, con el bastidor conformado al faldón. Incluye el trazo de la pendiente, la estructura inclinada con sus amarres, la placa y el tratamiento de juntas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.130": {
+      "titulo": "Plafón de placa de cemento en área húmeda",
+      "descripcion": "Plafón continuo de placa de cemento reforzada con fibra para baños, regaderas y áreas húmedas, donde la placa de yeso no aguanta. Incluye el bastidor suspendido, la placa de cemento atornillada, el sellado de juntas con pasta y cinta resistente al agua y la previsión de huecos. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PLACA-CEM": "Placa de cemento reforzada con fibra",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.140": {
+      "titulo": "Reparación de plafón de tablaroca dañado",
+      "descripcion": "Reparación de plafón de tablaroca dañado por humedad, golpe o anclaje fallido, con sustitución de la zona afectada. Incluye el corte del paño dañado hasta llegar a placa sana, el refuerzo del borde, la reposición de la placa, el tratamiento de juntas y el lijado. Se cuantifica por metro cuadrado reparado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-LIJAD": "Lijadora de muro con mango"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.150": {
+      "titulo": "Plafón continuo de doble placa con aislamiento térmico y acústico",
+      "descripcion": "Plafón continuo de doble placa de tablaroca con panel de lana mineral, para aislamiento acústico y térmico reforzado. Incluye la estructura suspendida, la lana en la cámara, la doble placa con juntas contrapeadas y el tratamiento de juntas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-LANA": "Panel de lana mineral",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.160": {
+      "titulo": "Plafón continuo con placa de yeso perforada acústica",
+      "descripcion": "Plafón continuo con placa de yeso perforada para absorción acústica, en locales donde importa el tiempo de reverberación: salas de juntas, aulas, consultorios. Incluye la estructura suspendida, la cámara con lana mineral detrás de la perforación, la placa perforada y el tratamiento de juntas. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-LANA": "Panel de lana mineral",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.170": {
+      "titulo": "Plafón continuo de placa de cemento en voladizo exterior",
+      "descripcion": "Plafón continuo de placa de cemento reforzada con fibra en voladizo, alero o pórtico exterior, donde el plafón ve lluvia y sol. Incluye la estructura con sus anclajes al muro, la placa de cemento, el sellado de juntas con producto para exterior y el remate perimetral. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PLACA-CEM": "Placa de cemento reforzada con fibra",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.180": {
+      "titulo": "Plafón continuo con foso integrado para iluminación empotrada",
+      "descripcion": "Plafón continuo de tablaroca con foso integrado para luminarias empotradas. Incluye la estructura, la formación del foso o nicho por luminaria, el forrado, el tratamiento de juntas y la previsión de la caja de conexión accesible. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.190": {
+      "titulo": "Plafón continuo de tablaroca a doble altura",
+      "descripcion": "Plafón continuo de tablaroca en espacio a doble altura, con estructura y placa en el nivel superior. Incluye la estructura con sus anclajes a muro o trabe, la placa, el tratamiento de juntas y el andamiaje necesario para trabajar arriba. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.200": {
+      "titulo": "Remate decorativo perimetral de plafón",
+      "descripcion": "Colocación de remate decorativo perimetral de plafón con perfil o moldura, para resolver la junta entre placa y muro. Incluye la fijación del remate con adhesivo y pijas, el resane de la unión y el acabado. Se cuantifica por metro lineal de remate.",
+      "recursos": {
+        "MT-PERFIL-REMATE": "Perfil guardacantos (esquinero metálico)",
+        "MT-PLO-SOP": "Perfil o moldura de remate",
+        "MQ-TALADRO": "Taladro con broca de diamante"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.210": {
+      "titulo": "Plafón de tablaroca en foso de escalera",
+      "descripcion": "Plafón continuo de tablaroca en el foso de la escalera, con estructura y placa adaptadas a la geometría y a la altura. Incluye la estructura, la placa, el tratamiento de juntas y el andamiaje. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.220": {
+      "titulo": "Plafón continuo con junta de dilatación",
+      "descripcion": "Plafón continuo de tablaroca con junta de dilatación perimetral o intermedia en paños grandes. Incluye la estructura, la placa, el perfil de junta de dilatación y el tratamiento de juntas. En paños largos la junta evita que el plafón se agriete por movimiento térmico. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-JUNTA-DILAT": "Perfil de junta de dilatación",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.230": {
+      "titulo": "Plafón de tablaroca con placa antihumedad en baño",
+      "descripcion": "Plafón continuo de placa de yeso resistente a la humedad en baño, con estructura y placa. Incluye el bastidor suspendido, la placa verde, el sellado perimetral y el tratamiento de juntas. En baño conviene dejar registro del extractor y de la ventilación. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA-RH": "Placa de yeso resistente a la humedad (verde) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.240": {
+      "titulo": "Plafón de tablaroca con lucernario o domo",
+      "descripcion": "Plafón continuo de tablaroca con marco y remate para lucernario o domo. Incluye la estructura reforzada alrededor del hueco, la placa, el marco del lucernario, el tratamiento de juntas y el sellado del encuentro con el domo. Se cuantifica por metro cuadrado ejecutado; el domo se cotiza aparte.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-DOMO": "Domo o lucernario con marco",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.250": {
+      "titulo": "Plafón continuo de tablaroca con tapa de registro",
+      "descripcion": "Plafón continuo de tablaroca con tapa de registro practicable para inspección. Incluye la estructura, la placa, el registro con su marco enrasado y el tratamiento de juntas alrededor. Se cuantifica por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PERF-CR": "Perfilera galvanizada calibre 26 (canal, poste y omega)",
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-REGISTRO": "Tapa y marco de registro practicable",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-ATORN": "Atornilladora para placa"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.08.01.260": {
+      "titulo": "Reparación de plafón con sustitución de placa",
+      "descripcion": "Reparación de plafón continuo con sustitución de la placa dañada y tratamiento de juntas. Incluye el corte del paño, el retiro de la placa vieja, la revisión de la estructura y de la causa del daño, la reposición y el acabado. Si el daño viene de una fuga, primero se resuelve la fuga. Se cuantifica por metro cuadrado reparado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de yeso (tablaroca) de 12.7 mm",
+        "MT-PYL-PASTA": "Pasta para juntas y cinta de papel",
+        "MT-TORN-TECHO": "Tornillos y alambre galvanizado para colgar",
+        "MQ-LIJAD": "Lijadora de muro con mango"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.010": {
+      "titulo": "Pintura vinílica mate lavable en muro interior, dos manos",
+      "descripcion": "Aplicación de dos manos de pintura vinílica acrílica mate lavable sobre muro interior ya preparado, con sellador previo en soportes nuevos o porosos. Incluye la limpieza y el lijado ligero del sustrato, el resane de faltantes, la protección de pisos y zoclos, el corte con brocha en esquinas, techos y marcos, la aplicación con rodillo en manos cruzadas, los repasos finales y la limpieza del área. El color lo elige el cliente. Se cuantifica por metro cuadrado realmente pintado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.020": {
+      "titulo": "Pintura vinílica satinada lavable en interior, dos manos",
+      "descripcion": "Aplicación de dos manos de pintura vinílica satinada lavable sobre muro interior preparado. El acabado satinado se ve más parejo y aguanta el trapo, a cambio de marcar mejor las imperfecciones del aplanado: por eso el resane y el lijado previo pesan más que en mate. Incluye la preparación del soporte, el corte a brocha en encuentros, la aplicación con rodillo en manos cruzadas, el lijado suave intermedio y los repasos finales. Se cuantifica por metro cuadrado realmente pintado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.030": {
+      "titulo": "Pintura de plafón a dos manos, con protección integral del espacio",
+      "descripcion": "Aplicación de dos manos de pintura sobre plafón ya preparado, con rodillo de mango extensible y brocha para el perímetro. Incluye la protección completa del mobiliario y de los pisos con plástico y cartón, el corte del perímetro contra el muro, la aplicación en manos cruzadas y los repasos finales. Pintar un plafón salpica hacia abajo: la protección no es un extra, es parte del trabajo. Se cuantifica por metro cuadrado realmente pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MT-PROT-OBRA": "Protección de áreas con plástico, cartón y cinta",
+        "MQ-RODILLO": "Rodillo, brocha y charola",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.040": {
+      "titulo": "Pintura vinílica sobre aplanado nuevo, con sellador y tres manos",
+      "descripcion": "Aplicación de pintura vinílica sobre aplanado de yeso o mortero nuevo, con sellador 5x1 y tres manos de acabado. El aplanado nuevo chupa pintura de forma desigual y el primer brochazo se nota: el sellador y la tercera mano son los que emparejan el tono. Incluye la aplicación del fondo, las tres manos de pintura, el lijado entre manos y la protección de pisos y carpintería. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.050": {
+      "titulo": "Repintado de muro interior sobre pintura existente en buen estado",
+      "descripcion": "Repintado de muro interior sobre pintura existente que está sana y bien adherida, con dos manos de vinílica. Incluye la limpieza superficial para quitar grasa y polvo, el resane de pequeños desperfectos con pasta, el lijado de las zonas resanadas y las dos manos de acabado. No incluye el retiro de pintura suelta ni el tratamiento de humedad: si la pintura se descarapela, el problema es el sustrato y se cobra aparte. Se cuantifica por metro cuadrado repintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-MASILLA": "Masilla o pasta para resane de muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.060": {
+      "titulo": "Pintura antimoho en muro de cocina o baño",
+      "descripcion": "Aplicación de pintura acrílica antimoho en muros de cocina, baño o local con condensación, con dos manos. Incluye el lavado de la superficie con fungicida para retirar el hongo antes de pintar, el lijado y resane de la zona afectada y las dos manos de pintura. La pintura antimoho retrasa la reaparición, no corrige la causa: si hay filtración o falta ventilación, el moho vuelve. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-ANTIMOHO": "Pintura acrílica antimoho",
+        "MT-FUNGICIDA": "Fungicida concentrado para lavado previo",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.070": {
+      "titulo": "Pintura vinílica semibrillo lavable en zonas de alto tránsito",
+      "descripcion": "Aplicación de pintura vinílica semibrillo lavable en muros de pasillos, escaleras y áreas de servicio, donde la pared se toca y se limpia seguido. Incluye la preparación del soporte, el resane de golpes, el corte de esquinas y las dos manos de acabado semibrillo. Aguanta más lavados que la mate y disimula mejor que el brillo. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-SEMIBRILLO": "Pintura vinílica semibrillo lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.080": {
+      "titulo": "Pintura de pizarra (efecto tiza) en muro interior",
+      "descripcion": "Aplicación de pintura de pizarra efecto tiza en muro interior, con fondo preparado y dos manos, para muro de recados o zona infantil. Incluye el fondo sellador, las dos manos de pintura de pizarra y el curado previo al primer uso: hay que dejarla curar varios días antes de escribir encima, o el gis se queda marcado para siempre. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-TIZA": "Pintura de pizarra (efecto tiza)",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.090": {
+      "titulo": "Pintura magnética como base de muro, antes del acabado",
+      "descripcion": "Aplicación de pintura magnética con partículas de hierro como base del muro, antes de la pintura de acabado. Incluye la preparación del soporte, el número de manos que pide el fabricante para alcanzar la fuerza de sujeción y el lijado entre manos. Siempre lleva acabado encima: la capa magnética sola es negra y no se puede lavar. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-MAGNETICA": "Pintura magnética con partículas de hierro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.100": {
+      "titulo": "Pintura vinílica sobre plafón de concreto visto",
+      "descripcion": "Aplicación de pintura vinílica sobre plafón de concreto visto, con sellador y dos manos. El concreto visto tiene poros, rebabas y marcas de cimbra: el sellador tapa el poro y evita que la pintura se consuma en la primera mano. Incluye la limpieza y el desprendimiento de partes flojas, el sellador, las dos manos de acabado y la protección de muros y pisos. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.110": {
+      "titulo": "Pintura a dos colores en un muro, con línea de separación recta",
+      "descripcion": "Aplicación de pintura vinílica a dos colores en el mismo muro, con guarda o línea de separación recta. Incluye el trazo de la línea a nivel, el enmascarado con cinta, la aplicación de ambos colores y el retiro cuidadoso de la cinta cuando la pintura aún está fresca, para que no se lleve el borde. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.120": {
+      "titulo": "Pintura de mocheta y remate de vanos de puertas y ventanas",
+      "descripcion": "Pintura de la mocheta, arista y remate interior de vanos de puertas y ventanas, con dos manos de esmalte o vinílica según el acabado del muro. Incluye la protección de las superficies adyacentes, el lijado del canto, el corte a brocha sin chorretones y las dos manos de acabado. Es la parte que se ve de cerca al entrar por una puerta. Se cuantifica por metro lineal de mocheta pintada.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.130": {
+      "titulo": "Pintura de franja inferior o zoclo pintado",
+      "descripcion": "Pintura de la franja inferior del muro o zoclo pintado, con dos manos de pintura lavable en color distinto al del muro. Incluye el trazo y enmascarado de la línea superior a nivel, la preparación de la zona que más se ensucia y las dos manos de acabado. Se cuantifica por metro lineal de franja pintada.",
+      "recursos": {
+        "MT-PIN-SEMIBRILLO": "Pintura vinílica semibrillo lavable",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.140": {
+      "titulo": "Pintura a la cal en interiores de sótano o bodega",
+      "descripcion": "Aplicación de pintura a la cal en muros interiores de sótanos, bodegas y espacios ventilados, con dos manos. Es el acabado más económico y deja respirar el muro, lo que ayuda donde hay humedad de capilaridad. Incluye la preparación del soporte, el humedecido previo y las dos manos. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAL": "Pintura a la cal",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.150": {
+      "titulo": "Pintura de techos altos o muros fuera de alcance, con andamio",
+      "descripcion": "Aplicación de pintura vinílica en techos o muros altos que requieren andamio, con dos manos. Incluye el montaje, el desmontaje y el uso del andamio con sus plataformas y barandales, la aplicación de la pintura y la protección del área de trabajo. El andamio se cobra aquí porque sin él el trabajo no existe. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola",
+        "MQ-ANDAMIO": "Andamio tubular con plataformas"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.160": {
+      "titulo": "Retoque puntual de pintura interior en zonas dañadas",
+      "descripcion": "Retoque y repaso puntual de pintura interior en zonas dañadas o desgastadas, con una mano de acabado. Incluye la limpieza de la zona, el resane de pequeños desperfectos con pasta, el lijado y la mano de retoque igualada al tono existente. Se cuantifica por metro cuadrado retocado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-MASILLA": "Masilla o pasta para resane de muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.170": {
+      "titulo": "Sellado antihumedad de muro interior y pintura vinílica",
+      "descripcion": "Sellado de muro interior con hidrófugo de silicón en las zonas con humedad, seguido de dos manos de pintura vinílica. Incluye la aplicación del sellador, el tiempo de secado entre capas, las dos manos de pintura y la protección del área. El sellador frena la humedad superficial; si viene de una filtración activa, primero se resuelve la filtración. Se cuantifica por metro cuadrado tratado y pintado.",
+      "recursos": {
+        "MT-HIDROFUGO": "Sellador hidrófugo de silicón",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.180": {
+      "titulo": "Esmalte lavable en muro de cocina, despensa o área de servicio",
+      "descripcion": "Aplicación de esmalte lavable en muros de cocina, despensa o área de servicio, con fondo y dos manos. Incluye la preparación del soporte, el fondo sellador, el lijado entre manos y las dos manos de acabado resistente al lavado frecuente. En cocina el muro recibe grasa y salpicadura: el esmalte se limpia, la vinílica mate se mancha. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-SEMIBRILLO": "Pintura vinílica semibrillo lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.190": {
+      "titulo": "Pintura intumescente ignífuga en estructura o muro interior",
+      "descripcion": "Aplicación de pintura intumescente ignífuga sobre estructura o muro interior, con el número de capas y el espesor de película que exige el grado de resistencia al fuego del proyecto. Incluye la preparación del soporte, la aplicación por capas con medición de espesor y el registro del consumo por metro cuadrado, que es lo que respalda la garantía. No incluye el dictamen de resistencia al fuego, que lo emite el especialista. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-IGNFUGA": "Pintura intumescente ignífuga",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.200": {
+      "titulo": "Pintura acrílica lavable en muros de cocina",
+      "descripcion": "Aplicación de pintura acrílica lavable en muros de cocina, con fondo sellador y dos manos. Incluye la preparación del soporte, el resane, el fondo y las dos manos de acabado. Es la opción intermedia entre la vinílica y el esmalte: lava bien y no deja el muro con acabado plástico. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.210": {
+      "titulo": "Pintura de señalamiento de seguridad en interior",
+      "descripcion": "Aplicación de pintura de señalamiento en interior: franjas de paso, zonas de equipo, límites de almacén y marcas de piso, según el plano de señalamiento. Incluye el replanteo y trazo de las marcas, el enmascarado de los bordes y la aplicación. No incluye la señalética vertical ni los letreros. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PINT-TRAFICO": "Pintura para señalamiento",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.220": {
+      "titulo": "Esmalte sobre estructura metálica interior, con fondo anticorrosivo",
+      "descripcion": "Aplicación de esmalte sintético sobre estructura metálica interior, con fondo anticorrosivo y dos manos de acabado. Incluye la limpieza y desengrase del perfil, el lijado o esmerilado de puntos de óxido, el fondo anticorrosivo y las dos manos de esmalte. Si el óxido no se retira antes del fondo, la pintura lo cubre un tiempo y después vuelve a salir por debajo. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PINT-ANTICORR": "Fondo anticorrosivo",
+        "MT-PIN-ESMALTE": "Esmalte sintético",
+        "MQ-ESMERIL": "Esmeriladora para limpieza de metal",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.230": {
+      "titulo": "Pintura decorativa con plantilla en muro interior",
+      "descripcion": "Aplicación de pintura decorativa con plantilla sobre muro interior, con una o varias manos según el diseño. Incluye el replanteo y centrado del diseño en el paño, el enmascarado, la aplicación con plantilla y el retoque de bordes. El diseño y la plantilla los define el cliente. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.240": {
+      "titulo": "Pintura vinílica de techo con rodillo extensible",
+      "descripcion": "Aplicación de pintura vinílica en techo con rodillo extensible, con fondo y dos manos. Incluye la preparación del plafón, el sellador, el corte del perímetro a brocha y las dos manos de pintura. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.250": {
+      "titulo": "Pintura satinada en locales de alta humedad, con sellador hidrófugo",
+      "descripcion": "Aplicación de pintura satinada en locales de alta humedad —baños, lavanderías, cuartos de servicio— sobre sellador hidrófugo. Incluye la limpieza y el tratamiento de la superficie, la aplicación del sellador, el lijado entre manos y dos manos de acabado satinado lavable. El satinado deja correr el agua y aguanta el lavado con cloro diluido. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-SEMIBRILLO": "Pintura vinílica semibrillo lavable",
+        "MT-HIDROFUGO": "Sellador hidrófugo de silicón",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.260": {
+      "titulo": "Pintura decorativa perlada o metalizada en muro interior",
+      "descripcion": "Aplicación de pintura decorativa con acabado perlado o metalizado sobre muro interior. Incluye la preparación del soporte hasta dejarlo parejo —este acabado refleja la luz y delata cualquier desnivel—, el fondo indicado por el fabricante y la aplicación en las manos necesarias. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.270": {
+      "titulo": "Repintado integral de vivienda habitada, con protección y desalojo",
+      "descripcion": "Repintado integral de vivienda con muebles dentro, protegiendo y desalojando cada espacio por turnos, con dos manos de vinílica. Incluye la protección del mobiliario y los pisos con plástico y cartón, el resane de golpes, el lijado, las dos manos de acabado y la limpieza final. Trabajar con la casa habitada cuesta más manos de obra y menos metros por jornada: por eso es partida aparte y no un metro cuadrado más de pintura. Se cuantifica por metro cuadrado repintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PROT-PLAST": "Plástico y cartón para proteger mobiliario",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.280": {
+      "titulo": "Pintura de guarda o aplanado decorativo interior",
+      "descripcion": "Pintura de guarda o remate decorativo en el muro interior, con una o dos manos. Incluye el trazo y enmascarado de la línea, la aplicación y el remate limpio del canto. Se cuantifica por metro lineal pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-CINTA-ENM": "Cinta masking para enmascarar",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.10.01.290": {
+      "titulo": "Pintura de sótano o estacionamiento interior",
+      "descripcion": "Aplicación de pintura vinílica o epóxica en muros de sótano o estacionamiento interior, con fondo y dos manos. Incluye la preparación del soporte, la limpieza de polvo y salitre, el fondo y las dos manos de acabado lavable. En sótano conviene epóxica en la franja baja, donde roza el agua y el parachoques. Se cuantifica por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílica mate lavable",
+        "MT-PIN-FONDO": "Sellador o fondo 5x1 para muro",
+        "MT-PIN-LIJA": "Lija de agua y manta para lijado",
+        "MQ-RODILLO": "Rodillo, brocha y charola"
       },
       "revisado": "2026-11-06"
     }

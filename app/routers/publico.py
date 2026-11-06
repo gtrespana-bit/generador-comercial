@@ -791,20 +791,20 @@ def sitemap_index(request: Request):
     from ..seo import SITEMAP_LASTMOD, origen_canonico
 
     origen = origen_canonico(request)
-    # (url, lastmod): la fecha de revisión de los precios de cada país, no
-    # una constante. Un lastmod que no cambia cuando cambia el contenido
-    # enseña a Google a ignorarlo, y entonces tampoco sirve el día que sí
-    # hay novedades.
+    # (url, lastmod): la fecha de revisión de cada país —la del lote de
+    # precios o la del registro de texto propio, la que sea más reciente—, no
+    # una constante. Un lastmod que no cambia cuando cambia el contenido enseña
+    # a Google a ignorarlo, y entonces tampoco sirve el día que sí hay
+    # novedades.
     hijos = [(f"{origen}/sitemap.xml", SITEMAP_LASTMOD)]
     try:
         from ..services import precios_publicos as pp
 
         for cc in pp.paises_con_sitemap():
-            resumen = pp.resumen(cc) or {}
             hijos.append(
                 (
                     f"{origen}/sitemap-precios-{cc.lower()}.xml",
-                    resumen.get("fecha_revision") or SITEMAP_LASTMOD,
+                    pp.revision_de_mercado(cc) or SITEMAP_LASTMOD,
                 )
             )
     except Exception:
