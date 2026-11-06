@@ -1022,6 +1022,98 @@ def jsonld_ficha_precio(
     }
 
 
+def _unidad_titulo(unidad: str) -> str:
+    """Unidad de medida en la forma que se lee en un título.
+
+    El catálogo guarda «m2»; en un resultado de Google eso parece un error de
+    tecleo, así que se escribe «m²». Las unidades que no están en el mapa se
+    dejan tal cual: inventar una abreviatura sería peor que la del catálogo.
+    """
+    clave = str(unidad or "").strip().lower()
+    if not clave:
+        return ""
+    clave = {"m²": "m2", "m³": "m3"}.get(clave, clave)
+    return _UNIDADES_TITULO.get(clave, str(unidad).strip())
+
+
+def titulo_partida(
+    cc: str,
+    titulo: str,
+    unidad: str,
+    pu,
+    pais: dict,
+    en: bool,
+) -> str:
+    """Título de la ficha de partida, con la cifra dentro.
+
+    «Portón corredizo con automatismo» no responde a quien busca «cuánto
+    cuesta»; «Portón corredizo con automatismo — 491 EUR/ud en España» sí, y
+    esa diferencia es la que se mide en el CTR de 9.500 impresiones al mes.
+
+    La cifra se escribe como en los hubs: sin céntimos, con la moneda una sola
+    vez y redondeando hacia arriba. El precio con céntimos («491,00 EUR») es
+    lo que dejaba fuera la cifra: gastaba ocho caracteres de más y el título
+    se caía a la variante sin precio.
+
+    Orden de las variantes: primero nombre completo con precio, unidad y país;
+    después se recorta el país, luego la unidad y solo al final se renuncia al
+    número. El nombre de la partida es lo último que se toca, porque es lo que
+    coincide con la consulta; cuando ni así cabe, se prueba su primera cláusula
+    («Piso de loseta en baño, con pendiente hacia la coladera» → «Piso de
+    loseta en baño»), que es la parte que la gente escribe.
+    """
+    base_titulo = " ".join(str(titulo or "").split())
+    if not base_titulo:
+        return ""
+    moneda = str(pais.get("moneda") or "").strip()
+    cifra = _numero_corto(pu, pais) if moneda else ""
+    ud = _unidad_titulo(unidad)
+    con_unidad = f"{cifra} {moneda}/{ud}" if cifra and ud else (f"{cifra} {moneda}" if cifra else "")
+    sin_unidad = f"{cifra} {moneda}" if cifra else ""
+    nombre = _nombre_pais(cc, str(pais.get("idioma") or ("en" if en else "es")))
+    corto = _nombre_corto(cc, nombre, en)
+    paises = [nombre] + ([corto] if corto and corto != nombre else [])
+    preposicion = "in" if en else "en"
+
+    bases = [base_titulo]
+    clausula = _primera_clausula(base_titulo)
+    if clausula and clausula != base_titulo:
+        bases.append(clausula)
+
+    con_cifra: list[str] = []
+    for base in bases:
+        for pais_txt in paises:
+            if con_unidad:
+                con_cifra.append(f"{base} — {con_unidad} {preposicion} {pais_txt}")
+        if con_unidad:
+            con_cifra.append(f"{base} — {con_unidad}")
+        for pais_txt in paises:
+            if sin_unidad:
+                con_cifra.append(f"{base} — {sin_unidad} {preposicion} {pais_txt}")
+    # Las variantes con precio se eligen aparte y no con `_titulo_meta`: ese
+    # ayudante prefiere lo que cabe en 60 caracteres, y en una ficha eso supone
+    # tirar el país teniendo sitio hasta 72. El país es lo que distingue la
+    # misma partida en veintidós mercados y, si Google recorta, recorta por el
+    # final: el número queda a la vista.
+    elegido = next((v for v in con_cifra if len(v) <= 72), "")
+    if not elegido:
+        # Sin sitio ni para la cifra más corta: se cede el número, no el nombre.
+        sin_cifra = (
+            [f"{base_titulo} in {nombre}", f"{base_titulo} — price in {nombre}"]
+            if en
+            else [
+                f"{base_titulo} en {nombre}",
+                f"{base_titulo} — precio unitario en {nombre}",
+                f"{base_titulo} — precio en {nombre}",
+            ]
+        )
+        elegido = _titulo_meta(sin_cifra, respaldo=base_titulo)
+    # La marca solo si no empuja el título fuera del ancho útil: en las fichas
+    # el nombre de la partida ya gasta casi todo el espacio.
+    con_marca = f"{elegido} | CotizaT"
+    return con_marca if len(con_marca) <= 72 else elegido
+
+
 def contexto_partida(request: Request, cc: str, slug_apartado: str,
                      slug: str) -> dict | None:
     ficha = pp.partida(cc, slug_apartado, slug)
@@ -1034,6 +1126,13 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
     titulo = ficha["titulo"]
     unidad = ficha["unidad"]
     pu_txt = _dinero(ficha["pu"], pais)
+    # La cifra del título y la de la descripción tienen que ser la misma: si el
+    # título dice «491 EUR/ud» y la descripción «491,00 EUR/ud», el resultado
+    # parece descuidado. Los céntimos se quedan en el cuerpo de la ficha.
+    pu_serif = _dinero_corto(ficha["pu"], pais)
+    # «m2» en la descripción es el nombre del campo, no una unidad: el
+    # catálogo guarda ASCII y el lector espera «m²».
+    ud_serif = _unidad_titulo(unidad) or str(unidad or "")
     mes = _mes(ficha["fecha_revision"], lang)
     directo = float(ficha["directo"] or 0) or 1.0
     pct = {
@@ -1042,40 +1141,21 @@ def contexto_partida(request: Request, cc: str, slug_apartado: str,
     }
 
     if en:
-        title = _titulo_meta(
-            _con_marca(
-                [
-                    f"{titulo} — {pu_txt}/{unidad} in {nombre}",
-                    f"{titulo} in {nombre}",
-                    f"{titulo} — price in {nombre}",
-                ]
-            ),
-            respaldo=titulo,
-        )
+        title = titulo_partida(cc, titulo, unidad, ficha["pu"], pais, True)
         # El precio y los porcentajes van delante: son lo que se compara en
         # el resultado de búsqueda. El nombre cierra la frase, porque ya está
         # en el título y en el H1 y es la parte que puede recortarse.
         description = (
-            f"{pu_txt}/{unidad} in {nombre} ({mes}). Materials "
+            f"{pu_serif}/{ud_serif} in {nombre} ({mes}). Materials "
             f"{pct['materiales']}%, labor {pct['mano_obra']}%, equipment "
             f"{pct['maquinaria']}%. Line-by-line cost breakdown from the "
             f"CotizaT catalog."
         )
         h1 = f"{titulo} — price in {nombre}"
     else:
-        title = _titulo_meta(
-            _con_marca(
-                [
-                    f"{titulo} — {pu_txt}/{unidad} en {nombre}",
-                    f"{titulo} en {nombre}",
-                    f"{titulo} — precio unitario en {nombre}",
-                    f"{titulo} — precio en {nombre}",
-                ]
-            ),
-            respaldo=titulo,
-        )
+        title = titulo_partida(cc, titulo, unidad, ficha["pu"], pais, False)
         description = (
-            f"{pu_txt}/{unidad} en {nombre} ({mes}). Materiales "
+            f"{pu_serif}/{ud_serif} en {nombre} ({mes}). Materiales "
             f"{pct['materiales']}%, mano de obra {pct['mano_obra']}%, maquinaria "
             f"{pct['maquinaria']}%. Descompuesto línea a línea del catálogo CotizaT."
         )
