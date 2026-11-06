@@ -642,6 +642,36 @@ def paises_con_sitemap() -> tuple[str, ...]:
     return tuple(cc for cc in paises_publicados() if indice_indexable(cc))
 
 
+def revision_de_mercado(codigo_pais: str) -> str | None:
+    """Fecha de revisión que se publica en el índice de sitemaps.
+
+    Es **la más reciente** entre la del lote de precios del catálogo y la del
+    registro de texto propio. Un mercado que anunciaba el lote de agosto y
+    estrena prosa en noviembre tiene que decirlo: un ``lastmod`` que no cambia
+    cuando cambia el contenido enseña a Google a ignorarlo, y el día que sí hay
+    novedades ya no sirve.
+
+    Las dos fechas son ISO (``AAAA-MM-DD``), así que compararlas como texto
+    ordena igual que como fecha.
+    """
+    cc = str(codigo_pais or "").strip().upper()
+    fechas = [(_indice(cc) or {}).get("fecha_revision"), _revision_localizado(cc)]
+    validas = [f for f in fechas if isinstance(f, str) and len(f) >= 10]
+    return max(validas) if validas else None
+
+
+@lru_cache(maxsize=32)
+def _revision_localizado(codigo_pais: str) -> str | None:
+    """``_revision`` del registro de texto propio del mercado, si lo trae."""
+    ruta = _DIR_LOCALIZADO / f"{str(codigo_pais or '').strip().upper()}.json"
+    try:
+        bruto = json.loads(ruta.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    revision = bruto.get("_revision") if isinstance(bruto, dict) else None
+    return revision if isinstance(revision, str) else None
+
+
 def partida_localizada(codigo_pais: str, codigo_partida: str) -> bool:
     """¿Esta partida tiene texto propio validado en este mercado?"""
     return str(codigo_partida or "").strip() in _localizado(codigo_pais)

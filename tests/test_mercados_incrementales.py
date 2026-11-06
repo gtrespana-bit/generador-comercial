@@ -43,11 +43,11 @@ def _sin_cache_contaminada():
     Se limpia antes y después, no solo después: una prueba que falle a mitad
     tampoco debe arrastrar estado.
     """
-    pp._localizado.cache_clear()
-    pp._indice_en_vivo.cache_clear()
+    for cache in (pp._localizado, pp._indice_en_vivo, pp._revision_localizado):
+        cache.cache_clear()
     yield
-    pp._localizado.cache_clear()
-    pp._indice_en_vivo.cache_clear()
+    for cache in (pp._localizado, pp._indice_en_vivo, pp._revision_localizado):
+        cache.cache_clear()
 
 
 def _indice(cc: str = CC) -> dict:
@@ -307,3 +307,36 @@ def test_todo_registro_esta_en_el_artefacto():
                 f"{cc}: el registro tiene texto propio y el artefacto no. "
                 "Ejecuta python tools/generar_precios_publicos.py"
             )
+
+
+def test_la_revision_del_sitemap_usa_la_mas_reciente(monkeypatch, tmp_path):
+    """El lastmod del hijo no puede quedarse en la fecha del lote de precios.
+
+    Un mercado que anuncia prosa nueva en noviembre y declara agosto en el
+    índice de sitemaps está diciendo que no cambió nada. Se publica la más
+    reciente de las dos fechas: la del catálogo y la del registro.
+    """
+    slug_ap, fichas = _apartado_con_partidas(1)
+    monkeypatch.setattr(pp, "_DIR_LOCALIZADO", tmp_path)
+    monkeypatch.setattr(pp, "_localizado", lambda cc: {})
+    pp._revision_localizado.cache_clear()
+
+    catalogo = pp.revision_de_mercado(CC)
+    assert catalogo, "el artefacto del mercado trae su fecha de revisión"
+
+    ruta = tmp_path / f"{CC}.json"
+    ruta.write_text(
+        json.dumps(
+            {"_revision": "2030-01-01", "partidas": {fichas[0]["codigo"]: {}}},
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    pp._revision_localizado.cache_clear()
+    assert pp.revision_de_mercado(CC) == "2030-01-01"
+
+    # Un registro sin fecha no cambia nada: manda la del catálogo.
+    ruta.write_text(json.dumps({"partidas": {}}, ensure_ascii=False), encoding="utf-8")
+    pp._revision_localizado.cache_clear()
+    assert pp.revision_de_mercado(CC) == catalogo
+    pp._revision_localizado.cache_clear()

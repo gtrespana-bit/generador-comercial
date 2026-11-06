@@ -47,9 +47,14 @@ def test_el_catalogo_de_precios_tambien_se_puede_avisar():
     assert not any(u.endswith(".json") for u in urls)
     assert "https://cotizat.online/es/precios" in urls
     assert "https://cotizat.online/es/mano-de-obra" in urls
-    # México anuncia sus 29 páginas localizadas y nada más.
+    # México anuncia exactamente las páginas que su registro sostiene: ni una
+    # más (no es un número fijo, crece por oleadas).
+    from app.services import precios_publicos as pp
+
     assert "https://cotizat.online/mx/precios" in urls
-    assert len([u for u in urls if "/mx/precios" in u]) == 29
+    de_mexico = [u for u in urls if "/mx/precios" in u]
+    assert len(de_mexico) == len(pp.urls_sitemap("MX", "https://cotizat.online"))
+    assert len(de_mexico) < len(pp.urls_sitemap("ES", "https://cotizat.online"))
     # Un mercado sin texto propio no se avisa, ni su JSON ni su mano de obra.
     assert not any("/co/precios" in u for u in urls)
     assert not any(u.endswith("/precios.json") for u in urls)

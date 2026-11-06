@@ -178,45 +178,37 @@ obra se cambian de una vez para todo el mercado, cuando se encienda entero.
 
 #### Estado de partida (06/11/2026)
 
-México es el primer mercado con registro: **26 fichas y 2 apartados
-completos**, escritos a mano uno por uno.
+México es el primer mercado con registro y va por su segunda oleada. **146 fichas
+y 7 apartados completos**, escritos a mano uno por uno:
 
-| Apartado | Fichas | Estado |
-|---|---|---|
-| `02-04-01` Paredes, muros y apertura de vanos | 20 / 20 | anunciado |
-| `12-05-03` Pisos cerámicos y porcelanato | 6 / 6 | anunciado |
+| Apartado | Fichas |
+|---|---|
+| `02-04-01` Paredes, muros y apertura de vanos | 20 / 20 |
+| `02-01-01` Cimentaciones | 18 / 18 |
+| `05-06-01` Losas y entrepiso | 21 / 21 |
+| `10-05-01` Impermeabilización de áreas húmedas | 26 / 26 |
+| `12-05-03` Pisos cerámicos y porcelanato | 6 / 6 |
+| `12-08-01` Plafones continuos de tablaroca | 26 / 26 |
+| `12-10-01` Pintura interior | 29 / 29 |
 
-Eso son 29 URL anunciadas (portada del catálogo + 2 apartados + 26 fichas) y
-2.171 páginas que siguen en `noindex`: el mercado entero sigue apagado, crece
-por oleadas. En `sitemap_index.xml` hay un hijo más (`sitemap-precios-mx.xml`);
-el resto de mercados hispanos sigue sin sitemap.
+Son **154 URL anunciadas** (portada del catálogo + 7 apartados + 146 fichas) y
+1.843 páginas que siguen en `noindex`. El mercado entero sigue apagado: crece
+por oleadas y cada oleada se mide antes de la siguiente.
 
-**Desplegado el 06/11/2026** (PR #203). Verificado en producción: el hijo
-`sitemap-precios-mx.xml` sirve exactamente las 29 URL, `sitemap_index.xml`
-lista 8 hijos y una ficha localizada responde 200 con la prosa mexicana.
+**Desplegado el 06/11/2026**: la oleada 0 (26 fichas, 2 apartados) en el PR #203 y
+la oleada 1 (120 fichas, 5 apartados) en el PR siguiente. Verificado en
+producción: `sitemap-precios-mx.xml` sirve exactamente las 154 URL,
+`sitemap_index.xml` lista 8 hijos y las fichas localizadas responden 200 con la
+prosa mexicana.
 
-La línea base de GSC hay que tomarla **antes** de que Google rastree: páginas
-indexadas y posición media de México, más el total del sitio. Si no se toma
-hoy, la comparación de las 4 semanas no tiene contra qué medirse.
+El `lastmod` del hijo de México ya usa la fecha más reciente entre el lote de
+precios y el registro de texto propio (`precios_publicos.revision_de_mercado`),
+así que un mercado que estrena prosa no sigue declarando la fecha del catálogo.
 
-Dos detalles conocidos, para la oleada siguiente y no para tocar la que está en
-medición:
-
-- El `lastmod` del hijo de México sigue siendo el del lote de precios
-  (2026-09-08), no el de la prosa (2026-11-06). Es una pista, no un bloqueo, y
-  el hijo es nuevo para Google: se descubrirá igual. Arreglo correcto: que el
-  índice use la revisión del registro cuando sea posterior a la del catálogo.
-- La mano de obra se sigue llamando «Oficial de 1ª colocador de pisos» y
-  «Ayudante»: es el nombre base del catálogo, sin localizar. Se arregla de una
-  vez para todo el mercado cuando se encienda entero, no ficha a ficha (ver la
-  regla de `MO-*` más arriba).
-
-Siguiente oleada propuesta, por orden de trabajo ya hecho: los cinco apartados
-que faltan de la hipótesis de demanda (`10-05-01` impermeabilización de áreas
-húmedas, `05-06-01` losas y entrepiso, `12-10-01` pintura interior, `12-08-01`
-plafones continuos de tablaroca, `02-01-01` cimentaciones) hasta completar las
-159 fichas. Después, decidir con GSC si la siguiente ola es México o el
-siguiente mercado.
+Queda un detalle conocido, para cuando se encienda el mercado entero: la mano de
+obra se sigue llamando «Oficial de 1ª colocador de pisos» y «Ayudante», el nombre
+base del catálogo. Se renombra de una vez para todo el mercado (ver la regla de
+`MO-*` arriba), no ficha a ficha.
 
 ## 5. Protocolo de cambio seguro (aplica a todo, no solo al catálogo)
 
@@ -252,7 +244,7 @@ mirar. El patrón del 23/10 fue exactamente ese, y se detectó tarde.
 |---|---|---|---|
 | ES | 2.201 URL | referencia | — |
 | US, GB, CA, AU, IE | 1.956–1.987 URL | anunciado | — |
-| MX | 2.171 URL | **a medio localizar** | 26 fichas / 2 apartados anunciados; faltan 5 apartados de la hipótesis y 1.963 fichas |
+| MX | 2.171 URL | **a medio localizar** | 146 fichas / 7 apartados anunciados (154 URL); faltan 1.843 fichas |
 | CO | 2.190 URL | calco | prosa propia (4 guías ya hechas) |
 | PE | 2.185 URL | calco | prosa propia (4 guías ya hechas) |
 | EC | 2.185 URL | calco | prosa propia (4 guías ya hechas) |
