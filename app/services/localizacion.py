@@ -331,4 +331,3 @@ def mercados_por_encender(muestra: int = MUESTRA_POR_DEFECTO) -> list[str]:
         pendientes.append(fila)
 
     return [f["mercado"] for f in sorted(pendientes, key=clave_orden)]
-
