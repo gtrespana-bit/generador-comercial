@@ -60,7 +60,7 @@
             {% endif %}
           </td>
           <td>
-            {{ mercado.estado.ultima_consulta.strftime('%d/%m/%Y') if mercado.estado.ultima_consulta else '—' }}
+            {{ mercado.estado.ultima_consulta|local_fecha('%d/%m/%Y') if mercado.estado.ultima_consulta else '—' }}
           </td>
           <td class="tabla-num">
             {% if mercado.estado.pendientes_revision %}

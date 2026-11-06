@@ -437,7 +437,8 @@ def test_el_operador_ve_el_panel_completo(entorno_panel, monkeypatch):
     assert "Eventos de todas las empresas" in producto.text
     assert "Cuenta registrada" in producto.text
     assert "Qué se modifica al guardar un presupuesto" in producto.text
-    assert "Actividad por hora (UTC)" in producto.text
+    assert "Actividad por hora" in producto.text
+    assert "hora de Caracas" in producto.text  # la zona va a la vista, no «UTC»
 
     # Clientes: empresas, cohortes y riesgo de baja.
     assert "Constructora Activa" in clientes.text  # tabla de empresas

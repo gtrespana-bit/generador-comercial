@@ -1,0 +1,40 @@
+<!doctype html>{# 500 pública. Se sirve con estado 500 real, sin canónica y sin depender de la
+   sesión ni de la base de datos: el fallo puede venir justamente de ahí, así
+   que la página solo usa estáticos y el diccionario de traducciones. Lleva la
+   referencia del fallo para que quien lo sufre pueda reportarlo y el titular
+   lo cruce con la tabla de errores internos. #}
+<html lang="{{ _idioma }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'error500.titulo' | t(_idioma) }} · {{ product_name }}</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body class="landing">
+<main class="hub-hero-int error-404 error-500">
+  <a class="brand" href="{{ '/en-us/' if _idioma == 'en' else '/' }}">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </span>
+    {{ product_name }}
+  </a>
+
+  <h1>{{ 'error500.titulo' | t(_idioma) }}</h1>
+  <p class="sub">{{ 'error500.texto' | t(_idioma) }}</p>
+
+  <p class="error-referencia">
+    {{ 'error500.referencia' | t(_idioma) }}
+    <code>{{ referencia }}</code>
+  </p>
+
+  <div class="acciones error-404-acciones">
+    <a class="btn btn-primary" href="{{ request.url.path }}">{{ 'error500.reintentar' | t(_idioma) }}</a>
+    <a class="btn" href="{{ '/en-us/' if _idioma == 'en' else '/' }}">{{ 'error500.inicio' | t(_idioma) }}</a>
+    <a class="btn" href="mailto:{{ email_soporte }}?subject={{ 'error500.asunto' | t(_idioma) }}%20{{ referencia }}">{{ 'error500.soporte' | t(_idioma) }}</a>
+  </div>
+</main>
+</body>
+</html>

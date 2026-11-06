@@ -66,7 +66,7 @@
           <span class="muted">compra #{{ c.id }} · {{ fila.plan_nombre }} · {{ "%.2f"|format(c.importe) }} {{ c.moneda }}</span>
         </div>
         <div class="compra-meta">
-          <span class="muted">{{ c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else '—' }}</span>
+          <span class="muted">{{ c.created_at|local('%d/%m/%Y %H:%M') if c.created_at else '—' }}</span>
           <span class="muted">{{ fila.metodo_nombre }} · {{ c.creada_por_email }}</span>
         </div>
         <div class="compra-acc">
@@ -107,7 +107,7 @@
             {% if c.licencia_id %}<dt>Licencia concedida</dt><dd>#{{ c.licencia_id }}</dd>{% endif %}
             {% if c.revisado_por_email %}
             <dt>Revisada por</dt>
-            <dd>{{ c.revisado_por_email }} · {{ c.revisado_at.strftime('%d/%m/%Y %H:%M') if c.revisado_at else '' }}</dd>
+            <dd>{{ c.revisado_por_email }} · {{ c.revisado_at|local('%d/%m/%Y %H:%M') if c.revisado_at else '' }}</dd>
             {% endif %}
           </dl>
         </div>

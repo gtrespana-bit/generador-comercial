@@ -27,7 +27,7 @@
           <dt>Último acceso</dt>
           <dd>
             {% if ficha.agregados.ultimo_acceso %}
-            {{ ficha.agregados.ultimo_acceso.strftime('%d/%m/%Y %H:%M') if ficha.agregados.ultimo_acceso.strftime is defined else ficha.agregados.ultimo_acceso }}
+            {{ ficha.agregados.ultimo_acceso|local('%d/%m/%Y %H:%M') if ficha.agregados.ultimo_acceso.strftime is defined else ficha.agregados.ultimo_acceso }}
             {% else %}<span class="muted">Sin registros de acceso</span>{% endif %}
           </dd>
           <dt>Estado comercial</dt>
@@ -74,7 +74,7 @@
         {% for nota in ficha.notas[:3] %}
         <div class="nota-bloque">
           <b>{{ nota.contenido|truncate(220) }}</b>
-          <small class="muted">{{ nota.autor_email or '—' }} · {{ nota.created_at.strftime('%d/%m/%Y %H:%M') if nota.created_at else '' }}</small>
+          <small class="muted">{{ nota.autor_email or '—' }} · {{ nota.created_at|local('%d/%m/%Y %H:%M') if nota.created_at else '' }}</small>
         </div>
         {% else %}
         <div class="vacio">

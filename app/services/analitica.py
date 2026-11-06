@@ -48,6 +48,7 @@ from ..models import (
     Presupuesto,
     Usuario,
 )
+from ..tiempo import a_local
 from .audiencia import resumen_audiencia
 from .licencias import vence_cadena
 from .telemetria import (
@@ -625,10 +626,12 @@ def _origenes(db, *, desde: datetime) -> list[dict]:
 
 
 def _horas_punta(db, *, desde: datetime) -> dict:
-    """Cuándo se trabaja: distribución por hora UTC y por día de la semana.
+    """Cuándo se trabaja: distribución por hora y por día **del operador**.
 
     Sirve para decisiones concretas (ventanas de mantenimiento, horarios de
-    soporte, envíos de correo) que una lista de eventos no responde.
+    soporte, envíos de correo) que una lista de eventos no responde, así que
+    las horas se cuentan en la zona de la empresa y no en UTC: «hora punta
+    02:00» en UTC es medianoche en Caracas y no dice nada útil.
     """
     filas = (
         db.query(EventoProducto.created_at)
@@ -643,8 +646,9 @@ def _horas_punta(db, *, desde: datetime) -> dict:
     for (creado,) in filas:
         if not creado:
             continue
-        por_hora[creado.hour] += 1
-        por_dia[creado.weekday()] += 1
+        local = a_local(creado)
+        por_hora[local.hour] += 1
+        por_dia[local.weekday()] += 1
     maximo_hora = max(por_hora, default=0)
     maximo_dia = max(por_dia, default=0)
     nombres_dia = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]

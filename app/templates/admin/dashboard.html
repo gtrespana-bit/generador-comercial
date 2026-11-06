@@ -3,7 +3,7 @@
 {% block title %}Hoy · Panel de administración{% endblock %}
 
 {% block page_subtitle %}
-  {{ resumen.hoy.strftime('%d/%m/%Y') }} · {{ operador }}.
+  {{ resumen.hoy.strftime('%d/%m/%Y') }} · {{ operador }} · <span class="sub-zona">{{ zona_horaria() }}</span>.
   Primero lo que pide una decisión, después la agenda del día, y al final cómo va el mes.
 {% endblock %}
 
@@ -207,7 +207,7 @@
               <b>{{ r.titulo }}</b>
               <span class="muted">{{ r.email or 'sin correo' }}</span>
               <small class="muted">
-                {{ r.fecha.strftime('%d/%m %H:%M') }}
+                {{ r.fecha|local('%d/%m %H:%M') }}
                 {% if r.organizacion_nombre %}· {{ r.organizacion_nombre }}{% endif %}
                 {% if r.detalle %}· {{ r.detalle }}{% endif %}
               </small>
@@ -361,7 +361,7 @@
               <small>
                 {{ v.plan_nombre }} · {{ v.metodo_nombre }}
                 {% if v.renovacion %}· renovación{% endif %}
-                · {{ v.fecha.strftime('%d/%m/%Y %H:%M') }}
+                · {{ v.fecha|local('%d/%m/%Y %H:%M') }}
               </small>
             </div>
             <div class="venta-acc">
@@ -410,7 +410,7 @@
               <li>
                 <code class="accion-code">{{ evento.accion }}</code>
                 <span class="muted">{{ evento.operador_email or '—' }}</span>
-                <span class="muted">· {{ evento.created_at.strftime('%d/%m %H:%M') if evento.created_at else '' }}</span>
+                <span class="muted">· {{ evento.created_at|local('%d/%m %H:%M') if evento.created_at else '' }}</span>
               </li>
               {% else %}
               <li class="muted">Aún no hay acciones registradas desde el panel.</li>

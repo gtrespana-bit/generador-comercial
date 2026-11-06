@@ -30,7 +30,7 @@
       <tbody>
         {% for c in ficha.compras %}
         <tr>
-          <td>{{ c.created_at.strftime('%d/%m/%Y %H:%M') if c.created_at else '—' }}</td>
+          <td>{{ c.created_at|local('%d/%m/%Y %H:%M') if c.created_at else '—' }}</td>
           <td>{{ c.plan }}</td>
           <td class="muted">{{ c.metodo_pago }}</td>
           <td class="tabla-num">{{ "%.2f"|format(c.importe) }} <span class="muted">{{ c.moneda }}</span></td>

@@ -59,7 +59,7 @@
     </div>
     <div class="timeline-contenido">
       <div class="timeline-fila">
-        <time class="muted">{{ e.cuando.strftime('%d/%m/%Y %H:%M') if e.cuando else '—' }}</time>
+        <time class="muted">{{ e.cuando|local('%d/%m/%Y %H:%M') if e.cuando else '—' }}</time>
         {% if e.severidad != 'info' %}
         <span class="badge badge-{{ e.severidad }}">{{ e.severidad }}</span>
         {% endif %}

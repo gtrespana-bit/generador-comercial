@@ -392,6 +392,22 @@ TEMPLATES.env.filters["cant"] = fmt_cantidad
 TEMPLATES.env.filters["fecha"] = fmt_fecha
 TEMPLATES.env.filters["archivo_url"] = file_url
 
+# --- Hora del operador -------------------------------------------------------
+# Todo lo guardado es UTC. El panel lo imprimía tal cual: a un operador en
+# Caracas una venta de las 20:30 le aparecía como las 00:30 del día siguiente.
+# `|local` traduce al pintar; `utc` deja el instante exacto para el `title`.
+from ..tiempo import (  # noqa: E402
+    etiqueta_zona as _etiqueta_zona,
+    fecha_local as _fecha_local,
+    hora_local as _hora_local,
+    utc_iso as _utc_iso,
+)
+
+TEMPLATES.env.filters["local"] = _hora_local
+TEMPLATES.env.filters["local_fecha"] = _fecha_local
+TEMPLATES.env.filters["utc"] = _utc_iso
+TEMPLATES.env.globals["zona_horaria"] = _etiqueta_zona
+
 # Capa imperial de documento (EE. UU.): los valores guardados son métricos y
 # las plantillas los pintan en la unidad del mercado cuando el contexto trae
 # ``es_imperial``. Sin esa clave (o en falso) cada filtro devuelve el valor

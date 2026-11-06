@@ -56,7 +56,7 @@
         <tbody>
           {% for nota in ficha.notas %}
           <tr>
-            <td class="muted">{{ nota.created_at.strftime('%d/%m/%Y %H:%M') if nota.created_at else '—' }}</td>
+            <td class="muted">{{ nota.created_at|local('%d/%m/%Y %H:%M') if nota.created_at else '—' }}</td>
             <td class="muted">{{ nota.autor_email or '—' }}</td>
             <td>{{ nota.contenido }}</td>
           </tr>

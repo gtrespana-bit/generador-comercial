@@ -12,6 +12,21 @@
   <!-- La piel del panel vive en un solo archivo cacheable: paleta, componentes
        y el CSS propio de cada pantalla, prefijado con `.panel-<área>`. -->
   <link rel="stylesheet" href="{{ 'css/admin.css' | asset }}">
+  {# Precarga de navegación (Speculation Rules). Al detener el puntero sobre
+     una sección o una pestaña —o al tocarla— el navegador ya trae esa página,
+     así que el clic se siente instantáneo aunque la conexión sea lenta. La
+     lista es blanca: solo los enlaces de navegación que el servidor conoce
+     (las seis áreas y las pestañas del área activa), nunca enlaces de acción,
+     para que pasar el ratón no dispare nada con efectos. «moderate» evita que
+     el panel se ponga a descargar seis páginas al abrirse; los navegadores que
+     no entienden la regla simplemente lo ignoran. #}
+  {% set _rutas_precarga = [] %}
+  {% for _enlace in (secciones or []) + (pestanas or []) %}
+  {% if _enlace.ruta and _enlace.ruta not in _rutas_precarga %}{% set _ = _rutas_precarga.append(_enlace.ruta) %}{% endif %}
+  {% endfor %}
+  {% if _rutas_precarga %}
+  <script type="speculationrules" nonce="{{ request.state.csp_nonce }}">{{ {'prefetch': [{'source': 'list', 'urls': _rutas_precarga, 'eagerness': 'moderate'}]} | tojson }}</script>
+  {% endif %}
 </head>
 <body class="panel-{{ seccion_activa }}">
   {% set current_path = request.url.path %}

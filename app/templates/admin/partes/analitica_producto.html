@@ -61,7 +61,7 @@
         <tbody>
           {% for ev in ex.eventos %}
           <tr>
-            <td class="muted" title="{{ ev.created_at.strftime('%d/%m/%Y %H:%M:%S') }} UTC">{{ ev.created_at.strftime("%d/%m %H:%M") }}</td>
+            <td class="muted" title="{{ ev.created_at|utc }} (UTC)">{{ ev.created_at|local("%d/%m %H:%M") }}</td>
             <td><span class="badge {{ 'badge-info' if ev.global else 'badge-neutral' }}">{{ ev.etiqueta }}</span></td>
             <td class="text-bold">{% if ev.organizacion_id %}<a href="/admin/clientes/{{ ev.organizacion_id }}">{{ ev.organizacion }}</a>{% else %}{{ ev.organizacion }}{% endif %}</td>
             <td class="muted">{{ ev.actor }}</td>
@@ -154,9 +154,9 @@
       </div>
     </div>
     <div class="card chart">
-      <div class="card-header"><h2>Actividad por hora (UTC)</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
+      <div class="card-header"><h2>Actividad por hora · <span class="muted">{{ zona_horaria() }}</span></h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
       <div class="card-body">
-        <div class="chart-info"><b>{{ resumen.horas.total }}</b><span>{% if resumen.horas.hora_punta is not none %}hora punta {{ "%02d"|format(resumen.horas.hora_punta) }}:00 UTC{% else %}sin actividad{% endif %}</span></div>
+        <div class="chart-info"><b>{{ resumen.horas.total }}</b><span>{% if resumen.horas.hora_punta is not none %}hora punta {{ "%02d"|format(resumen.horas.hora_punta) }}:00{% else %}sin actividad{% endif %}</span></div>
         <svg class="compacta" viewBox="0 0 {{ resumen.horas.chart_horas.ancho }} {{ resumen.horas.chart_horas.alto }}" role="img" aria-label="Actividad por hora del día">
           <line class="eje" x1="0" y1="{{ resumen.horas.chart_horas.base }}" x2="{{ resumen.horas.chart_horas.ancho }}" y2="{{ resumen.horas.chart_horas.base }}"></line>
           {% for p in resumen.horas.chart_horas.puntos %}
