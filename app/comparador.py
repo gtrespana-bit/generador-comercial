@@ -254,9 +254,21 @@ def _fecha_txt(lang: str) -> str:
         return iso
 
 
-def _usd(valor: float, lang: str = "es") -> str:
-    """Importe en USD con el separador del idioma: «18,85 USD» / «$18.85»."""
+def _usd(valor: float, lang: str = "es", mercado: dict | None = None) -> str:
+    """Importe en USD con el separador de la página: «18,85 USD» / «18.85 USD».
+
+    El separador sigue al **mercado de la página**, no al idioma. En una ficha
+    de El Salvador el dólar local se lee «6.97 USD»; con el separador del
+    español salía «6,97 USD» al lado de «6.97 USD/ud» en la misma fila: dos
+    formas del mismo número, separadas por dos celdas.
+    """
     texto = f"{valor:,.2f}"
+    if mercado:
+        miles = str(mercado.get("separador_miles") or ",")
+        decimal = str(mercado.get("separador_decimal") or ".")
+        texto = (texto.replace(",", "\x00").replace(".", decimal)
+                 .replace("\x00", miles))
+        return f"{texto} USD"
     if lang == "en":
         return f"{texto} USD"
     return texto.replace(",", "\x00").replace(".", ",").replace("\x00", "\u00a0") + " USD"
@@ -404,7 +416,7 @@ def comparativa_partida(cc_origen: str, codigo: str, lang: str = "es") -> list[d
                 "nombre": _nombre_en_frase(cc, lang),
                 "bandera": _bandera(cc),
                 "usd": valor,
-                "usd_txt": _usd(valor),
+                "usd_txt": _usd(valor, lang, pp.PAISES.get(cc_origen)),
                 "local_txt": _importe(
                     float(indice["partidas"][destino]["pu"]),
                     pp.PAISES.get(cc) or {},

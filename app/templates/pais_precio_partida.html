@@ -31,7 +31,7 @@
   <h1>{{ seo.h1 }}</h1>
 
   <div class="precios-pu-card">
-    <div class="precios-pu">{{ partida.pu | money_iso(partida.moneda) }} <span class="precios-pu-unidad">{{ ('precios.por' | t(_idioma)).format(unidad=partida.unidad) }}</span></div>
+    <div class="precios-pu">{{ partida.pu | money_iso(partida.moneda, mercado=pais) }} <span class="precios-pu-unidad">{{ ('precios.por' | t(_idioma)).format(unidad=partida.unidad) }}</span></div>
     <p class="precios-revisado">{{ 'precios.pu' | t(_idioma) }} · {{ ('precios.revisado' | t(_idioma)).format(mes=mes_revision) }}</p>
     <p class="precios-aviso">{{ ('precios.aviso' | t(_idioma)).format(pais=(pais.nombre_en if _idioma == 'en' else pais.nombre)) }}</p>
   </div>
@@ -61,27 +61,27 @@
           <td>{{ linea.nombre }}</td>
           <td>{{ linea.unidad }}</td>
           <td>{{ linea.rendimiento_txt }}</td>
-          <td>{{ linea.precio | money_iso(partida.moneda) }}</td>
-          <td>{{ linea.importe | money_iso(partida.moneda) }}</td>
+          <td>{{ linea.precio | money_iso(partida.moneda, mercado=pais) }}</td>
+          <td>{{ linea.importe | money_iso(partida.moneda, mercado=pais) }}</td>
         </tr>
         {% endfor %}
         <tr class="precios-subtotal">
           <td colspan="4">{{ ('precios.grupo.' ~ grupo) | t(_idioma) }}</td>
-          <td>{{ partida.grupos[grupo] | money_iso(partida.moneda) }}</td>
+          <td>{{ partida.grupos[grupo] | money_iso(partida.moneda, mercado=pais) }}</td>
         </tr>
         {% endif %}
         {% endfor %}
         <tr class="precios-total">
           <td colspan="4">{{ 'precios.directo' | t(_idioma) }}</td>
-          <td>{{ partida.directo | money_iso(partida.moneda) }}</td>
+          <td>{{ partida.directo | money_iso(partida.moneda, mercado=pais) }}</td>
         </tr>
         <tr>
           <td colspan="4">{{ ('precios.complementarios' | t(_idioma)).format(pct='%g' % partida.compl_pct) }}</td>
-          <td>{{ partida.complementarios | money_iso(partida.moneda) }}</td>
+          <td>{{ partida.complementarios | money_iso(partida.moneda, mercado=pais) }}</td>
         </tr>
         <tr class="precios-pu-fila">
           <td colspan="4">{{ 'precios.pu' | t(_idioma) }} ({{ ('precios.por' | t(_idioma)).format(unidad=partida.unidad) }})</td>
-          <td>{{ partida.pu | money_iso(partida.moneda) }}</td>
+          <td>{{ partida.pu | money_iso(partida.moneda, mercado=pais) }}</td>
         </tr>
       </tbody>
     </table>
@@ -102,7 +102,7 @@
     <p>{{ ('precios.mo_partida.texto' | t(_idioma)).format(moneda=partida.moneda) }}</p>
     <ul class="precios-lista">
       {% for linea in lineas_mo %}
-      <li>{{ linea.nombre }} — <span class="precios-importe">{{ linea.precio | money_iso(partida.moneda) }}/{{ linea.unidad }}</span></li>
+      <li>{{ linea.nombre }} — <span class="precios-importe">{{ linea.precio | money_iso(partida.moneda, mercado=pais) }}/{{ linea.unidad }}</span></li>
       {% endfor %}
     </ul>
     <p><a href="{{ mano_obra_url }}">{{ ('precios.mo_partida.enlace' | t(_idioma)).format(pais=nombre_pais) }}</a></p>
@@ -122,7 +122,7 @@
   <h2>{{ ('precios.hermanas' | t(_idioma)).format(apartado=partida.apartado.nombre) }}</h2>
   <ul class="precios-lista">
     {% for h in partida.hermanas %}
-    <li><a href="{{ h.ruta }}">{{ h.titulo }}</a> <span class="precios-importe">{{ h.pu | money_iso(h.moneda) }}/{{ h.unidad }}</span></li>
+    <li><a href="{{ h.ruta }}">{{ h.titulo }}</a> <span class="precios-importe">{{ h.pu | money_iso(h.moneda, mercado=pais) }}/{{ h.unidad }}</span></li>
     {% endfor %}
   </ul>
   {% endif %}
