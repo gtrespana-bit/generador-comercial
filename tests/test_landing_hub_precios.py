@@ -1,28 +1,21 @@
-"""La landing de Chile y España compite como hub de precios de su mercado.
+"""El hub de precios unitarios es un recurso secundario en CL y ES.
 
-En la línea base de Search Console (08/10–04/11) /cl/ y /es/ eran las dos
-URL con más impresiones del sitio y las que peor rankeaban (posición 67,3 y
-63,5): su copy perseguía consultas de *software* («software de presupuestos
-y APU en Chile») contra Opus, Neodata y Presto con un dominio de días, y las
-consultas de software del sitio se mueven en las posiciones 44–87 sin un
-solo clic. La batalla que sí puede ganar esa URL es «precios de
-construcción en <país>»: la landing se convierte en el hub de precios del
-mercado con el índice de apartados y la cifra real de cada uno, el recuento
-en el título y el CTA de la aplicación intacto (playbook §14).
+La meta comercial de CotizaT es vender el software. El catálogo público de
+precios sirve como apoyo SEO para captar visitas, pero no desplaza el
+posicionamiento de marca ni el mensaje principal de producto: titles, H1 y
+descriptions siguen hablando de CotizaT y software. El índice completo se
+muestra después de los beneficios y los planes, antes del CTA final.
 
-Solo CL y ES. Los otros 20 mercados quedan como están —sus landings
-convierten (BO 6 %, NI 8,3 %, DO 9,2 % de CTR en la misma ventana)— y hacen
-de grupo de control del experimento.
+Solo CL y ES. Los otros 20 mercados quedan intactos como grupo de control.
 
 Contratos que protege este módulo:
 
-* solo CL y ES cambian de intención; el resto conserva su copy comercial;
-* el título lleva el recuento real de partidas y la marca al final, dentro
-  del ancho útil (≤ 72, si Google corta corta por el final y el número se
-  queda a la vista);
+* solo CL y ES incorporan el hub; su metadata sigue siendo comercial y de
+  software;
 * el índice enlaza cada apartado con la misma cifra que promete el título
   de la página de destino (una sola cuenta: ``_medidas_apartado``);
 * las cifras usan los separadores del mercado (§12), no los del idioma;
+* producto, beneficios y planes aparecen antes del índice;
 * la página sigue indexable, con su canónica y con el CTA de alta.
 """
 from __future__ import annotations
@@ -76,21 +69,25 @@ def test_solo_chile_y_espana_son_landing_hub():
             assert hub is None, f"{codigo}: no es landing-hub (grupo de control)"
 
 
-def test_el_resto_de_landing_conserva_su_titulo_comercial():
-    """El grupo de control no se toca: título comercial con la marca delante."""
-    for codigo in ORDEN_SELECTOR:
-        if codigo in HUBS:
-            continue
+def test_las_landings_priorizan_cotizat_y_el_software_en_todos_los_mercados():
+    """El hub de precios no sustituye el posicionamiento comercial de marca."""
+    for codigo in [""] + list(ORDEN_SELECTOR):
         ficha = ficha_landing(codigo)
         assert ficha["title"].startswith("CotizaT:"), f"{codigo}: {ficha['title']}"
+        assert "software" in ficha["title"].lower(), f"{codigo}: {ficha['title']}"
+        assert "software" in ficha["h1"].lower(), f"{codigo}: {ficha['h1']}"
+        if codigo in HUBS:
+            assert "software" in ficha["description"].lower(), f"{codigo}: {ficha['description']}"
 
 
-def test_sin_catalogo_la_landing_cae_al_copy_comercial(monkeypatch):
-    """Si el artefacto del mercado falta, la ficha no se queda a medias."""
-    monkeypatch.setattr(sp, "ficha_hub_landing", lambda _cc: None)
-    ficha = ficha_landing("CL")
-    assert ficha["title"] == "CotizaT: software de presupuestos y APU en Chile"
-    assert ficha["h1"] == "Software de presupuestos y APU para construcción en Chile"
+def test_hub_de_precios_no_sobrescribe_el_copy_comercial():
+    """CL y ES mantienen title/H1/descripción de software con el hub activo."""
+    chile = ficha_landing("CL")
+    espana = ficha_landing("ES")
+    assert chile["title"] == "CotizaT: software de presupuestos y APU en Chile"
+    assert chile["h1"] == "Software de presupuestos y APU para construcción en Chile"
+    assert espana["title"] == "CotizaT: software de presupuestos de obra y reformas para España"
+    assert espana["h1"] == "Software de presupuestos de obra y reformas para España"
 
 
 # ---------------------------------------------------------------------------
@@ -98,34 +95,21 @@ def test_sin_catalogo_la_landing_cae_al_copy_comercial(monkeypatch):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("cc", HUBS)
-def test_el_titulo_lleva_el_recuento_real_y_la_marca_al_final(cc):
-    resumen = pp.resumen(cc)
+def test_title_h1_y_description_priorizan_software(cc):
     ficha = ficha_landing(cc)
     pais = PAISES[cc]
-    total_txt = sp._miles(resumen["total_partidas"], pais)
 
-    titulo = ficha["title"]
-    assert total_txt in titulo, f"{cc}: el título no lleva el recuento: {titulo}"
-    assert pais["nombre"] in titulo
-    assert pais["moneda"] in titulo
-    assert titulo.endswith(" | CotizaT"), "la marca se conserva, al final"
-    assert len(titulo) <= 72, f"{cc}: {len(titulo)} caracteres"
-    # La cifra va antes del corte típico de Google (~60): aunque recorte,
-    # el recuento y el país ya se han leído.
-    primeros_60 = titulo[:60]
-    assert total_txt in primeros_60 and pais["nombre"] in primeros_60
-
-    assert ficha["h1"] == f"Precios de construcción en {pais['nombre']}"
-    assert total_txt in ficha["h1_resalte"]
-    assert total_txt in ficha["description"]
+    assert ficha["title"].startswith("CotizaT: software de presupuestos")
+    assert pais["nombre"] in ficha["title"]
+    assert ficha["h1"].startswith("Software de presupuestos")
+    assert "software" in ficha["description"].lower()
     assert ficha["canonical_path"] == f"/{cc.lower()}/"
 
 
-def test_los_dos_hubs_no_comparten_el_titulo():
-    """CL y ES son dos páginas distintas, no una con el nombre cambiado."""
+def test_titles_comerciales_distinguen_chile_y_espana():
     assert ficha_landing("CL")["title"] != ficha_landing("ES")["title"]
-    assert "CLP" in ficha_landing("CL")["title"]
-    assert "EUR" in ficha_landing("ES")["title"]
+    assert "Chile" in ficha_landing("CL")["title"]
+    assert "España" in ficha_landing("ES")["title"]
 
 
 # ---------------------------------------------------------------------------
@@ -234,7 +218,7 @@ def test_el_jsonld_webpage_y_el_faq_sobreviven_al_cambio():
     tipos = {b.get("@type") for b in bloques}
     assert "FAQPage" in tipos
     webpage = next(b for b in bloques if b.get("@type") == "WebPage")
-    assert "Precios de construcción en España" in webpage.get("name", "")
+    assert "Software de presupuestos de obra y reformas para España" in webpage.get("name", "")
 
 
 def test_el_indice_del_catalogo_no_se_toca():

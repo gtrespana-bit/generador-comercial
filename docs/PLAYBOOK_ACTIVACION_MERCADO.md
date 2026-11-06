@@ -515,23 +515,21 @@ La landing conserva su **relato comercial y de conversión como prioridad**;
 el catálogo es un apoyo de captación SEO, no el producto ni el contenido que
 interrumpe la explicación de beneficios:
 
-* **Título con el recuento real**, patrón de las fichas (§10): «Precios de
-  construcción en Chile: 2.000 partidas en CLP | CotizaT» (65 caracteres;
-  marca al final solo si el total cabe en 72, número siempre antes del corte
-  de ~60). Nada de cifra clavada a mano: el recuento sale del artefacto del
-  mercado y cambia solo al publicar uno nuevo.
-* **H1, description y sub** responden a «precios de construcción en <país>»;
-  el sub mantiene la línea fiscal (NIF/RUT, IVA), el CTA de la aplicación y
-  los FAQ comerciales siguen.
+* **Title, H1 y description mantienen CotizaT y el software como mensaje
+  principal**: «CotizaT: software de presupuestos y APU en Chile» /
+  «CotizaT: software de presupuestos de obra y reformas para España». El H1
+  sigue describiendo el software localizado; no se sustituye por un título de
+  catálogo. El hero y los CTA conducen al producto y al alta.
 * **El orden de la página pone primero la conversión**: problema del cliente,
   beneficios, propuesta de valor, flujo del producto, comparativa y planes
   aparecen antes del catálogo. El índice completo con cifras
   (`#precios-mercado`) queda después de los planes y antes del CTA final, como
   recurso secundario para quien busca precios.
-* Cada apartado es una pastilla-enlace con la cifra que promete su propia
-  página («40–264 EUR/m²», «desde 10 EUR», «103 EUR de media», §9). La cifra de
-  la lista y la del título de destino salen de la misma cuenta
-  (`_medidas_apartado`), así que el enlace nunca miente.
+* El hub conserva el recuento real en su propio H2 y cada apartado es una
+  pastilla-enlace con la cifra que promete su página («40–264 EUR/m²»,
+  «desde 10 EUR», «103 EUR de media», §9). La cifra de la lista y la del
+  título de destino salen de la misma cuenta (`_medidas_apartado`), así que
+  el enlace nunca miente.
 * El antiguo «puente al catálogo» de 5 enlaces se suprime solo en estas dos
   páginas: el hub ya enlaza todo.
 
@@ -544,14 +542,13 @@ control**. Si el experimento no mueve CL/ES en cuatro semanas, se revierte
 con quitarlos de `LANDING_HUB_PRECIOS` en `app/seo_precios.py`; los espejos
 `/en-cl/` y `/en-es/` siguen `noindex` y no participan.
 
-Implementación: `LANDING_HUB_PRECIOS`, `cifra_apartado`, `hub_landing` y
-`ficha_hub_landing` en `app/seo_precios.py`; el enganche de la ficha en
-`seo.ficha_landing` (con caída al copy comercial si el catálogo falta); el
-contexto `hub_precios` en `routers/publico._contexto_landing`; la sección en
-`landing_impulso.html` y su CSS solo con clases nuevas. Tests:
-`tests/test_landing_hub_precios.py` más las dos exenciones puntuales de
-`test_seo.py` (el título ya no empieza por la marca en CL/ES) y
-`test_espana.py`.
+Implementación: `LANDING_HUB_PRECIOS`, `cifra_apartado` y `hub_landing` en
+`app/seo_precios.py`; el SEO comercial de `seo.ficha_landing` permanece sin
+override; el contexto `hub_precios` en `routers/publico._contexto_landing`;
+la sección en `landing_impulso.html` y su CSS solo con clases nuevas. Tests:
+`tests/test_landing_hub_precios.py` fija metadata de software y la posición
+secundaria del índice; las pruebas generales y de España exigen title/H1
+comerciales.
 
 ### Cómo se mide
 

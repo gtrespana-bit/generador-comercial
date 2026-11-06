@@ -1009,62 +1009,6 @@ def hub_landing(cc: str, lang: str = "es") -> dict | None:
     }
 
 
-def ficha_hub_landing(cc: str) -> dict | None:
-    """Copy SEO de la landing-hub de precios (Chile y España).
-
-    Lo que cambia respecto al copy comercial de ``seo._LANDING``: el título
-    lleva el recuento real de partidas (el patrón que movió el CTR de fichas
-    y hubs, §9-§10), el H1 y la description responden a «precios de
-    construcción en <país>» y el párrafo visible del hero presenta el
-    catálogo antes que la aplicación, sin soltar el CTA (fiscalidad y PDF).
-
-    Devuelve None fuera de ``LANDING_HUB_PRECIOS`` o sin catálogo: la ficha
-    conserva entonces el copy comercial intacto.
-    """
-    cc = str(cc or "").strip().upper()
-    if cc not in LANDING_HUB_PRECIOS:
-        return None
-    hub = hub_landing(cc, "es")
-    if not hub:
-        return None
-    pais = PAISES[cc]
-    nombre = str(pais.get("nombre") or cc)
-    moneda = hub["moneda"]
-    total_txt = hub["total_txt"]
-    mes = hub["mes"]
-    # Como en las fichas (§10): la variante con la cifra gasta hasta 72
-    # caracteres (si Google recorta lo hace por el final y el número queda a
-    # la vista) y la marca se conserva al final mientras quepa.
-    variantes = [
-        f"Precios de construcción en {nombre}: {total_txt} partidas en {moneda}",
-        f"Precios de construcción en {nombre}: {total_txt} partidas",
-        f"Precios de construcción en {nombre} ({moneda})",
-        f"Precios de construcción en {nombre}",
-    ]
-    elegido = next((v for v in variantes if len(v) <= 72), variantes[-1])
-    con_marca = f"{elegido} | CotizaT"
-    title = con_marca if len(con_marca) <= 72 else elegido
-    etiqueta, tipo = _impuesto_texto(pais, "es")
-    impuesto = f"{etiqueta} {tipo} %" if tipo else etiqueta
-    fiscal = f"{pais.get('id_fiscal')}, {impuesto}".strip(", ")
-    return {
-        "title": title,
-        "description": (
-            f"{total_txt} precios unitarios de construcción en {nombre}, en "
-            f"{moneda} y con su descompuesto partida a partida. Revisión {mes}."
-        ),
-        "h1": f"Precios de construcción en {nombre}",
-        "h1_resalte": f"{total_txt} partidas con su descompuesto",
-        "sub": (
-            f"El coste de la obra en {nombre}, partida a partida: {total_txt} "
-            f"precios unitarios en {moneda} con su APU —materiales, mano de "
-            f"obra y maquinaria—, revisados en {mes} y enlazados más abajo por "
-            f"capítulos. Y cuando los quieras en un presupuesto: {fiscal}, "
-            "margen en vivo y PDF con tu logo."
-        ),
-    }
-
-
 def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
     ficha = pp.apartado(cc, slug)
     if ficha is None:

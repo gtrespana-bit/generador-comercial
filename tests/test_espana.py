@@ -216,11 +216,9 @@ def test_ficha_landing_espana():
     from app.seo import ficha_landing
 
     ficha = ficha_landing("ES")
-    # /es/ es landing-hub de precios (§14): el título responde a «precios de
-    # construcción en España» con el recuento real y la marca al final; la
-    # canónica y el locale no cambian.
-    assert ficha["title"].startswith("Precios de construcción en España:")
-    assert ficha["title"].endswith(" | CotizaT")
+    # La landing monetiza el software: title comercial y canónica estables.
+    # El índice de precios es un recurso secundario, no sustituye el mensaje.
+    assert ficha["title"] == "CotizaT: software de presupuestos de obra y reformas para España"
     assert ficha["canonical_path"] == "/es/"
     assert ficha["lang"] == "es-ES"
 
