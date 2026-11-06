@@ -218,6 +218,38 @@
   </div>
 </div>
 
+{# Landing-hub de precios (solo LANDING_HUB_PRECIOS: CL y ES, §14 del
+   playbook): el índice completo del mercado con la cifra real de cada
+   apartado, justo tras el hero. Es el contenido que responde a «precios de
+   construcción en <país>»; el relato comercial y el CTA siguen debajo. #}
+{% if hub_precios %}
+<section class="lp2-section lp2-hub" id="precios-mercado" aria-labelledby="hub-precios-h2">
+  <div class="lp2-wrap">
+    <div class="lp2-section-head">
+      <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
+      <h2 class="lp2-section-title" id="hub-precios-h2">{{ L("Precios de construcción en", "Construction prices in") }} {{ hub_precios.nombre }}: <em>{{ hub_precios.total_txt }} {{ L("partidas con su descompuesto", "items with their cost breakdown") }}</em></h2>
+      <p class="lp2-lead">{{ L("Cada apartado lleva su cifra en", "Each section shows its figure in") }} {{ hub_precios.moneda }} {{ L("y enlaza a la tabla con el precio de cada partida. Precios revisados en", "and links to the table with every item's price. Prices checked in") }} {{ hub_precios.mes }}.</p>
+    </div>
+    <div class="lp2-hub-capitulos">
+      {% for capitulo in hub_precios.capitulos %}
+      <div class="lp2-hub-capitulo">
+        <h3>{{ capitulo.nombre }}</h3>
+        <ul class="lp2-hub-lista">
+          {% for ap in capitulo.apartados %}
+          <li><a href="{{ ap.ruta }}"><span class="lp2-hub-nombre">{{ ap.nombre }}</span>{% if ap.cifra %} <span class="lp2-hub-cifra">{{ ap.cifra }}</span>{% endif %}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="lp2-hub-mas">
+      <a href="{{ hub_precios.indice }}">{{ L("Índice completo de precios de", "Full price index for") }} {{ hub_precios.nombre }} →</a>{% if hub_precios.mano_obra %}
+      · <a href="{{ hub_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=hub_precios.nombre) }}</a>{% endif %}
+    </p>
+  </div>
+</section>
+{% endif %}
+
 <section class="lp2-section lp2-pain lp2-defer" id="problema">
   <div class="lp2-wrap">
     <div class="lp2-section-head">
@@ -490,8 +522,11 @@
   </div>
 </section>
 
-{# Puente al catálogo público de precios: enlaces internos de autoridad. #}
-{% if catalogo_precios %}
+{# Puente al catálogo público de precios: enlaces internos de autoridad.
+   Con landing-hub (CL y ES) no se repite: el índice completo con cifras ya
+   enlaza cada apartado y el índice del mercado desde arriba de la página. #}
+{% if hub_precios %}
+{% elif catalogo_precios %}
 <section class="mercados-precios" aria-label="{{ L('Precios unitarios publicados', 'Published unit prices') }}">
   <div class="mercados-precios-int">
     <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>

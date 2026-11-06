@@ -488,3 +488,68 @@ La oleada 3 natural es el clúster de baño y azulejo: `12-03-01` Azulejo y
 porcelanato en paredes (18), `07-07-01` Canceles de baño (16) y `12-05-05` Pisos
 de madera y laminados (7), que cierran el catálogo de acabados antes de entrar
 en instalaciones.
+
+## 14. /cl/ y /es/ compiten por «precios», no por «software» (06/11/2026)
+
+### El diagnóstico
+
+`www.cotizat.online/cl/` (212 impresiones, 2 clics, posición **67,3**) y
+`www.cotizat.online/es/` (140, 0, **63,5**) son las dos URL con más
+impresiones del sitio y las que peor rankean. Su título era «CotizaT:
+software de presupuestos y APU en Chile/España»: perseguían consultas de
+*software*, y esas consultas se miden en §10 —se mueven en las posiciones
+44–87 sin un clic, contra Opus, Neodata y Presto, con un dominio de días.
+Ahí no se gana; es la batalla equivocada, no falta de esfuerzo.
+
+Dato que cerraba el diagnóstico: **`/cl/` es la única URL de Chile que Google
+puede posicionar** (su catálogo entero está en `noindex, follow` hasta que se
+localice, §4). Si la landing no lleva los precios, Chile no tiene precios en
+el índice. España sí indexa su catálogo, así que ahí la landing se suma al
+silo sin sustituir al índice (`/es/precios` conserva su título «Precios
+unitarios…»; no se toca).
+
+### La decisión
+
+La landing del país se convierte en **hub de precios del mercado**:
+
+* **Título con el recuento real**, patrón de las fichas (§10): «Precios de
+  construcción en Chile: 2.000 partidas en CLP | CotizaT» (65 caracteres;
+  marca al final solo si el total cabe en 72, número siempre antes del corte
+  de ~60). Nada de cifra clavada a mano: el recuento sale del artefacto del
+  mercado y cambia solo al publicar uno nuevo.
+* **H1, description y sub** responden a «precios de construcción en <país>»;
+  el sub mantiene la línea fiscal (NIF/RUT, IVA) y el PDF: el CTA de la
+  aplicación no se toca y los FAQ comerciales siguen.
+* **Índice completo de apartados con cifras justo tras el hero**
+  (`#precios-mercado`): cada apartado es una pastilla-enlace con la cifra que
+  promete su propia página («40–264 EUR/m²», «desde 10 EUR», «103 EUR de
+  media», §9). La cifra de la lista y la del título de destino salen de la
+  misma cuenta (`_medidas_apartado`), así que el enlace nunca miente.
+* El antiguo «puente al catálogo» de 5 enlaces se suprime solo en estas dos
+  páginas: el hub ya enlaza todo.
+
+### Solo CL y ES
+
+Los otros 20 mercados no se tocan: sus landings convierten bien como están
+(en la línea base, las landings hispanas pequeñas hacen 2,93 % de CTR y
+Bolivia/Nicaragua/Dominicana superan el 6 %) y quedan como **grupo de
+control**. Si el experimento no mueve CL/ES en cuatro semanas, se revierte
+con quitarlos de `LANDING_HUB_PRECIOS` en `app/seo_precios.py`; los espejos
+`/en-cl/` y `/en-es/` siguen `noindex` y no participan.
+
+Implementación: `LANDING_HUB_PRECIOS`, `cifra_apartado`, `hub_landing` y
+`ficha_hub_landing` en `app/seo_precios.py`; el enganche de la ficha en
+`seo.ficha_landing` (con caída al copy comercial si el catálogo falta); el
+contexto `hub_precios` en `routers/publico._contexto_landing`; la sección en
+`landing_impulso.html` y su CSS solo con clases nuevas. Tests:
+`tests/test_landing_hub_precios.py` más las dos exenciones puntuales de
+`test_seo.py` (el título ya no empieza por la marca en CL/ES) y
+`test_espana.py`.
+
+### Cómo se mide
+
+Misma ventana de 28 días que §11, filtrando página = `/cl/` y `/es/` (sin el
+www): la métrica es **posición media y CTR respecto al grupo de control**.
+Lectura a los 14 días (~20/11, junto con la primera lectura de los títulos) y
+veredicto a los 28 (~4/12). Ganar no es «posición 3»: es salir del pozo 63–67
+al tramo 11–40, que es donde el sitio ya sabe cobrar clics.

@@ -255,10 +255,18 @@ def test_titulo_empieza_por_marca_y_describe_el_oficio():
     """En Google no puede aparecer solo «CotizaT»: hay que leer qué es."""
     from app.paises import ORDEN_SELECTOR
     from app.seo import TEMAS, ficha_landing, ficha_tema, titulo_publico
+    from app.seo_precios import LANDING_HUB_PRECIOS
 
     assert titulo_publico("software de presupuestos de construcción").startswith("CotizaT:")
     for codigo in [""] + list(ORDEN_SELECTOR):
         ficha = ficha_landing(codigo)
+        if codigo in LANDING_HUB_PRECIOS:
+            # CL y ES compiten como hub de precios del mercado: «Precios de
+            # construcción en <país>: N partidas en XXX | CotizaT». La marca
+            # sigue en el título y la página describe qué es; lo que cambia
+            # es la intención (playbook §14, tests/test_landing_hub_precios.py).
+            assert "Precios de construcción en" in ficha["title"]
+            continue
         assert ficha["title"].startswith("CotizaT:")
         assert "software" in ficha["title"].lower()
         assert "presupuesto" in ficha["title"].lower()

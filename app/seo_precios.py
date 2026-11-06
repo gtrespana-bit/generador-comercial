@@ -18,6 +18,7 @@ página: la misma partida/apartado en los países donde está publicada
 from __future__ import annotations
 
 import math
+from functools import lru_cache
 
 from starlette.requests import Request
 
@@ -709,6 +710,62 @@ def _primera_clausula(apartado: str) -> str:
     return apartado
 
 
+def _medidas_apartado(partidas: list[dict], pais: dict) -> dict:
+    """Las cifras que se pueden prometer de un apartado, calculadas una vez.
+
+    Es la única cuenta que hacen el título del hub, su descripción y la cifra
+    con que la landing-hub lo anuncia en su índice: si las tres salen del
+    mismo sitio, la lista no promete un precio distinto del que luego enseña
+    la página a la que enlaza.
+
+    Reglas (medidas en §9-§10 del playbook): el rango doble solo se escribe
+    si el apartado es homogéneo (≥70 % misma unidad) —sumar precios de metro
+    cuadrado y de unidad no da un rango, da un número inventado—; cuando la
+    dispersión pasa de 40 a 1 el rango es inútil («1–183 USD») y se anuncia
+    la mediana como precio típico; y el «desde» va sin unidad si el apartado
+    mezcla m² con unidades.
+    """
+    moneda = str(pais.get("moneda") or "")
+    precios = [
+        float(partida.get("pu") or 0)
+        for partida in partidas
+        if float(partida.get("pu") or 0) > 0
+    ]
+    unidad, proporcion = _unidad_dominante(partidas)
+    homogeneo = bool(precios) and proporcion >= 0.7
+    sufijo = f"/{unidad}" if homogeneo and unidad else ""
+    rango = rango_prosa = desde = medio = tipico = ""
+    if precios:
+        bajo = _numero_corto(min(precios), pais)
+        alto = _numero_corto(max(precios), pais)
+        # Un apartado con una partida de 1 USD y otra de 183 USD no tiene un
+        # rango útil: «1–183 USD» parece un error y el «desde 1» del mínimo
+        # suelto es peor todavía. Cuando la dispersión pasa de 40 a 1 se
+        # anuncia el precio típico (la mediana), que es lo que se busca.
+        dispersion = (max(precios) / min(precios)) if min(precios) > 0 else 0
+        sesgado = dispersion > 40
+        desde = "" if sesgado else f"{bajo} {moneda}{sufijo}"
+        if homogeneo and not sesgado:
+            rango = f"{bajo}–{alto} {moneda}{sufijo}"
+            rango_prosa = f"{bajo} a {alto} {moneda}{sufijo}"
+            medio = f"{_numero_corto(sum(precios) / len(precios), pais)} {moneda}{sufijo}"
+        if sesgado:
+            ordenados = sorted(precios)
+            centro = ordenados[len(ordenados) // 2]
+            tipico = f"{_numero_corto(centro, pais)} {moneda}{sufijo}"
+    return {
+        "moneda": moneda,
+        "unidad": unidad,
+        "homogeneo": homogeneo,
+        "sufijo": sufijo,
+        "rango": rango,
+        "rango_prosa": rango_prosa,
+        "desde": desde,
+        "medio": medio,
+        "tipico": tipico,
+    }
+
+
 def titulo_apartado(
     cc: str,
     apartado: str,
@@ -734,35 +791,15 @@ def titulo_apartado(
     no dan precio. Antes, cuando el rango no cabía, se caía directamente a la
     versión sin cifra: así se quedaban 120 hubs sin número en el título.
     """
-    moneda = str(pais.get("moneda") or "")
-    precios = [
-        float(partida.get("pu") or 0)
-        for partida in partidas
-        if float(partida.get("pu") or 0) > 0
-    ]
+    medidas = _medidas_apartado(partidas, pais)
+    moneda = medidas["moneda"]
+    sufijo = medidas["sufijo"]
+    rango = medidas["rango"]
+    rango_prosa = medidas["rango_prosa"]
+    desde = medidas["desde"]
+    medio = medidas["medio"]
+    tipico = medidas["tipico"]
     total = len(partidas)
-    unidad, proporcion = _unidad_dominante(partidas)
-    homogeneo = bool(precios) and proporcion >= 0.7
-    sufijo = f"/{unidad}" if homogeneo and unidad else ""
-    rango = rango_prosa = desde = medio = tipico = ""
-    if precios:
-        bajo = _numero_corto(min(precios), pais)
-        alto = _numero_corto(max(precios), pais)
-        # Un apartado con una partida de 1 USD y otra de 183 USD no tiene un
-        # rango útil: «1–183 USD» parece un error y el «desde 1» del mínimo
-        # suelto es peor todavía. Cuando la dispersión pasa de 40 a 1 se
-        # anuncia el precio típico (la mediana), que es lo que se busca.
-        dispersion = (max(precios) / min(precios)) if min(precios) > 0 else 0
-        sesgado = dispersion > 40
-        desde = "" if sesgado else f"{bajo} {moneda}{sufijo}"
-        if homogeneo and not sesgado:
-            rango = f"{bajo}–{alto} {moneda}{sufijo}"
-            rango_prosa = f"{bajo} a {alto} {moneda}{sufijo}"
-            medio = f"{_numero_corto(sum(precios) / len(precios), pais)} {moneda}{sufijo}"
-        if sesgado:
-            ordenados = sorted(precios)
-            centro = ordenados[len(ordenados) // 2]
-            tipico = f"{_numero_corto(centro, pais)} {moneda}{sufijo}"
 
     # Candidatos de la más informativa a la más escueta. El que cabe se queda:
     # primero con el nombre completo del apartado y el país completo, y solo
@@ -867,6 +904,165 @@ def titulo_apartado(
                 "catálogo CotizaT."
             )
     return title, description
+
+
+#: Landings de país convertidas en hub de precios del mercado (§14 del
+#: playbook). Solo Chile y España: /cl/ y /es/ son las dos URL con más
+#: impresiones del sitio y las que peor rankean (posición 67,3 y 63,5 en la
+#: línea base 08/10–04/11) porque su copy perseguía consultas de *software*
+#: contra Opus, Neodata y Presto con un dominio de días. La página que sí
+#: puede ganar ahí es la que responde «precios de construcción en <país>»:
+#: índice de apartados con cifras, título con el recuento real y el CTA de
+#: la aplicación intacto. Los otros 20 mercados no se tocan: sus landings
+#: convierten bien como están (BO 6 %, NI 8,3 %, DO 9,2 % de CTR en la
+#: misma ventana) y quedan de grupo de control.
+LANDING_HUB_PRECIOS: tuple[str, ...] = ("CL", "ES")
+
+
+def cifra_apartado(partidas: list[dict], pais: dict, lang: str = "es") -> str:
+    """La cifra compacta de un apartado para un listado: «40–264 EUR/m²».
+
+    Misma regla que el título del hub (``_medidas_apartado``): rango solo si
+    el apartado es homogéneo, dispersión >40:1 como mediana y «desde» sin
+    unidad si mezcla unidades. La cifra de la lista y la que promete el
+    título de la página de destino salen de la misma cuenta: el enlace no
+    miente.
+    """
+    medidas = _medidas_apartado(partidas, pais)
+    if medidas["rango"]:
+        return medidas["rango"]
+    if medidas["desde"]:
+        return (
+            f"from {medidas['desde']}"
+            if lang == "en"
+            else f"desde {medidas['desde']}"
+        )
+    if medidas["tipico"]:
+        return (
+            f"avg {medidas['tipico']}"
+            if lang == "en"
+            else f"{medidas['tipico']} de media"
+        )
+    return ""
+
+
+@lru_cache(maxsize=8)
+def hub_landing(cc: str, lang: str = "es") -> dict | None:
+    """Índice de apartados con cifras para la landing-hub del mercado.
+
+    Datos del bloque «precios de construcción en <país>» que convierte la
+    landing en el hub de su mercado: todos los capítulos con sus apartados,
+    cada uno con la cifra que promete su propia página, más los enlaces de
+    nivel superior (índice del catálogo y mano de obra). Devuelve None si el
+    mercado no es landing-hub o no tiene catálogo publicado: la plantilla
+    sigue entonces con el puente de siempre.
+
+    Cacheado por despliegue: el índice vive en el artefacto precalculado y
+    solo cambia al publicar uno nuevo.
+    """
+    cc = str(cc or "").strip().upper()
+    if cc not in LANDING_HUB_PRECIOS or cc not in pp_publicados():
+        return None
+    resumen = pp_resumen(cc)
+    if not resumen:
+        return None
+    pais = PAISES[cc]
+    lang = "en" if str(lang or "") == "en" else "es"
+    capitulos: list[dict] = []
+    for capitulo in resumen["capitulos"]:
+        apartados: list[dict] = []
+        for ap in capitulo.get("apartados") or []:
+            ficha = pp.apartado(cc, ap.get("slug") or "")
+            if not ficha:
+                continue
+            partidas = ficha.get("partidas") or []
+            apartados.append(
+                {
+                    "nombre": ap.get("nombre") or "",
+                    "ruta": pp.ruta_apartado(cc, ap["slug"]),
+                    "n_partidas": ap.get("n_partidas") or len(partidas),
+                    "cifra": cifra_apartado(partidas, pais, lang),
+                }
+            )
+        if apartados:
+            capitulos.append(
+                {
+                    "codigo": capitulo.get("codigo") or "",
+                    "nombre": capitulo.get("nombre") or "",
+                    "apartados": apartados,
+                }
+            )
+    if not capitulos:
+        return None
+    total = int(resumen.get("total_partidas") or 0)
+    return {
+        "codigo": cc,
+        "nombre": _nombre_pais(cc, lang),
+        "moneda": str(pais.get("moneda") or ""),
+        "indice": pp.ruta_indice(cc),
+        "mano_obra": pp.ruta_mano_obra(cc) if pp.oficios_disponibles(cc) else "",
+        "total": total,
+        "total_txt": _miles(total, pais),
+        "apartados_total": int(resumen.get("total_apartados") or 0),
+        "mes": _mes(str(resumen.get("fecha_revision") or ""), lang),
+        "capitulos": capitulos,
+    }
+
+
+def ficha_hub_landing(cc: str) -> dict | None:
+    """Copy SEO de la landing-hub de precios (Chile y España).
+
+    Lo que cambia respecto al copy comercial de ``seo._LANDING``: el título
+    lleva el recuento real de partidas (el patrón que movió el CTR de fichas
+    y hubs, §9-§10), el H1 y la description responden a «precios de
+    construcción en <país>» y el párrafo visible del hero presenta el
+    catálogo antes que la aplicación, sin soltar el CTA (fiscalidad y PDF).
+
+    Devuelve None fuera de ``LANDING_HUB_PRECIOS`` o sin catálogo: la ficha
+    conserva entonces el copy comercial intacto.
+    """
+    cc = str(cc or "").strip().upper()
+    if cc not in LANDING_HUB_PRECIOS:
+        return None
+    hub = hub_landing(cc, "es")
+    if not hub:
+        return None
+    pais = PAISES[cc]
+    nombre = str(pais.get("nombre") or cc)
+    moneda = hub["moneda"]
+    total_txt = hub["total_txt"]
+    mes = hub["mes"]
+    # Como en las fichas (§10): la variante con la cifra gasta hasta 72
+    # caracteres (si Google recorta lo hace por el final y el número queda a
+    # la vista) y la marca se conserva al final mientras quepa.
+    variantes = [
+        f"Precios de construcción en {nombre}: {total_txt} partidas en {moneda}",
+        f"Precios de construcción en {nombre}: {total_txt} partidas",
+        f"Precios de construcción en {nombre} ({moneda})",
+        f"Precios de construcción en {nombre}",
+    ]
+    elegido = next((v for v in variantes if len(v) <= 72), variantes[-1])
+    con_marca = f"{elegido} | CotizaT"
+    title = con_marca if len(con_marca) <= 72 else elegido
+    etiqueta, tipo = _impuesto_texto(pais, "es")
+    impuesto = f"{etiqueta} {tipo} %" if tipo else etiqueta
+    fiscal = f"{pais.get('id_fiscal')}, {impuesto}".strip(", ")
+    return {
+        "title": title,
+        "description": (
+            f"{total_txt} precios unitarios de construcción en {nombre}, en "
+            f"{moneda} y con su descompuesto partida a partida. Revisión {mes}."
+        ),
+        "h1": f"Precios de construcción en {nombre}",
+        "h1_resalte": f"{total_txt} partidas con su descompuesto",
+        "sub": (
+            f"El coste de la obra en {nombre}, partida a partida: {total_txt} "
+            f"precios unitarios en {moneda} con su APU —materiales, mano de "
+            f"obra y maquinaria—, revisados en {mes} y enlazados más abajo por "
+            f"capítulos. Y cuando los quieras en un presupuesto: {fiscal}, "
+            "margen en vivo y PDF con tu logo."
+        ),
+    }
 
 
 def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:

@@ -1390,6 +1390,35 @@ body.landing-impulso .mercados-precios-lista { display: flex; flex-wrap: wrap; g
 body.landing-impulso .mercados-precios-lista a { display: inline-flex; min-height: 40px; align-items: center; padding: .4rem .75rem; border: 1px solid var(--lp2-line); border-radius: 999px; background: var(--lp2-paper); color: var(--lp2-navy-3); font-size: .78rem; font-weight: 800; text-decoration: none; }
 body.landing-impulso .mercados-precios-lista a:hover { border-color: var(--lp2-navy-3); }
 
+/* ── Landing-hub de precios (CL y ES, §14): índice con cifras tras el hero ── */
+
+body.landing-impulso .lp2-hub {
+  padding: clamp(2.6rem, 5vw, 4.2rem) 0;
+  background: #fff;
+}
+
+body.landing-impulso .lp2-hub-capitulos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem 2.5rem;
+}
+
+body.landing-impulso .lp2-hub-capitulo h3 {
+  margin: 0 0 .6rem;
+  color: var(--lp2-navy-3);
+  font-size: .8rem;
+  font-weight: 950;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+body.landing-impulso .lp2-hub-lista { display: flex; flex-wrap: wrap; gap: .45rem; margin: 0; padding: 0; list-style: none; }
+body.landing-impulso .lp2-hub-lista a { display: inline-flex; min-height: 38px; align-items: center; gap: .45rem; padding: .35rem .7rem; border: 1px solid var(--lp2-line); border-radius: 999px; background: var(--lp2-paper); color: var(--lp2-navy-3); font-size: .78rem; font-weight: 800; text-decoration: none; }
+body.landing-impulso .lp2-hub-lista a:hover { border-color: var(--lp2-navy-3); }
+body.landing-impulso .lp2-hub-cifra { color: var(--lp2-muted); font-size: .72rem; font-weight: 700; white-space: nowrap; }
+body.landing-impulso .lp2-hub-mas { margin: 1.8rem 0 0; font-size: .92rem; font-weight: 700; }
+body.landing-impulso .lp2-hub-mas a { color: var(--lp2-navy-3); }
+
 body.landing-impulso .lp2-markets { padding: clamp(3rem, 6vw, 5rem) 0; background: var(--lp2-paper); }
 body.landing-impulso .mercado-bloque-titulo { display: inline-block; margin: 2rem 0 .7rem; padding: .25rem .6rem; border-radius: 8px; background: var(--lp2-paper); color: var(--lp2-navy-3); font-size: .78rem; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
 body.landing-impulso .mercado-tabla { display: grid; }
@@ -1525,6 +1554,7 @@ body.landing-impulso .site-footer .footer-paises a { background: rgba(255, 255, 
   body.landing-impulso .lp2-pain-grid,
   body.landing-impulso .lp2-calc,
   body.landing-impulso .lp2-compare-grid,
+  body.landing-impulso .lp2-hub-capitulos,
   body.landing-impulso .banner-int { grid-template-columns: 1fr; }
   body.landing-impulso .tour-slide.active { grid-template-columns: 1fr; }
   body.landing-impulso .tour-caption { order: -1; padding-bottom: 1rem; }

@@ -1567,6 +1567,16 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
         )
 
     base = _LANDING.get(codigo) or _LANDING[""]
+    if codigo:
+        # Chile y España compiten como hub de precios de su mercado, no como
+        # landing de software (§14 del playbook): título con el recuento
+        # real, H1 y description de precios. Si el catálogo no está
+        # publicado se sirve el copy comercial de siempre.
+        from .seo_precios import ficha_hub_landing
+
+        hub = ficha_hub_landing(codigo)
+        if hub:
+            base = {**base, **hub}
     return _aplicar_prueba(
         {
             **base,

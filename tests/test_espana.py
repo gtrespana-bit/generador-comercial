@@ -216,8 +216,11 @@ def test_ficha_landing_espana():
     from app.seo import ficha_landing
 
     ficha = ficha_landing("ES")
-    assert ficha["title"].startswith("CotizaT:")
-    assert "España" in ficha["title"]
+    # /es/ es landing-hub de precios (§14): el título responde a «precios de
+    # construcción en España» con el recuento real y la marca al final; la
+    # canónica y el locale no cambian.
+    assert ficha["title"].startswith("Precios de construcción en España:")
+    assert ficha["title"].endswith(" | CotizaT")
     assert ficha["canonical_path"] == "/es/"
     assert ficha["lang"] == "es-ES"
 
