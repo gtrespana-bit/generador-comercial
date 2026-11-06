@@ -373,7 +373,10 @@
 
   /* ---------- Modo oscuro ---------- *
    * La preferencia se guarda en localStorage y se aplica como clase
-   * .dark-mode en <html>. Sin JS, el panel se ve en modo claro siempre. */
+   * .dark-mode en <html>. Sin JS, el panel se ve en modo claro siempre.
+   * Solo se activa si el operador lo pide con el botón: el panel ya no sigue
+   * `prefers-color-scheme` (lo hacía y dejaba el panel en un modo oscuro a
+   * medio hacer, con texto casi invisible; ver la auditoría de 2026-11-06). */
   var darkBtn = document.querySelector("[data-admin-dark]");
   var htmlRoot = document.documentElement;
 
@@ -391,16 +394,11 @@
 
   function cargarModoOscuro() {
     try {
+      // Sin preferencia guardada el panel se queda en claro: es el tema que
+      // está revisado y el que se ve igual en cualquier equipo del equipo.
       var guardado = localStorage.getItem("cotizat_dark");
-      if (guardado !== null) {
-        aplicarModoOscuro(guardado === "1");
-        return;
-      }
-      // Sin preferencia guardada: respetar el sistema.
-      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        aplicarModoOscuro(true);
-      }
-    } catch (_e) { /* fallback: modo claro */ }
+      if (guardado === "1") aplicarModoOscuro(true);
+    } catch (_e) { /* sin localStorage: modo claro */ }
   }
 
   if (darkBtn) {

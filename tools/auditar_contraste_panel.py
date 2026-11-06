@@ -72,7 +72,9 @@ def paleta(css: str, selector: str) -> dict[str, str]:
         if encontrado is None:
             return {}
     tokens = {}
-    for declaracion in encontrado.group(1).split(";"):
+    # Los comentarios del bloque pueden llevar ':' y romperían el corte.
+    bloque = re.sub(r"/\*.*?\*/", "", encontrado.group(1), flags=re.S)
+    for declaracion in bloque.split(";"):
         if ":" not in declaracion:
             continue
         clave, valor = declaracion.split(":", 1)
@@ -303,6 +305,41 @@ def auditar() -> dict:
         "detalle": {k: sorted(set(v)) for k, v in sorted(superficies.items())},
     }
 
+    # Tokens que se usan como color de texto: si uno no tiene valor en modo
+    # oscuro, hereda el claro y reaparece el problema que arregló el tramo A.
+    definidos_oscuro = set(paleta(css, SELECCION_OSCURO))
+    tokens_texto = set()
+    for _, declaraciones in reglas:
+        for nombre in re.findall(r"var\(\s*(--[\w-]+)", declaraciones.get("color", "")):
+            tokens_texto.add(nombre)
+    informe["tokens_texto"] = sorted(tokens_texto)
+    # Un token que se apunta a sí mismo (o a otro inexistente) se queda sin
+    # valor efectivo y rompe el color en silencio: el navegador lo descarta.
+    todos = dict(tokens_claro)
+    todos.update(paleta(css, SELECCION_OSCURO))
+    rotos = sorted(
+        f"{nombre}: {valor}"
+        for nombre, valor in todos.items()
+        if "var(" in resolver(valor, todos) or valor.strip() == f"var({nombre})"
+    )
+    referenciados = set()
+    for _, declaraciones in reglas:
+        for valor in declaraciones.values():
+            referenciados.update(re.findall(r"var\(\s*(--[\w-]+)", valor))
+    informe["tokens_rotos"] = rotos
+    informe["tokens_inexistentes"] = sorted(referenciados - set(todos))
+    informe["tokens_texto_sin_version_oscura"] = sorted(
+        tokens_texto - definidos_oscuro
+    )
+
+    # Escala tipográfica: cuántos tamaños distintos se sirven al navegador.
+    tamanos = {
+        valor
+        for _, declaraciones in reglas
+        if (valor := declaraciones.get("font-size"))
+    }
+    informe["tamanos_fuente"] = sorted(tamanos)
+
     # Matriz de riesgo: tokens de texto del modo oscuro sobre esas superficies.
     tokens_texto = [
         t
@@ -344,6 +381,11 @@ def imprimir(informe: dict) -> None:
         "  superficies claras fijas ..... "
         f"{informe['superficies_literales']['total']}"
     )
+    print(f"  tamaños de fuente distintos .. {len(informe['tamanos_fuente'])}")
+    if informe["tokens_rotos"]:
+        print(f"  TOKENS ROTOS ................. {informe['tokens_rotos']}")
+    if informe["tokens_inexistentes"]:
+        print(f"  TOKENS INEXISTENTES .......... {informe['tokens_inexistentes']}")
     for modo in ("claro", "oscuro"):
         fallos = informe[modo]["fallos"]
         print(f"\nMODO {modo.upper()}: {len(fallos)} par(es) por debajo de {MINIMO_NORMAL}:1")
@@ -382,6 +424,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(informe, ensure_ascii=False, indent=2))
     else:
         imprimir(informe)
+
+    if informe["tokens_rotos"] or informe["tokens_inexistentes"]:
+        print("::warning::Hay tokens de color rotos o inexistentes en el panel.")
 
     if argumentos.baseline:
         if not argumentos.baseline.exists():

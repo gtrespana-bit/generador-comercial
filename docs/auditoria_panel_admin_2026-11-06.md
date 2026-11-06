@@ -207,3 +207,50 @@ Peores superficies en modo oscuro (contraste de los tokens de texto sobre ellas)
 | `#eaf1ec` | 1,07 | 2,23 | 2,58 |
 | `#fbfdfb` (13 reglas) | 1,21 | 2,51 | 2,90 |
 | `#f4f7f5` | 1,14 | 2,38 | 2,74 |
+
+---
+
+## Resultado del tramo A (mismo día)
+
+Ejecutado sobre `arena/3b3eccdd-generador-comercial`. Solo CSS y una función de
+JavaScript: ninguna consulta, ninguna ruta, ningún servicio.
+
+| Métrica | Antes | Después |
+|---|---|---|
+| Pares por debajo de AA · modo oscuro | 41 | **0** |
+| Pares por debajo de AA · modo claro | 4 | **0** |
+| Superficies de fondo escritas a mano | 32 | **0** |
+| Colores literales (fuera de la paleta) | 52 | **1** (`#241a02`, tinta del contador sobre el lima) |
+| Tamaños de letra distintos | 45 | **9** (escala `--t-2xs`…`--t-4xl`) |
+| Declaraciones por debajo de 12,5 px | 88 | **0** |
+| Tokens de color declarados | 25 | **71** |
+| Modo oscuro automático | sí (`prefers-color-scheme`) | **no**: solo con el botón |
+
+Qué se hizo, en orden:
+
+1. **Paleta completa.** Cada superficie, borde y color de estado tiene token en
+   claro y en oscuro: `--surface-2`, `--surface-3`, `--surface-hover`,
+   `--border-suave`, `--topbar-bg`; y por familia semántica `--danger-bg`,
+   `--danger-borde`, `--danger-texto`, `--danger-solid` (igual para `success`,
+   `warn` y `blue`). El texto sobre un fondo de marca ya no es blanco sobre el
+   azul claro del modo oscuro: los botones usan `--brand-solid`.
+2. **Los 52 hexadecimales sueltos pasaron a tokens** en las 12 plantillas que
+   servían CSS. El único que queda es deliberado.
+3. **Mapa de calor de analítica** rehecho en la rampa navy del panel (antes eran
+   seis verdes con texto oscuro sobre fondo oscuro: 1,99:1). Ahora cada nivel
+   declara su par fondo/texto y cumple AA en los dos temas.
+4. **Escala tipográfica de nueve pasos** sustituyendo 45 tamaños. El suelo sube
+   de 9,6 px a 12,5 px: 106 declaraciones que estaban por debajo.
+5. **El modo oscuro ya no se activa solo.** Se queda en claro salvo que el
+   operador lo pida; la preferencia sigue guardándose en `localStorage`.
+6. **`kbd` de la chuleta** de atajos: fondo propio (`--surface-3`) en vez del
+   color de borde, que dejaba el texto a 4,17:1.
+
+La puerta queda cerrada: `tests/test_contraste_panel.py` (7 pruebas) exige cero
+violaciones, cero superficies fijas, un solo color literal, nueve tamaños de
+letra, ningún token roto o inexistente y ningún token de texto sin versión
+oscura. Durante el propio tramo esa puerta detectó dos fallos reales: tokens que
+se apuntaban a sí mismos (`--topbar-bg: var(--topbar-bg)`) y un token que el
+parser no veía por un comentario con dos puntos.
+
+Suite completa: **3368 passed, 13 skipped en 214 s**.
