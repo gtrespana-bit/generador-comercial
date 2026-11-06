@@ -4,7 +4,7 @@
 
 {% block page_subtitle %}
   {{ resumen.hoy.strftime('%d/%m/%Y') }} · {{ operador }}.
-  Las cifras del negocio y todo lo que espera una decisión tuya.
+  Primero lo que pide una decisión, después la agenda del día, y al final cómo va el mes.
 {% endblock %}
 
 {% block page_title_extra %}{% endblock %}
@@ -27,275 +27,86 @@
   </div>
   {% endif %}
 
-  {# --------------------------------------------------------------- #}
-  {# 0. Alertas críticas y de advertencia — banda superior             #}
-  {#   Lo primero que lee el operador: qué está ardiendo y qué hacer. #}
-  {# --------------------------------------------------------------- #}
-  {% if alertas_criticas %}
-  <div class="alerta-banda">
-    <div class="alerta-banda-cabecera">
-      <h2 class="alerta-banda-titulo">Requiere tu atención ahora</h2>
-      <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver todas las alertas</a>
-    </div>
-    <div class="alerta-banda-items">
-      {% for a in alertas_criticas %}
-      <div class="alerta-item alerta-{{ a.severidad }}">
-        <span class="alerta-punto alerta-punto-{{ a.severidad }}" aria-hidden="true"></span>
-        <div class="alerta-info">
-          <b>{{ a.titulo }}</b>
-          <small>{{ a.detalle }}</small>
-        </div>
-        <div class="alerta-acciones">
-          <a class="btn btn-sm btn-secondary" href="{{ a.url }}">Atender</a>
-          {% if a.url_lista %}
-          <a class="btn btn-sm btn-outline" href="{{ a.url_lista }}">{{ a.etiqueta_lista or 'Lista' }}</a>
-          {% endif %}
+  {# ===================================================================== #}
+  {# BANDA 1 · AHORA                                                       #}
+  {#   Una sola lista de lo accionable. Antes la misma alerta se pintaba    #}
+  {#   dos veces (banda de alertas + tarjeta de pendientes) y el operador   #}
+  {#   tenía que decidir cuál mirar.                                        #}
+  {# ===================================================================== #}
+  <section class="banda" aria-labelledby="banda-ahora">
+    <header class="banda-cab">
+      <div class="banda-cab-txt">
+        <span class="banda-num" aria-hidden="true">1</span>
+        <div>
+          <h2 class="banda-titulo" id="banda-ahora">Requiere tu acción ahora</h2>
+          <p class="banda-sub">Comprobantes por verificar, equipo incompleto y clientes sin plan. Lo que tiene su propia lista —renovaciones, soporte, riesgo de baja— se resuelve en la banda 2.</p>
         </div>
       </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% else %}
-  <div class="alerta-banda alerta-banda-vacia">
-    <div class="alerta-banda-cabecera">
-      <h2 class="alerta-banda-titulo">Requiere tu atención ahora</h2>
-    </div>
-    <div class="alerta-item alerta-success">
-      <span class="alerta-punto alerta-punto-success" aria-hidden="true"></span>
-      <div class="alerta-info">
-        <b>Sin alertas críticas hoy.</b>
-        <small>Licencias al día, compras activadas y equipo completo.</small>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
-  {# --------------------------------------------------------------- #}
-  {# 1. KPIs principales — negocio en movimiento con comparativa      #}
-  {#   Cada tarjeta muestra el valor actual, el del mes anterior y    #}
-  {#   la variación con flecha de tendencia.                          #}
-  {# --------------------------------------------------------------- #}
-  <div class="kpis-principales">
-    {# MRR #}
-    <a class="kpi-card enlaza {{ 'positiva' if (finanzas.mrr_variacion or 0) >= 0 else 'negativa' }}" href="/admin/ingresos?tab=cobros">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">MRR</span>
-        <span class="kpi-periodo">mes anterior</span>
-      </div>
-      <div class="kpi-valor">{{ "%.2f"|format(finanzas.mrr) }}<small>US$/mes</small></div>
-      <div class="kpi-comparativa">
-        {% if finanzas.mrr_variacion is not none %}
-        <span class="kpi-tendencia {{ 'pos' if finanzas.mrr_variacion >= 0 else 'neg' }}">
-          {{ '▲' if finanzas.mrr_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.mrr_variacion|abs) }}%
-        </span>
-        <span class="kpi-anterior">{{ "%.2f"|format(finanzas.mrr_mes_anterior) }} US$/mes</span>
-        {% else %}
-        <span class="kpi-anterior">Sin dato mes anterior</span>
-        {% endif %}
-      </div>
-    </a>
-
-    {# Ingresos del mes #}
-    <a class="kpi-card enlaza {{ 'positiva' if (finanzas.ingresos_variacion or 0) >= 0 else 'negativa' }}" href="/admin/ingresos?tab=ventas">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Ingresos del mes</span>
-        <span class="kpi-periodo">vs. mes anterior</span>
-      </div>
-      <div class="kpi-valor">{{ "%.2f"|format(finanzas.ingresos_mes) }}<small>US$</small></div>
-      <div class="kpi-comparativa">
-        {% if finanzas.ingresos_variacion is not none %}
-        <span class="kpi-tendencia {{ 'pos' if finanzas.ingresos_variacion >= 0 else 'neg' }}">
-          {{ '▲' if finanzas.ingresos_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.ingresos_variacion|abs) }}%
-        </span>
-        <span class="kpi-anterior">{{ "%.2f"|format(finanzas.ingresos_mes_anterior) }} US$</span>
-        {% else %}
-        <span class="kpi-anterior">Sin dato mes anterior</span>
-        {% endif %}
-      </div>
-    </a>
-
-    {# Ventas del mes #}
-    <a class="kpi-card enlaza" href="/admin/ingresos?tab=ventas">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Ventas del mes</span>
-        <span class="kpi-periodo">cerradas este mes</span>
-      </div>
-      <div class="kpi-valor">{{ ventas.kpis.ventas_mes }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$ cobrados</span>
-      </div>
-    </a>
-
-    {# Clientes con pago #}
-    <a class="kpi-card enlaza {{ 'positiva' if (finanzas.clientes_variacion or 0) >= 0 else 'negativa' }}" href="/admin/clientes?tab=directorio">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Clientes de pago</span>
-        <span class="kpi-periodo">con plan activo</span>
-      </div>
-      <div class="kpi-valor">{{ finanzas.clientes_con_pago_mes }}</div>
-      <div class="kpi-comparativa">
-        {% if finanzas.clientes_variacion is not none %}
-        <span class="kpi-tendencia {{ 'pos' if finanzas.clientes_variacion >= 0 else 'neg' }}">
-          {{ '▲' if finanzas.clientes_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.clientes_variacion|abs) }}%
-        </span>
-        <span class="kpi-anterior">{{ finanzas.clientes_con_pago_mes_anterior }} mes pasado</span>
-        {% else %}
-        <span class="kpi-anterior">Sin dato mes anterior</span>
-        {% endif %}
-      </div>
-    </a>
-
-    {# Clientes por vencer #}
-    <a class="kpi-card enlaza {{ 'negativa' if resumen.totales.por_vencer > 0 else '' }}" href="/admin/clientes?tab=directorio&estado=por_vencer">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Por vencer (≤15 d)</span>
-        <span class="kpi-periodo">licencias de pago</span>
-      </div>
-      <div class="kpi-valor">{{ resumen.totales.por_vencer }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">{{ finanzas.licencias_renovando_mes }} renovan este mes</span>
-      </div>
-    </a>
-
-    {# Compras por activar #}
-    <a class="kpi-card enlaza {{ 'negativa' if resumen.totales.pendientes > 0 else '' }}" href="/admin/ingresos?tab=compras">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Compras por activar</span>
-        <span class="kpi-periodo">esperando verificación</span>
-      </div>
-      <div class="kpi-valor">{{ resumen.totales.pendientes }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">Comprobantes pendientes</span>
-      </div>
-    </a>
-
-    {# Soporte sin atender #}
-    <a class="kpi-card enlaza {{ 'negativa' if soporte.nuevo > 0 else '' }}" href="/admin/clientes?tab=soporte&estado=nuevo">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Soporte sin atender</span>
-        <span class="kpi-periodo">mensajes nuevos</span>
-      </div>
-      <div class="kpi-valor">{{ soporte.nuevo }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">{{ soporte.todos }} en el buzón</span>
-      </div>
-    </a>
-
-    {# Riesgo churn #}
-    <a class="kpi-card enlaza {{ 'negativa' if riesgo_churn|length > 0 else '' }}" href="/admin/analitica">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Riesgo de baja</span>
-        <span class="kpi-periodo">14+ días sin uso</span>
-      </div>
-      <div class="kpi-valor">{{ riesgo_churn|length }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">pagan pero no entran</span>
-      </div>
-    </a>
-
-    {# Clientes sin plan #}
-    <a class="kpi-card enlaza" href="/admin/clientes?tab=directorio&plan=sin">
-      <div class="kpi-meta">
-        <span class="kpi-titulo">Sin plan activo</span>
-        <span class="kpi-periodo">sin licencia de pago</span>
-      </div>
-      <div class="kpi-valor">{{ resumen.totales.sin_plan }}</div>
-      <div class="kpi-comparativa">
-        <span class="kpi-anterior">{{ resumen.totales.clientes }} clientes totales</span>
-      </div>
-    </a>
-  </div>
-
-  {# --------------------------------------------------------------- #}
-  {# 2. Acciones del día — agenda, no catálogo                         #}
-  {# --------------------------------------------------------------- #}
-  <div class="card" id="pendientes">
-    <div class="card-header">
-      <h2>Requiere tu acción hoy</h2>
-      <div class="card-header-acc">
-        {% if pendientes|length %}
-        <span class="badge badge-warning">{{ pendientes|length }} pendiente{{ 's' if pendientes|length != 1 else '' }}</span>
+      <div class="banda-cab-acc">
+        {% if pendientes_ahora|length %}
+        <span class="badge badge-warning">{{ pendientes_ahora|length }} pendiente{{ 's' if pendientes_ahora|length != 1 else '' }}</span>
         {% else %}
         <span class="badge badge-success">Al día</span>
         {% endif %}
       </div>
-    </div>
-    {% for aviso in pendientes %}
-    <div class="pend-item">
-      <span class="punto punto-{{ aviso.severidad }}" aria-hidden="true"></span>
-      <div class="pend-info">
-        <b>{{ aviso.titulo }}</b>
-        <small>{{ aviso.detalle }}</small>
-      </div>
-      <div class="pend-acc">
-        <a class="btn btn-sm btn-secondary" href="{{ aviso.url }}">Atender</a>
-        {% if aviso.url_lista %}
-        <a class="btn btn-sm btn-secondary" href="{{ aviso.url_lista }}">{{ aviso.etiqueta_lista or 'Ver la lista' }}</a>
-        {% endif %}
-      </div>
-    </div>
-    {% else %}
-    <div class="vacio">
-      <b>Nada pendiente.</b>
-      <p>Ninguna licencia vence en 15 días, no hay compras por activar y el equipo está completo. Buen momento para revisar la analítica.</p>
-      <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver analítica</a>
-    </div>
-    {% endfor %}
-    <div class="card-pie">
-      <span class="muted-note">
-        Se recalcula al abrir el panel: renovaciones ≤15 días, compras por activar, salud del equipo y clientes sin plan.
-      </span>
-      <span class="toolbar-limpiar">
-        <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=automatizaciones">Automatizaciones</a>
-      </span>
-    </div>
-  </div>
+    </header>
 
-  {# --------------------------------------------------------------- #}
-  {# 3. Detalle secundario — dos columnas                              #}
-  {# --------------------------------------------------------------- #}
-  <div class="grid-lateral">
-    <div class="col-principal">
-      {% if finanzas.serie %}
-      <div class="card">
-        <div class="card-header">
-          <h2>Ingresos de los últimos {{ finanzas.serie|length }} meses</h2>
-          <span class="badge badge-neutral">US$</span>
+    <div class="card banda-card" id="pendientes">
+      {% for aviso in pendientes_ahora %}
+      <div class="pend-item">
+        <span class="punto punto-{{ aviso.severidad }}" aria-hidden="true"></span>
+        <div class="pend-info">
+          <b>{{ aviso.titulo }}</b>
+          <small>{{ aviso.detalle }}</small>
         </div>
-        <div class="card-body">
-          {% set punto_max = finanzas.serie | max(attribute='ingresos') %}
-          {% set maximo = punto_max.ingresos if punto_max else 0 %}
-          {% if maximo > 0 %}
-          <div class="serie-barras">
-            {% for punto in finanzas.serie %}
-            <div class="serie-col">
-              {% set alto = ((punto.ingresos / maximo * 118) if punto.ingresos else 2) %}
-              {% set y = 128 - alto %}
-              <svg class="serie-svg" viewBox="0 0 20 132" role="img" aria-label="{{ punto.label }}: {{ '%.0f'|format(punto.ingresos) }} US$">
-                <rect class="serie-bar" x="3" y="{{ y|round(1) }}" width="14" height="{{ alto|round(1) }}" rx="3"></rect>
-              </svg>
-              <div class="muted serie-label">{{ punto.label }}</div>
-              <div class="text-bold serie-valor">{{ "%.0f"|format(punto.ingresos) }}</div>
-            </div>
-            {% endfor %}
-          </div>
-          {% else %}
-          <div class="vacio">
-            <b>Sin ingresos registrados todavía.</b>
-            <p>Cuando concedas la primera licencia de pago o actives una compra, la serie mensual se dibujará aquí.</p>
-          </div>
+        <div class="pend-acc">
+          <a class="btn btn-sm btn-secondary" href="{{ aviso.url }}">Atender</a>
+          {% if aviso.url_lista %}
+          <a class="btn btn-sm btn-secondary" href="{{ aviso.url_lista }}">{{ aviso.etiqueta_lista or 'Ver la lista' }}</a>
           {% endif %}
         </div>
-        <div class="card-pie">
-          <span class="muted-note">Ticket medio {{ "%.2f"|format(finanzas.ticket_medio) }} US$ · conversión a pago {{ "%.1f"|format(finanzas.tasa_pago) }}% · LTV medio {{ "%.2f"|format(finanzas.ltv_medio) }} US$</span>
+      </div>
+      {% else %}
+      <div class="vacio">
+        <b>Nada pendiente.</b>
+        <p>No hay comprobantes por verificar, el equipo está completo y todos los clientes tienen plan. Buen momento para revisar cómo va el mes.</p>
+        <a class="btn btn-sm btn-secondary" href="#banda-mes">Ver el mes</a>
+      </div>
+      {% endfor %}
+      <div class="card-pie">
+        <span class="muted-note">Se recalcula al abrir el panel: comprobantes por verificar, salud del equipo y clientes sin plan.</span>
+        <span class="toolbar-limpiar">
+          <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=automatizaciones">Automatizaciones</a>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  {# ===================================================================== #}
+  {# BANDA 2 · HOY                                                         #}
+  {#   Las colas de trabajo del día. Cada tarjeta lleva su propio contador  #}
+  {#   en la cabecera: el número no se repite en los KPIs del mes.          #}
+  {# ===================================================================== #}
+  <section class="banda" aria-labelledby="banda-hoy">
+    <header class="banda-cab">
+      <div class="banda-cab-txt">
+        <span class="banda-num" aria-hidden="true">2</span>
+        <div>
+          <h2 class="banda-titulo" id="banda-hoy">Lo que espera hoy</h2>
+          <p class="banda-sub">Vencimientos, soporte, riesgo de baja y altas: lo que puede cambiar de aquí a mañana.</p>
         </div>
       </div>
-      {% endif %}
+    </header>
 
+    <div class="banda-rejilla">
       <div class="card">
         <div class="card-header">
-          <h2>Clientes por vencer</h2>
-          <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=renovaciones">Ver el mes completo</a>
+          <h3>Clientes por vencer</h3>
+          <div class="card-header-acc">
+            <a class="badge badge-enlace {{ 'badge-warning' if resumen.totales.por_vencer else 'badge-success' }}"
+               href="/admin/clientes?tab=directorio&estado=por_vencer">{{ resumen.totales.por_vencer }} en 15 días</a>
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=renovaciones">Ver el mes completo</a>
+          </div>
         </div>
         <div class="table-container">
           <table>
@@ -324,58 +135,38 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>Últimas ventas</h2>
+          <h3>Buzón de soporte</h3>
           <div class="card-header-acc">
-            {% if ventas.kpis.ventas_hoy %}
-            <span class="badge badge-success">{{ ventas.kpis.ventas_hoy }} hoy</span>
-            {% endif %}
-            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=ventas">Libro de ventas</a>
+            <a class="badge badge-enlace {{ 'badge-warning' if soporte.nuevo else 'badge-success' }}"
+               href="/admin/clientes?tab=soporte&estado=nuevo">{{ soporte.nuevo }} sin atender</a>
+            <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=soporte">Abrir</a>
           </div>
         </div>
-        {% for v in ultimas_ventas %}
-        <div class="venta-item">
-          <div class="venta-importe">
-            <b>{{ "%.2f"|format(v.importe) }}</b>
-            <small>{{ v.moneda }}</small>
-          </div>
-          <div class="venta-info">
-            <b>
-              <a href="{{ v.url_cliente }}">{{ v.organizacion_nombre }}</a>
-              {% if v.es_novedad %}<span class="badge badge-warning">Nueva</span>{% endif %}
-            </b>
-            <small>
-              {{ v.plan_nombre }} · {{ v.metodo_nombre }}
-              {% if v.renovacion %}· renovación{% endif %}
-              · {{ v.fecha.strftime('%d/%m/%Y %H:%M') }}
-            </small>
-          </div>
-          <div class="venta-acc">
-            <span class="badge {{ 'badge-success' if v.automatica else 'badge-info' }}">
-              {{ 'Automática' if v.automatica else 'Manual' }}
-            </span>
-          </div>
-        </div>
-        {% else %}
-        <div class="vacio">
-          <b>Todavía no hay ventas confirmadas.</b>
-          <p>Cuando alguien pague con tarjeta (lo confirma Stripe) o actives un comprobante en «Compras por revisar», la venta aparece aquí y en el libro completo.</p>
-          <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras">Compras por revisar</a>
-        </div>
-        {% endfor %}
-        <div class="card-pie">
-          <span class="muted-note">
-            Este mes: <b>{{ ventas.kpis.ventas_mes }}</b> venta(s) ·
-            <b>{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$</b>
-          </span>
+        <div class="card-body">
+          {% if soporte.nuevo %}
+          <p class="soporte-aviso"><b>{{ soporte.nuevo }} mensaje(s) sin atender de {{ soporte.todos }} en el buzón.</b></p>
+          <ul class="lista-registros">
+            {% for m in soporte_ultimos %}
+            <li>
+              <b>{{ m.etiqueta_tipo }} · {{ m.nombre or m.email }}</b>
+              <small class="muted">{{ (m.asunto or m.mensaje)[:80] }}</small>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="muted-note">Nada pendiente. {{ soporte.todos }} mensaje(s) recibidos en total.</p>
+          {% endif %}
         </div>
       </div>
-    </div>
 
-    <div class="col-lateral">
       <div class="card">
         <div class="card-header">
-          <h2>⚠️ Riesgo de baja (churn)</h2>
-          <a class="btn btn-sm btn-secondary" href="/admin/analitica">Ver detalle de uso</a>
+          <h3>Riesgo de baja (churn)</h3>
+          <div class="card-header-acc">
+            <a class="badge badge-enlace {{ 'badge-warning' if riesgo_churn|length else 'badge-success' }}"
+               href="/admin/analitica?tab=clientes">{{ riesgo_churn|length }} pagan y no entran</a>
+            <a class="btn btn-sm btn-secondary" href="/admin/analitica?tab=clientes">Ver detalle de uso</a>
+          </div>
         </div>
         <div class="table-container">
           {% if riesgo_churn %}
@@ -404,29 +195,7 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>Buzón de soporte</h2>
-          <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=soporte">Abrir</a>
-        </div>
-        <div class="card-body">
-          {% if soporte.nuevo %}
-          <p class="soporte-aviso"><b>{{ soporte.nuevo }} mensaje(s) sin atender.</b></p>
-          <ul class="lista-registros">
-            {% for m in soporte_ultimos %}
-            <li>
-              <b>{{ m.etiqueta_tipo }} · {{ m.nombre or m.email }}</b>
-              <small class="muted">{{ (m.asunto or m.mensaje)[:80] }}</small>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}
-          <p class="muted-note">Nada pendiente. {{ soporte.todos }} mensaje(s) recibidos en total.</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <h2>Altas y pruebas</h2>
+          <h3>Altas y pruebas</h3>
           <div class="card-header-acc">
             <span class="badge badge-neutral">{{ registros.hoy }} hoy</span>
           </div>
@@ -453,10 +222,173 @@
           </p>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="ficha-lado">
+  {# ===================================================================== #}
+  {# BANDA 3 · EL MES                                                      #}
+  {#   Dinero y tendencia: se consulta, no se trabaja. Los contadores de    #}
+  {#   trabajo (por vencer, compras, soporte, churn) viven arriba.          #}
+  {# ===================================================================== #}
+  <section class="banda" aria-labelledby="banda-mes">
+    <header class="banda-cab">
+      <div class="banda-cab-txt">
+        <span class="banda-num" aria-hidden="true">3</span>
+        <div>
+          <h2 class="banda-titulo" id="banda-mes">Cómo va el mes</h2>
+          <p class="banda-sub">Dinero recurrente, ingresos y cartera, con la comparación contra el mes anterior.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="kpis">
+      {# MRR #}
+      <a class="kpi-card enlaza {{ 'positiva' if (finanzas.mrr_variacion or 0) >= 0 else 'negativa' }}" href="/admin/ingresos?tab=cobros">
+        <div class="kpi-value">{{ "%.2f"|format(finanzas.mrr) }} <small>US$/mes</small></div>
+        <div class="kpi-label">MRR</div>
+        <p class="note-sub">
+          {% if finanzas.mrr_variacion is not none %}
+          <span class="kpi-tendencia {{ 'pos' if finanzas.mrr_variacion >= 0 else 'neg' }}">{{ '▲' if finanzas.mrr_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.mrr_variacion|abs) }}%</span>
+          · {{ "%.2f"|format(finanzas.mrr_mes_anterior) }} US$/mes el mes anterior
+          {% else %}
+          Sin dato del mes anterior
+          {% endif %}
+        </p>
+      </a>
+
+      {# Ingresos del mes #}
+      <a class="kpi-card enlaza {{ 'positiva' if (finanzas.ingresos_variacion or 0) >= 0 else 'negativa' }}" href="/admin/ingresos?tab=ventas">
+        <div class="kpi-value">{{ "%.2f"|format(finanzas.ingresos_mes) }} <small>US$</small></div>
+        <div class="kpi-label">Ingresos del mes</div>
+        <p class="note-sub">
+          {% if finanzas.ingresos_variacion is not none %}
+          <span class="kpi-tendencia {{ 'pos' if finanzas.ingresos_variacion >= 0 else 'neg' }}">{{ '▲' if finanzas.ingresos_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.ingresos_variacion|abs) }}%</span>
+          · {{ "%.2f"|format(finanzas.ingresos_mes_anterior) }} US$ el mes anterior
+          {% else %}
+          Sin dato del mes anterior
+          {% endif %}
+        </p>
+      </a>
+
+      {# Ventas del mes #}
+      <a class="kpi-card enlaza" href="/admin/ingresos?tab=ventas">
+        <div class="kpi-value">{{ ventas.kpis.ventas_mes }}</div>
+        <div class="kpi-label">Ventas del mes</div>
+        <p class="note-sub">{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$ cobrados · {{ ventas.kpis.ventas_hoy }} hoy</p>
+      </a>
+
+      {# Clientes con pago #}
+      <a class="kpi-card enlaza {{ 'positiva' if (finanzas.clientes_variacion or 0) >= 0 else 'negativa' }}" href="/admin/clientes?tab=directorio">
+        <div class="kpi-value">{{ finanzas.clientes_con_pago_mes }}</div>
+        <div class="kpi-label">Clientes de pago</div>
+        <p class="note-sub">
+          {% if finanzas.clientes_variacion is not none %}
+          <span class="kpi-tendencia {{ 'pos' if finanzas.clientes_variacion >= 0 else 'neg' }}">{{ '▲' if finanzas.clientes_variacion >= 0 else '▼' }} {{ "%.1f"|format(finanzas.clientes_variacion|abs) }}%</span>
+          · {{ finanzas.clientes_con_pago_mes_anterior }} el mes pasado
+          {% else %}
+          Sin dato del mes anterior
+          {% endif %}
+        </p>
+      </a>
+
+      {# Clientes sin plan #}
+      <a class="kpi-card enlaza" href="/admin/clientes?tab=directorio&plan=sin">
+        <div class="kpi-value">{{ resumen.totales.sin_plan }}</div>
+        <div class="kpi-label">Sin plan activo</div>
+        <p class="note-sub">{{ resumen.totales.clientes }} clientes totales</p>
+      </a>
+    </div>
+
+    <div class="grid-lateral">
+      <div class="col-principal">
+        {% if finanzas.serie %}
         <div class="card">
-          <div class="card-header"><h2>Ir a</h2></div>
+          <div class="card-header">
+            <h3>Ingresos de los últimos {{ finanzas.serie|length }} meses</h3>
+            <span class="badge badge-neutral">US$</span>
+          </div>
+          <div class="card-body">
+            {% set punto_max = finanzas.serie | max(attribute='ingresos') %}
+            {% set maximo = punto_max.ingresos if punto_max else 0 %}
+            {% if maximo > 0 %}
+            <div class="serie-barras">
+              {% for punto in finanzas.serie %}
+              <div class="serie-col">
+                {% set alto = ((punto.ingresos / maximo * 118) if punto.ingresos else 2) %}
+                {% set y = 128 - alto %}
+                <svg class="serie-svg" viewBox="0 0 20 132" role="img" aria-label="{{ punto.label }}: {{ '%.0f'|format(punto.ingresos) }} US$">
+                  <rect class="serie-bar" x="3" y="{{ y|round(1) }}" width="14" height="{{ alto|round(1) }}" rx="3"></rect>
+                </svg>
+                <div class="muted serie-label">{{ punto.label }}</div>
+                <div class="text-bold serie-valor">{{ "%.0f"|format(punto.ingresos) }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="vacio">
+              <b>Sin ingresos registrados todavía.</b>
+              <p>Cuando concedas la primera licencia de pago o actives una compra, la serie mensual se dibujará aquí.</p>
+            </div>
+            {% endif %}
+          </div>
+          <div class="card-pie">
+            <span class="muted-note">Ticket medio {{ "%.2f"|format(finanzas.ticket_medio) }} US$ · conversión a pago {{ "%.1f"|format(finanzas.tasa_pago) }}% · LTV medio {{ "%.2f"|format(finanzas.ltv_medio) }} US$</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Últimas ventas</h3>
+            <div class="card-header-acc">
+              {% if ventas.kpis.ventas_hoy %}
+              <span class="badge badge-success">{{ ventas.kpis.ventas_hoy }} hoy</span>
+              {% endif %}
+              <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=ventas">Libro de ventas</a>
+            </div>
+          </div>
+          {% for v in ultimas_ventas %}
+          <div class="venta-item">
+            <div class="venta-importe">
+              <b>{{ "%.2f"|format(v.importe) }}</b>
+              <small>{{ v.moneda }}</small>
+            </div>
+            <div class="venta-info">
+              <b>
+                <a href="{{ v.url_cliente }}">{{ v.organizacion_nombre }}</a>
+                {% if v.es_novedad %}<span class="badge badge-warning">Nueva</span>{% endif %}
+              </b>
+              <small>
+                {{ v.plan_nombre }} · {{ v.metodo_nombre }}
+                {% if v.renovacion %}· renovación{% endif %}
+                · {{ v.fecha.strftime('%d/%m/%Y %H:%M') }}
+              </small>
+            </div>
+            <div class="venta-acc">
+              <span class="badge {{ 'badge-success' if v.automatica else 'badge-info' }}">
+                {{ 'Automática' if v.automatica else 'Manual' }}
+              </span>
+            </div>
+          </div>
+          {% else %}
+          <div class="vacio">
+            <b>Todavía no hay ventas confirmadas.</b>
+            <p>Cuando alguien pague con tarjeta (lo confirma Stripe) o actives un comprobante en «Compras por revisar», la venta aparece aquí y en el libro completo.</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/ingresos?tab=compras">Compras por revisar</a>
+          </div>
+          {% endfor %}
+          <div class="card-pie">
+            <span class="muted-note">
+              Este mes: <b>{{ ventas.kpis.ventas_mes }}</b> venta(s) ·
+              <b>{{ "%.2f"|format(ventas.kpis.importe_mes) }} US$</b>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lateral">
+        <div class="card">
+          <div class="card-header"><h3>Ir a</h3></div>
           <div class="card-body cuerpo-atajos">
             {% for atajo in atajos %}
             <a class="atajo" href="{{ atajo.ruta }}">
@@ -469,7 +401,7 @@
 
         <div class="card">
           <div class="card-header">
-            <h2>Últimas acciones del panel</h2>
+            <h3>Últimas acciones del panel</h3>
             <a class="btn btn-sm btn-secondary" href="/admin/sistema?tab=auditoria">Auditoría</a>
           </div>
           <div class="card-body">
@@ -488,5 +420,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}

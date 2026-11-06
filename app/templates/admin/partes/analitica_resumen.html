@@ -1,0 +1,158 @@
+{# Analítica · Resumen — la foto del día: quién está dentro, qué se crea y
+   cuánto avanza el embudo. Las otras tres pestañas responden a preguntas más
+   estrechas para no tener que leer 44 tarjetas seguidas. #}
+  {% set k = resumen.kpis %}
+  {% set vivo = resumen.en_vivo %}
+
+  <p class="note-h">Medición propia en el servidor (sin cookies, sin terceros). La presencia se actualiza con cada petición autenticada; el resto, en tiempo real desde la base.</p>
+
+  <div class="vivo-barra" role="status" aria-live="polite">
+    <span class="vivo-punto" aria-hidden="true"></span>
+    <div class="vivo-dato"><span>Empresas en línea ahora</span><strong>{{ vivo.en_linea_total }}</strong></div>
+    <div class="vivo-dato"><span>Personas con sesión hoy</span><strong>{{ vivo.logueados_total }}</strong></div>
+    <div class="vivo-dato"><span>Acciones de empresas (15 min)</span><strong>{{ vivo.eventos_ultimos_15 }}</strong></div>
+    <div class="vivo-dato"><span>Presupuestos hoy</span><strong>{{ k.presupuestos_hoy }}</strong></div>
+    <span class="vivo-sello">Última lectura {{ vivo.actualizado.strftime("%H:%M") }} UTC · se considera «en línea» {{ vivo.presencia_minutos }} min tras la última actividad
+      <label class="check-filtro" for="auto-refresh"><input type="checkbox" id="auto-refresh"> actualizar solo</label>
+    </span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ k.activas_hoy }}</div>
+      <div class="kpi-label">Empresas activas hoy</div>
+      <div class="muted">{{ k.activas_7d }} en 7 días · {{ k.activas_ventana }} en {{ resumen.dias }}d</div>
+    </div>
+
+    <div class="kpi-card{% if k.telemetria_rota %} warn{% endif %}">
+      <div class="kpi-value">{{ k.presupuestos_hoy }}</div>
+      <div class="kpi-label">Presupuestos creados hoy</div>
+      <div class="muted">{% if k.telemetria_rota %}no llegan eventos nuevos: falló {{ k.telemetria_fallos[0].accion }}{% else %}{{ k.presupuestos_semana }} esta semana · {{ k.presupuestos_mes }} este mes{% endif %}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value">{{ k.usuarios_hoy }}</div>
+      <div class="kpi-label">Cuentas que entraron hoy</div>
+      <div class="muted">{{ k.usuarios_7d }} en 7 días</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value">{{ k.usuarios_activos_hoy }}</div>
+      <div class="kpi-label">Usuarios activos hoy</div>
+      <div class="muted">con al menos un evento del producto</div>
+    </div>
+
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ "%.0f"|format(k.adopcion_activa) }} <small>%</small></div>
+      <div class="kpi-label">Adopción activa</div>
+      <div class="muted">{{ k.activas_ventana }} de {{ k.organizaciones }} en {{ resumen.dias }}d</div>
+    </div>
+  </div>
+
+  <div class="vivo-grid">
+    <div class="card">
+      <div class="card-header">
+        <h2>En línea ahora mismo</h2>
+        <span class="badge badge-success">{{ vivo.en_linea_total }} empresa{{ 's' if vivo.en_linea_total != 1 else '' }}</span>
+      </div>
+      <div class="card-body">
+        {% if vivo.en_linea %}
+        <ul class="vivo-lista">
+          {% for fila in vivo.en_linea %}
+          <li>
+            <span>
+              <a class="quien" href="/admin/clientes/{{ fila.organizacion_id }}">{{ fila.organizacion }}</a>
+              <span class="donde">{{ fila.actor }}{% if fila.pagina %} · {{ fila.pagina }}{% endif %}</span>
+            </span>
+            <span class="muted" data-hace="{{ fila.minutos }}">hace {{ fila.minutos }} min</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="vacio">
+          <b>Nadie está trabajando en este momento</b>
+          <p>La lista se llena en cuanto una empresa autenticada hace una petición. Si esperabas ver movimiento, revisa que la migración de presencia esté aplicada.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Sesiones iniciadas hoy</h2>
+        <span class="badge badge-neutral">{{ vivo.logueados_total }} cuenta{{ 's' if vivo.logueados_total != 1 else '' }}</span>
+      </div>
+      <div class="card-body">
+        {% if vivo.logueados %}
+        <ul class="vivo-lista">
+          {% for u in vivo.logueados %}
+          <li>
+            <span>
+              <span class="quien">{{ u.nombre or u.email }}</span>
+              <span class="donde">{{ u.email }}</span>
+            </span>
+            <span class="muted">{{ u.acceso.strftime("%H:%M") if u.acceso else "—" }} UTC</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="vacio">
+          <b>Todavía nadie ha iniciado sesión hoy</b>
+          <p>Se mide al autenticar y se sella como máximo cada cinco minutos para no escribir en cada petición.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="grid-charts">
+    {% set charts = [
+      ("chart_activas", "Organizaciones activas por día", "b-act", "activas"),
+      ("chart_presupuestos", "Presupuestos creados por día", "b-presu", "presupuestos"),
+      ("chart_registros", "Cuentas registradas por día", "b-reg", "registros"),
+    ] %}
+    {% for clave, titulo, clase_serie, clave_serie in charts %}
+    <div class="card chart">
+      <div class="card-header"><h2>{{ titulo }}</h2></div>
+      <div class="card-body">
+        {% set c = resumen[clave] %}
+        <div class="chart-info"><b>{{ c.total }}</b><span>máx. {{ c.maximo }}/día · últimos {{ resumen.dias }} días</span></div>
+        <svg viewBox="0 0 {{ c.ancho }} {{ c.alto }}" role="img" aria-label="{{ titulo }}">
+          <line class="eje" x1="0" y1="{{ c.base }}" x2="{{ c.ancho }}" y2="{{ c.base }}"></line>
+          {% for p in c.puntos %}
+          <rect class="bar {{ clase_serie }}" x="{{ p.x }}" y="{{ p.y }}" width="{{ p.ancho }}" height="{{ p.alto }}" rx="2">
+            <title>{{ p.fecha.strftime("%d/%m") }} · {{ p[clave_serie] }}</title>
+          </rect>
+          {% endfor %}
+        </svg>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Embudo de conversión</h2>
+      <span class="badge badge-neutral">últimos {{ resumen.dias }} días</span>
+    </div>
+    <div class="card-body">
+      <div class="embudo">
+        {% for paso in resumen.embudo %}
+        <div class="paso">
+          <div class="nombre">{{ paso.etiqueta }}
+            {% if not loop.first %}<small>{{ "%.0f"|format(paso.pct) }}% desde «{{ resumen.embudo[loop.index0 - 1].etiqueta }}»</small>{% endif %}
+          </div>
+          <div class="barra">
+            <svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="8"></rect>
+              <rect x="0" y="1" width="{{ [paso.pct, 0.6]|max }}" height="8"></rect>
+            </svg>
+          </div>
+          <div class="cifra"><b>{{ paso.valor }}</b><span>{{ "%.1f"|format(paso.pct) }}% de la base</span></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>

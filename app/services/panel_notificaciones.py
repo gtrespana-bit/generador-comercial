@@ -276,7 +276,7 @@ def _avisos_uso(db, hoy: date, nombres: dict[int, str], *, dias: int = 7) -> lis
             f"Su plan sigue vigente hasta el {vence:%d/%m/%Y} y no ha creado ni "
             "enviado nada. Es la señal más temprana de baja.",
             f"/admin/clientes/{organizacion_id}?tab=actividad",
-            url_lista="/admin/analitica?dias=7",
+            url_lista="/admin/analitica?tab=clientes&dias=7",
             etiqueta_lista="Ver uso de todas las empresas",
         ))
 

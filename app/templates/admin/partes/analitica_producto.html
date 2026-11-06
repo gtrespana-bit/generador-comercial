@@ -1,0 +1,185 @@
+{# Analítica · Producto — qué se usa de verdad: el explorador de eventos, qué
+   se corrige al guardar y a qué hora se trabaja. #}
+  {% set ex = resumen.explorador %}
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Eventos de todas las empresas</h2>
+      <span class="badge badge-neutral">{{ ex.total }} evento{{ 's' if ex.total != 1 else '' }} · página {{ ex.pagina }} de {{ ex.paginas }}</span>
+    </div>
+    <form class="filtros-eventos" method="get" action="/admin/analitica">
+      <input type="hidden" name="tab" value="producto">
+      <input type="hidden" name="dias" value="{{ resumen.dias }}">
+      <div class="form-group">
+        <label class="form-label" for="ev-org">Empresa</label>
+        <select class="form-control" id="ev-org" name="organizacion_id">
+          <option value="">Todas las empresas</option>
+          {% for org in ex.organizaciones %}
+          <option value="{{ org.id }}" {{ 'selected' if org.id == ex.filtros.organizacion_id else '' }}>{{ org.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ev-accion">Acción</label>
+        <select class="form-control" id="ev-accion" name="accion">
+          <option value="">Todas las acciones</option>
+          {% for accion in resumen.acciones_catalogo %}
+          <option value="{{ accion }}" {{ 'selected' if accion == ex.filtros.accion else '' }}>{{ accion }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ev-actor">Persona</label>
+        <input class="form-control" type="search" id="ev-actor" name="actor" value="{{ ex.filtros.actor }}" placeholder="email" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ev-q">Buscar</label>
+        <input class="form-control" type="search" id="ev-q" name="q" value="{{ ex.filtros.q }}" placeholder="empresa, email o detalle" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ev-desde">Desde</label>
+        <input class="form-control" type="date" id="ev-desde" name="desde" value="{{ ex.filtros.desde.isoformat() if ex.filtros.desde else '' }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ev-hasta">Hasta</label>
+        <input class="form-control" type="date" id="ev-hasta" name="hasta" value="{{ ex.filtros.hasta.isoformat() if ex.filtros.hasta else '' }}">
+      </div>
+      <div class="form-group ancho-total">
+        <div class="acciones-filtro">
+          <button class="btn btn-primary btn-sm" type="submit">Filtrar</button>
+          <a class="btn btn-secondary btn-sm" href="/admin/analitica?tab=producto&dias={{ resumen.dias }}">Limpiar</a>
+          <label class="check-filtro" for="ev-ruido"><input type="checkbox" id="ev-ruido" name="ruido" value="1" {{ 'checked' if not ex.filtros.ocultar_ruido else '' }}> incluir latidos y presencia</label>
+          <label class="check-filtro" for="ev-mios"><input type="checkbox" id="ev-mios" name="sin_mios" value="1" {{ 'checked' if ex.filtros.ocultar_mios else '' }}> ocultar mis propios eventos</label>
+        </div>
+      </div>
+    </form>
+    <div class="table-container tabla-eventos-wrap">
+      <table id="tabla-eventos">
+        <thead>
+          <tr><th>Cuándo</th><th>Acción</th><th>Empresa</th><th>Quién</th><th>Detalle</th></tr>
+        </thead>
+        <tbody>
+          {% for ev in ex.eventos %}
+          <tr>
+            <td class="muted" title="{{ ev.created_at.strftime('%d/%m/%Y %H:%M:%S') }} UTC">{{ ev.created_at.strftime("%d/%m %H:%M") }}</td>
+            <td><span class="badge {{ 'badge-info' if ev.global else 'badge-neutral' }}">{{ ev.etiqueta }}</span></td>
+            <td class="text-bold">{% if ev.organizacion_id %}<a href="/admin/clientes/{{ ev.organizacion_id }}">{{ ev.organizacion }}</a>{% else %}{{ ev.organizacion }}{% endif %}</td>
+            <td class="muted">{{ ev.actor }}</td>
+            <td class="muted">{% if ev.detalle %}<span class="detalle-ev">{{ ev.detalle|tojson }}</span>{% else %}—{% endif %}</td>
+          </tr>
+          {% endfor %}
+          {% if not ex.eventos %}
+          <tr><td colspan="5" class="muted text-center empty-pad-sm">Ningún evento con estos filtros. Prueba a ampliar la ventana o a incluir los latidos de actividad.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="paginacion">
+      <span>{{ ex.total }} evento{{ 's' if ex.total != 1 else '' }} · {{ ex.por_pagina }} por página · histórico completo (las fechas son opcionales y no dependen de la ventana de arriba)</span>
+      <span class="enlaces">
+        {% if ex.filtros.enlace_anterior %}<a class="btn btn-secondary btn-sm" href="/admin/analitica?tab=producto&{{ ex.filtros.enlace_anterior }}">← Anteriores</a>{% endif %}
+        {% if ex.filtros.enlace_siguiente %}<a class="btn btn-secondary btn-sm" href="/admin/analitica?tab=producto&{{ ex.filtros.enlace_siguiente }}">Siguientes →</a>{% endif %}
+      </span>
+    </div>
+    <div class="card-body"><p class="note-bottom">Fuente: <code>eventos_producto</code> — medición propia, mínima y sin cookies (E5-012). Google Analytics sigue midiendo la capa pública.</p></div>
+  </div>
+
+
+  {# --------------------------------------------------------------- #}
+  {# Qué se modifica al guardar: el dato que dice qué arreglar del editor #}
+  {# --------------------------------------------------------------- #}
+  <div class="card">
+    <div class="card-header">
+      <h2>Qué se modifica al guardar un presupuesto</h2>
+      <span class="badge badge-neutral">
+        {% if cambios.ediciones == 1 %}1 edición{% else %}{{ cambios.ediciones }} ediciones{% endif %} · últimos {{ cambios.dias }} días
+      </span>
+    </div>
+    <div class="card-body">
+      {% if cambios.filas %}
+      <p class="note-block">
+        Se cuenta lo que cambia entre abrir y guardar: si predomina un campo, ahí
+        está el problema del producto (no en el editor, en el dato de origen).
+      </p>
+      <div class="funciones">
+        {% for fila in cambios.filas %}
+        <div class="funcion">
+          <div class="nombre">{{ cambios.etiquetas.get(fila.clave, fila.clave) }}</div>
+          <div class="barra">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+              <rect x="0" y="1" width="{{ [fila.pct, 1.2]|max }}" height="6"></rect>
+            </svg>
+          </div>
+          <div class="total">{{ fila.total }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="vacio">
+        <b>Todavía no hay ediciones medidas en esta ventana</b>
+        <p>
+          El dato se recoge al guardar un presupuesto: cuántos precios, textos,
+          cantidades o partidas cambiaron. Hasta que se guarde uno, no hay nada
+          que contar (y un cero aquí es un dato, no una avería).
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <div class="grid-charts">
+    <div class="card">
+      <div class="card-header"><h2>Uso de funciones</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
+      <div class="card-body">
+        {% if resumen.funciones %}
+        <div class="funciones">
+          {% for f in resumen.funciones %}
+          <div class="funcion">
+            <div class="nombre" title="{{ f.accion }}">{{ f.etiqueta }}</div>
+            <div class="barra">
+              <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+                <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+                <rect x="0" y="1" width="{{ [f.pct, 1.2]|max }}" height="6"></rect>
+              </svg>
+            </div>
+            <div class="total">{{ f.total }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted text-center">Todavía no hay eventos de uso en esta ventana.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card chart">
+      <div class="card-header"><h2>Actividad por hora (UTC)</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
+      <div class="card-body">
+        <div class="chart-info"><b>{{ resumen.horas.total }}</b><span>{% if resumen.horas.hora_punta is not none %}hora punta {{ "%02d"|format(resumen.horas.hora_punta) }}:00 UTC{% else %}sin actividad{% endif %}</span></div>
+        <svg class="compacta" viewBox="0 0 {{ resumen.horas.chart_horas.ancho }} {{ resumen.horas.chart_horas.alto }}" role="img" aria-label="Actividad por hora del día">
+          <line class="eje" x1="0" y1="{{ resumen.horas.chart_horas.base }}" x2="{{ resumen.horas.chart_horas.ancho }}" y2="{{ resumen.horas.chart_horas.base }}"></line>
+          {% for p in resumen.horas.chart_horas.puntos %}
+          <rect class="bar b-hora" x="{{ p.x }}" y="{{ p.y }}" width="{{ p.ancho }}" height="{{ p.alto }}" rx="2">
+            <title>{{ p.etiqueta }}:00 · {{ p.valor }} eventos</title>
+          </rect>
+          {% endfor %}
+        </svg>
+      </div>
+    </div>
+    <div class="card chart">
+      <div class="card-header"><h2>Actividad por día de la semana</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
+      <div class="card-body">
+        <div class="chart-info"><b>{{ resumen.horas.total }}</b><span>eventos fechados</span></div>
+        <svg class="compacta" viewBox="0 0 {{ resumen.horas.chart_dias.ancho }} {{ resumen.horas.chart_dias.alto }}" role="img" aria-label="Actividad por día de la semana">
+          <line class="eje" x1="0" y1="{{ resumen.horas.chart_dias.base }}" x2="{{ resumen.horas.chart_dias.ancho }}" y2="{{ resumen.horas.chart_dias.base }}"></line>
+          {% for p in resumen.horas.chart_dias.puntos %}
+          <rect class="bar b-hora" x="{{ p.x }}" y="{{ p.y }}" width="{{ p.ancho }}" height="{{ p.alto }}" rx="2">
+            <title>{{ p.etiqueta }} · {{ p.valor }} eventos</title>
+          </rect>
+          {% endfor %}
+        </svg>
+      </div>
+    </div>
+  </div>
+  </div>
