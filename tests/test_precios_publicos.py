@@ -30,6 +30,7 @@ DATOS = RAIZ / "basedatos_partidas" / "datos"
 SALIDA = RAIZ / "basedatos_partidas" / "salida"
 
 PUBLICADOS = pp.paises_publicados()
+ORIGEN = "https://cotizat.online"
 
 # Detector independiente (no reusa el del servicio): si ambos fallan a
 # la vez, que sea por motivos distintos.
@@ -305,15 +306,17 @@ def test_hreflang_solo_variantes_existentes(cliente_web):
 
 
 def test_sitemaps(cliente_web):
-    """Solo se anuncian los mercados cuyo catálogo es indexable.
+    """Solo se anuncia lo indexable, y todo el sitemap del mercado lo es.
 
     Desde el 23/10/2026 los mercados hispanos que no son España publican sus
     fichas con ``noindex``: anunciarlas sería contradecirse, y un sitemap que
     anuncia páginas noindex es un error que Search Console reporta por cada
-    URL. El índice de sitemaps y ``robots.txt`` se recogen solos de la misma
-    política.
+    URL. Desde el 06/11/2026 la unidad es la ficha, así que un mercado puede
+    tener sitemap con dos apartados y 26 fichas (México) sin estar encendido
+    entero. El índice de sitemaps y ``robots.txt`` se recogen solos de la
+    misma política.
     """
-    anunciados = pp.paises_con_catalogo_indexable()
+    anunciados = tuple(cc for cc in PUBLICADOS if pp.urls_sitemap(cc, ORIGEN))
     silenciados = [cc for cc in PUBLICADOS if cc not in anunciados]
 
     principal = cliente_web.get("/sitemap.xml")
@@ -326,12 +329,12 @@ def test_sitemaps(cliente_web):
         assert f"sitemap-precios-{cc.lower()}.xml" in indice, cc
         hijo = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
         assert hijo.status_code == 200
-        resumen = pp.resumen(cc)
-        esperado = 1 + resumen["total_apartados"] + resumen["total_partidas"]
-        # +1: la página de coste horario de la mano de obra del mercado.
-        if pp.oficios_disponibles(cc):
-            esperado += 1
-        assert hijo.text.count("<loc>") == esperado, cc
+        entradas = pp.urls_sitemap(cc, ORIGEN)
+        assert hijo.text.count("<loc>") == len(entradas), cc
+        # Ni una noindex anunciada: cada loc pasa por el mismo predicado que
+        # decide el <meta robots> y el X-Robots-Tag.
+        for entrada in entradas:
+            assert pp.path_indexable(cc, entrada["loc"]), (cc, entrada["loc"])
     for cc in silenciados:
         assert f"sitemap-precios-{cc.lower()}.xml" not in indice, cc
         r = cliente_web.get(f"/sitemap-precios-{cc.lower()}.xml")
@@ -351,38 +354,73 @@ def _mercado_del_href(href: str) -> str:
     return segmento.removeprefix("en-")
 
 
-def test_los_sitemaps_hijos_solo_enlazan_mercados_indexables():
+def test_los_sitemaps_hijos_solo_enlazan_paginas_indexables():
     """El hreflang del sitemap no puede apuntar a una página noindex.
 
     Es la versión sitemap de ``test_hreflang_solo_variantes_existentes`` (que
-    cubre el ``<head>``): un alternate hacia un mercado silenciado invalida el
-    clúster hreflang entero, así que los 16 mercados noindex no pueden aparecer
-    en ninguno de los seis sitemaps hijos.
+    cubre el ``<head>``): un alternate hacia una página silenciada invalida el
+    clúster hreflang entero. La comprobación es página a página, no mercado a
+    mercado, porque desde el 06/11/2026 México anuncia dos apartados y no el
+    resto de su catálogo: un mercado a medias sí puede aparecer en el grupo,
+    pero solo en las fichas que también anuncia.
     """
-    indexables = {cc.lower() for cc in pp.paises_con_catalogo_indexable()}
-    assert len(indexables) == 6
     for cc in pp.paises_con_catalogo_indexable():
-        entradas = pp.urls_sitemap(cc, "https://cotizat.online")
-        assert entradas  # mercado indexable: su sitemap nunca va vacío
+        entradas = pp.urls_sitemap(cc, ORIGEN)
+        assert entradas  # mercado encendido: su sitemap nunca va vacío
         for entrada in entradas:
             mercados = set()
             for alt in entrada["alternates"]:
+                # El destino por defecto también tiene que ser indexable.
+                assert pp.path_indexable(cc, alt["href"]), (cc, entrada["loc"], alt)
                 if alt["hreflang"] == "x-default":
-                    # El destino por defecto también tiene que ser indexable.
-                    assert _mercado_del_href(alt["href"]) in indexables, alt
                     continue
                 mercado = _mercado_del_href(alt["href"])
-                assert mercado in indexables, (cc, entrada["loc"], alt)
+                assert mercado not in mercados, (cc, entrada["loc"], alt)
                 mercados.add(mercado)
-            if entrada["alternates"]:
-                # 6 mercados indexables + x-default: nunca los 23 de antes.
-                assert len(entrada["alternates"]) <= 7, entrada["loc"]
-        # La entrada índice del mercado existe en los seis catálogos: su grupo
-        # tiene exactamente los seis mercados más x-default.
+        # La entrada índice del mercado lleva un alternate por cada mercado
+        # cuya portada de catálogo se anuncia, más x-default.
         entrada_indice = next(
             e for e in entradas if e["loc"].endswith(pp.ruta_indice(cc))
         )
-        assert len(entrada_indice["alternates"]) == 7
+        portadas = {
+            otro
+            for otro in pp.paises_publicados()
+            if pp.path_indexable(otro, ORIGEN + pp.ruta_indice(otro))
+        }
+        assert len(entrada_indice["alternates"]) == len(portadas) + 1
+
+
+def test_el_sitemap_anuncia_lo_indexable_y_nada_mas():
+    """La lista del sitemap es exactamente el conjunto que se anuncia.
+
+    En las dos direcciones: ninguna URL que el predicado mande a noindex
+    (contradicción que Search Console reporta una por una) y ninguna página
+    indexable que falte (contenido invisible para el buscador). Vale igual
+    para un mercado encendido entero y para uno a medio localizar.
+    """
+    for cc in pp.PAISES_PRECIOS_PUBLICOS:
+        locs = {entrada["loc"] for entrada in pp.urls_sitemap(cc, ORIGEN)}
+        indice = pp._indice(cc)
+        if not indice:
+            assert not locs, cc
+            continue
+        esperadas: set[str] = set()
+        if pp.indice_indexable(cc):
+            esperadas.add(ORIGEN + pp.ruta_indice(cc))
+        # La tabla de tarifas horarias solo con el mercado entero encendido.
+        if pp.ficha_indexable(cc) and pp.oficios_disponibles(cc):
+            esperadas.add(ORIGEN + pp.ruta_mano_obra(cc))
+        for slug_ap in indice["apartados"]:
+            if not pp.apartado_indexable(cc, slug_ap):
+                continue
+            esperadas.add(ORIGEN + pp.ruta_apartado(cc, slug_ap))
+            for resumen in indice["apartados"][slug_ap]["partidas"]:
+                if pp.partida_indexable(cc, slug_ap, resumen["slug"]):
+                    esperadas.add(
+                        ORIGEN + pp.ruta_partida(cc, slug_ap, resumen["slug"])
+                    )
+        # Igualdad en los dos sentidos, también para un mercado a medias.
+        assert locs == esperadas, (cc, locs ^ esperadas)
 
 
 def test_las_alternates_crudas_siguen_incluyendo_mercados_silenciados():

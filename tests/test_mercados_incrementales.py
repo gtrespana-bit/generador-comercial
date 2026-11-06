@@ -27,7 +27,9 @@ from app.main import app
 from app.services import precios_publicos as pp
 
 BASE = "https://cotizat.online"
-CC = "MX"
+# Mercado sin registro propio: las pruebas de abajo son sintéticas y no deben
+# depender de cuántas fichas lleve localizadas hoy México.
+CC = "CO"
 
 
 @pytest.fixture(autouse=True)
@@ -89,8 +91,9 @@ def un_solo_apartado(monkeypatch):
     return slug_ap, fichas
 
 
-def test_sin_texto_propio_el_mercado_sigue_apagado():
-    """El estado de hoy: México existe, se navega y no se anuncia."""
+def test_sin_texto_propio_el_mercado_sigue_apagado(monkeypatch):
+    """Un mercado sin registro existe, se navega y no se anuncia."""
+    monkeypatch.setattr(pp, "_localizado", lambda cc: {})
     slug_ap, fichas = _apartado_con_partidas(1)
     ficha = fichas[0]
     assert pp.ficha_indexable(CC) is False
@@ -111,17 +114,16 @@ def test_una_ficha_localizada_se_anuncia_sola(un_solo_apartado):
     assert pp.resto_indexable("precios", CC) is True
     assert pp.resto_indexable(f"precios/{slug_ap}/{ficha['slug']}", CC) is True
 
+    raiz = BASE + pp.ruta_indice(CC)
     locs = [entrada["loc"] for entrada in pp.urls_sitemap(CC, BASE)]
-    assert f"{BASE}/mx/precios" in locs
+    assert raiz in locs
     # Exactamente las fichas localizadas, ni una más: las hermanas del
     # apartado que no tienen texto propio siguen fuera del sitemap.
     anunciadas = {
-        loc
-        for loc in locs
-        if loc.startswith(f"{BASE}/mx/precios/") and loc.count("/") == 6
+        loc for loc in locs if loc.startswith(raiz + "/") and loc.count("/") == 6
     }
     assert anunciadas == {
-        f"{BASE}/mx/precios/{slug_ap}/{f['slug']}" for f in fichas
+        BASE + pp.ruta_partida(CC, slug_ap, f["slug"]) for f in fichas
     }
 
 
@@ -135,7 +137,7 @@ def test_el_apartado_necesita_tres_fichas(monkeypatch):
         )
         assert pp.apartado_indexable(CC, slug_ap) is esperado
         locs = [entrada["loc"] for entrada in pp.urls_sitemap(CC, BASE)]
-        assert (f"{BASE}/mx/precios/{slug_ap}" in locs) is esperado
+        assert (BASE + pp.ruta_apartado(CC, slug_ap) in locs) is esperado
 
 
 def test_una_ficha_sin_localizar_sigue_en_noindex(un_solo_apartado):
@@ -169,13 +171,22 @@ def test_el_hreflang_no_apunta_a_paginas_noindex(un_solo_apartado):
         {
             "hreflang": "es",
             "cc": "ES",
-            "path": f"/es/precios/{ficha['slug_apartado']}/{ficha['slug']}",
+            "path": pp.ruta_partida("ES", ficha["slug_apartado"], ficha["slug"]),
         },
-        {"hreflang": "es-MX", "cc": "MX", "path": f"/mx/precios/{slug_ap}/{ficha['slug']}"},
-        {"hreflang": "es-CO", "cc": "CO", "path": f"/co/precios/{slug_ap}/{ficha['slug']}"},
+        {
+            "hreflang": "es-CO",
+            "cc": "CO",
+            "path": pp.ruta_partida("CO", slug_ap, ficha["slug"]),
+        },
+        # Ruta que no existe en el mercado: no se anuncia, así que sobra.
+        {
+            "hreflang": "es-MX",
+            "cc": "MX",
+            "path": f"/mx/precios/{slug_ap}/ficha-que-no-existe",
+        },
     ]
     etiquetas = [enlace["hreflang"] for enlace in _hreflang(BASE, rutas)]
-    assert etiquetas == ["es", "es-MX", "x-default"]
+    assert etiquetas == ["es", "es-CO", "x-default"]
 
 
 def test_el_texto_propio_llega_a_la_ficha(monkeypatch):
@@ -259,9 +270,11 @@ def test_la_cabecera_y_el_meta_coinciden_en_la_ficha(monkeypatch):
         pp, "_localizado", lambda cc: registro if str(cc).upper() == CC else {}
     )
     with TestClient(app, base_url=BASE) as cliente:
-        buena = cliente.get(f"/mx/precios/{slug_ap}/{localizada['slug']}")
+        buena = cliente.get(
+            pp.ruta_partida(CC, slug_ap, localizada["slug"])
+        )
         mala = cliente.get(
-            f"/mx/precios/{otra['slug_apartado']}/{otra['slug']}"
+            pp.ruta_partida(CC, otra["slug_apartado"], otra["slug"])
         )
     assert buena.status_code == 200 and mala.status_code == 200
     assert "noindex" not in buena.headers.get("x-robots-tag", "")

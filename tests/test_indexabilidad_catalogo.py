@@ -17,6 +17,12 @@ Desde entonces solo se anuncian los mercados de ``MERCADOS_FICHAS_INDEXABLES``;
 el resto publica sus páginas con ``noindex, follow``, sin sitemap y sin
 hreflang, pero navegables.
 
+**Ahora** (06/11/2026) la unidad es la ficha: un mercado a medio localizar
+anuncia su portada, los apartados con tres fichas propias y esas fichas, y
+sigue sirviendo el resto con ``noindex, follow``. Por eso ``NO_ANUNCIADOS`` se
+calcula por sitemap y no por mercado: México tiene 29 URL anunciadas y 2 171
+páginas silenciadas a la vez.
+
 Estas pruebas vigilan las dos cosas: que lo anunciado sea indexable y que lo no
 anunciado lo diga **en las dos cabeceras a la vez**.
 """
@@ -30,7 +36,10 @@ from app.seo import es_indexable
 from app.services import precios_publicos as pp
 
 INDEXABLES = sorted(pp.paises_con_catalogo_indexable())
-NO_ANUNCIADOS = sorted(set(pp.paises_publicados()) - set(INDEXABLES))
+#: Mercados sin una sola página anunciada: ni sitemap ni hreflang.
+NO_ANUNCIADOS = sorted(
+    set(pp.paises_publicados()) - set(pp.paises_con_sitemap())
+)
 
 
 def _cliente() -> TestClient:
@@ -101,9 +110,8 @@ def test_el_mercado_no_anunciado_lleva_noindex_en_las_dos_cabeceras(cc):
 
 
 def test_mano_de_obra_y_json_de_un_mercado_no_anunciado():
-    if "MX" not in NO_ANUNCIADOS:
-        pytest.skip("México está anunciado en la política actual")
-    for ruta in ("/mx/precios.json", "/mx/mano-de-obra"):
+    cc = NO_ANUNCIADOS[0].lower()
+    for ruta in (f"/{cc}/precios.json", f"/{cc}/mano-de-obra"):
         with _cliente() as cliente:
             respuesta = cliente.get(ruta)
         assert respuesta.status_code == 200, ruta
@@ -143,11 +151,11 @@ def test_la_regla_reconoce_las_formas_canonicas_y_nada_mas():
     assert es_indexable("/en-us/prices/carpentry-metalwork-glazing-and-solar-shading")
     assert es_indexable("/en-us/labour-rates")
     # No anunciados: el mismo catálogo en un mercado hispano copia de España.
-    assert not es_indexable("/mx/precios")
-    assert not es_indexable("/mx/precios/azulejo-y-porcelanato-en-paredes")
-    assert not es_indexable("/mx/precios/un-apartado/una-partida")
-    assert not es_indexable("/mx/mano-de-obra")
-    assert not es_indexable("/mx/precios.json")
+    assert not es_indexable("/co/precios")
+    assert not es_indexable("/co/precios/azulejo-y-porcelanato-en-paredes")
+    assert not es_indexable("/co/precios/un-apartado/una-partida")
+    assert not es_indexable("/co/mano-de-obra")
+    assert not es_indexable("/co/precios.json")
     # Sus páginas de mercado sí siguen indexables: son las que rankean.
     assert es_indexable("/mx/")
     assert es_indexable("/mx/apu")

@@ -1,0 +1,293 @@
+{
+  "_comentario": "Texto propio del mercado de México.",
+  "_mercado": "MX",
+  "_revision": "2026-11-06",
+  "partidas": {
+    "02.04.01.010": {
+      "titulo": "Demolición de muro de block o tabique, con sus aplanados",
+      "descripcion": "Demolición de muro interior no estructural de block de concreto o tabique, incluyendo el aplanado de ambas caras, con martillo demoledor eléctrico y sin comprometer la estabilidad de los elementos vecinos. Incluye revisar antes que el muro no sea de carga y que no tenga instalaciones en servicio, proteger el entorno con plástico y cartón, apuntalar donde haga falta, trocear el escombro a tamaño manejable, sacarlo en sacos de rafia hasta el sitio de acopio y dejar limpia el área. No incluye el acarreo al tiro ni el pago de la descarga. Se cuantifica por metro cuadrado realmente demolido.",
+      "recursos": {
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.020": {
+      "titulo": "Demolición de muro de tablaroca con su bastidor y aislamiento",
+      "descripcion": "Demolición de muro interior de tablaroca con su bastidor de acero galvanizado y el aislamiento de la cámara, con medios manuales. Incluye localizar y desconectar antes las instalaciones que corren por dentro del muro —el paso crítico de este sistema, porque la tubería y el cableado quedan ocultos y sin señalizar—, proteger el piso, desmontar primero las placas, retirar el aislamiento, desarmar la perfilería y limpiar. No incluye el bote del escombro, que se cobra en el capítulo de residuos. Se cuantifica a cinta corrida descontando claros mayores a 2 m².",
+      "recursos": {
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-PROT-OBRA": "Protección de áreas con plástico, cartón y cinta",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.030": {
+      "titulo": "Demolición de muro de concreto no estructural, con sus aplanados",
+      "descripcion": "Demolición de muro interior de concreto no estructural, con sus aplanados, con martillo neumático y corte de la malla de refuerzo si la tiene. Incluye la revisión estructural previa que confirme que el muro no es de carga ni de contraventeo —requisito indispensable antes de entrarle—, el corte perimetral con disco de diamante, la protección del entorno, el control de polvo, el troceo del escombro y su retiro en sacos. No incluye el bote del escombro. Se cuantifica por metro cuadrado realmente demolido.",
+      "recursos": {
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-OXI-CONS": "Consumibles de oxicorte",
+        "MT-PROT-OBRA": "Protección de áreas con plástico, cartón y cinta",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-AMOLA": "Esmeriladora angular con disco de diamante",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.040": {
+      "titulo": "Apertura de vano en muro de block o tabique, con apuntalamiento",
+      "descripcion": "Apertura de vano para puerta, ventana o paso en muro existente de block o tabique, con corte perimetral de disco de diamante y demolición del interior con martillo demoledor. Incluye el trazo del vano, el apuntalamiento provisional de la dala o dintel con puntales antes de empezar a demoler, el corte perimetral que deja las jambas derechas y sin desgarres hacia el resto del muro, la demolición controlada de arriba hacia abajo, el retiro del escombro y el repaso de las jambas a plomo. No incluye la dala definitiva ni el resane de jambas, que se cotizan aparte. No incluye el bote del escombro. Se cuantifica por metro cuadrado de vano realmente abierto.",
+      "recursos": {
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-APEO": "Puntales metálicos telescópicos y madera de apeo",
+        "MT-PROT-OBRA": "Protección de áreas con plástico, cartón y cinta",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg",
+        "MQ-AMOLA": "Esmeriladora angular con disco de diamante",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.050": {
+      "titulo": "Demolición de muro o paño de block de vidrio",
+      "descripcion": "Demolición de muro o paño de block de vidrio, con sus juntas de mortero y el armado entre hiladas, con medios manuales y martillo demoledor. Este trabajo tiene un riesgo propio: la proyección de esquirlas de vidrio. Se encinta la cara de los blockes para que rompan contenidos y se trabaja con careta y guantes anticorte. Incluye proteger el entorno, demoler de arriba hacia abajo por hiladas, retirar el material en sacos reforzados y barrer con cuidado las esquirlas. No incluye el bote del escombro. Se cuantifica por metro cuadrado realmente demolido.",
+      "recursos": {
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-PROT-OBRA": "Protección de áreas con plástico, cartón y cinta",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.070": {
+      "titulo": "Demolición de muro de placa de cemento sobre bastidor metálico",
+      "descripcion": "Demolición de muro de placa de cemento sobre bastidor metálico. Incluye desmontar la placa, desarmar el bastidor, separar los residuos por tipo y llevarlos al sitio de acopio. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.080": {
+      "titulo": "Demolición de pared de mampostería estructural con refuerzo",
+      "descripcion": "Demolición de pared de mampostería estructural con refuerzo. Es una pared que trabaja: antes de intervenir hace falta la revisión de un responsable estructural, porque aquí no aplica la demolición libre de un muro de relleno. Incluye la demolición con equipo neumático, el corte del acero de refuerzo y el retiro del escombro al acopio. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-NEUM": "Martillo neumático con compresor"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.090": {
+      "titulo": "Demolición de muro de tabique rojo recocido, con sus aplanados",
+      "descripcion": "Demolición de muro de tabique rojo recocido asentado con mortero, con sus aplanados. Incluye trocear el tabique para que quepa en saco, separar el material y limpiar el área. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.100": {
+      "titulo": "Demolición de muro de block de arcilla (tabicón), con sus aplanados",
+      "descripcion": "Demolición de muro de block de arcilla (tabicón), con sus aplanados. Incluye retirar el mortero de las juntas, trocear el escombro, sacarlo al acopio y limpiar el área. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.110": {
+      "titulo": "Demolición de muro de madera o machihembrado, desmontando la pieza",
+      "descripcion": "Demolición de muro de madera o machihembrado, desmontando la pieza en lugar de romperla. Incluye desmontar tabla por tabla, retirar clavos y fijaciones, separar la madera reutilizable de la que va a residuo y sacar el material al acopio. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-SIERRA": "Sierra circular o motosierra"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.120": {
+      "titulo": "Demolición de muro de panel prefabricado ligero",
+      "descripcion": "Demolición de muro de panel prefabricado ligero. Incluye desmontar los paneles por piezas, retirar la fijación y el sellado perimetral, y sacar el material al acopio. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.130": {
+      "titulo": "Apertura de rozas en muro de block o tabique para instalaciones",
+      "descripcion": "Apertura de rozas (ranuras) en muro de block o tabique para alojar instalación eléctrica, hidráulica o de gas. Incluye el trazo de la ruta con el plano de instalaciones a la mano, el corte con ranuradora de doble disco para que la ranura quede de ancho uniforme, la profundidad suficiente para que el tubo quede cubierto por el aplanado, el retiro del escombro fino y la limpieza. Se cuantifica por metro lineal de roza.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MQ-ROZAD": "Ranuradora de doble disco con captación de polvo",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.140": {
+      "titulo": "Demolición de muro de block de concreto, con sus aplanados",
+      "descripcion": "Demolición de muro de block de concreto, con sus aplanados. Incluye demoler con martillo eléctrico, trocear el block a tamaño manejable, retirar el escombro en sacos y dejar limpia el área. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.150": {
+      "titulo": "Demolición de muro de doble placa de tablaroca con aislamiento",
+      "descripcion": "Demolición de muro de doble placa de tablaroca con aislamiento interior. Incluye retirar ambas capas de placa, sacar el aislamiento (lana mineral o fibra) en bolsa cerrada para no dispersar fibras, desarmar el bastidor y limpiar. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.160": {
+      "titulo": "Apertura de vano en muro de concreto, con corte perimetral",
+      "descripcion": "Apertura de vano en muro de concreto, con corte perimetral y demolición del paño. Incluye revisar que el muro no sea estructural, trazar el vano, cortar con disco de diamante, demoler con martillo eléctrico, cortar el acero que aparezca y retirar el escombro. Se cuantifica por metro lineal de vano.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-OXI-CONS": "Consumibles de oxicorte",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.170": {
+      "titulo": "Demolición de muro de block de vidrio existente",
+      "descripcion": "Demolición de muro de block de vidrio existente, retirando los blockes completos cuando sea posible para reducir la esquirla. Incluye proteger el área, retirar el armado entre hiladas, sacar el material al acopio y barrer. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.180": {
+      "titulo": "Demolición de muro de blockes con armado interior de acero",
+      "descripcion": "Demolición de muro de blockes con armado interior de acero. Incluye demoler el block, cortar el acero con equipo de oxicorte, separar el metal para su venta o reciclaje y retirar el escombro. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-OXI-CONS": "Consumibles de oxicorte",
+        "MQ-MART-NEUM": "Martillo neumático con compresor",
+        "MQ-OXICORTE": "Equipo de oxicorte"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.190": {
+      "titulo": "Demolición de muro de panel de fibra o composite",
+      "descripcion": "Demolición de muro de panel de fibra o composite. Incluye desmontar el panel, retirar la fijación, separar el material (muchos de estos paneles no van al mismo residuo que el escombro de obra) y sacarlo al acopio. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.200": {
+      "titulo": "Apertura de roza en muro de concreto para instalaciones",
+      "descripcion": "Apertura de roza (ranura) en muro de concreto para instalaciones. Incluye trazo de la ruta, corte con ranuradora de doble disco, retiro del escombro fino y limpieza. En concreto la ranura es más lenta: el disco se desgasta más y hay que evitar cortar el acero de refuerzo. Se cuantifica por metro lineal de roza.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MQ-ROZAD": "Ranuradora de doble disco con captación de polvo",
+        "MQ-ASPIR": "Aspiradora industrial con filtro fino"
+      },
+      "revisado": "2026-11-06"
+    },
+    "02.04.01.210": {
+      "titulo": "Demolición de pared de tabique a la vista, cuidando el entorno",
+      "descripcion": "Demolición de pared de tabique a la vista, cuidando de no dañar los muros, pisos o acabados vecinos que se conservan. Incluye protección del entorno inmediato, demolición de arriba hacia abajo, retiro del escombro y limpieza fina del área. Se cuantifica por metro cuadrado demolido.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas, cinceles y discos",
+        "MT-SAC-ESC": "Saco de rafia para escombro",
+        "MQ-MART-ELEC": "Martillo demoledor eléctrico de 5 kg"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.010": {
+      "titulo": "Piso de loseta cerámica o porcelanato de formato estándar, pegado en capa fina",
+      "descripcion": "Suministro y colocación de piso con loseta cerámica o porcelanato de formato estándar, hasta 60x60 cm, sobre firme o losa previamente nivelada y limpia. Se pega en capa fina con pegazulejo mejorado tipo C2 TE aplicado con llana dentada y doble encolado en la pieza, se nivela con cuñas y crucetas desechables y se boquillea con mortero para junta tipo CG2 en el color que elija el cliente. Incluye trazo y modulación del despiece para centrar la loseta, cortes en orillas y en pasos de instalaciones, limpieza final de la superficie y retiro de recortes. La loseta la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MT-CRU-NIV": "Crucetas y cuñas niveladoras desechables",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla para pegazulejo"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.020": {
+      "titulo": "Piso de porcelanato rectificado de gran formato (120x60 cm o mayor), capa fina",
+      "descripcion": "Colocación de piso con porcelanato rectificado de gran formato, de 120x60 cm o mayor, sobre firme o losa ya nivelada. El pegazulejo mejorado C2 TE se aplica con llana dentada y doble encolado, y las piezas se manipulan con juego de ventosas para no flexionarlas. Se nivela con cuñas de alta resistencia porque en este formato cualquier desnivel se ve a contraluz, y se deja junta mínima boquilleada con mortero CG2. Incluye revisión previa de la planitud del soporte, trazo del despiece, cortes con cortadora de disco de diamante refrigerada por agua, limpieza final y retiro de recortes. La pieza la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MT-CRU-NIV": "Crucetas y cuñas niveladoras desechables",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua",
+        "MQ-VENT-SUC": "Juego de ventosas para manejo de piezas de gran formato",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla para pegazulejo"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.030": {
+      "titulo": "Piso de loseta en baño o área húmeda, con pendiente hacia la coladera",
+      "descripcion": "Suministro y colocación de piso con loseta cerámica o porcelanato en baño, lavadero o área húmeda, formando la pendiente hacia la coladera y resolviendo el encuentro con el desagüe. La pendiente es lo que hace que el agua salga y no se estanque: en una regadera eso se nota desde el primer día de uso. Incluye trazo de las pendientes de los bordes hacia el drenaje, corte y ajuste de las piezas alrededor de la coladera, doble encolado, nivelación respetando la pendiente, boquilla con mortero apto para zona húmeda y sello elástico de poliuretano en el encuentro con muros y con el colador. La loseta la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MT-CRU-NIV": "Crucetas y cuñas niveladoras desechables",
+        "MT-SELLA-ELAST": "Sellador elástico de poliuretano para juntas y encuentros",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla para pegazulejo"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.040": {
+      "titulo": "Piso de loseta en terraza, patio o exterior, con juntas de movimiento",
+      "descripcion": "Colocación de piso con loseta cerámica o porcelanato en terraza, patio o área exterior, con pegazulejo de altas prestaciones, junta ancha y juntas de movimiento en el perímetro y en paños. En exterior el piso trabaja con dilatación térmica y con humedad bajo la pieza: la junta ancha y las juntas de movimiento son las que evitan que el piso se abombe o se despegue por acumulación de esfuerzos. Incluye revisar que el soporte tenga pendiente de desagüe, trazo, doble encolado, ejecución de las juntas de movimiento, boquilla con mortero para exterior y sello perimetral. La loseta la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado, descontando claros mayores a 1 m².",
+      "recursos": {
+        "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MT-CRU-NIV": "Crucetas y cuñas niveladoras desechables",
+        "MT-SELLA-ELAST": "Sellador elástico de poliuretano para juntas y encuentros",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua",
+        "MQ-BATID": "Mezcladora eléctrica de doble varilla para pegazulejo"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.070": {
+      "titulo": "Piso de loseta con zoclo (guarda) perimetral de pieza decorativa",
+      "descripcion": "Colocación de piso de loseta cerámica con zoclo o guarda perimetral de pieza decorativa, pegada en capa fina con adhesivo cementoso normal tipo C1. Incluye el trazo del despiece para que el zoclo remate completo en esquinas y vanos, el corte a inglete o a tope según el diseño, la colocación del piso y del zoclo, el boquillado de ambos y la limpieza final. No incluye la loseta ni la pieza de zoclo, que aporta el cliente y se cotizan aparte. Se cuantifica por metro cuadrado de piso colocado.",
+      "recursos": {
+        "MT-ADH-C1": "Pegazulejo normal tipo C1 gris",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MT-CRU-NIV": "Crucetas y cuñas niveladoras desechables",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua"
+      },
+      "revisado": "2026-11-06"
+    },
+    "12.05.03.080": {
+      "titulo": "Piso de porcelanato rectificado de junta mínima",
+      "descripcion": "Colocación de piso de porcelanato rectificado con junta mínima, en capa fina. La pieza rectificada ya viene calibrada, así que el acabado depende de la planitud del firme y de la nivelación durante la colocación, no del boquillado. Incluye preparación y revisión del soporte, trazo del despiece, pegado con adhesivo C2 TE, nivelación con cuñas, boquilla CG2 de junta delgada y limpieza final. La pieza la aporta el cliente y se cotiza aparte. Se cuantifica por metro cuadrado realmente colocado.",
+      "recursos": {
+        "MT-ADH-C2TE": "Pegazulejo mejorado tipo C2 TE (adhesivo cementoso) para capa fina",
+        "MT-JUN-CG2": "Boquilla cementosa tipo CG2 para juntas",
+        "MQ-CORT-AGUA": "Cortadora eléctrica de banco con disco de diamante y agua"
+      },
+      "revisado": "2026-11-06"
+    }
+  }
+}

@@ -161,6 +161,14 @@ material), la descripción dice **qué incluye y cómo se mide**, y los nombres 
 los recursos usan el término del país (block, castillo, dala, plafón, losa,
 impermeabilizante acrílico).
 
+Una regla que no comprueba ningún test y hay que respetar a mano: **en
+`recursos` se renombran materiales y equipo (`MT-*`, `MQ-*`), no mano de obra
+(`MO-*`)**. La tabla de tarifas horarias del mercado se construye agrupando los
+recursos `MO-*` por nombre; si una ficha suelta llama «losetero» al oficial de
+piso y otra sigue llamándolo «oficial de 1ª», el mismo oficio aparece dos veces
+con medias tarifas y el mercado pasa de 16 oficios a 22. Los nombres de mano de
+obra se cambian de una vez para todo el mercado, cuando se encienda entero.
+
 #### Qué NO es localizar
 
 - Cambiar «hormigón» por «concreto» en las 2.000 fichas con un buscar y
@@ -168,11 +176,27 @@ impermeabilizante acrílico).
 - Rellenar con sinónimos automáticos o traducción de máquina sin revisar.
 - Encender un apartado con una sola ficha: por eso el mínimo es tres.
 
-#### Estado de partida
+#### Estado de partida (06/11/2026)
 
-Hoy no hay ningún registro (`datos/localizado/` está vacío), así que nada
-cambia en producción: los 16 mercados hispanos siguen en `noindex` y en
-`sitemap_index.xml` siguen los mismos 7 hijos.
+México es el primer mercado con registro: **26 fichas y 2 apartados
+completos**, escritos a mano uno por uno.
+
+| Apartado | Fichas | Estado |
+|---|---|---|
+| `02-04-01` Paredes, muros y apertura de vanos | 20 / 20 | anunciado |
+| `12-05-03` Pisos cerámicos y porcelanato | 6 / 6 | anunciado |
+
+Eso son 29 URL anunciadas (portada del catálogo + 2 apartados + 26 fichas) y
+2.171 páginas que siguen en `noindex`: el mercado entero sigue apagado, crece
+por oleadas. En `sitemap_index.xml` hay un hijo más (`sitemap-precios-mx.xml`);
+el resto de mercados hispanos sigue sin sitemap.
+
+Siguiente oleada propuesta, por orden de trabajo ya hecho: los cinco apartados
+que faltan de la hipótesis de demanda (`10-05-01` impermeabilización de áreas
+húmedas, `05-06-01` losas y entrepiso, `12-10-01` pintura interior, `12-08-01`
+plafones continuos de tablaroca, `02-01-01` cimentaciones) hasta completar las
+159 fichas. Después, decidir con GSC si la siguiente ola es México o el
+siguiente mercado.
 
 ## 5. Protocolo de cambio seguro (aplica a todo, no solo al catálogo)
 
@@ -208,7 +232,7 @@ mirar. El patrón del 23/10 fue exactamente ese, y se detectó tarde.
 |---|---|---|---|
 | ES | 2.201 URL | referencia | — |
 | US, GB, CA, AU, IE | 1.956–1.987 URL | anunciado | — |
-| MX | 2.171 URL | calco | prosa propia (4 guías ya hechas) |
+| MX | 2.171 URL | **a medio localizar** | 26 fichas / 2 apartados anunciados; faltan 5 apartados de la hipótesis y 1.963 fichas |
 | CO | 2.190 URL | calco | prosa propia (4 guías ya hechas) |
 | PE | 2.185 URL | calco | prosa propia (4 guías ya hechas) |
 | EC | 2.185 URL | calco | prosa propia (4 guías ya hechas) |
@@ -225,8 +249,8 @@ ruido estadístico; ese orden lo debe decidir la demanda de GSC, no este número
 
 - **No** se encienden los 16 mercados hispanos de golpe «para ver qué pasa».
 - **No** se baja el umbral de 0,50 para que la puerta deje pasar un mercado.
-- **No** se tocan los sitemaps actuales: funcionan (7 hijos) y llevan desde el
-  23/10 siendo los mismos.
+- **No** se tocan los sitemaps ya enviados: funcionan y llevan desde el 23/10
+  siendo los mismos. El de México es un hijo nuevo, no un cambio de los otros.
 - **No** se reescribe la prosa con sinónimos automáticos del español: eso sube
   el jaccard a 0,99 igual y no aporta valor al lector del país.
 - **No** se mezcla un encendido de catálogo con un cambio de títulos o de

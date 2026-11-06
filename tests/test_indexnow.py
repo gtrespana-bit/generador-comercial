@@ -47,7 +47,12 @@ def test_el_catalogo_de_precios_tambien_se_puede_avisar():
     assert not any(u.endswith(".json") for u in urls)
     assert "https://cotizat.online/es/precios" in urls
     assert "https://cotizat.online/es/mano-de-obra" in urls
-    assert not any("/mx/precios" in u for u in urls)
+    # México anuncia sus 29 páginas localizadas y nada más.
+    assert "https://cotizat.online/mx/precios" in urls
+    assert len([u for u in urls if "/mx/precios" in u]) == 29
+    # Un mercado sin texto propio no se avisa, ni su JSON ni su mano de obra.
+    assert not any("/co/precios" in u for u in urls)
+    assert not any(u.endswith("/precios.json") for u in urls)
 
 
 def test_se_puede_avisar_un_solo_mercado():
@@ -61,7 +66,10 @@ def test_se_puede_avisar_un_solo_mercado():
     assert urls_precios(cc="zz") == []
     from app.services import precios_publicos as pp
 
-    # Un mercado silenciado no tiene nada que anunciar.
-    silenced = [c for c in pp.paises_publicados() if not pp.ficha_indexable(c)]
-    if silenced:
-        assert urls_precios(cc=silenced[0]) == []
+    # Un mercado sin una sola página anunciada no tiene nada que avisar.
+    silenced = [c for c in pp.paises_publicados() if c not in pp.paises_con_sitemap()]
+    assert silenced
+    assert urls_precios(cc=silenced[0]) == []
+    # México, a medio localizar, avisa solo lo suyo.
+    solo_mx = urls_precios(cc="MX")
+    assert solo_mx and all("/mx/" in u for u in solo_mx)

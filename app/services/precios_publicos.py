@@ -626,8 +626,20 @@ def ficha_indexable(codigo_pais: str) -> bool:
 
 
 def paises_con_catalogo_indexable() -> tuple[str, ...]:
-    """Mercados publicados cuyo catálogo se anuncia a los buscadores."""
+    """Mercados publicados cuyo catálogo está encendido entero."""
     return tuple(cc for cc in paises_publicados() if ficha_indexable(cc))
+
+
+def paises_con_sitemap() -> tuple[str, ...]:
+    """Mercados con al menos una página anunciada, es decir, con sitemap hijo.
+
+    No es lo mismo que ``paises_con_catalogo_indexable``: un mercado a medio
+    localizar (México desde el 06/11/2026) anuncia su portada, los apartados
+    completos y las fichas con texto propio. ``urls_sitemap`` devuelve lista
+    vacía si y solo si el mercado no se anuncia, así que este es el criterio
+    que listan ``/sitemap_index.xml`` y los verificadores.
+    """
+    return tuple(cc for cc in paises_publicados() if indice_indexable(cc))
 
 
 def partida_localizada(codigo_pais: str, codigo_partida: str) -> bool:

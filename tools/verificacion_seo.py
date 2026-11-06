@@ -2,8 +2,10 @@
 
 Ejecuta el código real del repositorio (sin red) y comprueba:
 
-1. Los sitemaps hijos de precios solo anuncian mercados indexables en sus
+1. Los sitemaps hijos de precios solo enlazan páginas anunciadas en sus
    alternates hreflang (nunca un destino ``noindex``), en espejo del <head>.
+   La comprobación es página a página: un mercado a medio localizar (México)
+   aparece en el grupo solo en las fichas que también anuncia.
 2. Los hijos omiten ``lastmod`` por URL; el índice conserva la fecha de
    revisión de cada lote.
 3. robots.txt anuncia únicamente el índice de sitemaps.
@@ -20,8 +22,7 @@ from app import seo
 from app.services import precios_publicos as pp
 
 ORIGEN = "https://cotizat.online"
-indexables = {cc.lower() for cc in pp.paises_con_catalogo_indexable()}
-silenciados = {cc.lower() for cc in pp.paises_publicados() if cc.lower() not in indexables}
+con_sitemap = pp.paises_con_sitemap()
 
 
 def _mercado(href: str) -> str:
@@ -33,17 +34,21 @@ def _mercado(href: str) -> str:
 def main() -> None:
     errores = []
 
-    # 1. hreflang de los sitemaps hijos: solo mercados indexables.
-    for cc in pp.paises_con_catalogo_indexable():
+    # 1. hreflang de los sitemaps hijos: solo destinos anunciados.
+    for cc in con_sitemap:
         for entrada in pp.urls_sitemap(cc, ORIGEN):
+            mercados = []
             for alt in entrada["alternates"]:
-                if _mercado(alt["href"]) in silenciados:
-                    errores.append(f"{cc} anuncia mercado noindex: {alt['href']}")
-            if len(entrada["alternates"]) > 7:
-                errores.append(f"{entrada['loc']} tiene {len(entrada['alternates'])} alternates")
+                destino = _mercado(alt["href"])
+                if not pp.path_indexable(destino.upper(), alt["href"]):
+                    errores.append(f"{cc} enlaza una página noindex: {alt['href']}")
+                if alt["hreflang"] != "x-default":
+                    mercados.append(destino)
+            if len(mercados) != len(set(mercados)):
+                errores.append(f"{entrada['loc']} repite mercado en los alternates")
 
     # 2. Los hijos no llevan lastmod por URL.
-    for cc in pp.paises_con_catalogo_indexable():
+    for cc in con_sitemap:
         if any(e["lastmod"] is not None for e in pp.urls_sitemap(cc, ORIGEN)):
             errores.append(f"el sitemap hijo {cc} emite lastmod por URL")
 
@@ -53,16 +58,21 @@ def main() -> None:
     if lineas_sitemap != [f"Sitemap: {ORIGEN}/sitemap_index.xml"]:
         errores.append(f"robots.txt inesperado: {lineas_sitemap}")
 
-    # 4. Los mercados silenciados siguen sin sitemap (404 en el router).
-    if pp.urls_sitemap("MX", ORIGEN):
-        errores.append("MX sigue generando entradas de sitemap")
+    # 4. Un mercado sin texto propio sigue sin sitemap (404 en el router).
+    for cc in pp.paises_publicados():
+        if cc not in con_sitemap and pp.urls_sitemap(cc, ORIGEN):
+            errores.append(f"{cc} no se anuncia pero genera entradas de sitemap")
 
     if errores:
         print("REVISIÓN FALLIDA:")
         for error in errores:
             print(" -", error)
         raise SystemExit(1)
-    print("OK: hreflang filtrado a 6 mercados, hijos sin lastmod, robots solo con el índice.")
+    print(
+        "OK: hreflang filtrado página a página en "
+        f"{len(con_sitemap)} sitemaps hijos, hijos sin lastmod, "
+        "robots solo con el índice."
+    )
 
 
 if __name__ == "__main__":
