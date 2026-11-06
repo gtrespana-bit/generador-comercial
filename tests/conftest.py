@@ -342,3 +342,91 @@ def entorno(monkeypatch, tmp_path):
 @pytest.fixture
 def cliente_web():
     return TestClient(app, base_url=ORIGEN)
+
+
+# ---------------------------------------------------------------------------
+# Sesión de operador del panel
+# ---------------------------------------------------------------------------
+
+#: Mismo operador que siembra ``init_db()``: es la identidad que valida
+#: ``es_operador``. Vive aquí y no en cada módulo porque el humo del panel, la
+#: precarga, el 500 y las finanzas necesitan exactamente la misma puerta.
+EMAIL_OPERADOR = "titular@cotizat.online"
+AUTH_UUID_OPERADOR = "00000000-0000-4000-8000-000000000020"
+
+
+@pytest.fixture
+def operador(entorno, monkeypatch):
+    """Entorno comercial + sesión de operador real en ``get_operator_db``.
+
+    Devuelve ``(Session, ids)``; el cliente se construye con ``cliente_panel``
+    para que cada módulo no repita cookies ni opciones del TestClient.
+    """
+    from fastapi import Request
+
+    from app.auth import (
+        OrganizationAccessDenied,
+        SupabaseAuthSettings,
+        SupabaseIdentity,
+    )
+    from app.database import get_operator_db
+    from app.main import app
+    from app.operadores import es_operador, rol_operador
+    from app.routers import common
+
+    Session, ids, _rol = entorno
+    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
+    # Sin semilla de operadores el panel responde 303 y el humo pasaría sin
+    # abrir ninguna página.
+    monkeypatch.setenv("COTIZAT_OPERADORES", EMAIL_OPERADOR)
+    monkeypatch.setattr(
+        SupabaseAuthSettings,
+        "from_environment",
+        classmethod(lambda _cls: SupabaseAuthSettings(
+            url="https://project.supabase.co",
+            publishable_key="sb_publishable_test",
+            cookie_secure=True,
+        )),
+    )
+
+    def _db_operador(request: Request):
+        db = Session()
+        db.info["usuario_id"] = ids[1]
+        db.info["auth_email"] = EMAIL_OPERADOR
+        request.state.supabase_identity = SupabaseIdentity(
+            auth_user_id=AUTH_UUID_OPERADOR,
+            email=EMAIL_OPERADOR,
+            email_verified=True,
+            name="Operador",
+        )
+        if not es_operador(EMAIL_OPERADOR, email_verificado=True):
+            db.close()
+            raise OrganizationAccessDenied("No tienes acceso a esta sección.")
+        db.info["es_operador"] = True
+        db.info["operador_rol"] = rol_operador(
+            EMAIL_OPERADOR, email_verificado=True, db=db
+        )
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_operator_db] = _db_operador
+    try:
+        yield Session, ids
+    finally:
+        app.dependency_overrides.pop(get_operator_db, None)
+
+
+@pytest.fixture
+def cliente_panel():
+    """Cliente HTTP con la sesión de operador puesta (sin lanzar 500)."""
+    from app.auth import ACCESS_COOKIE, REFRESH_COOKIE
+    from app.main import app
+
+    cliente = TestClient(
+        app, base_url="https://cotizat.test", raise_server_exceptions=False
+    )
+    cliente.cookies.set(ACCESS_COOKIE, "access-token")
+    cliente.cookies.set(REFRESH_COOKIE, "refresh-token")
+    return cliente

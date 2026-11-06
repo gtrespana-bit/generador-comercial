@@ -93,6 +93,13 @@
   var results = document.querySelector("[data-admin-search-results]");
   var items = [];
   var selIndex = -1;
+  /* Consola de comandos (tramo F). `comandos` se pide una vez al abrir la
+     paleta y se filtra en memoria: escribir no dispara una petición por tecla.
+     `pendiente` guarda el comando de acción que está esperando el segundo
+     Enter; sin él, nada que cambie estado sale de aquí. */
+  var comandos = [];
+  var comandosPedidos = false;
+  var pendiente = null;
 
   function tipoIcono(tipo) {
     switch (tipo) {
@@ -141,24 +148,103 @@
     return a;
   }
 
-  function renderItems(lista) {
+  function iconoComando(c) {
+    return c.accion ? "⚡" : "→";
+  }
+
+  function crearItemComando(c, i) {
+    var a = document.createElement("a");
+    a.className = "admin-kit-item comando" + (c.accion ? " accion" : "");
+    a.setAttribute("data-i", String(i));
+    a.setAttribute("href", c.accion ? "#" : (c.url || "#"));
+    a.setAttribute("title", c.descripcion || c.titulo || "");
+
+    var ico = document.createElement("span");
+    ico.className = "ico";
+    ico.textContent = iconoComando(c);
+
+    var wrapper = document.createElement("span");
+    var titulo = document.createElement("b");
+    titulo.textContent = c.titulo || "";
+    var sub = document.createElement("small");
+    sub.textContent = c.descripcion || "";
+    wrapper.appendChild(titulo);
+    wrapper.appendChild(sub);
+
+    if (c.accion) {
+      var etiqueta = document.createElement("kbd");
+      etiqueta.className = "admin-kit-accion";
+      etiqueta.textContent = "Enter";
+      a.appendChild(ico);
+      a.appendChild(wrapper);
+      a.appendChild(etiqueta);
+    } else {
+      a.appendChild(ico);
+      a.appendChild(wrapper);
+    }
+    return a;
+  }
+
+  function crearGrupo(texto) {
+    var h = document.createElement("div");
+    h.className = "admin-kit-grupo";
+    h.textContent = texto;
+    return h;
+  }
+
+  function normalizar(texto) {
+    return (texto || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function comandosQueEncajan(q) {
+    if (!q) return comandos.slice(0, 6);
+    var busca = normalizar(q);
+    return comandos.filter(function (c) {
+      var pajar = normalizar([c.titulo, c.descripcion, c.grupo].join(" "));
+      return pajar.indexOf(busca) !== -1;
+    }).slice(0, 6);
+  }
+
+  function renderItems(lista, q) {
     if (!results) return;
-    items = lista || [];
+    var resultados = lista || [];
+    var acciones = comandosQueEncajan(q || "");
+    // El índice de teclado recorre lo pintado: primero comandos, luego datos.
+    items = acciones.concat(resultados);
     selIndex = -1;
+    vaciar(results);
+
     if (!items.length) {
-      crearVacio(results, "Sin resultados.");
+      crearVacio(results, q
+        ? "Sin resultados. Prueba con un cliente, una licencia o un comando."
+        : "Escribe para buscar, o lanza una acción con ↑↓ y Enter.");
       return;
     }
-    vaciar(results);
-    items.forEach(function (r, i) {
-      results.appendChild(crearItemBusqueda(r, i));
-    });
+    if (acciones.length) {
+      results.appendChild(crearGrupo("Comandos"));
+      acciones.forEach(function (c, i) {
+        results.appendChild(crearItemComando(c, i));
+      });
+    }
+    if (resultados.length) {
+      results.appendChild(crearGrupo("Resultados"));
+      var base = acciones.length;
+      resultados.forEach(function (r, i) {
+        results.appendChild(crearItemBusqueda(r, base + i));
+      });
+    }
   }
 
   function abrirBusqueda() {
     if (!overlay) return;
     overlay.classList.add("open");
     document.body.classList.add("admin-kit-abierto");
+    pendiente = null;
+    cargarComandos();
     setTimeout(function () { if (input) input.focus(); }, 30);
   }
 
@@ -167,14 +253,74 @@
     overlay.classList.remove("open");
     document.body.classList.remove("admin-kit-abierto");
     if (input) input.value = "";
+    pendiente = null;
     renderItems([]);
+  }
+
+  function cargarComandos() {
+    if (comandosPedidos) { renderItems([], input ? input.value.trim() : ""); return; }
+    comandosPedidos = true;
+    fetch("/admin/comandos", { headers: { "Accept": "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        comandos = data.comandos || [];
+        renderItems([], input ? input.value.trim() : "");
+      })
+      .catch(function () { comandos = []; });
   }
 
   function buscar(q) {
     fetch("/admin/buscar?q=" + encodeURIComponent(q), { headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json(); })
-      .then(function (data) { renderItems(data.resultados || []); })
-      .catch(function () { renderItems([]); });
+      .then(function (data) { renderItems(data.resultados || [], q); })
+      .catch(function () { renderItems([], q); });
+  }
+
+  /* Una acción no se ejecuta con el primer Enter: se pide confirmación y se
+     envía un formulario real, para que el servidor haga lo de siempre (CSRF
+     por origen, redirect con el mensaje). Nada de rutas nuevas ni de fetch. */
+  function confirmarAccion(comando) {
+    pendiente = comando;
+    vaciar(results);
+    var caja = document.createElement("div");
+    caja.className = "admin-kit-confirmar";
+    var titulo = document.createElement("b");
+    titulo.textContent = comando.titulo;
+    var texto = document.createElement("p");
+    texto.textContent = comando.confirmacion || "Esta acción cambia datos.";
+    var pie = document.createElement("div");
+    pie.className = "admin-kit-confirmar-pie";
+    var si = document.createElement("button");
+    si.type = "button";
+    si.className = "btn btn-sm btn-primary";
+    si.textContent = "Enviar (Enter)";
+    si.addEventListener("click", ejecutarPendiente);
+    var no = document.createElement("button");
+    no.type = "button";
+    no.className = "btn btn-sm";
+    no.textContent = "Cancelar (Esc)";
+    no.addEventListener("click", function () {
+      pendiente = null;
+      renderItems([], input ? input.value.trim() : "");
+    });
+    pie.appendChild(si);
+    pie.appendChild(no);
+    caja.appendChild(titulo);
+    caja.appendChild(texto);
+    caja.appendChild(pie);
+    results.appendChild(caja);
+  }
+
+  function ejecutarPendiente() {
+    if (!pendiente) return;
+    var comando = pendiente;
+    pendiente = null;
+    var form = document.createElement("form");
+    form.method = "post";
+    form.action = comando.url;
+    form.className = "visualmente-oculto";
+    document.body.appendChild(form);
+    form.submit();
   }
 
   var debounce;
@@ -182,11 +328,17 @@
   if (overlay && input) {
     input.addEventListener("input", function () {
       clearTimeout(debounce);
+      pendiente = null;
       var q = input.value.trim();
-      if (!q) { renderItems([]); return; }
+      if (!q) { renderItems([], ""); return; }
       debounce = setTimeout(function () { buscar(q); }, 200);
     });
     input.addEventListener("keydown", function (ev) {
+      if (pendiente && ev.key === "Enter") {
+        ev.preventDefault();
+        ejecutarPendiente();
+        return;
+      }
       if (ev.key === "ArrowDown") {
         ev.preventDefault();
         if (selIndex < items.length - 1) selIndex++;
@@ -197,7 +349,9 @@
         marcarSeleccion();
       } else if (ev.key === "Enter") {
         var sel = items[selIndex] || items[0];
-        if (sel && sel.url) window.location.href = sel.url;
+        if (!sel) return;
+        if (sel.accion) { confirmarAccion(sel); return; }
+        if (sel.url) window.location.href = sel.url;
       }
     });
     overlay.addEventListener("click", function (ev) { if (ev.target === overlay) cerrarBusqueda(); });
@@ -238,6 +392,13 @@
       return;
     }
     if (ev.key === "Escape" && overlay && overlay.classList.contains("open")) {
+      // Con una acción a medio confirmar, Escape cancela la acción (no la
+      // paleta): cerrar de golpe dejaría el «¿envío?» en el aire.
+      if (pendiente) {
+        pendiente = null;
+        renderItems([], input ? input.value.trim() : "");
+        return;
+      }
       cerrarBusqueda();
       return;
     }

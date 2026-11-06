@@ -167,7 +167,7 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
     from ..services.audit_admin import resumen_auditoria_admin
     from ..services.licencias import exigencia_licencia_activada
     from ..services.panel_admin import resumen_admin
-    from ..services.panel_finanzas import resumen_financiero
+    from ..services.panel_finanzas import movimiento_mrr, resumen_financiero
     from ..services.panel_notificaciones import notificaciones_admin
     from ..services.panel_renovaciones import proximas_renovaciones
     from ..services.panel_ventas import (
@@ -226,6 +226,8 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
     contexto.update({
         "resumen": resumen_admin(db, hoy=hoy_local()),
         "finanzas": resumen_financiero(db),
+        # El mismo MRR, pero explicado: de dónde sale el cambio del mes.
+        "mrr_mov": movimiento_mrr(db, hoy=hoy_local()),
         "proximas": proximas_renovaciones(db, limite=6),
         "eventos": resumen_auditoria_admin(db, limite=6),
         "pendientes": pendientes_agenda,
@@ -1049,6 +1051,7 @@ def _ingresos_compras(request: Request, db, pestana: str) -> dict:
 
 
 def _ingresos_cobros(request: Request, db, pestana: str) -> dict:
+    from ..services.panel_finanzas import movimiento_mrr
     from ..services.panel_cobros import (
         ORDENES_COBROS,
         filtrar_movimientos,
@@ -1091,6 +1094,8 @@ def _ingresos_cobros(request: Request, db, pestana: str) -> dict:
     contexto = _base_ingresos(request, db, pestana, actuales)
     contexto.update({
         "cobros": {**datos, "movimientos": movimientos},
+        # Cómo se movió el MRR este mes: no solo cuánto vale, también por qué.
+        "mrr": movimiento_mrr(db, hoy=hoy_local()),
         "paginador": paginador(ruta, actuales, meta),
         "opciones_orden": orden_chips(ruta, actuales, ORDENES_COBROS),
         "periodo": periodo_mes(mes, ruta=ruta, pestana=pestana, actuales=actuales),

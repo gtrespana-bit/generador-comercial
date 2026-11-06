@@ -254,6 +254,18 @@
           Sin dato del mes anterior
           {% endif %}
         </p>
+        {# El porqué del cambio, en una línea: sin esto, «▲ 4 %» no distingue
+           un mes de dos altas y dos bajas de un mes de crecimiento real. #}
+        <p class="note-sub mrr-kpi-mov">
+          {%- set m = mrr_mov.mes -%}
+          {{ m.etiqueta }}:
+          {% if m.nuevo or m.expansion or m.contraccion or m.baja -%}
+          +{{ "%.0f"|format(m.nuevo) }} nuevo · +{{ "%.0f"|format(m.expansion) }} expansión ·
+          −{{ "%.0f"|format(m.contraccion) }} contracción · −{{ "%.0f"|format(m.baja) }} bajas
+          {%- else -%}
+          sin movimientos
+          {%- endif %}
+        </p>
       </a>
 
       {# Ingresos del mes #}
