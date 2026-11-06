@@ -1,0 +1,8 @@
+{
+  "_comentario": "Deuda de contraste aceptada del panel admin, medida por tools/auditar_contraste_panel.py. El tramo A (2026-11-06) la dejó en cero: las listas vacías significan que cualquier par nuevo por debajo de WCAG AA rompe la suite. Los techos solo pueden bajar.",
+  "claro": [],
+  "oscuro": [],
+  "superficies_literales_max": 0,
+  "colores_literales_max": 1,
+  "tamanos_fuente_max": 9
+}

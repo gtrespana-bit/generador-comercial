@@ -15,11 +15,11 @@
     align-items: flex-start;
     margin-bottom: 18px;
     padding: 14px 16px;
-    border: 1px solid #cfe3d7;
+    border: 1px solid var(--success-borde);
     border-radius: 12px;
-    background: #f5fbf7;
+    background: var(--success-bg);
     color: var(--text-main);
-    font-size: .84rem;
+    font-size: var(--t-xs);
     line-height: 1.5;
   }
   .chat-notice strong { color: var(--brand-color); }
@@ -31,9 +31,9 @@
     align-items: end;
     padding: 16px 18px;
     border-bottom: 1px solid var(--border-color);
-    background: #fbfdfb;
+    background: var(--surface-2);
   }
-  .chat-filtros label { display: grid; gap: 5px; color: var(--text-muted); font-size: .72rem; font-weight: 800; }
+  .chat-filtros label { display: grid; gap: 5px; color: var(--text-muted); font-size: var(--t-2xs); font-weight: 800; }
   .chat-filtros input, .chat-filtros select { width: 100%; min-width: 0; }
   .chat-filtros-acciones { display: flex; gap: 7px; align-items: center; }
   .chat-tabla-wrap { overflow-x: auto; }
@@ -42,10 +42,10 @@
   .chat-conv-titulo { max-width: 440px; }
   .chat-conv-titulo a { color: var(--text-main); font-weight: 800; text-decoration: none; }
   .chat-conv-titulo a:hover { color: var(--brand-color); }
-  .chat-conv-titulo small { display: block; margin-top: 5px; color: var(--text-muted); font-size: .75rem; line-height: 1.35; }
-  .chat-meta { display: flex; gap: 7px; flex-wrap: wrap; color: var(--text-muted); font-size: .76rem; }
+  .chat-conv-titulo small { display: block; margin-top: 5px; color: var(--text-muted); font-size: var(--t-2xs); line-height: 1.35; }
+  .chat-meta { display: flex; gap: 7px; flex-wrap: wrap; color: var(--text-muted); font-size: var(--t-2xs); }
   .chat-usuario { max-width: 210px; overflow-wrap: anywhere; }
-  .chat-paginacion { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text-muted); font-size: .78rem; }
+  .chat-paginacion { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text-muted); font-size: var(--t-2xs); }
   .chat-paginacion-acciones { display: flex; gap: 8px; }
   .chat-paginacion-acciones a { text-decoration: none; }
   @media (max-width: 1050px) {
