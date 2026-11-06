@@ -681,6 +681,518 @@
       },
       "revisado": "2026-11-06"
     },
+    "06.04.01.010": {
+      "titulo": "Muro de tablaroca a dos placas por lado sobre poste de 70 mm",
+      "descripcion": "Muro divisorio de 100 mm de espesor armado con canal y poste galvanizado de 70 mm, postes cada 60 cm y dos placas de tablaroca de 15 mm atornilladas por cada lado, con lana mineral de 60 mm dentro del hueco. Incluye el trazo en piso y plomo, la cinta de sellado perimetral, el armado de la estructura, el atornillado de las placas, el refuerzo de las juntas con cinta y compuesto, el lijado y el retiro del sobrante. Se cobra por metro cuadrado de muro terminado.",
+      "recursos": {
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-PLACA": "Placa de tablaroca estándar de 15 mm de espesor, borde afinado.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MQ-LIJAD": "Lijadora de pared con aspiración para acabado de juntas.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro autoportante de placa de tablaroca 15+70+15, doble placa por cara",
+        "descripcion": "Muro autoportante de 100 mm de espesor total, ejecutado con estructura de perfiles de acero galvanizado de 70 mm, montantes cada 600 mm y canales fijados a piso y techo, con doble placa de tablaroca de 15 mm atornillada a cada cara y aislamiento interior de lana mineral de 60 mm. Incluye replanteo, banda estanca perimetral, tratamiento de juntas con cinta y pasta, lijado hasta dejar el paramento listo para pintar, y retirada de restos. Medido a cinta corrida descontando huecos mayores de 2 m².",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.020": {
+      "titulo": "Muro de tablaroca a una placa por lado sobre poste de 70 mm",
+      "descripcion": "División interior de 95 mm con canal y poste galvanizado de 70 mm, postes cada 60 cm, una placa de 12.5 mm por cara y lana mineral en el hueco. Es la solución más pedida para separar recámaras, baños y áreas de servicio cuando no hace falta refuerzo especial: gasta cerca de la mitad de placa que el muro a doble capa. Incluye trazo, cinta perimetral, armado, atornillado, aislamiento, tratamiento de juntas y lijado. Se mide por metro cuadrado de muro terminado.",
+      "recursos": {
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MQ-LIJAD": "Lijadora de pared con aspiración para acabado de juntas.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro autoportante de tablaroca 12,5+70+12,5, placa simple",
+        "descripcion": "Muro autoportante de 95 mm de espesor total, ejecutado con estructura de perfiles de acero galvanizado de 70 mm con montantes cada 600 mm, placa de tablaroca de 12,5 mm atornillada a cada cara y aislamiento de lana mineral en la cámara. Es la solución estándar para divisiones interiores sin exigencias especiales, y frente al muro de doble placa reduce a la mitad el material de placa y buena parte de la mano de obra. Incluye el replanteo, la banda estanca perimetral, el montaje de canales y montantes, el atornillado de las placas, la colocación del aislamiento, el tratamiento de juntas con cinta y pasta y el lijado hasta dejar el paramento listo para pintar. Medido a cinta corrida descontando huecos mayores de 2 m².",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.030": {
+      "titulo": "Muro de tablaroca con placa verde resistente a la humedad",
+      "descripcion": "Muro de tablaroca para baños, cocinas y cuartos de lavado, con placa verde resistente a la humedad en las caras expuestas. La placa verde retrasa la absorción, no impermeabiliza: en regaderas y muros que reciben agua directa hay que sumar una membrana o impermeabilizante bajo el recubrimiento, que se cobra aparte. Incluye trazo, cinta perimetral, armado con postes más juntos para poder atornillar el recubrimiento, atornillado, aislamiento, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-PLACA-RH": "Placa de tablaroca resistente a la humedad, de 12,5 mm, para áreas húmedas.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MT-SELLA-ELAST": "Sellador elástico de poliuretano para juntas de movimiento y encuentros.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MQ-LIJAD": "Lijadora de pared con aspiración para acabado de juntas.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con placa resistente a la humedad",
+        "descripcion": "Muro autoportante ejecutado con placa de tablaroca resistente a la humedad en las caras expuestas, para baños, cocinas y áreas de servicio. La placa resistente a la humedad no es impermeable: retrasa la absorción, pero en las zonas de contacto directo con el agua debe complementarse con una impermeabilización bajo el recubrimiento, que se valora aparte. Incluye el replanteo, la banda estanca perimetral, el montaje de canales y montantes con la separación reducida que exige recibir el recubrimiento, el atornillado de las placas, el aislamiento de la cámara, el tratamiento de juntas y el lijado. Medido a cinta corrida descontando huecos mayores de 2 m².",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.040": {
+      "titulo": "Forro autoportante de tablaroca sobre muro existente",
+      "descripcion": "Forro de tablaroca montado sobre estructura independiente, separada unos centímetros del muro viejo, con lana mineral en medio. Sirve para dejar plana una pared desplomada o agrietada, para esconder instalaciones sin romper el muro y para mejorar el aislamiento. Al no ir pegado, el muro puede estar irregular sin que sus defectos salgan en la cara nueva. Incluye trazo, banda perimetral, canal, poste, aislamiento, atornillado, juntas y lijado. Por metro cuadrado de superficie forrada.",
+      "recursos": {
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MQ-LIJAD": "Lijadora de pared con aspiración para acabado de juntas.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Trasdosado autoportante de tablaroca",
+        "descripcion": "Trasdosado autoportante de placa de tablaroca sobre estructura independiente separada del muro existente, con aislamiento en la cámara. Se emplea para regularizar paredes desplomadas o en mal estado, para alojar instalaciones sin picar el muro y para mejorar el aislamiento térmico y acústico. Al no apoyarse en el muro, admite soportes muy irregulares sin trasladar sus defectos al paramento final. Incluye el replanteo, la banda estanca, el montaje de canales y montantes, el aislamiento, el atornillado de la placa, el tratamiento de juntas y el lijado. Medido en superficie realmente ejecutada, descontando huecos mayores de 2 m².",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.050": {
+      "titulo": "Forro directo de tablaroca pegado con pasta al muro",
+      "descripcion": "Recubrimiento con una placa de tablaroca pegada al muro por puntos de pasta, sin estructura. Es la forma más rápida y barata de dejar presentable una pared, pero exige que el muro esté más o menos aplomado y firme, y no deja hueco para meter instalaciones ni aislamiento. Incluye limpieza y revisión del soporte, pegado por puntos a la separación indicada, alineado de las placas con plomo y regla antes de que fragüe, tratamiento de juntas y lijado. Por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MQ-LIJAD": "Lijadora de pared con aspiración para acabado de juntas.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Trasdosado directo de placa de tablaroca pegada al muro",
+        "descripcion": "Trasdosado directo mediante placa de tablaroca adherida al muro existente con pelladas de pasta de agarre. Es la solución más rápida y económica para regularizar y renovar un paramento, pero exige que el muro esté razonablemente plomado y sano, y no permite alojar instalaciones ni aislamiento. Incluye la limpieza y comprobación del soporte, la aplicación de las pelladas con la separación indicada, la colocación y reglado de las placas comprobando plomo y planitud antes del fraguado, el tratamiento de juntas y el lijado. Medido en superficie realmente ejecutada, descontando huecos mayores de 2 m².",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.060": {
+      "titulo": "Refuerzo interior entre postes para colgar cargas en tablaroca",
+      "descripcion": "Colocación de un refuerzo de madera o perfil metálico entre dos postes del muro, en la altura exacta donde va a colgarse un mueble, una pantalla, un lavabo o una barra de apoyo. Tiene que quedar definido antes de cerrar el muro: hacerlo después obliga a abrir la placa y reparar. Incluye el trazo de altura y posición según lo que se va a colgar, el corte y la fijación a los postes y el registro en plano para encontrarlo cuando el muro esté terminado. Se cobra por pieza colocada.",
+      "recursos": {
+        "MT-REFUERZO-PYL": "Refuerzo interior de madera o perfil metálico para anclaje de cargas en muro de tablaroca.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Refuerzo interior para anclaje de cargas en muro de tablaroca",
+        "descripcion": "Colocación de refuerzo interior de madera o perfil metálico entre montantes del muro de tablaroca, en la posición prevista para colgar mobiliario, televisores, lavabo suspendidos, barras de apoyo o cualquier carga puntual. Debe replantearse y montarse antes de cerrar el muro: resolverlo después obliga a abrir la placa. Incluye el replanteo de la altura y posición exactas según el elemento a soportar, el corte y fijación del refuerzo a los montantes, y el registro de su posición en el plano para poder localizarlo una vez cerrado y acabado el muro. Medido por refuerzo realmente colocado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.070": {
+      "titulo": "Muro de tablaroca con lana mineral para aislar el ruido",
+      "descripcion": "Muro divisorio de tablaroca con lana mineral dentro del hueco para cortar el paso del ruido entre recámaras, oficinas o cuartos de máquinas. La lana sola no hace milagros: el resultado depende de sellar bien la junta con piso, techo y muros laterales, y de que las cajas eléctricas no compartan pared. Incluye estructura, lana, placa, sello perimetral, tratamiento de juntas y lijado. Por metro cuadrado de muro.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con aislamiento acústico",
+        "descripcion": "Ejecución de muro de tablaroca con panel de lana mineral en la cámara. Incluye la estructura, la lana, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.080": {
+      "titulo": "Muro de tablaroca con placa de alta dureza",
+      "descripcion": "Muro de tablaroca con placa de yeso de alta dureza, la que aguanta golpes de muebles, carritos o puertas sin abollarse como la placa estándar. Se usa en escuelas, clínicas, pasillos de circulación y cuartos de niños. Incluye estructura, placa, tratamiento de juntas y lijado; el recubrimiento final se cobra aparte. Por metro cuadrado de muro ejecutado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA-HD": "Placa de tablaroca de alta dureza, de 12,5 mm, para paramentos interiores sometidos a impacto y zonas de tránsito.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con placa de alta dureza",
+        "descripcion": "Ejecución de muro de tablaroca con placa de alta dureza. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.090": {
+      "titulo": "Muro de tablaroca con placa resistente al fuego",
+      "descripcion": "Muro de tablaroca con placa tipo RH, de núcleo de yeso reforzado con fibra de vidrio. Se emplea en el cerramiento de cuartos de calderas, cocinas industriales, cuartos de máquinas y en divisiones que separan áreas con riesgo de incendio. La resistencia real depende del conjunto —número de capas, postes, sellos y encuentros—, no solo de la placa. Incluye estructura, placa, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA-IG": "Placa de tablaroca resistente al fuego (tipo F), de 15 mm, para protección de instalaciones y estructura.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con placa ignífuga",
+        "descripcion": "Ejecución de muro de tablaroca con placa resistente al fuego. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.100": {
+      "titulo": "Muro de tablaroca para zona húmeda de baño y lavandería",
+      "descripcion": "División de tablaroca pensada para el área húmeda de la casa: placa resistente a la humedad, postes más próximos para poder atornillar el recubrimiento y sello en el encuentro con el piso para que el agua que escurre no suba por la placa. Incluye estructura, placa, sello perimetral, juntas y lijado. La impermeabilización de la regadera y la colocación de loseta se cobran aparte. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA-RH": "Placa de tablaroca resistente a la humedad, de 12,5 mm, para áreas húmedas.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca en zona húmeda",
+        "descripcion": "Ejecución de muro de tablaroca con placa resistente a la humedad. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.110": {
+      "titulo": "Muro de tablaroca de gran altura con estructura reforzada",
+      "descripcion": "Muro de tablaroca de doble altura o de más de 4 m, con postes de mayor calibre, refuerzos horizontales y anclajes que evitan el pandeo con el viento o con el uso. Requiere andamio y, casi siempre, junta de movimiento en el encuentro con la losa. Incluye estructura reforzada, placa, juntas y lijado; el andamio se cobra en su propia partida. Por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca de gran altura",
+        "descripcion": "Ejecución de muro de tablaroca de gran altura, con refuerzo de estructura. Incluye la estructura reforzada, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.120": {
+      "titulo": "Muro de tablaroca con banda de sellado perimetral",
+      "descripcion": "Muro de tablaroca con banda o cinta de estanqueidad en el encuentro con piso, techo y muros laterales, para que no pase aire ni ruido por las orillas y para que la junta tenga holgura cuando la estructura se mueve. Es un detalle barato que se nota cuando falta: muros que silban y esquinas que se rajan. Incluye estructura, banda, placa, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-BANDA": "Banda estanca autoadhesiva de polietileno para junta perimetral de muro.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con banda perimetral",
+        "descripcion": "Ejecución de muro de tablaroca con banda perimetral de estanqueidad. Incluye la estructura, la banda, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.130": {
+      "titulo": "Forro autoportante de tablaroca con lana mineral",
+      "descripcion": "Forro de tablaroca separado del muro existente sobre estructura propia, con lana mineral en el hueco. Es la manera habitual de aislar un muro que da al exterior o a un cuarto ruidoso sin tocar la pared original, y de paso deja la superficie plana. Incluye trazo, banda, canal, poste, lana, atornillado, juntas y lijado. Por metro cuadrado de superficie forrada.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Trasdosado autoportante con lana",
+        "descripcion": "Ejecución de trasdosado autoportante de tablaroca con lana mineral. Incluye la estructura, la lana, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.140": {
+      "titulo": "Forro directo de placa de yeso pegada al muro",
+      "descripcion": "Colocación de una placa de yeso pegada directamente al muro con pasta, sin estructura, para alisar y renovar la superficie. Solo procede si el muro está firme y aplomado a menos de un centímetro en dos metros; si no, hay que ir a un forro autoportante. Incluye revisión del muro, pasta, pegado, alineado de las placas y tratamiento de juntas. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA-AGARRE": "Pasta de agarre de base yeso para fijación de placa de tablaroca directamente al paramento en trasdosado directo.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Trasdosado directo de placa de yeso",
+        "descripcion": "Ejecución de trasdosado directo de placa de yeso adherida al muro. Incluye la aplicación de pasta y la colocación de la placa. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.150": {
+      "titulo": "Muro de tablaroca a doble placa por cara",
+      "descripcion": "Muro divisorio con dos capas de placa de yeso por cada lado, atornilladas con la junta de la segunda capa desplazada respecto a la primera. Duplica la masa del muro, y eso se traduce en menos ruido y más resistencia al golpe: es la solución de las recámaras que colindan y de los muros donde se cuelga mobiliario pesado. Incluye estructura, doble placa, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con doble placa",
+        "descripcion": "Ejecución de muro de tablaroca con doble placa por cara. Incluye la estructura, la doble placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.160": {
+      "titulo": "Muro de tablaroca con refuerzo interior para cargas",
+      "descripcion": "Muro de tablaroca armado con refuerzos de madera o perfil metálico entre postes, en los puntos donde se van a colgar muebles, pantallas, calentadores o barras de apoyo. El refuerzo se coloca durante el armado; resolverlo después implica abrir la placa, reparar y volver a pintar. Incluye estructura, refuerzos, placa, juntas y lijado, y el registro de la ubicación de cada refuerzo. Por metro cuadrado de muro.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-REFUERZO-PYL": "Refuerzo interior de madera o perfil metálico para anclaje de cargas en muro de tablaroca.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con refuerzo de cargas",
+        "descripcion": "Ejecución de muro de tablaroca con refuerzo interior para cargas. Incluye la estructura, el refuerzo, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.170": {
+      "titulo": "Muro de tablaroca curvo",
+      "descripcion": "Muro de tablaroca con curvatura, armado con canal y poste flexionados y placa delgada de doble capa, que es la que acepta el radio sin romperse. Se usa en recepciones, escaleras y muros de diseño. El radio mínimo depende del espesor de la placa: pasado ese límite hay que partir la curva en tramos o curvar la placa en taller. Incluye estructura, placa, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca curvo",
+        "descripcion": "Ejecución de muro de tablaroca curvo, con estructura conformada. Incluye la estructura curva, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.180": {
+      "titulo": "Muro de tablaroca con cajón para instalaciones",
+      "descripcion": "Muro de tablaroca con un cajón o falso muro en la parte baja o alta para alojar tubería, drenajes, ductos o cableado sin romper la estructura. Es habitual en baños con salidas desplazadas y en cocinas con extractor. Incluye estructura, cajón, placa, juntas y lijado, y la previsión de registros para poder dar mantenimiento. Por metro cuadrado de muro ejecutado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con cajón de instalaciones",
+        "descripcion": "Ejecución de muro de tablaroca con cajón para instalaciones. Incluye la estructura, el cajón, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.190": {
+      "titulo": "Muro de tablaroca con junta de movimiento",
+      "descripcion": "Muro de tablaroca con junta de dilatación en el punto donde coincide con una junta de la estructura o con un cambio de material, para que el movimiento no raje la placa. La junta se deja abierta y se cubre con perfil o sello elástico, nunca con pasta rígida. Incluye estructura, placa, perfil de junta, tratamiento de juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-JUNTA-DILAT": "Perfil de junta de dilatación para piso, con su elemento elástico.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con junta de dilatación",
+        "descripcion": "Ejecución de muro de tablaroca con junta de dilatación. Incluye la estructura, la placa, la junta y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.200": {
+      "titulo": "Muro de tablaroca con placa perforada acústica",
+      "descripcion": "Revestimiento de tablaroca con placa perforada y velo acústico, que absorbe el sonido dentro de la sala en lugar de reflejarlo. Se usa en estudios, salas de juntas, auditorios y restaurantes. La placa perforada sola no aísla del ruido de fuera: para eso hacen falta masa y lana en el muro. Incluye estructura, placa perforada, juntas y remates. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-LANA": "Panel de lana mineral de 60 mm para aislamiento térmico y acústico en cámara de muro.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con placa perforada",
+        "descripcion": "Ejecución de muro de tablaroca con placa perforada acústica. Incluye la estructura, la placa perforada y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.210": {
+      "titulo": "Muro de tablaroca en ático o bajo techumbre",
+      "descripcion": "Cierre de tablaroca en el ático o bajo la techumbre inclinada, para separar un cuarto habitable del espacio del techo. Se arma con canal y poste cortados a la altura variable de la cubierta y con la placa recortada en inglete. Incluye estructura, cortes, placa, juntas y lijado. Por metro cuadrado de muro terminado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca en áticos",
+        "descripcion": "Ejecución de muro de tablaroca en ático o bajo cubierta inclinada. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.220": {
+      "titulo": "Muro de tablaroca con cámara para instalaciones",
+      "descripcion": "Muro de tablaroca montado con una cámara de aire entre la placa y el muro de respaldo, para pasar tubería, ductos o cableado y tener acceso si hay una fuga. La cámara se dimensiona según lo que va a alojar y necesita registros en los puntos de conexión. Incluye estructura, cámara, placa, juntas y lijado. Por metro cuadrado de muro.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con cámara para instalaciones",
+        "descripcion": "Ejecución de muro de tablaroca con cámara de instalaciones. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.230": {
+      "titulo": "Muro de tablaroca de una placa por cara",
+      "descripcion": "División de tablaroca con una sola placa de 12.5 mm por lado sobre estructura metálica: la opción más económica para separar espacios interiores donde no se cuelga nada pesado ni se busca aislamiento. Conviene reforzar los puntos de colgado antes de cerrar. Incluye estructura, placa, juntas y lijado. Por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca de una sola placa",
+        "descripcion": "Ejecución de muro de tablaroca de placa simple por cara. Incluye la estructura, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.240": {
+      "titulo": "Muro de tablaroca a doble placa de alta dureza",
+      "descripcion": "Muro con dos capas de placa de alta dureza por cara, para pasillos y zonas de mucho tráfico donde una placa estándar se abollaría en meses: escuelas, clínicas, gimnasios y áreas comunes de edificios. Incluye estructura, doble placa de alta dureza, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-PYL-MONT": "Montante de acero galvanizado de 70 mm para estructura de muro autoportante.",
+        "MT-PYL-CANAL": "Canal de acero galvanizado de 70 mm para arranque y remate de muro autoportante.",
+        "MT-PYL-PLACA-HD": "Placa de tablaroca de alta dureza, de 12,5 mm, para paramentos interiores sometidos a impacto y zonas de tránsito.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con placa de alta dureza doble",
+        "descripcion": "Ejecución de muro de tablaroca con doble placa de alta dureza. Incluye la estructura, la doble placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
+    "06.04.01.250": {
+      "titulo": "Muro de tablaroca sobre bastidor de madera",
+      "descripcion": "Muro de tablaroca armado sobre bastidor de madera en lugar de perfil metálico. Se usa en obras pequeñas, en muros cortos y donde no hay perfil disponible, y es más fácil de clavar para muebles, aunque se mueve más con la humedad. La madera debe estar seca y tratada. Incluye bastidor, placa, juntas y lijado. Por metro cuadrado.",
+      "recursos": {
+        "MT-MADERA-LISTON": "Listón de madera de obra para bastidores, marcos de cerramiento provisional y rastreles.",
+        "MT-PYL-PLACA125": "Placa de tablaroca estándar de 12,5 mm de espesor, borde afinado.",
+        "MT-PYL-PASTA": "Pasta de juntas y cinta de papel microperforada para tratamiento de uniones.",
+        "MT-TORN": "Tornillería y fijaciones mecánicas para montaje de estructura y placas.",
+        "MQ-ATORN": "Atornilladora eléctrica para placa de tablaroca, incluida amortización y consumo.",
+        "MO-OF1-MON": "Oficial de 1ª montador de prefabricados interiores.",
+        "MO-AYU-ESP": "Ayudante especializado."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Muro de tablaroca con bastidor de madera",
+        "descripcion": "Ejecución de muro de tablaroca sobre bastidor de madera. Incluye el bastidor, la placa y el tratamiento de juntas. Medido por metro cuadrado ejecutado.",
+        "apartado": "Tabiquería de tablaroca"
+      }
+    },
     "10.05.01.010": {
       "titulo": "Impermeabilización de piso de baño o regadera con membrana cementosa, bajo el recubrimiento",
       "descripcion": "Impermeabilización del piso de baño, regadera o lavadero con membrana cementosa flexible de dos componentes, aplicada con brocha y llana antes de colocar la loseta. Incluye el chaflán o media caña en las esquinas, la banda de refuerzo embebida en el encuentro de piso con muro y en la base del brocal, el collarín sellado alrededor de la coladera, dos manos cruzadas y la prueba de estanqueidad por inundación de 24 horas antes de enchapar. No incluye la loseta ni el piso de acabado. Se cuantifica por metro cuadrado realmente impermeabilizado.",
@@ -845,7 +1357,7 @@
     },
     "10.05.01.160": {
       "titulo": "Impermeabilización de sauna o baño de vapor con membrana de poliuretano",
-      "descripcion": "Impermeabilización de los paramentos de sauna o baño de vapor con membrana líquida de poliuretano elastomérica, aplicada sobre puente de adherencia. Aquí la membrana cementosa no basta: el vapor a temperatura alta y los ciclos de calentamiento exigen un elastómero y juntas tratadas con malla. Incluye la preparación del soporte, el puente de adherencia, la malla en juntas y cambios de plano, dos manos cruzadas y la prueba de estanqueidad. Se cuantifica por metro cuadrado realmente impermeabilizado.",
+      "descripcion": "Impermeabilización de los muros y el plafón de la sauna o del baño de vapor con membrana líquida de poliuretano elastomérica, aplicada sobre puente de adherencia. Aquí la membrana cementosa no basta: el vapor a temperatura alta y los ciclos de calentamiento exigen un elastómero y juntas tratadas con malla. Incluye la preparación del soporte, el puente de adherencia, la malla en juntas y cambios de plano, dos manos cruzadas y la prueba de estanqueidad. Se cuantifica por metro cuadrado realmente impermeabilizado.",
       "recursos": {
         "MT-POLIUR-LIQ": "Membrana líquida de poliuretano elastomérica",
         "MT-PUENTE-ADH": "Puente de adherencia epóxico",
@@ -959,6 +1471,464 @@
         "MQ-RODILLO": "Rodillo de pelo corto y brocha"
       },
       "revisado": "2026-11-06"
+    },
+    "12.01.01.010": {
+      "titulo": "Preparación de muro interior para pintura: resane, alisado y sellador",
+      "descripcion": "Preparación completa de un muro interior antes de pintar. Incluye cubrir pisos, canceles y muebles con plástico y cinta, retirar lo que esté suelto, resanar grietas y huecos con masilla, alisar y lijar hasta dejar la superficie pareja, quitar el polvo y aplicar una mano de sellador fijador que consolida el soporte y regula su absorción. Al terminar, el muro queda listo para recibir el acabado. Se cobra por metro cuadrado trabajado, sin descontar vanos menores de 1 m².",
+      "recursos": {
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de paramento interior para pintura: resane, alisado y fondo",
+        "descripcion": "Preparación completa de paramento interior antes de pintar. Incluye protección de pisos, carpintería y mobiliario con plástico y cinta de enmascarar, retirada de partes sueltas, resane de grietas y huecos con masilla de reparación, alisado y lijado hasta obtener superficie uniforme, eliminación del polvo residual y aplicación de una mano de fondo fijador para consolidar el soporte y regular su absorción. Deja el paramento listo para recibir el acabado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.020": {
+      "titulo": "Preparación de fachada o muro exterior antes de pintar",
+      "descripcion": "Preparación de fachada o muro exterior antes de pintar, con lavado a presión, retiro de lo suelto, tratamiento de hongos y sellador fijador. En exterior la preparación pesa más que la pintura: aplicada sobre una superficie con moho o con aplanado suelto, la mejor pintura se cae en una temporada de lluvias. Incluye hidrolavado, raspado de las zonas desprendidas, lavado, tratamiento de hongos y sellador. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-HIDROLAV": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de paramento exterior para pintura",
+        "descripcion": "Preparación de fachada o paramento exterior antes de pintar, con lavado a presión, eliminación de partes sueltas, tratamiento de hongos y aplicación de fondo fijador. En exterior la preparación pesa más que la pintura: aplicada sobre una superficie con moho o con aplanado disgregado, la mejor pintura se desprende en una temporada de lluvias. Incluye el lavado con hidrolavadora, el raspado de las zonas desprendidas, la aplicación de solución fungicida sobre las manchas de moho con su tiempo de actuación y enjuague, el resane de fisuras y el fondo fijador. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.030": {
+      "titulo": "Sellado de fisuras en muro antes de pintar",
+      "descripcion": "Apertura, saneado y sellado de fisuras antes de pintar, con masilla elástica y malla de refuerzo en las más abiertas. Pintar encima de una grieta solo la esconde unas semanas: vuelve por la misma línea en cuanto el muro se mueve y el cliente lo lee como un defecto de la pintura. Incluye el mapeo de las fisuras, su apertura en caja para que el sellador tenga dónde alojarse, la limpieza y el sellado. Por metro lineal tratado.",
+      "recursos": {
+        "MT-SELLA-FISURA": "Sellador elástico de fisuras en base a poliuretano o acrílico para exteriores.",
+        "MT-MALLA-JUNTA": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-AMOLA": "Amoladora angular con disco de diamante, para corte perimetral y de juntas.",
+        "MQ-ASPIR": "Aspirador industrial con filtro de polvo fino para limpieza de soporte y control de polvo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Sellado de fisuras en paramento previo a pintura",
+        "descripcion": "Apertura, saneado y sellado de fisuras en paramento antes de pintar, con masilla elástica y banda de refuerzo en las de mayor apertura. Pintar sobre una fisura sin tratar solo la disimula unas semanas: reaparece en la misma línea en cuanto el paramento se mueve, y el cliente lo lee como un defecto de la pintura. Incluye el mapeo de las fisuras, su apertura en cajeado para dar alojamiento al sellador, la limpieza y aspirado, la imprimación, el relleno con masilla elástica, el refuerzo con banda en las fisuras vivas y el lijado de la transición. Medido en longitud de fisura realmente tratada.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.040": {
+      "titulo": "Nivelación de muro interior con mortero",
+      "descripcion": "Nivelación de un muro interior con mortero para corregir desplomes y ondulaciones antes del acabado. Se usa cuando el aplanado viejo se fue de nivel o cuando el muro de block quedó ondulado: la pintura no corrige nada, solo delata. Incluye trazo y maestras, aplicación del mortero y afinado. Por metro cuadrado nivelado.",
+      "recursos": {
+        "MT-MORT-REP-EST": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Regularización de paramento con mortero de nivelación",
+        "descripcion": "Regularización de paramento interior con mortero de nivelación para corregir desniveles previo al acabado. Incluye el replanteo, la aplicación y el afinado. Medido por metro cuadrado regularizado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.050": {
+      "titulo": "Picado y limpieza de muro deteriorado",
+      "descripcion": "Picado y limpieza de muro deteriorado, retirando el aplanado o recubrimiento suelto antes de reparar. Es el paso que se salta cuando se quiere ahorrar, y la causa de que la reparación nueva se caiga junto con la vieja. Incluye retiro del material suelto, picado del resto y limpieza de la superficie. Por metro cuadrado picado.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+        "MQ-MART-ELEC": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Picado y limpieza de paramento deteriorado",
+        "descripcion": "Picado y limpieza de paramento deteriorado con eliminación del revestimiento suelto previo a la reparación. Incluye la retirada del material suelto y la limpieza de la superficie. Medido por metro cuadrado picado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.060": {
+      "titulo": "Sellador fijador para muro poroso antes de pintar",
+      "descripcion": "Aplicación de sellador fijador sobre muro poroso antes de pintar. En aplanados nuevos, yeso y block, el sellador empareja la absorción: sin él la primera mano se va en chuparse y el color queda con manchas y diferencias de tono. Incluye limpieza y aplicación del sellador. Por metro cuadrado sellado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Imprimación selladora de paramento poroso",
+        "descripcion": "Aplicación de imprimación selladora o fondo fijador sobre paramento poroso previo a la pintura. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado imprimado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.070": {
+      "titulo": "Reparación de grietas con malla de refuerzo",
+      "descripcion": "Reparación de grietas con apertura, malla de refuerzo y relleno de mortero. La malla se usa en grietas que ya volvieron una vez y en el encuentro entre dos materiales distintos, donde el movimiento es seguro; para una fisura capilar basta la masilla elástica. Incluye apertura, colocación de la malla, relleno y afinado. Por metro lineal reparado.",
+      "recursos": {
+        "MT-MALLA-JUNTA": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+        "MT-MORT-REP-EST": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Reparación de grietas con malla de refuerzo",
+        "descripcion": "Reparación de grietas en paramento con apertura, colocación de malla de refuerzo y sellado con mortero. Incluye la apertura de la grieta, la malla y el relleno. Medido por metro lineal reparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.080": {
+      "titulo": "Nivelación puntual de muro con pasta",
+      "descripcion": "Nivelación puntual con pasta en las zonas irregulares del muro, antes del acabado. Se aplica en capas delgadas y se lija entre una y otra: cargar demasiado de una vez deja la pasta agrietada o desprendida. Incluye aplicación de la pasta y lijado. Por metro cuadrado nivelado.",
+      "recursos": {
+        "MT-ESTUCO-FINO": "Pasta de acabado fino para estucado y alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Nivelación puntual de paramento con pasta",
+        "descripcion": "Nivelación puntual de paramento con pasta de nivelación para alisar zonas irregulares previo al acabado. Incluye la aplicación de la pasta y el lijado. Medido por metro cuadrado nivelado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.090": {
+      "titulo": "Tratamiento antihumedad de muro antes de pintar",
+      "descripcion": "Tratamiento antihumedad del muro antes de pintar, con producto bloqueador. Es imprescindible cuando la mancha de humedad sube desde el piso o atraviesa el muro: la pintura sobre humedad activa se ampolla y se descascara en semanas, por buena que sea. Incluye limpieza y aplicación del tratamiento. Por metro cuadrado tratado.",
+      "recursos": {
+        "MT-HIDROFUGO": "Aditivo hidrófugo de masa para morteros de aplanado en exteriores y áreas húmedas.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Tratamiento antihumedad de paramento previo a pintura",
+        "descripcion": "Tratamiento antihumedad de paramento previo a la pintura, con aplicación de producto bloqueador de humedad. Incluye la limpieza y la aplicación del tratamiento. Medido por metro cuadrado tratado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.100": {
+      "titulo": "Puente de adherencia sobre concreto endurecido",
+      "descripcion": "Aplicación de puente de adherencia sobre concreto ya endurecido, antes de colocar mortero o cualquier recubrimiento. El concreto viejo y pulido no agarra: sin puente, el mortero de reparación se despega en placas. Incluye limpieza de la superficie y aplicación del puente. Por metro cuadrado tratado.",
+      "recursos": {
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Puente de adherencia sobre soporte de concreto",
+        "descripcion": "Aplicación de puente de adherencia sobre soporte de concreto endurecido previo a la colocación de mortero o recubrimiento. Incluye la limpieza y la aplicación del puente. Medido por metro cuadrado tratado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.110": {
+      "titulo": "Preparación de muro para recubrimiento con mortero",
+      "descripcion": "Preparación del soporte para recibir un recubrimiento de mortero, con la nivelación que garantiza una superficie plana y limpia. El mortero no corrige un muro torcido: copia lo que encuentra, así que el trabajo fino se hace antes. Incluye nivelación y afinado previo. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-MORT-IMPER": "Mortero impermeabilizante cementoso bicomponente, flexible, para áreas húmedas bajo recubrimiento.",
+        "MT-MALLA-JUNTA": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte de recubrimiento con mortero",
+        "descripcion": "Preparación de soporte para recubrimiento con mortero de nivelación que garantiza un paramento plano y limpio. Incluye la regularización y el afinado previo a la colocación. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.120": {
+      "titulo": "Preparación de piso existente para recubrimiento nuevo",
+      "descripcion": "Preparación de un piso existente para colocar un recubrimiento nuevo, con raspado, limpieza y nivelación de las irregularidades. En pisos viejos hay que retirar restos de adhesivo y revisar huecos: la loseta nueva se despega donde el soporte estaba flojo. Incluye retiro de restos y nivelación previa. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-AUT-NIV": "Mortero autonivelante de base cemento para regularización de soportes interiores.",
+        "MT-DISOL-ADH": "Disolvente removedor de adhesivos para levantado de pisos vinílicos y alfombras.",
+        "MQ-ESMERIL": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de piso existente para nuevo revestimiento",
+        "descripcion": "Preparación de piso existente para la colocación de un nuevo revestimiento, con raspado, limpieza y nivelación de las irregularidades. Incluye la retirada de restos y la nivelación previa. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.130": {
+      "titulo": "Preparación de madera para pintura",
+      "descripcion": "Preparación de superficie de madera para pintar, con lijado, limpieza y fondo tapaporos. El tapaporos sella el poro para que la pintura no se hunda y para que los nudos no suelten resina y manchen el acabado. Incluye lijado, limpieza y fondo. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte de madera para pintura",
+        "descripcion": "Preparación de soporte de madera para pintura, con lijado, limpieza y aplicación de fondo tapaporos. Incluye el lijado y la aplicación del fondo. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.140": {
+      "titulo": "Resane de muro interior con masilla",
+      "descripcion": "Resane de muro interior con masilla para quitar hoyos, marcas de clavo y desconchones antes de pintar. La masilla se aplica en capas finas y se lija con lija de grano medio, dejando secar entre capas o se hunde al lijar. Incluye aplicación de la masilla y lijado. Por metro cuadrado resanado.",
+      "recursos": {
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Resane de paramento interior con masilla",
+        "descripcion": "Resane de paramento interior con masilla para eliminar imperfecciones previo a la pintura. Incluye la aplicación de la masilla y el lijado. Medido por metro cuadrado resanado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.150": {
+      "titulo": "Reparación de muro de concreto con mortero estructural",
+      "descripcion": "Reparación de muro de concreto deteriorado con mortero de reparación estructural, antes de cualquier acabado. Cuando el acero de refuerzo está expuesto, primero hay que sanear el óxido y pasivar la varilla; si no, la reparación vuelve a saltar. Incluye saneado de la zona, aplicación del mortero y afinado. Por metro cuadrado reparado.",
+      "recursos": {
+        "MT-MORT-REP-EST": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Reparación de paramento de concreto con mortero",
+        "descripcion": "Reparación de paramento de concreto deteriorado con mortero de reparación estructural, previo a cualquier acabado. Incluye el saneado de la zona, la aplicación del mortero y el afinado. Medido por metro cuadrado reparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.160": {
+      "titulo": "Preparación de yeso o enlucido con sellador",
+      "descripcion": "Preparación de un soporte de yeso o enlucido con sellador antes de pintar. El yeso es muy absorbente y ligeramente soluble: sin sellador, la vinílica deja marcas y el agua de la pintura puede disolver el yeso y levantar ampollas. Incluye limpieza y aplicación del sellador. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte de yeso con sellador",
+        "descripcion": "Preparación de soporte de yeso o enlucido con aplicación de sellador previo a la pintura. Incluye la limpieza y la aplicación del sellador. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.170": {
+      "titulo": "Limpieza de muro interior con agua a presión",
+      "descripcion": "Limpieza de muro interior con agua a presión para quitar suciedad y restos antes del acabado. Se usa tras una obra o tras retirar un recubrimiento viejo; hay que proteger lo que no debe mojarse y dejar secar el muro antes de sellar. Incluye protección del entorno y limpieza por franjas. Por metro cuadrado limpiado.",
+      "recursos": {
+        "MQ-HIDROLAV": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Limpieza de paramento con agua a presión",
+        "descripcion": "Limpieza de paramento interior con agua a presión para eliminar suciedad y restos antes del acabado. Incluye la protección del entorno y la limpieza por franjas. Medido por metro cuadrado limpiado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.180": {
+      "titulo": "Rasqueteado de aplanado deteriorado",
+      "descripcion": "Rasqueteado y retiro del aplanado o recubrimiento deteriorado, dejando el soporte limpio para el acabado nuevo. Se hace a mano con espátula o a máquina cuando la superficie es grande; el objetivo es dejar solo lo que está firme. Incluye retiro del material suelto y limpieza. Por metro cuadrado rasqueteado.",
+      "recursos": {
+        "MT-CONS-DEM": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+        "MQ-MART-ELEC": "Martillo eléctrico de demolición de 5 kg, incluida amortización y consumo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Rasqueteado de aplanado existente deteriorado",
+        "descripcion": "Rasqueteado y retirada del aplanado o revestimiento existente deteriorado, dejando el soporte limpio para el nuevo acabado. Incluye la retirada del material suelto y la limpieza. Medido por metro cuadrado rasqueteado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.190": {
+      "titulo": "Reparación de esquina con esquinero metálico",
+      "descripcion": "Reparación de esquina o arista del muro con esquinero metálico y acabado de mortero o pasta. Las esquinas son lo primero que se golpea con muebles y bolsas: el esquinero deja la arista recta y protege el yeso. Incluye fijación del esquinero, mortero y remate. Por metro lineal de esquina reparada.",
+      "recursos": {
+        "MT-MALLA-ESQ": "Cantonera metálica de esquina y malla de refuerzo para encuentros de aplanado.",
+        "MT-MORT-REP-EST": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Reparación de esquina con cantonera",
+        "descripcion": "Reparación de esquina o arista de paramento con colocación de cantonera metálica y acabado con mortero o pasta. Incluye la fijación de la cantonera y el remate. Medido por metro lineal de esquina reparada.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.200": {
+      "titulo": "Saneado de muro con eflorescencia salina",
+      "descripcion": "Saneado de muro con eflorescencia salina, con cepillado, lavado y tratamiento neutralizante. Las sales salen porque hay humedad detrás: si solo se rascan y se pintan, vuelven con la siguiente humedad. Incluye limpieza de las sales y tratamiento previo al acabado. Por metro cuadrado saneado.",
+      "recursos": {
+        "MT-LIMP-QUIM": "Limpiador químico específico para fachadas, según el tipo de soporte y de mancha.",
+        "MQ-HIDROLAV": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Saneado de paramento con eflorescencias",
+        "descripcion": "Saneado de paramento con eflorescencias salinas, con cepillado, lavado y aplicación de tratamiento neutralizante. Incluye la limpieza de las sales y el tratamiento previo al acabado. Medido por metro cuadrado saneado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.210": {
+      "titulo": "Preparación de soporte para microcemento",
+      "descripcion": "Preparación del soporte para aplicar microcemento, con nivelación, imprimación y malla en juntas y encuentros. El microcemento va fino: cualquier hoyo o falta de plomo del muro se ve en el acabado y ya no se puede corregir. Incluye nivelación e imprimación. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-AUT-NIV": "Mortero autonivelante de base cemento para regularización de soportes interiores.",
+        "MT-MALLA-JUNTA": "Malla o banda de refuerzo para juntas entre materiales distintos y encuentros con estructura.",
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte para microcemento",
+        "descripcion": "Preparación de soporte para la aplicación de microcemento, con regularización, imprimación y malla en juntas. Incluye la nivelación y la preparación de la superficie. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.220": {
+      "titulo": "Preparación de muro para papel tapiz",
+      "descripcion": "Preparación de muro para colocar papel tapiz, con resane, lijado e imprimación. El papel necesita una superficie lisa y sellada: sobre yeso desnudo el pegamento agarra mal y sobre una pared con masilla sin sellar se marcan las juntas. Incluye alisado e imprimación. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-ESTUCO-FINO": "Pasta de acabado fino para estucado y alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte para papel tapiz",
+        "descripcion": "Preparación de soporte para la colocación de papel tapiz, con resane, lijado e imprimación. Incluye el alisado y la aplicación de la imprimación. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.230": {
+      "titulo": "Nivelación de techo de concreto antes de plafón",
+      "descripcion": "Nivelación de techo de concreto antes de instalar plafón o pintar, con mortero o pasta. En losas viejas el colado suele estar ondulado, y el plafón se cuelga de un techo parejo: se corrige antes de armar la estructura. Incluye corrección de desniveles y afinado. Por metro cuadrado nivelado.",
+      "recursos": {
+        "MT-MORT-REP-EST": "Mortero tixotrópico de reparación estructural, de retracción compensada y con inhibidor de corrosión.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Regularización de techo previo a plafón",
+        "descripcion": "Regularización de techo de concreto previo a la instalación de plafón o pintura, con mortero o pasta de nivelación. Incluye la corrección de desniveles y el afinado. Medido por metro cuadrado regularizado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.240": {
+      "titulo": "Retiro de adhesivo y pintura vieja del muro",
+      "descripcion": "Eliminación de restos de adhesivo, papel tapiz o pintura vieja con decapante o raspado, antes del acabado nuevo. Donde queda una capa mal adherida, la pintura nueva se levanta encima en pocos meses. Incluye aplicación del decapante o raspado y limpieza. Por metro cuadrado limpiado.",
+      "recursos": {
+        "MT-DISOL-ADH": "Disolvente removedor de adhesivos para levantado de pisos vinílicos y alfombras.",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Eliminación de restos de adhesivo en paramento",
+        "descripcion": "Eliminación de restos de adhesivo y pintura vieja en paramento, con decapante o raspado, previo al nuevo acabado. Incluye la limpieza de la superficie. Medido por metro cuadrado limpiado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.250": {
+      "titulo": "Reparación de junta de dilatación en muro",
+      "descripcion": "Reparación de junta de dilatación con retiro del sellado viejo y aplicación de sellador elástico nuevo. La junta se sella con material flexible, nunca con pasta o mortero rígido: si no puede moverse, se raja al lado. Incluye limpieza de la junta y nuevo sellado. Por metro lineal reparado.",
+      "recursos": {
+        "MT-SELLA-ELAST": "Sellador elástico de poliuretano para juntas de movimiento y encuentros.",
+        "MT-CONS-DEM": "Consumibles de demolición: puntas y cinceles de martillo, discos de corte y hojas de espátula.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Reparación de junta de dilatación en paramento",
+        "descripcion": "Reparación de junta de dilatación en paramento, con retirada del sellado deteriorado y aplicación de sellador elástico. Incluye la limpieza de la junta y el nuevo sellado. Medido por metro lineal reparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.260": {
+      "titulo": "Tratamiento de manchas de óxido en muro de concreto",
+      "descripcion": "Tratamiento de manchas de óxido en muro de concreto, con limpieza y producto pasivante. La mancha sale de una varilla mal recubierta: si solo se tapa con pintura, vuelve a salir en meses, y la reparación de fondo implica picar hasta el acero. Incluye limpieza de la zona y tratamiento. Por metro cuadrado tratado.",
+      "recursos": {
+        "MT-PASIVANTE": "Recubrimiento pasivante de base cementosa con inhibidor, para protección de acero de refuerzo corroído.",
+        "MQ-ESMERIL": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Tratamiento de óxido en paramento de concreto",
+        "descripcion": "Tratamiento de manchas de óxido en paramento de concreto, con limpieza y aplicación de producto pasivante. Incluye la limpieza de la zona y el tratamiento. Medido por metro cuadrado tratado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.270": {
+      "titulo": "Trazo y nivelación de muro con nivel láser",
+      "descripcion": "Trazo y nivelación de muro con nivel láser antes del aplanado o del recubrimiento, para garantizar plomos y niveles. Con láser se colocan las maestras en menos tiempo y con menos error que con plomada de hilo, sobre todo en muros largos. Incluye comprobación con láser y marcado de maestras. Por metro cuadrado nivelado.",
+      "recursos": {
+        "MQ-NIVEL-LASER": "Nivel láser autonivelante y equipo de medición para replanteo.",
+        "MO-OF1-ALB": "Oficial de 1ª albañil.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Nivelación de paramento con nivel láser",
+        "descripcion": "Replanteo y nivelación de paramento con nivel láser previo a aplanado o recubrimiento, para garantizar plomos y niveles. Incluye la comprobación con láser y el marcado de maestras. Medido por metro cuadrado nivelado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
+    },
+    "12.01.01.280": {
+      "titulo": "Preparación de superficie metálica para pintura",
+      "descripcion": "Preparación de superficie metálica para pintar, con limpieza, lijado y fondo anticorrosivo. En metal, el orden manda: desengrasar, lijar, quitar el óxido y aplicar el fondo el mismo día, antes de que la humedad vuelva a oxidar la pieza. Incluye limpieza, lijado y fondo. Por metro cuadrado preparado.",
+      "recursos": {
+        "MT-PINT-ANTICORR": "Imprimación anticorrosiva de fondo para estructura metálica.",
+        "MQ-ESMERIL": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Preparación de soporte de metal para pintura",
+        "descripcion": "Preparación de soporte metálico para pintura, con limpieza, lijado y aplicación de fondo anticorrosivo. Incluye la preparación de la superficie. Medido por metro cuadrado preparado.",
+        "apartado": "Preparación de soportes para pintura"
+      }
     },
     "12.05.03.010": {
       "titulo": "Piso de loseta cerámica o porcelanato de formato estándar, pegado en capa fina",
@@ -1670,6 +2640,461 @@
         "MQ-RODILLO": "Rodillo, brocha y charola"
       },
       "revisado": "2026-11-06"
+    },
+    "12.11.01.010": {
+      "titulo": "Pintura vinílica para exterior a dos manos",
+      "descripcion": "Aplicación de dos manos de pintura vinílica para exterior sobre fachada ya preparada, con brocha en esquinas y remates y rodillo en los paños grandes. Incluye el trabajo desde andamio, la protección de ventanas, herrería y piso al pie del muro, el recorte de pretiles y molduras, el respeto al tiempo de secado entre manos y el repaso por paños completos para que no se marquen las paradas. No se pinta con sol directo fuerte ni con lluvia anunciada: el acabado se ampolla. Se cobra por metro cuadrado pintado, sin descontar vanos menores de 1 m².",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura vinílica para exterior, dos manos",
+        "descripcion": "Aplicación de dos manos de pintura vinílica para exteriores sobre fachada preparada, con brocha en encuentros y rodillo en paños. Incluye el trabajo desde andamio, la protección de carpinterías y del entorno a pie de fachada, el recorte de perímetros y molduras, la aplicación de las manos respetando el tiempo de secado y evitando pintar bajo sol directo intenso o con amenaza de lluvia, que arruina el acabado, y el repaso final por paños completos para que no se marquen las paradas. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.020": {
+      "titulo": "Recubrimiento elastomérico impermeabilizante de fachada",
+      "descripcion": "Aplicación de recubrimiento elastomérico impermeabilizante en fachada, en dos o tres manos hasta llegar al espesor de película que garantiza el puenteo de fisuras. Su valor está en el espesor: aplicado fino para ahorrar material pierde la elasticidad que justifica su precio y deja de tapar las grietas. Incluye la preparación del soporte, el refuerzo de las fisuras grandes con banda y la aplicación cruzada respetando el consumo del fabricante. Por metro cuadrado ejecutado.",
+      "recursos": {
+        "MT-ACRIL-IMPER": "Impermeabilizante acrílico elastomérico de aplicación líquida, con su malla de refuerzo.",
+        "MT-BANDA-REF": "Banda elástica de refuerzo para encuentros, esquinas y juntas en impermeabilizaciones.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura elastomérica impermeabilizante de fachada",
+        "descripcion": "Aplicación de recubrimiento elastomérico impermeabilizante en fachada, en dos o tres manos hasta alcanzar el espesor de película que garantiza el puenteo de fisuras. A diferencia de una pintura convencional, su valor está en el espesor: aplicada en capa fina para ahorrar material pierde la elasticidad que justifica su precio y deja de puentear las fisuras. Incluye la preparación del soporte, el tratamiento previo de fisuras mayores con banda, la aplicación de las manos cruzadas respetando el consumo indicado por el fabricante y la verificación del espesor. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.030": {
+      "titulo": "Pintura sobre concreto aparente o superficie mineral",
+      "descripcion": "Pintura sobre concreto aparente, block o superficie mineral porosa, con sellador previo. El concreto nuevo es muy alcalino y ataca las pinturas comunes: se descascara en pocos meses si no se respeta el curado o no se usa un sellador resistente a los álcalis. Incluye limpieza, retiro de eflorescencias, sellador, resane de colados y manos de acabado. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura sobre concreto visto o superficie mineral",
+        "descripcion": "Aplicación de pintura sobre concreto visto, block o superficie mineral porosa, con imprimación selladora previa. El concreto joven es fuertemente alcalino y ataca las pinturas convencionales produciendo saponificación y desprendimiento, por lo que hay que respetar el tiempo de curado o emplear imprimación resistente a álcalis. Incluye la limpieza y eliminación de eflorescencias, la imprimación selladora, el resane de coqueras y las manos de acabado. Medido en superficie realmente ejecutada, descontando huecos mayores de 1 m².",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.040": {
+      "titulo": "Pintura vinílica exterior sobre aplanado nuevo a tres manos",
+      "descripcion": "Pintura vinílica para exterior sobre aplanado nuevo, con sellador de fondo y tres manos de acabado. El aplanado nuevo chupa la primera mano como esponja: sin sellador el color queda disparejo y la pintura rinde mucho menos de lo previsto. Incluye fondo sellador, tres manos y la protección de ventanas y pisos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura vinílica exterior sobre aplanado nuevo, tres manos",
+        "descripcion": "Aplicación de pintura vinílica exterior sobre aplanado nuevo, con fondo sellador y tres manos. Incluye la aplicación del fondo, las tres manos de pintura y la protección de ventanas y pisos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.050": {
+      "titulo": "Repintado de fachada sobre pintura existente",
+      "descripcion": "Repintado de fachada sobre pintura existente en buen estado, con lavado y dos manos de vinílica para exterior. Antes de pintar hay que revisar si la capa vieja está firme: donde se desprende en hojuela hay que retirarla y resanar, porque la pintura nueva se levanta con ella. Incluye limpieza, repaso de fisuras y dos manos. Por metro cuadrado repintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Repintado de fachada sobre pintura existente",
+        "descripcion": "Repintado de fachada sobre pintura existente en buen estado, con limpieza y dos manos de pintura vinílica exterior. Incluye la limpieza de la superficie, el repaso de fisuras y las dos manos de acabado. Medido por metro cuadrado repintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.060": {
+      "titulo": "Pintura de fachada con acabado satinado a dos manos",
+      "descripcion": "Pintura vinílica para exterior con acabado satinado, en dos manos. El satinado aguanta mejor el lavado y repele más el polvo que el mate, por eso se usa en fachadas a nivel de calle y en muros que se tallan seguido; a cambio deja ver cualquier imperfección del aplanado. Incluye preparación del soporte y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con acabado satinado, dos manos",
+        "descripcion": "Aplicación de pintura vinílica exterior con acabado satinado sobre fachada, con dos manos. Incluye la preparación del soporte y las dos manos de acabado satinado. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.070": {
+      "titulo": "Pintura de fachada con acabado texturizado",
+      "descripcion": "Aplicación de recubrimiento texturizado, de gota o de grano, sobre fachada en dos manos, con llana o rodillo de textura. Cubre mejor que la pintura lisa las irregularidades del aplanado y deja un acabado más grueso y durable a la intemperie. Incluye preparación del soporte y aplicación del texturizado. Por metro cuadrado aplicado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MQ-PROYECT-MORT": "Máquina de proyección de mortero y pasta de yeso, con su compresor y mangueras.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con acabado texturado",
+        "descripcion": "Aplicación de pintura exterior con acabado texturado o gota sobre fachada, con dos manos. Incluye la preparación del soporte y la aplicación del revestimiento texturado. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.080": {
+      "titulo": "Pintura de barda o muro de lindero",
+      "descripcion": "Pintura exterior en barda, muro de lindero o cerco de la propiedad, a dos manos. Son los muros que reciben sol y polvo de la calle y casi siempre están hechos de block, así que se sellan antes de pintar. Incluye limpieza, sellado del block cuando lo pide y dos manos de vinílica para exterior. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de muro de cerramiento o pared medianera",
+        "descripcion": "Aplicación de pintura exterior en muro de cerramiento o medianera, con dos manos. Incluye la limpieza de la superficie y las dos manos de pintura vinílica exterior. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.090": {
+      "titulo": "Pintura de cornisas, aleros y remates de fachada",
+      "descripcion": "Pintura exterior en cornisas, aleros, pretiles y remates de fachada, a dos manos. Son las partes más castigadas de la casa: reciben el agua de escurrimiento y el sol de frente, y una cornisa mal pintada se convierte en el primer punto de humedad del muro. Incluye la protección de los elementos de abajo y las dos manos. Por metro cuadrado o lineal pintado, según el elemento.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-CINTA-ENM": "Rollo de cinta de enmascarar y cinta adhesiva de embalaje para fijación de protecciones.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de cornisa, alero y remates de fachada",
+        "descripcion": "Aplicación de pintura exterior en cornisas, aleros y remates de fachada, con dos manos. Incluye la protección de los elementos adyacentes y las dos manos de pintura. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.100": {
+      "titulo": "Pintura de fachada sobre concreto aparente",
+      "descripcion": "Pintura exterior sobre fachada de concreto aparente, con sellador de fondo y dos manos de acabado. El concreto aparente tiene coladas, juntas y manchas de desmoldante que la pintura no cubre sola: el sellador parejo es lo que hace que el color salga uniforme. Incluye limpieza, sellador y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-LIJA": "Lija, cinta de enmascarar y plástico de protección. Consumibles de preparación y protección.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada sobre concreto visto",
+        "descripcion": "Aplicación de pintura sobre concreto visto o superficie mineral exterior, con fondo sellador y dos manos. Incluye la limpieza, el fondo y las dos manos de acabado. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.110": {
+      "titulo": "Pintura de fachada con hidrofugante previo",
+      "descripcion": "Aplicación de hidrofugante y dos manos de pintura exterior en fachadas castigadas por la lluvia. El hidrofugante baja la absorción del muro antes de pintar, así la pintura no se ablanda ni se mancha con cada temporada de aguas. Incluye el hidrofugante, las dos manos y la protección del entorno. Por metro cuadrado tratado y pintado.",
+      "recursos": {
+        "MT-HIDROFUG-FACH": "Hidrofugante incoloro de impregnación para protección de fachadas.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con hidrofugante previo",
+        "descripcion": "Aplicación de hidrofugante previo y dos manos de pintura exterior en fachadas expuestas a lluvia. Incluye la aplicación del hidrofugante, las dos manos de pintura y la protección del entorno. Medido por metro cuadrado tratado y pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.120": {
+      "titulo": "Pintura de esmalte sobre reja o protección metálica exterior",
+      "descripcion": "Aplicación de esmalte sobre reja, protección de ventana o cualquier elemento metálico exterior, con fondo anticorrosivo y dos manos. El fondo es la mitad del trabajo: sin él, el esmalte se descascara desde los puntos de soldadura, que es donde empieza el óxido. Incluye limpieza y desengrase, fondo anticorrosivo y dos manos de esmalte. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PINT-ANTICORR": "Imprimación anticorrosiva de fondo para estructura metálica.",
+        "MT-PIN-ESMALTE": "Esmalte sintético brillante para carpintería metálica y de madera.",
+        "MQ-ESMERIL": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de reja, verja o elemento metálico exterior",
+        "descripcion": "Aplicación de esmalte sobre reja, verja o elemento metálico exterior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo anticorrosivo y las dos manos de esmalte. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.130": {
+      "titulo": "Pintura de fachada con puente de adherencia",
+      "descripcion": "Aplicación de puente de adherencia y dos manos de pintura exterior en fachadas con soportes irregulares o superficies donde la pintura no agarra bien: concreto pulido, aplanados viejos, restos de pintura de otra base. El puente asegura que la capa nueva se pegue y no se desprenda en hojuelas. Incluye puente, dos manos y protección del entorno. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PUENTE-ADH": "Puente de adherencia epóxico entre concreto endurecido y concreto o mortero nuevo.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con puente de adherencia",
+        "descripcion": "Aplicación de puente de adherencia y dos manos de pintura exterior en fachada con soporte irregular. Incluye el puente, las dos manos y la protección del entorno. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.140": {
+      "titulo": "Tratamiento de salitre y pintura de muro exterior",
+      "descripcion": "Saneado del salitre en muro exterior y pintura posterior. El salitre aparece cuando la humedad sale del muro y arrastra sales: si se pinta encima sin tratarlo, la eflorescencia vuelve y levanta la pintura en semanas. Incluye cepillado y lavado, tratamiento del salitre, sellador y dos manos de pintura exterior. Por metro cuadrado tratado y pintado.",
+      "recursos": {
+        "MT-LIMP-QUIM": "Limpiador químico específico para fachadas, según el tipo de soporte y de mancha.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Tratamiento de salitre y pintura de muro exterior",
+        "descripcion": "Tratamiento de salitre en muro exterior seguido de dos manos de pintura. Incluye el saneado del salitre, el tratamiento y las dos manos. Medido por metro cuadrado tratado y pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.150": {
+      "titulo": "Pintura de fachada a dos colores",
+      "descripcion": "Pintura exterior de fachada en dos colores, con la línea de cambio enmascarada para que el remate quede limpio. Se usa para separar el zócalo del paño alto o para marcar un volumen de la casa. Incluye trazo y enmascarado de la línea, aplicación de ambos colores y retiro de la cinta. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-CINTA-ENM": "Rollo de cinta de enmascarar y cinta adhesiva de embalaje para fijación de protecciones.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada a dos colores",
+        "descripcion": "Aplicación de pintura exterior a dos colores en fachada, con enmascarado de la línea de separación. Incluye la aplicación de ambos colores y el remate limpio. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.160": {
+      "titulo": "Pintura de zócalo exterior de fachada",
+      "descripcion": "Pintura exterior en el zócalo de la fachada, la franja baja que recibe los salpicones del piso, las mangueras y los golpes. Conviene esmalte o pintura lavable, no vinílica mate, porque se talla seguido. Incluye preparación del soporte y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de zócalo exterior",
+        "descripcion": "Aplicación de pintura exterior en zócalo de fachada, con dos manos. Incluye la preparación del soporte y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.170": {
+      "titulo": "Pintura de losa o techo exterior",
+      "descripcion": "Pintura exterior en cubierta o losa de techo de superficie inclinada, a dos manos. En techos planos conviene una pintura clara o un recubrimiento reflectivo: baja varios grados la temperatura del interior y alarga la vida de la impermeabilización. Incluye preparación de la superficie y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de cubierta o techo exterior",
+        "descripcion": "Aplicación de pintura exterior en cubierta o techo de superficie inclinada, con dos manos. Incluye la preparación y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.180": {
+      "titulo": "Pintura de fachada con acabado mate",
+      "descripcion": "Pintura exterior con acabado mate en dos manos. El mate disimula mejor las irregularidades del aplanado y es el acabado tradicional de la casa habitación; a cambio se ensucia antes y se talla peor. Incluye preparación del soporte y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con acabado mate",
+        "descripcion": "Aplicación de pintura exterior con acabado mate sobre fachada, con dos manos. Incluye la preparación del soporte y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.190": {
+      "titulo": "Pintura de fachada con hidrolavado previo",
+      "descripcion": "Lavado con hidrolavadora y dos manos de pintura exterior sobre fachada. El hidrolavado quita el polvo, el hollín y las capas sueltas que impiden que la pintura agarre, y es lo que separa un repintado que dura diez años de uno que dura tres. Incluye el hidrolavado, la preparación y las dos manos. Por metro cuadrado lavado y pintado.",
+      "recursos": {
+        "MQ-HIDROLAV": "Hidrolavadora de presión para limpieza de fachadas, pisos y acabados.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con hidrolavado previo",
+        "descripcion": "Hidrolavado previo y dos manos de pintura exterior en fachada. Incluye la limpieza con hidrolavadora, la preparación y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.200": {
+      "titulo": "Hidrofugación de fachada con siloxano",
+      "descripcion": "Aplicación de hidrofugante base siloxano sobre la fachada. Repela el agua de lluvia pero deja respirar el muro, así la humedad de dentro sale en vapor en lugar de quedarse atrapada; por eso se prefiere al sellador acrílico en muros de piedra o con humedad de capilaridad. Incluye limpieza previa y aplicación del hidrofugante. Por metro cuadrado tratado.",
+      "recursos": {
+        "MT-SILOXANO": "Hidrofugante a base de siloxano para fachadas, permeable al vapor de agua.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Hidrofugación con siloxano de fachada",
+        "descripcion": "Aplicación de hidrofugante a base de siloxano sobre fachada, permeable al vapor. Incluye la limpieza previa y la aplicación del hidrofugante. Medido por metro cuadrado tratado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.210": {
+      "titulo": "Protector anti-graffiti para fachada",
+      "descripcion": "Aplicación de protector anti-graffiti sobre fachada ya pintada, que forma una película que impide que la pintura en aerosol penetre y permite lavarla con agua a presión. Se usa en fachadas a pie de calle, escuelas y comercios. Incluye limpieza previa y aplicación del protector. Por metro cuadrado tratado.",
+      "recursos": {
+        "MT-ANTI-GRAFFITI": "Protector anti-graffiti para superficies pintadas, que facilita la limpieza de pintadas.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Protector anti-graffiti sobre fachada",
+        "descripcion": "Aplicación de protector anti-graffiti sobre fachada pintada, que facilita la limpieza de pintadas. Incluye la limpieza previa y la aplicación del protector. Medido por metro cuadrado tratado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.220": {
+      "titulo": "Pintura de muro de contención exterior",
+      "descripcion": "Pintura exterior sobre muro de contención, a dos manos. Son muros que trabajan con tierra detrás y suelen mostrar humedad permanente en la cara vista: hay que sellar y usar pintura resistente a la alcalinidad, no vinílica común. Incluye preparación del soporte y dos manos. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de muro de contención exterior",
+        "descripcion": "Aplicación de pintura exterior sobre muro de contención, con dos manos. Incluye la preparación del soporte y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.230": {
+      "titulo": "Pintura de fachada de block de concreto",
+      "descripcion": "Pintura exterior sobre fachada de block de concreto, con sellado del block y dos manos. El block tiene poros y juntas que se comen la primera mano: sin sellador el color queda manchado y la pintura rinde la mitad. Incluye sellado del block, sellador de fondo y dos manos de acabado. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PIN-FONDO": "Fondo fijador o sellador acrílico al agua, para consolidar y regular la absorción de paramentos interiores.",
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada de block de concreto",
+        "descripcion": "Aplicación de pintura exterior sobre fachada de block de concreto, con fondo y dos manos. Incluye el sellado del block, el fondo y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.240": {
+      "titulo": "Pintura de esmalte en portón o puerta metálica",
+      "descripcion": "Esmalte sobre portón o puerta metálica exterior, con fondo anticorrosivo y dos manos. En herrería exterior el óxido empieza por los bordes cortados y las soldaduras, así que el fondo se aplica después de lijar y desengrasar toda la pieza. Incluye limpieza, fondo y dos manos de esmalte. Por metro cuadrado pintado.",
+      "recursos": {
+        "MT-PINT-ANTICORR": "Imprimación anticorrosiva de fondo para estructura metálica.",
+        "MT-PIN-ESMALTE": "Esmalte sintético brillante para carpintería metálica y de madera.",
+        "MQ-ESMERIL": "Esmeriladora y cepillo de púas para limpieza y preparación de superficies metálicas.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de portón o puerta metálica exterior",
+        "descripcion": "Aplicación de esmalte sobre portón o puerta metálica exterior, con fondo anticorrosivo y dos manos. Incluye la limpieza, el fondo y las dos manos. Medido por metro cuadrado pintado.",
+        "apartado": "Pintura exterior"
+      }
+    },
+    "12.11.01.250": {
+      "titulo": "Repintado de mantenimiento de fachada",
+      "descripcion": "Repintado de mantenimiento de la fachada, con limpieza, resane de fisuras y dos manos de pintura exterior. Es la rutina que evita la reparación cara: repintar cada cinco o seis años sale más barato que dejar que el agua entre y acabe con el aplanado. Incluye limpieza, resane de fisuras y dos manos. Por metro cuadrado repintado.",
+      "recursos": {
+        "MT-PIN-CAUCHO": "Pintura vinílica acrílico mate lavable para interiores, base blanca tintable.",
+        "MT-PIN-MASILLA": "Masilla de reparación en pasta para alisado de paramentos interiores.",
+        "MQ-RODILLO": "Equipo de aplicación de pintura: rodillos, brochas, cubetas y andamio bajo.",
+        "MO-OF1-PIN": "Oficial de 1ª pintor.",
+        "MO-AYU": "Ayudante.",
+        "MQ-ANDAMIO": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados."
+      },
+      "revisado": "2026-11-06",
+      "_origen": {
+        "titulo": "Pintura de fachada con esquema de mantenimiento",
+        "descripcion": "Repintado de mantenimiento de fachada, con limpieza, repaso de fisuras y dos manos. Incluye la limpieza, el resane y las dos manos. Medido por metro cuadrado repintado.",
+        "apartado": "Pintura exterior"
+      }
     }
   }
 }
