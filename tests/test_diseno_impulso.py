@@ -13,7 +13,8 @@ PUBLIC = (RAIZ / "app/static/css/public.css").read_text(encoding="utf-8")
 APP = (RAIZ / "app/static/css/style.css").read_text(encoding="utf-8")
 ONBOARDING = (RAIZ / "app/templates/onboarding.html").read_text(encoding="utf-8")
 ONBOARDING_EN = (RAIZ / "app/templates/onboarding_en.html").read_text(encoding="utf-8")
-ADMIN = (RAIZ / "app/templates/admin/base_admin.html").read_text(encoding="utf-8")
+# La piel del panel vive en su hoja desde el tramo B (2026-11-06).
+ADMIN = (RAIZ / "app/static/css/admin.css").read_text(encoding="utf-8")
 
 
 def _sin_errores(css: str) -> None:

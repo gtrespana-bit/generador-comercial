@@ -32,12 +32,3 @@
 {% block content %}
   {% include "admin/partes/ficha_" + pestana + ".html" %}
 {% endblock %}
-
-{% block extra_css %}
-  .ficha-estado { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-  .ficha-estado b { font-size: var(--t-lg); }
-  .lista-miembros { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-  .lista-miembros li { display: flex; gap: 10px; align-items: center; font-size: var(--t-xs); }
-  .lista-miembros .mono { font-family: ui-monospace, monospace; color: var(--text-muted); font-size: var(--t-2xs); }
-  .aviso-corto { background: var(--surface-2); border: 1px dashed var(--border-color); border-radius: 10px; padding: 10px 12px; font-size: var(--t-xs); color: var(--text-muted); }
-{% endblock %}

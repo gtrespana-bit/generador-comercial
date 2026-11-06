@@ -196,6 +196,28 @@ def _revisar(cliente: TestClient, urls: list[str], *, permitidos=(200,)) -> list
 # ---------------------------------------------------------------------------
 
 
+def test_las_paginas_del_panel_cargan_su_hoja_y_marcan_el_area(operador):
+    """La piel viaja en `admin.css` y cada página declara su área en `<body>`.
+
+    Desde el tramo B el CSS del panel ya no se incrusta en la respuesta: se
+    enlaza con huella de versión y el navegador lo guarda. Y cada pantalla
+    necesita `.panel-<área>` para que su CSS (que ahora vive en el mismo
+    archivo) no alcance a las demás.
+    """
+    respuesta = _cliente().get("/admin")
+    assert respuesta.status_code == 200
+    html = respuesta.text
+    assert "/static/css/admin.css?v=" in html, (
+        "El panel tiene que enlazar la hoja cacheable con el filtro asset()."
+    )
+    assert '<body class="panel-hoy"' in html, (
+        "El <body> del panel tiene que llevar la clase de su área."
+    )
+    assert "<style" not in html, (
+        "El panel ha vuelto a incrustar estilos en la respuesta."
+    )
+
+
 def test_el_panel_no_se_abre_sin_sesion_de_operador():
     """El humo de abajo no puede pasar por una puerta abierta.
 

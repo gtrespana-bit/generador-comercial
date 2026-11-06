@@ -254,3 +254,54 @@ se apuntaban a sí mismos (`--topbar-bg: var(--topbar-bg)`) y un token que el
 parser no veía por un comentario con dos puntos.
 
 Suite completa: **3368 passed, 13 skipped en 214 s**.
+
+---
+
+## Resultado del tramo B (mismo día)
+
+Objetivo: que la piel del panel deje de viajar dentro de cada respuesta y que
+exista un solo sitio donde tocar un componente.
+
+| Métrica | Antes | Después |
+|---|---|---|
+| CSS dentro del HTML del panel | ~44 KB en cada respuesta | **0** |
+| Hojas de estilo del panel | 0 (todo inline) | **1**: `app/static/css/admin.css` |
+| Caché del CSS | ninguna | `max-age=31536000, immutable` con `?v=<sha>` |
+| CSS propio de pantalla | 426 líneas sueltas en 11 plantillas | mismo CSS, prefijado `.panel-<área>` en la hoja |
+| Declaraciones de espaciado en escala | 0 | **128** (pasos `--e-1`…`--e-8`) |
+| Plantillas del panel con `<style>` | 12 | **0** |
+| Tokens del panel | 71 | **78** (7 de espaciado) |
+
+Qué se hizo:
+
+1. **Extracción completa.** Las 1.294 líneas del `<style>` de `base_admin.html`
+   más las 426 de las 11 pantallas pasan a `admin.css` (78,5 KB; 14,5 KB
+   comprimido). `base_admin.html` enlaza con `{{ 'css/admin.css' | asset }}`, la
+   misma ruta que ya usaban `public.css` y `style.css`, así que hereda la
+   política de caché del proyecto: inmutable para una versión concreta.
+2. **Aislamiento por área.** Ahora que todas las pantallas comparten hoja, el
+   CSS de una podría alcanzar a otra. Para que no: `<body class="panel-{{ seccion_activa }}">`
+   y cada bloque de pantalla se prefija con su área (`.panel-hoy`,
+   `.panel-clientes`, `.panel-ingresos`, `.panel-web`, `.panel-analitica`,
+   `.panel-sistema`). El comportamiento visible es exactamente el de antes,
+   porque un selector prefijado gana a la regla base igual que antes ganaba por
+   orden.
+3. **Escala de espaciado** (`--e-1` 4 px … `--e-8` 32 px) aplicada a las 128
+   declaraciones cuyo valor ya coincidía con un paso. No mueve nada: convierte
+   el 16 en `var(--e-4)`. Los valores fuera de escala (9, 13, 14, 18 px) quedan
+   a la vista como deuda del siguiente tramo.
+4. **Se retira el hook `{% block extra_css %}`.** Una pantalla nueva ya no
+   inyecta estilos: los añade a la hoja. Lo vigila una prueba.
+
+Puertas nuevas (además de las 7 del tramo A):
+
+- `test_la_piel_del_panel_vive_en_una_hoja_cacheable`: la hoja existe, el panel
+  la enlaza con `asset()` y el `<body>` lleva su clase de área.
+- `test_ninguna_plantilla_del_panel_vuelve_a_incrustar_estilos`: ninguna
+  plantilla del panel contiene `<style>` ni `extra_css`.
+- `test_las_paginas_del_panel_cargan_su_hoja_y_marcan_el_area` (humo, con sesión
+  real): el HTML servido enlaza `admin.css?v=…`, marca `panel-hoy` y no lleva
+  estilos incrustados.
+
+Validación: `admin.css` parsea sin errores (0 de 637 reglas de primer nivel),
+llaves equilibradas, contraste 0/0 en ambos modos, **3371 pruebas en verde**.

@@ -3,6 +3,8 @@ from pathlib import Path
 
 
 BASE_ADMIN = Path("app/templates/admin/base_admin.html").read_text(encoding="utf-8")
+# La piel del panel vive en su hoja desde el tramo B (2026-11-06).
+ADMIN_CSS = Path("app/static/css/admin.css").read_text(encoding="utf-8")
 ADMIN_KIT = Path("app/static/js/admin-kit.js").read_text(encoding="utf-8")
 
 
@@ -27,4 +29,4 @@ def test_menu_admin_cierra_por_fondo_escape_y_navegacion():
 
 
 def test_css_admin_bloquea_scroll_mientras_el_cajon_esta_abierto():
-    assert 'body.menu-abierto { overflow: hidden; }' in BASE_ADMIN
+    assert 'body.menu-abierto { overflow: hidden; }' in ADMIN_CSS

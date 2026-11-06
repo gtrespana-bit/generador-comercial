@@ -48,11 +48,22 @@ RGBA = re.compile(r"rgba?\([^)]*\)")
 # --------------------------------------------------------------------------- #
 # Lectura del CSS del panel
 # --------------------------------------------------------------------------- #
+HOJA = REPO / "app" / "static" / "css" / "admin.css"
+
+
 def css_del_panel() -> str:
-    """Devuelve todo el CSS que el panel envía al navegador."""
-    partes = [
+    """Devuelve todo el CSS que el panel envía al navegador.
+
+    Desde el tramo B la piel vive en `app/static/css/admin.css` (cacheable, con
+    huella de versión). Se siguen leyendo los bloques inline por si alguna
+    plantilla vuelve a incrustar estilos: así la medición no se queda ciega.
+    """
+    partes = []
+    if HOJA.exists():
+        partes.append(HOJA.read_text(encoding="utf-8"))
+    partes.extend(
         m.group(1) for m in BLOQUE_CSS.finditer(BASE.read_text(encoding="utf-8"))
-    ]
+    )
     for ruta in sorted(ADMIN.rglob("*.html")):
         if ruta.name == "base_admin.html":
             continue
@@ -375,7 +386,7 @@ def auditar() -> dict:
 def imprimir(informe: dict) -> None:
     print("Panel de administración · auditoría de contraste\n")
     print(f"  reglas CSS analizadas ........ {informe['reglas']}")
-    print(f"  tokens de color (claro) ...... {informe['tokens_claro']}")
+    print(f"  tokens declarados (claro) .... {informe['tokens_claro']}")
     print(f"  colores literales distintos .. {len(informe['colores_literales'])}")
     print(
         "  superficies claras fijas ..... "

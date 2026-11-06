@@ -79,37 +79,3 @@
 </div>
 
 {% endif %}
-
-{% block extra_css %}
-  /* Timeline unificado de cliente */
-  .timeline-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-  .timeline-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-  .btn-outline:hover { border-color: var(--brand-color); }
-
-  .timeline { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--border-color); margin-left: 24px; padding-left: 0; }
-  .timeline-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border-suave); position: relative; }
-  .timeline-item:last-of-type { border-bottom: 0; }
-  .timeline-item.critical { border-left: 3px solid var(--danger); }
-  .timeline-item.warning { border-left: 3px solid var(--warn); }
-  .timeline-item.success { border-left: 3px solid var(--success); }
-  .timeline-item.info { border-left: 3px solid var(--blue); }
-
-  .timeline-marca { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--card-bg); border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-top: 2px; }
-  .timeline-critical .timeline-marca { border-color: var(--danger); color: var(--danger); }
-  .timeline-warning .timeline-marca { border-color: var(--warn); color: var(--warn); }
-  .timeline-success .timeline-marca { border-color: var(--success); color: var(--success); }
-  .timeline-info .timeline-marca { border-color: var(--blue); color: var(--blue); }
-
-  .timeline-contenido { flex: 1; min-width: 0; }
-  .timeline-fila { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; flex-wrap: wrap; }
-  .timeline-fila time { font-size: var(--t-2xs); }
-  .timeline-titulo { font-size: var(--t-sm); font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
-  .timeline-detalle { font-size: var(--t-2xs); color: var(--text-muted); line-height: 1.5; margin-bottom: 6px; }
-  .timeline-accion { margin-top: 4px; }
-
-  @media (max-width: 640px) {
-    .timeline { margin-left: 16px; }
-    .timeline-marca { width: 26px; height: 26px; }
-  }
-{% endblock %}
