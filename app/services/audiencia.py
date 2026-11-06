@@ -24,10 +24,18 @@ def _inicio_dia(dia: date) -> datetime:
     return datetime.combine(dia, time.min)
 
 
-def _dias_de_serie(desde: datetime, hasta: datetime) -> list[date]:
+def _dias_de_serie(desde: date | datetime, hasta: date | datetime) -> list[date]:
+    """Días del rango, con los dos extremos incluidos.
+
+    Acepta ``date`` y ``datetime``. ``resumen_audiencia`` recibe ``hoy`` como
+    fecha (lo pasa el panel) y le resta ``timedelta``, así que aquí llegan
+    ``date``; llamar ``.date()`` sobre una fecha fue el 500 del 06/11/2026
+    (``AttributeError: 'datetime.date' object has no attribute 'date'``),
+    que solo apareció cuando la audiencia empezó a tener filas.
+    """
     dias = []
-    cursor = desde.date()
-    fin = hasta.date()
+    cursor = desde.date() if isinstance(desde, datetime) else desde
+    fin = hasta.date() if isinstance(hasta, datetime) else hasta
     while cursor <= fin:
         dias.append(cursor)
         cursor += timedelta(days=1)

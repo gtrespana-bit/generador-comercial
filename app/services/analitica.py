@@ -102,10 +102,12 @@ def _mes_siguiente(clave: str) -> str:
     return f"{anyo:04d}-{mes:02d}"
 
 
-def _dias_de_serie(desde: datetime, hasta: datetime) -> list[date]:
+def _dias_de_serie(desde: date | datetime, hasta: date | datetime) -> list[date]:
+    # Tolera ``date`` además de ``datetime``: el mismo despiste en
+    # ``app/services/audiencia.py`` tiró /admin/analitica entero el 06/11/2026.
     dias = []
-    cursor = desde.date()
-    fin = hasta.date()
+    cursor = desde.date() if isinstance(desde, datetime) else desde
+    fin = hasta.date() if isinstance(hasta, datetime) else hasta
     while cursor <= fin:
         dias.append(cursor)
         cursor += timedelta(days=1)

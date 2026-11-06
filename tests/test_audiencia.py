@@ -77,3 +77,87 @@ def test_un_buscador_no_es_un_visitante():
             },
         )
     assert _visitas() == []
+
+
+# ---------------------------------------------------------------------------
+# Regresión del 06/11/2026: con la audiencia por fin escribiendo filas, el
+# panel empezó a devolver 500 con
+# ``AttributeError: 'datetime.date' object has no attribute 'date'`` en
+# ``app/services/audiencia.py``. El trozo de serie diaria solo se ejecuta
+# cuando hay visitas, así que con la tabla vacía nunca se había probado.
+# ---------------------------------------------------------------------------
+
+from datetime import date, datetime  # noqa: E402
+
+from app.services.analitica import resumen_analitica  # noqa: E402
+from app.services.audiencia import resumen_audiencia  # noqa: E402
+
+HOY = date(2026, 11, 5)
+AYER = date(2026, 11, 4)
+
+
+def _sembrar_dos_visitas() -> None:
+    with SessionLocal() as db:
+        db.add_all(
+            [
+                VisitaPagina(
+                    ruta="/",
+                    ip_hash="a" * 64,
+                    referente="https://www.google.com/",
+                    created_at=datetime(2026, 11, 4, 10, 0),
+                ),
+                VisitaPagina(
+                    ruta="/precios",
+                    ip_hash="b" * 64,
+                    created_at=datetime(2026, 11, 5, 11, 30),
+                ),
+                # Segunda visita del mismo visitante: no suma visitante nuevo.
+                VisitaPagina(
+                    ruta="/precios",
+                    ip_hash="b" * 64,
+                    created_at=datetime(2026, 11, 5, 12, 0),
+                ),
+            ]
+        )
+        db.commit()
+
+
+def test_la_serie_diaria_se_arma_cuando_hay_visitas():
+    _sembrar_dos_visitas()
+    with SessionLocal() as db:
+        datos = resumen_audiencia(db, dias=7, hoy=HOY)
+
+    assert datos["disponible"] is True
+    assert len(datos["serie"]) == 7
+    assert datos["serie"][-1]["fecha"] == HOY
+    assert datos["serie"][-1]["vistas"] == 2
+    assert datos["serie"][-1]["visitantes"] == 1
+    assert datos["serie"][-2]["fecha"] == AYER
+    assert datos["serie"][-2]["vistas"] == 1
+    assert datos["vistas_ventana"] == 3
+    assert datos["visitantes_hoy"] == 1
+    assert datos["paginas_top"][0] == {"ruta": "/precios", "vistas": 2}
+
+
+def test_resumen_audiencia_acepta_fechas_y_datetimes():
+    """El panel pasa ``date``; la API pública del servicio tolera ambos."""
+    _sembrar_dos_visitas()
+    with SessionLocal() as db:
+        en_dias = resumen_audiencia(db, dias=7, hoy=HOY)
+        en_datetimes = resumen_audiencia(
+            db, dias=7, hoy=datetime(2026, 11, 5, 18, 0)
+        )
+    assert len(en_dias["serie"]) == len(en_datetimes["serie"]) == 7
+    assert en_dias["vistas_ventana"] == en_datetimes["vistas_ventana"] == 3
+
+
+def test_el_panel_de_analitica_pinta_la_audiencia_sin_romperse():
+    """El 500 real: ``resumen_analitica`` con filas en ``visitas_pagina``."""
+    _sembrar_dos_visitas()
+    with SessionLocal() as db:
+        resumen = resumen_analitica(db, hoy=HOY, dias=30)
+
+    audiencia = resumen["audiencia"]
+    assert audiencia["disponible"] is True
+    assert audiencia["vistas_ventana"] == 3
+    assert audiencia["serie"][-1]["fecha"] == HOY
