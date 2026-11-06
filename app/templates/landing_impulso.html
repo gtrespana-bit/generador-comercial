@@ -333,7 +333,11 @@
     </div>
     <div class="lp2-value-grid">
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Mira un presupuesto completo", "See a full estimate") }}</h3><p>{{ L("Abre el PDF de ejemplo: capítulos, mediciones, coste interno, beneficio, impuesto de tu mercado y un documento con aspecto profesional.", "Open the sample PDF: sections, measurements, internal cost, profit, your market's tax and a professional-looking document.") }}</p><a href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Abrir el PDF de ejemplo →", "Open the sample PDF →") }}</a></article>
+      {% if pais_codigo in ("CL", "ES") %}
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Incluido en el plan", "Included in the plan") }}</span><h3>{{ L("Tu catálogo ya viene cargado", "Your catalog is ready to use") }}</h3><p>{{ L("Al crear tu espacio en CotizaT, recibes partidas de tu mercado con su APU, listas para presupuestar. No empiezas desde cero.", "When you create your CotizaT workspace, you get local items with their unit price analysis, ready to estimate. You don't start from scratch.") }}</p><a href="#primer-valor">{{ L("Ver cómo funciona el software →", "See how the software works →") }}</a></article>
+      {% else %}
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Revisa precios y APU reales", "Review real prices and unit prices") }}</h3><p>{{ L("El catálogo público muestra partidas con su descompuesto: materiales, mano de obra y equipo. Puedes comprobar de dónde sale cada número.", "The public catalog shows items with their breakdown: materials, labor and equipment. You can check where each number comes from.") }}</p><a href="{{ catalogo_precios.indice if catalogo_precios else '/precios-comparados' }}">{{ L("Explorar precios de obra →", "Explore construction prices →") }}</a></article>
+      {% endif %}
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Calcula tu coste de oportunidad", "Calculate your opportunity cost") }}</h3><p>{{ L("Usa tus propios presupuestos por semana y horas por documento. El resultado es inmediato y no se envía a ningún servidor.", "Use your own estimates per week and hours per document. The result is immediate and isn't sent to any server.") }}</p><a href="#problema" data-ga-event="ir_calculadora">{{ L("Usar la calculadora de arriba →", "Use the calculator above →") }}</a></article>
     </div>
   </div>
@@ -490,11 +494,8 @@
   </div>
 </section>
 
-{# Puente al catálogo público de precios: enlaces internos de autoridad.
-   Con landing-hub (CL y ES) no se repite: el índice completo con cifras ya
-   enlaza cada apartado y el índice del mercado desde arriba de la página. #}
-{% if hub_precios %}
-{% elif catalogo_precios %}
+{# Puente al catálogo público de precios: enlaces internos de autoridad. #}
+{% if catalogo_precios and pais_codigo not in ("CL", "ES") %}
 <section class="mercados-precios" aria-label="{{ L('Precios unitarios publicados', 'Published unit prices') }}">
   <div class="mercados-precios-int">
     <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
@@ -507,7 +508,7 @@
     </ul>
   </div>
 </section>
-{% elif indices_catalogos %}
+{% elif indices_catalogos and pais_codigo not in ("CL", "ES") %}
 <section class="mercados-precios" aria-label="{{ L('Catálogos de precios publicados', 'Published price catalogs') }}">
   <div class="mercados-precios-int">
     <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
@@ -684,36 +685,6 @@
     <div class="nota-honesta"><strong>{{ L("Honestidad por delante:", "Honesty up front:") }}</strong> {{ product_name }} {{ L("está en acceso anticipado. Los documentos que genera son documentos comerciales, no facturas fiscales.", "is in early access. The documents it generates are commercial documents, not tax invoices.") }}{% if prueba_activa %} {{ L("Pruébalo", "Try it") }} {{ dias_prueba }} {{ L("días con tus propios datos antes de pagar nada: sabrás exactamente qué recibes.", "days with your own data before paying anything: you'll know exactly what you get.") }}{% endif %}</div>
   </div>
 </section>
-
-{# Recurso SEO secundario (solo CL y ES, §14 del playbook): aparece después
-   de los beneficios y de los planes del software, antes del CTA final. #}
-{% if hub_precios %}
-<section class="lp2-section lp2-hub" id="precios-mercado" aria-labelledby="hub-precios-h2">
-  <div class="lp2-wrap">
-    <div class="lp2-section-head">
-      <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
-      <h2 class="lp2-section-title" id="hub-precios-h2">{{ L("Precios de construcción en", "Construction prices in") }} {{ hub_precios.nombre }}: <em>{{ hub_precios.total_txt }} {{ L("partidas con su descompuesto", "items with their cost breakdown") }}</em></h2>
-      <p class="lp2-lead">{{ L("Cada apartado lleva su cifra en", "Each section shows its figure in") }} {{ hub_precios.moneda }} {{ L("y enlaza a la tabla con el precio de cada partida. Precios revisados en", "and links to the table with every item's price. Prices checked in") }} {{ hub_precios.mes }}.</p>
-    </div>
-    <div class="lp2-hub-capitulos">
-      {% for capitulo in hub_precios.capitulos %}
-      <div class="lp2-hub-capitulo">
-        <h3>{{ capitulo.nombre }}</h3>
-        <ul class="lp2-hub-lista">
-          {% for ap in capitulo.apartados %}
-          <li><a href="{{ ap.ruta }}"><span class="lp2-hub-nombre">{{ ap.nombre }}</span>{% if ap.cifra %} <span class="lp2-hub-cifra">{{ ap.cifra }}</span>{% endif %}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endfor %}
-    </div>
-    <p class="lp2-hub-mas">
-      <a href="{{ hub_precios.indice }}">{{ L("Índice completo de precios de", "Full price index for") }} {{ hub_precios.nombre }} →</a>{% if hub_precios.mano_obra %}
-      · <a href="{{ hub_precios.mano_obra }}">{{ ('home.mano_obra' | t(_idioma)).format(pais=hub_precios.nombre) }}</a>{% endif %}
-    </p>
-  </div>
-</section>
-{% endif %}
 
 <section class="lp2-final lp2-defer" id="pago">
   <div class="lp2-wrap">

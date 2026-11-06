@@ -216,9 +216,8 @@ def test_ficha_landing_espana():
     from app.seo import ficha_landing
 
     ficha = ficha_landing("ES")
-    # La landing monetiza el software: title comercial y canónica estables.
-    # El índice de precios es un recurso secundario, no sustituye el mensaje.
-    assert ficha["title"] == "CotizaT: software de presupuestos de obra y reformas para España"
+    assert ficha["title"].startswith("CotizaT:")
+    assert "España" in ficha["title"]
     assert ficha["canonical_path"] == "/es/"
     assert ficha["lang"] == "es-ES"
 

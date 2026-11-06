@@ -1566,9 +1566,6 @@ def ficha_landing(codigo: str = "", lang: str = "es") -> dict:
             lang="en",
         )
 
-    # El SEO de la landing sigue priorizando CotizaT y el software. El hub de
-    # precios es contenido secundario de captación dentro de la página; no
-    # sustituye title, H1, description ni sub comerciales.
     base = _LANDING.get(codigo) or _LANDING[""]
     return _aplicar_prueba(
         {

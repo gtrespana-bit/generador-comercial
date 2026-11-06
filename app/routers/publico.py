@@ -187,13 +187,6 @@ def _contexto_landing(request: Request, pais_forzado: str | None = None) -> dict
                 "seo_defer_jsonld": True,
             }
             ctx.update(contexto_seo(request, codigo=codigo))
-            # Landing-hub de precios (§14): solo los mercados de
-            # LANDING_HUB_PRECIOS; hub_landing devuelve None para el resto.
-            from ..seo_precios import hub_landing
-
-            hub = hub_landing(codigo, idioma)
-            if hub:
-                ctx["hub_precios"] = hub
             if not ctx.get("catalogo_precios"):
                 # Sin catálogo propio: al menos el índice de todos los
                 # catálogos publicados, para no dejar la home sin puente.
