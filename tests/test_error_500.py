@@ -70,12 +70,12 @@ def test_la_pagina_del_500_es_html_con_referencia_y_estado_real():
     from app.main import _error_interno
 
     peticion = _peticion("/admin", "text/html")
-    peticion.state.referencia_error = "3f9a1c0be2"
+    peticion.state.referencia_error = "ref-demo-01"
     respuesta = asyncio.run(_error_interno(peticion, RuntimeError("base caída")))
     estado, cabeceras, cuerpo = _resolver(respuesta)
     assert estado == 500
-    assert cabeceras[b"x-referencia-error"] == b"3f9a1c0be2"
-    assert "3f9a1c0be2" in cuerpo
+    assert cabeceras[b"x-referencia-error"] == b"ref-demo-01"
+    assert "ref-demo-01" in cuerpo
     assert "Algo se rompió" in cuerpo
     # Ni trazas ni mensajes internos en el navegador.
     assert "base caída" not in cuerpo
