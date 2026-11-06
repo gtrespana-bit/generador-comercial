@@ -191,6 +191,26 @@ Eso son 29 URL anunciadas (portada del catálogo + 2 apartados + 26 fichas) y
 por oleadas. En `sitemap_index.xml` hay un hijo más (`sitemap-precios-mx.xml`);
 el resto de mercados hispanos sigue sin sitemap.
 
+**Desplegado el 06/11/2026** (PR #203). Verificado en producción: el hijo
+`sitemap-precios-mx.xml` sirve exactamente las 29 URL, `sitemap_index.xml`
+lista 8 hijos y una ficha localizada responde 200 con la prosa mexicana.
+
+La línea base de GSC hay que tomarla **antes** de que Google rastree: páginas
+indexadas y posición media de México, más el total del sitio. Si no se toma
+hoy, la comparación de las 4 semanas no tiene contra qué medirse.
+
+Dos detalles conocidos, para la oleada siguiente y no para tocar la que está en
+medición:
+
+- El `lastmod` del hijo de México sigue siendo el del lote de precios
+  (2026-09-08), no el de la prosa (2026-11-06). Es una pista, no un bloqueo, y
+  el hijo es nuevo para Google: se descubrirá igual. Arreglo correcto: que el
+  índice use la revisión del registro cuando sea posterior a la del catálogo.
+- La mano de obra se sigue llamando «Oficial de 1ª colocador de pisos» y
+  «Ayudante»: es el nombre base del catálogo, sin localizar. Se arregla de una
+  vez para todo el mercado cuando se encienda entero, no ficha a ficha (ver la
+  regla de `MO-*` más arriba).
+
 Siguiente oleada propuesta, por orden de trabajo ya hecho: los cinco apartados
 que faltan de la hipótesis de demanda (`10-05-01` impermeabilización de áreas
 húmedas, `05-06-01` losas y entrepiso, `12-10-01` pintura interior, `12-08-01`
