@@ -55,7 +55,21 @@ A partir de ese momento cada pull request ejecuta el flujo automáticamente.
 | `node --check` | Detectar errores de sintaxis en los 20 archivos JavaScript. |
 | `git diff --check` | Marcar conflictos y espacios sobrantes, solo en las líneas del cambio. |
 | `tools/simular_vercel_rofs.py` | Reproducir el sistema de archivos de solo lectura de Vercel, que ya provocó incidencias de arranque. |
-| `pytest -q` | Ejecutar la suite completa. |
+| `pytest -q -n auto` | Ejecutar la suite completa repartida entre los núcleos del runner (pytest-xdist). |
+
+## Disparadores y coste
+
+| Disparador | Escaneo de secretos | Motivo |
+|---|---|---|
+| `pull_request` | Solo los archivos del cambio (ficheros completos) | El resto del repositorio ya pasó el paso antes de entrar en `main`. |
+| `push` a `main` | Repositorio completo | Red de seguridad tras la fusión. |
+| `schedule` (lunes 04:00 UTC) y `workflow_dispatch` | Repositorio completo | Detecta un secreto que llegó por una vía que no pasó por el flujo. |
+
+Medición del 06/11/2026 (tres muestras por evento): push de rama 8m14s,
+`pull_request` 11m52s, push a `main` 9m39s; dentro del run de PR la suite eran
+437 s y `detect-secrets` 227 s. Con el escaneo acotado y `-n auto` el run de PR
+baja a ~1-2 min. El criterio de fallo no cambia: cualquier hallazgo cuyo hash no
+esté en `.secrets.baseline` rompe CI.
 
 ## Mantenimiento
 
