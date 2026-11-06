@@ -267,3 +267,38 @@ ruido estadístico; ese orden lo debe decidir la demanda de GSC, no este número
   el jaccard a 0,99 igual y no aporta valor al lector del país.
 - **No** se mezcla un encendido de catálogo con un cambio de títulos o de
   plantilla en la misma semana.
+
+## 9. El título del hub de apartado (06/11/2026)
+
+El 02/11 el hub con la segunda cifra de impresiones del sitio,
+`/en-ie/prices/lifts-and-platform-lifts`, tenía 63 impresiones, posición 10,2 y
+**cero clics**. Su título era «Lifts and platform lifts: unit prices in Ireland
+(EUR)»: un listado que no promete ninguna cifra, compitiendo por «home lift
+prices ireland» contra páginas que sí la dan.
+
+La cifra ya estaba en el código, pero casi nunca llegaba al título: se escribía
+con céntimos y con la moneda dos veces («40,00 EUR–264,00 EUR»), así que no cabía
+en los 60 caracteres del resultado y se caía a la variante sin precio. El
+resultado era que **solo el 22 % de los hubs de apartado llevaba un número en el
+título**; hoy lo llevan el **88 %**.
+
+Tres reglas, y las tres tienen test en `tests/test_titulos_apartado.py`:
+
+1. **La cifra va sin céntimos y con la moneda una sola vez**: «40–264 MXN/m²»,
+   no «40,00 MXN–264,00 MXN». `_numero_corto` redondea **hacia arriba**, para no
+   prometer un precio más bajo del que hay en la ficha.
+2. **El rango doble solo si el apartado es homogéneo** (≥70 % de las partidas en
+   la misma unidad): sumar precios de m² y de unidad no da un rango, da un
+   número inventado. Si no lo es, se anuncia el mínimo con «desde» y sin unidad.
+3. **Si la dispersión pasa de 40 a 1, no hay rango**: «0,48–63,68 EUR» no
+   informa de nada. Se anuncia el precio típico (la mediana) con «de media».
+
+El orden de las variantes importa y es la mitad del arreglo: primero el nombre
+completo con el país completo, después el mismo título con el país corto («the
+US»), después con la primera cláusula del apartado, y solo al final la versión
+sin cifra. Antes se saltaba de la variante completa a la que no da precio, que
+es exactamente cómo se quedaron 1.200 hubs sin número.
+
+Queda un detalle estético menor: la ficha del hub sigue mostrando su rango con
+céntimos («de 22,18 EUR a 38,21 EUR»). Son dos redondeos del mismo dato y los
+dos son ciertos, pero convendría unificarlos cuando se toque esa plantilla.

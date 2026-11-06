@@ -17,6 +17,8 @@ página: la misma partida/apartado en los países donde está publicada
 
 from __future__ import annotations
 
+import math
+
 from starlette.requests import Request
 
 from . import comparador
@@ -60,6 +62,68 @@ def _dinero(valor, pais: dict) -> str:
     decimal = str(pais.get("separador_decimal") or ".")
     texto = f"{float(valor or 0):,.2f}".replace(",", "\0").replace(".", decimal)
     return texto.replace("\0", miles) + f" {pais.get('moneda') or ''}".rstrip()
+
+
+def _numero_corto(valor, pais: dict) -> str:
+    """Solo el número, con los separadores del país y los decimales justos.
+
+    Se redondea **hacia arriba**: en un título «desde 40 MXN» con una partida
+    de 39,82 MXN es verdad; «desde 39» sería prometer un precio que no existe.
+    Los decimales dependen de la magnitud: redondear a entero un precio de
+    0,48 USD por pie cuadrado lo convierte en «1 USD» y parece un error del
+    catálogo, así que por debajo de 10 se conservan uno o dos decimales.
+    """
+    miles = str(pais.get("separador_miles") or ",")
+    decimal = str(pais.get("separador_decimal") or ".")
+    cantidad = float(valor or 0)
+    decimales = 2 if cantidad < 1 else (1 if cantidad < 10 else 0)
+    factor = 10 ** decimales
+    redondeado = math.ceil(cantidad * factor - 1e-9) / factor
+    texto = f"{redondeado:,.{decimales}f}"
+    texto = texto.replace(",", "\0").replace(".", decimal).replace("\0", miles)
+    if decimales and decimal in texto:
+        texto = texto.rstrip("0").rstrip(decimal)
+    return texto
+
+
+def _dinero_corto(valor, pais: dict) -> str:
+    """Importe para títulos y descripciones: sin céntimos.
+
+    En un resultado de Google los céntimos gastan caracteres y no aportan
+    nada al que busca «cuánto cuesta». La moneda va una sola vez aunque haya
+    dos cifras: «40–264 MXN», no «40,00 MXN–264,00 MXN».
+    """
+    return f"{_numero_corto(valor, pais)} {pais.get('moneda') or ''}".rstrip()
+
+
+_UNIDADES_TITULO = {
+    "m2": "m²", "m²": "m²",
+    "m3": "m³", "m³": "m³",
+    "ml": "ml", "m": "m",
+    "ud": "ud", "ea": "ea",
+    "kg": "kg", "l": "l", "h": "h", "t": "t",
+}
+
+
+def _unidad_dominante(partidas: list[dict]) -> tuple[str, float]:
+    """Unidad de medida más repetida del apartado y qué proporción representa.
+
+    Un apartado con 26 partidas por m² y 3 por metro lineal todavía se puede
+    anunciar por m²; uno con la mitad por m² y la mitad por unidad, no. De ahí
+    la proporción: por debajo del 70 % no se escribe ni unidad ni rango doble.
+    """
+    cuenta: dict[str, int] = {}
+    for partida in partidas:
+        clave = str(partida.get("unidad") or "").strip().lower()
+        # El catálogo escribe «m²» y «m2» para lo mismo: se cuentan juntas o
+        # un apartado homogéneo parecería mitad y mitad.
+        clave = {"m²": "m2", "m³": "m3"}.get(clave, clave)
+        if clave:
+            cuenta[clave] = cuenta.get(clave, 0) + 1
+    if not cuenta:
+        return "", 0.0
+    unidad, veces = max(cuenta.items(), key=lambda par: (par[1], par[0]))
+    return _UNIDADES_TITULO.get(unidad, unidad), veces / sum(cuenta.values())
 
 
 def _cantidad(valor, decimales: int = 4) -> str:
@@ -615,6 +679,196 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
     return ctx
 
 
+_NOMBRE_CORTO = {"US": ("EE. UU.", "the US"), "GB": ("Reino Unido", "the UK")}
+
+
+def _nombre_corto(cc: str, nombre: str, en: bool) -> str:
+    """Nombre del país para cuando el título va justo de espacio.
+
+    «the United States» gasta 12 caracteres más que «the US» y en un título
+    que ya lleva una cifra y una unidad eso decide si el número entra o no.
+    """
+    corto = _NOMBRE_CORTO.get(str(cc or "").upper())
+    if not corto:
+        return nombre
+    return corto[1] if en else corto[0]
+
+
+def _primera_clausula(apartado: str) -> str:
+    """Primera cláusula del nombre del apartado, si sigue siendo descriptiva.
+
+    «Exploratory openings, detection and surveys» ocupa 45 caracteres y deja
+    fuera la cifra; «Exploratory openings» dice lo mismo del contenido de la
+    página y deja sitio al precio. Solo se usa cuando no cabe el nombre
+    completo, y nunca si la cláusula se queda en una o dos palabras sueltas.
+    """
+    for separador in (", ", " y ", " and ", " / "):
+        cabeza = apartado.split(separador)[0].strip()
+        if cabeza and cabeza != apartado and len(cabeza.split()) >= 2:
+            return cabeza
+    return apartado
+
+
+def titulo_apartado(
+    cc: str,
+    apartado: str,
+    nombre: str,
+    pais: dict,
+    partidas: list[dict],
+    en: bool,
+) -> tuple[str, str]:
+    """Título y descripción del hub de apartado, con la cifra dentro.
+
+    «Precios unitarios en España» no promete ninguna cifra y compite contra
+    páginas que sí la dan; «de 40 a 264 MXN/m²» responde a la consulta que
+    trae al visitante. La cifra tiene que caber en el ancho del resultado, así
+    que va sin céntimos y con la moneda una sola vez («40–264 MXN», no
+    «40,00 MXN–264,00 MXN»).
+
+    El rango doble solo se escribe si el apartado es homogéneo: sumar precios
+    de metro cuadrado y de unidad no da un rango, da un número inventado. Si
+    no lo es, se anuncia el mínimo con «desde» y sin unidad.
+
+    El orden de las variantes importa: primero la más informativa, después la
+    que conserva el número aunque sea una sola cifra, y solo al final las que
+    no dan precio. Antes, cuando el rango no cabía, se caía directamente a la
+    versión sin cifra: así se quedaban 120 hubs sin número en el título.
+    """
+    moneda = str(pais.get("moneda") or "")
+    precios = [
+        float(partida.get("pu") or 0)
+        for partida in partidas
+        if float(partida.get("pu") or 0) > 0
+    ]
+    total = len(partidas)
+    unidad, proporcion = _unidad_dominante(partidas)
+    homogeneo = bool(precios) and proporcion >= 0.7
+    sufijo = f"/{unidad}" if homogeneo and unidad else ""
+    rango = rango_prosa = desde = medio = tipico = ""
+    if precios:
+        bajo = _numero_corto(min(precios), pais)
+        alto = _numero_corto(max(precios), pais)
+        # Un apartado con una partida de 1 USD y otra de 183 USD no tiene un
+        # rango útil: «1–183 USD» parece un error y el «desde 1» del mínimo
+        # suelto es peor todavía. Cuando la dispersión pasa de 40 a 1 se
+        # anuncia el precio típico (la mediana), que es lo que se busca.
+        dispersion = (max(precios) / min(precios)) if min(precios) > 0 else 0
+        sesgado = dispersion > 40
+        desde = "" if sesgado else f"{bajo} {moneda}{sufijo}"
+        if homogeneo and not sesgado:
+            rango = f"{bajo}–{alto} {moneda}{sufijo}"
+            rango_prosa = f"{bajo} a {alto} {moneda}{sufijo}"
+            medio = f"{_numero_corto(sum(precios) / len(precios), pais)} {moneda}{sufijo}"
+        if sesgado:
+            ordenados = sorted(precios)
+            centro = ordenados[len(ordenados) // 2]
+            tipico = f"{_numero_corto(centro, pais)} {moneda}{sufijo}"
+
+    # Candidatos de la más informativa a la más escueta. El que cabe se queda:
+    # primero con el nombre completo del apartado y el país completo, y solo
+    # si no entra se recorta la cláusula del apartado o el nombre del país,
+    # nunca la cifra. Antes se saltaba de la versión completa a la que no da
+    # precio, que es como se quedaron 1.200 hubs sin número en el título.
+    desde_sin_unidad = desde[: -len(sufijo)] if sufijo and desde.endswith(sufijo) else desde
+    bases = [apartado]
+    clausula = _primera_clausula(apartado)
+    if clausula != apartado:
+        bases.append(clausula)
+    paises = [nombre]
+    pais_corto = _nombre_corto(cc, nombre, en)
+    if pais_corto != nombre:
+        paises.append(pais_corto)
+
+    variantes: list[str] = []
+    for base in bases:
+        for pais_txt in paises:
+            if rango:
+                variantes.append(
+                    f"{base}: {rango} in {pais_txt}"
+                    if en
+                    else f"{base}: {rango} en {pais_txt}"
+                )
+            if desde:
+                variantes.append(
+                    f"{base}: from {desde} in {pais_txt}"
+                    if en
+                    else f"{base}: desde {desde} en {pais_txt}"
+                )
+            if desde_sin_unidad and desde_sin_unidad != desde:
+                variantes.append(
+                    f"{base}: from {desde_sin_unidad} in {pais_txt}"
+                    if en
+                    else f"{base}: desde {desde_sin_unidad} en {pais_txt}"
+                )
+            if tipico:
+                variantes.append(
+                    f"{base}: avg {tipico} in {pais_txt}"
+                    if en
+                    else f"{base}: {tipico} de media en {pais_txt}"
+                )
+    if en:
+        variantes += [
+            f"{apartado}: unit prices in {nombre} ({moneda})",
+            f"{apartado}: prices in {nombre}",
+            f"{apartado} — {nombre}",
+        ]
+        title = _con_marca([_titulo_meta(variantes, respaldo=apartado)])[0]
+        if rango:
+            description = (
+                f"{total} unit prices for {_minuscula_inicial(apartado)} in "
+                f"{nombre}: {rango}, average {medio}. Cost breakdown of every "
+                "item."
+            )
+        elif desde:
+            description = (
+                f"{total} unit prices for {_minuscula_inicial(apartado)} in "
+                f"{nombre}: from {desde}. Cost breakdown of every item."
+            )
+        elif tipico:
+            description = (
+                f"{total} unit prices for {_minuscula_inicial(apartado)} in "
+                f"{nombre}: {tipico} typical, with the full range in the table. "
+                "Cost breakdown of every item."
+            )
+        else:
+            description = (
+                f"{total} {_minuscula_inicial(apartado)} unit prices for {nombre} "
+                f"in {moneda}, each with a full cost breakdown from the CotizaT "
+                "construction catalog."
+            )
+    else:
+        variantes += [
+            f"{apartado}: precios en {nombre}",
+            f"{apartado}: precios en {nombre} ({moneda})",
+            f"{apartado} — precios en {nombre}",
+        ]
+        title = _con_marca([_titulo_meta(variantes, respaldo=apartado)])[0]
+        if rango:
+            description = (
+                f"{total} precios unitarios de {_minuscula_inicial(apartado)} en "
+                f"{nombre}: de {rango_prosa} (media {medio}). Descompuesto de "
+                "cada partida."
+            )
+        elif desde:
+            description = (
+                f"{total} precios unitarios de {_minuscula_inicial(apartado)} en "
+                f"{nombre}: desde {desde}. Descompuesto de cada partida."
+            )
+        elif tipico:
+            description = (
+                f"{total} precios unitarios de {_minuscula_inicial(apartado)} en "
+                f"{nombre}: {tipico} de precio típico, con el rango completo en la "
+                "tabla. Descompuesto de cada partida."
+            )
+        else:
+            description = (
+                f"{total} precios unitarios de {_minuscula_inicial(apartado)} para "
+                f"{nombre} en {moneda}, cada uno con su descompuesto completo del "
+                "catálogo CotizaT."
+            )
+    return title, description
+
+
 def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
     ficha = pp.apartado(cc, slug)
     if ficha is None:
@@ -639,70 +893,18 @@ def contexto_apartado(request: Request, cc: str, slug: str) -> dict | None:
             "maximo": _dinero(max(precios), pais),
             "medio": _dinero(sum(precios) / len(precios), pais),
         }
-    if en:
-        # El rango entra en el título cuando existe: es el dato que busca
-        # quien teclea «home lift prices ireland» y lo que separa un listado
-        # de precios de una respuesta. Con los datos del 02/11/2026 este hub
-        # tenía 63 impresiones, posición 10,2 y CERO clics; el mismo tipo de
-        # página en España, con el precio en el título, sí los tenía.
-        title = _titulo_meta(
-            [
-                (
-                    f"{apartado}: {rango['minimo']}–{rango['maximo']} in {nombre}"
-                    if rango
-                    else ""
-                ),
-                f"{apartado}: unit prices in {nombre} ({moneda})",
-                f"{apartado} prices in {nombre}",
-                f"{apartado} — {nombre}",
-            ],
-            respaldo=apartado,
-        )
-        title = _con_marca([title])[0]
-        if rango:
-            description = (
-                f"{n} unit prices for {_minuscula_inicial(apartado)} in {nombre}: "
-                f"from {rango['minimo']} to {rango['maximo']}, average "
-                f"{rango['medio']}. Cost breakdown of every item."
-            )
-        else:
-            description = (
-                f"{n} {_minuscula_inicial(apartado)} unit prices for {nombre} in "
-                f"{moneda}, each with a full cost breakdown from the CotizaT "
-                f"construction catalog."
-            )
-        h1 = f"{apartado} — unit prices in {nombre}"
-    else:
-        # Igual que en inglés: el rango del apartado en el título. «Precios
-        # unitarios en España» no promete ninguna cifra; «de 120 a 890 EUR»
-        # sí, y es exactamente lo que se busca.
-        title = _titulo_meta(
-            [
-                (
-                    f"{apartado}: de {rango['minimo']} a {rango['maximo']} en {nombre}"
-                    if rango
-                    else ""
-                ),
-                f"{apartado}: precios unitarios en {nombre}",
-                f"{apartado}: precios en {nombre} ({moneda})",
-                f"{apartado} — precios en {nombre}",
-            ],
-            respaldo=apartado,
-        )
-        title = _con_marca([title])[0]
-        if rango:
-            description = (
-                f"{n} precios unitarios de {_minuscula_inicial(apartado)} en "
-                f"{nombre}: de {rango['minimo']} a {rango['maximo']} "
-                f"({rango['medio']} de media). Descompuesto de cada partida."
-            )
-        else:
-            description = (
-                f"{n} precios unitarios de {_minuscula_inicial(apartado)} para "
-                f"{nombre} en {moneda}, cada uno con su descompuesto completo "
-                f"del catálogo CotizaT."
-            )
-        h1 = f"{apartado} — precios unitarios en {nombre}"
+    # El título y la descripción del hub salen de una sola función, que se
+    # puede probar sin levantar una petición: era la página con más
+    # impresiones y menos clics del sitio (63 impresiones, posición 10,2, cero
+    # clics en Irlanda) y el arreglo tiene que poder medirse.
+    title, description = titulo_apartado(
+        cc, apartado, nombre, pais, ficha["partidas"], en
+    )
+    h1 = (
+        f"{apartado} — unit prices in {nombre}"
+        if en
+        else f"{apartado} — precios unitarios en {nombre}"
+    )
 
     origen = origen_canonico(request)
     partidas = [
