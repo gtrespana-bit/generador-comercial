@@ -302,3 +302,98 @@ es exactamente cómo se quedaron 1.200 hubs sin número.
 Queda un detalle estético menor: la ficha del hub sigue mostrando su rango con
 céntimos («de 22,18 EUR a 38,21 EUR»). Son dos redondeos del mismo dato y los
 dos son ciertos, pero convendría unificarlos cuando se toque esa plantilla.
+
+## 10. La línea base real y el título de la ficha (06/11/2026)
+
+El informe de Search Console de 28 días (08/10 → 04/11) cambia el punto de
+partida de todo lo anterior. No es un sitio estable: es un sitio en curva.
+
+| | Primeros 7 días | Últimos 7 días | 28 días |
+|---|---|---|---|
+| Clics | 15 | 105 | 167 |
+| Impresiones | 237 | 13.062 | 15.530 |
+| Posición media | 36,5 | 25,0 | 25,7 |
+
+El 84 % de las impresiones del periodo llegó en sus últimos siete días, y el
+salto se ve el 28/10 (187 → 1.129 impresiones en un día). **La caída del CTR no
+es un problema de títulos: es aritmética de ganar impresiones en posiciones
+20-40.** Lo que hay que leer es por tramos y por tipo de página.
+
+### Dónde están las impresiones y dónde los clics
+
+| Tipo de página | Páginas | Impresiones | Clics | CTR | Posición |
+|---|---|---|---|---|---|
+| Ficha de partida | 746 | 9.504 (64 %) | 75 | 0,79 % | 22,5 |
+| Hub de apartado | 169 | 2.927 (19 %) | 10 | 0,34 % | 31,9 |
+| Landing de país | 46 | 1.708 (11 %) | 50 | **2,93 %** | 17,6 |
+| Portada | 1 | 96 | 23 | 24,0 % | 5,0 |
+
+| Posición | Impresiones | CTR |
+|---|---|---|
+| 1–3 | 105 | 4,76 % |
+| 4–10 | 3.838 | 2,79 % |
+| 11–20 | 2.956 | 0,98 % |
+| 21–40 | 3.551 | 0,51 % |
+| > 40 | 4.378 | 0,27 % |
+
+Hay **6.500 impresiones en posiciones 11-40**. Ahí no hay que subir de posición:
+hay que dejar de perder el clic que Google ya está sirviendo.
+
+### Los mercados pequeños convierten, los grandes rankean
+
+| Grupo | Impresiones | Clics | CTR |
+|---|---|---|---|
+| España + 5 angloparlantes | 12.460 (87 %) | 73 (48 %) | 0,59 % |
+| 16 mercados hispanos | 1.787 (13 %) | **79 (52 %)** | **4,42 %** |
+
+Ecuador: 12 clics con 54 impresiones (22 % CTR, posición 6). Los clics de esos
+mercados vienen de las **landings de país** —que sí son indexables y rankean en
+4-11—, no del catálogo. Dos casos sueltos: Chile rankea en 62 con 383
+impresiones, y las URL `www.cotizat.online` del informe (1.418 impresiones, 35
+clics) son residuo anterior al 301 de www al ápice, ya corregido en el borde y
+en `HostCanonicoMiddleware`.
+
+### El arreglo: la cifra en el título de la ficha
+
+Mismo diagnóstico que en los hubs y misma solución. Antes del cambio,
+**167 de 42.978 fichas (0,4 %) llevaban cifra en el título**; después,
+**42.278 (98,4 %)**. Mediana 66 caracteres, ninguna por encima de 72, y en el
+93-96 % de ellas (según el mercado) el precio entero entra antes del corte de
+Google, que llega hacia los 60. El título se corta por el final, y el final es
+el país: el número queda siempre a la vista.
+
+Reglas, todas con test en `tests/test_titulos_ficha.py`:
+
+1. `titulo_partida()` es pura: `(cc, título, unidad, pu, país, idioma) → título`.
+2. La cifra va sin céntimos, moneda una vez y **redondeo hacia arriba**.
+3. La unidad se escribe como se lee: «m²», no «m2» (la descripción también).
+4. Orden de sacrificio: primero el país, después la unidad, después la primera
+   cláusula del nombre («…, con pendiente hacia la coladera»), y **solo al
+   final** el precio. El nombre de la partida es lo último que se toca porque es
+   lo que coincide con la consulta.
+5. La marca (`| CotizaT`) solo si el título resultante no pasa de 72 caracteres.
+
+Un detalle que no es cosmético: las variantes con precio **no** se eligen con
+`_titulo_meta`, porque ese ayudante prefiere lo que cabe en 60 caracteres y en
+una ficha eso significa tirar el país teniendo sitio hasta 72. El país es lo que
+distingue la misma partida en veintidós mercados, así que se conserva hasta 72 y
+lo que Google recorta, si recorta, es la cola.
+
+Lo que **no** se tocó, a propósito: el H1, el precio con céntimos del cuerpo y la
+descripción larga. El cuerpo sigue dando la cifra exacta del descompuesto; el
+título y la meta description dan la cifra redondeada, que es la que se compara.
+
+## 11. El panel de los 14 días (Search Console)
+
+Cada 14 días, tres números y nada más:
+
+1. **Cobertura del sitemap de México** — «Rastreada: no indexada» por sitemap. Por
+   debajo del 20 % indexado a las cuatro semanas, alarma.
+2. **CTR de fichas y de hubs, por mercado.** Línea divisoria: fichas 0,79 %,
+   hubs 0,34 %, landings 2,93 % (28 días hasta el 04/11).
+3. **Posición media de los tramos 11-20 y 21-40**: si suben sin que suba el CTR,
+   el problema es el título, no el ranking.
+
+Línea base para comparar: **167 clics · 15.530 impresiones · CTR 1,08 % ·
+posición 25,7**, con 12.460 impresiones en los seis mercados grandes y 1.787 en
+los dieciséis hispanos.
