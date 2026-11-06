@@ -137,3 +137,38 @@ def test_el_baseline_solo_guarda_deuda_real(informe, baseline):
             "quítalas para que la deuda refleje la realidad:\n  "
             + "\n  ".join(sorted(obsoletas))
         )
+
+
+HOJA = REPO / "app" / "static" / "css" / "admin.css"
+PLANTILLAS = REPO / "app" / "templates" / "admin"
+
+
+def test_la_piel_del_panel_vive_en_una_hoja_cacheable():
+    """Un archivo con huella de versión, no CSS incrustado en cada respuesta.
+
+    Antes del tramo B viajaban ~70 KB de CSS dentro del HTML del panel, sin
+    caché posible y con cada pantalla redefiniendo componentes a su manera.
+    """
+    assert HOJA.exists(), "Falta app/static/css/admin.css, la hoja del panel."
+    base = (PLANTILLAS / "base_admin.html").read_text(encoding="utf-8")
+    assert "css/admin.css' | asset" in base, (
+        "base_admin.html debe cargar la hoja con el filtro asset() para que "
+        "viaje con huella de versión y se cachee."
+    )
+    assert 'class="panel-{{ seccion_activa }}"' in base, (
+        "El <body> necesita la clase de área: el CSS de cada pantalla se "
+        "prefija con .panel-<área> para no alcanzar a las demás."
+    )
+
+
+def test_ninguna_plantilla_del_panel_vuelve_a_incrustar_estilos():
+    """El CSS de una pantalla nueva se añade a admin.css, no al HTML."""
+    con_estilos = []
+    for ruta in sorted(PLANTILLAS.rglob("*.html")):
+        texto = ruta.read_text(encoding="utf-8")
+        if "<style" in texto or "extra_css" in texto:
+            con_estilos.append(str(ruta.relative_to(REPO)))
+    assert not con_estilos, (
+        "Estas plantillas del panel vuelven a llevar estilos incrustados: "
+        f"{con_estilos}. Muévelos a app/static/css/admin.css."
+    )

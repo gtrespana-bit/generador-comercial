@@ -11,26 +11,6 @@
   <a class="btn btn-sm btn-secondary" href="/admin/analitica/chats">← Todas las conversaciones</a>
 {% endblock %}
 
-{% block extra_css %}
-  .chat-detalle-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; }
-  .chat-detalle-meta div { padding: 13px 15px; border: 1px solid var(--border-color); border-radius: 11px; background: var(--surface-2); }
-  .chat-detalle-meta dt { color: var(--text-muted); font-size: var(--t-2xs); font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
-  .chat-detalle-meta dd { margin: 5px 0 0; font-size: var(--t-xs); font-weight: 700; overflow-wrap: anywhere; }
-  .chat-detalle-meta code { font-size: var(--t-2xs); overflow-wrap: anywhere; }
-  .chat-mensajes { display: grid; gap: 12px; padding: 18px; }
-  .chat-mensaje { display: grid; grid-template-columns: 110px 1fr; gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--border-color); }
-  .chat-mensaje:last-child { border-bottom: 0; padding-bottom: 0; }
-  .chat-mensaje:first-child { padding-top: 0; }
-  .chat-mensaje-rol { font-size: var(--t-2xs); font-weight: 900; color: var(--brand-color); text-transform: uppercase; letter-spacing: .04em; }
-  .chat-mensaje-rol small { display: block; margin-top: 5px; color: var(--text-muted); font-size: var(--t-2xs); font-weight: 600; text-transform: none; letter-spacing: 0; }
-  .chat-mensaje-contenido { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--t-sm); line-height: 1.6; }
-  .chat-mensaje-usuario .chat-mensaje-contenido { color: var(--text-main); }
-  .chat-mensaje-asistente .chat-mensaje-contenido { padding: 11px 13px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border-color); }
-  .chat-detalle-aviso { margin-top: 16px; color: var(--text-muted); font-size: var(--t-2xs); line-height: 1.5; }
-  @media (max-width: 620px) {
-    .chat-mensaje { grid-template-columns: 1fr; gap: 5px; }
-  }
-{% endblock %}
 
 {% block content %}
   <dl class="chat-detalle-meta">
