@@ -397,3 +397,42 @@ Cada 14 días, tres números y nada más:
 Línea base para comparar: **167 clics · 15.530 impresiones · CTR 1,08 % ·
 posición 25,7**, con 12.460 impresiones en los seis mercados grandes y 1.787 en
 los dieciséis hispanos.
+
+## 12. Los separadores siguen al mercado, no al idioma (06/11/2026)
+
+En la primera ficha mexicana que se abrió tras el cambio de títulos, el mismo
+precio aparecía de tres maneras:
+
+```
+cuerpo:  2.460,25 MXN     ← separadores de España
+FAQ:     2,460.25 MXN     ← separadores de México
+título:  2,461 MXN/m³     ← redondeado, correcto
+```
+
+La plantilla llamaba a `money_iso(partida.moneda)` sin pasarle el mercado, así
+que el filtro caía al locale de la interfaz («es»: punto de miles, coma
+decimal). **Ocho mercados hispanos usan coma de miles** —MX, EC, DO, PA, GT,
+HN, SV, NI— y son justo los que aún no estaban localizados: el error habría
+entrado en producción con la primera oleada de cada uno.
+
+Dos arreglos, y ninguno toca el formateo global de la aplicación:
+
+1. `pais_precio_partida.html` y `pais_precio_apartado.html` pasan
+   `mercado=pais` a `money_iso`. El filtro ya aceptaba el mercado; nadie se lo
+   daba.
+2. `comparador._usd()` recibe el mercado de la página. En la fila del propio
+   mercado se leía «6,97 USD» junto a «6.97 USD/ud»: dos formatos del mismo
+   precio en dos celdas seguidas.
+
+`tests/test_precios_separadores.py` ata el cuerpo de la página al formateador
+del país: la cifra visible tiene que ser la de `formato_iso(..., mercado=PAISES[cc])`
+y la que producía el locale español no puede aparecer. Está comprobado que las
+pruebas fallan sin el arreglo (7 fallos al revertir `_usd`, 16 al revertir la
+plantilla).
+
+Barrido final sobre los 22 mercados × 4 tipos de página (landing, índice, hub,
+ficha): **0 cifras del propio mercado con los separadores invertidos**.
+
+Lo que se dejó igual a propósito: las páginas de la aplicación (presupuestos,
+facturas, recursos) siguen formateando con el locale del usuario. Ahí la cifra
+es del documento, no del mercado, y el mercado no siempre existe.

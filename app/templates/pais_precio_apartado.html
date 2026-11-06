@@ -43,7 +43,7 @@
         {% for p in apartado.partidas %}
         <tr>
           <td><a href="{{ p.ruta }}">{{ p.titulo }}</a></td>
-          <td>{{ p.pu | money_iso(p.moneda) }}</td>
+          <td>{{ p.pu | money_iso(p.moneda, mercado=pais) }}</td>
           <td>{{ p.unidad }}</td>
         </tr>
         {% endfor %}
