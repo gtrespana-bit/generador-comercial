@@ -172,3 +172,42 @@ def test_ninguna_plantilla_del_panel_vuelve_a_incrustar_estilos():
         "Estas plantillas del panel vuelven a llevar estilos incrustados: "
         f"{con_estilos}. Muévelos a app/static/css/admin.css."
     )
+
+
+# --------------------------------------------------------------------------- #
+# La medición no puede quedarse ciega
+# --------------------------------------------------------------------------- #
+
+
+def test_el_modo_oscuro_se_mide_con_su_propia_paleta(informe):
+    """La auditoría tiene que leer los tokens del modo oscuro, no los del claro.
+
+    El 06/11 (tramo D) se descubrió que el extractor buscaba el texto
+    `html.dark-mode` y lo encontraba primero dentro de un comentario del
+    encabezado de la hoja, así que devolvía el bloque `:root`. Desde el tramo B
+    la auditoría del modo oscuro estaba midiendo la paleta clara y salía
+    impecable. Con la extracción arreglada, el oscuro aporta 60 y pico tokens
+    propios: si vuelve a caer a cero, esto avisa.
+    """
+    assert informe["tokens_oscuro"] >= 40, (
+        "El modo oscuro tiene que declarar su propia paleta; "
+        f"solo se han leído {informe['tokens_oscuro']} tokens."
+    )
+    # Y no puede ser la misma que la clara: si coinciden, no se leyó el bloque.
+    assert informe["tokens_oscuro"] < informe["tokens_claro"] + 1
+
+
+def test_los_elementos_no_textuales_llegan_a_tres_a_uno(informe):
+    """WCAG 1.4.11: bordes de control, anillo de foco y series de gráfico.
+
+    Es el contraste que no se ve fallar mirando: un campo cuyo borde no se
+    distingue del fondo, o una barra de gráfico al 85 % de opacidad que se
+    queda en 2,95:1, se leen como «diseño limpio» hasta que alguien no
+    encuentra el campo.
+    """
+    for modo in ("claro", "oscuro"):
+        filas = informe["componentes"][modo]
+        assert len(filas) >= 6, f"faltan mediciones no textuales en {modo}"
+        malas = [f for f in filas if not f["ok"]]
+        assert not malas, f"{modo}: {malas}"
+    assert not informe["componentes_fallos"], informe["componentes_fallos"]

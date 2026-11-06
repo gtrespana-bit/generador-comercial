@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Mide el contraste de texto del panel de administración sin abrir un navegador.
 
-El panel tiene toda su hoja de estilos dentro de `admin/base_admin.html` (y cada
-pantalla añade la suya con `{% block extra_css %}`). Este script lee ese CSS,
-resuelve las variables `var(--token)` para el modo claro y el oscuro, y calcula
-el ratio de contraste WCAG 2.1 de cada par texto/fondo que el propio CSS declara.
+El panel tiene toda su piel en `app/static/css/admin.css` (desde el tramo B; las
+pantallas ya no incrustan estilos). Este script lee ese CSS, resuelve las
+variables `var(--token)` para el modo claro y el oscuro, y calcula el ratio de
+contraste WCAG 2.1 de cada par texto/fondo que el propio CSS declara. También
+mide los elementos **no textuales** de WCAG 1.4.11 (bordes de control, anillo de
+foco y series de gráfico), que son justo los que un ojo cansado no ve fallar.
 
 Por qué existe: la única forma de revisar el contraste a mano era mirar la
 pantalla, y así se colaron pares como `--text-main` (#e2e8f0) sobre `#fff`
@@ -36,6 +38,20 @@ MINIMO_NORMAL = 4.5
 #: Umbral para texto grande (≥ 18,66 px o ≥ 14 px en negrita) y elementos no
 #: textuales relevantes.
 MINIMO_GRANDE = 3.0
+
+#: Umbral WCAG 1.4.11 para elementos no textuales: bordes de control, anillo
+#: de foco y series de un gráfico.
+MINIMO_NO_TEXTUAL = 3.0
+
+#: (qué se mide, color del elemento, color de lo que lo rodea).
+COMPONENTES_NO_TEXTUALES: tuple[tuple[str, str, str], ...] = (
+    ("borde de campo sobre tarjeta", "--borde-control", "--card-bg"),
+    ("borde de campo sobre el fondo", "--borde-control", "--bg-body"),
+    ("anillo de foco sobre tarjeta", "--brand-color", "--card-bg"),
+    ("barra de gráfico sobre tarjeta", "--brand-color", "--card-bg"),
+    ("segunda serie sobre tarjeta", "--chart-2", "--card-bg"),
+    ("segunda serie sobre su pista", "--chart-2", "--surface-3"),
+)
 
 BLOQUE_CSS = re.compile(r"<style[^>]*>(.*?)</style>", re.S)
 BLOQUE_EXTRA = re.compile(r"{%\s*block extra_css\s*%}(.*?){%\s*endblock\s*%}", re.S)
@@ -74,25 +90,39 @@ def css_del_panel() -> str:
 
 
 def paleta(css: str, selector: str) -> dict[str, str]:
-    """Tokens `--x: valor` declarados en el bloque del selector indicado."""
-    encontrado = re.search(re.escape(selector) + r"\s*\{(.*?)\}", css, re.S)
-    if encontrado is None:
-        # El selector puede venir con otro espaciado (saltos de línea distintos).
-        patron = re.escape(selector.split(",")[0].strip()) + r"[^{]*\{(.*?)\}"
-        encontrado = re.search(patron, css, re.S)
-        if encontrado is None:
-            return {}
-    tokens = {}
-    # Los comentarios del bloque pueden llevar ':' y romperían el corte.
-    bloque = re.sub(r"/\*.*?\*/", "", encontrado.group(1), flags=re.S)
-    for declaracion in bloque.split(";"):
-        if ":" not in declaracion:
+    """Tokens `--x: valor` declarados en el bloque del selector indicado.
+
+    Dos trampas que costaron caro (tramo D, 06/11/2026):
+
+    1. **Los comentarios también contienen selectores.** El encabezado de
+       `admin.css` menciona `html.dark-mode` al explicar el modo oscuro; buscar
+       la primera aparición del texto encontraba ese comentario y devolvía el
+       bloque `:root` siguiente. Resultado: el modo oscuro se auditaba con la
+       paleta clara y salía impecable. Los comentarios se quitan antes de
+       buscar.
+    2. **Un selector puede ser una lista.** `html.dark-mode, body.dark-mode`
+       se compara como conjunto de selectores, no como texto exacto.
+
+    Devuelve `{}` si el selector no existe: quien llama decide si eso es un
+    error (para el modo oscuro lo es).
+    """
+    sin_comentarios = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    buscados = {parte.strip() for parte in selector.split(",") if parte.strip()}
+    for encabezado, cuerpo in re.findall(r"([^{}]+)\{([^{}]*)\}", sin_comentarios):
+        selectores = {parte.strip() for parte in encabezado.split(",") if parte.strip()}
+        if not buscados & selectores:
             continue
-        clave, valor = declaracion.split(":", 1)
-        clave = clave.strip()
-        if clave.startswith("--"):
-            tokens[clave] = valor.strip()
-    return tokens
+        tokens = {}
+        for declaracion in cuerpo.split(";"):
+            if ":" not in declaracion:
+                continue
+            clave, valor = declaracion.split(":", 1)
+            clave = clave.strip()
+            if clave.startswith("--"):
+                tokens[clave] = valor.strip()
+        if tokens:
+            return tokens
+    return {}
 
 
 # --------------------------------------------------------------------------- #
@@ -377,6 +407,35 @@ def auditar() -> dict:
                 fila[token] = round(contraste(rgb_texto, rgb_fondo), 2)
         matriz[superficie] = fila
     informe["matriz_oscuro"] = matriz
+
+    # Elementos no textuales (WCAG 1.4.11). El texto puede estar perfecto y aun
+    # así el panel ser inusable: un campo cuyo borde no se ve, o una barra de
+    # gráfico que se funde con la tarjeta, no se distinguen.
+    informe["componentes"] = {}
+    fallos_componentes = []
+    for modo, tokens in (("claro", tokens_claro), ("oscuro", tokens_oscuro)):
+        filas = []
+        for nombre, frente, fondo_nombre in COMPONENTES_NO_TEXTUALES:
+            if frente not in tokens or fondo_nombre not in tokens:
+                continue
+            rgb_frente, _ = primer_color(resolver(tokens[frente], tokens))
+            rgb_fondo, _ = primer_color(resolver(tokens[fondo_nombre], tokens))
+            if rgb_frente is None or rgb_fondo is None:
+                continue
+            ratio = round(contraste(rgb_frente, rgb_fondo), 2)
+            fila = {
+                "nombre": nombre,
+                "frente": frente,
+                "fondo": fondo_nombre,
+                "ratio": ratio,
+                "minimo": MINIMO_NO_TEXTUAL,
+                "ok": ratio >= MINIMO_NO_TEXTUAL,
+            }
+            filas.append(fila)
+            if not fila["ok"]:
+                fallos_componentes.append({**fila, "modo": modo})
+        informe["componentes"][modo] = filas
+    informe["componentes_fallos"] = fallos_componentes
     return informe
 
 
@@ -407,6 +466,14 @@ def imprimir(informe: dict) -> None:
             )
         if len(fallos) > 25:
             print(f"  … y {len(fallos) - 25} más")
+    print(f"\nElementos no textuales (WCAG 1.4.11, mínimo {MINIMO_NO_TEXTUAL}:1):")
+    for modo in ("claro", "oscuro"):
+        for fila in informe["componentes"].get(modo, []):
+            marca = "ok" if fila["ok"] else "FALLA"
+            print(
+                f"  {modo:<7} {fila['ratio']:>6.2f}:1  {marca:<5} {fila['nombre']}"
+            )
+
     print("\nContraste de los tokens de texto del modo oscuro sobre superficies fijas:")
     encabezado = "  superficie".ljust(22) + "".join(
         t.replace("--", "").rjust(12) for t in ("--text-main", "--text-muted", "--brand-color")

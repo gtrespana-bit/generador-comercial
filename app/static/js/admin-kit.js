@@ -442,3 +442,90 @@
     }
   });
 })();
+
+/* ------------------------------------------------------------------------- *
+ * Barra de progreso de navegación.
+ *
+ * El panel se pinta en el servidor: al pulsar un enlace, el navegador se queda
+ * en la página anterior hasta que llega la siguiente. En un panel con tablas
+ * pesadas eso son varios cientos de milisegundos sin ninguna señal, y el
+ * operador vuelve a pulsar. Tres píxeles arriba bastan para que sepa que el
+ * clic contó.
+ *
+ * No es un «esqueleto» de tarjetas grises a propósito: aquí no llegan datos
+ * después del HTML, así que un esqueleto sería decorado que miente.
+ * ------------------------------------------------------------------------- */
+(function () {
+  "use strict";
+
+  var barra = null;
+
+  function crear() {
+    if (barra) return barra;
+    barra = document.createElement("div");
+    barra.className = "barra-carga";
+    barra.setAttribute("data-estado", "listo");
+    barra.setAttribute("aria-hidden", "true");
+    document.body.appendChild(barra);
+    return barra;
+  }
+
+  function marcar(estado) {
+    crear().setAttribute("data-estado", estado);
+  }
+
+  function contenido() {
+    return document.getElementById("contenido");
+  }
+
+  function ocupado(activo) {
+    var main = contenido();
+    if (!main) return;
+    if (activo) main.setAttribute("aria-busy", "true");
+    else main.removeAttribute("aria-busy");
+  }
+
+  function esNavegacion(ev, enlace) {
+    if (!enlace || !enlace.getAttribute) return false;
+    if (ev.defaultPrevented || ev.button !== 0) return false;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return false;
+    if (enlace.target && enlace.target !== "_self") return false;
+    if (enlace.hasAttribute("download")) return false;
+    var destino = enlace.getAttribute("href") || "";
+    if (!destino || destino.charAt(0) === "#") return false;
+    if (/^(mailto|tel|javascript):/i.test(destino)) return false;
+    var url;
+    try {
+      url = new URL(enlace.href, window.location.href);
+    } catch (error) {
+      return false;
+    }
+    if (url.origin !== window.location.origin) return false;
+    // Misma página, solo otro hash: no hay recarga.
+    if (url.pathname === window.location.pathname && url.search === window.location.search) {
+      return false;
+    }
+    return true;
+  }
+
+  document.addEventListener("click", function (ev) {
+    var enlace = ev.target && ev.target.closest ? ev.target.closest("a[href]") : null;
+    if (!esNavegacion(ev, enlace)) return;
+    marcar("cargando");
+    ocupado(true);
+  });
+
+  function terminar() {
+    if (!barra) return;
+    marcar("listo");
+    ocupado(false);
+    window.setTimeout(function () {
+      if (barra) barra.setAttribute("data-estado", "");
+    }, 260);
+  }
+
+  window.addEventListener("pageshow", terminar);
+  window.addEventListener("beforeunload", function () {
+    if (barra) barra.setAttribute("data-estado", "listo");
+  });
+})();
