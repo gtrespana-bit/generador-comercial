@@ -61,12 +61,12 @@
           <tr>
             <td class="chat-conv-titulo">
               <a href="/admin/analitica/chats/{{ conversacion.public_id }}">{{ conversacion.titulo or 'Conversación sin título' }}</a>
-              <small>Iniciada {{ conversacion.created_at.strftime('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}{% if conversacion.pagina_inicio %} · {{ conversacion.pagina_inicio }}{% endif %}</small>
+              <small>Iniciada {{ conversacion.created_at|local('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}{% if conversacion.pagina_inicio %} · {{ conversacion.pagina_inicio }}{% endif %}</small>
             </td>
             <td class="text-bold">{{ fila.organizacion.nombre if fila.organizacion else '—' }}</td>
             <td class="chat-usuario muted">{{ conversacion.usuario_email or 'Cuenta local / no identificada' }}</td>
             <td><span class="badge badge-neutral">{{ fila.mensajes }}</span></td>
-            <td class="muted">{{ conversacion.ultimo_mensaje_at.strftime('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</td>
+            <td class="muted">{{ conversacion.ultimo_mensaje_at|local('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</td>
             <td><a class="btn btn-sm btn-secondary" href="/admin/analitica/chats/{{ conversacion.public_id }}">Leer</a></td>
           </tr>
           {% else %}

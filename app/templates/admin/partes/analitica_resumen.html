@@ -12,7 +12,7 @@
     <div class="vivo-dato"><span>Personas con sesión hoy</span><strong>{{ vivo.logueados_total }}</strong></div>
     <div class="vivo-dato"><span>Acciones de empresas (15 min)</span><strong>{{ vivo.eventos_ultimos_15 }}</strong></div>
     <div class="vivo-dato"><span>Presupuestos hoy</span><strong>{{ k.presupuestos_hoy }}</strong></div>
-    <span class="vivo-sello">Última lectura {{ vivo.actualizado.strftime("%H:%M") }} UTC · se considera «en línea» {{ vivo.presencia_minutos }} min tras la última actividad
+    <span class="vivo-sello">Última lectura {{ vivo.actualizado|local("%H:%M") }} · {{ zona_horaria() }} · se considera «en línea» {{ vivo.presencia_minutos }} min tras la última actividad
       <label class="check-filtro" for="auto-refresh"><input type="checkbox" id="auto-refresh"> actualizar solo</label>
     </span>
   </div>
@@ -91,7 +91,7 @@
               <span class="quien">{{ u.nombre or u.email }}</span>
               <span class="donde">{{ u.email }}</span>
             </span>
-            <span class="muted">{{ u.acceso.strftime("%H:%M") if u.acceso else "—" }} UTC</span>
+            <span class="muted">{{ u.acceso|local("%H:%M") if u.acceso else "—" }}</span>
           </li>
           {% endfor %}
         </ul>

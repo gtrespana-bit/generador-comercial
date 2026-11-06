@@ -16,8 +16,8 @@
   <dl class="chat-detalle-meta">
     <div><dt>Organización</dt><dd>{{ chat.organizacion.nombre if chat.organizacion else '—' }}</dd></div>
     <div><dt>Usuario</dt><dd>{{ conversacion.usuario_email or 'Cuenta local / no identificada' }}</dd></div>
-    <div><dt>Inicio</dt><dd>{{ conversacion.created_at.strftime('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}</dd></div>
-    <div><dt>Último turno</dt><dd>{{ conversacion.ultimo_mensaje_at.strftime('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</dd></div>
+    <div><dt>Inicio</dt><dd>{{ conversacion.created_at|local('%d/%m/%Y %H:%M') if conversacion.created_at else '—' }}</dd></div>
+    <div><dt>Último turno</dt><dd>{{ conversacion.ultimo_mensaje_at|local('%d/%m/%Y %H:%M') if conversacion.ultimo_mensaje_at else '—' }}</dd></div>
   </dl>
 
   <div class="card">
@@ -28,7 +28,7 @@
     <div class="chat-mensajes">
       {% for mensaje in chat.mensajes %}
       <article class="chat-mensaje {{ 'chat-mensaje-usuario' if mensaje.rol == 'user' else 'chat-mensaje-asistente' }}">
-        <div class="chat-mensaje-rol">{{ 'Usuario' if mensaje.rol == 'user' else 'Asistente' }}<small>{{ mensaje.created_at.strftime('%d/%m/%Y %H:%M:%S') if mensaje.created_at else '—' }}{% if not mensaje.completo %} · respuesta interrumpida{% endif %}</small></div>
+        <div class="chat-mensaje-rol">{{ 'Usuario' if mensaje.rol == 'user' else 'Asistente' }}<small>{{ mensaje.created_at|local('%d/%m/%Y %H:%M:%S') if mensaje.created_at else '—' }}{% if not mensaje.completo %} · respuesta interrumpida{% endif %}</small></div>
         <p class="chat-mensaje-contenido">{{ mensaje.contenido }}</p>
       </article>
       {% else %}

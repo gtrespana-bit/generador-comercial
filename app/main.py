@@ -58,7 +58,10 @@ from .security import (  # noqa: E402
 )
 from .services.prueba_gratuita import hash_ip  # noqa: E402
 from .services.invitations import GestionEquipoError  # noqa: E402
-from .services.operacion import RegistroErroresMiddleware  # noqa: E402
+from .services.operacion import (  # noqa: E402
+    RegistroErroresMiddleware,
+    referencia_de_error,
+)
 from .storage import StorageError  # noqa: E402
 
 from .routers import (  # noqa: E402
@@ -911,6 +914,52 @@ async def _error_http(request: Request, exc: StarletteHTTPException):
     return JSONResponse(
         {"detail": exc.detail}, status_code=exc.status_code, headers=headers
     )
+
+
+@app.exception_handler(Exception)
+async def _error_interno(request: Request, exc: Exception):
+    """500 con página propia: qué pasó, qué hacer y una referencia para seguirlo.
+
+    Antes, un fallo no capturado devolvía el texto crudo de Starlette
+    («Internal Server Error»): en inglés, sin salidas, sin decir a quién
+    avisar y sin nada que permita cruzarlo con la tabla de errores internos.
+    Este manejador no oculta ni suaviza el 500 —el estado sigue siendo 500—,
+    pero convierte el callejón sin salida en una página útil.
+
+    Dos reglas: **nunca** se sirve la página de error con datos del fallo (la
+    traza va al log y a la tabla, no al navegador) y **nunca** se depende de la
+    sesión ni de la base, porque el fallo puede venir de ahí.
+    """
+    referencia = (
+        getattr(getattr(request, "state", None), "referencia_error", None)
+        or referencia_de_error()
+    )
+    cabeceras = {"X-Referencia-Error": referencia, "Cache-Control": "no-store"}
+    if _respuesta_auth_json(request):
+        return JSONResponse(
+            {
+                "ok": False,
+                "error": "Fallo interno del servidor.",
+                "referencia": referencia,
+            },
+            status_code=500,
+            headers=cabeceras,
+        )
+    try:
+        from .routers.common import TEMPLATES
+
+        return TEMPLATES.TemplateResponse(
+            request, "500.html", {"referencia": referencia},
+            status_code=500, headers=cabeceras,
+        )
+    except Exception:  # la página de error tampoco puede ser otro 500
+        from starlette.responses import PlainTextResponse
+
+        return PlainTextResponse(
+            f"Fallo interno del servidor. Referencia: {referencia}",
+            status_code=500,
+            headers=cabeceras,
+        )
 
 
 @app.exception_handler(RequestValidationError)

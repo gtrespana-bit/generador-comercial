@@ -108,7 +108,7 @@
             <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a>
             <div class="org-sub">{{ org.slug }}{% for email in fila.emails[:2] %} · <a href="/admin/clientes?tab=directorio&q={{ email|urlencode }}" title="Ver las empresas de {{ email }}">{{ email }}</a>{% endfor %}{% if fila.emails|length > 2 %} +{{ fila.emails|length - 2 }}{% endif %}</div>
           </td>
-          <td class="muted" title="Fecha de registro">{{ org.created_at.strftime('%d/%m/%Y') if org.created_at else '—' }}</td>
+          <td class="muted" title="Fecha de registro">{{ org.created_at|local_fecha('%d/%m/%Y') if org.created_at else '—' }}</td>
           <td>
             {% if fila.estado == 'activa' %}<span class="badge badge-success">{{ fila.estado_label }}</span>
             {% elif fila.estado == 'por_vencer' %}<span class="badge badge-warning">{{ fila.estado_label }} · {{ fila.dias_restantes }}d</span>

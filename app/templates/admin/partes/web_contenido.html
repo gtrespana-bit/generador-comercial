@@ -27,7 +27,7 @@
           <span class="badge badge-warning" title="El borrador es distinto a lo publicado">Borrador sin publicar</span>
           {% endif %}
           {% if item.publicado %}
-          <span class="badge badge-success">Publicado {{ item.publicado_at.strftime('%d/%m/%Y %H:%M') if item.publicado_at else '—' }}{% if item.publicado_por %} · {{ item.publicado_por }}{% endif %}</span>
+          <span class="badge badge-success">Publicado {{ item.publicado_at|local('%d/%m/%Y %H:%M') if item.publicado_at else '—' }}{% if item.publicado_por %} · {{ item.publicado_por }}{% endif %}</span>
           {% else %}
           <span class="badge badge-neutral">Nunca publicado</span>
           {% endif %}

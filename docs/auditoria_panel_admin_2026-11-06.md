@@ -464,3 +464,93 @@ control, anillo de foco y series de gráfico, con mínimo 3:1.
 Tramo D cerrado. Lo que queda para más adelante, ya fuera del plan acordado:
 pantalla de carga por sección (requiere datos por `fetch`), impresión de fichas
 y pruebas en navegador real.
+
+---
+
+## Tramo E · Honestidad y velocidad (mismo día)
+
+Con los cuatro tramos del plan cerrados, el siguiente escalón no era visual:
+era **lo que el panel dice y cómo responde**. Tres huecos medidos en el código
+—no supuestos— y arreglados en un solo tramo.
+
+### E1 · La hora que ve el operador
+
+La empresa opera desde Caracas (UTC−4) y todo lo guardado es UTC
+(`DateTime` con `datetime.utcnow` en `app/models.py`, correcto para almacenar y
+para ordenar). El problema estaba al pintar: **13 plantillas imprimían el
+instante en crudo**, así que una venta de las 20:30 aparecía como las 00:30
+**del día siguiente**. No es un detalle de formato: es un dato falso en la
+pantalla que se usa para decidir.
+
+Ahora la conversión vive en un solo sitio, `app/tiempo.py`:
+
+- Zona configurable con `COTIZAT_ZONA_HORARIA` (por omisión `America/Caracas`).
+  Si el nombre está mal escrito se cae a UTC y el panel sigue funcionando: una
+  variable de entorno no puede tumbar el arranque.
+- Filtros `|local` (instante → zona), `|local_fecha` (día) y `|utc` (el
+  instante exacto, para el `title` del `<time>`), más el global
+  `zona_horaria()` → «hora de Caracas (UTC−04:00)», que se ve en la cabecera
+  de Hoy, en el pie del reloj de analítica y en la tarjeta de actividad por
+  hora. Nadie tiene que adivinar en qué zona está leyendo.
+- Las **fechas de calendario no se desplazan**: `vence` o `inicio` son días,
+  no instantes. Un vencimiento no cambia de día por la zona del que mira.
+- Las fronteras de periodo («hoy», «este mes») del panel usan el día del
+  operador (`hoy_local()`), no el día UTC: a las 22:00 en Caracas sigue siendo
+  hoy, y «ventas de hoy» no se vacía a media tarde.
+- `Actividad por hora` cuenta en la zona del operador; «hora punta 02:00 UTC»
+  era medianoche en Caracas y no servía para decidir nada.
+
+Una prueba recorre todas las plantillas del panel y **falla si alguien vuelve a
+escribir un `strftime` con hora sin pasar por `|local`**. Es el tipo de arreglo
+que se pierde en la siguiente pantalla nueva si no queda cerrado.
+
+### E2 · La página del 500
+
+Un fallo no capturado devolvía el texto crudo de Starlette
+(«Internal Server Error»): en inglés, sin salidas, sin decir a quién avisar y
+sin nada que permitir cruzarlo con la tabla de errores internos. Para un panel
+que se usa a diario, ese es el peor momento posible para no tener interfaz.
+
+- `500.html` con estado **500 real** (nunca 200), `noindex`, salidas
+  (reintentar la misma ruta, volver al inicio, escribir al soporte) y una
+  **referencia de 10 caracteres** a la vista.
+- La referencia se deriva de la **huella** del fallo —la misma que ya usa
+  `errores_internos`—, así que el operador la pega en la tabla de errores y
+  encuentra la traza exacta **sin añadir una columna ni una migración**.
+- La página no depende de la sesión ni de la base: el 500 puede venir de ahí.
+  Si hasta la plantilla falla, se responde texto plano con la referencia; nunca
+  se convierte un 500 en otro 500.
+- Nada del fallo viaja al navegador: ni la traza ni el mensaje interno. La
+  cabecera `X-Referencia-Error` acompaña a la respuesta para soporte.
+- Una API recibe JSON (`{"ok": false, "referencia": …}`), no HTML.
+
+### E3 · Precarga al navegar
+
+El panel se renderiza en el servidor: cada clic es una ida y vuelta completa.
+Medido en frío, con base de datos incluida, son cientos de milisegundos por
+pantalla. En vez de reescribir el panel como SPA, se le dice al navegador a
+dónde va a ir antes de que haga clic.
+
+- **Speculation Rules** (`prefetch`, `eagerness: "moderate"`) con una lista
+  blanca que construye el servidor: las seis áreas y las pestañas del área
+  activa. Al detener el puntero —o al tocar— el navegador ya está trayendo esa
+  página y el clic se siente instantáneo.
+- La lista **no lleva enlaces de acción**: pasar el ratón por encima de
+  «conceder» o «salir» no prepara nada. Lo comprueba una prueba.
+- `moderate` evita que abrir el panel dispare seis descargas; los navegadores
+  que no entienden la regla la ignoran sin coste. Lleva `nonce` para pasar la
+  CSP, y no hay JavaScript propio nuevo.
+
+### Cifras
+
+| | Tramo D | Tramo E |
+|---|---|---|
+| Fechas con hora sin zona | 13 plantillas | **0** (y una prueba lo vigila) |
+| Página de error del panel | texto crudo de Starlette | **500 con referencia rastreable** |
+| Precarga de navegación | ninguna | **áreas + pestañas, con lista blanca** |
+| Pruebas | 3382 | **3406** |
+
+Queda para el tramo F lo que ya estaba aprobado aparte: la **consola de
+comandos en ⌘K** (ejecutar, no solo buscar) y el **movimiento del MRR**
+(nuevo, expansión, contracción y baja del mes), que `resumen_financiero` hoy no
+calcula.

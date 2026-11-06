@@ -5785,6 +5785,27 @@ body:not(.landing-impulso) .hub-bloque a:hover { color: var(--ct-navy); }
 .error-404 h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; letter-spacing: -.05em; }
 .error-404 .acciones { justify-content: center; }
 
+/* 500: mismo esqueleto que la 404, con la referencia del fallo a la vista.
+   `user-select: all` para que se copie de un toque; el id es de 10 caracteres
+   y se dicta por teléfono sin equivocarse. */
+.error-500 .error-referencia {
+  max-width: 34rem;
+  margin: 1.1rem auto 0;
+  font-size: .95rem;
+  color: var(--ct-navy-3);
+}
+.error-500 .error-referencia code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--ct-navy);
+  background: rgba(18, 59, 114, .08);
+  border-radius: .4rem;
+  padding: .12rem .45rem;
+  user-select: all;
+}
+
 @media (max-width: 640px) {
   .auth-stage { padding: 1.2rem .8rem; }
   .auth-split { border-radius: 22px; }

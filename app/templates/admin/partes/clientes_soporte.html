@@ -71,7 +71,7 @@
      el número del ticket en el asunto y el mensaje original citado, para no
      tener que copiarlo a mano. #}
   {% set asunto_respuesta = 'Re: [' ~ m.etiqueta_tipo ~ ' #' ~ m.id ~ '] ' ~ (m.asunto or 'tu mensaje') %}
-  {% set cuerpo_respuesta = '\n\n\n—— Mensaje original (' ~ (m.created_at.strftime('%d/%m/%Y %H:%M') if m.created_at else '') ~ ') ——\n' ~ (m.nombre or 'Sin nombre') ~ ' escribió:\n' ~ (m.mensaje or '') %}
+  {% set cuerpo_respuesta = '\n\n\n—— Mensaje original (' ~ (m.created_at|local('%d/%m/%Y %H:%M') if m.created_at else '') ~ ') ——\n' ~ (m.nombre or 'Sin nombre') ~ ' escribió:\n' ~ (m.mensaje or '') %}
   <div class="mensaje-soporte {{ 'sin-atender' if m.estado == 'nuevo' else '' }}">
     <div class="mensaje-cabecera">
       <div class="mensaje-quien">
@@ -93,7 +93,7 @@
         {% else %}
         <span class="badge badge-success">Resuelto</span>
         {% endif %}
-        <span class="muted">{{ m.created_at.strftime('%d/%m/%Y %H:%M') if m.created_at else '' }}</span>
+        <span class="muted">{{ m.created_at|local('%d/%m/%Y %H:%M') if m.created_at else '' }}</span>
       </div>
     </div>
 
@@ -105,7 +105,7 @@
     <p class="mensaje-nota"><b>Nota interna:</b> {{ m.nota_interna }}</p>
     {% endif %}
     {% if m.atendido_por_email %}
-    <p class="mensaje-pagina muted">Atendido por {{ m.atendido_por_email }}{% if m.atendido_at %} · {{ m.atendido_at.strftime('%d/%m/%Y %H:%M') }}{% endif %}</p>
+    <p class="mensaje-pagina muted">Atendido por {{ m.atendido_por_email }}{% if m.atendido_at %} · {{ m.atendido_at|local('%d/%m/%Y %H:%M') }}{% endif %}</p>
     {% endif %}
 
     <div class="mensaje-acciones">

@@ -52,7 +52,7 @@
       <tbody>
         {% for evento in eventos %}
         <tr>
-          <td class="muted">{{ evento.created_at.strftime('%d/%m/%Y %H:%M') if evento.created_at else '—' }}</td>
+          <td class="muted">{{ evento.created_at|local('%d/%m/%Y %H:%M') if evento.created_at else '—' }}</td>
           <td class="org-name">{{ evento.operador_email or '—' }}</td>
           <td>{% if evento.operador_rol %}<span class="badge badge-info">{{ evento.operador_rol }}</span>{% else %}—{% endif %}</td>
           <td><code class="accion-code" title="{{ etiquetas_acciones.get(evento.accion, evento.accion) }}">{{ evento.accion }}</code></td>

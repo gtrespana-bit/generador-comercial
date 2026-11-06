@@ -31,6 +31,7 @@ no guardan identidad.
 """
 from __future__ import annotations
 
+import uuid
 from collections import deque
 from dataclasses import dataclass
 from datetime import datetime
@@ -308,6 +309,19 @@ async def _respuesta_de_saturacion(scope, receive, send) -> None:
     await respuesta(scope, receive, send)
 
 
+def referencia_de_error(huella: str | None = None) -> str:
+    """Identificador corto que se enseña en la página del 500.
+
+    Se deriva de la **huella** del fallo (no de la petición): así el operador
+    pega esos diez caracteres en la tabla de errores internos y encuentra la
+    fila exacta, con su traza, sin añadir una columna ni una migración. Dos
+    personas que sufren el mismo bug comparten referencia, que es lo útil.
+    Sin huella (fallo fuera del middleware) cae a un identificador aleatorio
+    para que la página nunca salga sin nada que reportar.
+    """
+    return (huella or uuid.uuid4().hex)[:10]
+
+
 class RegistroErroresMiddleware:
     """Captura excepciones no manejadas y las deja registradas.
 
@@ -336,6 +350,21 @@ class RegistroErroresMiddleware:
             transitorio = error_de_infraestructura(exc)
             try:
                 datos = capturar_excepcion(scope, exc)
+                from .errores_internos import huella_de
+
+                datos["referencia"] = referencia_de_error(
+                    huella_de(
+                        datos.get("metodo", ""),
+                        datos.get("ruta", ""),
+                        datos.get("tipo", ""),
+                        datos.get("mensaje", ""),
+                    )
+                )
+                # La página del 500 la enseña: «dinos esta referencia».
+                try:
+                    scope.setdefault("state", {})["referencia_error"] = datos["referencia"]
+                except Exception:  # pragma: no cover - el registro nunca rompe
+                    pass
                 datos["transitorio"] = transitorio
                 from .errores_internos import (
                     persistir_y_avisar,

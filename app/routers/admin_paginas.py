@@ -39,6 +39,7 @@ from ..services.panel_listas import (
     paginar_lista,
     paginador,
 )
+from ..tiempo import hoy_local
 from ..services.panel_contextos import (
     ALCANCES_ROL,
     DESCRIPCIONES_CRM,
@@ -223,7 +224,7 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
         })
 
     contexto.update({
-        "resumen": resumen_admin(db),
+        "resumen": resumen_admin(db, hoy=hoy_local()),
         "finanzas": resumen_financiero(db),
         "proximas": proximas_renovaciones(db, limite=6),
         "eventos": resumen_auditoria_admin(db, limite=6),
@@ -231,7 +232,7 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
         "pendientes_ahora": pendientes_ahora,
         "avisos": avisos,
         "riesgo_churn": riesgo_churn,
-        "ventas": resumen_ventas(db, periodo="mes"),
+        "ventas": resumen_ventas(db, periodo="mes", hoy=hoy_local()),
         "ultimas_ventas": ultimas_ventas(db, limite=5),
         "registros": resumen_registros(db),
         "ultimos_registros": registros_recientes(db, limite=5, dias=30),
@@ -864,6 +865,7 @@ def _ingresos_ventas(request: Request, db, pestana: str) -> dict:
 
     datos = resumen_ventas(
         db,
+        hoy=hoy_local(),
         periodo=periodo,
         plan=plan,
         metodo=metodo,
@@ -1404,6 +1406,7 @@ def _csv_ventas(request: Request, db):
     direccion = "asc" if pedidos["dir"] == "asc" else "desc"
     datos = resumen_ventas(
         db,
+        hoy=hoy_local(),
         periodo=periodo,
         plan=plan,
         metodo=metodo,

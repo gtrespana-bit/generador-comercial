@@ -82,7 +82,7 @@
       <tbody>
         {% for e in datos.cronologia %}
         <tr>
-          <td class="muted">{{ e.cuando.strftime('%d/%m/%Y %H:%M') if e.cuando else '—' }}</td>
+          <td class="muted">{{ e.cuando|local('%d/%m/%Y %H:%M') if e.cuando else '—' }}</td>
           <td class="muted">{{ e.actor or '—' }}</td>
           <td>
             <span class="badge {{ 'badge-warning' if e.tono == 'warn' else ('badge-success' if e.tono == 'ok' else 'badge-info') }}">{{ e.etiqueta }}</span>
@@ -124,7 +124,7 @@
           <tr>
             <td>{{ fila.etiqueta }}</td>
             <td class="tabla-num">{{ fila.veces }}</td>
-            <td class="muted">{{ fila.ultima.strftime('%d/%m/%Y') if fila.ultima else '—' }}</td>
+            <td class="muted">{{ fila.ultima|local_fecha('%d/%m/%Y') if fila.ultima else '—' }}</td>
           </tr>
           {% else %}
           <tr><td colspan="3" class="muted">Sin datos en la ventana.</td></tr>
@@ -145,7 +145,7 @@
         <tbody>
           {% for e in ficha.eventos_admin[:10] %}
           <tr>
-            <td class="muted">{{ e.created_at.strftime('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
+            <td class="muted">{{ e.created_at|local('%d/%m/%Y %H:%M') if e.created_at else '—' }}</td>
             <td>{{ e.operador_email or '—' }}</td>
             <td><code class="accion-code">{{ e.accion }}</code></td>
           </tr>
