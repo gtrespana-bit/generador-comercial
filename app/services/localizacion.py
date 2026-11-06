@@ -141,6 +141,11 @@ def huella(codigo_pais: str, muestra: int = MUESTRA_POR_DEFECTO) -> dict:
         "jaccard": None,
         "identicas": None,
         "muestra": 0,
+        # Progreso de la activación incremental: cuántas fichas tienen ya
+        # texto propio validado en ``datos/localizado/<CC>.json``. Es el
+        # marcador que se mueve al escribir, no al cambiar umbrales.
+        "localizadas": 0,
+        "cobertura_localizada": None,
     }
     indice = pp._indice(cc)
     if not indice:
@@ -150,6 +155,11 @@ def huella(codigo_pais: str, muestra: int = MUESTRA_POR_DEFECTO) -> dict:
     base["publicado"] = True
     base["partidas"] = len(por_codigo)
     base["muestra"] = muestra
+    base["localizadas"] = pp.partidas_localizadas(cc)
+    if por_codigo:
+        base["cobertura_localizada"] = round(
+            100 * base["localizadas"] / len(por_codigo), 1
+        )
     if base["referencia"]:
         return base
 

@@ -12,6 +12,9 @@ credenciales) y saca una tabla por mercado con:
 * ``estado``: ``referencia`` (España), ``listo``, ``parcial``, ``calco`` o
   ``sin_catalogo``.
 * ``partidas``: fichas publicables hoy en ese mercado.
+* ``propias``: fichas con texto propio validado (``datos/localizado``). Es el
+  marcador que se mueve al escribir; con tres en un apartado, ese apartado ya
+  se anuncia.
 * ``jaccard``: parecido del vocabulario con España (1,00 = calcado).
 * ``idénticas``: fichas cuyo texto es literalmente el español.
 * ``guías`` y ``editorial``: lo que el mercado tiene además del catálogo.
@@ -102,8 +105,8 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     cabecera = (
-        f"{'MERCADO':<8} {'ESTADO':<13} {'PARTIDAS':>8} {'JACCARD':>8} "
-        f"{'IDÉNTICAS':>9} {'URLS':>6}  EDITORIAL"
+        f"{'MERCADO':<8} {'ESTADO':<13} {'PARTIDAS':>8} {'PROPIAS':>8} "
+        f"{'JACCARD':>8} {'IDÉNTICAS':>9} {'URLS':>6}  EDITORIAL"
     )
     print(cabecera)
     print("-" * len(cabecera))
@@ -117,7 +120,8 @@ def main(argv: list[str] | None = None) -> int:
         urls = _urls(cc) if fila["publicado"] else 0
         print(
             f"{cc:<8} {_ETIQUETA.get(fila['estado'], fila['estado']):<13} "
-            f"{fila['partidas']:>8} {jaccard:>8} {identicas:>9} {urls:>6}  "
+            f"{fila['partidas']:>8} {fila['localizadas']:>8} {jaccard:>8} "
+            f"{identicas:>9} {urls:>6}  "
             f"{_fila_editorial(fila['editorial'], fila['guias'])}"
         )
 
@@ -157,6 +161,13 @@ def main(argv: list[str] | None = None) -> int:
     orden = localizacion.mercados_por_encender(muestra)
     if orden:
         print(f"Orden propuesto para encender: {' → '.join(orden)}")
+    a_medias = [
+        f"{f['mercado']} ({f['localizadas']}/{f['partidas']})"
+        for f in filas
+        if f["publicado"] and f["localizadas"] and not f["referencia"]
+    ]
+    if a_medias:
+        print(f"Localizados a medias: {', '.join(a_medias)}")
     print()
     print(
         "Un mercado pasa a LISTO cuando su prosa deja de ser la española "

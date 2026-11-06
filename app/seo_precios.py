@@ -173,17 +173,21 @@ def _nombre_pais(cc: str, lang: str) -> str:
 
 
 def _hreflang(origen: str, rutas: list[dict]) -> list[dict]:
-    """Enlaces hreflang del grupo, solo entre mercados anunciados.
+    """Enlaces hreflang del grupo, solo entre páginas anunciadas.
 
     Un hreflang que apunta a una página ``noindex`` es un error explícito: el
-    grupo entero deja de considerarse fiable. Por eso se filtra por
-    ``ficha_indexable`` en el único punto donde nacen estos enlaces; el
-    selector de país visible (``_alternates_visibles``) sigue mostrando todos
-    los mercados, que es UX y no señal SEO.
+    grupo entero deja de considerarse fiable. Por eso se filtra con
+    ``path_indexable`` —ficha a ficha, no mercado a mercado— en el único punto
+    donde nacen estos enlaces; el selector de país visible
+    (``_alternates_visibles``) sigue mostrando todos los mercados, que es UX y
+    no señal SEO.
     """
-    from .services.precios_publicos import ficha_indexable
+    from .services.precios_publicos import path_indexable
 
-    rutas = [r for r in rutas if ficha_indexable(r.get("cc"))]
+    # Destino a destino: desde que un mercado puede estar a medio localizar, la
+    # unidad ya no es el mercado sino la ficha. Un hreflang que apunta a una
+    # página noindex invalida el grupo entero.
+    rutas = [r for r in rutas if path_indexable(r.get("cc"), r.get("path"))]
     enlaces = [
         {"hreflang": r["hreflang"], "href": origen + r["path"]} for r in rutas
     ]

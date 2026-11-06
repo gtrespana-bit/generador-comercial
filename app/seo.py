@@ -130,25 +130,32 @@ def _es_indexable_precios(resto: str, codigo_pais: str) -> bool:
     Se acepta la forma canónica de cada tipo de página y nada más: un slug
     inventado da 404 en el router, no una página indexable.
     """
-    from .services.precios_publicos import ficha_indexable
+    from .services.precios_publicos import resto_indexable
 
-    if not ficha_indexable(codigo_pais):
-        return False
     partes = str(resto or "").strip("/").split("/")
     if not partes or not partes[0]:
         return False
-    if len(partes) == 1 and partes[0] in {"precios.json", "prices.json"}:
-        return True
-    if len(partes) == 1 and partes[0] in {"mano-de-obra", "labour-rates"}:
-        return True
+    if len(partes) == 1 and partes[0] in {
+        "precios.json",
+        "prices.json",
+        "mano-de-obra",
+        "labour-rates",
+    }:
+        return resto_indexable(partes[0], codigo_pais)
     if partes[0] not in {"precios", "prices"}:
         return False
-    if len(partes) == 1:
-        return True
-    return len(partes) <= 3 and all(
-        re.fullmatch(r"[a-z0-9][a-z0-9-]*", segmento)
-        for segmento in partes[1:]
-    )
+    if not (
+        len(partes) <= 3
+        and all(
+            re.fullmatch(r"[a-z0-9][a-z0-9-]*", segmento)
+            for segmento in partes[1:]
+        )
+    ):
+        return False
+    # La forma es canónica; quién se anuncia lo decide el catálogo, ficha a
+    # ficha (mercado completo o texto propio del mercado). Una sola función
+    # alimenta el <meta robots>, el X-Robots-Tag y el sitemap.
+    return resto_indexable("/".join(partes), codigo_pais)
 
 
 def es_indexable(path: str) -> bool:

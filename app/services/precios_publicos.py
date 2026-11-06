@@ -84,6 +84,22 @@ _RAIZ = Path(__file__).resolve().parents[2]
 _DATOS = _RAIZ / "basedatos_partidas" / "datos"
 _SALIDA = _RAIZ / "basedatos_partidas" / "salida"
 
+#: Texto propio por mercado: ``datos/localizado/<CC>.json``.
+#:
+#: El catálogo comparte el descompuesto entre los 22 mercados hispanos, así que
+#: la ficha de México es la española con precios en MXN: medido, el 98 % del
+#: vocabulario es idéntico (``services/localizacion``). Eso es lo que se
+#: anunció el 22/10/2026 y lo que hundió el sitio dos días después. Aquí se
+#: publica la excepción: las fichas que un mercado ha reescrito con su
+#: terminología, su unidad y su forma de medir.
+#:
+#: El registro manda sobre la indexabilidad, ficha a ficha. Una partida entra
+#: en el índice si el mercado entero está en ``MERCADOS_FICHAS_INDEXABLES``
+#: (España y los cinco mercados traducidos) o si tiene texto propio validado
+#: aquí. Un apartado entra con al menos ``_MIN_PARTIDAS_APARTADO`` partidas
+#: propias, y el índice del catálogo solo se anuncia si hay alguna.
+_DIR_LOCALIZADO = _DATOS / "localizado"
+
 _GRUPOS = ("materiales", "mano_obra", "maquinaria")
 
 # Detector de restos en español sobre textos ya traducidos: regla de
@@ -200,6 +216,69 @@ def _nombres_clasificacion() -> dict[tuple[str, ...], str]:
     return salida
 
 
+def _plano(texto: str) -> str:
+    """Texto comparable: sin espacios de más y en minúsculas."""
+    return " ".join(str(texto or "").lower().split())
+
+
+@lru_cache(maxsize=32)
+def _localizado(codigo_pais: str) -> dict[str, dict]:
+    """Fichas con texto propio **validado** del mercado, por código de partida.
+
+    Un registro cuenta solo si trae título y descripción, la descripción llega
+    al mínimo que ya exige la guardia de la ficha (``_MIN_DESCRIPCION``) y el
+    texto **no** es el español copiado. Lo que no cumple eso es un borrador: se
+    ignora aquí y la herramienta ``tools/preparar_mercado.py`` lo lista como
+    pendiente.
+
+    La clave es el código de partida (``01.01.01.010``) y nunca el slug: al
+    reescribir el título cambia el slug, y el registro tiene que sobrevivir a
+    ese cambio.
+    """
+    cc = str(codigo_pais or "").strip().upper()
+    ruta = _DIR_LOCALIZADO / f"{cc}.json"
+    if not ruta.exists():
+        return {}
+    try:
+        bruto = json.loads(ruta.read_text(encoding="utf-8"))
+        partidas = bruto.get("partidas") or {}
+    except (OSError, ValueError, AttributeError):
+        # Un registro dañado no puede encender nada: se comporta como ausente.
+        return {}
+    catalogo = {p["codigo"]: p for p in _catalogo()}
+    salida: dict[str, dict] = {}
+    for codigo, ficha in partidas.items():
+        if not isinstance(ficha, dict):
+            continue
+        codigo = str(codigo or "").strip()
+        titulo = str(ficha.get("titulo") or "").strip()
+        descripcion = str(ficha.get("descripcion") or "").strip()
+        if not codigo or len(titulo) < 8 or len(descripcion) < _MIN_DESCRIPCION:
+            continue
+        base = catalogo.get(codigo)
+        if base:
+            # Copiar la descripción española no localiza nada. Se compara
+            # contra las dos formas que puede tomar en este mercado: el texto
+            # del catálogo y el que produce la capa de terminología local
+            # (``traducir``), que es lo que el visitante ve hoy sin registro.
+            original = base.get("descripcion") or ""
+            parecidos = {_plano(original), _plano(traducir(original, cc))}
+            if _plano(descripcion) in parecidos:
+                continue
+        recursos = {
+            str(ref): str(nombre).strip()
+            for ref, nombre in (ficha.get("recursos") or {}).items()
+            if str(nombre or "").strip()
+        }
+        salida[codigo] = {
+            "titulo": titulo,
+            "descripcion": descripcion,
+            "recursos": recursos,
+            "revisado": str(ficha.get("revisado") or "").strip(),
+        }
+    return salida
+
+
 def tema_precios(codigo_pais: str) -> str:
     """Segmento de URL según el idioma del mercado: prices / precios."""
     pais = PAISES.get(str(codigo_pais or "").strip().upper()) or {}
@@ -246,12 +325,24 @@ def _unidad_visible(unidad: str, imperial: bool, idioma: str) -> str:
     return visible
 
 
-def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict):
-    """Ficha pública de la partida en el país, o None si no pasa la guardia."""
+def _partida_publicable(
+    bruta: dict,
+    cc: str,
+    precios_pais: dict,
+    recursos: dict,
+    localizado: dict | None = None,
+):
+    """Ficha pública de la partida en el país, o None si no pasa la guardia.
+
+    ``localizado`` es el texto propio del mercado para esta partida (ver
+    ``_localizado``). Cuando existe, manda sobre el español y sobre la
+    traducción: es la razón de que la ficha pueda anunciarse.
+    """
     pais = PAISES[cc]
     idioma = str(pais.get("idioma") or "es")
     imperial = es_imperial_codigo(cc)
     unidad = bruta["unidad"]
+    local = (localizado or {}).get(bruta["codigo"]) or {}
 
     lineas = []
     grupos = {g: 0.0 for g in _GRUPOS}
@@ -271,7 +362,9 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
             horas_mo += rendimiento
         if fecha > fecha_max:
             fecha_max = fecha
-        nombre = traducir_recurso_por_codigo(recurso["descripcion"], ref, cc)
+        nombre = (local or {}).get("recursos", {}).get(ref) or traducir_recurso_por_codigo(
+            recurso["descripcion"], ref, cc
+        )
         if idioma == "en" and not _sin_restos_es(nombre):
             return None
         lineas.append(
@@ -294,8 +387,8 @@ def _partida_publicable(bruta: dict, cc: str, precios_pais: dict, recursos: dict
     if len(lineas) < _MIN_LINEAS:
         return None
 
-    titulo = _titulo_limpio(traducir(bruta["titulo"], cc))
-    descripcion = traducir(bruta["descripcion"], cc).strip()
+    titulo = _titulo_limpio(local.get("titulo") or traducir(bruta["titulo"], cc))
+    descripcion = (local.get("descripcion") or traducir(bruta["descripcion"], cc)).strip()
     if idioma == "en":
         if titulo == _titulo_limpio(bruta["titulo"]) or descripcion == bruta["descripcion"].strip():
             return None
@@ -411,6 +504,7 @@ def _indice_en_vivo(cc: str) -> dict | None:
     recursos = _recursos()
     nombres = _nombres_clasificacion()
     idioma = str(PAISES[cc].get("idioma") or "es")
+    localizado = _localizado(cc)
 
     def nombre_destino(clave: tuple[str, ...]) -> str | None:
         original = nombres.get(clave) or ""
@@ -423,7 +517,7 @@ def _indice_en_vivo(cc: str) -> dict | None:
 
     por_apartado: dict[tuple[str, ...], list[dict]] = {}
     for bruta in _catalogo():
-        ficha = _partida_publicable(bruta, cc, precios_pais, recursos)
+        ficha = _partida_publicable(bruta, cc, precios_pais, recursos, localizado)
         if ficha is not None:
             por_apartado.setdefault(ficha["_clave_apartado"], []).append(ficha)
 
@@ -536,6 +630,127 @@ def paises_con_catalogo_indexable() -> tuple[str, ...]:
     return tuple(cc for cc in paises_publicados() if ficha_indexable(cc))
 
 
+def partida_localizada(codigo_pais: str, codigo_partida: str) -> bool:
+    """¿Esta partida tiene texto propio validado en este mercado?"""
+    return str(codigo_partida or "").strip() in _localizado(codigo_pais)
+
+
+def _codigo_de(codigo_pais: str, slug_apartado: str, slug_partida: str) -> str:
+    indice = _indice(codigo_pais) or {}
+    ficha = (indice.get("partidas") or {}).get(
+        (str(slug_apartado or ""), str(slug_partida or ""))
+    )
+    return str((ficha or {}).get("codigo") or "")
+
+
+def partida_indexable(codigo_pais: str, slug_apartado: str, slug_partida: str) -> bool:
+    """¿Se anuncia esta ficha concreta?
+
+    Tres formas de que sí: el mercado entero se anuncia (España y los cinco
+    traducidos), o esta partida tiene texto propio del mercado. Nada más. Un
+    mercado a medio localizar anuncia solo lo que ha escrito.
+    """
+    if ficha_indexable(codigo_pais):
+        return True
+    codigo = _codigo_de(codigo_pais, slug_apartado, slug_partida)
+    return bool(codigo) and partida_localizada(codigo_pais, codigo)
+
+
+def partidas_localizadas(codigo_pais: str) -> int:
+    """Fichas publicadas con texto propio del mercado (no borradores)."""
+    indice = _indice(codigo_pais) or {}
+    publicadas = set((indice.get("por_codigo") or {}).keys())
+    return len(publicadas & set(_localizado(codigo_pais).keys()))
+
+
+def apartado_indexable(codigo_pais: str, slug_apartado: str) -> bool:
+    """¿Se anuncia este apartado?
+
+    El mercado entero, o al menos ``_MIN_PARTIDAS_APARTADO`` fichas propias: un
+    apartado con una sola partida localizada es una página de listado que no
+    lleva a ninguna parte y compite con su hermana española.
+    """
+    if ficha_indexable(codigo_pais):
+        return True
+    indice = _indice(codigo_pais) or {}
+    ficha = (indice.get("apartados") or {}).get(str(slug_apartado or ""))
+    if not ficha:
+        return False
+    propias = 0
+    for resumen in ficha.get("partidas") or []:
+        codigo = _codigo_de(codigo_pais, slug_apartado, resumen.get("slug"))
+        if codigo and partida_localizada(codigo_pais, codigo):
+            propias += 1
+            if propias >= _MIN_PARTIDAS_APARTADO:
+                return True
+    return False
+
+
+def indice_indexable(codigo_pais: str) -> bool:
+    """¿Se anuncia la portada del catálogo del mercado (``/mx/precios``)?
+
+    Sí si el mercado está encendido entero o si hay al menos una ficha con
+    texto propio: es la página que reparte autoridad hacia ellas.
+    """
+    if ficha_indexable(codigo_pais):
+        return True
+    return partidas_localizadas(codigo_pais) > 0
+
+
+def resto_indexable(resto: str, codigo_pais: str) -> bool:
+    """Indexabilidad de una ruta del catálogo, sin el prefijo de país.
+
+    ``resto`` es lo que queda tras ``/mx`` o ``/en-gb``: ``precios``,
+    ``precios/03-estructuras``, ``prices/foundations/slab``… Es la **única**
+    función que decide, y la usan el ``<meta robots>``, el ``X-Robots-Tag``
+    (ambos vía ``seo.es_indexable``) y el sitemap. Si divergen, Google aplica
+    la instrucción más restrictiva y la página se cae sin que nadie lo pida:
+    ya pasó con el catálogo entero.
+    """
+    cc = str(codigo_pais or "").strip().upper()
+    partes = [p for p in str(resto or "").strip("/").split("/") if p]
+    if not partes:
+        return False
+    if ficha_indexable(cc):
+        # Mercado completo: se conserva la política anterior sin cambios.
+        return True
+    primero = partes[0].lower()
+    # Descargas y mano de obra son caras de nivel de mercado: siguen la
+    # política del mercado, no la de una ficha concreta.
+    if primero in {"precios.json", "prices.json", "mano-de-obra", "labour-rates"}:
+        return False
+    if primero not in {"precios", "prices"}:
+        return False
+    if len(partes) == 1:
+        return indice_indexable(cc)
+    if len(partes) == 2:
+        return apartado_indexable(cc, partes[1])
+    if len(partes) == 3:
+        return partida_indexable(cc, partes[1], partes[2])
+    return False
+
+
+def path_indexable(codigo_pais: str, path: str) -> bool:
+    """Indexabilidad de una URL completa del catálogo (``/mx/precios/…``).
+
+    Sirve para los ``alternates``: un hreflang hacia una página ``noindex``
+    invalida el grupo entero, así que cada destino se comprueba uno a uno y no
+    por mercado.
+    """
+    from urllib.parse import urlsplit
+
+    ruta = urlsplit(str(path or "")).path or "/"
+    partes = [p for p in ruta.strip("/").split("/") if p]
+    if not partes:
+        return False
+    primera = partes[0].lower()
+    if (primera.startswith("en-") and len(primera) == 5) or primera in {
+        c.lower() for c in PAISES
+    }:
+        partes = partes[1:]
+    return resto_indexable("/".join(partes), codigo_pais)
+
+
 def resumen(codigo_pais: str) -> dict | None:
     indice = _indice(codigo_pais)
     if indice is None:
@@ -644,38 +859,40 @@ def ruta_json(codigo_pais: str) -> str:
 def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
     """Entradas del sitemap del país con la forma de ``seo.urls_sitemap``.
 
-    Un mercado cuyo catálogo no se anuncia (``MERCADOS_FICHAS_INDEXABLES``)
-    devuelve una lista vacía: sus páginas existen y se navegan, pero llevan
-    ``noindex`` y un sitemap que anuncia páginas noindex es una contradicción
-    que Search Console reporta como error y que empeora la señal del sitio.
-
     Dos políticas deliberadas:
 
-    * Los ``alternates`` se filtran por ``ficha_indexable``: un hreflang hacia
-      una página ``noindex`` invalida el clúster entero, así que el sitemap
-      solo anuncia los mercados que se indexan, los mismos que el ``<head>``
-      vía ``seo_precios._hreflang``. ``alternates()`` y
-      ``alternates_apartado()`` siguen devolviendo los 22 mercados porque
-      alimentan también el selector de país visible, que es UX y no señal SEO.
+    * **Solo lo indexable, ficha a ficha.** Antes bastaba con que el mercado
+      estuviera en ``MERCADOS_FICHAS_INDEXABLES``; ahora un mercado a medio
+      localizar anuncia únicamente las fichas con texto propio, su apartado
+      (con al menos tres) y la portada del catálogo. Un sitemap que anuncia
+      una página ``noindex`` es una contradicción que Search Console reporta
+      como error y que empeora la señal del sitio.
+    * **Los ``alternates`` se filtran uno a uno** con ``path_indexable``: un
+      hreflang hacia una página ``noindex`` invalida el grupo entero, así que
+      el sitemap solo enlaza los mercados que anuncian esa misma ficha. Es el
+      mismo criterio que ``seo_precios._hreflang`` en el ``<head>``;
+      ``alternates()`` y ``alternates_apartado()`` siguen devolviendo los 22
+      mercados porque alimentan también el selector visible, que es UX.
     * Las entradas llevan ``lastmod = None``: la fecha de revisión es la del
       lote completo del catálogo (idéntica para miles de URLs), no un cambio
       real de cada página. Un ``lastmod`` uniforme y antiguo enseña a Google a
       ignorar esta señal; la fecha veraz se publica una sola vez por hijo en
       ``sitemap_index.xml`` (la revisión del lote de ese mercado).
     """
-    if not ficha_indexable(codigo_pais):
-        return []
     indice = _indice(codigo_pais)
     if indice is None:
         return []
     cc = indice["cc"]
+    if not indice_indexable(cc):
+        return []
 
     def alts_de(paths: list[dict]) -> list[dict]:
         # Punto único de filtrado del sitemap: alternates() nace con los 22
         # mercados publicados (los necesita el selector visible), pero aquí
-        # solo pueden quedar los indexables. Un destino noindex en el
-        # sitemap es el mismo error que en el <head>: tira del clúster entero.
-        paths = [p for p in paths if ficha_indexable(p.get("cc"))]
+        # solo pueden quedar las páginas que se anuncian de verdad.
+        paths = [
+            p for p in paths if path_indexable(p.get("cc"), p.get("path"))
+        ]
         alts = [
             {"hreflang": a["hreflang"], "href": origen + a["path"]} for a in paths
         ]
@@ -703,14 +920,17 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
                         "cc": otro,
                         "path": ruta_indice(otro),
                     }
-                    for otro in paises_con_catalogo_indexable()
+                    for otro in paises_publicados()
+                    if indice_indexable(otro)
                 ]
             ),
         }
     ]
     # Coste horario de la mano de obra: una página por mercado, con dato
-    # propio (moneda, oficios y tarifas del catálogo de ese país).
-    if oficios_disponibles(cc):
+    # propio (moneda, oficios y tarifas del catálogo de ese país). Se anuncia
+    # con el mercado completo: es una tabla de tarifas del país, no una ficha
+    # localizada, y no debe adelantarse a la localización del catálogo.
+    if ficha_indexable(cc) and oficios_disponibles(cc):
         salida.append(
             {
                 "loc": origen + ruta_mano_obra(cc),
@@ -721,6 +941,8 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
             }
         )
     for slug_ap in sorted(indice["apartados"]):
+        if not apartado_indexable(cc, slug_ap):
+            continue
         salida.append(
             {
                 "loc": origen + ruta_apartado(cc, slug_ap),
@@ -733,6 +955,8 @@ def urls_sitemap(codigo_pais: str, origen: str) -> list[dict]:
             }
         )
     for (slug_ap, slug_p), ficha in sorted(indice["partidas"].items()):
+        if not partida_indexable(cc, slug_ap, slug_p):
+            continue
         salida.append(
             {
                 "loc": origen + ruta_partida(cc, slug_ap, slug_p),

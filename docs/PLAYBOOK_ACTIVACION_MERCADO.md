@@ -45,12 +45,18 @@ tienen texto propio.
 **Consecuencia operativa:** encender un mercado hispano no es añadir un código a
 una tupla. Es escribir su prosa.
 
-## 2. Las dos herramientas
+## 2. Las herramientas
 
 ```bash
-python tools/radar_activacion_mercados.py            # radiografía de los 22
+# Radiografía: estado de los 22 mercados y progreso de localización
+python tools/radar_activacion_mercados.py
 python tools/radar_activacion_mercados.py --mercado MX --muestra 0
 python tools/radar_activacion_mercados.py --json radar.json
+
+# Preparación y progreso de un mercado, apartado a apartado
+python tools/preparar_mercado.py --mercado MX --apartados
+python tools/preparar_mercado.py --mercado MX --apartados 02-04-01
+python tools/preparar_mercado.py --mercado MX --estado
 ```
 
 `tests/test_activacion_mercados.py` es la puerta: falla si un mercado de
@@ -85,21 +91,88 @@ traducción/adaptación asistida hay que revisar el vocabulario local (block vs
 ladrillo, pañete vs revoque, castillo vs castillete) o se reintroduce el mismo
 problema en español neutro.
 
-### B. Subconjunto con demanda (recomendado para empezar)
+### B. Subconjunto con demanda (implementado)
 
-Localizar primero los apartados con demanda demostrada —10–15 por mercado, unas
-150–300 fichas— y anunciar **solo esas**. Crece con cada oleada de contenido y
-nunca se presenta de golpe el catálogo entero.
+La unidad ya no es el mercado sino **la ficha**. Un mercado puede anunciar diez
+partidas sin anunciar las dos mil, y crecer por oleadas de contenido.
 
-Requiere un cambio de código que hoy no existe: la indexabilidad es por mercado
-(`ficha_indexable(cc)`), no por ficha. La forma limpia es un registro de fichas
-localizadas (`basedatos_partidas/datos/localizado/<CC>/…`) del que se deriven
-sitemap, `hreflang` y `X-Robots-Tag`, con la misma disciplina que hoy tiene
-`MERCADOS_FICHAS_INDEXABLES`: una fuente de verdad y tests que la cubren.
+Cómo funciona, en una frase: **una ficha se anuncia si tiene texto propio
+validado en `basedatos_partidas/datos/localizado/<CC>.json`**; su apartado se
+anuncia cuando hay al menos tres; y la portada del catálogo, si hay alguna. El
+resto del mercado sigue publicado, navegable y en `noindex`.
 
-**Antes de elegir B hay que decidirlo como producto**, porque toca el servicio
-`precios_publicos`, la generación de sitemaps y el `hreflang` del catálogo. No
-se hace por la puerta de atrás.
+La decisión vive en una sola función, `precios_publicos.resto_indexable()`, y
+de ella salen el `<meta robots>`, el `X-Robots-Tag` y el sitemap. Es la lección
+del catálogo entero: cuando el meta decía «index» y la cabecera «noindex»,
+Google aplicó la más restrictiva y el catálogo se cayó del índice sin que nadie
+lo pidiera.
+
+El registro tiene una guardia real, no una promesa: una entrada sin título, con
+descripción de menos de 120 caracteres o con la descripción española copiada
+(comparada también contra la variante de terminología local) **no enciende
+nada**. Es un borrador.
+
+#### El flujo de trabajo, comando a comando
+
+```bash
+# 1. Ver qué apartados tiene el mercado y cuántas partidas cada uno
+python tools/preparar_mercado.py --mercado MX --apartados
+
+# 2. Crear las entradas de los apartados elegidos (no pisa lo ya escrito)
+python tools/preparar_mercado.py --mercado MX --apartados 02-04-01,12-05-03
+
+# 3. Escribir el texto de cada partida en datos/localizado/MX.json
+#    (cada entrada trae el texto español en "_origen" como referencia)
+
+# 4. Ver el progreso: cuántas válidas, qué apartados ya se anunciarían
+python tools/preparar_mercado.py --mercado MX --estado
+
+# 5. Regenerar el artefacto del mercado (obligatorio si ya estaba encendido;
+#    recomendable siempre, porque es lo que se sirve)
+python tools/generar_precios_publicos.py
+
+# 6. Comprobar la prosa y la puerta
+python tools/radar_activacion_mercados.py --mercado MX
+python -m pytest tests/test_mercados_incrementales.py tests/test_activacion_mercados.py
+```
+
+#### Cómo se escribe una entrada
+
+La referencia es el vocabulario del país, no un sinónimo del español. Ejemplo
+del patrón (México; el dato de precio no se toca, eso lo pone el catálogo):
+
+```json
+{
+  "partidas": {
+    "02.04.01.010": {
+      "titulo": "Muro de block de concreto 15x20x40 asentado con mortero",
+      "descripcion": "Suministro y colocación de muro de block hueco de concreto de 15x20x40 cm, asentado con mortero cemento-arena en proporción 1:5, incluyendo castillos y dalas de desplante y cerramiento, refuerzo horizontal, andamio, plomeo y limpieza del área. La cantidad se mide por metro cuadrado de muro terminado, descontando vanos mayores a 1 m². No incluye aplanado ni pintura.",
+      "recursos": {
+        "MT-BLOCK-15": "Block hueco de concreto 15x20x40 cm"
+      },
+      "revisado": "2026-11-06"
+    }
+  }
+}
+```
+
+Reglas de estilo que se comprueban solas: el título describe el trabajo (no el
+material), la descripción dice **qué incluye y cómo se mide**, y los nombres de
+los recursos usan el término del país (block, castillo, dala, plafón, losa,
+impermeabilizante acrílico).
+
+#### Qué NO es localizar
+
+- Cambiar «hormigón» por «concreto» en las 2.000 fichas con un buscar y
+  reemplazar. Sube la similitud a 0,99 otra vez y no aporta nada al lector.
+- Rellenar con sinónimos automáticos o traducción de máquina sin revisar.
+- Encender un apartado con una sola ficha: por eso el mínimo es tres.
+
+#### Estado de partida
+
+Hoy no hay ningún registro (`datos/localizado/` está vacío), así que nada
+cambia en producción: los 16 mercados hispanos siguen en `noindex` y en
+`sitemap_index.xml` siguen los mismos 7 hijos.
 
 ## 5. Protocolo de cambio seguro (aplica a todo, no solo al catálogo)
 
