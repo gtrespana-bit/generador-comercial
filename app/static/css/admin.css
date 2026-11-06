@@ -112,6 +112,17 @@
   --e-6: 24px;
   --e-8: 32px;
 
+  /* Sombras y velos, todos del navy de la marca. Un rgba verde suelto
+     (11,91,56 / 12,26,20) es residuo de la paleta anterior: sobre el azul
+     marino se lee como un halo de otro producto. */
+  --sombra-1: rgba(6, 20, 39, 0.07);
+  --sombra-2: rgba(6, 20, 39, 0.12);
+  --sombra-3: rgba(6, 20, 39, 0.18);
+  --velo: rgba(6, 20, 39, 0.45);
+  --brillo-activo: rgba(201, 242, 77, 0.30);
+  --anillo-brand: rgba(18, 59, 114, 0.16);
+  --anillo-brand-tenue: rgba(18, 59, 114, 0.06);
+
   --radio: 14px;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   color: var(--text-main);
@@ -182,6 +193,13 @@ body.dark-mode {
   --mapa-3-texto: #000000;
   --mapa-4-bg: #7fb0e3;
   --mapa-4-texto: #061427;
+
+  --sombra-1: rgba(0, 0, 0, 0.35);
+  --sombra-2: rgba(0, 0, 0, 0.45);
+  --sombra-3: rgba(0, 0, 0, 0.55);
+  --velo: rgba(0, 0, 0, 0.62);
+  --anillo-brand: rgba(127, 176, 227, 0.20);
+  --anillo-brand-tenue: rgba(127, 176, 227, 0.08);
 }
 
 * { box-sizing: border-box; }
@@ -293,7 +311,7 @@ code { background: var(--surface-3); border-radius: 5px; padding: 2px 6px; font-
 .sidebar-nav .nav-item.activo {
   background: var(--bg-sidebar-active);
   color: var(--text-sidebar-active);
-  box-shadow: 0 6px 16px rgba(11, 91, 56, 0.34);
+  box-shadow: 0 6px 16px var(--brillo-activo);
 }
 .sidebar-nav .nav-item.activo svg { opacity: 1; }
 .nav-nombre { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -925,7 +943,7 @@ button.link:hover { color: var(--danger-hover); }
 }
 .admin-kit-overlay {
   position: fixed; inset: 0; z-index: 70;
-  background: rgba(12, 26, 20, 0.42);
+  background: var(--velo);
   display: none; align-items: flex-start; justify-content: center; padding: 9vh 16px 16px;
 }
 .admin-kit-overlay.open { display: flex; }
@@ -1002,7 +1020,7 @@ body.menu-abierto { overflow: hidden; }
   body.menu-abierto .sidebar { transform: translateX(0); }
   body.menu-abierto .sidebar-fondo {
     display: block; position: fixed; inset: 0; z-index: 45;
-    background: rgba(12,26,20,0.42);
+    background: var(--velo);
   }
   .menu-toggle { display: inline-flex; }
   main.content { padding: 18px 16px 60px; }
@@ -1108,7 +1126,7 @@ body.menu-abierto { overflow: hidden; }
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(14, 43, 32, 0.12);
+  box-shadow: 0 12px 30px var(--sombra-3);
 }
 .vista-form { display: grid; gap: var(--e-2); }
 .vista-form-linea { display: flex; gap: var(--e-2); align-items: center; }
@@ -1488,8 +1506,8 @@ body.dark-mode .admin-kit-item.sel { background: var(--blue-bg); }
   .panel-analitica .kpi-nota { display: block; color: var(--text-muted); font-size: var(--t-2xs); margin-top: var(--e-1); }
 
   .panel-analitica .vivo-barra { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; padding: 14px 18px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface-2); margin-bottom: 18px; }
-  .panel-analitica .vivo-punto { width: 10px; height: 10px; border-radius: 50%; background: var(--brand-color); box-shadow: 0 0 0 4px rgba(11,91,56,0.14); animation: latir 2.4s ease-in-out infinite; }
-  @keyframes latir { 0%, 100% { box-shadow: 0 0 0 3px rgba(11,91,56,0.12); } 50% { box-shadow: 0 0 0 7px rgba(11,91,56,0.05); } }
+  .panel-analitica .vivo-punto { width: 10px; height: 10px; border-radius: 50%; background: var(--brand-color); box-shadow: 0 0 0 4px var(--anillo-brand); animation: latir 2.4s ease-in-out infinite; }
+  @keyframes latir { 0%, 100% { box-shadow: 0 0 0 3px var(--anillo-brand); } 50% { box-shadow: 0 0 0 7px var(--anillo-brand-tenue); } }
   .panel-analitica .vivo-barra b { font-size: var(--t-lg); }
   .panel-analitica .vivo-dato { display: flex; flex-direction: column; gap: 2px; }
   .panel-analitica .vivo-dato span { color: var(--text-muted); font-size: var(--t-2xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
