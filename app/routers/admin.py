@@ -285,6 +285,27 @@ def buscar_global_web(
     )
 
 
+@router.get("/admin/comandos", include_in_schema=False)
+def comandos_panel_web(
+    request: Request,
+    q: str = "",
+    db: Session = Depends(get_operator_db),
+):
+    """API de la consola de comandos de la paleta (⌘K).
+
+    Devuelve solo lo que el rol de la sesión puede lanzar; el servidor vuelve a
+    comprobarlo al ejecutar, porque esto es una comodidad y no una puerta.
+    `q` filtra por título, descripción o alias.
+    """
+    from ..services.comandos_panel import buscar_comandos
+
+    rol = str(db.info.get("operador_rol") or "")
+    return JSONResponse(
+        {"q": q, "comandos": buscar_comandos(rol, q)},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @router.get("/admin/notificaciones", include_in_schema=False)
 def notificaciones_web(request: Request, db: Session = Depends(get_operator_db)):
     """API de la campana de notificaciones (A4)."""

@@ -247,3 +247,183 @@ _MESES = {
     1: "Ene", 2: "Feb", 3: "Mar", 4: "Abr", 5: "May", 6: "Jun",
     7: "Jul", 8: "Ago", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dic",
 }
+
+
+# ---------------------------------------------------------------------------
+# Movimiento del MRR (tramo F)
+# ---------------------------------------------------------------------------
+#
+# `resumen_financiero` da el MRR de hoy y su variación contra el mes anterior.
+# Eso responde «cuánto» pero no «por qué»: un mes puede cerrar plano con dos
+# altas y dos bajas que se compensan, y esa es justo la información que dice si
+# el negocio crece o se está fugando. Aquí se descompone el mes en las cuatro
+# piezas estándar —nuevo, expansión, contracción y baja— y se comprueba que
+# cuadren: apertura + neto = cierre, sin residuos ni «ajustes».
+
+def _mrr_de_licencia(licencia: Licencia) -> float:
+    """Ingreso mensual recurrente que aporta una licencia.
+
+    Los planes anuales se reparten entre doce meses (misma regla que
+    ``resumen_financiero``), para que el MRR no salte el día que alguien paga
+    un año de golpe.
+    """
+    importe = float(licencia.importe or 0.0)
+    return importe if _es_mensual(licencia) else importe / 12.0
+
+
+def _licencia_cubre(licencia: Licencia, dia: date) -> bool:
+    """¿La licencia da acceso de pago ese día?
+
+    Se decide por fechas y no por ``estado``: una licencia vencida en octubre
+    conserva ``estado="vencida"`` para siempre, así que mirar el estado haría
+    desaparecer también el histórico. Solo se excluye lo cancelado a mano, que
+    es una decisión, no el paso del tiempo.
+    """
+    if licencia.origen != "pago" or float(licencia.importe or 0.0) <= 0:
+        return False
+    if (licencia.estado or "") == "cancelada":
+        return False
+    if not licencia.inicio or not licencia.vence:
+        return False
+    return licencia.inicio <= dia <= licencia.vence
+
+
+def _mrr_por_organizacion(licencias, dia: date) -> dict[int, float]:
+    """MRR que aporta cada cliente ese día (suma de sus licencias vigentes)."""
+    acumulado: dict[int, float] = defaultdict(float)
+    for licencia in licencias:
+        if _licencia_cubre(licencia, dia):
+            acumulado[licencia.organizacion_id] += _mrr_de_licencia(licencia)
+    return {org: round(monto, 2) for org, monto in acumulado.items() if monto > 0}
+
+
+def _descomponer(apertura: dict[int, float], cierre: dict[int, float]) -> dict:
+    """Las cuatro piezas del mes, derivadas del paso de apertura a cierre.
+
+    Se calculan por cliente para que «expansión» y «contracción» signifiquen
+    algo: un cliente que sube de plan y otro que baja no son dos altas.
+    """
+    nuevo = round(sum(m for org, m in cierre.items() if org not in apertura), 2)
+    baja = round(sum(m for org, m in apertura.items() if org not in cierre), 2)
+    expansion = round(
+        sum(m - apertura[org] for org, m in cierre.items()
+            if org in apertura and m > apertura[org]),
+        2,
+    )
+    contraccion = round(
+        sum(apertura[org] - m for org, m in cierre.items()
+            if org in apertura and m < apertura[org]),
+        2,
+    )
+    neto = round(nuevo + expansion - contraccion - baja, 2)
+    return {
+        "nuevo": nuevo,
+        "expansion": expansion,
+        "contraccion": contraccion,
+        "baja": baja,
+        "neto": neto,
+        "clientes_nuevos": sum(1 for org in cierre if org not in apertura),
+        "clientes_baja": sum(1 for org in apertura if org not in cierre),
+        "clientes_expansion": sum(
+            1 for org, m in cierre.items() if org in apertura and m > apertura[org]
+        ),
+        "clientes_contraccion": sum(
+            1 for org, m in cierre.items() if org in apertura and m < apertura[org]
+        ),
+        "clientes_activos": len(cierre),
+    }
+
+
+def movimiento_mrr(
+    db,
+    *,
+    hoy: date | None = None,
+    meses: int = 6,
+) -> dict:
+    """Cómo se movió el MRR, mes a mes, y por qué.
+
+    Devuelve el mes en curso descompuesto (apertura, nuevo, expansión,
+    contracción, baja, cierre) y la serie de los ``meses`` anteriores para ver
+    la tendencia. ``cuadra`` es la comprobación de que la aritmética cierra:
+    apertura + neto == cierre. Si algún día deja de cuadrar, es un bug del
+    cálculo y la tarjeta lo dice en vez de esconderlo.
+    """
+    hoy = hoy or date.today()
+    licencias = db.query(Licencia).all()
+    inicio_mes = hoy.replace(day=1)
+
+    serie: list[dict] = []
+    primero = inicio_mes
+    for _ in range(max(1, int(meses)) - 1):
+        primero = _mes_anterior(primero)
+
+    cursor = primero
+    while cursor.year < hoy.year or (cursor.year == hoy.year and cursor.month <= hoy.month):
+        fin_mes = _mes_siguiente(cursor) - timedelta(days=1)
+        apertura_dia = cursor - timedelta(days=1)
+        # El mes en curso se mide hasta hoy: contar licencias que vencen el día
+        # 30 como si ya estuvieran cobradas sería vender humo.
+        cierre_dia = min(fin_mes, hoy)
+        apertura = _mrr_por_organizacion(licencias, apertura_dia)
+        cierre = _mrr_por_organizacion(licencias, cierre_dia)
+        piezas = _descomponer(apertura, cierre)
+        mrr_inicio = round(sum(apertura.values()), 2)
+        mrr_cierre = round(sum(cierre.values()), 2)
+        serie.append({
+            "clave": f"{cursor.year}-{cursor.month:02d}",
+            "etiqueta": f"{_MESES[cursor.month]} {cursor.year}",
+            "corto": _MESES[cursor.month],
+            "desde": cursor,
+            "hasta": cierre_dia,
+            "en_curso": cursor == inicio_mes,
+            "inicio": mrr_inicio,
+            "cierre": mrr_cierre,
+            **piezas,
+            "variacion": (
+                round((mrr_cierre - mrr_inicio) / mrr_inicio * 100, 1)
+                if mrr_inicio > 0
+                else None
+            ),
+            "cuadra": round(mrr_inicio + piezas["neto"] - mrr_cierre, 2) == 0,
+        })
+        cursor = _mes_siguiente(cursor)
+
+    actual = serie[-1]
+    return {
+        "hoy": hoy,
+        "mes": actual,
+        "serie": serie,
+        "cuadra": all(mes["cuadra"] for mes in serie),
+        "maximo": max([m["cierre"] for m in serie] + [0.0]),
+        "chart": _geometria_mrr(serie),
+    }
+
+
+def _geometria_mrr(serie: list[dict], *, ancho: int = 300, alto: int = 90) -> dict:
+    """Coordenadas de las barras de la serie, listas para un SVG.
+
+    Se calcula aquí y no en la plantilla porque la plantilla no puede hacer
+    aritmética con estilos (la CSP prohíbe `style=`), y porque así el gráfico
+    se puede probar sin abrir un navegador.
+    """
+    if not serie:
+        return {"ancho": ancho, "alto": alto, "base": alto, "puntos": [], "maximo": 0.0}
+    maximo = max((mes["cierre"] for mes in serie), default=0.0) or 0.0
+    hueco = 6
+    ancho_barra = max(4.0, (ancho - hueco * (len(serie) - 1)) / len(serie))
+    puntos = []
+    for indice, mes in enumerate(serie):
+        alto_barra = (mes["cierre"] / maximo * (alto - 8)) if maximo else 0.0
+        puntos.append({
+            "clave": mes["clave"],
+            "x": round(indice * (ancho_barra + hueco), 2),
+            "y": round(alto - alto_barra, 2),
+            "ancho": round(ancho_barra, 2),
+            "alto": round(alto_barra, 2),
+            "etiqueta": mes["corto"],
+            "cierre": mes["cierre"],
+            "neto": mes["neto"],
+            "positivo": mes["neto"] >= 0,
+            "en_curso": mes["en_curso"],
+        })
+    return {"ancho": ancho, "alto": alto, "base": alto, "puntos": puntos, "maximo": round(maximo, 2)}

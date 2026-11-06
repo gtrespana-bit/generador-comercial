@@ -554,3 +554,72 @@ Queda para el tramo F lo que ya estaba aprobado aparte: la **consola de
 comandos en ⌘K** (ejecutar, no solo buscar) y el **movimiento del MRR**
 (nuevo, expansión, contracción y baja del mes), que `resumen_financiero` hoy no
 calcula.
+
+---
+
+## Tramo F · Hacer, no solo mirar (mismo día)
+
+Los cinco huecos del informe están cerrados. Estos dos últimos no cambian cómo
+se ve el panel: cambian lo que se puede hacer con él.
+
+### F1 · La paleta es una consola, no un buscador
+
+⌘K buscaba (clientes, licencias, compras, equipo) y se quedaba a medio camino:
+para cualquier acción había que cerrar la paleta, navegar y encontrar el botón.
+
+Ahora, al abrirla, ya está la lista de lo que se puede lanzar —**«Compras por
+revisar»**, «Buzón de soporte», «Clientes en riesgo de baja»— y escribiendo
+aparecen los comandos junto a los resultados. Cada comando dice qué hace, y los
+que cambian estado llevan un `Enter` a la derecha: **el primer Enter no ejecuta
+nada**, abre la confirmación con el efecto real («se enviarán correos a los
+clientes que vencen en los próximos 15 días»); el segundo Enter envía.
+
+Decisiones que importan:
+
+- **El catálogo vive en el servidor** (`app/services/comandos_panel.py`), no en
+  el JavaScript: rol, textos y destino se cambian en un sitio y la paleta se
+  entera sola.
+- **Ningún comando inventa una ruta.** Cada uno apunta a una ruta que ya
+  existía; una prueba recorre las rutas reales de la aplicación (incluidos los
+  routers diferidos) y falla si un comando deja de enrutar.
+- **El rol filtra** igual que el menú, y la ruta vuelve a comprobar el rol al
+  ejecutar: la paleta es una comodidad, nunca una puerta trasera.
+- **Se envía un formulario real**, no un `fetch` con permisos propios: el CSRF
+  por origen, el rol y el redirect con el mensaje siguen siendo los de siempre.
+  Cero rutas nuevas para escribir.
+
+### F2 · El MRR se mueve, y ahora se ve por qué
+
+`resumen_financiero` daba el MRR de hoy y su variación contra el mes anterior.
+Con eso no se distingue un mes plano de dos altas y dos bajas que se compensan.
+
+`movimiento_mrr` descompone el mes en las cuatro piezas estándar —**nuevo,
+expansión, contracción y baja**— y se calcula **por cliente**, para que «sube de
+plan» y «baja de plan» no se confundan con altas; también cuenta clientes, no
+solo importes. La tarjeta de **Ingresos › Cobros del mes** lo presenta como una
+cuenta que se lee de arriba abajo (apertura → sumas → restas → cierre) con la
+serie de seis meses al lado, y el KPI de MRR de **Hoy** gana una línea con el
+porqué del cambio.
+
+- **Cuadra, y se comprueba.** Apertura + neto = cierre en cada mes; si algún día
+  no cuadra, la tarjeta lo dice en rojo en vez de esconder la diferencia.
+- **El histórico no se reescribe.** Se decide por fechas (`inicio ≤ día ≤
+  vence`) y no por `estado`: una licencia vencida en octubre conserva
+  `estado="vencida"` para siempre, y mirar el estado habría borrado también los
+  meses pasados. Solo se excluye lo cancelado a mano, que es una decisión.
+- **El mes en curso se mide hasta hoy**: contar licencias que vencen el día 30
+  como si ya estuvieran cobradas sería vender humo.
+- **Los importes anuales se reparten entre doce meses**, así que el MRR no salta
+  el día que alguien paga un año de golpe.
+
+### Cifras
+
+| | Tramo E | Tramo F |
+|---|---|---|
+| Comandos en ⌘K | 0 (solo búsqueda) | **11** (9 navegación, 2 acciones con confirmación) |
+| Movimiento del MRR | no existía | **4 piezas + serie de 6 meses, con cuadre** |
+| Pruebas | 3406 | **3429** |
+
+Con esto, los cinco huecos aprobados del informe están cerrados. Lo que queda
+en la lista de deseos —pantalla de carga por sección, impresión de fichas y
+pruebas en navegador real— sigue fuera del plan acordado.

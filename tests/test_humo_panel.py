@@ -114,66 +114,6 @@ def test_la_app_arranca_en_un_proceso_limpio(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture
-def operador(entorno, monkeypatch):
-    """El entorno comercial de ``conftest`` + una sesión de operador real.
-
-    ``entorno`` siembra la organización con presupuestos, licencia, clientes y
-    facturas; aquí solo se añade la puerta de operador (``get_operator_db``)
-    con la misma identidad verificada que usa el panel.
-    """
-    Session, ids, _rol = entorno
-    monkeypatch.setattr(common, "DATABASE_IS_SQLITE", False)
-    # Sin la semilla de operadores el panel responde 303 a /organizaciones y
-    # el humo pasaría sin abrir ninguna página.
-    monkeypatch.setenv("COTIZAT_OPERADORES", EMAIL_OPERADOR)
-    monkeypatch.setattr(
-        SupabaseAuthSettings, "from_environment", classmethod(lambda _cls: SETTINGS)
-    )
-
-    def _db_operador(request: Request):
-        from app.auth import OrganizationAccessDenied
-
-        db = Session()
-        db.info["usuario_id"] = ids[1]
-        db.info["auth_email"] = EMAIL_OPERADOR
-        request.state.supabase_identity = SupabaseIdentity(
-            auth_user_id=AUTH_UUID,
-            email=EMAIL_OPERADOR,
-            email_verified=True,
-            name="Operador",
-        )
-        if not es_operador(EMAIL_OPERADOR, email_verificado=True):
-            db.close()
-            raise OrganizationAccessDenied("No tienes acceso a esta sección.")
-        db.info["es_operador"] = True
-        db.info["operador_rol"] = rol_operador(
-            EMAIL_OPERADOR, email_verificado=True, db=db
-        )
-        try:
-            yield db
-        finally:
-            db.close()
-
-    app.dependency_overrides[get_operator_db] = _db_operador
-    try:
-        yield Session, ids
-    finally:
-        app.dependency_overrides.pop(get_operator_db, None)
-
-
-def _cliente(*, con_sesion: bool = True) -> TestClient:
-    # raise_server_exceptions=False: una página que revienta devuelve 500 en
-    # lugar de tumbar la prueba, así se pueden listar todas las que fallan.
-    cliente = TestClient(
-        app, base_url="https://cotizat.test", raise_server_exceptions=False
-    )
-    if con_sesion:
-        cliente.cookies.set(ACCESS_COOKIE, "access-token")
-        cliente.cookies.set(REFRESH_COOKIE, "refresh-token")
-    return cliente
-
-
 def _revisar(cliente: TestClient, urls: list[str], *, permitidos=(200,)) -> list[int]:
     """Pide cada URL y falla listando todas las que se salen de lo permitido."""
     fallos = []
@@ -196,7 +136,7 @@ def _revisar(cliente: TestClient, urls: list[str], *, permitidos=(200,)) -> list
 # ---------------------------------------------------------------------------
 
 
-def test_las_paginas_del_panel_cargan_su_hoja_y_marcan_el_area(operador):
+def test_las_paginas_del_panel_cargan_su_hoja_y_marcan_el_area(operador, cliente_panel):
     """La piel viaja en `admin.css` y cada página declara su área en `<body>`.
 
     Desde el tramo B el CSS del panel ya no se incrusta en la respuesta: se
@@ -204,7 +144,7 @@ def test_las_paginas_del_panel_cargan_su_hoja_y_marcan_el_area(operador):
     necesita `.panel-<área>` para que su CSS (que ahora vive en el mismo
     archivo) no alcance a las demás.
     """
-    respuesta = _cliente().get("/admin")
+    respuesta = cliente_panel.get("/admin")
     assert respuesta.status_code == 200
     html = respuesta.text
     assert "/static/css/admin.css?v=" in html, (
@@ -224,13 +164,14 @@ def test_el_panel_no_se_abre_sin_sesion_de_operador():
     Aquí se usa el camino real de autenticación (sin la dependencia sustituida):
     sin sesión y sin semilla de operadores, ``/admin`` no pinta el panel.
     """
-    respuesta = _cliente(con_sesion=False).get("/admin", follow_redirects=False)
+    anonimo = TestClient(app, base_url="https://cotizat.test", raise_server_exceptions=False)
+    respuesta = anonimo.get("/admin", follow_redirects=False)
     assert respuesta.status_code in (301, 302, 303, 307, 308, 401, 403), (
         f"/admin sin sesión devolvió {respuesta.status_code}"
     )
 
 
-def test_todas_las_pestanas_del_panel_responden(operador):
+def test_todas_las_pestanas_del_panel_responden(operador, cliente_panel):
     """Área por área y pestaña por pestaña, tal como se navega de verdad."""
     Session, ids = operador
     org_id = ids[0]
@@ -252,10 +193,10 @@ def test_todas_las_pestanas_del_panel_responden(operador):
 
     # Aquí se exige 200: son las páginas del menú, las mismas que se navegan a
     # diario. Un 303 a /organizaciones significa que el operador no entra.
-    _revisar(_cliente(), urls)
+    _revisar(cliente_panel, urls)
 
 
-def test_todas_las_rutas_get_del_panel_responden(operador):
+def test_todas_las_rutas_get_del_panel_responden(operador, cliente_panel):
     """Todas las rutas GET de ``app/routers`` que cuelgan de ``/admin``.
 
     Se leen del código fuente a propósito: las exportaciones CSV y los PDF
@@ -301,7 +242,7 @@ def test_todas_las_rutas_get_del_panel_responden(operador):
     # Las exportaciones y las fichas pueden redirigir con un mensaje (una
     # licencia de cortesía no tiene recibo) o responder 404 si el registro no
     # existe; lo que nunca es aceptable es un 500, un 401 o un 403.
-    codigos = _revisar(_cliente(), urls, permitidos=(200, 303, 404))
+    codigos = _revisar(cliente_panel, urls, permitidos=(200, 303, 404))
     assert codigos.count(200) >= 18, (
         f"solo {codigos.count(200)} de {len(urls)} rutas responden 200: "
         "el humo estaría pasando sin abrir el panel de verdad"

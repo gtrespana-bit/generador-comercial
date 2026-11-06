@@ -24,6 +24,77 @@
   </div>
 </div>
 
+{# Movimiento del MRR: el valor puntual ya está en Hoy; aquí está el por qué.
+   Se lee como una cuenta: lo que había al abrir el mes, lo que entró, lo que
+   subió, lo que bajó, lo que se fue y lo que hay ahora. Si no cuadrara, la
+   propia tarjeta lo avisa en vez de esconder la diferencia. #}
+<div class="card mrr-mov">
+  <div class="card-header">
+    <h2>Movimiento del MRR · {{ mrr.mes.etiqueta }}</h2>
+    <div class="card-header-acc">
+      <span class="badge {{ 'badge-success' if mrr.mes.neto >= 0 else 'badge-danger' }}">
+        {{ '+' if mrr.mes.neto >= 0 else '−' }}{{ "%.2f"|format(mrr.mes.neto|abs) }} US$/mes
+      </span>
+      {% if mrr.mes.variacion is not none %}
+      <span class="badge badge-neutral">{{ '+' if mrr.mes.variacion >= 0 else '−' }}{{ "%.1f"|format(mrr.mes.variacion|abs) }}%</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <p class="mrr-mov-nota">
+    Del {{ mrr.mes.desde|local_fecha('%d/%m') }} a {{ mrr.mes.hasta|local_fecha('%d/%m') }}:
+    lo que entra de clientes nuevos, lo que sube de plan, lo que baja y lo que se va.
+    {% if mrr.cuadra %}<span class="mrr-cuadra">Apertura + neto = cierre, sin ajustes.</span>
+    {% else %}<span class="mrr-no-cuadra">Las cuentas no cierran: revisa el cálculo antes de fiarte.</span>{% endif %}
+  </p>
+
+  <div class="mrr-mov-cuerpo">
+    <dl class="mrr-piezas">
+      <div class="mrr-fila">
+        <dt>Apertura del mes</dt>
+        <dd class="mrr-cifra">{{ "%.2f"|format(mrr.mes.inicio) }} <small>US$/mes</small></dd>
+      </div>
+      <div class="mrr-fila mrr-suma">
+        <dt>Nuevo <small>{{ mrr.mes.clientes_nuevos }} cliente{{ 's' if mrr.mes.clientes_nuevos != 1 else '' }}</small></dt>
+        <dd class="mrr-cifra">+{{ "%.2f"|format(mrr.mes.nuevo) }}</dd>
+      </div>
+      <div class="mrr-fila mrr-suma">
+        <dt>Expansión <small>{{ mrr.mes.clientes_expansion }} sube{{ 'n' if mrr.mes.clientes_expansion != 1 else '' }} de plan</small></dt>
+        <dd class="mrr-cifra">+{{ "%.2f"|format(mrr.mes.expansion) }}</dd>
+      </div>
+      <div class="mrr-fila mrr-resta">
+        <dt>Contracción <small>{{ mrr.mes.clientes_contraccion }} baja{{ 'n' if mrr.mes.clientes_contraccion != 1 else '' }} de plan</small></dt>
+        <dd class="mrr-cifra">−{{ "%.2f"|format(mrr.mes.contraccion) }}</dd>
+      </div>
+      <div class="mrr-fila mrr-resta">
+        <dt>Bajas <small>{{ mrr.mes.clientes_baja }} se va{{ 'n' if mrr.mes.clientes_baja != 1 else '' }}</small></dt>
+        <dd class="mrr-cifra">−{{ "%.2f"|format(mrr.mes.baja) }}</dd>
+      </div>
+      <div class="mrr-fila mrr-cierre">
+        <dt>Cierre{% if mrr.mes.en_curso %} (hoy){% endif %}</dt>
+        <dd class="mrr-cifra">{{ "%.2f"|format(mrr.mes.cierre) }} <small>US$/mes</small></dd>
+      </div>
+    </dl>
+
+    <figure class="mrr-mov-chart">
+      <svg viewBox="0 0 {{ mrr.chart.ancho }} {{ mrr.chart.alto }}" role="img"
+           aria-label="MRR al cierre de cada mes, últimos {{ mrr.serie|length }} meses">
+        <line class="eje" x1="0" y1="{{ mrr.chart.base }}" x2="{{ mrr.chart.ancho }}" y2="{{ mrr.chart.base }}"></line>
+        {% for p in mrr.chart.puntos %}
+        <rect class="barra {{ 'positiva' if p.positivo else 'negativa' }} {{ 'en-curso' if p.en_curso else '' }}"
+              x="{{ p.x }}" y="{{ p.y }}" width="{{ p.ancho }}" height="{{ p.alto }}" rx="2">
+          <title>{{ p.etiqueta }} · {{ "%.2f"|format(p.cierre) }} US$/mes · neto {{ '+' if p.neto >= 0 else '−' }}{{ "%.2f"|format(p.neto|abs) }}</title>
+        </rect>
+        {% endfor %}
+        {% for p in mrr.chart.puntos %}
+        <text x="{{ p.x + p.ancho / 2 }}" y="{{ mrr.chart.alto }}" text-anchor="middle">{{ p.etiqueta }}</text>
+        {% endfor %}
+      </svg>
+      <figcaption class="muted">MRR al cierre de cada mes · el mes en curso, hasta hoy</figcaption>
+    </figure>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-header">
     <h2>Movimientos de {{ periodo.etiqueta|lower }}</h2>
