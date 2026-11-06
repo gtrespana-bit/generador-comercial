@@ -39,7 +39,12 @@ def resumen_financiero(
     hoy: date | None = None,
     meses_serie: int = 6,
 ) -> dict:
-    """Métricas para el dashboard: negocio en movimiento, no solo acumulado."""
+    """Métricas para el dashboard: negocio en movimiento, no solo acumulado.
+
+    Ahora incluye comparativas contra el mes anterior para cada KPI principal:
+    MRR, ARR, ingresos del mes y clientes de pago. El operador ve de un golpe
+    si el número sube o baja, no solo el valor absoluto.
+    """
     hoy = hoy or date.today()
     inicio_mes = hoy.replace(day=1)
     fin_mes = (
@@ -47,6 +52,19 @@ def resumen_financiero(
         - timedelta(days=1)
         if inicio_mes.month == 12
         else inicio_mes.replace(month=inicio_mes.month + 1, day=1) - timedelta(days=1)
+    )
+
+    # Mes anterior para comparativas.
+    if inicio_mes.month == 1:
+        inicio_mes_anterior = inicio_mes.replace(year=inicio_mes.year - 1, month=12, day=1)
+    else:
+        inicio_mes_anterior = inicio_mes.replace(month=inicio_mes.month - 1, day=1)
+    fin_mes_anterior = (
+        inicio_mes_anterior.replace(year=inicio_mes_anterior.year + 1, month=1, day=1)
+        - timedelta(days=1)
+        if inicio_mes_anterior.month == 12
+        else inicio_mes_anterior.replace(month=inicio_mes_anterior.month + 1, day=1)
+        - timedelta(days=1)
     )
 
     licencias = db.query(Licencia).all()
@@ -65,6 +83,9 @@ def resumen_financiero(
     mrr_anual = 0.0
     renovaciones_mes = 0.0
     licencias_renovando = 0
+
+    # MRR del mes anterior (para comparativa).
+    mrr_mes_anterior = 0.0
 
     for lic in licencias:
         if lic.origen != "pago" or lic.importe <= 0:
@@ -85,10 +106,19 @@ def resumen_financiero(
             else:
                 mrr_anual += lic.importe / 12.0
 
-        # Renovaciones: importe previsto de las que vencen este mes. Se usan
-        # tanto las que vencen ahora como las que ya tenían vencimiento.
-        if lic.inicio.year == inicio_mes.year and lic.inicio.month == inicio_mes.month:
-            pass
+        # Vigente en el mes anterior: la licencia cubría algún día de ese mes.
+        vigente_mes_anterior = (
+            lic.inicio <= fin_mes_anterior
+            and lic.vence >= inicio_mes_anterior
+            and lic.estado == "activa"
+        )
+        if vigente_mes_anterior:
+            if _es_mensual(lic):
+                mrr_mes_anterior += lic.importe
+            else:
+                mrr_mes_anterior += lic.importe / 12.0
+
+        # Renovaciones: importe previsto de las que vencen este mes.
         if lic.vence and lic.vence.year == inicio_mes.year and lic.vence.month == inicio_mes.month:
             renovaciones_mes += lic.importe
             licencias_renovando += 1
@@ -97,6 +127,18 @@ def resumen_financiero(
 
     mrr = mrr_mensual + mrr_anual
     arr = mrr * 12.0
+    arr_mes_anterior = mrr_mes_anterior * 12.0
+
+    # Ingresos del mes actual y anterior.
+    ingresos_mes = round(
+        por_mes.get((inicio_mes.year, inicio_mes.month), {}).get("ingresos", 0.0), 2
+    )
+    ingresos_mes_anterior = round(
+        por_mes.get((inicio_mes_anterior.year, inicio_mes_anterior.month), {}).get(
+            "ingresos", 0.0
+        ),
+        2,
+    )
 
     # --- Convergencia: cuántos clientes alguna vez pagaron ------------------
     clientes_con_pago = len(ingresos_por_org)
@@ -104,6 +146,41 @@ def resumen_financiero(
     ticket_medio = round(ticket_sum / ticket_count, 2) if ticket_count else 0.0
     ltv_clients = list(ingresos_por_org.values())
     ltv_medio = round(sum(ltv_clients) / len(ltv_clients), 2) if ltv_clients else 0.0
+
+    # Agrupa licencias por organización para calcular clientes activos por mes.
+    lic_por_org: dict[int, list] = defaultdict(list)
+    for lic in licencias:
+        lic_por_org[lic.organizacion_id].append(lic)
+
+    # Clientes con licencia de pago vigente este mes vs mes anterior.
+    clientes_con_pago_mes = len(
+        {
+            org_id
+            for org_id, cadena in lic_por_org.items()
+            if any(
+                l.origen == "pago"
+                and l.importe > 0
+                and l.inicio <= hoy
+                and l.vence >= hoy
+                and l.estado == "activa"
+                for l in cadena
+            )
+        }
+    )
+    clientes_con_pago_mes_anterior = len(
+        {
+            org_id
+            for org_id, cadena in lic_por_org.items()
+            if any(
+                l.origen == "pago"
+                and l.importe > 0
+                and l.inicio <= fin_mes_anterior
+                and l.vence >= inicio_mes_anterior
+                and l.estado == "activa"
+                for l in cadena
+            )
+        }
+    )
 
     # --- Serie de meses -----------------------------------------------------
     serie = []
@@ -120,17 +197,33 @@ def resumen_financiero(
         })
         end = _mes_siguiente(end)
 
+    def _variacion(actual: float, anterior: float) -> float | None:
+        if anterior and anterior > 0:
+            return round((actual - anterior) / anterior * 100, 1)
+        if actual > 0 and anterior == 0:
+            return 100.0
+        return None
+
     return {
         "hoy": hoy,
         "mrr": round(mrr, 2),
+        "mrr_mes_anterior": round(mrr_mes_anterior, 2),
+        "mrr_variacion": _variacion(mrr, mrr_mes_anterior),
         "arr": round(arr, 2),
+        "arr_mes_anterior": round(arr_mes_anterior, 2),
+        "arr_variacion": _variacion(arr, arr_mes_anterior),
         "ingresos_total": round(ingresos_total, 2),
-        "ingresos_mes": round(por_mes.get((inicio_mes.year, inicio_mes.month), {}).get("ingresos", 0.0), 2),
+        "ingresos_mes": ingresos_mes,
+        "ingresos_mes_anterior": ingresos_mes_anterior,
+        "ingresos_variacion": _variacion(ingresos_mes, ingresos_mes_anterior),
         "renovaciones_mes": round(renovaciones_mes, 2),
         "licencias_renovando_mes": licencias_renovando,
         "ticket_medio": ticket_medio,
         "tasa_pago": tasa_pago,
         "clientes_con_pago": clientes_con_pago,
+        "clientes_con_pago_mes": clientes_con_pago_mes,
+        "clientes_con_pago_mes_anterior": clientes_con_pago_mes_anterior,
+        "clientes_variacion": _variacion(clientes_con_pago_mes, clientes_con_pago_mes_anterior),
         "organizaciones": organizaciones,
         "ltv_medio": ltv_medio,
         "licencias_activas": len(activas_pago),

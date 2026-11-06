@@ -3882,6 +3882,7 @@ class VistaGuardada(Base):
     modulo = Column(String(60), nullable=False)
     filtros = Column(Text, nullable=False, default="{}")
     columnas = Column(Text, nullable=False, default="[]")
+    favorita = Column(Boolean, nullable=False, default=False)
     creada_por = Column(String(254), nullable=False, default="")
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

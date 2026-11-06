@@ -1,0 +1,115 @@
+{# Ficha › Timeline unificado. Todo lo que ha pasado con este cliente en una
+   sola línea cronológica: licencias, compras, notas, cambios de CRM,
+   actividad del producto y acciones del panel. #}
+
+<div class="timeline-cabecera">
+  <div>
+    <h2 class="timeline-titulo">Timeline de {{ ficha.organizacion.nombre }}</h2>
+    <p class="muted timeline-subtitulo">
+      {{ timeline|length }} evento{{ 's' if timeline|length != 1 else '' }} en los últimos 30 días
+      · <span class="badge {{ 'badge-success' if ficha.vigente else 'badge-danger' }}">
+        {{ 'Acceso vigente' if ficha.vigente else 'Sin acceso activo' }}
+      </span>
+    </p>
+  </div>
+  <div class="timeline-filtros">
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'todos' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=todos">Todos</a>
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'licencia' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=licencia">Licencias</a>
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'compra' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=compra">Compras</a>
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'nota' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=nota">Notas</a>
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'admin' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=admin">Panel</a>
+    <a class="btn btn-sm {{ 'btn-secondary' if filtro_activo == 'producto' else 'btn-outline' }}"
+       href="?tab=timeline&filtro=producto">Producto</a>
+  </div>
+</div>
+
+{% set eventos = timeline %}
+{% if filtro_activo and filtro_activo != 'todos' %}
+  {% set eventos = eventos | selectattr('tipo', 'contains', filtro_activo) | list %}
+{% endif %}
+
+{% if not eventos %}
+<div class="card">
+  <div class="card-body vacio">
+    <b>Sin actividad registrada.</b>
+    <p>
+      Cuando se conceda una licencia, se active una compra, se escriba una nota
+      o el cliente use la aplicación, todo aparecerá aquí en orden cronológico.
+    </p>
+    {% if operador_rol in ('superadmin', 'admin') %}
+    <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#conceder">
+      Conceder acceso ahora
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+
+<div class="timeline">
+  {% for e in eventos %}
+  <div class="timeline-item timeline-{{ e.severidad }}">
+    <div class="timeline-marca">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="{{ e.icono }}"></svg>
+    </div>
+    <div class="timeline-contenido">
+      <div class="timeline-fila">
+        <time class="muted">{{ e.cuando.strftime('%d/%m/%Y %H:%M') if e.cuando else '—' }}</time>
+        {% if e.severidad != 'info' %}
+        <span class="badge badge-{{ e.severidad }}">{{ e.severidad }}</span>
+        {% endif %}
+      </div>
+      <div class="timeline-titulo">{{ e.titulo }}</div>
+      {% if e.detalle %}
+      <div class="timeline-detalle muted">{{ e.detalle }}</div>
+      {% endif %}
+      {% if e.url %}
+      <div class="timeline-accion">
+        <a class="btn btn-sm btn-secondary" href="{{ e.url }}">Abrir</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endif %}
+
+{% block extra_css %}
+  /* Timeline unificado de cliente */
+  .timeline-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .timeline-filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+  .btn-outline:hover { border-color: var(--brand-color); }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--border-color); margin-left: 24px; padding-left: 0; }
+  .timeline-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f0f5f2; position: relative; }
+  .timeline-item:last-of-type { border-bottom: 0; }
+  .timeline-item.critical { border-left: 3px solid var(--danger); }
+  .timeline-item.warning { border-left: 3px solid var(--warn); }
+  .timeline-item.success { border-left: 3px solid var(--success); }
+  .timeline-item.info { border-left: 3px solid var(--blue); }
+
+  .timeline-marca { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .timeline-critical .timeline-marca { border-color: var(--danger); color: var(--danger); }
+  .timeline-warning .timeline-marca { border-color: var(--warn); color: var(--warn); }
+  .timeline-success .timeline-marca { border-color: var(--success); color: var(--success); }
+  .timeline-info .timeline-marca { border-color: var(--blue); color: var(--blue); }
+
+  .timeline-contenido { flex: 1; min-width: 0; }
+  .timeline-fila { display: flex; gap: 10px; align-items: baseline; margin-bottom: 4px; flex-wrap: wrap; }
+  .timeline-fila time { font-size: 0.78rem; }
+  .timeline-titulo { font-size: 0.88rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+  .timeline-detalle { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 6px; }
+  .timeline-accion { margin-top: 4px; }
+
+  @media (max-width: 640px) {
+    .timeline { margin-left: 16px; }
+    .timeline-marca { width: 26px; height: 26px; }
+  }
+{% endblock %}

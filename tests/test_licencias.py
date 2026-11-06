@@ -36,7 +36,7 @@ from app.auth import (
 from app.database import Base, get_operator_db
 from app.main import app
 from app.models import Licencia, Membresia, Organizacion, Usuario
-from app.operadores import es_operador, operadores_configurados
+from app.operadores import es_operador, operadores_configurados, rol_operador
 from app.services.licencias import (
     GestionLicenciaError,
     cancelar_licencia,
@@ -449,6 +449,12 @@ def entorno(monkeypatch):
             db.close()
             raise OrganizationAccessDenied("No tienes acceso a esta sección.")
         db.info["es_operador"] = True
+        # Igual que `_establecer_contexto_identidad` en app/database.py: el rol
+        # sale de `rol_operador()` (semilla de entorno = superadmin). Sin esto
+        # las rutas de escritura responden «Se requiere el rol admin».
+        db.info["operador_rol"] = rol_operador(
+            identidad.email, email_verificado=identidad.email_verified, db=db
+        )
         try:
             yield db
         finally:
@@ -482,6 +488,28 @@ def test_un_cliente_normal_no_alcanza_el_panel(entorno, monkeypatch):
     assert "Panel de operador" not in respuesta.text
 
 
+def test_solo_admin_puede_otorgar(entorno):
+    """Decisión de producto del 06/11/2026: solo ``admin`` puede otorgar.
+
+    Conceder una prueba o activar una compra lo hacen ``admin`` y
+    ``superadmin``; ``soporte`` y ``analista`` pueden mirar el panel (y sus
+    listas) pero no mutar licencias ni compras. Es la matriz del rediseño, no
+    un efecto colateral: si alguien la cambia, esta prueba lo dice.
+    """
+    from app.services.operadores_admin import GestionEquipoError, exigir_rol
+
+    Session, _datos, _estado = entorno
+    with Session() as db:
+        for rol_sin_permiso in ("soporte", "analista", "", "miembro"):
+            db.info["operador_rol"] = rol_sin_permiso
+            with pytest.raises(GestionEquipoError):
+                exigir_rol(db, "admin", "superadmin")
+
+        for rol_con_permiso in ("admin", "superadmin"):
+            db.info["operador_rol"] = rol_con_permiso
+            exigir_rol(db, "admin", "superadmin")  # no levanta nada
+
+
 def test_el_operador_ve_el_panel_con_las_organizaciones(entorno, monkeypatch):
     Session, datos, estado = entorno
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@example.com")
@@ -490,7 +518,10 @@ def test_el_operador_ve_el_panel_con_las_organizaciones(entorno, monkeypatch):
         respuesta = client.get("/admin/licencias")
 
     assert respuesta.status_code == 200
-    assert "Panel de operador" in respuesta.text
+    # El sidebar del rediseño ya no dice «Panel de operador» a secas: muestra
+    # el rol con el que se entra, que es el dato que el operador necesita.
+    assert "Rol: superadmin" in respuesta.text
+    assert "titular@example.com" in respuesta.text
     assert "Constructora Cliente" in respuesta.text
     assert respuesta.headers["cache-control"] == "no-store"
 

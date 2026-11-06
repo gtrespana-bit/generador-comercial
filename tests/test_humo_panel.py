@@ -44,7 +44,7 @@ from app.auth import (
 from app.database import get_operator_db
 from app.main import app
 from app.models import CompraPlan, Licencia, Organizacion, Presupuesto
-from app.operadores import es_operador
+from app.operadores import es_operador, rol_operador
 from app.panel_arquitectura import FICHA_PESTANAS, SECCIONES, pestanas_de
 from app.routers import common
 
@@ -147,6 +147,9 @@ def operador(entorno, monkeypatch):
             db.close()
             raise OrganizationAccessDenied("No tienes acceso a esta sección.")
         db.info["es_operador"] = True
+        db.info["operador_rol"] = rol_operador(
+            EMAIL_OPERADOR, email_verificado=True, db=db
+        )
         try:
             yield db
         finally:

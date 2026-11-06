@@ -41,6 +41,35 @@
       background: var(--bg-body);
     }
 
+    /* Modo oscuro: se activa con la clase .dark-mode en <html> o <body>. */
+    html.dark-mode,
+    body.dark-mode {
+      --bg-body: #0b1120;
+      --bg-sidebar: #050a14;
+      --bg-sidebar-2: #081224;
+      --text-sidebar: #8fa3c0;
+      --text-sidebar-hover: #e2e8f0;
+      --bg-sidebar-hover: #123b72;
+      --bg-sidebar-active: #c9f24d;
+      --text-sidebar-active: #000000;
+      --brand-color: #5b9bd5;
+      --brand-hover: #3d7aad;
+      --accent-lime: #c9f24d;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-color: #1e2a3f;
+      --card-bg: #111827;
+      --danger: #ef4444;
+      --danger-hover: #b91c1c;
+      --danger-bg: #2d1b1b;
+      --success: #22c55e;
+      --success-bg: #0d2b1d;
+      --warn: #f59e0b;
+      --warn-bg: #2d230a;
+      --blue: #3b82f6;
+      --blue-bg: #1e293b;
+    }
+
     * { box-sizing: border-box; }
 
     body {
@@ -1015,6 +1044,167 @@
 
     /* Nota de una tarjeta (por qué existe el bloque). */
     .card-nota { font-size: 0.76rem; color: var(--text-muted); }
+
+    /* ================================================================
+     * Modo oscuro y productividad del operador                       *
+     * ================================================================ */
+    .sidebar-acciones {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .admin-dark-toggle,
+    .admin-cheatsheet {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-sidebar);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .admin-dark-toggle:hover,
+    .admin-cheatsheet:hover {
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
+      color: var(--text-sidebar-hover);
+    }
+
+    /* Botón cheatsheet en la topbar */
+    .admin-cheatsheet-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 0.78rem;
+      padding: 6px 10px;
+    }
+    .admin-cheatsheet-btn:hover {
+      border-color: var(--brand-color);
+      color: var(--brand-color);
+    }
+    .admin-cheatsheet-btn kbd {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--border-color);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    /* Vistas favoritas en el sidebar */
+    .sidebar-favoritas {
+      margin: 20px 0 0 0;
+    }
+    /* Estilos que estaban en línea en las plantillas del rediseño: con la CSP
+       vigente sólo valen las clases de este bloque de estilos. */
+    .alerta-banda-titulo {
+      margin: 0;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .timeline-titulo { margin: 0 0 4px 0; }
+    .timeline-subtitulo { margin: 0; }
+    .timeline-filtros { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Título de grupo del sidebar (antes iba en línea, que la CSP bloquea). */
+    .sidebar-grupo-titulo {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 0 0 8px 14px;
+    }
+    .sidebar-favoritas .nav-item {
+      font-size: 0.82rem;
+    }
+    .sidebar-favoritas svg {
+      opacity: 0.9;
+    }
+
+    /* Modal del cheatsheet */
+    .admin-cheatsheet-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(6,20,39,0.45);
+      backdrop-filter: blur(6px);
+    }
+    .admin-cheatsheet-modal.open { display: flex; align-items: center; justify-content: center; }
+    .admin-cheatsheet-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      width: min(640px, 92vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .admin-cheatsheet-panel h2 {
+      margin: 0 0 4px;
+      font-size: 1.25rem;
+    }
+    .admin-cheatsheet-panel p {
+      margin: 0 0 20px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .admin-cheatsheet-panel table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .admin-cheatsheet-panel td {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+    .admin-cheatsheet-panel td:first-child {
+      width: 34%;
+      color: var(--brand-color);
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+    }
+    .admin-cheatsheet-panel td:last-child {
+      text-align: right;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+    .admin-cheatsheet-panel .cheatsheet-cerrar {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .admin-cheatsheet-panel .cheatsheet-cerrar button {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .admin-cheatsheet-panel .cheatsheet-cerrar button:hover {
+      border-color: var(--brand-color);
+      color: var(--brand-color);
+    }
+
+    /* Ajustes de modo oscuro para componentes específicos */
+    body.dark-mode .admin-kit-panel { background: var(--card-bg); border-color: var(--border-color); }
+    body.dark-mode .admin-kit-empty { color: var(--text-muted); }
+    body.dark-mode .admin-kit-item { color: var(--text-main); border-color: var(--border-color); }
+    body.dark-mode .admin-kit-item.sel { background: var(--blue-bg); }
   </style>
 </head>
 <body>
@@ -1059,9 +1249,31 @@
       {% endfor %}
     </nav>
 
+    {% if vistas_favoritas %}
+    <div class="sidebar-favoritas">
+      <h3 class="sidebar-grupo-titulo">Favoritas</h3>
+      <nav class="sidebar-nav">
+        {% for v in vistas_favoritas %}
+        <a class="nav-item" href="{{ v.url }}" title="{{ v.nombre }}">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5l2-1 10 5 2-1v1z"></path><polyline points="7 2 11 2 11 18 7 18"></polyline></svg>
+          <span class="nav-nombre">{{ v.nombre }}</span>
+        </a>
+        {% endfor %}
+      </nav>
+    </div>
+    {% endif %}
+
     <div class="sidebar-footer">
       <span class="operador">{{ operador }}</span>
       <span class="operador-role">{% if operador_rol %}Rol: {{ operador_rol }}{% else %}Panel de operador{% endif %}</span>
+      <div class="sidebar-acciones">
+        <button type="button" class="admin-dark-toggle" data-admin-dark title="Cambiar modo oscuro" aria-label="Modo oscuro">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <button type="button" class="admin-cheatsheet" data-admin-cheatsheet title="Atajos de teclado (?)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12M6 16h12M12 16h0M12 8h0M12 8v8M12 8h0M12 8v-8M12 8h0M12 8v8"></path></svg>
+        </button>
+      </div>
       <a href="/organizaciones" class="volver-btn">
         <svg class="svg-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         <span>Volver a la app</span>
@@ -1092,6 +1304,10 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <span>Buscar</span>
           <kbd>⌘K</kbd>
+        </button>
+        <button type="button" class="admin-cheatsheet-btn" data-admin-cheatsheet title="Atajos de teclado (?)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12M6 16h12M12 16h0M12 8h0M12 8v8M12 8h0M12 8v-8M12 8h0M12 8v8"></path></svg>
+          <kbd>?</kbd>
         </button>
         <div class="admin-bell-wrap">
           <button type="button" class="admin-bell" data-admin-bell aria-label="Notificaciones" title="Centro de notificaciones">
@@ -1163,6 +1379,28 @@
     </main>
   </div>
 
+  <div class="admin-cheatsheet-modal" data-admin-cheatsheet-modal>
+    <div class="admin-cheatsheet-panel">
+      <h2>Atajos de teclado</h2>
+      <p>Navega el panel sin quitar las manos del teclado.</p>
+      <table>
+        <tr><td>⌘K / Ctrl+K</td><td>Buscador global (clientes, licencias, compras, equipo)</td></tr>
+        <tr><td>/</td><td>Abrir buscador global</td></tr>
+        <tr><td>G + H</td><td>Ir a Hoy (dashboard)</td></tr>
+        <tr><td>G + C</td><td>Ir a Clientes</td></tr>
+        <tr><td>G + I</td><td>Ir a Ingresos</td></tr>
+        <tr><td>G + W</td><td>Ir a Web (CMS)</td></tr>
+        <tr><td>G + A</td><td>Ir a Analítica</td></tr>
+        <tr><td>G + S</td><td>Ir a Sistema</td></tr>
+        <tr><td>?</td><td>Mostrar este menú de atajos</td></tr>
+        <tr><td>Esc</td><td>Cerrar buscador, notificaciones o este menú</td></tr>
+        <tr><td>↑↓ + Enter</td><td>Navegar y abrir un resultado de búsqueda</td></tr>
+      </table>
+      <div class="cheatsheet-cerrar">
+        <button type="button" data-admin-cheatsheet-cerrar>Cerrar</button>
+      </div>
+    </div>
+  </div>
   <script nonce="{{ request.state.csp_nonce }}" src="{{ 'js/admin-kit.js' | asset }}"></script>
   {% block extra_js %}{% endblock %}
 </body>

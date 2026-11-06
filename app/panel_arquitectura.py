@@ -28,6 +28,8 @@ import re
 from dataclasses import dataclass
 from urllib.parse import parse_qs, urlsplit
 
+from .models import ROLES_OPERADOR
+
 #: Trazado SVG (viewBox 0 0 24 24, trazo, sin relleno) de cada icono del menú.
 #: Se guardan aquí y no en las plantillas para que el sidebar se dibuje solo a
 #: partir de la definición de secciones.
@@ -73,6 +75,16 @@ ICONOS: dict[str, tuple[str, ...]] = {
 }
 
 
+#: Valor por omisión de ``roles_permitidos``: todos los roles operadores
+#: válidos (es decir, sin restricción; ver ``_rol_permite``).
+#:
+#: El import de ``ROLES_OPERADOR`` es obligatorio: usarlo sin importarlo fue el
+#: ``NameError`` de nivel de módulo del 05/11/2026 que impidió construir
+#: ``app.main`` —y con ello tumbó **todas** las rutas, no solo el panel—.
+#: ``tests/test_humo_panel.py`` arranca la app para que no vuelva a pasar.
+ROLES_TODOS = ROLES_OPERADOR
+
+
 @dataclass(frozen=True)
 class Pestana:
     """Una vista dentro de un área del panel."""
@@ -82,6 +94,8 @@ class Pestana:
     descripcion: str = ""
     #: Módulo de `vistas_guardadas` si esta pestaña admite filtros persistidos.
     vista_modulo: str = ""
+    #: Roles que pueden ver esta pestaña. Tupla vacía = todos los roles.
+    roles_permitidos: tuple[str, ...] = ()
 
     @property
     def clave(self) -> str:
@@ -102,10 +116,32 @@ class Seccion:
     #: editar el JavaScript a mano.
     atajo: str = ""
     pestanas: tuple[Pestana, ...] = ()
+    #: Roles que pueden ver esta sección. Tupla vacía = todos los roles.
+    roles_permitidos: tuple[str, ...] = ()
 
     @property
     def tiene_pestanas(self) -> bool:
         return len(self.pestanas) > 1
+
+
+def _rol_permite(rol: str | None, roles_permitidos: tuple[str, ...]) -> bool:
+    """Indica si un rol puede ver un elemento con ``roles_permitidos``.
+
+    Este filtro es de **presentación**: decide qué enlaces del menú y qué
+    pestañas se enseñan. La autorización de verdad —quién puede entrar y qué
+    puede escribir— la deciden ``get_operator_db`` + ``es_operador``,
+    ``exigir_rol`` y las políticas RLS; nunca esta función.
+
+    Tupla vacía significa «todos los roles». Sin rol declarado tampoco se
+    filtra: devolver ``False`` dejaba el sidebar vacío y rompía la ficha con
+    ``TemplateNotFound: 'admin/partes/ficha_.html'`` (500 del 05/11/2026 cuando
+    la sesión no traía ``operador_rol``).
+    """
+    if not roles_permitidos:
+        return True
+    if not rol:
+        return True
+    return rol in roles_permitidos
 
 
 #: El panel completo. Añadir una página aquí es añadir su navegación, su breadcrumb
@@ -118,6 +154,7 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="Lo que necesita una decisión antes de que cierre el día.",
         icono="hoy",
         atajo="h",
+        roles_permitidos=ROLES_TODOS,
     ),
     Seccion(
         id="clientes",
@@ -126,22 +163,26 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="La ficha de cada empresa: acceso, cobros, CRM y notas de gestión.",
         icono="clientes",
         atajo="c",
+        roles_permitidos=("superadmin", "admin", "soporte"),
         pestanas=(
             Pestana(
                 "directorio",
                 "Directorio",
                 "Todas las empresas con su plan, vencimiento e ingresos.",
                 vista_modulo="clientes",
+                roles_permitidos=("superadmin", "admin", "soporte"),
             ),
             Pestana(
                 "pipeline",
                 "Pipeline comercial",
                 "El estado comercial de cada cliente: lead, prueba, activo, riesgo o inactivo.",
+                roles_permitidos=("superadmin", "admin", "soporte"),
             ),
             Pestana(
                 "soporte",
                 "Buzón de soporte",
                 "Lo que escriben clientes y visitantes: leer, responder y cerrar cada mensaje.",
+                roles_permitidos=("superadmin", "admin", "soporte"),
             ),
         ),
     ),
@@ -152,34 +193,40 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="El ciclo completo del cobro: ventas, contratos, compras, renovaciones y cobros del mes.",
         icono="ingresos",
         atajo="i",
+        roles_permitidos=("superadmin", "admin"),
         pestanas=(
             Pestana(
                 "ventas",
                 "Ventas",
                 "Cada cobro confirmado: qué se vendió, a quién, cuándo y por cuánto.",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "renovaciones",
                 "Renovaciones",
                 "Qué vence este mes, cuánto importa y a quién hay que empujar.",
                 vista_modulo="renovaciones",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "compras",
                 "Compras por revisar",
                 "Comprobantes enviados por clientes: verificar y activar, o rechazar.",
                 vista_modulo="compras",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "cobros",
                 "Cobros del mes",
                 "Licencias, compras, facturas y pagos del mes natural.",
                 vista_modulo="cobros",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "contratos",
                 "Contratos y licencias",
                 "El registro de acceso: quién está dentro, hasta cuándo y por qué importe.",
+                roles_permitidos=("superadmin", "admin"),
             ),
         ),
     ),
@@ -190,21 +237,25 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="La landing, el SEO, los avisos y el changelog, sin tocar código.",
         icono="web",
         atajo="w",
+        roles_permitidos=("superadmin", "admin"),
         pestanas=(
             Pestana(
                 "contenido",
                 "Contenido y SEO",
                 "Textos de la landing y de las páginas SEO. El borrador no sale al público hasta que publicas.",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "avisos",
                 "Avisos y banners",
                 "Mantenimiento programado, avisos legales y anuncios con ventana de vigencia.",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "versiones",
                 "Versiones",
                 "Notas de versión publicadas en /novedades.",
+                roles_permitidos=("superadmin", "admin"),
             ),
         ),
     ),
@@ -215,6 +266,7 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="Embudo, retención, cohes y uso de funciones medidos en el servidor.",
         icono="analitica",
         atajo="a",
+        roles_permitidos=ROLES_TODOS,
     ),
     Seccion(
         id="sistema",
@@ -223,47 +275,56 @@ SECCIONES: tuple[Seccion, ...] = (
         descripcion="Operación, automatizaciones, datos, matrices de precios, equipo, accesos y auditoría del panel.",
         icono="sistema",
         atajo="s",
+        roles_permitidos=("superadmin",),
         pestanas=(
             Pestana(
                 "estado",
                 "Estado del servicio",
                 "Los mismos chequeos de /readyz, con respaldo, correo y errores del proceso.",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "automatizaciones",
                 "Automatizaciones",
                 "Las reglas que corren por cron y su efecto hoy, con disparo manual.",
                 vista_modulo="automatizaciones",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "datos",
                 "Salud de datos",
                 "Catálogo y configuración: huecos, precios anómalos y estado del despliegue de datos.",
+                roles_permitidos=("superadmin", "admin"),
             ),
             Pestana(
                 "precios",
                 "Matrices de precios",
                 "Carga de la matriz nacional de precios por país, con validación previa.",
+                roles_permitidos=("superadmin",),
             ),
             Pestana(
                 "equipo",
                 "Equipo",
                 "Quién puede administrar el panel y con qué rol.",
+                roles_permitidos=("superadmin",),
             ),
             Pestana(
                 "accesos",
                 "Flags y claves",
                 "Interruptores de funcionalidad y claves de integración.",
+                roles_permitidos=("superadmin",),
             ),
             Pestana(
                 "auditoria",
                 "Auditoría",
                 "Registro de cada acción tomada desde el panel.",
+                roles_permitidos=("superadmin", "admin", "soporte", "analista"),
             ),
             Pestana(
                 "correos",
                 "Correos de prueba",
                 "Enviar cualquier correo transaccional a un buzón real y revisarlo.",
+                roles_permitidos=("superadmin",),
             ),
         ),
     ),
@@ -279,42 +340,61 @@ FICHA_PESTANAS: tuple[Pestana, ...] = (
         "Qué tiene contratado, cuánto paga y desde cuándo.",
     ),
     Pestana(
+        "timeline",
+        "Timeline",
+        "Todo lo que ha pasado con este cliente: licencias, pagos, notas, cambios de estado y uso del producto, en una sola línea cronológica.",
+    ),
+    Pestana(
         "presupuestos",
         "Presupuestos y precios",
         "Uso real del cliente: presupuestos, partidas, precios modificados y ajustes (solo lectura).",
+        roles_permitidos=("superadmin",),
     ),
     Pestana(
         "acceso",
         "Acceso y licencias",
         "La cadena de licencias completa: conceder, renovar, recibo y suspensión.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "cobros",
         "Cobros",
         "Compras de plan, facturas y pagos del cliente.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "gestion",
         "CRM y notas",
         "Estado comercial, próximo contacto y notas internas del equipo.",
+        roles_permitidos=("superadmin", "admin", "soporte"),
     ),
     Pestana(
         "actividad",
         "Actividad",
         "Últimos movimientos del cliente y acciones tomadas desde el panel.",
+        roles_permitidos=("superadmin", "admin", "soporte", "analista"),
     ),
 )
 
 
-def pestana_ficha_valida(pestana: str) -> str:
+def pestana_ficha_valida(pestana: str, rol: str | None = None) -> str:
     pedida = (pestana or "").strip().lower()
-    for definida in FICHA_PESTANAS:
+    definidas = tuple(
+        p for p in FICHA_PESTANAS if _rol_permite(rol, p.roles_permitidos)
+    )
+    for definida in definidas:
         if definida.id == pedida:
             return definida.id
+    if definidas:
+        return definidas[0].id
+    # Sin ninguna pestaña visible se usa la primera definida: un id vacío se
+    # convierte en ``admin/partes/ficha_.html`` y tira la ficha con un 500.
     return FICHA_PESTANAS[0].id
 
 
-def ficha_pestanas_panel(organizacion_id: int, activa: str) -> list[dict]:
+def ficha_pestanas_panel(
+    organizacion_id: int, activa: str, rol: str | None = None
+) -> list[dict]:
     base = f"/admin/clientes/{int(organizacion_id)}"
     return [
         {
@@ -327,6 +407,7 @@ def ficha_pestanas_panel(organizacion_id: int, activa: str) -> list[dict]:
             "modulo_vistas": "",
         }
         for definida in FICHA_PESTANAS
+        if _rol_permite(rol, definida.roles_permitidos)
     ]
 
 
@@ -346,28 +427,45 @@ def seccion(seccion_id: str) -> Seccion:
     raise KeyError(seccion_id)
 
 
-def pestanas_de(seccion_id: str) -> tuple[Pestana, ...]:
-    """Pestañas definidas para un área (tupla vacía si el área no las tiene)."""
+def pestanas_de(seccion_id: str, rol: str | None = None) -> tuple[Pestana, ...]:
+    """Pestañas definidas para un área (tupla vacía si el área no las tiene).
+
+    Si se indica ``rol``, solo se devuelven las pestañas que ese rol puede ver.
+    """
     try:
-        return seccion(seccion_id).pestanas
+        definidas = seccion(seccion_id).pestanas
     except KeyError:
         return ()
+    if rol:
+        definidas = tuple(
+            p for p in definidas if _rol_permite(rol, p.roles_permitidos)
+        )
+    return definidas
 
 
-def pestana_valida(seccion_id: str, pestana: str) -> str:
+def pestana_valida(seccion_id: str, pestana: str, rol: str | None = None) -> str:
     """Pestaña pedida, o la primera si no existe.
 
     La URL de una pestaña se comparte y se guarda en favoritos; un `?tab=`
     escrito a mano o que quedó viejo no puede devolver un 404 en el panel.
+
+    Si se indica ``rol``, solo se consideran pestañas visibles para ese rol.
     """
     pedida = (pestana or "").strip().lower()
-    definidas = pestanas_de(seccion_id)
+    definidas = pestanas_de(seccion_id, rol=rol)
     if not pedida and definidas:
         return definidas[0].id
     for definida in definidas:
         if definida.id == pedida:
             return definida.id
-    return definidas[0].id if definidas else ""
+    if definidas:
+        return definidas[0].id
+    # Mismo criterio que en la ficha: sin pestañas visibles se usa la primera
+    # definida para que la plantilla exista siempre.
+    try:
+        return seccion(seccion_id).pestanas[0].id
+    except (KeyError, IndexError):
+        return ""
 
 
 def ruta_panel(seccion_id: str, pestana: str = "") -> str:
@@ -387,14 +485,21 @@ def modulo_de_vistas(seccion_id: str, pestana: str) -> str:
     return ""
 
 
-def pestanas_panel(seccion_id: str, activa: str, contadores: dict | None = None) -> list[dict]:
+def pestanas_panel(
+    seccion_id: str,
+    activa: str,
+    contadores: dict | None = None,
+    rol: str | None = None,
+) -> list[dict]:
     """Barra de pestañas del área activa, con el contador que le corresponde.
 
     Un área con una sola pestaña devuelve lista vacía: no se pinta barra, porque
     una pestaña única es ruido (y era uno de los defectos del panel anterior).
+
+    Si se indica ``rol``, solo se muestran pestañas visibles para ese rol.
     """
     contadores = contadores or {}
-    definidas = pestanas_de(seccion_id)
+    definidas = pestanas_de(seccion_id, rol=rol)
     if len(definidas) < 2:
         return []
     base = seccion(seccion_id).ruta
@@ -421,15 +526,20 @@ CONTADOR_DE_AREA: dict[str, str] = {
 }
 
 
-def nav_panel(contadores: dict | None = None) -> list[dict]:
+def nav_panel(contadores: dict | None = None, rol: str | None = None) -> list[dict]:
     """Enlaces del menú lateral. Seis, ni uno más.
 
     El contador solo se muestra donde hay algo que atender (Ingresos y el
     buzón de Clientes); un badge en cada entrada sería decoración.
+
+    Si se indica ``rol``, solo se muestran las secciones que ese rol puede ver.
     """
     contadores = contadores or {}
-    return [
-        {
+    salida = []
+    for actual in SECCIONES:
+        if not _rol_permite(rol, actual.roles_permitidos):
+            continue
+        salida.append({
             "id": actual.id,
             "nombre": actual.nombre,
             "ruta": actual.ruta,
@@ -439,10 +549,9 @@ def nav_panel(contadores: dict | None = None) -> list[dict]:
             "contador": int(
                 contadores.get(CONTADOR_DE_AREA.get(actual.id, actual.id), 0) or 0
             ),
-            "pestanas": pestanas_de(actual.id),
-        }
-        for actual in SECCIONES
-    ]
+            "pestanas": pestanas_de(actual.id, rol=rol),
+        })
+    return salida
 
 
 def cabecera_panel(seccion_id: str, pestana: str = "") -> dict:

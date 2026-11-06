@@ -45,6 +45,7 @@ ACCIONES_LECIBLES = {
     "automatizacion.ejecutada": "Automatización ejecutada",
     "crm.cliente_actualizado": "Estado comercial del cliente",
     "admin.vista_guardada": "Vista guardada",
+    "admin.vista_favorita": "Vista guardada marcada como favorita",
     "admin.vista_eliminada": "Vista eliminada",
     "api_key.creada": "Clave de API creada",
     "api_key.revocada": "Clave de API revocada",

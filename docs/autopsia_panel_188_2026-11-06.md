@@ -170,3 +170,35 @@ git cherry-pick df269250
     tests/test_panel_arquitectura.py tests/test_panel_listas.py \
     tests/test_panel_pro_fase1.py       # 233 passed, 23 failed → grupos C y D
 ```
+
+## Resultado del tramo C (06/11/2026)
+
+Los cuatro puntos de #188 y el fix de #189 están **rebasados sobre `main`**
+(cherry-pick de `87b2a4bf`, `464604eb`, `c5d91cf2`, `d78af0b5` y `df269250`):
+el rebase aplicó **sin conflictos**, porque el rediseño toca plantillas y
+servicios del panel que `main` no había vuelto a tocar desde #187.
+
+Y esto es lo importante: los 23 fallos de la autopsia **no eran del rediseño**.
+Al rebasar desaparecieron los del grupo C (el `do_max(list=...)`, los estilos
+en línea, la cadena de migraciones y `visitas_pagina`) y los del grupo D se
+resolvieron con cambios quirúrgicos:
+
+| defecto | arreglo |
+|---|---|
+| `NameError: ROLES_OPERADOR` (el apagón) | `from .models import ROLES_OPERADOR` en `panel_arquitectura.py` |
+| sidebar vacío y `TemplateNotFound: admin/partes/ficha_.html` | `_rol_permite` no filtra cuando la sesión no trae rol (el filtro es de presentación) y `pestana_valida`/`pestana_ficha_valida` nunca devuelven `""` |
+| `admin.vista_favorita` sin etiqueta | entrada en `ACCIONES_LECIBLES` |
+| hub sin «Clientes por vencer», «Últimas ventas» ni «Buzón de soporte» | el rediseño los había dejado fuera del dashboard aunque el contexto los seguía calculando: se restauran (y «Ventas del mes» vuelve como KPI) |
+| estilos en línea en `base_admin`, `dashboard` y `ficha_timeline` | clases en el bloque de estilos con nonce |
+| cabecera Alembic | `x9m2k4p8v1n6` cuelga de `w3m9k2p8v1n4`; `EXPECTED_ALEMBIC_HEAD` y las pruebas de cadena al día |
+| pruebas de licencias/compras sin rol en la sesión | la fixture replica `_establecer_contexto_identidad` (`rol_operador()`), como producción |
+| decisión de producto del RBAC | `test_solo_admin_puede_otorgar`: `admin` y `superadmin` sí; `soporte`, `analista` y `""` no |
+
+**Suite completa: 3360 passed, 14 skipped.** El humo del panel
+(`tests/test_humo_panel.py`) cubre las 33 páginas del mapa + las 24 rutas GET
+de `/admin` en el árbol rebasado.
+
+Pendiente de este tramo: aplicar `docs/staging_upgrade_x9m2k4p8v1n6.sql` en
+producción **antes** de fusionar, porque la base tiene que ir por delante del
+código (al contrario, la primera consulta a `vistas_guardadas` pediría una
+columna que aún no existe).
