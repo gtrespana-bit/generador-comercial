@@ -263,10 +263,38 @@ SECCIONES: tuple[Seccion, ...] = (
         id="analitica",
         nombre="Analítica",
         ruta="/admin/analitica",
-        descripcion="Embudo, retención, cohes y uso de funciones medidos en el servidor.",
+        descripcion="Embudo, retención, cohortes y uso de funciones medidos en el servidor.",
         icono="analitica",
         atajo="a",
         roles_permitidos=ROLES_TODOS,
+        # Cuatro preguntas, cuatro pestañas. Antes eran 44 tarjetas apiladas en
+        # una sola página: la información estaba toda, pero no se podía leer.
+        pestanas=(
+            Pestana(
+                "resumen",
+                "Resumen",
+                "Quién está usando el producto ahora mismo y qué se crea, con el embudo de conversión.",
+                roles_permitidos=ROLES_TODOS,
+            ),
+            Pestana(
+                "producto",
+                "Producto",
+                "Qué se toca, qué se corrige al guardar y a qué hora se trabaja: el explorador de eventos.",
+                roles_permitidos=ROLES_TODOS,
+            ),
+            Pestana(
+                "clientes",
+                "Clientes",
+                "Empresas con su plan y su uso, cohortes de retención y quién está en riesgo de baja.",
+                roles_permitidos=ROLES_TODOS,
+            ),
+            Pestana(
+                "web",
+                "Web",
+                "Audiencia de la web pública: visitantes, páginas vistas y de dónde llegan los registros.",
+                roles_permitidos=ROLES_TODOS,
+            ),
+        ),
     ),
     Seccion(
         id="sistema",

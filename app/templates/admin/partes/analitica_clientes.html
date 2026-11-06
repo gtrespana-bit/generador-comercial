@@ -1,0 +1,167 @@
+{# Analítica · Clientes — quién paga, cuánto usa y quién está a punto de irse. #}
+  {% set k = resumen.kpis %}
+
+  <div class="kpis">
+    <div class="kpi-card">
+      <div class="kpi-value">{{ k.organizaciones }}</div>
+      <div class="kpi-label">Empresas</div>
+      <div class="muted">{% if k.org_recientes %}+{{ k.org_recientes }} en {{ resumen.dias }}d{% else %}sin altas en {{ resumen.dias }}d{% endif %}</div>
+    </div>
+
+    <div class="kpi-card{% if k.usuarios_limitados %} warn{% endif %}">
+      <div class="kpi-value">{{ k.usuarios }}</div>
+      <div class="kpi-label">Cuentas</div>
+      <div class="muted">{% if k.usuarios_limitados %}posible bloqueo de RLS: aplica la migración de operador{% else %}{% if k.usuarios_recientes %}+{{ k.usuarios_recientes }} en {{ resumen.dias }}d{% else %}sin registros en {{ resumen.dias }}d{% endif %}{% endif %}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value">{{ "%.0f"|format(k.empresa_a_presupuesto) }} <small>%</small></div>
+      <div class="kpi-label">Empresas que presupuestan</div>
+      <div class="muted">{{ k.orgs_sin_presupuesto }} todavía sin ningún presupuesto</div>
+    </div>
+
+    <div class="kpi-card danger">
+      <div class="kpi-value">{{ "%.2f"|format(k.ingresos) }} <small>US$</small></div>
+      <div class="kpi-label">Ingresos acumulados</div>
+      <div class="muted">{{ k.orgs_que_pagaron }} empresa{{ 's' if k.orgs_que_pagaron != 1 else '' }} han pagado</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Empresas</h2>
+      <span class="badge badge-neutral">{{ resumen.organizaciones.total }} empresa{{ 's' if resumen.organizaciones.total != 1 else '' }} · últimos {{ resumen.dias }} días de actividad</span>
+    </div>
+    {% if resumen.organizaciones.limitada %}
+    <div class="card-body">
+      <p class="note-block">No se pudieron leer los agregados por empresa (falta aplicar la migración <code>r7f2b1d4e8a6</code>). Se muestran los datos de uso, que sí están disponibles.</p>
+    </div>
+    {% endif %}
+    <div class="table-container">
+      {% if resumen.organizaciones.filas %}
+      <table class="tabla-empresas">
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Estado</th>
+            <th class="num">Miembros</th>
+            <th class="num">Presupuestos</th>
+            <th class="num">Clientes</th>
+            <th class="num">Presupuestado</th>
+            <th class="num">Días de uso</th>
+            <th>Último acceso</th>
+            <th>Última actividad</th>
+            <th>Plan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in resumen.organizaciones.filas %}
+          <tr{% if fila.en_linea %} class="destacada"{% endif %}>
+            <td class="org">
+              <a href="/admin/clientes/{{ fila.id }}">{{ fila.nombre }}</a>
+              <small>Desde {{ fila.creada.strftime("%d/%m/%Y") }}{% if not fila.activa %} · desactivada{% endif %}</small>
+            </td>
+            <td>
+              {% if fila.estado == "en_linea" %}
+              <span class="badge badge-success"><span class="punto-estado vivo"></span>En línea</span>
+              {% elif fila.estado == "hoy" %}
+              <span class="badge badge-info"><span class="punto-estado hoy"></span>Hoy</span>
+              {% elif fila.estado == "semana" %}
+              <span class="badge badge-neutral"><span class="punto-estado semana"></span>Esta semana</span>
+              {% elif fila.estado == "nunca" %}
+              <span class="badge badge-danger"><span class="punto-estado inactiva"></span>Sin uso</span>
+              {% else %}
+              <span class="badge badge-warning"><span class="punto-estado inactiva"></span>Inactiva</span>
+              {% endif %}
+            </td>
+            <td class="num">{{ fila.miembros }}</td>
+            <td class="num">{{ fila.presupuestos }}</td>
+            <td class="num">{{ fila.clientes }}</td>
+            <td class="num">{{ "%.0f"|format(fila.total_presupuestado) }}</td>
+            <td class="num"><span title="{{ fila.eventos }} acciones registradas en la ventana">{{ fila.dias_uso }}<small class="muted">/{{ resumen.dias }}</small></span></td>
+            <td class="muted">{% if fila.ultimo_acceso %}{{ fila.ultimo_acceso.strftime("%d/%m %H:%M") }}{% else %}—{% endif %}</td>
+            <td class="muted">{% if fila.ultima_actividad %}{{ fila.ultima_actividad.strftime("%d/%m %H:%M") }}{% else %}—{% endif %}</td>
+            <td>{% if fila.pagando %}<span class="badge badge-success">Paga · {{ fila.dias_plan }}d</span>{% elif fila.plan_vence %}<span class="badge badge-neutral">Vence {{ fila.plan_vence.strftime("%d/%m") }}</span>{% else %}<span class="badge badge-neutral">Sin plan</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="vacio">
+        <b>Sin empresas todavía</b>
+        <p>Cuando se cree la primera cuenta aparecerá aquí con su actividad, sus presupuestos y su último acceso.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Retención por cohorte</h2>
+      <span class="badge badge-success">{{ "%.0f"|format(k.adopcion_activa) }}% activas en {{ resumen.dias }}d</span>
+    </div>
+    <div class="card-body">
+      <p class="note-block">Empresas creadas cada mes y % que usaron el producto en ese mes y los siguientes (uso diario).</p>
+      <div class="table-container">
+        <table class="cohorte-table">
+          <thead>
+            <tr><th>Cohorte</th><th>Empresas</th>
+              {% for i in range(resumen.cohortes|length) %}<th>Mes {{ i }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for fila in resumen.cohortes %}
+            <tr>
+              <td>{{ fila.etiqueta }}</td>
+              <td>{{ fila.organizaciones }}</td>
+              {% for valor in fila.valores %}
+                {% if valor is none %}
+                <td><span class="cel c-null">—</span></td>
+                {% else %}
+                  {% if valor >= 75 %}{% set clase = "c-4" %}{% elif valor >= 50 %}{% set clase = "c-3" %}
+                  {% elif valor >= 25 %}{% set clase = "c-2" %}{% elif valor > 0 %}{% set clase = "c-1" %}
+                  {% else %}{% set clase = "c-0" %}{% endif %}
+                  <td><span class="cel {{ clase }}" title="{{ fila.organizaciones }} empresa(s) en la cohorte">{{ "%.0f"|format(valor) }}%</span></td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="leyenda">
+        <span>Sin uso</span>
+        <span class="cel c-0">0%</span><span class="cel c-1">25</span><span class="cel c-2">50</span><span class="cel c-3">75</span><span class="cel c-4">100</span>
+        <span>Uso pleno</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Riesgo de churn</h2>
+      <span class="badge badge-warning">{{ resumen.riesgo.pagantes_en_riesgo|length }} de {{ resumen.riesgo.total_vigentes }} en riesgo</span>
+    </div>
+    <div class="table-container">
+      {% if resumen.riesgo.pagantes_en_riesgo %}
+      <table>
+        <thead><tr><th>Empresa</th><th>Días sin uso</th><th>Última actividad</th><th>Plan vence</th><th>Estado</th></tr></thead>
+        <tbody>
+          {% for fila in resumen.riesgo.pagantes_en_riesgo %}
+          <tr>
+            <td class="text-bold">{{ fila.organizacion.nombre }}</td>
+            <td><span class="badge {% if fila.dias_inactivo >= 30 %}badge-danger{% else %}badge-warning{% endif %}">{{ fila.dias_inactivo }} días</span></td>
+            <td class="muted">{% if fila.ultima_actividad %}{{ fila.ultima_actividad.strftime("%d/%m/%Y") }}{% else %}—{% endif %}</td>
+            <td class="muted">{% if fila.vence %}{{ fila.vence.strftime("%d/%m/%Y") }} ({{ fila.dias_restantes }}d){% else %}—{% endif %}</td>
+            <td>{% if fila.dias_restantes <= 15 %}<span class="badge badge-danger">Crítico</span>{% else %}<span class="badge badge-warning">Atención</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="text-center muted empty-pad">Ninguna empresa con plan activo supera los 14 días sin uso.</div>
+      {% endif %}
+    </div>
+  </div>

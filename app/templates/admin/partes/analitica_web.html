@@ -1,0 +1,131 @@
+{# Analítica · Web — la capa pública: visitantes, páginas y de dónde llegan
+   los registros. #}
+  {% set k = resumen.kpis %}
+  {% set aud = resumen.audiencia %}
+
+  <div class="kpis">
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ aud.visitantes_hoy if aud.disponible else 0 }}</div>
+      <div class="kpi-label">Visitantes hoy (web pública)</div>
+      <div class="muted">{{ aud.visitantes_7d if aud.disponible else 0 }} en 7 días</div>
+    </div>
+
+    <div class="kpi-card info">
+      <div class="kpi-value">{{ aud.vistas_hoy if aud.disponible else 0 }}</div>
+      <div class="kpi-label">Vistas de página hoy</div>
+      <div class="muted">{{ aud.vistas_ventana if aud.disponible else 0 }} en {{ resumen.dias }}d</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Audiencia de la web pública</h2>
+      <span class="badge badge-neutral">últimos {{ resumen.dias }} días · sin cookies de terceros</span>
+    </div>
+    <div class="card-body grid-2">
+      <div class="chart">
+        <div class="chart-info">
+          <b>{{ aud.visitantes_ventana if aud.disponible else 0 }}</b>
+          <span>visitantes únicos en {{ resumen.dias }}d · máx. {% set _mv = ((aud.serie|map(attribute="visitantes")|list) or [0])|max if aud.disponible else 0 %}{{ _mv }}/día</span>
+        </div>
+        <svg viewBox="0 0 720 150" role="img" aria-label="Visitantes únicos por día">
+          <line class="eje" x1="0" y1="132" x2="720" y2="132"></line>
+          {% if aud.disponible and aud.serie %}
+            {% set _n = aud.serie|length %}
+            {% set _paso = 720 / _n %}
+            {% set _ancho = _paso * 0.68 %}
+            {% set _max = (aud.serie|map(attribute="visitantes")|list)|max or 1 %}
+            {% for p in aud.serie %}
+            <rect class="bar" x="{{ (loop.index0 * _paso + (_paso - _ancho) / 2)|round(1) }}" y="{{ (132 - p.visitantes / _max * 110)|round(1) }}" width="{{ _ancho|round(1) }}" height="{{ (p.visitantes / _max * 110)|round(1) }}" rx="2">
+              <title>{{ p.fecha.strftime("%d/%m") }} · {{ p.visitantes }} visitantes · {{ p.vistas }} vistas</title>
+            </rect>
+            {% endfor %}
+          {% endif %}
+        </svg>
+        <p class="note-sub">Barras: visitantes únicos (IP hash) por día. Área bajo la barra: vistas de página ese día.</p>
+      </div>
+      <div>
+        {% if aud.disponible and aud.paginas_top %}
+        <div class="funciones">
+          {% for pagina in aud.paginas_top %}
+          <div class="funcion">
+            <div class="nombre" title="{{ pagina.ruta }}">{{ pagina.ruta }}</div>
+            <div class="barra">
+              <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+                <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+                {% set _mp = aud.paginas_top[0].vistas %}
+                <rect x="0" y="1" width="{{ [(pagina.vistas * 100.0 / _mp)|round(1), 1.2]|max }}" height="6"></rect>
+              </svg>
+            </div>
+            <div class="total">{{ pagina.vistas }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted text-center">Sin visitas medidas todavía.</p>
+        {% endif %}
+        {% if aud.disponible and aud.referentes_top %}
+        <p class="note-sub">Páginas de origen medidas: {% for r in aud.referentes_top %}{{ r.origen }}{{ ", " if not loop.last }}{% endfor %}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="grid-charts">
+    <div class="card">
+      <div class="card-header"><h2>Registros por país</h2><span class="badge badge-neutral">últimos {{ resumen.dias }} días</span></div>
+      <div class="card-body">
+        {% if resumen.paises %}
+        {% set max_pais = resumen.paises[0].total %}
+        {% for p in resumen.paises %}
+        <div class="pais-fila">
+          <b>{{ p.pais }}</b>
+          <div class="barra">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+              <rect x="0" y="1" width="{{ (p.total * 100.0 / max_pais)|round(1) }}" height="6"></rect>
+            </svg>
+          </div>
+          <span>{{ p.total }} · {{ "%.0f"|format(p.pct) }}%</span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="muted text-center">Sin registros en esta ventana.</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Qué página trae los registros</h2>
+        <span class="badge badge-neutral">últimos {{ resumen.dias }} días</span>
+      </div>
+      <div class="card-body">
+        {% if resumen.origenes %}
+        {% set max_origen = resumen.origenes[0].total %}
+        {% for o in resumen.origenes %}
+        <div class="pais-fila">
+          <b>{{ o.etiqueta }}</b>
+          <div class="barra">
+            <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="fondo" x="0" y="1" width="100" height="6"></rect>
+              <rect x="0" y="1" width="{{ (o.total * 100.0 / max_origen)|round(1) }}" height="6"></rect>
+            </svg>
+          </div>
+          <span>{{ o.total }} · {{ "%.0f"|format(o.pct) }}%</span>
+        </div>
+        {% endfor %}
+        <p class="muted origen-nota">
+          Cada registro llega con el <code>?origen=</code> del botón que lo
+          trajo. «Sin atribuir» son registros anteriores a la medición: no se
+          les inventa un origen. Sirve para decidir qué página merece el
+          trabajo: hoy el catálogo es la mayoría de las impresiones y las
+          consultas comerciales no traen clics.
+        </p>
+        {% else %}
+        <p class="muted text-center">Sin registros atribuidos en esta ventana.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  </div>

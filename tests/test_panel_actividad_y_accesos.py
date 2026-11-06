@@ -280,7 +280,7 @@ def test_la_analitica_ensena_que_se_modifica_mas(panel):
     cliente, Session, datos = panel
     _sembrar_actividad(Session, datos["por_vencer"])
 
-    pagina = cliente.get("/admin/analitica?dias=30").text
+    pagina = cliente.get("/admin/analitica?tab=producto&dias=30").text
 
     assert "Qué se modifica al guardar un presupuesto" in pagina
     assert "Precios corregidos" in pagina
@@ -289,7 +289,7 @@ def test_la_analitica_ensena_que_se_modifica_mas(panel):
 
 def test_la_analitica_sin_ediciones_lo_explica_en_vez_de_inventar(panel):
     cliente, _Session, _datos = panel
-    pagina = cliente.get("/admin/analitica?dias=30").text
+    pagina = cliente.get("/admin/analitica?tab=producto&dias=30").text
 
     assert "Todavía no hay ediciones medidas" in pagina
 

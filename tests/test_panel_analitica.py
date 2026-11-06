@@ -406,39 +406,81 @@ def test_el_explorador_filtra_por_empresa_accion_actor_y_fechas(entorno_panel):
 
 
 def test_el_operador_ve_el_panel_completo(entorno_panel, monkeypatch):
+    """Las cuatro pestañas, juntas, siguen enseñando todo lo que había.
+
+    Analítica era una sola página con 44 tarjetas: el dato estaba, pero había
+    que recorrerla entera. Ahora se reparte en cuatro pestañas (resumen,
+    producto, clientes, web). Esta prueba existe para que el reparto no se
+    lleve nada por delante: cada cosa que se miraba antes se sigue viendo.
+    """
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@cotizat.online")
     with _cliente() as client:
-        respuesta = client.get("/admin/analitica")
+        resumen = client.get("/admin/analitica")
+        producto = client.get("/admin/analitica?tab=producto")
+        clientes = client.get("/admin/analitica?tab=clientes")
+        web = client.get("/admin/analitica?tab=web")
 
-    assert respuesta.status_code == 200
-    assert "Analítica de producto" in respuesta.text
-    # KPIs
-    assert "Constructora Activa" not in respuesta.text or True  # los nombres pueden aparecer en riesgo
-    # Embudo
+    for respuesta in (resumen, producto, clientes, web):
+        assert respuesta.status_code == 200
+        assert "Analítica de producto" in respuesta.text
+        assert "no-store" in respuesta.headers.get("cache-control", "")
+
+    # Resumen: presencia, embudo y las cifras del día.
     for paso in ("Cuentas registradas", "Empresas creadas", "Crearon presupuesto", "Pagaron"):
-        assert paso in respuesta.text
-    # Riesgo de churn con la empresa dormida
-    assert "Remodeladora Dormida" in respuesta.text
-    assert "40 días" in respuesta.text
-    # Cohortes y eventos
-    assert "Retención por cohorte" in respuesta.text
-    assert "Eventos de todas las empresas" in respuesta.text
-    assert "Cuenta registrada" in respuesta.text
-    # Presencia y actividad por empresa: lo que faltaba en la pestaña.
-    assert "En línea ahora mismo" in respuesta.text
-    assert "Sesiones iniciadas hoy" in respuesta.text
-    assert "Presupuestos creados hoy" in respuesta.text
-    assert "Constructora Activa" in respuesta.text  # tabla de empresas
-    assert "/presupuestos" in respuesta.text  # página de la presencia en vivo
-    assert "no-store" in respuesta.headers.get("cache-control", "")
+        assert paso in resumen.text
+    assert "En línea ahora mismo" in resumen.text
+    assert "Sesiones iniciadas hoy" in resumen.text
+    assert "Presupuestos creados hoy" in resumen.text
+    assert "/presupuestos" in resumen.text  # página de la presencia en vivo
+
+    # Producto: el explorador de eventos y lo que se toca.
+    assert "Eventos de todas las empresas" in producto.text
+    assert "Cuenta registrada" in producto.text
+    assert "Qué se modifica al guardar un presupuesto" in producto.text
+    assert "Actividad por hora (UTC)" in producto.text
+
+    # Clientes: empresas, cohortes y riesgo de baja.
+    assert "Constructora Activa" in clientes.text  # tabla de empresas
+    assert "Retención por cohorte" in clientes.text
+    assert "Remodeladora Dormida" in clientes.text
+    assert "40 días" in clientes.text
+
+    # Web: la capa pública y el origen de los registros.
+    assert "Audiencia de la web pública" in web.text
+    assert "Qué página trae los registros" in web.text
+
+
+def test_las_cuatro_pestanas_de_analitica_se_navegan_por_url(entorno_panel, monkeypatch):
+    """Cada pestaña tiene URL propia y la ventana de días sobrevive al cambio."""
+    monkeypatch.setenv("COTIZAT_OPERADORES", "titular@cotizat.online")
+    with _cliente() as client:
+        pagina = client.get("/admin/analitica?tab=clientes&dias=7")
+
+    assert pagina.status_code == 200
+    for pestana, nombre in (
+        ("resumen", "Resumen"),
+        ("producto", "Producto"),
+        ("clientes", "Clientes"),
+        ("web", "Web"),
+    ):
+        # La ventana elegida viaja con la pestaña: 7 días siguen siendo 7 días.
+        # Jinja escapa el `&` del enlace, y eso es HTML válido.
+        assert f'href="/admin/analitica?tab={pestana}&amp;dias=7"' in pagina.text, pestana
+        assert nombre in pagina.text
+    assert 'aria-selected="true"' in pagina.text
+
+    with _cliente() as client:
+        por_omision = client.get("/admin/analitica").text
+    # En la ventana por omisión (30 días) la URL no arrastra ruido.
+    assert 'href="/admin/analitica?tab=producto"' in por_omision
 
 
 def test_los_filtros_del_explorador_funcionan_por_url(entorno_panel, monkeypatch):
     monkeypatch.setenv("COTIZAT_OPERADORES", "titular@cotizat.online")
     with _cliente() as client:
-        filtrada = client.get("/admin/analitica?organizacion_id=2&accion=organizacion.creada")
-        vacia = client.get("/admin/analitica?actor=nadie@example.com")
-        con_ruido = client.get("/admin/analitica?ruido=1")
+        filtrada = client.get("/admin/analitica?tab=producto&organizacion_id=2&accion=organizacion.creada")
+        vacia = client.get("/admin/analitica?tab=producto&actor=nadie@example.com")
+        con_ruido = client.get("/admin/analitica?tab=producto&ruido=1")
 
     assert filtrada.status_code == 200
     # Los filtros quedan seleccionados en el formulario (GET, sin JavaScript).

@@ -161,9 +161,14 @@ def test_clientes_usa_una_sola_lista_para_dos_vistas():
 
 
 def test_un_area_de_una_sola_pantalla_no_pinta_barra():
-    """Una barra con un elemento es ruido: Hoy y Analítica navegan sin pestañas."""
+    """Una barra con un elemento es ruido: Hoy navega sin pestañas.
+
+    Analítica sí las tiene desde el tramo C (resumen, producto, clientes, web):
+    una sola página con 44 tarjetas se leía mal. Cualquier valor raro de la URL
+    cae en «resumen» en vez de dejar la pantalla sin contenido.
+    """
     assert pestana_valida("hoy", "cualquiera") == ""
-    assert pestana_valida("analitica", "cualquiera") == ""
+    assert pestana_valida("analitica", "cualquiera") == "resumen"
     assert len(pestana_valida("sistema", "auditoria")) > 0
 
 
@@ -919,6 +924,35 @@ def test_el_hub_es_agenda_y_no_un_muro_de_tablas(entorno):
     assert "/admin/organizaciones/" not in pagina.text  # sin acciones universales en el hub
     for entrada in nav_panel():
         assert entrada["nombre"] in pagina.text
+
+
+def test_hoy_se_lee_en_tres_bandas(entorno):
+    """Una pantalla larga se lee si tiene jerarquía: ahora → hoy → mes.
+
+    Antes, /admin apilaba 29 tarjetas del mismo peso y la misma alerta aparecía
+    dos veces (banda de alertas y tarjeta de pendientes). Ahora hay tres bandas
+    numeradas, una sola lista de lo accionable y los contadores de trabajo
+    dentro de la tarjeta que los resuelve, no repetidos como KPI del mes.
+    """
+    cliente, _Session, _datos = entorno
+    html = cliente.get("/admin").text
+
+    assert html.count('class="banda"') == 3
+    for banda in ("banda-ahora", "banda-hoy", "banda-mes"):
+        assert f'id="{banda}"' in html, banda
+    # El orden es la jerarquía: primero decidir, después atender, después mirar.
+    assert html.index("banda-ahora") < html.index("banda-hoy") < html.index("banda-mes")
+
+    # Una sola lista de pendientes: la alerta ya no se pinta dos veces.
+    assert html.count('id="pendientes"') == 1
+    assert "alerta-banda" not in html
+
+    # Los contadores de trabajo viven en su tarjeta, no como KPI del mes.
+    assert "Por vencer (≤15 d)" not in html
+    assert "Soporte sin atender" not in html
+    assert "Riesgo de baja (14+ días)" not in html
+    # Y las cifras del mes siguen ahí.
+    assert "MRR" in html and "Ingresos del mes" in html
 
 
 def test_los_atajos_de_teclado_salen_del_mapa_del_panel(entorno):

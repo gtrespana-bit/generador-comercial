@@ -184,6 +184,12 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
     # propia tarjeta: una venta ya está cobrada y no pide nada.
     avisos = notificaciones_admin(db)
     pendientes_agenda = [a for a in avisos if a["tipo"] not in {"venta", "registro"}]
+    # La banda 1 no repite lo que ya tiene su tabla en la banda 2: una
+    # renovación a 2 días está en «Clientes por vencer» con su botón, y el
+    # riesgo de baja en su propia tabla. Repetir el mismo hecho en dos sitios
+    # era justo lo que hacía ilegible el panel.
+    en_banda_2 = {"renovacion", "soporte", "uso"}
+    pendientes_ahora = [a for a in pendientes_agenda if a["tipo"] not in en_banda_2]
 
     # Riesgo de churn: empresas con licencia vigente de pago pero sin uso del
     # producto en los últimos 14 días. Señal temprana de posible baja.
@@ -216,20 +222,14 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
             "dias_restantes": max((licencia.vence - hoy_fecha).days, 0) if licencia and licencia.vence else 0,
         })
 
-    # Alertas críticas y de advertencia separadas del resto de avisos:
-    # se muestran en una banda arriba del dashboard, antes que cualquier KPI.
-    alertas_criticas = [a for a in avisos if a["severidad"] in {"critical", "warning"}]
-    alertas_info = [a for a in avisos if a["severidad"] == "info"]
-
     contexto.update({
         "resumen": resumen_admin(db),
         "finanzas": resumen_financiero(db),
         "proximas": proximas_renovaciones(db, limite=6),
         "eventos": resumen_auditoria_admin(db, limite=6),
         "pendientes": pendientes_agenda,
+        "pendientes_ahora": pendientes_ahora,
         "avisos": avisos,
-        "alertas_criticas": alertas_criticas,
-        "alertas_info": alertas_info,
         "riesgo_churn": riesgo_churn,
         "ventas": resumen_ventas(db, periodo="mes"),
         "ultimas_ventas": ultimas_ventas(db, limite=5),
@@ -1766,6 +1766,7 @@ def pagina_analitica(
     pagina: int = 1,
     ruido: int = 0,
     sin_mios: int = 0,
+    tab: str = "",
     db: Session = Depends(get_operator_db),
 ):
     """Analítica de producto medida en el servidor (E5-012).
@@ -1779,7 +1780,15 @@ def pagina_analitica(
     from ..services.analitica import resumen_analitica
 
     ventana = dias if dias in (7, 30, 90) else 30
-    contexto = contexto_base(request, db, seccion="analitica")
+    # Las cuatro pestañas comparten consulta: cambiar de pestaña no cambia el
+    # número, cambia qué parte se mira. `pestana_valida` cae en «resumen» con
+    # cualquier valor raro que llegue por la URL.
+    contexto = contexto_base(request, db, seccion="analitica", pestana=tab)
+    # La ventana elegida sobrevive al cambio de pestaña: quien mira 90 días no
+    # quiere volver a 30 cada vez que salta de «Producto» a «Clientes».
+    if ventana != 30:
+        for definida in contexto["pestanas"]:
+            definida["ruta"] = f"{definida['ruta']}&dias={ventana}"
     filtros = {
         "organizacion_id": organizacion_id,
         "accion": accion,

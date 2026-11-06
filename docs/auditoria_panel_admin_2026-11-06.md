@@ -305,3 +305,86 @@ Puertas nuevas (además de las 7 del tramo A):
 
 Validación: `admin.css` parsea sin errores (0 de 637 reglas de primer nivel),
 llaves equilibradas, contraste 0/0 en ambos modos, **3371 pruebas en verde**.
+
+---
+
+## Resultado del tramo C (mismo día)
+
+Objetivo: que el panel se pueda **leer**. Con el contraste arreglado (tramo A)
+y un solo sitio donde tocar cada componente (tramo B), faltaba lo que más se
+nota: la información estaba toda, pero no tenía jerarquía.
+
+### «Hoy»: de 29 tarjetas planas a 3 bandas
+
+La pantalla de entrada apilaba 29 tarjetas del mismo peso. La misma alerta se
+pintaba dos veces (banda de alertas arriba y tarjeta de pendientes más abajo) y
+cuatro de los nueve KPIs eran contadores de trabajo que ya estaban, otra vez,
+en las tarjetas de detalle.
+
+| | Antes | Ahora |
+|---|---|---|
+| Bloques de primer nivel | 4 contenedores sueltos, 29 tarjetas | **3 bandas** numeradas |
+| Veces que se pinta una alerta | 2 | **1** |
+| KPIs | 9 (4 eran contadores de trabajo) | **5**, todos de dinero y cartera |
+| Números repetidos en dos sitios | 4 | **0** |
+
+- **Banda 1 · Requiere tu acción ahora.** Una sola lista de lo accionable, con
+  su punto de severidad y dos botones (el hecho concreto y la lista completa).
+  Deja fuera lo que ya tiene tabla propia en la banda 2, para no repetirlo.
+- **Banda 2 · Lo que espera hoy.** Las cuatro colas del día: clientes por
+  vencer, buzón de soporte, riesgo de baja y altas. Cada tarjeta lleva su
+  contador en la cabecera, y ese contador **es un enlace a la lista que cuenta**
+  (la invariante sigue vigilada por
+  `test_los_kpis_del_panel_llevan_a_la_misma_lista_que_cuentan`).
+- **Banda 3 · Cómo va el mes.** MRR, ingresos, ventas, clientes de pago y
+  clientes sin plan, con la serie de seis meses y las últimas ventas. Esto se
+  consulta; no se trabaja aquí.
+
+### «Analítica»: de 44 tarjetas a 4 pestañas
+
+Era una sola página de 632 líneas con 44 tarjetas: presencia en vivo, KPIs,
+tabla de empresas, explorador de eventos, tres series, embudo, cohortes, uso de
+funciones, países, orígenes, horas y churn. Todo verdad, todo junto.
+
+Ahora son cuatro pestañas **resueltas en el servidor** (cada una con su URL,
+enlazable desde el buscador o un aviso, y sin depender de JavaScript), todas
+sobre la misma consulta: cambiar de pestaña no cambia el número, cambia qué
+parte se mira. La ventana de días elegida viaja con la pestaña.
+
+| Pestaña | Qué responde |
+|---|---|
+| **Resumen** | ¿Quién está dentro ahora y cuánto avanza el embudo? |
+| **Producto** | ¿Qué se usa, qué se corrige al guardar y a qué hora se trabaja? |
+| **Clientes** | ¿Quién paga, cuánto usa y quién está a punto de irse? |
+| **Web** | ¿Qué pasa en la capa pública y de dónde llegan los registros? |
+
+Ninguna métrica se perdió: el reparto está comprobado en
+`test_el_operador_ve_el_panel_completo`, que recorre las cuatro pestañas y exige
+ver cada bloque que antes estaba en la página única.
+
+### Un componente por patrón
+
+- **KPI único.** «Hoy» tenía su propio KPI (`kpi-valor`, `kpi-titulo`,
+  `kpi-meta`, `kpi-comparativa`) distinto del que usan las otras 15 pantallas
+  (`kpi-value`, `kpi-label`). Se borró el de Hoy: ahora todas comparten el
+  mismo componente y la tendencia es una pieza opcional (`.kpi-tendencia`).
+- **Banda** como patrón nuevo y único (`.banda`, `.banda-cab`, `.banda-num`,
+  `.banda-rejilla`), en la hoja base para que la reutilicen las demás pantallas.
+- **Fuera el patrón viejo de banda de alertas**: ~40 reglas que ya no usaba
+  nadie (`.alerta-banda*`, `.alerta-item*`, `.alerta-punto*`).
+- La hoja baja de 1.734 a **1.688 líneas** y de 659 a **634 reglas** aunque el
+  panel gana tres patrones nuevos.
+
+### Puertas nuevas
+
+- `test_hoy_se_lee_en_tres_bandas`: tres bandas, en orden, una sola lista de
+  pendientes, cero contadores de trabajo repetidos como KPI.
+- `test_las_cuatro_pestanas_de_analitica_se_navegan_por_url`: las cuatro
+  pestañas, con su URL y con la ventana de días conservada.
+- `test_el_operador_ve_el_panel_completo` (reescrita): recorre las cuatro
+  pestañas y exige ver todo lo que había en la página única.
+- `test_todas_las_pestanas_del_panel_responden` (humo): ya recorría
+  `?tab=` de todas las áreas, así que una pestaña nueva sin plantilla falla.
+
+Validación: **3373 pruebas en verde**, 249 plantillas parseadas, contraste
+**0 violaciones** en claro y en oscuro.
