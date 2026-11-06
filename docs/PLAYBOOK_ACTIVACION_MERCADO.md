@@ -436,3 +436,55 @@ ficha): **0 cifras del propio mercado con los separadores invertidos**.
 Lo que se dejó igual a propósito: las páginas de la aplicación (presupuestos,
 facturas, recursos) siguen formateando con el locale del usuario. Ahí la cifra
 es del documento, no del mercado, y el mercado no siempre existe.
+
+## 13. Oleada 2 de México (06/11/2026)
+
+La oleada 1 abrió siete apartados de acabados y obra básica. La oleada 2
+**cierra dos clústeres** que quedaban a medias y que en México son consulta de
+todos los días:
+
+| Apartado | Fichas | Por qué |
+|---|---|---|
+| Preparación de soportes para pintura | 28 | cierra el clúster de pintura: interior + soportes + exterior |
+| Pintura exterior | 25 | fachada y barda son la mitad del trabajo del pintor mexicano |
+| Tabiquería de tablaroca | 25 | hermana de los plafones; «tablaroca» es término de casa |
+
+Total: **78 fichas**, escritas una por una en español de México —no traducidas—,
+con el criterio de que cada descripción diga algo que la española no decía:
+qué incluye, qué no, dónde falla la partida y cómo se mide.
+
+### Lo que se arregló de paso
+
+Las descripciones españolas de casi todo «Tabiquería de tablaroca» eran de una
+línea («Incluye la estructura, la placa y el tratamiento de juntas. Medido por
+metro cuadrado ejecutado.»). Donde la fuente es flaca, la localización no puede
+ser una traducción: esas 16 fichas pasaron de 90 a 380 caracteres con criterio
+propio (por qué la placa verde no impermeabiliza, para qué sirve un refuerzo
+entre postes, cuándo una junta lleva perfil elástico y no pasta).
+
+### Estado del mercado
+
+```
+MX 1989 partidas · 224 propias · 235 URLs · jaccard 0.889 · idénticas 51.0 %
+apartados con texto propio: 10 de 180 (los 7 de la oleada 1 + los 3 de la 2)
+```
+
+La cobertura de fichas va del 11,3 % del catálogo. El mercado sigue con
+`noindex` en las 1.765 fichas restantes: lo que se anuncia es lo que tiene texto
+propio, nada más.
+
+### Cómo se escribió (para la oleada 3)
+
+1. `python tools/preparar_mercado.py --mercado MX --apartados 12-01-01,12-11-01,06-04-01`
+   deja los borradores con el texto español en `_origen` como referencia.
+2. Se escribe título y descripción **de cada partida** (no del apartado) en el
+   registro, con `revisado: <fecha>`.
+3. `--estado` para confirmar que los apartados quedan completos: un apartado
+   necesita **3 fichas válidas** para que su hub se anuncie.
+4. `generar_precios_publicos.py`, `radar_activacion_mercados.py --mercado MX`,
+   `verificacion_seo.py` y la suite completa.
+
+La oleada 3 natural es el clúster de baño y azulejo: `12-03-01` Azulejo y
+porcelanato en paredes (18), `07-07-01` Canceles de baño (16) y `12-05-05` Pisos
+de madera y laminados (7), que cierran el catálogo de acabados antes de entrar
+en instalaciones.
