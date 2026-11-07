@@ -1,5 +1,8 @@
 # Investigación de precios de referencia — España (2026-08-25) — Revisión mano de obra
 
+> **Aviso de auditoría (2026-11-06):** Las hipótesis y precios de mano de obra de este documento son históricos y no están confirmados. En particular, la hipótesis de AT del 1,50 % no puede generalizarse a todos los oficios y el cálculo de 3.431,76 €/mes requiere revisión. Consulte la [revisión de coste empresarial](auditoria_precios/ESPANA_MANO_OBRA_2026.md) antes de utilizar estas cifras. **Corrección:** la tabla de Barcelona con oficial a 31.290,43 €/año es de 2025, no de 2026; véase [contraste provincial](auditoria_precios/ESPANA_CONTRASTE_PROVINCIAL_2026.md).
+
+
 **Objetivo:** anclas de mercado observadas para la matriz nacional de precios de recursos en EUR (`basedatos_partidas/salida/precios_recursos_espana.csv`). Mismo contrato que las rondas LatAm: cada cifra conserva rango, fuente y fecha; no son cotizaciones de tienda.
 
 **Tasa de corte:** 1 USD = 0,8564 EUR (EUR/USD 1,1677, xe.com mid-market 22/08/2026; BCE 21/08/2026: 1,1681). Solo se usa para normalizar el precio base USD antes de aplicar el factor de mercado; el resultado queda congelado en EUR con fecha.

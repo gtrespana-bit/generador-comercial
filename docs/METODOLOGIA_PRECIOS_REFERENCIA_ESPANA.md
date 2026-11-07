@@ -1,5 +1,8 @@
 # Metodología — precios de referencia nacionales España (EUR) — Revisión 2026-08-25
 
+> **Aviso de auditoría (2026-11-06):** Las hipótesis y precios de mano de obra de este documento son históricos y no están confirmados. En particular, la hipótesis de AT del 1,50 % no puede generalizarse a todos los oficios y el cálculo de 3.431,76 €/mes requiere revisión. Consulte la [revisión de coste empresarial](auditoria_precios/ESPANA_MANO_OBRA_2026.md) antes de utilizar estas cifras. **Corrección:** la tabla de Barcelona con oficial a 31.290,43 €/año es de 2025, no de 2026; véase [contraste provincial](auditoria_precios/ESPANA_CONTRASTE_PROVINCIAL_2026.md).
+
+
 Extiende a España la metodología de `METODOLOGIA_PRECIOS_REFERENCIA_LATAM.md`.
 
 1. **Anclas observadas.** Materiales, mano de obra y maquinaria con precio de
