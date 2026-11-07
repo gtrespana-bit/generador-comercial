@@ -13,6 +13,7 @@ from functools import lru_cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REGISTRO = ROOT / "docs/auditoria_precios/espana_2026-11-06.csv"
 LIBRO = ROOT / "docs/auditoria_precios/espana_cierre_decisiones_2026-11-07.csv"
 REVISION_CIERRE = "docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md"
 APLICA = {"aplicar_mano_obra_dos_fuentes", "aplicar_media_dos_bancos",
@@ -50,7 +51,19 @@ def condiciones(codigo: str, iva: str, transporte: str) -> tuple[str, str]:
     return iva, transporte
 
 
+@lru_cache(maxsize=1)
+def registro() -> dict[str, dict]:
+    """Estado actual del registro maestro (puede haber confirmado después)."""
+    with REGISTRO.open(encoding="utf-8-sig", newline="") as manejador:
+        return {f["codigo_recurso"]: f for f in csv.DictReader(manejador, delimiter=";")}
+
+
 def estado(codigo: str, previsto: str) -> str:
+    # Una verificación posterior solo puede elevar el estado a confirmado; el
+    # precio no cambia al confirmar, por eso las pruebas de lote siguen valiendo.
+    actual = registro().get(codigo)
+    if actual and actual["estado_auditoria"] == "confirmado_referencia":
+        return "confirmado_referencia"
     fila = decisiones().get(codigo)
     if not fila:
         return previsto
