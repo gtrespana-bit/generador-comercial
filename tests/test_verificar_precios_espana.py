@@ -80,7 +80,7 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
     assert pendientes == set(verificacion) - confirmados
-    assert len(pendientes) == 356
+    assert len(pendientes) == 351
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]
@@ -89,7 +89,7 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
 
 def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
     filas = leer(confirmador.CONFIRMACIONES)
-    assert len(filas) == 14
+    assert len(filas) == 19
     for fila in filas:
         recurso = registro[fila["codigo_recurso"]]
         assert recurso["estado_auditoria"] == "confirmado_referencia"

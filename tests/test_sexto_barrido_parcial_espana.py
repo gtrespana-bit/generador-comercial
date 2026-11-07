@@ -35,11 +35,18 @@ def test_decisiones_trazables_sin_precios():
                                  (DOC / name).read_text(encoding='utf-8')))
         assert not codes & previos
     audit = {r['codigo_recurso']: r for r in leer('espana_2026-11-06.csv')}
+    adjudicacion = {r['codigo_recurso']: r for r in leer('espana_adjudicacion_2026-11-07.csv')}
     informe = (DOC / INFORME).read_text(encoding='utf-8')
     p = partidas()
     for r in decisions:
         a = audit[r['codigo_recurso']]
-        assert r['decision'] == 'sin_precio_revisado' and not a['precio_revisado']
+        assert r['decision'] == 'sin_precio_revisado'
+        if a['precio_revisado']:
+            # Cerrado después del barrido con una decisión posterior.
+            assert adjudicacion[r['codigo_recurso']]['decision'] != r['decision']
+            assert a['estado_auditoria'] == 'confirmado_referencia'
+            continue
+        assert not a['precio_revisado']
         assert a['estado_auditoria'] in ('pendiente', 'en_revision')
         assert r['unidad'] == a['unidad']
         assert int(r['usos']) == int(a['partidas_que_lo_usan']) == 3

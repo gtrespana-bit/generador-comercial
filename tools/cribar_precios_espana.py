@@ -62,9 +62,35 @@ GENERICAS = {
 }
 TIPOS = {"material": "materiales", "machinery": "maquinaria", "labor": "mano_obra"}
 
+# Variantes que designan la misma familia de artículo. El banco escribe
+# "Tornillería" donde el recurso dice "tornillo", "Hormigón" donde dice
+# "concreto" o "Motosierra" donde dice "sierra": exigir el token literal del
+# núcleo dejaba fuera fichas que sí son el mismo producto. Cada grupo se
+# colapsa a una sola forma canónica; el mapa es corto y revisable a mano.
+CANONICOS = {
+    "tornillo": "tornillo", "tornilleria": "tornillo", "tornillos": "tornillo",
+    "tirafondo": "tornillo",
+    "perno": "anclaje", "anclaje": "anclaje", "anclajes": "anclaje",
+    "taco": "anclaje", "tacos": "anclaje",
+    "hormigon": "hormigon", "concreto": "hormigon",
+    "taladro": "taladro", "taladradora": "taladro", "taladros": "taladro",
+    "mezcladora": "mezcladora", "batidora": "mezcladora", "amasadora": "mezcladora",
+    "martillo": "martillo", "picador": "martillo", "perforador": "martillo",
+    "sierra": "sierra", "motosierra": "sierra",
+    "tubo": "tubo", "tuberia": "tubo", "tuberias": "tubo",
+    "cable": "cable", "conductor": "cable",
+    "placa": "placa", "plancha": "placa", "placas": "placa",
+    "cinta": "cinta", "banda": "cinta",
+    "pasta": "pasta", "masilla": "pasta",
+}
 
-def tokens(texto: str) -> list[str]:
-    """Tokens significativos, sin acentos y sin plurales triviales."""
+
+def tokens(texto: str, sinonimos: bool = False) -> list[str]:
+    """Tokens significativos, sin acentos y sin plurales triviales.
+
+    Con ``sinonimos=True`` se colapsan las variantes de ``CANONICOS`` para que
+    "tornillería" y "tornillo" —o "hormigón" y "concreto"— sean el mismo token.
+    """
     salida = []
     for palabra in re.findall(r"[a-z]+|\d+(?:[.,]\d+)?", limpiar(texto)):
         palabra = palabra.replace(",", ".")
@@ -72,7 +98,10 @@ def tokens(texto: str) -> list[str]:
             continue
         if len(palabra) < 3 and not palabra.isdigit():
             continue
-        salida.append(palabra[:-1] if len(palabra) > 5 and palabra.endswith("s") else palabra)
+        palabra = palabra[:-1] if len(palabra) > 5 and palabra.endswith("s") else palabra
+        if sinonimos:
+            palabra = CANONICOS.get(palabra, palabra)
+        salida.append(palabra)
     return salida
 
 
@@ -90,7 +119,7 @@ def decimal(valor) -> Decimal | None:
     return numero if numero.is_finite() and numero > 0 else None
 
 
-def cargar_basicos(path: Path) -> tuple[list[dict], str, str]:
+def cargar_basicos(path: Path, sinonimos: bool = False) -> tuple[list[dict], str, str]:
     """Extrae los precios simples BCCA en euros con unidad reconocida."""
     bruto = path.read_bytes()
     sha = hashlib.sha256(bruto).hexdigest()
@@ -123,14 +152,14 @@ def cargar_basicos(path: Path) -> tuple[list[dict], str, str]:
             "edicion": str(precio.get("edition") or ""),
             "fecha": str(precio.get("date") or ""),
             "region": str(alcance.get("region")),
-            "tokens": set(tokens(texto)),
+            "tokens": set(tokens(texto, sinonimos)),
         })
     if not precios:
         raise ValueError("El banco no contiene precios simples utilizables")
     return precios, sha, str(raiz.get("version") or "")
 
 
-def cargar_bc3(path: Path) -> tuple[list[dict], str, str]:
+def cargar_bc3(path: Path, sinonimos: bool = False) -> tuple[list[dict], str, str]:
     """Adapta una base FIEBDC-3 al mismo formato que el banco abierto CERP.
 
     Se reutiliza el lector de BC3 ya probado (excluye descomposiciones, precios
@@ -153,13 +182,13 @@ def cargar_bc3(path: Path) -> tuple[list[dict], str, str]:
             "edicion": "",
             "fecha": p.fecha_fuente,
             "region": "EX",
-            "tokens": set(tokens(p.descripcion or p.texto)),
+            "tokens": set(tokens(p.descripcion or p.texto, sinonimos)),
         })
     return precios, sha, str(len(precios))
 
 
 def cribar(recursos: list[dict], precios: list[dict], precio_matriz: dict,
-           limite: int = 5) -> list[dict]:
+           limite: int = 5, sinonimos: bool = False) -> list[dict]:
     """Propone candidatos por recurso, ordenados por precisión y cobertura."""
     frecuencia = Counter(t for p in precios for t in p["tokens"])
     total = len(precios)
@@ -169,7 +198,7 @@ def cribar(recursos: list[dict], precios: list[dict], precio_matriz: dict,
 
     salida = []
     for recurso in recursos:
-        tokens_recurso = tokens(recurso["descripcion"])
+        tokens_recurso = tokens(recurso["descripcion"], sinonimos)
         if not tokens_recurso:
             continue
         conjunto = set(tokens_recurso)
@@ -255,18 +284,21 @@ def main() -> int:
                             help="edición que se anota en la tabla de candidatos")
     analizador.add_argument("--salida", type=Path, default=SALIDA)
     analizador.add_argument("--limite", type=int, default=5)
+    analizador.add_argument("--sinonimos", action="store_true",
+                            help="colapsa variantes del mismo artículo (tornillería/tornillo)")
     argumentar = analizador.parse_args()
     if not 1 <= argumentar.limite <= 50:
         analizador.error("--limite debe estar entre 1 y 50")
     if bool(argumentar.basicos) == bool(argumentar.bc3):
         analizador.error("indique --basicos o --bc3, pero no ambos")
     if argumentar.bc3:
-        precios, sha, version = cargar_bc3(argumentar.bc3)
+        precios, sha, version = cargar_bc3(argumentar.bc3, argumentar.sinonimos)
         version = f"BC3 {argumentar.banco} ({version} precios simples)"
     else:
-        precios, sha, version = cargar_basicos(argumentar.basicos)
+        precios, sha, version = cargar_basicos(argumentar.basicos, argumentar.sinonimos)
     recursos = leer_registro(AUDITORIA)
-    filas = cribar(recursos, precios, leer_matriz(MATRIZ), argumentar.limite)
+    filas = cribar(recursos, precios, leer_matriz(MATRIZ), argumentar.limite,
+                   argumentar.sinonimos)
     for fila in filas:
         fila["banco"] = argumentar.banco
         if argumentar.banco != "bcca":

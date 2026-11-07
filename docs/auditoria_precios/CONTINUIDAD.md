@@ -2,6 +2,17 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Auditoría de identidad del artículo (Extremadura 2026) — 7 de noviembre de 2026
+
+**37 precios confirmados** (eran 32). Informe: [auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md).
+
+- Pregunta que se cierra: ¿los 164 recursos sin precio lo están porque el artículo no está en la base o porque no lo sabemos encontrar? Clasificación medida en `espana_identidad_huecos_2026-11-07.csv`: 62 con la familia en la base pero sin medida o clase (2.479 usos), 19 cestas de consumibles que exigen desglose (968), 64 con solo parecido de nombre (795) y 19 sin candidato (615).
+- **5 confirmaciones nuevas (181 usos) sin cambiar ningún precio**: `MT-BLQ-20` (P01BG200, 0,63 €; el rechazo anterior citaba la ficha de 25 cm y era erróneo), `MT-CONC-180` (P01HCM003), `MT-CONC-210` y `MT-CONC-250` (P01HCA300) y `MT-CONC-300` (P01HCA320). El hormigón se identifica por clase de resistencia (`kg/cm² = N/mm² × 10`), que el parecido de palabras no podía resolver.
+- **Tres fallos de método corregidos**: (1) la observación que confirmaba se elegía por precio más cercano, no por identidad (un bloque de 25 cm «confirmaba» un recurso de 20 cm); ahora se elige por `f1` precisión/cobertura; (2) el cribado exigía el token literal del núcleo, de modo que *tornillería* no encontraba *tornillo*: nuevo modo `--sinonimos` (346 recursos con candidato y 79 fuertes, frente a 339/72); (3) reaplicar el cierre borraba las confirmaciones ya escritas y podía degradar un recurso confirmado.
+- Ficha forzada por identidad: `codigo_elegido` en `espana_revision_manual_2026-11-07.csv`. Ejemplo: `MT-EXTINTOR` pasa del extintor de 50 kg (421,04 €) al de 6 kg ABC real (P23FJ020, 34,08 €).
+- La base sigue **sin** cubrir: atornilladora (0 fichas), cortadora de azulejo/agua (0), aspirador industrial (0), consumibles sueltos (discos, puntas, cinceles: 0) y andamio por hora (solo €/m²·día y montaje €/m²).
+- Estado: 37 `confirmado_referencia` / 351 `en_revision`, 224 con precio revisado; veredictos 164/126/54/37/7. Pruebas nuevas: 10 (`tests/test_identidad_precios_espana.py`).
+
 ## Segunda base ingerida (Extremadura 2026) — 7 de noviembre de 2026
 
 **32 precios confirmados** (eran 25) al incorporar la Base de Precios de la Construcción de Extremadura 2026 en formato BC3. [Detalle en la verificación](ESPANA_VERIFICACION_2026-11-07.md).
@@ -10,7 +21,7 @@
 - Cribado: 339 recursos con candidato de núcleo común y 72 con precisión ≥ 0,75 y medidas compatibles (BCCA daba 253 y 63). Tabla: `espana_cribado_extremadura_2026-11-07.csv` (1.558 filas).
 - **7 confirmaciones nuevas** por coincidencia con Extremadura (`MT-CINTA-ENM`, `MT-PERFIL-ACERO`, `MT-POLIET`, `MT-BLQ-15`, `MT-BARNIZ-PISO`, `MT-BLQ-10`, `MT-REGISTRO`) y **3 candidatos rechazados a mano** con motivo escrito (`MT-BLQ-20` mide 25 y no 20; `MT-BREAKER` es otro aparato; `MT-PYL-PASTA` incluye cinta que el banco no cotiza). Fichero de revisiones: `espana_revision_manual_2026-11-07.csv`.
 - **30 divergencias nuevas** (56 en total): las más útiles son las de plomería seca, con precios vigentes muy por debajo de 2026 (`MT-PYL-MONT` 0,97 vs 2,07 €/m; `MT-PYL-CANAL` 0,90 vs 1,83). No se corrigen porque el recurso no fija sección ni espesor: quedan las primeras de la lista de corrección.
-- La base nueva **no aportó ni un precio** entre los 168 sin precio auditado: con la regla estricta solo hubo 2 candidatos y ambos se descartaron por alcance. Un banco más no sustituye a fijar especificaciones.
+- Con la regla estricta de entonces la base nueva no aportó ningún precio entre los 168 sin precio auditado; **la revisión de identidad posterior sí cerró cinco** (bloque de 20 cm y cuatro hormigones), véase la sección superior. Un banco más no sustituye a fijar especificaciones.
 
 ## Verificación cruzada de precios — 7 de noviembre de 2026
 

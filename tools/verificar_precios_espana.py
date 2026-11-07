@@ -141,7 +141,15 @@ def observaciones_de_fuentes() -> dict[str, list[dict]]:
 
 
 def observaciones_de_cribado() -> dict[str, list[dict]]:
-    """Candidatos de cada banco cribado (BCCA, Extremadura…) con especificación acreditada."""
+    """Candidatos de cada banco cribado (BCCA, Extremadura…), con su identidad.
+
+    Cada candidato viaja con ``f1``: la media armónica de precisión (cuánto del
+    candidato está descrito por el recurso) y cobertura (cuánto del recurso está
+    descrito por el candidato). Ese valor es el que después decide qué ficha se
+    elige para confirmar o para documentar una divergencia: antes se elegía la
+    de precio más cercano, de modo que un bloque de hormigón de 25 cm podía
+    «confirmar» un recurso que pedía 20 cm y un extintor de 50 kg, uno de 6 kg.
+    """
     salida: dict[str, list[dict]] = defaultdict(list)
     filas = [f for ruta in sorted(glob.glob(str(DOC / CRIBADO_GLOB)))
              for f in leer(Path(ruta))]
@@ -158,7 +166,8 @@ def observaciones_de_cribado() -> dict[str, list[dict]]:
         if precio is None:
             continue
         banco = (fila.get("banco") or "bcca").strip() or "bcca"
-        salida[fila["codigo_recurso"]].append({
+        cobertura = numero(fila.get("cobertura")) or Decimal("0")
+        candidato = {
             "codigo": fila["codigo_fuente"],
             "familia": banco,
             "precio": precio,
@@ -168,7 +177,11 @@ def observaciones_de_cribado() -> dict[str, list[dict]]:
             "fichero": banco,
             "detalle": fila["descripcion_fuente"][:90],
             "precision": precision,
-        })
+            "cobertura": cobertura,
+            "f1": (2 * precision * cobertura / (precision + cobertura)
+                   if precision + cobertura else Decimal("0")),
+        }
+        salida[fila["codigo_recurso"]].append(candidato)
     return salida
 
 
@@ -261,6 +274,14 @@ def verificar() -> list[dict]:
         propia = familia("", url_propia) if url_propia else "sin_documento"
         candidatas = (list(fuentes.get(codigo, [])) + list(bcca.get(codigo, []))
                       + list(cierre.get(codigo, [])))
+        # Identidad forzada a mano: si la revisión nombra la ficha exacta del
+        # banco, solo se compara con esa. Es el contrato de "es el mismo
+        # artículo" y evita que la ordenación por parecido elija otra variante.
+        elegido = (manuales.get(codigo, {}).get("codigo_elegido") or "").strip()
+        if elegido:
+            forzadas = [o for o in candidatas if o.get("codigo") == elegido]
+            if forzadas:
+                candidatas = forzadas
         citadas = familias_citadas(recurso)
         independientes, descartadas = [], []
         for obs in candidatas:
@@ -285,15 +306,18 @@ def verificar() -> list[dict]:
                       if abs(o["precio"] / revisado - 1) <= BANDA]
             oficiales = [o for o in dentro if o["familia"] in FAMILIAS_CONFIRMAN]
             if oficiales:
-                elegida = min(oficiales, key=lambda o: abs(o["precio"] / revisado - 1))
+                elegida = min(oficiales, key=lambda o: (-o.get("f1", Decimal("0")),
+                                                        abs(o["precio"] / revisado - 1)))
                 veredicto, delta = "confirmado_independiente", elegida["precio"] / revisado - 1
             elif dentro:
                 # Coincide, pero solo con comercios: se registra el contraste y no
                 # se eleva a confirmado porque no hay referencia oficial detrás.
-                elegida = min(dentro, key=lambda o: abs(o["precio"] / revisado - 1))
+                elegida = min(dentro, key=lambda o: (-o.get("f1", Decimal("0")),
+                                                    abs(o["precio"] / revisado - 1)))
                 veredicto, delta = "contraste_comercial", elegida["precio"] / revisado - 1
             elif independientes:
-                elegida = min(independientes, key=lambda o: abs(o["precio"] / revisado - 1))
+                elegida = min(independientes, key=lambda o: (-o.get("f1", Decimal("0")),
+                                                            abs(o["precio"] / revisado - 1)))
                 veredicto, delta = "divergencia_verificada", elegida["precio"] / revisado - 1
             else:
                 veredicto, delta, elegida = "solo_fuente_propia", None, None

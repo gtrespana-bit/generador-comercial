@@ -126,9 +126,24 @@ def unir(texto: str, nuevo: str) -> str:
     return texto if nuevo in texto else (f"{texto} | {nuevo}" if texto else nuevo)
 
 
+# Anotaciones que se añaden *después* del cierre (confirmaciones y contrastes).
+# Sin esta lista, volver a aplicar la adjudicación borraba la confirmación que
+# ya se había escrito, porque el reemplazo llegaba hasta el final del texto.
+POSTERIORES = ("Confirmación 2026-11-07:", "Contraste de cierre 2026-11-07:")
+
+
 def limpiar_marca(texto: str, marca: str) -> str:
-    """Quita una anotación previa de esta misma fecha para que sea idempotente."""
-    return re.sub(rf"\s*{re.escape(marca)}:.*$", "", texto or "", flags=re.S).strip()
+    """Quita la anotación de cierre previa sin borrar lo añadido después."""
+    texto = texto or ""
+    encontrado = re.search(rf"\s*{re.escape(marca)}:", texto, flags=re.S)
+    if not encontrado:
+        return texto.strip()
+    fin = len(texto)
+    for posterior in POSTERIORES:
+        posicion = texto.find(posterior, encontrado.end())
+        if posicion != -1:
+            fin = min(fin, posicion)
+    return (texto[:encontrado.start()] + texto[fin:]).strip()
 
 
 def texto_evidencia(fila: dict) -> str:
@@ -149,7 +164,10 @@ def aplicar(adjudicacion: list[dict], registro: dict, matriz: dict) -> tuple[lis
         final = previo
         if decision in APLICA:
             precio = decimal(fila["precio_adoptado"], codigo)
-            recurso["estado_auditoria"] = "en_revision"
+            # Adoptar un precio no puede degradar un recurso ya confirmado:
+            # la adjudicación se puede reejecutar sin perder verificaciones.
+            if recurso["estado_auditoria"] != "confirmado_referencia":
+                recurso["estado_auditoria"] = "en_revision"
             recurso["precio_revisado"] = str(precio.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
             # Se conserva la observación previa (es evidencia) y se añade la del cierre.
             recurso["fuente_observada"] = unir(recurso["fuente_observada"], fila["fuente"])

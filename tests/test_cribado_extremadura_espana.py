@@ -53,10 +53,10 @@ def test_la_base_nueva_aporta_confirmaciones_y_divergencias():
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
-    assert len(confirmados) >= 32
+    assert len(confirmados) >= 37
     # El banco de 2026 acorta la lista de precios sin contraste.
     assert sum(1 for f in verificacion.values()
-               if f["veredicto"] == "solo_fuente_propia") <= 125
+               if f["veredicto"] == "solo_fuente_propia") <= 126
     divergentes = [f for f in verificacion.values() if f["veredicto"] == "divergencia_verificada"]
     assert len(divergentes) >= 50
     assert any(f["familia_independiente"] == "extremadura" for f in divergentes)
@@ -64,19 +64,37 @@ def test_la_base_nueva_aporta_confirmaciones_y_divergencias():
 
 def test_las_revisiones_manuales_mandan_sobre_el_cribado():
     correcciones = verificador.revisiones_manuales()
-    assert {"MT-BLQ-20", "MT-BREAKER", "MT-PYL-PASTA"} <= set(correcciones)
+    assert {"MT-BREAKER", "MT-PYL-PASTA", "MT-EXTINTOR", "MT-ANCLA-PIEDRA"} <= set(
+        correcciones)
+    # El bloque de 20 cm se rechazó mirando la ficha de 25 cm: el rechazo se
+    # revirtió porque P01BG200 (20x20x40) existe y es el mismo artículo.
+    assert "MT-BLQ-20" not in correcciones
+    assert correcciones["MT-EXTINTOR"]["codigo_elegido"] == "P23FJ020"
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
-    for codigo in ("MT-BLQ-20", "MT-BREAKER", "MT-PYL-PASTA"):
+    for codigo in ("MT-BREAKER", "MT-PYL-PASTA"):
         assert verificacion[codigo]["veredicto"] == "divergencia_verificada"
+    # La ficha exacta del bloque de 20 cm sí existía: se confirmó, no se descartó.
+    assert verificacion["MT-BLQ-20"]["veredicto"] == "ya_confirmado"
+    confirmadas = {f["codigo_recurso"]: f
+                   for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
+    assert confirmadas["MT-BLQ-20"]["codigo_fuente"] == "P01BG200"
+    # Confirmar no reescribe el precio: la ficha del banco (0,63) queda como
+    # referencia y el precio revisado (0,68) se mantiene dentro del ±15 %.
+    assert verificacion["MT-BLQ-20"]["precio_revisado"] == "0.68"
+    registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
+    assert "P01BG200" in registro["MT-BLQ-20"]["fuente_observada"]
+    for codigo in ("MT-BREAKER", "MT-PYL-PASTA", "MT-EXTINTOR", "MT-ANCLA-PIEDRA"):
         assert verificacion[codigo]["revision_manual"]
 
 
 def test_confirmaciones_aplicadas_incluyen_la_segunda_base():
     confirmaciones = {f["codigo_recurso"]: f for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
-    assert len(confirmaciones) == 14
+    assert len(confirmaciones) == 19
     extremadura = [c for c, f in confirmaciones.items() if f["fuente"] == "extremadura"]
-    assert set(extremadura) == {"MT-AGUA-OBRA", "MT-BARNIZ-PISO", "MT-BLQ-10", "MT-BLQ-15",
-                                "MT-CINTA-ENM", "MT-PERFIL-ACERO", "MT-POLIET", "MT-REGISTRO"}
+    assert set(extremadura) == {
+        "MT-AGUA-OBRA", "MT-BARNIZ-PISO", "MT-BLQ-10", "MT-BLQ-15", "MT-CINTA-ENM",
+        "MT-PERFIL-ACERO", "MT-POLIET", "MT-REGISTRO", "MT-BLQ-20", "MT-CONC-180",
+        "MT-CONC-210", "MT-CONC-250", "MT-CONC-300"}
     registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
     for codigo in extremadura:
         assert registro[codigo]["estado_auditoria"] == "confirmado_referencia"

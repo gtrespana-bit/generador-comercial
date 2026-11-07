@@ -35,12 +35,18 @@ def test_decisiones_sin_precio_independientes_y_trazables():
                                  (DOC / anterior).read_text(encoding='utf-8')))
         assert not codigos & previos
     audit = {r['codigo_recurso']: r for r in leer('espana_2026-11-06.csv')}
+    adjudicacion = {r['codigo_recurso']: r for r in leer('espana_adjudicacion_2026-11-07.csv')}
     informe = (DOC / INFORME).read_text(encoding='utf-8')
     partes = partidas()
     for r in decisiones:
         code = r['codigo_recurso']
         a = audit[code]
         assert r['decision'] == 'sin_precio_revisado'
+        if a['precio_revisado']:
+            # El hueco se cerró después del barrido con una decisión posterior.
+            assert adjudicacion[code]['decision'] != r['decision']
+            assert a['estado_auditoria'] == 'confirmado_referencia'
+            continue
         assert not a['precio_revisado'] and a['estado_auditoria'] == cierre.estado(r['codigo_recurso'], 'pendiente')
         assert r['fuente'].startswith('https://') and r['fuente'] in informe
         assert r['motivo'] in informe and r['motivo'] in a['evidencia_y_pendientes']

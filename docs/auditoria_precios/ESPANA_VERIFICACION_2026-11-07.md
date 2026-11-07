@@ -14,7 +14,7 @@
 | `sin_precio_revisado` | 168 | — | No hay precio auditado: la matriz conserva la referencia histórica |
 | **Total** | **388** | | |
 
-Estado del registro tras la verificación: **32 `confirmado_referencia` / 356 `en_revision`**, 220 con precio revisado, 0 pendientes de decisión. La incorporación de la base de Extremadura 2026 movió 7 precios a confirmado y sacó a la luz 30 divergencias nuevas que antes no tenían contraste.
+Estado del registro tras la verificación: **37 `confirmado_referencia` / 351 `en_revision`**, 224 con precio revisado, 0 pendientes de decisión. El último lote es la [auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md): cinco confirmaciones nuevas (bloque de 20 cm y cuatro hormigones por clase de resistencia) y tres correcciones de método (identidad antes que precio, sinónimos en el cribado, cierre idempotente). La incorporación de la base de Extremadura 2026 movió 7 precios a confirmado y sacó a la luz 30 divergencias nuevas que antes no tenían contraste.
 
 ### La segunda base ya está ingerida: Extremadura 2026
 
@@ -142,7 +142,7 @@ python3 tools/inventario_precios_espana.py           # inventario actualizado
 python3 tools/generar_matriz_precios_espana.py && python3 tools/generar_sql_precios_espana.py
 ```
 
-Artefactos: `espana_verificacion_2026-11-07.csv` (388 filas, una por recurso, con familias, observación independiente y veredicto), `espana_confirmaciones_2026-11-07.csv` (14 confirmaciones aplicadas), `espana_pendientes_verificacion_2026-11-07.csv` (356 recursos con lo que falta), `espana_cribado_extremadura_2026-11-07.csv` (1.558 candidatos de la base de 2026) y `espana_revision_manual_2026-11-07.csv` (3 descartes razonados).
+Artefactos: `espana_verificacion_2026-11-07.csv` (388 filas, una por recurso, con familias, observación independiente y veredicto), `espana_confirmaciones_2026-11-07.csv` (19 confirmaciones aplicadas), `espana_pendientes_verificacion_2026-11-07.csv` (351 recursos con lo que falta), `espana_cribado_extremadura_2026-11-07.csv` (1.558 candidatos de la base de 2026) y `espana_revision_manual_2026-11-07.csv` (3 descartes razonados).
 
 Pruebas: `tests/test_verificar_precios_espana.py` (7 pruebas: familias documentales, regla de no circularidad, completitud de la matriz, coherencia de la cola, y validación/idempotencia del aplicador).
 
