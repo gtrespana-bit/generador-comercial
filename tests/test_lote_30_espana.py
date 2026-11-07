@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 import pytest
@@ -37,7 +38,8 @@ def test_lote_30_trazable_y_precio_provisional():
         assert next(x['url'] for x in fuentes if x['codigo_recurso'] == c) in audit[c]['fuente_observada']
         assert c in informe
     for c in bloqueados:
-        assert not audit[c]['precio_revisado'] and c in informe
+        assert (not audit[c]['precio_revisado']
+                or audit[c]['precio_revisado'] == cierre.precio_revisado(c, '')) and c in informe
     assert 'una sola vez' in audit['MT-DOM-SENSOR-MOV']['evidencia_y_pendientes']
     assert '10%' in audit['MT-TUB-RIEGO']['evidencia_y_pendientes']
 

@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 import json
 from pathlib import Path
@@ -31,7 +32,8 @@ def test_tercer_barrido_completo_sin_aplicaciones_y_sin_repeticiones():
         assert int(r['usos']) == usos_reales[codigo]
         a = auditoria[codigo]
         assert codigo not in informe_primero and codigo in informe
-        assert r['decision'] == 'sin_precio_revisado' and not a['precio_revisado']
+        assert r['decision'] == 'sin_precio_revisado'
+        assert not a['precio_revisado'] or a['precio_revisado'] == cierre.precio_revisado(r['codigo_recurso'], '')
         assert r['motivo'] in a['evidencia_y_pendientes']
         assert r['fuente'].startswith('https://')
         assert r['usos'] == a['partidas_que_lo_usan'] and r['unidad'] == a['unidad']

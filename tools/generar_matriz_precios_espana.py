@@ -1425,6 +1425,42 @@ def referencias_otros_treinta() -> dict[str, dict[str, Referencia]]:
     return resultado
 
 
+
+REVISION_CIERRE = "docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md"
+FUENTES_CIERRE = ROOT / "docs/auditoria_precios/espana_referencias_cierre_2026-11-07.csv"
+
+
+def referencias_cierre_2026_11_07() -> dict[str, dict[str, Referencia]]:
+    """Precios de cierre de la auditoría, aplicados desde una tabla validada.
+
+    Es la vía data-driven para futuros lotes: no se añade código por recurso,
+    solo filas nuevas en el CSV de referencias aceptadas.
+    """
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    resultado = {}
+    with FUENTES_CIERRE.open(encoding="utf-8-sig", newline="") as manejador:
+        for fila in csv.DictReader(manejador, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in unidades or codigo in resultado:
+                raise ValueError(f"Referencia de cierre duplicada o inexistente: {codigo}")
+            precio = Decimal(fila["precio"])
+            minimo, maximo = Decimal(fila["minimo"]), Decimal(fila["maximo"])
+            if (not precio.is_finite() or precio <= 0 or minimo <= 0 or maximo < minimo
+                    or not fila["fuente"].strip() or not fila["criterio"].strip()):
+                raise ValueError(f"Referencia de cierre inválida: {codigo}")
+            resultado[codigo] = {"ES": ref(
+                precio, minimo, maximo, REVISION_CIERRE, confianza="derivado",
+                incluye_iva=("no" if fila["incluye_iva"] == "no" else "no_confirmado"),
+                incluye_transporte=("no" if fila["incluye_transporte"] == "no" else "no_confirmado"),
+                observaciones=(f"{fila['fuente']}. {fila['criterio']} Reserva: {fila['reserva']} "
+                               "Referencia operativa de cierre; no es garantía de precio universal."),
+            )}
+    if not resultado:
+        raise ValueError("La tabla de referencias de cierre está vacía")
+    return resultado
+
+
 def _numero(valor: float) -> str:
     return f"{valor:.6f}".rstrip("0").rstrip(".")
 
@@ -1434,7 +1470,7 @@ def main():
     # La canasta histórica se mantiene congelada: una revisión individual no
     # debe recalibrar silenciosamente cientos de recursos aún pendientes.
     factores = completar_referencias_derivadas(data)
-    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas(), **referencias_materiales_07(), **referencias_lote_regional(), **referencias_lote_comercial(), **referencias_lote_prioritario(), **referencias_lote_tiendas(), **referencias_lote_posterior(), **referencias_lote_banco(), **referencias_lote_cuadros(), **referencias_lote_materiales(), **referencias_lote_cadenas(), **referencias_lote_prioridad(), **referencias_lote_alta_frecuencia(), **referencias_lote_familias(), **referencias_lote_componentes(), **referencias_lote_sistemas(), **referencias_lote_bloque_amplio(), **referencias_lote_verificacion(), **referencias_lote_continuacion(), **referencias_lote_evacuacion_epoxi(), **referencias_lote_treinta(), **referencias_otros_treinta()}
+    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas(), **referencias_materiales_07(), **referencias_lote_regional(), **referencias_lote_comercial(), **referencias_lote_prioritario(), **referencias_lote_tiendas(), **referencias_lote_posterior(), **referencias_lote_banco(), **referencias_lote_cuadros(), **referencias_lote_materiales(), **referencias_lote_cadenas(), **referencias_lote_prioridad(), **referencias_lote_alta_frecuencia(), **referencias_lote_familias(), **referencias_lote_componentes(), **referencias_lote_sistemas(), **referencias_lote_bloque_amplio(), **referencias_lote_verificacion(), **referencias_lote_continuacion(), **referencias_lote_evacuacion_epoxi(), **referencias_lote_treinta(), **referencias_otros_treinta(), **referencias_cierre_2026_11_07()}
     rows = []
     codigos = set()
     for codigo, categoria, item in iter_recursos(data):
@@ -1455,7 +1491,7 @@ def main():
                 "fecha_consulta": (
                     FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
                     else FECHA_REVISION_MO if dato and dato.fuente == REVISION_MO
-                    else FECHA_MATERIALES_07 if dato and dato.fuente in (REVISION_MATERIALES_07, REVISION_LOTE_REGIONAL, REVISION_LOTE_COMERCIAL, REVISION_LOTE_PRIORITARIO, REVISION_LOTE_TIENDAS, REVISION_LOTE_POSTERIOR, REVISION_LOTE_BANCO, REVISION_LOTE_CUADROS, REVISION_LOTE_MATERIALES, REVISION_LOTE_CADENAS, REVISION_LOTE_PRIORIDAD, REVISION_LOTE_ALTA_FRECUENCIA, REVISION_LOTE_FAMILIAS, REVISION_LOTE_COMPONENTES, REVISION_LOTE_SISTEMAS, REVISION_LOTE_BLOQUE_AMPLIO, REVISION_LOTE_VERIFICACION, REVISION_LOTE_CONTINUACION, REVISION_LOTE_EVACUACION_EPOXI, REVISION_LOTE_30, REVISION_OTROS_30)
+                    else FECHA_MATERIALES_07 if dato and dato.fuente in (REVISION_MATERIALES_07, REVISION_LOTE_REGIONAL, REVISION_LOTE_COMERCIAL, REVISION_LOTE_PRIORITARIO, REVISION_LOTE_TIENDAS, REVISION_LOTE_POSTERIOR, REVISION_LOTE_BANCO, REVISION_LOTE_CUADROS, REVISION_LOTE_MATERIALES, REVISION_LOTE_CADENAS, REVISION_LOTE_PRIORIDAD, REVISION_LOTE_ALTA_FRECUENCIA, REVISION_LOTE_FAMILIAS, REVISION_LOTE_COMPONENTES, REVISION_LOTE_SISTEMAS, REVISION_LOTE_BLOQUE_AMPLIO, REVISION_LOTE_VERIFICACION, REVISION_LOTE_CONTINUACION, REVISION_LOTE_EVACUACION_EPOXI, REVISION_LOTE_30, REVISION_OTROS_30, REVISION_CIERRE)
                     else FECHA_REVISION_MATERIALES if dato and dato.fuente == REVISION_MATERIALES
                     else FECHA if dato else ""
                 ),

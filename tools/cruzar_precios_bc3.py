@@ -57,7 +57,9 @@ def leer_bc3(path: Path) -> tuple[list[Precio], str]:
         try:
             texto = bruto.decode('utf-8')
         except UnicodeDecodeError:
-            texto = bruto.decode('cp1252')
+            # Las bases reales mezclan cp1252 con bytes sueltos (0x81, 0x8d…):
+            # se sustituye el caracter dudoso en vez de abortar el archivo.
+            texto = bruto.decode('cp1252', errors='replace')
     registros = re.split(r'~(?=[A-Za-z]\|)', texto)
     conceptos, descripciones, descompuestos = {}, {}, set()
     for registro in registros:

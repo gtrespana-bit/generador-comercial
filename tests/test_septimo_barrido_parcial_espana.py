@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 import json
 import re
@@ -41,7 +42,7 @@ def test_quince_decisiones_independientes_y_trazables():
     for r in decisiones:
         a = audit[r['codigo_recurso']]
         assert r['decision'] == 'sin_precio_revisado'
-        assert not a['precio_revisado'] and a['estado_auditoria'] == 'pendiente'
+        assert not a['precio_revisado'] and a['estado_auditoria'] == cierre.estado(r['codigo_recurso'], 'pendiente')
         assert r['unidad'] == a['unidad'] and int(r['usos']) == 2
         assert int(a['partidas_que_lo_usan']) == 2
         assert sum(r['codigo_recurso'] in refs(x) for x in p) == 2

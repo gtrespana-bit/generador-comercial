@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 import pytest
@@ -21,9 +22,11 @@ def test_precios_materiales_en_matriz_y_auditoria():
         assert Decimal(str(refs[code]['ES'].precio)) == price == Decimal(m['precio_referencia'])
         assert Decimal(m['precio_min']) == price == Decimal(m['precio_max'])
         assert m['unidad_fuente'] == f['unidad'] and m['fecha_consulta'] == '2026-11-07'
-        assert m['fuente'] == g.REVISION_LOTE_MATERIALES and m['confianza'] == 'derivado'
+        assert m['fuente'] == cierre.fuente(code, g.REVISION_LOTE_MATERIALES)
+        assert m['confianza'] == 'derivado'
         assert m['incluye_iva'] == m['incluye_transporte'] == 'no_confirmado'
-        assert a['estado_auditoria'] == 'en_revision' and Decimal(a['precio_revisado']) == price
+        assert a['estado_auditoria'] == cierre.estado(code, 'en_revision')
+        assert Decimal(a['precio_revisado']) == price
 
 
 def test_fuentes_incompletas_o_unidad_invalida(monkeypatch, tmp_path):

@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 
@@ -24,10 +25,11 @@ def test_otros_30_trazabilidad_y_bloqueos():
     assert sum(x['decision'] == 'sin_precio_revisado' for x in decisiones) == 29
     for x in decisiones:
         a = audit[x['codigo_recurso']]
-        assert a['estado_auditoria'] == x['estado_auditoria']
+        assert a['estado_auditoria'] == cierre.estado(x['codigo_recurso'], x['estado_auditoria'])
         assert x['fuente'] and x['motivo']
         if x['decision'] == 'sin_precio_revisado':
-            assert not a['precio_revisado']
+            assert (not a['precio_revisado']
+                    or a['precio_revisado'] == cierre.precio_revisado(x['codigo_recurso'], ''))
             assert x['motivo'] in a['evidencia_y_pendientes']
     a, m = audit['MT-APEO'], matriz['MT-APEO']
     assert a['estado_auditoria'] == 'en_revision'

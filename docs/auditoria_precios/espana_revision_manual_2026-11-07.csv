@@ -1,0 +1,5 @@
+﻿codigo_recurso;veredicto;motivo;codigo_elegido
+MT-BREAKER;divergencia_verificada;El candidato es un interruptor bipolar de 16 A y el recurso es un interruptor termomagnético;
+MT-PYL-PASTA;divergencia_verificada;El recurso agrupa pasta de juntas y cinta de papel;
+MT-EXTINTOR;;La base sí tiene el mismo artículo (P23FJ020, polvo ABC 6 kg, 34,08 EUR): el cribado automático había elegido el extintor de 50 kg (421,04) solo por parecido de nombre. Queda como divergencia con la ficha correcta.;P23FJ020
+MT-ANCLA-PIEDRA;solo_fuente_propia;El candidato de precio más cercano por nombre es un anclaje inoxidable genérico de 87,58 EUR y los pivotes ocultos de 0,37 EUR son otro producto (fijación de placa, no de pieza de piedra): ninguna ficha prueba el mismo artículo.;

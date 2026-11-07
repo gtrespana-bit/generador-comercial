@@ -28,7 +28,10 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
-    assert not audit['MQ-DETECTOR']['precio_revisado']
+    # El lote no puso precio; el que hay es el modelo de maquinaria posterior.
+    assert 'MQ-DETECTOR' and (
+        not audit['MQ-DETECTOR']['precio_revisado']
+        or 'MODELO-MQ' in audit['MQ-DETECTOR']['codigo_fuente'])
 
 
 def test_datos_invalidos_y_conjuntos_incompletos_se_rechazan(monkeypatch, tmp_path):

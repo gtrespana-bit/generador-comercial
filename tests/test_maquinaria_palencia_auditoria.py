@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 """Contraste provincial: candidatos en revisión, sin aplicar como precios."""
 import csv
 from decimal import Decimal
@@ -30,9 +31,11 @@ def test_contraste_maquinaria_palencia_no_aplica_precios():
     for codigo, (fuente, precio) in observaciones.items():
         r = auditoria[codigo]
         assert r['estado_auditoria'] == 'en_revision'
-        assert r['codigo_fuente'] == fuente
+        assert fuente in r['codigo_fuente']
         assert Decimal(r['precio_fuente_normalizado']) == Decimal(precio)
         assert r['unidad_fuente_normalizada'] == 'h'
         assert 'diputaciondepalencia.es/' in r['fuente_observada']
-        assert not r['precio_revisado']
-        assert Decimal(matriz[codigo]['precio_referencia']) == Decimal(r['precio_matriz'])
+        assert (not r['precio_revisado']
+                or r['precio_revisado'] == cierre.precio_revisado(codigo, ''))
+        assert (Decimal(matriz[codigo]['precio_referencia'])
+                == cierre.precio(codigo, r['precio_matriz']))

@@ -2,6 +2,7 @@ import csv
 from decimal import Decimal
 
 import pytest
+import apoyo_cierre_espana as cierre
 from tools import generar_matriz_precios_espana as g
 
 
@@ -20,7 +21,8 @@ def test_prioridad_trazable_en_auditoria_y_matriz():
         m, a, ref = matriz[codigo], audit[codigo], r['ES']
         p = Decimal(str(ref.precio))
         assert Decimal(m['precio_referencia']) == Decimal(m['precio_min']) == Decimal(m['precio_max']) == p
-        assert Decimal(a['precio_revisado']) == p and a['estado_auditoria'] == 'en_revision'
+        assert Decimal(a['precio_revisado']) == p
+        assert a['estado_auditoria'] == cierre.estado(codigo, 'en_revision')
         assert m['fuente'] == g.REVISION_LOTE_PRIORIDAD and m['fecha_consulta'] == '2026-11-07'
         assert m['incluye_iva'] == ('por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in fuentes if f['codigo_recurso'] == codigo) else 'no')
         assert m['incluye_transporte'] == 'no_confirmado'
@@ -30,7 +32,7 @@ def test_prioridad_trazable_en_auditoria_y_matriz():
     assert all(Decimal(str(referencias[k]['ES'].precio)) == Decimal(v) for k, v in esperados.items())
     for codigo in ('MT-MALLA-JUNTA', 'MT-PER-BANDA'):
         # Posteriormente investigados en el lote de componentes.
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        assert audit[codigo]['estado_auditoria'] == cierre.estado(codigo, 'en_revision')
         assert codigo in g.referencias_lote_componentes()
 
 

@@ -1,0 +1,459 @@
+﻿codigo_recurso;categoria;unidad;usos;estado_auditoria;precio_matriz;rango;codigo_fuente;descripcion_fuente;precio_fuente;edicion_fuente;fecha_precio;precision;cobertura;numeros_compatibles;ratio;alerta;banco
+MO-AYU;mano_obra;h;2922;confirmado_referencia;20.39;;;;;;;;;;;sin_candidato;bcca
+MO-AYU-ESP;mano_obra;h;409;confirmado_referencia;20.59;;;;;;;;;;;sin_candidato;bcca
+MO-OF1;mano_obra;h;0;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-AC;mano_obra;h;94;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-ALB;mano_obra;h;881;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-ALI;mano_obra;h;53;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-CAB;mano_obra;h;48;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-CARP;mano_obra;h;39;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-CARPM;mano_obra;h;209;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-ELE;mano_obra;h;405;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-JARD;mano_obra;h;24;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-MON;mano_obra;h;319;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-PIN;mano_obra;h;159;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-PISO;mano_obra;h;63;confirmado_referencia;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-PLO;mano_obra;h;218;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-SOLD;mano_obra;h;127;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MO-OF1-VIDR;mano_obra;h;92;en_revision;23.18;;;;;;;;;;;sin_candidato;bcca
+MQ-ALISADORA;maquinaria;h;9;en_revision;7.623246;;;;;;;;;;;sin_candidato;bcca
+MQ-AMOLA;maquinaria;h;50;en_revision;1.86;;;;;;;;;;;sin_candidato;bcca
+MQ-ANDAMIO;maquinaria;h;190;en_revision;2.8;;;;;;;;;;;sin_candidato;bcca
+MQ-ASPIR;maquinaria;h;91;en_revision;0.61;;;;;;;;;;;sin_candidato;bcca
+MQ-ATORN;maquinaria;h;162;en_revision;0.62;;;;;;;;;;;sin_candidato;bcca
+MQ-BANO-PORT;maquinaria;ud;3;en_revision;110;1;MP01000;ALQUILER DE EQUIPO JET-GROUTING;303.54;;051222;0.2681;0.0915;si;2.7595;desviacion_fuerte;bcca
+MQ-BANO-PORT;maquinaria;ud;3;en_revision;110;2;MP00700;ALQUILER EQUIPO PARA ANCLAJE EN INYECCIONES;192.74;;051222;0.2187;0.0915;si;1.7522;;bcca
+MQ-BANO-PORT;maquinaria;ud;3;en_revision;110;3;MP00100;EQUIPO PANTALLA Y GRÚA AUXILIAR (ALQUILER);268.21;;051222;0.1992;0.0915;si;2.4383;desviacion_fuerte;bcca
+MQ-BATID;maquinaria;h;60;en_revision;0.67;;;;;;;;;;;sin_candidato;bcca
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;1;MB00100;BOMBA DE AGOTAMIENTO, AGUA Y FANGOS;4.02;;051222;0.5054;0.2135;si;1.1426;;bcca
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;2;MB00200;BOMBA DE HORMIGONAR;98.06;;051222;0.4670;0.0997;si;27.8705;desviacion_fuerte;bcca
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;3;MP80010;EQUIPO PERFORACIONES PROFUNDAS C/BOMBA PRESIÓN;407.83;;051222;0.2360;0.0997;si;115.9128;desviacion_fuerte;bcca
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;1;MB00200;BOMBA DE HORMIGONAR;98.06;;051222;0.4670;0.0873;si;1.2572;;bcca
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;2;MB00100;BOMBA DE AGOTAMIENTO, AGUA Y FANGOS;4.02;;051222;0.2360;0.0873;si;0.0515;desviacion_fuerte;bcca
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;3;MP80010;EQUIPO PERFORACIONES PROFUNDAS C/BOMBA PRESIÓN;407.83;;051222;0.2360;0.0873;si;5.2286;desviacion_fuerte;bcca
+MQ-CIZALLA;maquinaria;h;45;en_revision;3.078618;;;;;;;;;;;sin_candidato;bcca
+MQ-COMPACT-SALTO;maquinaria;h;10;en_revision;6.597039;;;;;;;;;;;sin_candidato;bcca
+MQ-CORT-AGUA;maquinaria;h;91;en_revision;1.95;;;;;;;;;;;sin_candidato;bcca
+MQ-DESBROZ;maquinaria;h;9;en_revision;4.36;;;;;;;;;;;sin_candidato;bcca
+MQ-DETECTOR;maquinaria;h;61;en_revision;0.3;;;;;;;;;;;sin_candidato;bcca
+MQ-DOBLAD-TUBO;maquinaria;h;4;en_revision;3.811623;;;;;;;;;;;sin_candidato;bcca
+MQ-ESMERIL;maquinaria;h;40;en_revision;3.37182;;;;;;;;;;;sin_candidato;bcca
+MQ-ESTAMP;maquinaria;h;2;en_revision;7.036842;;;;;;;;;;;sin_candidato;bcca
+MQ-GRUA;maquinaria;h;40;en_revision;50.59;1;MG80000;GRÚA TELESCÓPICA S/CAMIÓN 20 t;74.49;;051222;0.4928;0.2100;si;1.4724;;bcca
+MQ-GRUA;maquinaria;h;40;en_revision;50.59;2;MK00100;CAMIÓN BASCULANTE;38.12;;051222;0.4857;0.1050;si;0.7535;;bcca
+MQ-GRUA;maquinaria;h;40;en_revision;50.59;3;MK00200;CAMIÓN CISTERNA;45.12;;051222;0.4670;0.1050;si;0.8919;;bcca
+MQ-HIDROLAV;maquinaria;h;28;en_revision;6.157237;;;;;;;;;;;sin_candidato;bcca
+MQ-INYECTORA;maquinaria;h;9;en_revision;5.35;;;;;;;;;;;sin_candidato;bcca
+MQ-LIJAD;maquinaria;h;60;en_revision;0.95;;;;;;;;;;;sin_candidato;bcca
+MQ-LIJAD-PISO;maquinaria;h;3;en_revision;9.529057;;;;;;;;;;;sin_candidato;bcca
+MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;1;MA10001;MARTILLO ELÉCTRICO;1.4;;071116;1.0000;0.4623;no;0.6699;numeros_diferentes;bcca
+MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;2;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;;051222;0.3555;0.2192;no;44.0144;"numeros_diferentes;desviacion_fuerte";bcca
+MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;3;MC00100;COMPRESOR DOS MARTILLOS;9.46;;051222;0.3393;0.2192;no;4.5263;"numeros_diferentes;desviacion_fuerte";bcca
+MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;4;MO00100;COMPRESOR DOS MARTILLOS;8.35;;010222;0.3393;0.2192;no;3.9952;"numeros_diferentes;desviacion_fuerte";bcca
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;1;MC00100;COMPRESOR DOS MARTILLOS;9.46;;051222;0.6948;0.1623;si;0.8600;;bcca
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;2;MO00100;COMPRESOR DOS MARTILLOS;8.35;;010222;0.6948;0.1623;si;0.7591;;bcca
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;3;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;;051222;0.6275;0.1399;si;8.3627;desviacion_fuerte;bcca
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;4;MA10001;MARTILLO ELÉCTRICO;1.4;;071116;0.4741;0.0792;si;0.1273;desviacion_fuerte;bcca
+MQ-MEZCL;maquinaria;h;120;en_revision;1.25;;;;;;;;;;;sin_candidato;bcca
+MQ-MONTAC;maquinaria;h;46;en_revision;13.927083;;;;;;;;;;;sin_candidato;bcca
+MQ-NIVEL-LASER;maquinaria;h;41;en_revision;3.225219;;;;;;;;;;;sin_candidato;bcca
+MQ-OXICORTE;maquinaria;h;48;en_revision;6.9;;;;;;;;;;;sin_candidato;bcca
+MQ-PERF-PILOTE;maquinaria;h;3;en_revision;80.630482;1;MP80000;EQUIPO PERFORACIÓN MICROPILOTES;407.83;;051222;0.5000;0.1330;si;5.0580;desviacion_fuerte;bcca
+MQ-PLANCHA-COMP;maquinaria;h;20;en_revision;5.570833;;;;;;;;;;;sin_candidato;bcca
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.14;1;MS00110;MAQUINA DESBARBADORA RADIAL-ORBITAL;1.78;;051222;0.2112;0.1072;si;0.1947;desviacion_fuerte;bcca
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.14;2;MC00300;MAQUINA NEUMATICA PARA BOQUILLAS DE AIRE-AGUA;2.76;;051222;0.1540;0.1072;si;0.3020;desviacion_fuerte;bcca
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.14;3;MW00100;MÁQUINA AUTOMÓVIL PARA MARCAR VIALES 3 BANDAS Y 3 CV;23.36;;051222;0.1299;0.1072;si;2.5558;desviacion_fuerte;bcca
+MQ-PULIDORA;maquinaria;h;16;en_revision;6.597039;;;;;;;;;;;sin_candidato;bcca
+MQ-RECUP-GAS;maquinaria;h;7;en_revision;9.529057;;;;;;;;;;;sin_candidato;bcca
+MQ-RETRO;maquinaria;h;63;en_revision;38.68;1;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;;051222;1.0000;0.4109;si;2.3782;desviacion_fuerte;bcca
+MQ-RETRO;maquinaria;h;63;en_revision;38.68;2;ME00400;RETROEXCAVADORA;52.09;;051222;1.0000;0.1531;si;1.3467;;bcca
+MQ-RETRO;maquinaria;h;63;en_revision;38.68;3;ME01400;MINI RETROEXCAVADORA;36.19;;051222;0.4670;0.1531;si;0.9356;;bcca
+MQ-RODILLO;maquinaria;h;151;en_revision;0.5;;;;;;;;;;;sin_candidato;bcca
+MQ-ROZAD;maquinaria;h;30;en_revision;6.157237;;;;;;;;;;;sin_candidato;bcca
+MQ-SIERRA;maquinaria;h;199;en_revision;0.97;1;MS00105;SIERRA MECÁNICA DE CORTE, MANUAL;3.45;;051222;0.5248;0.3223;si;3.5567;desviacion_fuerte;bcca
+MQ-SIERRA;maquinaria;h;199;en_revision;0.97;2;MS00100;SIERRA MECÁNICA;2.44;;051222;0.5143;0.1612;si;2.5155;desviacion_fuerte;bcca
+MQ-SOLDADORA;maquinaria;h;105;en_revision;1.43;;;;;;;;;;;sin_candidato;bcca
+MQ-TALADRO;maquinaria;h;1025;en_revision;1.03;1;MW00200;TALADRO ELÉCTRICO;5.81;;051222;0.5188;0.2572;si;5.6408;desviacion_fuerte;bcca
+MQ-TELUROMETRO;maquinaria;h;2;en_revision;17.592105;;;;;;;;;;;sin_candidato;bcca
+MQ-TERMOF;maquinaria;h;23;en_revision;2.638816;;;;;;;;;;;sin_candidato;bcca
+MQ-VENT-SUC;maquinaria;h;3;en_revision;4.104825;;;;;;;;;;;sin_candidato;bcca
+MQ-VIBRADOR;maquinaria;h;135;en_revision;3.72;1;MV00100;VIBRADOR;1.82;;051222;1.0000;0.1473;si;0.4892;desviacion_fuerte;bcca
+MQ-VOLQ;maquinaria;h;31;en_revision;51.02;1;MK00100;CAMIÓN BASCULANTE;38.12;;051222;0.4857;0.0942;no;0.7472;numeros_diferentes;bcca
+MQ-VOLQ;maquinaria;h;31;en_revision;51.02;2;MK00200;CAMIÓN CISTERNA;45.12;;051222;0.4670;0.0942;no;0.8844;numeros_diferentes;bcca
+MQ-VOLQ;maquinaria;h;31;en_revision;51.02;3;MG80000;GRÚA TELESCÓPICA S/CAMIÓN 20 t;74.49;;051222;0.2464;0.0942;no;1.4600;numeros_diferentes;bcca
+MT-ACC-BOMBA;materiales;ud;2;en_revision;31.898734;;;;;;;;;;;sin_candidato;bcca
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;;;;;;;;;;;sin_candidato;bcca
+MT-ACERO-INOX;materiales;kg;17;en_revision;15.949367;;;;;;;;;;;sin_candidato;bcca
+MT-ACRIL-IMPER;materiales;l;10;en_revision;5.012658;;;;;;;;;;;sin_candidato;bcca
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;;;;;;;;;;;sin_candidato;bcca
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;;;;;;;;;;;sin_candidato;bcca
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;;;;;;;;;;;sin_candidato;bcca
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;;;;;;;;;;;sin_candidato;bcca
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;;;;;;;;;;;sin_candidato;bcca
+MT-ADITIVO;materiales;l;5;en_revision;2.11;;;;;;;;;;;sin_candidato;bcca
+MT-ADOQUIN;materiales;m2;3;en_revision;17.658228;;;;;;;;;;;sin_candidato;bcca
+MT-AGUA-OBRA;materiales;m3;27;confirmado_referencia;0.84;;;;;;;;;;;sin_candidato;bcca
+MT-AISL-REFLECT;materiales;m2;9;en_revision;3.64557;;;;;;;;;;;sin_candidato;bcca
+MT-AISL-TERM;materiales;m2;11;confirmado_referencia;8.15;;;;;;;;;;;sin_candidato;bcca
+MT-ALAMBRE;materiales;kg;49;en_revision;4.92;;;;;;;;;;;sin_candidato;bcca
+MT-ALARMA;materiales;ud;0;en_revision;170.886076;;;;;;;;;;;sin_candidato;bcca
+MT-ANCLA-MURO;materiales;ud;10;en_revision;0.740506;;;;;;;;;;;sin_candidato;bcca
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;1;P124010;Anclaje hormigón;0.71;;150323;0.4555;0.0812;si;0.1183;desviacion_fuerte;bcca
+MT-ANIME-ALIV;materiales;ud;8;en_revision;1.822785;;;;;;;;;;;sin_candidato;bcca
+MT-ANTI-GRAFFITI;materiales;l;4;en_revision;76.73;;;;;;;;;;;sin_candidato;bcca
+MT-APEO;materiales;ud;54;en_revision;1.04;;;;;;;;;;;sin_candidato;bcca
+MT-ARENA;materiales;m3;13;en_revision;28;;;;;;;;;;;sin_candidato;bcca
+MT-ARNES;materiales;ud;3;en_revision;44.93;;;;;;;;;;;sin_candidato;bcca
+MT-ASPERSOR;materiales;ud;7;en_revision;5.45;;;;;;;;;;;sin_candidato;bcca
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;;;;;;;;;;;sin_candidato;bcca
+MT-AUTOM-PORTON;materiales;ud;0;en_revision;205.063291;;;;;;;;;;;sin_candidato;bcca
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;;;;;;;;;;;sin_candidato;bcca
+MT-BANDA-REF;materiales;m;46;en_revision;3.01;1;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;;281221;0.2571;0.1131;si;0.0233;desviacion_fuerte;bcca
+MT-BARANDA-PROV;materiales;m;6;en_revision;5.126582;;;;;;;;;;;sin_candidato;bcca
+MT-BARNIZ-MARINO;materiales;l;2;en_revision;10.44;;;;;;;;;;;sin_candidato;bcca
+MT-BARNIZ-PISO;materiales;l;16;confirmado_referencia;11.57;;;;;;;;;;;sin_candidato;bcca
+MT-BARRA-APOYO;materiales;ud;5;en_revision;31.898734;;;;;;;;;;;sin_candidato;bcca
+MT-BARRA-TIERRA;materiales;ud;5;en_revision;20.506329;;;;;;;;;;;sin_candidato;bcca
+MT-BARRERA-ANTICAP;materiales;m;3;en_revision;0.87;;;;;;;;;;;sin_candidato;bcca
+MT-BATERIA;materiales;ud;0;en_revision;250.632911;;;;;;;;;;;sin_candidato;bcca
+MT-BENTONITA;materiales;m2;3;en_revision;15.2;;;;;;;;;;;sin_candidato;bcca
+MT-BLOQUE-ALIV;materiales;ud;7;en_revision;1.082278;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-10;materiales;ud;10;confirmado_referencia;0.47;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-12;materiales;ud;2;en_revision;0.72;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-15;materiales;ud;22;confirmado_referencia;0.54;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-20;materiales;ud;2;confirmado_referencia;0.68;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-ARC-10;materiales;ud;3;en_revision;0.432911;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-ARC-15;materiales;ud;5;en_revision;0.45;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-EST-15;materiales;ud;5;en_revision;1.002532;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-EST-20;materiales;ud;3;en_revision;1.253165;;;;;;;;;;;sin_candidato;bcca
+MT-BLQ-VIDRIO;materiales;ud;2;en_revision;7.860759;;;;;;;;;;;sin_candidato;bcca
+MT-BOMBA-AGUA;materiales;ud;0;en_revision;182.278481;;;;;;;;;;;sin_candidato;bcca
+MT-BOTIQUIN;materiales;ud;6;en_revision;39.873418;;;;;;;;;;;sin_candidato;bcca
+MT-BREAKER;materiales;ud;18;en_revision;12.66;;;;;;;;;;;sin_candidato;bcca
+MT-CABLE-8;materiales;m;19;en_revision;2.8;;;;;;;;;;;sin_candidato;bcca
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;;;;;;;;;;;sin_candidato;bcca
+MT-CABLE-COBRE-DESN;materiales;m;23;en_revision;5.126582;;;;;;;;;;;sin_candidato;bcca
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;;;;;;;;;;;sin_candidato;bcca
+MT-CAJON-PERS;materiales;m;8;en_revision;67.35;;;;;;;;;;;sin_candidato;bcca
+MT-CAMARA-CCTV;materiales;ud;0;en_revision;96.835443;;;;;;;;;;;sin_candidato;bcca
+MT-CANAL-DREN;materiales;m;6;en_revision;14.67;;;;;;;;;;;sin_candidato;bcca
+MT-CANAL-PVC;materiales;m;8;en_revision;10.11;;;;;;;;;;;sin_candidato;bcca
+MT-CANON;materiales;m3;4;en_revision;7;;;;;;;;;;;sin_candidato;bcca
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;;;;;;;;;;;sin_candidato;bcca
+MT-CASETA-BIEN;materiales;ud;3;en_revision;136.708861;;;;;;;;;;;sin_candidato;bcca
+MT-CELOSIA;materiales;m2;10;en_revision;29.620253;1;P00101N;CELOSÍA FIJA LAMAS ORIENTABLES HORIZ. ALUMINIO;220;;010222;0.3108;0.2789;si;7.4274;desviacion_fuerte;bcca
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;;;;;;;;;;;sin_candidato;bcca
+MT-CERRADURA;materiales;ud;25;en_revision;36.455696;;;;;;;;;;;sin_candidato;bcca
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;;;;;;;;;;;sin_candidato;bcca
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;;;;;;;;;;;sin_candidato;bcca
+MT-CIELO-METAL;materiales;m2;4;en_revision;15.949367;;;;;;;;;;;sin_candidato;bcca
+MT-CIELO-PVC;materiales;m2;4;en_revision;18.227848;;;;;;;;;;;sin_candidato;bcca
+MT-CIERRA-PUERTA;materiales;ud;3;en_revision;19.01;;;;;;;;;;;sin_candidato;bcca
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;;;;;;;;;;;sin_candidato;bcca
+MT-CINTA-ENM;materiales;ud;57;confirmado_referencia;1.83;;;;;;;;;;;sin_candidato;bcca
+MT-CINTA-LED;materiales;m;3;en_revision;7.063291;;;;;;;;;;;sin_candidato;bcca
+MT-CLAVOS;materiales;kg;94;en_revision;3.21;;;;;;;;;;;sin_candidato;bcca
+MT-CONC-180;materiales;m3;4;confirmado_referencia;92;;;;;;;;;;;sin_candidato;bcca
+MT-CONC-210;materiales;m3;106;confirmado_referencia;100;;;;;;;;;;;sin_candidato;bcca
+MT-CONC-250;materiales;m3;66;confirmado_referencia;108;;;;;;;;;;;sin_candidato;bcca
+MT-CONC-300;materiales;m3;3;confirmado_referencia;118;;;;;;;;;;;sin_candidato;bcca
+MT-CONECTOR-CORTE;materiales;ud;2;en_revision;1.81;;;;;;;;;;;sin_candidato;bcca
+MT-CONS-DEM;materiales;ud;398;en_revision;1.253165;;;;;;;;;;;sin_candidato;bcca
+MT-CONS-LIMP;materiales;m2;35;en_revision;0.398734;;;;;;;;;;;sin_candidato;bcca
+MT-CONS-PULIDO;materiales;m2;14;en_revision;2.734177;;;;;;;;;;;sin_candidato;bcca
+MT-CONT-DESCARGAS;materiales;ud;0;en_revision;51.265823;;;;;;;;;;;sin_candidato;bcca
+MT-CONTENEDOR;materiales;ud;5;en_revision;74.050633;;;;;;;;;;;sin_candidato;bcca
+MT-CORNISA;materiales;m;5;en_revision;7.15;;;;;;;;;;;sin_candidato;bcca
+MT-CRU-NIV;materiales;ud;20;en_revision;0.19;;;;;;;;;;;sin_candidato;bcca
+MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;;;;;;;;;;;sin_candidato;bcca
+MT-CUMBRERA;materiales;m;8;en_revision;7.291139;;;;;;;;;;;sin_candidato;bcca
+MT-CURADOR;materiales;l;40;en_revision;2.25;;;;;;;;;;;sin_candidato;bcca
+MT-DECAP;materiales;l;3;en_revision;12.89;1;PW00330;DECAPANTE PINTURAS;6.58;;281221;1.0000;0.2019;si;0.5105;;bcca
+MT-DESMOLD;materiales;l;45;en_revision;5.93;;;;;;;;;;;sin_candidato;bcca
+MT-DESMOLD-COLOR;materiales;kg;5;en_revision;3.12;;;;;;;;;;;sin_candidato;bcca
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;;;;;;;;;;;sin_candidato;bcca
+MT-DIFERENCIAL;materiales;ud;4;confirmado_referencia;55.01;;;;;;;;;;;sin_candidato;bcca
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;;;;;;;;;;;sin_candidato;bcca
+MT-DISOL-ADH;materiales;l;4;en_revision;5.924051;1;PW00100;DISOLVENTE;1.96;;051222;1.0000;0.1064;si;0.3309;desviacion_fuerte;bcca
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-CENTRAL;materiales;ud;0;en_revision;205.063291;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-ENCHUFE;materiales;ud;0;en_revision;31.898734;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-PANEL;materiales;ud;0;en_revision;102.531646;1;P22IP040;Panel conex ión 48 puertos;185;;140323;0.1931;0.0846;si;1.8043;;bcca
+MT-DOM-PASARELA;materiales;ud;0;en_revision;102.531646;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-PERSIANA;materiales;ud;0;en_revision;54.683544;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-REPETIDOR;materiales;ud;0;en_revision;51.265823;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-GAS;materiales;ud;0;en_revision;34.177215;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-SENSOR-TEMP;materiales;ud;0;en_revision;25.063291;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-TECLADO;materiales;ud;0;en_revision;39.873418;;;;;;;;;;;sin_candidato;bcca
+MT-DOM-TERMOSTATO;materiales;ud;0;en_revision;62.658228;1;P20WT010;TERMOSTATO AMBIENTE PROGRAMABLE;76.7;;010222;0.3333;0.0886;si;1.2241;;bcca
+MT-DOMO;materiales;ud;4;en_revision;82.025316;;;;;;;;;;;sin_candidato;bcca
+MT-DPS-1;materiales;ud;0;en_revision;343.26;;;;;;;;;;;sin_candidato;bcca
+MT-DPS-2;materiales;ud;0;en_revision;197.54;;;;;;;;;;;sin_candidato;bcca
+MT-DPS-3;materiales;ud;0;en_revision;28.481013;;;;;;;;;;;sin_candidato;bcca
+MT-DPS-DATOS;materiales;ud;0;en_revision;34.177215;;;;;;;;;;;sin_candidato;bcca
+MT-DUCTO-VENT;materiales;m;41;en_revision;9.75;;;;;;;;;;;sin_candidato;bcca
+MT-ELE-CABLE;materiales;m;103;en_revision;1.06;;;;;;;;;;;sin_candidato;bcca
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;;;;;;;;;;;sin_candidato;bcca
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;;;;;;;;;;;sin_candidato;bcca
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;;;;;;;;;;;sin_candidato;bcca
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;;;;;;;;;;;sin_candidato;bcca
+MT-ELECTRODO;materiales;kg;71;en_revision;4.39;;;;;;;;;;;sin_candidato;bcca
+MT-ENDURECEDOR;materiales;kg;2;en_revision;0.63;;;;;;;;;;;sin_candidato;bcca
+MT-EPOXI-ANCLA;materiales;l;27;en_revision;24.23;1;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;;051222;0.1490;0.0736;si;0.3855;desviacion_fuerte;bcca
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.088608;1;PA00900;RESINA ACRÍLICA;3.76;;281221;0.4518;0.0759;si;0.2200;desviacion_fuerte;bcca
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.088608;2;PP00200;RESINA PLÁSTICA;2.85;;051222;0.4220;0.0759;si;0.1668;desviacion_fuerte;bcca
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.088608;3;PX00400;PINTURA RESINAS EPOXI DOS COMPONENTES CON DISOLVENTES;6.83;;281221;0.2507;0.1518;si;0.3997;desviacion_fuerte;bcca
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.088608;4;PX00100;PINTURA INSECTICIDA-FUNGICIDA ACEITE CON RESINAS, COLOR;14.67;;051222;0.2424;0.1518;si;0.8585;;bcca
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.088608;5;PX00200;PINTURA INSECTICIDA-FUNGICIDA ACEITE CON RESINAS, INCOL.;9.6;;051222;0.2351;0.1518;si;0.5618;;bcca
+MT-EPP;materiales;ud;7;en_revision;47.848101;;;;;;;;;;;sin_candidato;bcca
+MT-ESCALERILLA;materiales;m;7;en_revision;2.41;;;;;;;;;;;sin_candidato;bcca
+MT-ESMALTE-AGUA;materiales;l;1;en_revision;8.04;;;;;;;;;;;sin_candidato;bcca
+MT-ESPEJO;materiales;m2;9;en_revision;29.52;;;;;;;;;;;sin_candidato;bcca
+MT-ESTRUCT-MESON;materiales;m;4;en_revision;13.670886;;;;;;;;;;;sin_candidato;bcca
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;1;P08MA040;Pasta niveladora;0.58;;150323;0.4642;0.1004;si;1.0545;;bcca
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;2;PA00300;PASTA PÉTREA PARA RAYAR;2.24;;051222;0.4369;0.1819;si;4.0727;desviacion_fuerte;bcca
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;3;PA00200;PASTA PÉTREA LISA;2.44;;051222;0.3194;0.1004;si;4.4364;desviacion_fuerte;bcca
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;4;PA00400;PASTA PÉTREA RUGOSA;2.64;;051222;0.3082;0.1004;si;4.8000;desviacion_fuerte;bcca
+MT-ESTUCO-VEN;materiales;kg;4;en_revision;6.835443;1;P08MA040;Pasta niveladora;0.58;;150323;0.4642;0.1020;si;0.0849;desviacion_fuerte;bcca
+MT-ESTUCO-VEN;materiales;kg;4;en_revision;6.835443;2;PA00300;PASTA PÉTREA PARA RAYAR;2.24;;051222;0.4369;0.1847;si;0.3277;desviacion_fuerte;bcca
+MT-ESTUCO-VEN;materiales;kg;4;en_revision;6.835443;3;PA00200;PASTA PÉTREA LISA;2.44;;051222;0.3194;0.1020;si;0.3570;desviacion_fuerte;bcca
+MT-ESTUCO-VEN;materiales;kg;4;en_revision;6.835443;4;PA00400;PASTA PÉTREA RUGOSA;2.64;;051222;0.3082;0.1020;si;0.3862;desviacion_fuerte;bcca
+MT-EXTINTOR;materiales;ud;4;en_revision;63;;;;;;;;;;;sin_candidato;bcca
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;;;;;;;;;;;sin_candidato;bcca
+MT-FIBRA-NAT;materiales;m2;1;en_revision;25.063291;;;;;;;;;;;sin_candidato;bcca
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;;;;;;;;;;;sin_candidato;bcca
+MT-FORM-MADERA;materiales;m2;73;en_revision;10;;;;;;;;;;;sin_candidato;bcca
+MT-FUNGICIDA;materiales;l;6;en_revision;13.81;1;PW00170;SOLUCION FUNGICIDA;0.95;;281221;1.0000;0.2387;si;0.0688;desviacion_fuerte;bcca
+MT-GABINETE-MANG;materiales;ud;1;en_revision;227.848101;;;;;;;;;;;sin_candidato;bcca
+MT-GAS-REFRIG;materiales;kg;2;en_revision;20.506329;;;;;;;;;;;sin_candidato;bcca
+MT-GEOTEXTIL;materiales;m2;25;en_revision;0.68;;;;;;;;;;;sin_candidato;bcca
+MT-GRAMA;materiales;m2;4;en_revision;3.64557;;;;;;;;;;;sin_candidato;bcca
+MT-GRANO-MARMOL;materiales;kg;6;en_revision;0.09;;;;;;;;;;;sin_candidato;bcca
+MT-GRAVILLA;materiales;m3;21;en_revision;38.97;;;;;;;;;;;sin_candidato;bcca
+MT-GROUT;materiales;kg;5;en_revision;0.52;;;;;;;;;;;sin_candidato;bcca
+MT-GROUT-CELDA;materiales;m3;4;en_revision;143.544304;;;;;;;;;;;sin_candidato;bcca
+MT-HERRAJE-CLOSET;materiales;ud;47;en_revision;5.126582;;;;;;;;;;;sin_candidato;bcca
+MT-HERRAJE-CORRED;materiales;ud;6;en_revision;20.506329;;;;;;;;;;;sin_candidato;bcca
+MT-HERRAJE-MAD;materiales;ud;15;en_revision;5.45;;;;;;;;;;;sin_candidato;bcca
+MT-HERRAJE-PUERTA;materiales;ud;44;en_revision;14.810127;;;;;;;;;;;sin_candidato;bcca
+MT-HIDROFUG-FACH;materiales;l;4;en_revision;6.28;;;;;;;;;;;sin_candidato;bcca
+MT-HIDROFUGO;materiales;l;14;en_revision;1.91;;;;;;;;;;;sin_candidato;bcca
+MT-HIDRONEUMATICO;materiales;ud;0;en_revision;273.417722;;;;;;;;;;;sin_candidato;bcca
+MT-IMP-PRIM;materiales;l;6;en_revision;1.74;;;;;;;;;;;sin_candidato;bcca
+MT-IMPERM-ASF;materiales;l;2;en_revision;5.126582;;;;;;;;;;;sin_candidato;bcca
+MT-IMPRIM-ASF;materiales;l;18;en_revision;5.31;;;;;;;;;;;sin_candidato;bcca
+MT-INVERSOR;materiales;ud;0;en_revision;318.987342;;;;;;;;;;;sin_candidato;bcca
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;;;;;;;;;;;sin_candidato;bcca
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;;;;;;;;;;;sin_candidato;bcca
+MT-LACA-MADERA;materiales;l;7;en_revision;11.98;1;PL00200;LACA NITROCELULÓSICA INCOLORA;14.5;;051222;0.6893;0.2467;si;1.2104;;bcca
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;;;;;;;;;;;sin_candidato;bcca
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;;;;;;;;;;;sin_candidato;bcca
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;;;;;;;;;;;sin_candidato;bcca
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;;;;;;;;;;;sin_candidato;bcca
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;;;;;;;;;;;sin_candidato;bcca
+MT-LAMP-OBRA;materiales;ud;4;en_revision;10.822785;;;;;;;;;;;sin_candidato;bcca
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;;;;;;;;;;;sin_candidato;bcca
+MT-LASUR;materiales;l;2;en_revision;12.4;;;;;;;;;;;sin_candidato;bcca
+MT-LIMP-QUIM;materiales;l;10;en_revision;3.14;;;;;;;;;;;sin_candidato;bcca
+MT-LINEA-VIDA;materiales;m;3;en_revision;7.063291;;;;;;;;;;;sin_candidato;bcca
+MT-LLAVE-PROV;materiales;ud;5;en_revision;6.835443;;;;;;;;;;;sin_candidato;bcca
+MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;;;;;;;;;;;sin_candidato;bcca
+MT-MADERA-ENTIB;materiales;m2;5;en_revision;3.873418;;;;;;;;;;;sin_candidato;bcca
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;;;;;;;;;;;sin_candidato;bcca
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;;;;;;;;;;;sin_candidato;bcca
+MT-MADERA-PERGOLA;materiales;m;6;en_revision;7.746835;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-DREN;materiales;m2;2;en_revision;5.17;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-ESQ;materiales;m;17;en_revision;0.797468;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;;;;;;;;;;;sin_candidato;bcca
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;;;;;;;;;;;sin_candidato;bcca
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;;;;;;;;;;;sin_candidato;bcca
+MT-MANGUERA;materiales;m;6;en_revision;0.36;;;;;;;;;;;sin_candidato;bcca
+MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;;;;;;;;;;;sin_candidato;bcca
+MT-MANTO-ASF;materiales;m2;16;en_revision;4.09;;;;;;;;;;;sin_candidato;bcca
+MT-MARCO-PUERTA;materiales;m;30;en_revision;7.974684;;;;;;;;;;;sin_candidato;bcca
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;1;PW10001;MASILLA DE POLIURETANO;18.2;;071116;0.5000;0.0876;si;0.3936;desviacion_fuerte;bcca
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;2;PW00200;MASILLA CAUCHO-SILICONA;26.35;;051222;0.3319;0.0876;si;0.5699;;bcca
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;3;PW00210;MASILLA DE POLIURETANO MONOCOMPONENTE BAJO MÓD. ELASTICIDAD;11.07;;051222;0.1523;0.0876;si;0.2394;desviacion_fuerte;bcca
+MT-MAT-PRESTAMO;materiales;m3;2;en_revision;18.227848;;;;;;;;;;;sin_candidato;bcca
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;;;;;;;;;;;sin_candidato;bcca
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;;;;;;;;;;;sin_candidato;bcca
+MT-MICROCEM;materiales;kg;4;en_revision;6.265823;;;;;;;;;;;sin_candidato;bcca
+MT-MOLDURA-YESO;materiales;m;9;en_revision;1.39;;;;;;;;;;;sin_candidato;bcca
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;;;;;;;;;;;sin_candidato;bcca
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;;;;;;;;;;;sin_candidato;bcca
+MT-MOSAICO;materiales;m2;2;en_revision;12.4;;;;;;;;;;;sin_candidato;bcca
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;;;;;;;;;;;sin_candidato;bcca
+MT-OXI-CONS;materiales;ud;54;en_revision;4.443038;;;;;;;;;;;sin_candidato;bcca
+MT-PANEL-LIV;materiales;m2;2;en_revision;15.949367;;;;;;;;;;;sin_candidato;bcca
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;;;;;;;;;;;sin_candidato;bcca
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;;;;;;;;;;;sin_candidato;bcca
+MT-PANEL-SOLAR;materiales;ud;0;en_revision;205.063291;1;P22IP040;Panel conex ión 48 puertos;185;;140323;0.1931;0.1202;si;0.9022;;bcca
+MT-PARARRAYOS-PDA;materiales;ud;0;en_revision;432.911392;;;;;;;;;;;sin_candidato;bcca
+MT-PARARRAYOS-PUNTA;materiales;ud;0;en_revision;74.050633;;;;;;;;;;;sin_candidato;bcca
+MT-PASIVANTE;materiales;l;5;en_revision;11.164557;;;;;;;;;;;sin_candidato;bcca
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;1;P08MA040;Pasta niveladora;0.58;;150323;0.4642;0.1136;si;2.0000;;bcca
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;2;PA00300;PASTA PÉTREA PARA RAYAR;2.24;;051222;0.4369;0.2057;si;7.7241;desviacion_fuerte;bcca
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;3;PA00200;PASTA PÉTREA LISA;2.44;;051222;0.3194;0.1136;si;8.4138;desviacion_fuerte;bcca
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;4;PA00400;PASTA PÉTREA RUGOSA;2.64;;051222;0.3082;0.1136;si;9.1034;desviacion_fuerte;bcca
+MT-PEGA-MURAL;materiales;kg;4;en_revision;16.36;;;;;;;;;;;sin_candidato;bcca
+MT-PER-BANDA;materiales;m;3;en_revision;1.11;1;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;;281221;0.2571;0.0894;no;0.0631;"numeros_diferentes;desviacion_fuerte";bcca
+MT-PERF-DESM;materiales;m2;10;en_revision;8.17;;;;;;;;;;;sin_candidato;bcca
+MT-PERFIL-ACERO;materiales;kg;79;confirmado_referencia;1.54;;;;;;;;;;;sin_candidato;bcca
+MT-PERFIL-ALUM;materiales;kg;74;en_revision;10.822785;;;;;;;;;;;sin_candidato;bcca
+MT-PERFIL-CORTINERO;materiales;m;2;en_revision;8.43038;;;;;;;;;;;sin_candidato;bcca
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;;;;;;;;;;;sin_candidato;bcca
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;;;;;;;;;;;sin_candidato;bcca
+MT-PERNO-ANCLA;materiales;ud;148;en_revision;1.55;;;;;;;;;;;sin_candidato;bcca
+MT-PERSIANA-ALU;materiales;m2;4;en_revision;62.658228;;;;;;;;;;;sin_candidato;bcca
+MT-PIEDRA-FACHADA;materiales;m2;1;en_revision;43.291139;;;;;;;;;;;sin_candidato;bcca
+MT-PIEDRA-PIC;materiales;m3;10;en_revision;30;;;;;;;;;;;sin_candidato;bcca
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;1;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0529;si;1.3004;;bcca
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;2;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0529;si;3.7470;desviacion_fuerte;bcca
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0529;si;1.2609;;bcca
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.1619;0.0529;si;1.0791;;bcca
+MT-PIN-CAL;materiales;kg;1;en_revision;2.050633;1;PC00100;CAL LECHADA;1.5;;051222;0.5000;0.1005;si;0.7315;;bcca
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;1;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.4533;0.1575;si;1.6299;;bcca
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;2;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0562;si;1.9642;;bcca
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;3;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0562;si;5.6597;desviacion_fuerte;bcca
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;4;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0562;si;1.9045;;bcca
+MT-PIN-ESMALTE;materiales;l;14;en_revision;9.84;;;;;;;;;;;sin_candidato;bcca
+MT-PIN-FONDO;materiales;l;43;en_revision;4.09;1;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;;051222;0.4660;0.1761;si;2.2836;desviacion_fuerte;bcca
+MT-PIN-IGNFUGA;materiales;l;3;en_revision;13.670886;1;PX00970;PINTURA IGNÍFUGA;18.96;;281221;1.0000;0.2107;si;1.3869;;bcca
+MT-PIN-IGNFUGA;materiales;l;3;en_revision;13.670886;2;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0752;si;0.4813;desviacion_fuerte;bcca
+MT-PIN-IGNFUGA;materiales;l;3;en_revision;13.670886;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0752;si;0.4667;desviacion_fuerte;bcca
+MT-PIN-IGNFUGA;materiales;l;3;en_revision;13.670886;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.1619;0.0752;si;0.3994;desviacion_fuerte;bcca
+MT-PIN-LIJA;materiales;ud;86;en_revision;0.968354;;;;;;;;;;;sin_candidato;bcca
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;1;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.4533;0.1420;si;0.2485;desviacion_fuerte;bcca
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;2;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0507;si;0.2995;desviacion_fuerte;bcca
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;3;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0507;si;0.8630;;bcca
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;4;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0507;si;0.2904;desviacion_fuerte;bcca
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;1;PW10001;MASILLA DE POLIURETANO;18.2;;071116;0.5000;0.1283;si;14.7967;desviacion_fuerte;bcca
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;2;PW00200;MASILLA CAUCHO-SILICONA;26.35;;051222;0.3319;0.1283;si;21.4228;desviacion_fuerte;bcca
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;3;PW00210;MASILLA DE POLIURETANO MONOCOMPONENTE BAJO MÓD. ELASTICIDAD;11.07;;051222;0.1523;0.1283;si;9.0000;desviacion_fuerte;bcca
+MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;5.240506;1;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0626;si;1.2556;;bcca
+MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;5.240506;2;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0626;si;3.6180;desviacion_fuerte;bcca
+MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;5.240506;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0626;si;1.2174;;bcca
+MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;5.240506;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.1619;0.0626;si;1.0419;;bcca
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;1;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0551;si;0.3555;desviacion_fuerte;bcca
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;2;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0551;si;1.0243;;bcca
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0551;si;0.3447;desviacion_fuerte;bcca
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.1619;0.0551;si;0.2950;desviacion_fuerte;bcca
+MT-PINT-ANTICORR;materiales;l;78;en_revision;7.75;;;;;;;;;;;sin_candidato;bcca
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;1;PW00330;DECAPANTE PINTURAS;6.58;;281221;0.3571;0.0974;si;0.9360;;bcca
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;2;PX00970;PINTURA IGNÍFUGA;18.96;;281221;0.3571;0.0974;si;2.6970;desviacion_fuerte;bcca
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;;281221;0.2174;0.0974;si;0.9075;;bcca
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;;051222;0.1619;0.0974;si;0.7767;;bcca
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;;;;;;;;;;;sin_candidato;bcca
+MT-PLACA-FACHADA;materiales;m2;5;en_revision;47.848101;;;;;;;;;;;sin_candidato;bcca
+MT-PLANCHA-ACERO;materiales;kg;3;en_revision;2.506329;;;;;;;;;;;sin_candidato;bcca
+MT-PLANTA-ELEC;materiales;ud;0;en_revision;1367.088608;;;;;;;;;;;sin_candidato;bcca
+MT-PLATINA-DIV;materiales;m;1;en_revision;2.392405;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;1;P16EC060;Tubo fluorescente.;4.18;;150323;0.4642;0.0899;si;1.8914;;bcca
+MT-PLO-ACC20;materiales;ud;17;en_revision;0.911392;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-ACC4;materiales;ud;31;en_revision;3.303797;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-DESAG;materiales;ud;18;en_revision;6.151899;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-LLAVE;materiales;ud;17;en_revision;5.126582;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;;;;;;;;;;;sin_candidato;bcca
+MT-PLO-SOP;materiales;ud;169;en_revision;0.95;;;;;;;;;;;sin_candidato;bcca
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;;;;;;;;;;;sin_candidato;bcca
+MT-POLICARB;materiales;m2;14;en_revision;47.67;;;;;;;;;;;sin_candidato;bcca
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;;;;;;;;;;;sin_candidato;bcca
+MT-POLIET;materiales;m2;18;confirmado_referencia;0.69;;;;;;;;;;;sin_candidato;bcca
+MT-POLIUR-LIQ;materiales;kg;25;en_revision;7.85;;;;;;;;;;;sin_candidato;bcca
+MT-POLIUREA;materiales;kg;2;en_revision;5.8;;;;;;;;;;;sin_candidato;bcca
+MT-POLIURETANO-PISO;materiales;kg;2;en_revision;13.670886;;;;;;;;;;;sin_candidato;bcca
+MT-PRESERV-MAD;materiales;l;32;en_revision;13.17;;;;;;;;;;;sin_candidato;bcca
+MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;;;;;;;;;;;sin_candidato;bcca
+MT-PROT-OBRA;materiales;m2;86;en_revision;1.32;;;;;;;;;;;sin_candidato;bcca
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;;;;;;;;;;;sin_candidato;bcca
+MT-PUENTE-ADH;materiales;l;76;en_revision;23.91;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-BANDA;materiales;m;18;confirmado_referencia;0.31;1;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;;281221;0.2571;0.1177;si;0.2258;desviacion_fuerte;bcca
+MT-PYL-CANAL;materiales;m;47;en_revision;0.9;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-MONT;materiales;m;61;en_revision;0.97;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;1;P08MA040;Pasta niveladora;0.58;;150323;0.4642;0.1076;si;0.5743;;bcca
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;2;PA00300;PASTA PÉTREA PARA RAYAR;2.24;;051222;0.4369;0.1949;si;2.2178;desviacion_fuerte;bcca
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;3;PA00200;PASTA PÉTREA LISA;2.44;;051222;0.3194;0.1076;si;2.4158;desviacion_fuerte;bcca
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;4;PA00400;PASTA PÉTREA RUGOSA;2.64;;051222;0.3082;0.1076;si;2.6139;desviacion_fuerte;bcca
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;1;P08MA040;Pasta niveladora;0.58;;150323;0.4642;0.0652;si;1.2889;;bcca
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;2;PA00300;PASTA PÉTREA PARA RAYAR;2.24;;051222;0.4369;0.1181;si;4.9778;desviacion_fuerte;bcca
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;3;PA00200;PASTA PÉTREA LISA;2.44;;051222;0.3194;0.0652;si;5.4222;desviacion_fuerte;bcca
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;4;PA00400;PASTA PÉTREA RUGOSA;2.64;;051222;0.3082;0.0652;si;5.8667;desviacion_fuerte;bcca
+MT-PYL-PERF-CR;materiales;m2;26;en_revision;9.91;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PLACA-HD;materiales;m2;5;confirmado_referencia;4.4;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PLACA-IG;materiales;m2;4;confirmado_referencia;7.92;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;;;;;;;;;;;sin_candidato;bcca
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;;;;;;;;;;;sin_candidato;bcca
+MT-QUIMICO-LIMP-AC;materiales;ud;5;en_revision;9.683544;;;;;;;;;;;sin_candidato;bcca
+MT-RED-SEG;materiales;m2;5;en_revision;3.189873;;;;;;;;;;;sin_candidato;bcca
+MT-REFUERZO-PYL;materiales;m;3;en_revision;5.78;;;;;;;;;;;sin_candidato;bcca
+MT-REGISTRO;materiales;ud;5;confirmado_referencia;22.73;;;;;;;;;;;sin_candidato;bcca
+MT-REGUL-GAS;materiales;ud;37;en_revision;27.341772;;;;;;;;;;;sin_candidato;bcca
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;;;;;;;;;;;sin_candidato;bcca
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;10.253165;1;PA00900;RESINA ACRÍLICA;3.76;;281221;1.0000;0.1871;si;0.3667;desviacion_fuerte;bcca
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;10.253165;2;PP00200;RESINA PLÁSTICA;2.85;;051222;0.4220;0.0846;si;0.2780;desviacion_fuerte;bcca
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;10.253165;3;PW00400;RESINA DE SILICONA INCOLORA, TRANSPARENTE;6.44;;281221;0.1974;0.0846;si;0.6281;;bcca
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;10.253165;4;PX00600;PINTURA RESINAS POLIURETANO, DOS COMPONENTES;6.45;;281221;0.1729;0.0846;si;0.6291;;bcca
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;10.253165;5;PX00500;PINTURA RESINAS EPOXI SIN DISOLVENTES;10.66;;281221;0.1700;0.0846;si;1.0397;;bcca
+MT-RESINA-INYEC;materiales;l;7;en_revision;20.506329;1;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;;051222;0.1490;0.0816;si;0.4555;desviacion_fuerte;bcca
+MT-RIEL-CORRED;materiales;m;17;en_revision;15.949367;;;;;;;;;;;sin_candidato;bcca
+MT-SAC-ESC;materiales;ud;235;en_revision;0.42;;;;;;;;;;;sin_candidato;bcca
+MT-SAN-FIJA;materiales;ud;13;en_revision;5.468354;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-CONC;materiales;l;4;en_revision;6.06;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-ELAST;materiales;l;77;confirmado_referencia;13.13;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-FISURA;materiales;kg;5;confirmado_referencia;9.48;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-PASE;materiales;ud;17;en_revision;5.240506;;;;;;;;;;;sin_candidato;bcca
+MT-SELLA-PIEDRA;materiales;l;15;en_revision;22.27;;;;;;;;;;;sin_candidato;bcca
+MT-SENAL-OBRA;materiales;ud;73;en_revision;6.265823;;;;;;;;;;;sin_candidato;bcca
+MT-SEPARADOR;materiales;ud;37;en_revision;0.06;;;;;;;;;;;sin_candidato;bcca
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;;;;;;;;;;;sin_candidato;bcca
+MT-SILICONA-EST;materiales;l;96;en_revision;11.17;;;;;;;;;;;sin_candidato;bcca
+MT-SILOXANO;materiales;l;2;en_revision;6.28;;;;;;;;;;;sin_candidato;bcca
+MT-SOPORTE-AC;materiales;ud;36;en_revision;18.227848;;;;;;;;;;;sin_candidato;bcca
+MT-SOPORTE-ANTIVIB;materiales;ud;1;en_revision;5.696203;;;;;;;;;;;sin_candidato;bcca
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;;;;;;;;;;;sin_candidato;bcca
+MT-SUBESTRUCTURA;materiales;m2;7;en_revision;20.506329;;;;;;;;;;;sin_candidato;bcca
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;1;P124004;Tabique 13+13+48+13+48+13+13;62.17;;130323;0.3461;0.1313;si;0.1331;desviacion_fuerte;bcca
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;2;P124007;Tabique 48+13+48+13+13;39.64;;150323;0.3461;0.1313;si;0.0849;desviacion_fuerte;bcca
+MT-TABLERO-DIST;materiales;ud;3;en_revision;54.683544;;;;;;;;;;;sin_candidato;bcca
+MT-TABLERO-PROV;materiales;ud;2;en_revision;51.265823;;;;;;;;;;;sin_candidato;bcca
+MT-TEJA-ASF;materiales;m2;2;en_revision;11.962025;;;;;;;;;;;sin_candidato;bcca
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;;;;;;;;;;;sin_candidato;bcca
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;;;;;;;;;;;sin_candidato;bcca
+MT-TIMBRE;materiales;ud;2;en_revision;15.949367;;;;;;;;;;;sin_candidato;bcca
+MT-TINTE-MAD;materiales;l;1;en_revision;10.96;;;;;;;;;;;sin_candidato;bcca
+MT-TOLDO;materiales;m2;4;en_revision;54.683544;;;;;;;;;;;sin_candidato;bcca
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;1;PDG-007;TOMA DE GASES;360;;140323;0.5000;0.1663;si;9.1931;desviacion_fuerte;bcca
+MT-TORN;materiales;ud;154;en_revision;0.034177;;;;;;;;;;;sin_candidato;bcca
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;;;;;;;;;;;sin_candidato;bcca
+MT-TORNILLO-EST;materiales;ud;17;en_revision;7.8;;;;;;;;;;;sin_candidato;bcca
+MT-TRAGANTE;materiales;ud;9;en_revision;37.82;;;;;;;;;;;sin_candidato;bcca
+MT-TRAMPA-GRASA;materiales;ud;1;en_revision;88.860759;;;;;;;;;;;sin_candidato;bcca
+MT-TUB-FRIGO;materiales;m;34;en_revision;5.53;;;;;;;;;;;sin_candidato;bcca
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;;;;;;;;;;;sin_candidato;bcca
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;;;;;;;;;;;sin_candidato;bcca
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;;;;;;;;;;;sin_candidato;bcca
+MT-TUBO-ACERO;materiales;kg;36;en_revision;2.221519;;;;;;;;;;;sin_candidato;bcca
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;;;;;;;;;;;sin_candidato;bcca
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;;;;;;;;;;;sin_candidato;bcca
+MT-VAPOR;materiales;l;2;en_revision;2.734177;1;PW00170;SOLUCION FUNGICIDA;0.95;;281221;0.5330;0.1238;si;0.3475;desviacion_fuerte;bcca
+MT-VIDRIO-6;materiales;m2;23;en_revision;38;;;;;;;;;;;sin_candidato;bcca
+MT-VIDRIO-ARENA;materiales;m2;6;en_revision;31.898734;;;;;;;;;;;sin_candidato;bcca
+MT-VIDRIO-DECOR;materiales;m2;1;en_revision;51.265823;;;;;;;;;;;sin_candidato;bcca
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;;;;;;;;;;;sin_candidato;bcca
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;;;;;;;;;;;sin_candidato;bcca
+MT-VIDRIO-TEMP;materiales;m2;35;en_revision;77.468354;;;;;;;;;;;sin_candidato;bcca
+MT-VIGA-APEO;materiales;m;23;en_revision;3.303797;;;;;;;;;;;sin_candidato;bcca
+MT-VIGUETA;materiales;m;3;confirmado_referencia;7.84;;;;;;;;;;;sin_candidato;bcca
+MT-YESO-REP;materiales;kg;57;en_revision;0.16;;;;;;;;;;;sin_candidato;bcca
+MT-ZIPPER;materiales;ud;2;en_revision;4.329114;;;;;;;;;;;sin_candidato;bcca

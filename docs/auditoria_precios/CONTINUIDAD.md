@@ -2,6 +2,87 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Maquinaria: modelo de compra y amortización, aplicado — 7 de noviembre de 2026
+
+**13 precios nuevos, 2.185 usos, 47–92 % por debajo del precio anterior.** Informe:
+[maquinaria y decisiones](ESPANA_MAQUINARIA_DECISION_2026-11-07.md).
+
+- Decisión del titular: la maquinaria **no se alquila, se compra**; el precio horario es
+  `adquisición / vida útil × (1 + mantenimiento) + kW × 0,20 €/kWh × factor de carga +
+  consumibles`. Energía fijada en 0,20 €/kWh; los consumibles van dentro (brocas cada
+  100 h, disco de diamante cada 25 h, electrodo a 0,20 kg/h, cadena cada 40 h).
+- Cerradas las trece máquinas con precio de adquisición con fuente y URL: `MQ-TALADRO` 1,03
+  €/h (era 2,199), `MQ-SIERRA` 0,97 (4,251), `MQ-ATORN` 0,62 (2,052), `MQ-RODILLO` 0,50
+  (1,319), `MQ-MEZCL` 1,25 (3,00), `MQ-MART-ELEC` 2,09 (5,717), `MQ-SOLDADORA` 1,43 (5,278),
+  `MQ-ASPIR` 0,61 (3,079), `MQ-CORT-AGUA` 1,95 (4,691), `MQ-DETECTOR` 0,30 (3,812),
+  `MQ-BATID` 0,67 (2,346), `MQ-LIJAD` 0,95 (3,079), `MQ-AMOLA` 1,86 (3,518). Cada precio se
+  publica con su sensibilidad a vida útil ×0,5 y ×2.
+- **Contraste de magnitud**: BCCA 2023 (subida en esta ronda) publica `MARTILLO ELÉCTRICO`
+  a 1,40 €/h; el modelo da 2,09 €/h con punta y cincel incluidos, frente a 5,72 €/h del
+  precio anterior. La ficha de Extremadura del taladro (0,84 €/h) implica ≈230 h de vida:
+  coherente con las 250 h declaradas.
+- Impacto medido en `espana_impacto_maquinaria_2026-11-07.csv`: **1.511 partidas** de 2.016,
+  mediana −0,5 %, máximo −10,8 %, −886,52 € acumulados. Ninguna partida cambia de orden de
+  magnitud.
+- Fuera del modelo: `MQ-ANDAMIO` (el banco cotiza €/m²·día + montaje €/m²; convertirlo a €/h
+  sería inventar el rendimiento) y los 24 recursos de maquinaria pesada, que en obra no se
+  compran para una actuación y el banco sí cotiza por hora con convención razonable.
+- **Agregados**: decisión tomada con datos, no por intuición
+  ([informe](ESPANA_AGREGADOS_DECISION_2026-11-07.md)). Se recomponen solo siete, los que
+  pesan de verdad en el coste directo (`MT-HERRAJE-CLOSET` 27,4 % mediano y 40 partidas
+  >10 %, `MT-HERRAJE-PUERTA`, `MT-PLO-ACC4`, `MT-PLO-DESAG`, más tres pequeños). `MT-CONS-DEM`,
+  el agregado con más usos (398), pesa **1,3 %** y se queda documentado sin tocar: usar mucho
+  no es importar mucho. Nada aplicado en esta ronda; rehacer la receta de 200 partidas sin
+  cotizar componente a componente sería el error que la auditoría corrige.
+- Nota de entorno: los dos BC3 están versionados en `bases_precios/` (`BCEXTGREM_26_v1.bc3`
+  18,7 MB, `BCCA2023_V02.bc3` 4,4 MB). **El BCCA subido solo contiene 196 precios simples**
+  utilizables, no la base completa: aporta 7 candidatos con precisión alta y, sobre todo, el
+  contraste del martillo eléctrico.
+
+## Auditoría de identidad del artículo (Extremadura 2026) — 7 de noviembre de 2026
+
+**37 precios confirmados** (eran 32). Informe: [auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md).
+
+- Pregunta que se cierra: ¿los 164 recursos sin precio lo están porque el artículo no está en la base o porque no lo sabemos encontrar? Clasificación medida en `espana_identidad_huecos_2026-11-07.csv`: 62 con la familia en la base pero sin medida o clase (2.479 usos), 19 cestas de consumibles que exigen desglose (968), 64 con solo parecido de nombre (795) y 19 sin candidato (615).
+- **5 confirmaciones nuevas (181 usos) sin cambiar ningún precio**: `MT-BLQ-20` (P01BG200, 0,63 €; el rechazo anterior citaba la ficha de 25 cm y era erróneo), `MT-CONC-180` (P01HCM003), `MT-CONC-210` y `MT-CONC-250` (P01HCA300) y `MT-CONC-300` (P01HCA320). El hormigón se identifica por clase de resistencia (`kg/cm² = N/mm² × 10`), que el parecido de palabras no podía resolver.
+- **Tres fallos de método corregidos**: (1) la observación que confirmaba se elegía por precio más cercano, no por identidad (un bloque de 25 cm «confirmaba» un recurso de 20 cm); ahora se elige por `f1` precisión/cobertura; (2) el cribado exigía el token literal del núcleo, de modo que *tornillería* no encontraba *tornillo*: nuevo modo `--sinonimos` (346 recursos con candidato y 79 fuertes, frente a 339/72); (3) reaplicar el cierre borraba las confirmaciones ya escritas y podía degradar un recurso confirmado.
+- Ficha forzada por identidad: `codigo_elegido` en `espana_revision_manual_2026-11-07.csv`. Ejemplo: `MT-EXTINTOR` pasa del extintor de 50 kg (421,04 €) al de 6 kg ABC real (P23FJ020, 34,08 €).
+- La base sigue **sin** cubrir: atornilladora (0 fichas), cortadora de azulejo/agua (0), aspirador industrial (0), consumibles sueltos (discos, puntas, cinceles: 0) y andamio por hora (solo €/m²·día y montaje €/m²).
+- Estado: 37 `confirmado_referencia` / 351 `en_revision`, 224 con precio revisado; veredictos 164/126/54/37/7. Pruebas nuevas: 10 (`tests/test_identidad_precios_espana.py`).
+
+## Segunda base ingerida (Extremadura 2026) — 7 de noviembre de 2026
+
+**32 precios confirmados** (eran 25) al incorporar la Base de Precios de la Construcción de Extremadura 2026 en formato BC3. [Detalle en la verificación](ESPANA_VERIFICACION_2026-11-07.md).
+
+- Ingesta: 18,71 MB, FIEBDC-3/2020, `sha256=ac6f88c7…d5cafd5`; **30.137 precios simples utilizables** tras descartar descomposiciones, listas por zona y unidades ambiguas. Se añadió `--bc3` al cribador (misma lógica de núcleo, unidad y números que con el banco andaluz) y el lector de BC3 pasó a tolerar cp1252 con bytes sueltos. El archivo vive en `bases_precios/` y **no se versiona**.
+- Cribado: 339 recursos con candidato de núcleo común y 72 con precisión ≥ 0,75 y medidas compatibles (BCCA daba 253 y 63). Tabla: `espana_cribado_extremadura_2026-11-07.csv` (1.558 filas).
+- **7 confirmaciones nuevas** por coincidencia con Extremadura (`MT-CINTA-ENM`, `MT-PERFIL-ACERO`, `MT-POLIET`, `MT-BLQ-15`, `MT-BARNIZ-PISO`, `MT-BLQ-10`, `MT-REGISTRO`) y **3 candidatos rechazados a mano** con motivo escrito (`MT-BLQ-20` mide 25 y no 20; `MT-BREAKER` es otro aparato; `MT-PYL-PASTA` incluye cinta que el banco no cotiza). Fichero de revisiones: `espana_revision_manual_2026-11-07.csv`.
+- **30 divergencias nuevas** (56 en total): las más útiles son las de plomería seca, con precios vigentes muy por debajo de 2026 (`MT-PYL-MONT` 0,97 vs 2,07 €/m; `MT-PYL-CANAL` 0,90 vs 1,83). No se corrigen porque el recurso no fija sección ni espesor: quedan las primeras de la lista de corrección.
+- Con la regla estricta de entonces la base nueva no aportó ningún precio entre los 168 sin precio auditado; **la revisión de identidad posterior sí cerró cinco** (bloque de 20 cm y cuatro hormigones), véase la sección superior. Un banco más no sustituye a fijar especificaciones.
+
+## Verificación cruzada de precios — 7 de noviembre de 2026
+
+**25 precios confirmados con evidencia independiente** (antes 18). [Reglas, resultados y cola de trabajo](ESPANA_VERIFICACION_2026-11-07.md).
+
+- Regla nueva y explícita: una fuente **no puede confirmar el precio que ella misma originó**. Se descarta así la circularidad de usar la tabla BCCA para confirmar los oficios que ya se fijaron con ella.
+- **7 confirmaciones nuevas (730 usos)**: cinco oficios (`MO-OF1-MON` 319, `CARPM` 209, `PISO` 63, `ALI` 53, `CAB` 48) cuya cifra venía de un modelo de coste propio y coincide con la tabla oficial en 1 céntimo; `MT-AGUA-OBRA` (0,84 → respaldado por Extremadura 0,91) y `MT-AISL-TERM` (8,15 → respaldado por BCCA 7,22). Se corrigió la inconsistencia del cierre anterior, que había clasificado esos cinco oficios como «mantener sin cambio» cumpliendo la misma regla de confirmación.
+- Matriz de verificación de los 388: 25 `ya_confirmado`, 8 `contraste_comercial` (dos comercios coinciden pero no hay referencia oficial), 26 `divergencia_verificada` (la diferencia está explicada y no se toca el precio), 161 `solo_fuente_propia` y 168 `sin_precio_revisado`.
+- **Cola de 363 recursos** con el dato exacto que falta: 44 de esfuerzo alto (maquinaria que necesita modelo de coste horario, 3.215 usos), 287 de esfuerzo medio (segunda fuente independiente, 7.451 usos) y 32 sin uso actual.
+- Techo declarado: con una sola base completa accesible no se puede confirmar más. Para bajar de 363 hace falta la Base de Extremadura 2026 en BC3 (pública, ~20 MB, no ingerible desde este entorno por la red restringida del sandbox) o un banco con licencia. Pruebas: 7 nuevas (`tests/test_verificar_precios_espana.py`).
+
+## Cierre del primer ciclo de España — 7 de noviembre de 2026
+
+**Los 388 recursos quedan adjudicados: 18 precios nuevos aplicados, 5 referencias confirmadas y 0 recursos pendientes.** [Informe de cierre con método, tablas e impacto](ESPANA_CIERRE_2026-11-07.md).
+
+- Cribado completo contra el banco oficial de Andalucía (BCCA, ed. 2024-01 vía CERP 0.7.0): **1.167 candidatos** para 388 recursos, 253 con algún candidato y 63 con precisión ≥ 0,70 y números de especificación compatibles. Ninguna coincidencia automática aplicó precio.
+- Adjudicación explícita de los 375 recursos no confirmados (`espana_adjudicacion_2026-11-07.csv`, 16 columnas con precio, fuente, desviación, criterio y reserva) y aplicación validada todo-o-nada con `tools/cerrar_auditoria_espana.py`.
+- **18 precios aplicados** (1.522 usos): ocho oficios de oficial de 1ª a **23,18 €/h** por convergencia de dos vías independientes de coste empresarial; siete máquinas (vibrador 3,72 €/h, retro 38,68 €/h, grúa 50,59 €/h como media de dos provincias; oxicorte, desbrozadora, inyectora y proyectora de mortero con una referencia provincial 2026); y materiales `MT-POLIET` 0,69 €/m2 y `MT-BLQ-12` 0,72 €/ud.
+- **5 confirmaciones** dentro del ±15 % (`MT-DIFERENCIAL`, `MT-VIGUETA`, `MT-PYL-PLACA-IG`, `MT-PYL-PLACA-HD`, `MT-SELLA-FISURA`). Registro: **18 confirmados / 370 en revisión, 220 con precio revisado**.
+- Lo no aplicado queda tipificado y con motivo: 127 sin equivalente verificado, 96 cierres de barridos previos, 64 agregados que requieren desglose, 37 máquinas que requieren modelo de coste propio, 23 alertas de divergencia y 5 precios mantenidos por coherencia.
+- **Impacto:** 1.453 de las 3.006 partidas (48,3 %) usan algún recurso cuyo precio cambia; el efecto está dominado por la mano de obra.
+- Generador data-driven: `referencias_cierre_2026_11_07()` lee la tabla de referencias aceptadas y valida unidad, precio, fuente, IVA y transporte; añadir un precio ya no requiere código. Nuevas pruebas de la cadena (validación, coherencia libro/registro/matriz, idempotencia y cribado) y pruebas de lotes anteriores adaptadas sin relajar lo que verifican.
+- Matriz, inventario, SQL local e índice ES regenerados. **SQL no ejecutado ni despliegue.** Límite declarado: el banco de contraste es andaluz, con precios de 2022 y ámbito `ES/AND`, no una media nacional ni una referencia 2026.
+
 ## Octavo barrido parcial — 7 de noviembre de 2026
 
 **8 recursos examinados, 0 precios nuevos aplicados**: [informe y decisiones](ESPANA_OCTAVO_BARRIDO_PARCIAL_2026-11-07.md). Alerta de unidad `m2` frente a medición por unidad en `10.02.02.060`. Revisar señalización específica y tubería en BIE, alcances de fijaciones de fachada, y dimensionamiento/conexiones de separador de grasas. No se modificaron precios, estados ni partidas; el corte sigue en 202 precios revisados. Inventario regenerado; 72 pruebas focalizadas aprobadas y `git diff --check` limpio. Instaladas en el entorno local las dependencias de pruebas `tinycss2==1.5.1` y `pytest-xdist==3.8.0` ya declaradas: suite completa lanzada antes de crear el test de este bloque, 3.581 aprobadas y 13 omitidas en 260,63 s; las dos pruebas nuevas pasaron aparte en las focalizadas. SQL no ejecutado ni despliegue.

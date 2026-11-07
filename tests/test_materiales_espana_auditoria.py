@@ -57,7 +57,8 @@ def test_auditoria_preserva_fotografia_y_no_confirma_resistencia_de_sacos():
         assert auditoria[codigo]['precio_revisado'] == despues
     assert auditoria['MT-SAC-ESC']['estado_auditoria'] == 'en_revision'
     assert 'Resistencia exacta' in auditoria['MT-SAC-ESC']['criterio_revisado']
-    for codigo in ('MQ-TALADRO', 'MT-CONS-DEM'):
+    # MQ-ANDAMIO sigue sin modelo: el banco solo lo cotiza por m2 y dia.
+    for codigo in ('MQ-ANDAMIO', 'MT-CONS-DEM'):
         assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
         assert not auditoria[codigo]['precio_revisado']
 
@@ -69,7 +70,8 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
     previo = dict(re.findall(patron, snapshot.read_text(encoding='utf-8')))
     nuevo = dict(re.findall(patron, archivo.read_text(encoding='utf-8')))
     assert len(previo) == len(nuevo) == 388
-    assert {c for c in previo if previo[c] != nuevo[c]} == {
+    cambiados = {c for c in previo if previo[c] != nuevo[c]}
+    referenciados = {
         'MT-SAC-ESC', 'MT-CEMENTO', 'MT-ADH-C2TE',
         'MT-PYL-PLACA125', 'MT-PYL-MONT', 'MT-PYL-CANAL', 'MT-JUN-CG2', 'MT-SIL-SAN',
         'MO-OF1-MON', 'MO-OF1-CARPM', 'MO-OF1-PISO', 'MO-OF1-ALI', 'MO-OF1-CAB',
@@ -85,7 +87,12 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
         'MT-REJILLA-VENT', 'MT-PLACA-CEM', 'MT-PROT-OBRA', 'MT-PROT-PLAST', 'MT-PROT-CARTON',
         'MT-MANTO-ASF', 'MT-LANA-ROCA', 'MT-TIERRA-ABON', 'MT-AISL-TERM',
         'MT-LAMINA-OSB', 'MT-LAMINA-DREN', 'MT-VIGUETA', 'MT-MALLA-DREN',
-        'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC'} | set(generador.referencias_lote_cadenas()) | set(generador.referencias_lote_prioridad()) | set(generador.referencias_lote_alta_frecuencia()) | set(generador.referencias_lote_familias()) | set(generador.referencias_lote_componentes()) | set(generador.referencias_lote_sistemas()) | set(generador.referencias_lote_bloque_amplio()) | set(generador.referencias_lote_verificacion()) | set(generador.referencias_lote_continuacion()) | set(generador.referencias_lote_evacuacion_epoxi()) | set(generador.referencias_lote_treinta()) | set(generador.referencias_otros_treinta())
+        'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC'} | set(generador.referencias_lote_cadenas()) | set(generador.referencias_lote_prioridad()) | set(generador.referencias_lote_alta_frecuencia()) | set(generador.referencias_lote_familias()) | set(generador.referencias_lote_componentes()) | set(generador.referencias_lote_sistemas()) | set(generador.referencias_lote_bloque_amplio()) | set(generador.referencias_lote_verificacion()) | set(generador.referencias_lote_continuacion()) | set(generador.referencias_lote_evacuacion_epoxi()) | set(generador.referencias_lote_treinta()) | set(generador.referencias_otros_treinta()) | set(generador.referencias_cierre_2026_11_07())
+    # Toda referencia revisada justifica su precio; los hormigones confirmados
+    # mantienen el precio propio (banda de central), así que no cambian el SQL.
+    assert cambiados <= referenciados
+    assert referenciados - cambiados == {'MT-CONC-180', 'MT-CONC-210',
+                                         'MT-CONC-250', 'MT-CONC-300'}
 
 
 def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
@@ -118,7 +125,9 @@ def test_estados_y_oficios_condicionados_a_convenio():
         ROOT / 'docs/auditoria_precios/espana_2026-11-06.csv')}
     matriz = {r['codigo_recurso']: r for r in leer_csv(generador.OUT)}
     for codigo in ('MO-OF1-MON', 'MO-OF1-CARPM', 'MO-OF1-PISO', 'MO-OF1-ALI', 'MO-OF1-CAB'):
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        # El modelo de coste propio se contrasta con la tabla oficial: la
+        # verificación del 7 de noviembre elevó estos oficios a confirmados.
+        assert auditoria[codigo]['estado_auditoria'] in {'en_revision', 'confirmado_referencia'}
         assert 'convenio de construcción' in auditoria[codigo]['criterio_revisado']
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal('23.18')
         assert 'convenio de construcción' in matriz[codigo]['observaciones']
