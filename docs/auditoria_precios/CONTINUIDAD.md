@@ -2,6 +2,19 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Cierre del primer ciclo de España — 7 de noviembre de 2026
+
+**Los 388 recursos quedan adjudicados: 18 precios nuevos aplicados, 5 referencias confirmadas y 0 recursos pendientes.** [Informe de cierre con método, tablas e impacto](ESPANA_CIERRE_2026-11-07.md).
+
+- Cribado completo contra el banco oficial de Andalucía (BCCA, ed. 2024-01 vía CERP 0.7.0): **1.167 candidatos** para 388 recursos, 253 con algún candidato y 63 con precisión ≥ 0,70 y números de especificación compatibles. Ninguna coincidencia automática aplicó precio.
+- Adjudicación explícita de los 375 recursos no confirmados (`espana_adjudicacion_2026-11-07.csv`, 16 columnas con precio, fuente, desviación, criterio y reserva) y aplicación validada todo-o-nada con `tools/cerrar_auditoria_espana.py`.
+- **18 precios aplicados** (1.522 usos): ocho oficios de oficial de 1ª a **23,18 €/h** por convergencia de dos vías independientes de coste empresarial; siete máquinas (vibrador 3,72 €/h, retro 38,68 €/h, grúa 50,59 €/h como media de dos provincias; oxicorte, desbrozadora, inyectora y proyectora de mortero con una referencia provincial 2026); y materiales `MT-POLIET` 0,69 €/m2 y `MT-BLQ-12` 0,72 €/ud.
+- **5 confirmaciones** dentro del ±15 % (`MT-DIFERENCIAL`, `MT-VIGUETA`, `MT-PYL-PLACA-IG`, `MT-PYL-PLACA-HD`, `MT-SELLA-FISURA`). Registro: **18 confirmados / 370 en revisión, 220 con precio revisado**.
+- Lo no aplicado queda tipificado y con motivo: 127 sin equivalente verificado, 96 cierres de barridos previos, 64 agregados que requieren desglose, 37 máquinas que requieren modelo de coste propio, 23 alertas de divergencia y 5 precios mantenidos por coherencia.
+- **Impacto:** 1.453 de las 3.006 partidas (48,3 %) usan algún recurso cuyo precio cambia; el efecto está dominado por la mano de obra.
+- Generador data-driven: `referencias_cierre_2026_11_07()` lee la tabla de referencias aceptadas y valida unidad, precio, fuente, IVA y transporte; añadir un precio ya no requiere código. Nuevas pruebas de la cadena (validación, coherencia libro/registro/matriz, idempotencia y cribado) y pruebas de lotes anteriores adaptadas sin relajar lo que verifican.
+- Matriz, inventario, SQL local e índice ES regenerados. **SQL no ejecutado ni despliegue.** Límite declarado: el banco de contraste es andaluz, con precios de 2022 y ámbito `ES/AND`, no una media nacional ni una referencia 2026.
+
 ## Octavo barrido parcial — 7 de noviembre de 2026
 
 **8 recursos examinados, 0 precios nuevos aplicados**: [informe y decisiones](ESPANA_OCTAVO_BARRIDO_PARCIAL_2026-11-07.md). Alerta de unidad `m2` frente a medición por unidad en `10.02.02.060`. Revisar señalización específica y tubería en BIE, alcances de fijaciones de fachada, y dimensionamiento/conexiones de separador de grasas. No se modificaron precios, estados ni partidas; el corte sigue en 202 precios revisados. Inventario regenerado; 72 pruebas focalizadas aprobadas y `git diff --check` limpio. Instaladas en el entorno local las dependencias de pruebas `tinycss2==1.5.1` y `pytest-xdist==3.8.0` ya declaradas: suite completa lanzada antes de crear el test de este bloque, 3.581 aprobadas y 13 omitidas en 260,63 s; las dos pruebas nuevas pasaron aparte en las focalizadas. SQL no ejecutado ni despliegue.

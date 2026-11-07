@@ -1,0 +1,1168 @@
+﻿codigo_recurso;categoria;unidad;usos;estado_auditoria;precio_matriz;rango;codigo_fuente;descripcion_fuente;precio_fuente;edicion_fuente;fecha_precio;precision;cobertura;numeros_compatibles;ratio;alerta
+MO-AYU;mano_obra;h;2922;confirmado_referencia;20.39;1;TA00100;AYUDANTE;22.36;2024-01;2022-12;1.0000;1.0000;si;1.0966;
+MO-AYU;mano_obra;h;2922;confirmado_referencia;20.39;2;TA00300;AYUDANTE CARPINTERÍA;22.36;2024-01;2022-12;0.4931;1.0000;si;1.0966;
+MO-AYU;mano_obra;h;2922;confirmado_referencia;20.39;3;TA00200;AYUDANTE ESPECIALISTA;22.36;2024-01;2022-12;0.4730;1.0000;si;1.0966;
+MQ-TALADRO;maquinaria;h;1025;en_revision;2.199013;1;MW00200;TALADRO ELÉCTRICO;5.81;2024-01;2022-12;0.5565;0.2829;si;2.6421;desviacion_fuerte
+MO-OF1-ALB;mano_obra;h;881;confirmado_referencia;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5432;si;0.9996;
+MO-OF1-ALB;mano_obra;h;881;confirmado_referencia;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3805;no;0.9745;numeros_diferentes
+MO-OF1-ALB;mano_obra;h;881;confirmado_referencia;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5432;si;0.9996;
+MO-AYU-ESP;mano_obra;h;409;confirmado_referencia;20.59;1;TA00100;AYUDANTE;22.36;2024-01;2022-12;1.0000;0.4545;si;1.0860;
+MO-AYU-ESP;mano_obra;h;409;confirmado_referencia;20.59;2;TA00300;AYUDANTE CARPINTERÍA;22.36;2024-01;2022-12;0.4931;0.4545;si;1.0860;
+MO-AYU-ESP;mano_obra;h;409;confirmado_referencia;20.59;3;TA00200;AYUDANTE ESPECIALISTA;22.36;2024-01;2022-12;0.4730;0.4545;si;1.0860;
+MO-OF1-ELE;mano_obra;h;405;en_revision;24;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5617;si;0.9654;
+MO-OF1-ELE;mano_obra;h;405;en_revision;24;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3934;no;0.9412;numeros_diferentes
+MO-OF1-ELE;mano_obra;h;405;en_revision;24;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5617;si;0.9654;
+MT-CONS-DEM;materiales;ud;398;en_revision;1.253165;;;;;;;;;;;sin_candidato
+MO-OF1-MON;mano_obra;h;319;en_revision;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.3166;si;0.9996;
+MO-OF1-MON;mano_obra;h;319;en_revision;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.2218;no;0.9745;numeros_diferentes
+MO-OF1-MON;mano_obra;h;319;en_revision;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.3166;si;0.9996;
+MT-SAC-ESC;materiales;ud;235;en_revision;0.42;;;;;;;;;;;sin_candidato
+MO-OF1-PLO;mano_obra;h;218;en_revision;23;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5432;si;1.0074;
+MO-OF1-PLO;mano_obra;h;218;en_revision;23;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3805;no;0.9822;numeros_diferentes
+MO-OF1-PLO;mano_obra;h;218;en_revision;23;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5432;si;1.0074;
+MO-OF1-CARPM;mano_obra;h;209;en_revision;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.3357;si;0.9996;
+MO-OF1-CARPM;mano_obra;h;209;en_revision;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.2351;no;0.9745;numeros_diferentes
+MO-OF1-CARPM;mano_obra;h;209;en_revision;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.3357;si;0.9996;
+MQ-SIERRA;maquinaria;h;199;en_revision;4.251425;1;MS00100;SIERRA MECÁNICA;2.44;2024-01;2022-12;0.5219;0.2090;si;0.5739;
+MQ-SIERRA;maquinaria;h;199;en_revision;4.251425;2;MS00105;SIERRA MECÁNICA DE CORTE, MANUAL;3.45;2024-01;2022-12;0.5179;0.3773;si;0.8115;
+MQ-ANDAMIO;maquinaria;h;190;pendiente;2.8;;;;;;;;;;;sin_candidato
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;1;13982;CAJA ELECTRICA PARA 18 ELEMENTOS;32.19;2024-01;2023-03;0.4560;0.2560;si;25.6870;desviacion_fuerte
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;2;KDW0025N;CAJA EMPOTRAR MOSAIC 2X3/2X4;3.81;2024-01;2022-02;0.3761;0.3101;si;3.0403;desviacion_fuerte
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;3;US00500;CAJA HIERRO FUNDIDO (BR);24.28;2024-01;2021-12;0.3181;0.1547;si;19.3749;desviacion_fuerte
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;4;IE05100;CAJA REGISTRO O DERIVACION;1.49;2024-01;2022-12;0.2894;0.1547;si;1.1890;
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.253165;5;IV00250;CAJA DERIVACIÓN Y REGISTRO;0.26;2024-01;2021-12;0.2894;0.1547;si;0.2075;desviacion_fuerte
+MT-PLO-SOP;materiales;ud;169;en_revision;0.95;1;IP00100;ABRAZADERA CONDUCTOR;0.36;2024-01;2021-12;0.4931;0.2034;si;0.3789;desviacion_fuerte
+MT-PLO-SOP;materiales;ud;169;en_revision;0.95;2;IP00200;ABRAZADERA DIÁM. 40 A 50 mm;0.42;2024-01;2021-12;0.4145;0.2034;si;0.4421;desviacion_fuerte
+MT-PLO-SOP;materiales;ud;169;en_revision;0.95;3;IC64100;TERMOSTATO CONTACTO 100º CON ABRAZADERA;82.6;2024-01;2021-12;0.2579;0.2034;si;86.9474;desviacion_fuerte
+MT-PLO-SOP;materiales;ud;169;en_revision;0.95;4;IC63500;TERMOMETRO ESPERA 120º CON ABRAZADERA;80.63;2024-01;2021-12;0.2336;0.2034;si;84.8737;desviacion_fuerte
+MQ-ATORN;maquinaria;h;162;pendiente;2.052412;;;;;;;;;;;sin_candidato
+MO-OF1-PIN;mano_obra;h;159;en_revision;20;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5731;si;1.1585;
+MO-OF1-PIN;mano_obra;h;159;en_revision;20;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.4014;no;1.1295;numeros_diferentes
+MO-OF1-PIN;mano_obra;h;159;en_revision;20;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5731;si;1.1585;
+MT-TORN;materiales;ud;154;en_revision;0.034177;;;;;;;;;;;sin_candidato
+MQ-RODILLO;maquinaria;h;151;pendiente;1.319408;;;;;;;;;;;sin_candidato
+MT-PERNO-ANCLA;materiales;ud;148;en_revision;1.55;;;;;;;;;;;sin_candidato
+MQ-VIBRADOR;maquinaria;h;135;en_revision;4.98443;1;MV00100;VIBRADOR;1.82;2024-01;2022-12;1.0000;0.1677;si;0.3651;desviacion_fuerte
+MO-OF1-SOLD;mano_obra;h;127;en_revision;25;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5432;si;0.9268;
+MO-OF1-SOLD;mano_obra;h;127;en_revision;25;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3805;no;0.9036;numeros_diferentes
+MO-OF1-SOLD;mano_obra;h;127;en_revision;25;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5432;si;0.9268;
+MQ-MEZCL;maquinaria;h;120;en_revision;3;;;;;;;;;;;sin_candidato
+MQ-MART-ELEC;maquinaria;h;110;en_revision;5.717434;1;MA10001;MARTILLO ELÉCTRICO;1.4;2024-01;2016-11;1.0000;0.5054;no;0.2449;"numeros_diferentes;desviacion_fuerte"
+MQ-MART-ELEC;maquinaria;h;110;en_revision;5.717434;2;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;2024-01;2022-12;0.3962;0.2736;no;16.0894;"numeros_diferentes;desviacion_fuerte"
+MQ-MART-ELEC;maquinaria;h;110;en_revision;5.717434;3;MC00100;COMPRESOR DOS MARTILLOS;9.46;2024-01;2022-12;0.3524;0.2736;no;1.6546;numeros_diferentes
+MQ-MART-ELEC;maquinaria;h;110;en_revision;5.717434;4;MO00100;COMPRESOR DOS MARTILLOS;8.35;2024-01;2022-02;0.3524;0.2736;no;1.4604;numeros_diferentes
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;1;CA00320;ACERO B 500 S;0.95;2024-01;2022-12;0.4322;0.0487;no;0.5938;numeros_diferentes
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;2;CA00220;ACERO B 400 S;0.8;2024-01;2022-12;0.4191;0.0487;no;0.5000;numeros_diferentes
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;3;CA02500;ACERO GALVANIZADO EN CALIENTE;4.66;2024-01;2021-12;0.2484;0.0487;no;2.9125;"numeros_diferentes;desviacion_fuerte"
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;4;CA00900;ACERO PERFILES S 275 JR;1.1;2024-01;2022-12;0.2252;0.0487;no;0.6875;numeros_diferentes
+MT-ACERO-CAB;materiales;kg;106;en_revision;1.6;5;KA00200;ACERO EN PLETINAS MANUFACTURADO;1.5;2024-01;2021-12;0.2095;0.0487;no;0.9375;numeros_diferentes
+MT-CONC-210;materiales;m3;106;pendiente;100;;;;;;;;;;;sin_candidato
+MQ-SOLDADORA;maquinaria;h;105;en_revision;5.277632;;;;;;;;;;;sin_candidato
+MT-ELE-CABLE;materiales;m;103;en_revision;1.06;1;KW04800;CONDUCTOR COBRE TELEMANDO 3 CONDUCTORES;1.5;2024-01;2022-01;0.3863;0.2211;no;1.4151;numeros_diferentes
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;1;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.7356;0.2991;si;2.1188;desviacion_fuerte
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;2;FP01800;PASTA PARA JUNTAS DE PLACAS DE YESO LAMINADO;1.17;2024-01;2022-12;0.4962;0.2991;si;1.1584;
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;3;P08MA040;Pasta niveladora;0.58;2024-01;2023-03;0.4424;0.1198;si;0.5743;
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;4;GP00100;PASTA ADHESIVA;0.23;2024-01;2021-12;0.4226;0.1198;si;0.2277;desviacion_fuerte
+MT-PYL-PASTA;materiales;kg;99;en_revision;1.01;5;PA00300;PASTA PÉTREA PARA RAYAR;2.24;2024-01;2022-12;0.3790;0.1920;si;2.2178;desviacion_fuerte
+MT-SILICONA-EST;materiales;l;96;en_revision;11.17;;;;;;;;;;;sin_candidato
+MO-OF1-AC;mano_obra;h;94;en_revision;21;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.2839;si;1.1033;
+MO-OF1-AC;mano_obra;h;94;en_revision;21;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.1989;no;1.0757;numeros_diferentes
+MO-OF1-AC;mano_obra;h;94;en_revision;21;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.2839;si;1.1033;
+MT-CLAVOS;materiales;kg;94;en_revision;3.21;;;;;;;;;;;sin_candidato
+MO-OF1-VIDR;mano_obra;h;92;en_revision;21;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5432;si;1.1033;
+MO-OF1-VIDR;mano_obra;h;92;en_revision;21;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3805;no;1.0757;numeros_diferentes
+MO-OF1-VIDR;mano_obra;h;92;en_revision;21;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5432;si;1.1033;
+MQ-ASPIR;maquinaria;h;91;pendiente;3.078618;;;;;;;;;;;sin_candidato
+MQ-CORT-AGUA;maquinaria;h;91;pendiente;4.691228;;;;;;;;;;;sin_candidato
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;1;KM04800;LISTÓN PINO 50X25 mm;1.3;2024-01;2021-12;0.3357;0.1155;si;1.5854;
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;2;KM04100;LISTÓN PINO FLANDES 60X60 mm;5.41;2024-01;2021-12;0.3145;0.1155;si;6.5976;desviacion_fuerte
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;3;KM04900;LISTÓN SAPELLY 20X5 mm;1.79;2024-01;2021-12;0.3125;0.1155;si;2.1829;desviacion_fuerte
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;4;KM05000;LISTÓN SAPELLY 35X20 mm;2.35;2024-01;2021-12;0.3098;0.1155;si;2.8659;desviacion_fuerte
+MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;5;KM03900;LISTÓN PINO FLANDES 45X45 mm;3.13;2024-01;2021-12;0.3018;0.1155;si;3.8171;desviacion_fuerte
+MT-PIN-LIJA;materiales;ud;86;pendiente;0.968354;;;;;;;;;;;sin_candidato
+MT-PROT-OBRA;materiales;m2;86;en_revision;1.32;;;;;;;;;;;sin_candidato
+MT-PERFIL-ACERO;materiales;kg;79;en_revision;1.54;1;CA00800;ACERO PERFIL TUBULAR LAMINADO FRIO S 275 JR;1.5;2024-01;2022-12;0.4225;0.3479;si;0.9740;
+MT-PERFIL-ACERO;materiales;kg;79;en_revision;1.54;2;CA80120;ACERO PERFIL TUBULAR LAMINADO FRIO S 275 JR;1.65;2024-01;2022-12;0.4225;0.3479;si;1.0714;
+MT-PERFIL-ACERO;materiales;kg;79;en_revision;1.54;3;QW00500;PERFIL GALVANIZADO TIPO Z, U OMEGA;1.24;2024-01;2022-01;0.3265;0.1365;si;0.8052;
+MT-PINT-ANTICORR;materiales;l;78;en_revision;7.75;1;IS11;Imprimación color a elegir;6.26;2024-01;2018-07;0.3696;0.1854;si;0.8077;
+MT-SELLA-ELAST;materiales;l;77;confirmado_referencia;13.13;;;;;;;;;;;sin_candidato
+MT-PUENTE-ADH;materiales;l;76;en_revision;23.91;;;;;;;;;;;sin_candidato
+MT-PERFIL-ALUM;materiales;kg;74;pendiente;10.822785;1;QW00500;PERFIL GALVANIZADO TIPO Z, U OMEGA;1.24;2024-01;2022-01;0.3265;0.1219;si;0.1146;desviacion_fuerte
+MT-PERFIL-ALUM;materiales;kg;74;pendiente;10.822785;2;CA00800;ACERO PERFIL TUBULAR LAMINADO FRIO S 275 JR;1.5;2024-01;2022-12;0.1657;0.1219;si;0.1386;desviacion_fuerte
+MT-PERFIL-ALUM;materiales;kg;74;pendiente;10.822785;3;CA80120;ACERO PERFIL TUBULAR LAMINADO FRIO S 275 JR;1.65;2024-01;2022-12;0.1657;0.1219;si;0.1525;desviacion_fuerte
+MT-FORM-MADERA;materiales;m2;73;pendiente;10;1;CM80010;ENCOFRADO MADERA ZAPATAS Y VIGAS;17.7;2024-01;2021-12;0.4328;0.1602;si;1.7700;
+MT-FORM-MADERA;materiales;m2;73;pendiente;10;2;CM80000;ENCOFRADO PERD. ZUNCHOS ZAPATAS Y ENCEP. C/TABLA MADERA;21.21;2024-01;2021-12;0.2308;0.1602;si;2.1210;desviacion_fuerte
+MT-SENAL-OBRA;materiales;ud;73;pendiente;6.265823;1;HS00900;SEÑAL PELIGRO 0,70 m TIPO A;63.29;2024-01;2017-07;0.6857;0.2846;si;10.1008;desviacion_fuerte
+MT-SENAL-OBRA;materiales;ud;73;pendiente;6.265823;2;HS00500;SEÑAL ADVERTENCIA 42 cm;58.6;2024-01;2017-07;0.6801;0.2985;si;9.3523;desviacion_fuerte
+MT-SENAL-OBRA;materiales;ud;73;pendiente;6.265823;3;HS01000;SEÑAL PELIGRO 0,90 m TIPO A;78.91;2024-01;2017-07;0.6485;0.2846;si;12.5937;desviacion_fuerte
+MT-SENAL-OBRA;materiales;ud;73;pendiente;6.265823;4;HS01100;SEÑAL PELIGRO 1,35 m TIPO A;218.76;2024-01;2017-07;0.6243;0.2846;si;34.9132;desviacion_fuerte
+MT-SENAL-OBRA;materiales;ud;73;pendiente;6.265823;5;HS01200;SEÑAL PVC 30 cm;3.17;2024-01;2022-01;0.4345;0.1272;si;0.5059;
+MT-ELECTRODO;materiales;kg;71;en_revision;4.39;;;;;;;;;;;sin_candidato
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;1;HILOAUX005;CABLE CU 1 KV LH 1X16 MM2;1.96;2024-01;2023-03;0.3169;0.1039;si;3.1613;desviacion_fuerte
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;2;HILOAUX006;CABLE CU 1 KV LH 1X6 MM2;0.9;2024-01;2023-03;0.3158;0.1039;si;1.4516;
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;3;HR00300;CABLE DE DESLIZAMIENTO DE RED;4.06;2024-01;2022-01;0.2712;0.1039;si;6.5484;desviacion_fuerte
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;4;IE02730N;CABLE COBRE 1x4 mm2 RZ1-K(AS);4.4;2024-01;2022-02;0.2509;0.1039;si;7.0968;desviacion_fuerte
+MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;5;IE02500;CABLE COBRE 1x10 mm2 RZ1-K(AS);3.91;2024-01;2022-12;0.2497;0.1039;si;6.3065;desviacion_fuerte
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;1;KS04100;PERFIL MARCO ALUMINIO;6.87;2024-01;2021-12;0.6145;0.2003;si;2.4105;desviacion_fuerte
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;2;KS04200;PERFIL SOPORTE;5.88;2024-01;2021-12;0.5502;0.1207;si;2.0632;desviacion_fuerte
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;3;VW01400;"PERFIL EN ""U"" DE CIERRE DE ALUMINIO DE 16 mm";2.58;2024-01;2022-01;0.5000;0.2003;si;0.9053;
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;4;VW01500;"PERFIL EN ""U"" DE NEOPRENO";0.4;2024-01;2017-07;0.4616;0.1207;si;0.1404;desviacion_fuerte
+MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;5;RT00800;PERFIL SECUNDARIO;1.02;2024-01;2021-12;0.4509;0.1207;si;0.3579;desviacion_fuerte
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;1;FP01100;PLACA DE YESO LAMINADO DE 10 mm;4.58;2024-01;2022-12;0.7984;0.2955;no;1.4403;numeros_diferentes
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;2;FP01300;PLACA DE YESO LAMINADO DE 15 mm;5.43;2024-01;2022-12;0.7860;0.2955;no;1.7075;numeros_diferentes
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;3;FP02905N;PLACA DE YESO LAMINADO DE 15WR mm;6.99;2024-01;2022-01;0.7860;0.2955;no;2.1981;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;4;RT02000;PLACA YESO LAMINADO 60 X 60 cm;8.64;2024-01;2022-01;0.7784;0.2955;no;2.7170;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;5;FP01200;PLACA DE YESO LAMINADO DE 13 mm;4.7;2024-01;2022-12;0.7518;0.2955;no;1.4780;numeros_diferentes
+MT-CONC-250;materiales;m3;66;pendiente;108;;;;;;;;;;;sin_candidato
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;1;HR00450;MALLA TIPO RAFIA 1 m;0.32;2024-01;2022-01;0.3163;0.0810;si;1.7778;
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;2;KA00350;MALLA DE ACERO GALVANIZADO DE 150 mm;2.58;2024-01;2021-12;0.2893;0.0810;si;14.3333;desviacion_fuerte
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;3;HR00900;RED DE SEGURIDAD DE POLIAMIDA 10 mm Y MALLA 10x10 cm;37.96;2024-01;2022-01;0.1963;0.0810;si;210.8889;desviacion_fuerte
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;4;HR00800;RED DE SEGURIDAD DE POLIAMIDA 4 mm Y MALLA 10x10 cm;4.47;2024-01;2022-01;0.1722;0.0810;si;24.8333;desviacion_fuerte
+MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;5;HR00920;RED DE SEGURIDAD DE POLIAMIDA 4 mm Y MALLA 10x10 cm Y 2 m CALLE;7.58;2024-01;2022-01;0.1284;0.0810;si;42.1111;desviacion_fuerte
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;1;GM01100;MORTERO FORESIS;7.65;2024-01;2021-12;0.4105;0.0688;no;5.3125;"numeros_diferentes;desviacion_fuerte"
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;2;IS031;Mortero impermeabilizante;0.42;2024-01;2018-07;0.4023;0.0688;no;0.2917;"numeros_diferentes;desviacion_fuerte"
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;3;GM01000;MORTERO DRAINING;2.32;2024-01;2022-12;0.3912;0.0688;no;1.6111;numeros_diferentes
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;4;IS12;Mortero acrílico color a elegir;3.66;2024-01;2018-07;0.3867;0.1237;no;2.5417;"numeros_diferentes;desviacion_fuerte"
+MT-JUN-CG2;materiales;kg;64;en_revision;1.44;5;GW00400N;MORTERO CEMENTOSO PASIVADOR ANTICORROSIVO MONOCOMPONENTE;4.46;2024-01;2022-02;0.3598;0.1759;no;3.0972;"numeros_diferentes;desviacion_fuerte"
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;1;CA02600;TORNILLO PASANTE;3.59;2024-01;2021-12;0.4416;0.1126;si;17.0952;desviacion_fuerte
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;2;IF17250;JUEGO TORNILLOS FIJACIÓN PARA INODORO/ BIDÉ DISCAPACITADO;62.63;2024-01;2021-12;0.4170;0.3004;si;298.2381;desviacion_fuerte
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;3;IF17200;JUEGO TORNILLOS FIJACIÓN CROMADOS CAL. MEDIA;3.25;2024-01;2021-12;0.3928;0.2376;si;15.4762;desviacion_fuerte
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;4;US25009;TORNILLO BICROMAT. C/T M-20x80;1.32;2024-01;2021-12;0.2913;0.1126;si;6.2857;desviacion_fuerte
+MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;5;MT50SPL105AN;FIJACIÓN COMPUESTA POR TACO QUÍMICO, ARANDELA Y TORNILLO DE ACERO DE 12 mm DE DIÁMETRO Y 80 mm DE LONGITUD;4.75;2024-01;2022-02;0.2783;0.3735;si;22.6190;desviacion_fuerte
+MO-OF1-PISO;mano_obra;h;63;en_revision;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.3815;si;0.9996;
+MO-OF1-PISO;mano_obra;h;63;en_revision;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.2672;no;0.9745;numeros_diferentes
+MO-OF1-PISO;mano_obra;h;63;en_revision;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.3815;si;0.9996;
+MQ-RETRO;maquinaria;h;63;en_revision;45;1;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;2024-01;2022-12;1.0000;0.4361;si;2.0442;desviacion_fuerte
+MQ-RETRO;maquinaria;h;63;en_revision;45;2;ME00400;RETROEXCAVADORA;52.09;2024-01;2022-12;1.0000;0.1776;si;1.1576;
+MQ-RETRO;maquinaria;h;63;en_revision;45;3;ME01400;MINI RETROEXCAVADORA;36.19;2024-01;2022-12;0.4914;0.1776;si;0.8042;
+MQ-DETECTOR;maquinaria;h;61;pendiente;3.811623;;;;;;;;;;;sin_candidato
+MT-PYL-MONT;materiales;m;61;en_revision;0.97;;;;;;;;;;;sin_candidato
+MQ-BATID;maquinaria;h;60;en_revision;2.345614;;;;;;;;;;;sin_candidato
+MQ-LIJAD;maquinaria;h;60;pendiente;3.078618;;;;;;;;;;;sin_candidato
+MT-CINTA-ENM;materiales;ud;57;en_revision;1.83;;;;;;;;;;;sin_candidato
+MT-YESO-REP;materiales;kg;57;en_revision;0.16;1;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.4421;0.2280;si;13.3750;desviacion_fuerte
+MT-YESO-REP;materiales;kg;57;en_revision;0.16;2;FP01800;PASTA PARA JUNTAS DE PLACAS DE YESO LAMINADO;1.17;2024-01;2022-12;0.2982;0.2280;si;7.3125;desviacion_fuerte
+MT-YESO-REP;materiales;kg;57;en_revision;0.16;3;FP01700;PASTA PARA AGARRE DE PLACAS DE YESO LAMINADO;0.87;2024-01;2022-12;0.2824;0.2280;si;5.4375;desviacion_fuerte
+MT-YESO-REP;materiales;kg;57;en_revision;0.16;4;GP80010;PASTA AGARRE PARA PEGADO PANEL YESO LAMINADO;0.64;2024-01;2022-12;0.2213;0.2280;si;4.0000;desviacion_fuerte
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;1;IE05290;CARTUCHO FUSIBLE 10 A INTENSIDAD;0.35;2024-01;2022-12;0.2820;0.1372;si;0.0794;desviacion_fuerte
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;2;IE05293;CARTUCHO FUSIBLE 25 A INTENSIDAD;0.46;2024-01;2022-12;0.2789;0.1372;si;0.1043;desviacion_fuerte
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;3;IE05400;CARTUCHO FUSIBLE 100 A INTENSIDAD;5.55;2024-01;2022-12;0.2767;0.1372;si;1.2585;
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;4;IE05700;CARTUCHO FUSIBLE 200 A INTENSIDAD;10.06;2024-01;2022-12;0.2750;0.1372;si;2.2812;desviacion_fuerte
+MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;5;IE05300;CARTUCHO FUSIBLE 80 A INTENSIDAD;5.46;2024-01;2022-12;0.2737;0.1372;si;1.2381;
+MT-APEO;materiales;ud;54;en_revision;1.04;1;CE00200;PUNTAL METÁLICO DE 3 m;21.87;2024-01;2021-12;0.7869;0.2864;si;21.0288;desviacion_fuerte
+MT-APEO;materiales;ud;54;en_revision;1.04;2;CE80000;PUNTAL METÁLICO TELESC. HASTA 3 m (PARA 150 USOS);21.87;2024-01;2022-12;0.2682;0.2864;si;21.0288;desviacion_fuerte
+MT-OXI-CONS;materiales;ud;54;pendiente;4.443038;;;;;;;;;;;sin_candidato
+MO-OF1-ALI;mano_obra;h;53;en_revision;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5432;si;0.9996;
+MO-OF1-ALI;mano_obra;h;53;en_revision;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3805;no;0.9745;numeros_diferentes
+MO-OF1-ALI;mano_obra;h;53;en_revision;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5432;si;0.9996;
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;1;RL01400;TABLERO USO 10 mm REVESTIDO MELAMINA;6.86;2024-01;2021-12;0.5358;0.2243;no;0.3672;"numeros_diferentes;desviacion_fuerte"
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;2;RL02300;TABLERO AGLOMERADO AD MELAMINA A 2 CARAS DE 13 mm;9.96;2024-01;2021-12;0.3668;0.2243;no;0.5332;numeros_diferentes
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;3;KM07300;TABLERO AGLOMERADO 16 mm;5.7;2024-01;2021-12;0.3428;0.1002;no;0.3051;"numeros_diferentes;desviacion_fuerte"
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;4;RL01200;TABLERO AGLOMERADO MACHIHEMBRADO REVESTIDO MELAMINA 20 mm;23.44;2024-01;2022-12;0.3397;0.2243;no;1.2548;numeros_diferentes
+MT-MELAMINA;materiales;m2;51;en_revision;18.68;5;RS05200;TABLERO 20 mm ANTIHUMEDAD;8.53;2024-01;2021-12;0.3364;0.1002;no;0.4566;"numeros_diferentes;desviacion_fuerte"
+MQ-AMOLA;maquinaria;h;50;en_revision;3.518421;;;;;;;;;;;sin_candidato
+MT-ALAMBRE;materiales;kg;49;en_revision;4.92;1;CA01700;ALAMBRE DE ATAR;1.5;2024-01;2022-12;0.4884;0.2008;si;0.3049;desviacion_fuerte
+MO-OF1-CAB;mano_obra;h;48;en_revision;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.2582;si;0.9996;
+MO-OF1-CAB;mano_obra;h;48;en_revision;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.1809;no;0.9745;numeros_diferentes
+MO-OF1-CAB;mano_obra;h;48;en_revision;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.2582;si;0.9996;
+MQ-OXICORTE;maquinaria;h;48;en_revision;7.036842;;;;;;;;;;;sin_candidato
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;1;IC90066;ADHESIVO PARA COQUILLA ELASTOMÉRICA;10.28;2024-01;2022-02;0.4492;0.0984;no;35.4483;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;2;XI00200;ADHESIVO PVC LÍQUIDO;14.95;2024-01;2021-12;0.3646;0.0640;no;51.5517;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;3;XI03000;ADHESIVO POLIURETANO BI-COMPONENTE;21.47;2024-01;2022-12;0.3591;0.0640;no;74.0345;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.3556;0.0640;no;19.0690;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;5;XI00100;ADHESIVO CAUCHO SINTETICO EN DISOLUCIÓN;4.73;2024-01;2021-12;0.2503;0.0640;no;16.3103;"numeros_diferentes;desviacion_fuerte"
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;1;HILOAUX006;CABLE CU 1 KV LH 1X6 MM2;0.9;2024-01;2023-03;0.5997;0.2032;si;2.1429;desviacion_fuerte
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;2;IE02740N;CABLE COBRE 1x6 mm2 RZ1-K(AS);5.11;2024-01;2022-02;0.4612;0.2032;si;12.1667;desviacion_fuerte
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;3;IE02250;CABLE COBRE 5X6mm2 SZ1-K(AS+);5.45;2024-01;2022-12;0.3774;0.2032;si;12.9762;desviacion_fuerte
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;4;IE02300;CABLE COBRE 1x 6 mm2/1000 V;0.48;2024-01;2023-03;0.3574;0.2032;si;1.1429;
+MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;5;IE02200;CABLE COBRE 1x6 mm2 H07V-K;2.09;2024-01;2022-12;0.3497;0.2032;si;4.9762;desviacion_fuerte
+MT-HERRAJE-CLOSET;materiales;ud;47;pendiente;5.126582;1;HJJHFDF;Herrajes;200;2024-01;2023-03;1.0000;0.1403;si;39.0123;desviacion_fuerte
+MT-HERRAJE-CLOSET;materiales;ud;47;pendiente;5.126582;2;JFJFGFD;Herrajes;100;2024-01;2023-03;1.0000;0.1403;si;19.5062;desviacion_fuerte
+MT-HERRAJE-CLOSET;materiales;ud;47;pendiente;5.126582;3;VW00800;HERRAJES UNION LUNAS TEMPLADAS ACERO INOXIDABLE;36.9;2024-01;2022-01;0.2121;0.1403;si;7.1978;desviacion_fuerte
+MT-PYL-CANAL;materiales;m;47;en_revision;0.9;;;;;;;;;;;sin_candidato
+MQ-MONTAC;maquinaria;h;46;en_revision;13.927083;;;;;;;;;;;sin_candidato
+MT-BANDA-REF;materiales;m;46;en_revision;3.01;1;XA90000;BANDA ELASTICA 10 mm;0.12;2024-01;2021-12;0.7750;0.2325;si;0.0399;desviacion_fuerte
+MT-BANDA-REF;materiales;m;46;en_revision;3.01;2;US26015;BANDA DE SEÑALIZACIÓN;0.29;2024-01;2021-12;0.4950;0.1239;si;0.0963;desviacion_fuerte
+MT-BANDA-REF;materiales;m;46;en_revision;3.01;3;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;2024-01;2021-12;0.2708;0.1239;si;0.0233;desviacion_fuerte
+MQ-CIZALLA;maquinaria;h;45;pendiente;3.078618;;;;;;;;;;;sin_candidato
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;1;MC00100;COMPRESOR DOS MARTILLOS;9.46;2024-01;2022-12;0.7146;0.1993;si;0.8600;
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;2;MO00100;COMPRESOR DOS MARTILLOS;8.35;2024-01;2022-02;0.7146;0.1993;si;0.7591;
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;3;ME00500;RETROEXCAVADORA CON MARTILLO;91.99;2024-01;2022-12;0.5928;0.1471;si;8.3627;desviacion_fuerte
+MQ-MART-NEUM;maquinaria;h;45;en_revision;11;4;MA10001;MARTILLO ELÉCTRICO;1.4;2024-01;2016-11;0.5412;0.0983;si;0.1273;desviacion_fuerte
+MT-DESMOLD;materiales;l;45;en_revision;5.93;;;;;;;;;;;sin_candidato
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;1;UU01510;MALLA GALV. ELECTROSOLDADA EN PANELES RÍGIDOS;8.6;2024-01;2022-12;0.4060;0.2602;si;3.4263;desviacion_fuerte
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;2;CW00500;MALLA TIPO GALLINERO;2.51;2024-01;2022-01;0.3903;0.1149;si;1.0000;
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;3;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3572;0.1149;si;0.5976;
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;4;WW80400;MALLA FIBRA DE VIDRIO 3x3;3.42;2024-01;2022-01;0.2905;0.1149;si;1.3625;
+MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;5;UU01500;MALLA GALV. SIMPLE TORSIÓN;2.62;2024-01;2022-12;0.2239;0.1149;si;1.0438;
+MT-HERRAJE-PUERTA;materiales;ud;44;pendiente;14.810127;1;VW00900;JUEGO BISAGRAS ACERO INOXIDABLE;79.91;2024-01;2017-07;0.5846;0.2847;si;5.3956;desviacion_fuerte
+MT-HERRAJE-PUERTA;materiales;ud;44;pendiente;14.810127;2;UU004700;CASETA DE JUEGOS;3530.47;2024-01;2022-12;0.4596;0.1208;si;238.3822;desviacion_fuerte
+MT-HERRAJE-PUERTA;materiales;ud;44;pendiente;14.810127;3;UI00100;JUEGO DE SOPORTES PARA RÓTULO;9;2024-01;2022-01;0.4557;0.1993;si;0.6077;
+MT-HERRAJE-PUERTA;materiales;ud;44;pendiente;14.810127;4;IF16700;JUEGO DE RAMALILLOS;4.11;2024-01;2022-12;0.4160;0.1208;si;0.2775;desviacion_fuerte
+MT-HERRAJE-PUERTA;materiales;ud;44;pendiente;14.810127;5;UI00200;JUEGO DE SOPORTES PARA SEÑAL DE TRAFICO;28.79;2024-01;2022-01;0.3267;0.1993;si;1.9439;
+MT-PIN-FONDO;materiales;l;43;en_revision;4.09;1;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;2024-01;2022-12;0.4214;0.1770;si;2.2836;desviacion_fuerte
+MQ-NIVEL-LASER;maquinaria;h;41;en_revision;3.225219;;;;;;;;;;;sin_candidato
+MT-DUCTO-VENT;materiales;m;41;en_revision;9.75;;;;;;;;;;;sin_candidato
+MQ-ESMERIL;maquinaria;h;40;pendiente;3.37182;;;;;;;;;;;sin_candidato
+MQ-GRUA;maquinaria;h;40;en_revision;70;1;MG80000;GRÚA TELESCÓPICA S/CAMIÓN 20 t;74.49;2024-01;2022-12;0.5685;0.2460;si;1.0641;
+MQ-GRUA;maquinaria;h;40;en_revision;70;2;MK00100;CAMIÓN BASCULANTE;38.12;2024-01;2022-12;0.5458;0.1230;si;0.5446;
+MQ-GRUA;maquinaria;h;40;en_revision;70;3;MK00200;CAMIÓN CISTERNA;45.12;2024-01;2022-12;0.4914;0.1230;si;0.6446;
+MT-CURADOR;materiales;l;40;en_revision;2.25;;;;;;;;;;;sin_candidato
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;1;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.4257;0.1671;si;1.6299;
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;2;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.0794;si;1.9642;
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;3;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.0794;si;5.6597;desviacion_fuerte
+MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;4;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.0794;si;1.9045;
+MO-OF1-CARP;mano_obra;h;39;en_revision;21;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.3815;si;1.1033;
+MO-OF1-CARP;mano_obra;h;39;en_revision;21;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.2672;no;1.0757;numeros_diferentes
+MO-OF1-CARP;mano_obra;h;39;en_revision;21;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.3815;si;1.1033;
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;1;IS031;Mortero impermeabilizante;0.42;2024-01;2018-07;1.0000;0.1819;si;0.2400;desviacion_fuerte
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;2;GM01100;MORTERO FORESIS;7.65;2024-01;2021-12;0.4105;0.0732;si;4.3714;desviacion_fuerte
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;3;GM01000;MORTERO DRAINING;2.32;2024-01;2022-12;0.3912;0.0732;si;1.3257;
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;4;IS09;Mortero para capa base;0.68;2024-01;2018-07;0.3827;0.1235;si;0.3886;desviacion_fuerte
+MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;5;IS03;Mortero para fijación de paneles;0.68;2024-01;2018-07;0.3792;0.1235;si;0.3886;desviacion_fuerte
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;1;IC53800;REJILLA DE VENTILACIÓN DE ALUMINIO;4.68;2024-01;2021-12;0.7225;0.3018;si;0.5092;
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;2;IF24800;REJILLA DE ALUMINIO;2.04;2024-01;2022-12;0.5359;0.1338;si;0.2220;desviacion_fuerte
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;3;IW04200;REJILLA PLANA;2.43;2024-01;2021-12;0.4375;0.1338;si;0.2644;desviacion_fuerte
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;4;KW00200;REJILLA METALICA L/FIJAS C/MARCO 20X20 cm;13.9;2024-01;2022-01;0.4259;0.3167;si;1.5125;
+MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;5;IF08100;DESAGUE DUCHA CON REJILLA;4.53;2024-01;2021-12;0.4009;0.2399;si;0.4929;desviacion_fuerte
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;1;IG04500;VÁLVULA DE RETENCIÓN;9.33;2024-01;2022-01;1.0000;0.2811;si;0.5418;
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;2;IG04400;VÁLVULA DE COMPUERTA;110.02;2024-01;2022-01;1.0000;0.2582;si;6.3891;desviacion_fuerte
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;3;IF31800N;"VÁLVULA RETENCIÓN DIÁM. 3""";26.64;2024-01;2022-02;0.6060;0.2811;si;1.5470;
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;4;IP16701;"VALVULA RETENCION, 50 MM. ( 2"")";33.37;2024-01;2021-12;0.5757;0.2811;si;1.9379;
+MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;5;IP16401;"VALVULA RETENCION, 25 MM. ( 1"")";3.51;2024-01;2021-12;0.5666;0.2811;si;0.2038;desviacion_fuerte
+MT-REGUL-GAS;materiales;ud;37;pendiente;27.341772;1;IG03400;REGULADOR GAS BUTANO;11.36;2024-01;2022-01;0.6076;0.2378;si;0.4155;desviacion_fuerte
+MT-REGUL-GAS;materiales;ud;37;pendiente;27.341772;2;DREGULJHD;Regulador electrónico;45;2024-01;2023-03;0.4565;0.1357;si;1.6458;
+MT-REGUL-GAS;materiales;ud;37;pendiente;27.341772;3;IG06042;"REGULADOR ROSCADO 1""";168.41;2024-01;2022-01;0.3768;0.1357;si;6.1594;desviacion_fuerte
+MT-REGUL-GAS;materiales;ud;37;pendiente;27.341772;4;IG03300;"REGULADOR BAJA PRESIÓN PROPANO 1/2""";14.64;2024-01;2022-01;0.3662;0.2452;si;0.5354;
+MT-REGUL-GAS;materiales;ud;37;pendiente;27.341772;5;IG06003;REGULADOR DE BAJA PRESIÓN CON VÁLVULA DE SEGURIDAD DN 20;30.91;2024-01;2022-01;0.3329;0.2452;si;1.1305;
+MT-SEPARADOR;materiales;ud;37;en_revision;0.06;1;IC60500;SEPARADOR CENTRÍFUGO DE AIRE 50mm (2 ) DIÁM.;93.82;2024-01;2021-12;0.2589;0.1234;si;1563.6667;desviacion_fuerte
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;1;IF28855N;Tubería de cobre o inox. de 18 mm;4.2;2024-01;2016-02;0.5094;0.1691;si;1.9718;
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;2;VFR67;TUBERIA PPR 25MM;10.6;2024-01;2023-03;0.3173;0.0897;si;4.9765;desviacion_fuerte
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;3;VFRT;TUBERIA PPR 90MM;21.2;2024-01;2023-03;0.3018;0.0897;si;9.9531;desviacion_fuerte
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;4;VFRT1;TUBERIA PPR 75MM;18.02;2024-01;2023-03;0.2930;0.0897;si;8.4601;desviacion_fuerte
+MT-TUB-GAS;materiales;m;37;en_revision;2.13;5;VFRT23;TUBERIA PPR 63MM;15.9;2024-01;2023-03;0.2864;0.0897;si;7.4648;desviacion_fuerte
+MT-SOPORTE-AC;materiales;ud;36;pendiente;18.227848;1;HR00250;SOPORTE VERTICAL METÁLICO;13.41;2024-01;2022-01;0.6212;0.2019;si;0.7357;
+MT-SOPORTE-AC;materiales;ud;36;pendiente;18.227848;2;HS02100;SOPORTE METALICO DIÁM. 50 mm;17.98;2024-01;2017-07;0.5943;0.2019;si;0.9864;
+MT-SOPORTE-AC;materiales;ud;36;pendiente;18.227848;3;IV00040;SOPORTE PARA AMPLIFICADORES;6.66;2024-01;2021-12;0.5224;0.1756;si;0.3654;desviacion_fuerte
+MT-SOPORTE-AC;materiales;ud;36;pendiente;18.227848;4;KA00300A;SOPORTE METÁLICO AIRE ACONDICIONADO;6.95;2024-01;2016-12;0.4667;0.2019;si;0.3813;desviacion_fuerte
+MT-SOPORTE-AC;materiales;ud;36;pendiente;18.227848;5;HB00200;SOPORTE METÁLICO 60.60.2 mm;3.19;2024-01;2022-12;0.4667;0.2019;si;0.1750;desviacion_fuerte
+MT-TUBO-ACERO;materiales;kg;36;pendiente;2.221519;;;;;;;;;;;sin_candidato
+MT-CONS-LIMP;materiales;m2;35;pendiente;0.398734;;;;;;;;;;;sin_candidato
+MT-VIDRIO-TEMP;materiales;m2;35;pendiente;77.468354;1;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.5015;0.0964;no;0.1994;"numeros_diferentes;desviacion_fuerte"
+MT-VIDRIO-TEMP;materiales;m2;35;pendiente;77.468354;2;VV01300;VIDRIO IMPRESO TEMPLADO INCOLORO 9 A 11 mm;149.3;2024-01;2021-12;0.3478;0.2660;no;1.9272;numeros_diferentes
+MT-VIDRIO-TEMP;materiales;m2;35;pendiente;77.468354;3;RT01600;PLACA FIBRA DE VIDRIO;4.38;2024-01;2022-01;0.3430;0.0964;no;0.0565;"numeros_diferentes;desviacion_fuerte"
+MT-VIDRIO-TEMP;materiales;m2;35;pendiente;77.468354;4;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3172;0.0964;no;0.0194;"numeros_diferentes;desviacion_fuerte"
+MT-VIDRIO-TEMP;materiales;m2;35;pendiente;77.468354;5;JEMLLOOMD;Vidrio emplomado 2mm pb;2000;2024-01;2023-03;0.2930;0.0964;no;25.8170;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;1;IC90066;ADHESIVO PARA COQUILLA ELASTOMÉRICA;10.28;2024-01;2022-02;0.4492;0.1349;si;3.3377;desviacion_fuerte
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;2;XI00200;ADHESIVO PVC LÍQUIDO;14.95;2024-01;2021-12;0.3646;0.0877;si;4.8539;desviacion_fuerte
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;3;XI03000;ADHESIVO POLIURETANO BI-COMPONENTE;21.47;2024-01;2022-12;0.3591;0.0877;si;6.9708;desviacion_fuerte
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.3556;0.0877;si;1.7955;
+MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;5;XI00100;ADHESIVO CAUCHO SINTETICO EN DISOLUCIÓN;4.73;2024-01;2021-12;0.2503;0.0877;si;1.5357;
+MT-TUB-FRIGO;materiales;m;34;en_revision;5.53;1;IV02401;CABLE TELEFÓNICO 1 PAR;0.23;2024-01;2022-01;0.4798;0.2113;si;0.0416;desviacion_fuerte
+MT-TUB-FRIGO;materiales;m;34;en_revision;5.53;2;BELD001;Cable par trenzado con funda PVC Belden 85102;4.25;2024-01;2023-03;0.2840;0.2875;si;0.7685;
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;1;IS071;Panel de aislamiento EPS 20 mm;2.09;2024-01;2018-07;0.5237;0.1698;si;0.4409;desviacion_fuerte
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;2;WW00302N;PANEL COMPOSITE;98;2024-01;2022-02;0.3778;0.0666;si;20.6751;desviacion_fuerte
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;3;IS07N_4;Panel de aislamiento EPS 80mm conductividad 0,037 W/(mk);10.96;2024-01;2018-07;0.3024;0.1698;si;2.3122;desviacion_fuerte
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;4;RL00500;PANEL CORCHO 5 mm;14.05;2024-01;2022-01;0.2942;0.0666;si;2.9641;desviacion_fuerte
+MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;5;IS14_4;Panel de aislamiento EPS 80 mm grafito conductividad 0,032 W/(mk);11.9;2024-01;2018-07;0.2530;0.1698;si;2.5105;desviacion_fuerte
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;1;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.8168;0.2765;no;2.3739;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;2;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.8168;0.2765;no;4.2565;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;3;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.7998;0.2765;no;3.1391;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;4;XT80010;PANEL DE LANA MINERAL DE 15 mm;4.12;2024-01;2021-12;0.7981;0.2765;no;1.7913;numeros_diferentes
+MT-PYL-LANA;materiales;m2;33;en_revision;2.3;5;XT12723;PANEL SEMIRRÍGIDO LANA MINERAL 60 mm DENSIDAD 30 kg/m3;5.6;2024-01;2021-12;0.5346;0.3496;si;2.4348;desviacion_fuerte
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;1;SC02100;TUBERÍA FIBROCEMENTO NT SANITARIO DIÁM. 200 mm;12.56;2024-01;2021-12;0.4958;0.2148;no;1.2124;numeros_diferentes
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;2;SC02000;TUBERÍA FIBROCEMENTO NT SANITARIO DIÁM. 150 mm;9.32;2024-01;2021-12;0.4930;0.2148;no;0.8996;numeros_diferentes
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;3;SC02300;TUBERÍA FIBROCEMENTO NT SANITARIO DIÁM. 300 mm;22.97;2024-01;2021-12;0.4915;0.2148;no;2.2172;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;4;SC02200;TUBERÍA FIBROCEMENTO NT SANITARIO DIÁM. 250 mm;17.39;2024-01;2021-12;0.4905;0.2148;no;1.6786;numeros_diferentes
+MT-PLO-PVC4;materiales;m;32;en_revision;10.36;5;UA01500;TUBERÍA PVC SN4 DIÁM. 200 mm TEJA;5.84;2024-01;2021-12;0.4901;0.2274;si;0.5637;
+MT-PRESERV-MAD;materiales;l;32;en_revision;13.17;;;;;;;;;;;sin_candidato
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;1;UE04000;TOMA DE TIERRA;24.23;2024-01;2021-12;0.4532;0.1405;si;0.6187;
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;2;IV01050;AMPLIFICADOR TOMA;28.3;2024-01;2021-12;0.4500;0.1405;si;0.7227;
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;3;PDG-007;TOMA DE GASES;360;2024-01;2023-03;0.4334;0.1405;si;9.1931;desviacion_fuerte
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;4;IE11400;PLACA DE COBRE PARA TOMA TIERRA;34.6;2024-01;2022-12;0.3928;0.2463;si;0.8836;
+MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;5;IE01810;KIT 4 MÓD. 4 BASES TOMA ELEC. Y 2 PLACAS VOZ DATOS;49.98;2024-01;2021-12;0.2993;0.4556;si;1.2763;
+MQ-VOLQ;maquinaria;h;31;en_revision;50;1;MK00100;CAMIÓN BASCULANTE;38.12;2024-01;2022-12;0.5458;0.1161;no;0.7624;numeros_diferentes
+MQ-VOLQ;maquinaria;h;31;en_revision;50;2;MK00200;CAMIÓN CISTERNA;45.12;2024-01;2022-12;0.4914;0.1161;no;0.9024;numeros_diferentes
+MQ-VOLQ;maquinaria;h;31;en_revision;50;3;MG80000;GRÚA TELESCÓPICA S/CAMIÓN 20 t;74.49;2024-01;2022-12;0.2843;0.1161;no;1.4898;numeros_diferentes
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;1;IG04400;VÁLVULA DE COMPUERTA;110.02;2024-01;2022-01;0.4565;0.0823;si;13.4828;desviacion_fuerte
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;2;IG04500;VÁLVULA DE RETENCIÓN;9.33;2024-01;2022-01;0.4195;0.0823;si;1.1434;
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;3;IC72200;VÁLVULA DE CORTE;7.08;2024-01;2021-12;0.3949;0.0823;si;0.8676;
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;4;IF31500;VÁLVULA-REJILLA CERÁMICA;9.01;2024-01;2021-12;0.2813;0.0823;si;1.1042;
+MT-FLOTANTE;materiales;ud;31;en_revision;8.16;5;IG06301;"VÁLVULA DE MARIPOSA 2"" PARA GAS NATURAL";83.17;2024-01;2022-01;0.2696;0.1572;si;10.1924;desviacion_fuerte
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;1;GW00600N;MORTERO DE REPARACIÓN TAPAPOROS DE HORMIGÓN ESTRUCTURAL;6.48;2024-01;2022-02;0.6366;0.3018;si;6.1714;desviacion_fuerte
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;2;GW00500N;MORTERO TIXOTRÓPICO FIBRORREFORZADO PARA REPARACIÓN DE HORMIGÓN;7.08;2024-01;2022-02;0.5695;0.3112;si;6.7429;desviacion_fuerte
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;3;KK10006;Mortero de reparación estructural de 1 componente, reforzado con fibrasE;1.16;2024-01;2016-11;0.4893;0.3558;si;1.1048;
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;4;GM01100;MORTERO FORESIS;7.65;2024-01;2021-12;0.4105;0.0779;si;7.2857;desviacion_fuerte
+MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;5;IS031;Mortero impermeabilizante;0.42;2024-01;2018-07;0.4023;0.0779;si;0.4000;desviacion_fuerte
+MT-PLO-ACC4;materiales;ud;31;pendiente;3.303797;;;;;;;;;;;sin_candidato
+MQ-ROZAD;maquinaria;h;30;en_revision;6.157237;;;;;;;;;;;sin_candidato
+MT-MARCO-PUERTA;materiales;m;30;pendiente;7.974684;1;KS04100;PERFIL MARCO ALUMINIO;6.87;2024-01;2021-12;0.3855;0.1355;si;0.8615;
+MQ-HIDROLAV;maquinaria;h;28;en_revision;6.157237;;;;;;;;;;;sin_candidato
+MT-AGUA-OBRA;materiales;m3;27;en_revision;0.84;1;UJ00050;AGUA DE RIEGO;0.63;2024-01;2022-12;0.3847;0.1044;si;0.7500;
+MT-AGUA-OBRA;materiales;m3;27;en_revision;0.84;2;GW00100;AGUA POTABLE;1.16;2024-01;2022-12;0.3563;0.1044;si;1.3810;
+MT-EPOXI-ANCLA;materiales;l;27;en_revision;24.23;1;GR00200;RESINA EPOXI;21.45;2024-01;2022-12;0.4554;0.0878;si;0.8853;
+MT-EPOXI-ANCLA;materiales;l;27;en_revision;24.23;2;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;2024-01;2022-12;0.1626;0.0878;si;0.3855;desviacion_fuerte
+MT-PYL-PERF-CR;materiales;m2;26;en_revision;9.91;;;;;;;;;;;sin_candidato
+MT-CERRADURA;materiales;ud;25;pendiente;36.455696;1;KW01300;CERRADURA HOJA CORREDERA;17.09;2024-01;2022-01;0.3919;0.1873;si;0.4688;desviacion_fuerte
+MT-CERRADURA;materiales;ud;25;pendiente;36.455696;2;KW01500;CERRADURA PUERTA DE ENTRADA;24.87;2024-01;2022-01;0.3685;0.1873;si;0.6822;
+MT-CERRADURA;materiales;ud;25;pendiente;36.455696;3;KW01400;CERRADURA LLAVE PLANA;9.92;2024-01;2022-01;0.3684;0.1873;si;0.2721;desviacion_fuerte
+MT-CERRADURA;materiales;ud;25;pendiente;36.455696;4;KS02400;CERRADURA ENROLLABLE METALICO;35.36;2024-01;2021-12;0.3663;0.1873;si;0.9699;
+MT-CERRADURA;materiales;ud;25;pendiente;36.455696;5;VW00300;CERRADURA EN PAVIMENTO AC. INOX.;98.74;2024-01;2022-01;0.3597;0.1873;si;2.7085;desviacion_fuerte
+MT-GEOTEXTIL;materiales;m2;25;en_revision;0.68;;;;;;;;;;;sin_candidato
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;1;VFR67;TUBERIA PPR 25MM;10.6;2024-01;2023-03;0.7521;0.2146;no;11.6484;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;2;VFRT;TUBERIA PPR 90MM;21.2;2024-01;2023-03;0.7152;0.2146;no;23.2967;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;3;VFRT1;TUBERIA PPR 75MM;18.02;2024-01;2023-03;0.6943;0.2146;no;19.8022;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;4;VFRT23;TUBERIA PPR 63MM;15.9;2024-01;2023-03;0.6789;0.2146;no;17.4725;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-PPR20;materiales;m;25;en_revision;0.91;5;VFRT56;TUBERIA PPR 40 MMM;11.66;2024-01;2023-03;0.5117;0.2146;no;12.8132;"numeros_diferentes;desviacion_fuerte"
+MT-POLIUR-LIQ;materiales;kg;25;en_revision;7.85;;;;;;;;;;;sin_candidato
+MO-OF1-JARD;mano_obra;h;24;en_revision;21;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;0.5617;si;1.1033;
+MO-OF1-JARD;mano_obra;h;24;en_revision;21;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.3934;no;1.0757;numeros_diferentes
+MO-OF1-JARD;mano_obra;h;24;en_revision;21;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;0.5617;si;1.1033;
+MQ-TERMOF;maquinaria;h;23;pendiente;2.638816;;;;;;;;;;;sin_candidato
+MT-CABLE-COBRE-DESN;materiales;m;23;pendiente;5.126582;1;IE03100;CABLE COBRE 1x35 mm2 RZ1-K(AS);11.96;2024-01;2022-12;0.8457;0.1830;si;2.3329;desviacion_fuerte
+MT-CABLE-COBRE-DESN;materiales;m;23;pendiente;5.126582;2;IE02730N;CABLE COBRE 1x4 mm2 RZ1-K(AS);4.4;2024-01;2022-02;0.6461;0.1336;no;0.8583;numeros_diferentes
+MT-CABLE-COBRE-DESN;materiales;m;23;pendiente;5.126582;3;IE03000;CABLE COBRE 1x35 mm2 H07V-K(AS);13.19;2024-01;2022-12;0.6433;0.1830;si;2.5729;desviacion_fuerte
+MT-CABLE-COBRE-DESN;materiales;m;23;pendiente;5.126582;4;IE02500;CABLE COBRE 1x10 mm2 RZ1-K(AS);3.91;2024-01;2022-12;0.6430;0.1336;no;0.7627;numeros_diferentes
+MT-CABLE-COBRE-DESN;materiales;m;23;pendiente;5.126582;5;IE02750N;CABLE COBRE 1x10 mm2 RZ1-K(AS);6.52;2024-01;2022-02;0.6430;0.1336;no;1.2718;numeros_diferentes
+MT-VIDRIO-6;materiales;m2;23;pendiente;38;1;VV01100;VIDRIO IMPRESO INCOLORO 6 A 7 mm;15.99;2024-01;2021-12;0.5472;0.6227;si;0.4208;desviacion_fuerte
+MT-VIDRIO-6;materiales;m2;23;pendiente;38;2;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.5015;0.1991;no;0.4066;"numeros_diferentes;desviacion_fuerte"
+MT-VIDRIO-6;materiales;m2;23;pendiente;38;3;VV02600;"VIDRIO EN ""U"" INCOLORO, 270x41x6 mm";27.42;2024-01;2021-12;0.4908;0.6227;si;0.7216;
+MT-VIDRIO-6;materiales;m2;23;pendiente;38;4;VV00600;VIDRIO ARMADO INCOLORO 6 A 7 mm Y 25x25 mm;36.95;2024-01;2021-12;0.4728;0.6227;si;0.9724;
+MT-VIDRIO-6;materiales;m2;23;pendiente;38;5;VV00500;VIDRIO ARMADO INCOLORO 6 A 7 mm Y 12x12 mm;30.27;2024-01;2021-12;0.4619;0.6227;si;0.7966;
+MT-VIGA-APEO;materiales;m;23;pendiente;3.303797;;;;;;;;;;;sin_candidato
+MT-BLQ-15;materiales;ud;22;en_revision;0.54;1;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.8062;0.4991;si;1.4630;
+MT-BLQ-15;materiales;ud;22;en_revision;0.54;2;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.3773;no;1.7407;numeros_diferentes
+MT-BLQ-15;materiales;ud;22;en_revision;0.54;3;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.3773;no;1.0000;numeros_diferentes
+MT-BLQ-15;materiales;ud;22;en_revision;0.54;4;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.5901;0.3773;no;1.3333;numeros_diferentes
+MT-BLQ-15;materiales;ud;22;en_revision;0.54;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.3773;no;1.2407;numeros_diferentes
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;1;IF06275;"TUBO FLEXIBLE DE 3/4""X 50 cm";5.91;2024-01;2021-12;0.4719;0.1602;si;2.6742;desviacion_fuerte
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;2;P16EC060;Tubo fluorescente.;4.18;2024-01;2023-03;0.3344;0.0599;si;1.8914;
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;3;IW04300;TUBO FLUORESCENTE 20 W;2.89;2024-01;2021-12;0.2513;0.0599;si;1.3077;
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;4;IW04400;TUBO FLUORESCENTE 40 W;2.93;2024-01;2021-12;0.2510;0.0599;si;1.3258;
+MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;5;IF10200;"FLUXOR 1/2"" CON TUBO DE DESCARGA CAL. MEDIA";100.36;2024-01;2022-12;0.1983;0.1191;si;45.4118;desviacion_fuerte
+MT-GRAVILLA;materiales;m3;21;en_revision;38.97;1;AG00500;GRAVILLA;14.82;2024-01;2022-12;1.0000;0.1767;si;0.3803;desviacion_fuerte
+MT-GRAVILLA;materiales;m3;21;en_revision;38.97;2;AG00700;GRAVILLA DIÁM. 18/20 mm;15.88;2024-01;2022-12;0.3943;0.1767;si;0.4075;desviacion_fuerte
+MT-GRAVILLA;materiales;m3;21;en_revision;38.97;3;AG00600;GRAVILLA DIÁM. 5 (PIÑONCITO);14.82;2024-01;2022-12;0.3226;0.1767;si;0.3803;desviacion_fuerte
+MT-GRAVILLA;materiales;m3;21;en_revision;38.97;4;AC00100;GRAVILLA MACHAQUEO DIÁM. 18/20 mm CALIZA;13.87;2024-01;2022-12;0.2321;0.1767;si;0.3559;desviacion_fuerte
+MQ-PLANCHA-COMP;maquinaria;h;20;en_revision;5.570833;;;;;;;;;;;sin_candidato
+MT-CRU-NIV;materiales;ud;20;en_revision;0.19;;;;;;;;;;;sin_candidato
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;1;FJGJKL;Mecanismos;300;2024-01;2023-03;1.0000;0.1507;si;29.2683;desviacion_fuerte
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;2;KS03400;MECANISMO LAMAS ORIENTABLES;17.25;2024-01;2021-12;0.3592;0.1507;si;1.6829;
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;3;KS05700;RULO Y MECANISMOS PERSIANA;11.74;2024-01;2021-12;0.3359;0.1507;si;1.1454;
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;4;KW80050;MECANISMO APERTURA OSCILOBATIENTE;80.85;2024-01;2022-01;0.2893;0.1507;si;7.8878;desviacion_fuerte
+MT-ELE-MECA;materiales;ud;20;en_revision;10.25;5;KS05600;RULO Y MECANISMOS ENROLLABLE METALICO;40.3;2024-01;2021-12;0.2591;0.1507;si;3.9317;desviacion_fuerte
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;1;CW00500;MALLA TIPO GALLINERO;2.51;2024-01;2022-01;0.3903;0.0962;si;8.3667;desviacion_fuerte
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;2;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3572;0.0962;si;5.0000;desviacion_fuerte
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;3;WW80400;MALLA FIBRA DE VIDRIO 3x3;3.42;2024-01;2022-01;0.2905;0.0962;si;11.4000;desviacion_fuerte
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;4;UU01500;MALLA GALV. SIMPLE TORSIÓN;2.62;2024-01;2022-12;0.2239;0.0962;si;8.7333;desviacion_fuerte
+MT-MALLA-OBRA;materiales;m2;20;en_revision;0.3;5;HR00400;MALLA TUPIDA DE TEJIDO SINTETICO;0.38;2024-01;2022-01;0.1957;0.0962;si;1.2667;
+MT-CABLE-8;materiales;m;19;en_revision;2.8;1;KW04800;CONDUCTOR COBRE TELEMANDO 3 CONDUCTORES;1.5;2024-01;2022-01;0.3863;0.1761;no;0.5357;numeros_diferentes
+MT-BREAKER;materiales;ud;18;en_revision;12.66;1;IE11000;INTERRUPTOR SENCILLO;2;2024-01;2022-12;0.4050;0.1027;si;0.1580;desviacion_fuerte
+MT-BREAKER;materiales;ud;18;en_revision;12.66;2;IE08300;INTERRUPTOR CRUZAMIENTO;4.45;2024-01;2022-12;0.3902;0.1027;si;0.3515;desviacion_fuerte
+MT-BREAKER;materiales;ud;18;en_revision;12.66;3;IE10200;INTERRUPTOR MAGNETOTÉRMICO I+N, 63 A;135.18;2024-01;2022-12;0.2972;0.1027;si;10.6777;desviacion_fuerte
+MT-BREAKER;materiales;ud;18;en_revision;12.66;4;IE13930;INTERRUPTOR DIFERENCIAL BIPOLAR (II). INT. N. 25 A SENS. 0,03A;160.24;2024-01;2022-12;0.2863;0.2632;si;12.6572;desviacion_fuerte
+MT-BREAKER;materiales;ud;18;en_revision;12.66;5;IM05000;INTERRUPTOR AUTOMÁTICO DE NIVEL;121.13;2024-01;2021-12;0.2770;0.1027;si;9.5679;desviacion_fuerte
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;1;US04300;TUBERÍA PVC PRESIÓN DIÁM. 50 mm;4.33;2024-01;2022-01;0.4355;0.1623;no;24.0556;"numeros_diferentes;desviacion_fuerte"
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;2;UE04400;TUBERÍA PVC LIGERA DIÁM. 40 mm PARA COND. CABLES;0.6;2024-01;2021-12;0.3529;0.2266;no;3.3333;"numeros_diferentes;desviacion_fuerte"
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;3;UE04500;TUBERÍA PVC LIGERA DIÁM. 50 mm PARA COND. CABLES;0.83;2024-01;2021-12;0.3504;0.2266;no;4.6111;"numeros_diferentes;desviacion_fuerte"
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;4;UA01500;TUBERÍA PVC SN4 DIÁM. 200 mm TEJA;5.84;2024-01;2021-12;0.3476;0.1623;no;32.4444;"numeros_diferentes;desviacion_fuerte"
+MT-ELE-TUB20;materiales;m;18;en_revision;0.18;5;UE04600;TUBERÍA PVC LIGERA DIÁM. 60 mm PARA COND. CABLES;0.98;2024-01;2021-12;0.3466;0.2266;no;5.4444;"numeros_diferentes;desviacion_fuerte"
+MT-IMPRIM-ASF;materiales;l;18;en_revision;5.31;1;IS11;Imprimación color a elegir;6.26;2024-01;2018-07;0.3696;0.0986;si;1.1789;
+MT-PLO-DESAG;materiales;ud;18;pendiente;6.151899;;;;;;;;;;;sin_candidato
+MT-POLIET;materiales;m2;18;pendiente;0.6;1;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.5769;0.1593;si;1.1500;
+MT-POLIET;materiales;m2;18;pendiente;0.6;2;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.5025;0.1593;si;4.1000;desviacion_fuerte
+MT-POLIET;materiales;m2;18;pendiente;0.6;3;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.5025;0.1593;si;5.2167;desviacion_fuerte
+MT-POLIET;materiales;m2;18;pendiente;0.6;4;XT13001;LÁMINA DE POLIETILENO RETICULADO 5 mm;1.97;2024-01;2021-12;0.4880;0.1593;si;3.2833;desviacion_fuerte
+MT-POLIET;materiales;m2;18;pendiente;0.6;5;XT13101;LÁMINA DE POLIETILENO NO RETICULADO 5 mm;1.28;2024-01;2021-12;0.4880;0.1593;si;2.1333;desviacion_fuerte
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;1;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.5769;0.1779;si;3.8333;desviacion_fuerte
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;2;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.5025;0.1779;si;13.6667;desviacion_fuerte
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;3;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.5025;0.1779;si;17.3889;desviacion_fuerte
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;4;XT13001;LÁMINA DE POLIETILENO RETICULADO 5 mm;1.97;2024-01;2021-12;0.4880;0.1779;si;10.9444;desviacion_fuerte
+MT-PROT-PLAST;materiales;m2;18;en_revision;0.18;5;XT13101;LÁMINA DE POLIETILENO NO RETICULADO 5 mm;1.28;2024-01;2021-12;0.4880;0.1779;si;7.1111;desviacion_fuerte
+MT-PYL-BANDA;materiales;m;18;confirmado_referencia;0.31;1;US26015;BANDA DE SEÑALIZACIÓN;0.29;2024-01;2021-12;0.4950;0.1395;si;0.9355;
+MT-PYL-BANDA;materiales;m;18;confirmado_referencia;0.31;2;XA90000;BANDA ELASTICA 10 mm;0.12;2024-01;2021-12;0.4128;0.1395;si;0.3871;desviacion_fuerte
+MT-PYL-BANDA;materiales;m;18;confirmado_referencia;0.31;3;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;2024-01;2021-12;0.2708;0.1395;si;0.2258;desviacion_fuerte
+MT-ACERO-INOX;materiales;kg;17;pendiente;15.949367;;;;;;;;;;;sin_candidato
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;1;KS04200;PERFIL SOPORTE;5.88;2024-01;2021-12;0.5502;0.1459;si;1.4377;
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;2;VW01500;"PERFIL EN ""U"" DE NEOPRENO";0.4;2024-01;2017-07;0.4616;0.1459;si;0.0978;desviacion_fuerte
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;3;RT00800;PERFIL SECUNDARIO;1.02;2024-01;2021-12;0.4509;0.1459;si;0.2494;desviacion_fuerte
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;4;RT00600;PERFIL PERIMETRAL;0.76;2024-01;2021-12;0.4244;0.1459;si;0.1858;desviacion_fuerte
+MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;5;RT00700;PERFIL PRIMARIO;1.02;2024-01;2021-12;0.4244;0.1459;si;0.2494;desviacion_fuerte
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;1;KM05300;MADERA SAPELLY;941.5;2024-01;2021-12;0.4291;0.0783;si;1.9192;
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;2;KM05100;MADERA PINO FLANDES;464.95;2024-01;2021-12;0.3159;0.0783;si;0.9478;
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;3;CM00200;MADERA DE PINO EN TABLA;412.45;2024-01;2022-12;0.2665;0.0783;si;0.8408;
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;4;CM00100;MADERA DE PINO EN TABLONCILLO;424.53;2024-01;2022-12;0.2566;0.0783;si;0.8654;
+MT-MADERA-EST;materiales;m3;17;en_revision;490.57;5;CM00300;MADERA DE PINO EN TABLON;443.12;2024-01;2022-12;0.2566;0.0783;si;0.9033;
+MT-MALLA-ESQ;materiales;m;17;pendiente;0.797468;1;RW04300;CANTONERA PVC;1.68;2024-01;2022-12;0.6603;0.1338;si;2.1067;desviacion_fuerte
+MT-MALLA-ESQ;materiales;m;17;pendiente;0.797468;2;RW04400;CANTONERA GOMA;1.81;2024-01;2021-12;0.5521;0.1338;si;2.2697;desviacion_fuerte
+MT-MALLA-ESQ;materiales;m;17;pendiente;0.797468;3;KW00513N;CANTONERA CAUCHO ANTIPINZADEDOS;29.89;2024-01;2022-04;0.3576;0.1338;si;37.4811;desviacion_fuerte
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;1;RT01600;PLACA FIBRA DE VIDRIO;4.38;2024-01;2022-01;0.6570;0.1388;si;0.2193;desviacion_fuerte
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;2;RT01350;PLACA FIBRA MINERAL DESMONTABLE;9;2024-01;2021-12;0.4178;0.1388;si;0.4507;desviacion_fuerte
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;3;FP03200;PLACA HIDRÓFUGA DE CELULOSA DE CEMENTO DE 12MM;27.82;2024-01;2022-12;0.3445;0.1614;si;1.3931;
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;4;RA86030;PLACA HIDRÓFUGA DE CELULOSA DE CEMENTO DE 6 MM ESP.;41.36;2024-01;2021-12;0.3071;0.1614;si;2.0711;desviacion_fuerte
+MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;5;RT01000;PLACA ACÚSTICA DE ALUMINIO;11.55;2024-01;2021-12;0.2771;0.0644;si;0.5784;
+MT-PLO-ACC20;materiales;ud;17;pendiente;0.911392;;;;;;;;;;;sin_candidato
+MT-PLO-LLAVE;materiales;ud;17;pendiente;5.126582;1;IF21820N;"LLAVE PASO DIÁM. 2""";25.42;2024-01;2022-02;0.6378;0.2874;no;4.9585;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-LLAVE;materiales;ud;17;pendiente;5.126582;2;IG01700;LLAVE DE PASO DIÁM. 8 mm;5.31;2024-01;2022-01;0.5925;0.2874;no;1.0358;numeros_diferentes
+MT-PLO-LLAVE;materiales;ud;17;pendiente;5.126582;3;US01400;LLAVE DE PASO DIÁM. 100 mm;77;2024-01;2021-12;0.5923;0.2874;no;15.0198;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-LLAVE;materiales;ud;17;pendiente;5.126582;4;US01200;LLAVE DE PASO DIÁM. 60 mm;51.34;2024-01;2021-12;0.5907;0.2874;no;10.0145;"numeros_diferentes;desviacion_fuerte"
+MT-PLO-LLAVE;materiales;ud;17;pendiente;5.126582;5;US01600;LLAVE DE PASO DIÁM. 200 mm;184.68;2024-01;2021-12;0.5871;0.2874;no;36.0240;"numeros_diferentes;desviacion_fuerte"
+MT-RIEL-CORRED;materiales;m;17;pendiente;15.949367;;;;;;;;;;;sin_candidato
+MT-SELLA-PASE;materiales;ud;17;pendiente;5.240506;1;IG05070;KIT SEGURIDAD CALDERA;906.75;2024-01;2022-01;0.3939;0.1198;si;173.0272;desviacion_fuerte
+MT-SELLA-PASE;materiales;ud;17;pendiente;5.240506;2;IC90049;KIT PARA CONEXION DE RADIADOR DE CHAPA DE ACERO A LA TUBERÍA DE;22.8;2024-01;2022-02;0.3359;0.2133;si;4.3507;desviacion_fuerte
+MT-SELLA-PASE;materiales;ud;17;pendiente;5.240506;3;IC50100N;KIT ALARMA ASEO;256.55;2024-01;2022-03;0.3106;0.1198;si;48.9552;desviacion_fuerte
+MT-SELLA-PASE;materiales;ud;17;pendiente;5.240506;4;IF05933N;KIT AIRE ENTRADA/EXTRACCIÓN;46.4;2024-01;2017-09;0.2831;0.1198;si;8.8541;desviacion_fuerte
+MT-SELLA-PASE;materiales;ud;17;pendiente;5.240506;5;IC90048;KIT PARA MONTAJE DE RADIADOR DE CHAPA DE ACERO, COMPUESTO POR SOLDADURA;7.6;2024-01;2022-02;0.1372;0.1198;si;1.4502;
+MT-TORNILLO-EST;materiales;ud;17;en_revision;7.8;;;;;;;;;;;sin_candidato
+MQ-PULIDORA;maquinaria;h;16;en_revision;6.597039;;;;;;;;;;;sin_candidato
+MT-BARNIZ-PISO;materiales;l;16;en_revision;11.57;;;;;;;;;;;sin_candidato
+MT-MANTO-ASF;materiales;m2;16;en_revision;4.09;;;;;;;;;;;sin_candidato
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;1;PW10001;MASILLA DE POLIURETANO;18.2;2024-01;2016-11;0.5814;0.1414;si;14.7967;desviacion_fuerte
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;2;VW01000;MASILLA DE SILICONA;8.44;2024-01;2017-07;0.5133;0.1414;si;6.8618;desviacion_fuerte
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;3;VW01100;MASILLA PLASTICA;0.56;2024-01;2017-07;0.4943;0.1414;si;0.4553;desviacion_fuerte
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;4;PW00200;MASILLA CAUCHO-SILICONA;26.35;2024-01;2022-12;0.3707;0.1414;si;21.4228;desviacion_fuerte
+MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;5;PW00210;MASILLA DE POLIURETANO MONOCOMPONENTE BAJO MÓD. ELASTICIDAD;11.07;2024-01;2022-12;0.1733;0.1414;si;9.0000;desviacion_fuerte
+MT-HERRAJE-MAD;materiales;ud;15;en_revision;5.45;1;HJJHFDF;Herrajes;200;2024-01;2023-03;1.0000;0.1541;si;36.6972;desviacion_fuerte
+MT-HERRAJE-MAD;materiales;ud;15;en_revision;5.45;2;JFJFGFD;Herrajes;100;2024-01;2023-03;1.0000;0.1541;si;18.3486;desviacion_fuerte
+MT-HERRAJE-MAD;materiales;ud;15;en_revision;5.45;3;VW00800;HERRAJES UNION LUNAS TEMPLADAS ACERO INOXIDABLE;36.9;2024-01;2022-01;0.2121;0.1541;si;6.7706;desviacion_fuerte
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.1240;si;5.6000;desviacion_fuerte
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;2;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.1240;si;0.1104;desviacion_fuerte
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;3;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.1240;si;2.4832;desviacion_fuerte
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;4;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.2692;0.1240;si;0.3936;desviacion_fuerte
+MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;5;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.2692;0.1240;si;0.5008;
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;1;IS071;Panel de aislamiento EPS 20 mm;2.09;2024-01;2018-07;0.5237;0.1878;si;0.3393;desviacion_fuerte
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;2;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.5235;0.1628;si;0.8864;
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;3;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.5235;0.1628;si;1.5893;
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;4;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.5126;0.1628;si;1.1721;
+MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;5;XT80010;PANEL DE LANA MINERAL DE 15 mm;4.12;2024-01;2021-12;0.5115;0.1628;si;0.6688;
+MT-SELLA-PIEDRA;materiales;l;15;en_revision;22.27;;;;;;;;;;;sin_candidato
+MT-CONS-PULIDO;materiales;m2;14;pendiente;2.734177;;;;;;;;;;;sin_candidato
+MT-HIDROFUGO;materiales;l;14;en_revision;1.91;;;;;;;;;;;sin_candidato
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;1;PW10001;MASILLA DE POLIURETANO;18.2;2024-01;2016-11;0.5814;0.1017;si;0.3936;desviacion_fuerte
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;2;VW01000;MASILLA DE SILICONA;8.44;2024-01;2017-07;0.5133;0.1017;si;0.1825;desviacion_fuerte
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;3;VW01100;MASILLA PLASTICA;0.56;2024-01;2017-07;0.4943;0.1017;si;0.0121;desviacion_fuerte
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;4;PW00200;MASILLA CAUCHO-SILICONA;26.35;2024-01;2022-12;0.3707;0.1017;si;0.5699;
+MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;5;PW00210;MASILLA DE POLIURETANO MONOCOMPONENTE BAJO MÓD. ELASTICIDAD;11.07;2024-01;2022-12;0.1733;0.1017;si;0.2394;desviacion_fuerte
+MT-PIN-ESMALTE;materiales;l;14;en_revision;9.84;;;;;;;;;;;sin_candidato
+MT-POLICARB;materiales;m2;14;en_revision;47.67;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.1074;si;0.7342;
+MT-POLICARB;materiales;m2;14;en_revision;47.67;2;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.1074;si;0.0145;desviacion_fuerte
+MT-POLICARB;materiales;m2;14;en_revision;47.67;3;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.1074;si;0.3256;desviacion_fuerte
+MT-POLICARB;materiales;m2;14;en_revision;47.67;4;RL05000;LÁMINA VINÍLICA REFORZADA CON FIBRA DE VIDRIO;17.15;2024-01;2021-12;0.2769;0.1759;si;0.3598;desviacion_fuerte
+MT-POLICARB;materiales;m2;14;en_revision;47.67;5;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.2692;0.1074;si;0.0516;desviacion_fuerte
+MT-ARENA;materiales;m3;13;en_revision;28;1;U04AA001;ARENA DE RÍO (0-5MM);18.48;2024-01;2023-03;0.5944;0.2269;si;0.6600;
+MT-ARENA;materiales;m3;13;en_revision;28;2;AA00200;ARENA FINA;17.85;2024-01;2022-12;0.4656;0.1030;si;0.6375;
+MT-ARENA;materiales;m3;13;en_revision;28;3;AA00300;ARENA GRUESA;13.9;2024-01;2022-12;0.4656;0.1030;si;0.4964;desviacion_fuerte
+MT-ARENA;materiales;m3;13;en_revision;28;4;AA00100;ARENA CERNIDA;12.76;2024-01;2022-12;0.4541;0.1030;si;0.4557;desviacion_fuerte
+MT-ARENA;materiales;m3;13;en_revision;28;5;GK00400;ESTUCO DE MORTERO DE CAL Y ARENA DE MÁRMOL BLANCO;467.3;2024-01;2022-12;0.2091;0.1030;si;16.6893;desviacion_fuerte
+MT-EPOXI-PISO;materiales;kg;13;pendiente;17.088608;1;PA00900;RESINA ACRÍLICA;3.76;2024-01;2021-12;0.4554;0.0911;si;0.2200;desviacion_fuerte
+MT-EPOXI-PISO;materiales;kg;13;pendiente;17.088608;2;PP00200;RESINA PLÁSTICA;2.85;2024-01;2022-12;0.4299;0.0911;si;0.1668;desviacion_fuerte
+MT-EPOXI-PISO;materiales;kg;13;pendiente;17.088608;3;RS05600;PINTURA RESINA DE POLIURETANO;5.11;2024-01;2021-12;0.3409;0.0911;si;0.2990;desviacion_fuerte
+MT-EPOXI-PISO;materiales;kg;13;pendiente;17.088608;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.2935;0.0911;si;0.3236;desviacion_fuerte
+MT-EPOXI-PISO;materiales;kg;13;pendiente;17.088608;5;GR00100;AGLOMERADO DE RESINAS Y MARMOLINA;0.74;2024-01;2022-01;0.2784;0.0911;si;0.0433;desviacion_fuerte
+MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;1;KM80015;TABLERO M/H DE 40 mm ESPESOR EN PINO MACHIHEMBRADO;22.25;2024-01;2021-12;0.2793;0.1757;si;1.2966;
+MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;2;RL01300;TABLERO AGLOMERADO MACHIHEMBRADO REVESTIDO PVC 20 mm;32.1;2024-01;2022-12;0.2143;0.1757;si;1.8706;
+MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;3;RL01200;TABLERO AGLOMERADO MACHIHEMBRADO REVESTIDO MELAMINA 20 mm;23.44;2024-01;2022-12;0.1962;0.1757;si;1.3660;
+MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;4;RL01900;TABLERO MACHIHEMBRADO PINO SORIA S/NUDOS 10 mm;15.08;2024-01;2021-12;0.1946;0.1757;si;0.8788;
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;1;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;1.0000;0.2221;si;1.2821;
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;2;WW80400;MALLA FIBRA DE VIDRIO 3x3;3.42;2024-01;2022-01;0.8132;0.2221;si;2.9231;desviacion_fuerte
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;3;CW00300;MALLA FIBRA DE VIDRIO REV. PVC DE 152 g/m2;1.65;2024-01;2022-12;0.3941;0.2221;si;1.4103;
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;4;CW00500;MALLA TIPO GALLINERO;2.51;2024-01;2022-01;0.3903;0.0793;si;2.1453;desviacion_fuerte
+MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;5;CW00400;MALLA FIBRA DE VIDRIO REV. PVC DE 217 g/m2;1.95;2024-01;2022-12;0.3902;0.2221;si;1.6667;
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;1;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.7366;0.2981;si;7.3793;desviacion_fuerte
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;2;FP01800;PASTA PARA JUNTAS DE PLACAS DE YESO LAMINADO;1.17;2024-01;2022-12;0.4969;0.2981;si;4.0345;desviacion_fuerte
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;3;FP01700;PASTA PARA AGARRE DE PLACAS DE YESO LAMINADO;0.87;2024-01;2022-12;0.4706;0.2981;si;3.0000;desviacion_fuerte
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;4;P08MA040;Pasta niveladora;0.58;2024-01;2023-03;0.4424;0.1192;si;2.0000;
+MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;5;GP00100;PASTA ADHESIVA;0.23;2024-01;2021-12;0.4226;0.1192;si;0.7931;
+MT-SAN-FIJA;materiales;ud;13;pendiente;5.468354;1;IG05070;KIT SEGURIDAD CALDERA;906.75;2024-01;2022-01;0.3939;0.1142;si;165.8177;desviacion_fuerte
+MT-SAN-FIJA;materiales;ud;13;pendiente;5.468354;2;IC50100N;KIT ALARMA ASEO;256.55;2024-01;2022-03;0.3106;0.1142;si;46.9154;desviacion_fuerte
+MT-SAN-FIJA;materiales;ud;13;pendiente;5.468354;3;IF05933N;KIT AIRE ENTRADA/EXTRACCIÓN;46.4;2024-01;2017-09;0.2831;0.1142;si;8.4852;desviacion_fuerte
+MT-SAN-FIJA;materiales;ud;13;pendiente;5.468354;4;IC90049;KIT PARA CONEXION DE RADIADOR DE CHAPA DE ACERO A LA TUBERÍA DE;22.8;2024-01;2022-02;0.1886;0.1142;si;4.1694;desviacion_fuerte
+MT-SAN-FIJA;materiales;ud;13;pendiente;5.468354;5;IC90048;KIT PARA MONTAJE DE RADIADOR DE CHAPA DE ACERO, COMPUESTO POR SOLDADURA;7.6;2024-01;2022-02;0.1372;0.1142;si;1.3898;
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;1;UJ01800;TIERRA VEGETAL;8.74;2024-01;2022-01;0.4742;0.1837;si;0.4966;desviacion_fuerte
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;2;ET00200;CANON GESTION DE TIERRAS;2.42;2024-01;2021-12;0.3238;0.1837;si;0.1375;desviacion_fuerte
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;3;UP01600;TIERRAS PROCEDENTES DE PRÉSTAMO;1.89;2024-01;2017-07;0.2928;0.1837;si;0.1074;desviacion_fuerte
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;4;ET00100;CANON VERTIDO TIERRAS INERTES;1.07;2024-01;2021-12;0.2263;0.1837;si;0.0608;desviacion_fuerte
+MT-TIERRA-ABON;materiales;m3;12;en_revision;17.6;5;AW00300;CANON ADQUISICIÓN DE TIERRAS DE PRÉSTAMO;0.77;2024-01;2022-12;0.2243;0.1837;si;0.0438;desviacion_fuerte
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;1;VFR67;TUBERIA PPR 25MM;10.6;2024-01;2023-03;0.3173;0.0822;si;1.6308;
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;2;VFRT;TUBERIA PPR 90MM;21.2;2024-01;2023-03;0.3018;0.0822;si;3.2615;desviacion_fuerte
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;3;VFRT1;TUBERIA PPR 75MM;18.02;2024-01;2023-03;0.2930;0.0822;si;2.7723;desviacion_fuerte
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;4;VFRT23;TUBERIA PPR 63MM;15.9;2024-01;2023-03;0.2864;0.0822;si;2.4462;desviacion_fuerte
+MT-TUBO-DREN;materiales;m;12;en_revision;6.5;5;IF28855N;Tubería de cobre o inox. de 18 mm;4.2;2024-01;2016-02;0.2701;0.0822;si;0.6462;
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;1;IC90066;ADHESIVO PARA COQUILLA ELASTOMÉRICA;10.28;2024-01;2022-02;0.4492;0.1966;si;2.5134;desviacion_fuerte
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;2;XI00200;ADHESIVO PVC LÍQUIDO;14.95;2024-01;2021-12;0.3646;0.1278;si;3.6553;desviacion_fuerte
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;3;XI03000;ADHESIVO POLIURETANO BI-COMPONENTE;21.47;2024-01;2022-12;0.3591;0.1278;si;5.2494;desviacion_fuerte
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.3556;0.1278;si;1.3521;
+MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;5;XI00100;ADHESIVO CAUCHO SINTETICO EN DISOLUCIÓN;4.73;2024-01;2021-12;0.2503;0.1278;si;1.1565;
+MT-AISL-TERM;materiales;m2;11;en_revision;8.15;1;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.8168;0.2903;si;0.6699;
+MT-AISL-TERM;materiales;m2;11;en_revision;8.15;2;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.8168;0.2903;si;1.2012;
+MT-AISL-TERM;materiales;m2;11;en_revision;8.15;3;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.7998;0.2903;si;0.8859;
+MT-AISL-TERM;materiales;m2;11;en_revision;8.15;4;XT80010;PANEL DE LANA MINERAL DE 15 mm;4.12;2024-01;2021-12;0.7981;0.2903;si;0.5055;
+MT-AISL-TERM;materiales;m2;11;en_revision;8.15;5;IS071;Panel de aislamiento EPS 20 mm;2.09;2024-01;2018-07;0.5237;0.2146;si;0.2564;desviacion_fuerte
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;1;GC80020;CEMENTO COLA;0.2;2024-01;2022-12;0.4738;0.2183;si;1.0526;
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;2;GC80010;CEMENTO CON COLORANTE;0.63;2024-01;2022-12;0.3574;0.2183;si;3.3158;desviacion_fuerte
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;3;GM00120;MORTERO CEMENTO HIDROFUGADO;0.24;2024-01;2022-12;0.3227;0.2183;si;1.2632;
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;4;GP00200;PASTA DE SILICONA, CEMENTO BLANCO Y ADITIVOS;0.6;2024-01;2021-12;0.2022;0.2183;si;3.1579;desviacion_fuerte
+MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;5;AGM00500N;MORTERO HIDRÓFUGO E IMPERMEABLE DE CEMENTO Y CAL;0.5;2024-01;2018-07;0.1966;0.2183;si;2.6316;desviacion_fuerte
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.0788;si;1.6611;
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;2;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.0788;si;0.0327;desviacion_fuerte
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;3;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.0788;si;0.7366;
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;4;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.2692;0.0788;si;0.1168;desviacion_fuerte
+MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;5;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.2692;0.0788;si;0.1486;desviacion_fuerte
+MQ-COMPACT-SALTO;maquinaria;h;10;en_revision;6.597039;;;;;;;;;;;sin_candidato
+MT-ACRIL-IMPER;materiales;l;10;pendiente;5.012658;;;;;;;;;;;sin_candidato
+MT-ANCLA-MURO;materiales;ud;10;pendiente;0.740506;;;;;;;;;;;sin_candidato
+MT-BLQ-10;materiales;ud;10;en_revision;0.47;1;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.2388;no;2.0000;numeros_diferentes
+MT-BLQ-10;materiales;ud;10;en_revision;0.47;2;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.6093;0.2388;no;1.6809;numeros_diferentes
+MT-BLQ-10;materiales;ud;10;en_revision;0.47;3;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.2388;no;1.1489;numeros_diferentes
+MT-BLQ-10;materiales;ud;10;en_revision;0.47;4;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.5901;0.2388;no;1.5319;numeros_diferentes
+MT-BLQ-10;materiales;ud;10;en_revision;0.47;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.2388;no;1.4255;numeros_diferentes
+MT-CELOSIA;materiales;m2;10;pendiente;29.620253;1;P00101N;CELOSÍA FIJA LAMAS ORIENTABLES HORIZ. ALUMINIO;220;2024-01;2022-02;0.2871;0.2539;si;7.4274;desviacion_fuerte
+MT-CELOSIA;materiales;m2;10;pendiente;29.620253;2;KS04300;PERSIANA CELOSÍA CORREDERA PINO;171.07;2024-01;2021-12;0.2838;0.1483;si;5.7754;desviacion_fuerte
+MT-CELOSIA;materiales;m2;10;pendiente;29.620253;3;KS01700;CELOSÍA FIJA LAMAS FIJAS AC. GALV. CON SOPORTES;74.39;2024-01;2021-12;0.2797;0.2450;si;2.5115;desviacion_fuerte
+MT-CELOSIA;materiales;m2;10;pendiente;29.620253;4;KS01800;CELOSÍA FIJA LAMAS FIJAS ALUM. CON BASTIDOR;70.06;2024-01;2021-12;0.2703;0.2450;si;2.3653;desviacion_fuerte
+MT-CELOSIA;materiales;m2;10;pendiente;29.620253;5;FW00100;CELOSÍA CERÁMICA DE 7 cm DE ESPESOR;8.21;2024-01;2021-12;0.2584;0.1483;si;0.2772;desviacion_fuerte
+MT-LIMP-QUIM;materiales;l;10;en_revision;3.14;;;;;;;;;;;sin_candidato
+MT-PERF-DESM;materiales;m2;10;en_revision;8.17;;;;;;;;;;;sin_candidato
+MT-PIEDRA-PIC;materiales;m3;10;pendiente;30;1;FS80010;PIEDRA CALIZA PARA MAMPOSTERÍA ORDINARIA;73.01;2024-01;2021-12;0.2958;0.1476;si;2.4337;desviacion_fuerte
+MT-PIEDRA-PIC;materiales;m3;10;pendiente;30;2;FS80035;PIEDRA CALIZA CONCERTADA PARA MAMPOSTERÍA;301.95;2024-01;2022-12;0.2958;0.1476;si;10.0650;desviacion_fuerte
+MT-PIEDRA-PIC;materiales;m3;10;pendiente;30;3;FS80030;PIEDRA CALIZA CAREADA PARA MAMPOSTERÍA;124.52;2024-01;2022-12;0.2958;0.1476;si;4.1507;desviacion_fuerte
+MT-PIEDRA-PIC;materiales;m3;10;pendiente;30;4;FS80000;PIEDRA GRANÍTICA PARA MAMPOSTERÍA ORDINARIA;73.43;2024-01;2022-12;0.2800;0.1476;si;2.4477;desviacion_fuerte
+MT-PIEDRA-PIC;materiales;m3;10;pendiente;30;5;FS80020;PIEDRA GRANÍTICA CAREADA PARA MAMPOSTERÍA;125.95;2024-01;2022-12;0.2800;0.1476;si;4.1983;desviacion_fuerte
+MQ-ALISADORA;maquinaria;h;9;pendiente;7.623246;;;;;;;;;;;sin_candidato
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;1;MB00200;BOMBA DE HORMIGONAR;98.06;2024-01;2022-12;0.3513;0.0635;si;1.2572;
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;2;MB00100;BOMBA DE AGOTAMIENTO, AGUA Y FANGOS;4.02;2024-01;2022-12;0.1764;0.0635;si;0.0515;desviacion_fuerte
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;78;3;MP80010;EQUIPO PERFORACIONES PROFUNDAS C/BOMBA PRESIÓN;407.83;2024-01;2022-12;0.1710;0.0635;si;5.2286;desviacion_fuerte
+MQ-DESBROZ;maquinaria;h;9;en_revision;3.958224;;;;;;;;;;;sin_candidato
+MQ-INYECTORA;maquinaria;h;9;en_revision;6.157237;;;;;;;;;;;sin_candidato
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.96886;1;MS00110;MAQUINA DESBARBADORA RADIAL-ORBITAL;1.78;2024-01;2022-12;0.2147;0.1324;si;0.1786;desviacion_fuerte
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.96886;2;MC00300;MAQUINA NEUMATICA PARA BOQUILLAS DE AIRE-AGUA;2.76;2024-01;2022-12;0.1923;0.1324;si;0.2769;desviacion_fuerte
+MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.96886;3;MW00100;MÁQUINA AUTOMÓVIL PARA MARCAR VIALES 3 BANDAS Y 3 CV;23.36;2024-01;2022-12;0.1482;0.1324;si;2.3433;desviacion_fuerte
+MT-AISL-REFLECT;materiales;m2;9;pendiente;3.64557;1;XT12210;MANTA FIB. VIDR. 40 mm ESP. 50 kg/m3 CARA PROT.;3.99;2024-01;2016-02;0.1554;0.1059;si;1.0945;
+MT-AISL-REFLECT;materiales;m2;9;pendiente;3.64557;2;XT10800;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 50 mm 50 kg/m3 DENS.;15.38;2024-01;2021-12;0.1383;0.1059;si;4.2188;desviacion_fuerte
+MT-AISL-REFLECT;materiales;m2;9;pendiente;3.64557;3;XT10700;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 40 mm 50 kg/m3 DENS.;12.93;2024-01;2021-12;0.1294;0.1059;si;3.5468;desviacion_fuerte
+MT-AISL-REFLECT;materiales;m2;9;pendiente;3.64557;4;XT10900;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 60 mm 50 kg/m3 DENS.;17.99;2024-01;2021-12;0.1279;0.1059;si;4.9348;desviacion_fuerte
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;1;KW01500;CERRADURA PUERTA DE ENTRADA;24.87;2024-01;2022-01;0.6099;0.1907;si;0.3040;desviacion_fuerte
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;2;KS80020;CERRADURA DE SEGURIDAD CIERRE ENROLLABLE;138.82;2024-01;2021-12;0.4963;0.2104;si;1.6967;
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;3;KW04700;CERRADURA ELÉCTRICA (ABRE-PUERTAS);22.93;2024-01;2022-01;0.4247;0.1907;si;0.2802;desviacion_fuerte
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;4;KW20021N;CERRADURA PUERTA INDICADORA BAÑOS;11.49;2024-01;2022-04;0.3961;0.1907;si;0.1404;desviacion_fuerte
+MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;5;KW01300;CERRADURA HOJA CORREDERA;17.09;2024-01;2022-01;0.3919;0.1152;si;0.2089;desviacion_fuerte
+MT-ESPEJO;materiales;m2;9;en_revision;29.52;1;JHUNGYUFFKL;espejo aseos;160;2024-01;2023-03;0.4742;0.1510;no;5.4201;"numeros_diferentes;desviacion_fuerte"
+MT-ESPEJO;materiales;m2;9;en_revision;29.52;2;KL80370;PUERTA CORREDERA ALUMINIO ARMARIO C/ESPEJO;171.43;2024-01;2021-12;0.2786;0.1510;no;5.8072;"numeros_diferentes;desviacion_fuerte"
+MT-ESPEJO;materiales;m2;9;en_revision;29.52;3;KS05200;PERSIANA VENECIANA LAM. ALUM. 25 mm ESPEJO;53.13;2024-01;2021-12;0.2047;0.1510;no;1.7998;numeros_diferentes
+MT-ESPEJO;materiales;m2;9;en_revision;29.52;4;VW03100;ESPEJO LUNA PULIDA PLATEADA INCOLORA 5 mm;50.19;2024-01;2017-07;0.1906;0.1510;no;1.7002;numeros_diferentes
+MT-MOLDURA-YESO;materiales;m;9;en_revision;1.39;1;RT00500;MOLDURA ESCAYOLA;2.98;2024-01;2022-01;0.5442;0.1293;si;2.1439;desviacion_fuerte
+MT-MOLDURA-YESO;materiales;m;9;en_revision;1.39;2;KM06400;MOLDURA SAPELLY 40X20 mm;3.88;2024-01;2021-12;0.3727;0.1293;si;2.7914;desviacion_fuerte
+MT-TRAGANTE;materiales;ud;9;en_revision;37.82;;;;;;;;;;;sin_candidato
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;1;VFR67;TUBERIA PPR 25MM;10.6;2024-01;2023-03;1.0000;0.3234;si;7.5177;desviacion_fuerte
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;2;VFRT;TUBERIA PPR 90MM;21.2;2024-01;2023-03;0.7152;0.2432;no;15.0355;"numeros_diferentes;desviacion_fuerte"
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;3;VFRT1;TUBERIA PPR 75MM;18.02;2024-01;2023-03;0.6943;0.2432;no;12.7801;"numeros_diferentes;desviacion_fuerte"
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;4;VFRT23;TUBERIA PPR 63MM;15.9;2024-01;2023-03;0.6789;0.2432;no;11.2766;"numeros_diferentes;desviacion_fuerte"
+MT-TUB-PPR25;materiales;m;9;en_revision;1.41;5;VFRT56;TUBERIA PPR 40 MMM;11.66;2024-01;2023-03;0.5117;0.2432;no;8.2695;"numeros_diferentes;desviacion_fuerte"
+MT-ANIME-ALIV;materiales;ud;8;pendiente;1.822785;1;CB00400;BLOQUE RETICULAR DE POLIESTIRENO 0,60x0,60 m;5.74;2024-01;2022-12;0.4668;0.1553;si;3.1490;desviacion_fuerte
+MT-ANIME-ALIV;materiales;ud;8;pendiente;1.822785;2;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.3253;0.0743;si;0.5157;
+MT-ANIME-ALIV;materiales;ud;8;pendiente;1.822785;3;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.2613;0.0743;si;0.4334;desviacion_fuerte
+MT-ANIME-ALIV;materiales;ud;8;pendiente;1.822785;4;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.2582;0.0743;si;0.2962;desviacion_fuerte
+MT-ANIME-ALIV;materiales;ud;8;pendiente;1.822785;5;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.2530;0.0743;si;0.3950;desviacion_fuerte
+MT-CAJON-PERS;materiales;m;8;en_revision;67.35;;;;;;;;;;;sin_candidato
+MT-CANAL-PVC;materiales;m;8;en_revision;10.11;;;;;;;;;;;sin_candidato
+MT-CUMBRERA;materiales;m;8;pendiente;7.291139;1;RW80080;ALBARDILLA HORMIGÓN POLÍMERO, PIEZAS 50x30x2,5 cm;23.92;2024-01;2021-12;0.1495;0.1442;si;3.2807;desviacion_fuerte
+MT-CUMBRERA;materiales;m;8;pendiente;7.291139;2;RW80070;ALBARDILLA HORMIGÓN POLÍMERO, PIEZAS 50x25x2,5 cm;20.24;2024-01;2021-12;0.1478;0.1442;si;2.7760;desviacion_fuerte
+MT-CUMBRERA;materiales;m;8;pendiente;7.291139;3;RW80060;ALBARDILLA HORMIGÓN POLIMERO, PIEZAS 50x14x2,5 mm;14.82;2024-01;2021-12;0.1407;0.1442;si;2.0326;desviacion_fuerte
+MT-CUMBRERA;materiales;m;8;pendiente;7.291139;4;RP01900;PELDAÑO DE PIEDRA ARTIFICIAL PREFAB. 3 cm EN UNA PIEZA;14.44;2024-01;2022-01;0.1375;0.1442;si;1.9805;
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;1;CW00500;MALLA TIPO GALLINERO;2.51;2024-01;2022-01;0.3903;0.1913;si;0.1760;desviacion_fuerte
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;2;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3572;0.1913;si;0.1052;desviacion_fuerte
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;3;WW80400;MALLA FIBRA DE VIDRIO 3x3;3.42;2024-01;2022-01;0.2905;0.1913;si;0.2398;desviacion_fuerte
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;4;UU01500;MALLA GALV. SIMPLE TORSIÓN;2.62;2024-01;2022-12;0.2239;0.1913;si;0.1837;desviacion_fuerte
+MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;5;UU01300;"MALLA GALV. RIZADA DE 3 mm DIÁM. ENMARCADA CON ""L"" 35x35x3 mm";12.9;2024-01;2022-12;0.2204;0.3244;si;0.9046;
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;1;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.1265;si;0.9360;
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;2;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.1265;si;2.6970;desviacion_fuerte
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.1265;si;0.9075;
+MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.2022;0.1265;si;0.7767;
+MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;1;QW00400;PANEL DE CARTON-YESO DE 15 mm ESPESOR;5.63;2024-01;2022-12;0.2603;0.1097;si;7.5067;desviacion_fuerte
+MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;2;FP012001;PANEL CARTÓN-YESO WA 13MM. ESPESOR;5.09;2024-01;2023-03;0.2519;0.1097;si;6.7867;desviacion_fuerte
+MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;3;FP02800;PANEL CARTÓN-YESO Y FIBRA DE VIDRIO DE 13 mm.;21.55;2024-01;2022-12;0.2170;0.1097;si;28.7333;desviacion_fuerte
+MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;4;XT00400;COMPLEJO P. FIB. VID. 40 mm 70 kg/m3 Y PL. CARTÓN-YESO 10 mm;17.18;2024-01;2021-12;0.1374;0.1097;si;22.9067;desviacion_fuerte
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;1;VFR67;TUBERIA PPR 25MM;10.6;2024-01;2023-03;0.3173;0.1493;si;8.9076;desviacion_fuerte
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;2;VFRT;TUBERIA PPR 90MM;21.2;2024-01;2023-03;0.3018;0.1493;si;17.8151;desviacion_fuerte
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;3;VFRT1;TUBERIA PPR 75MM;18.02;2024-01;2023-03;0.2930;0.1493;si;15.1429;desviacion_fuerte
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;4;VFRT23;TUBERIA PPR 63MM;15.9;2024-01;2023-03;0.2864;0.1493;si;13.3613;desviacion_fuerte
+MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;5;IF28855N;Tubería de cobre o inox. de 18 mm;4.2;2024-01;2016-02;0.2701;0.1493;si;3.5294;desviacion_fuerte
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;1;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.4985;0.0878;si;0.7240;
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;2;VL04400;DOBLE LUNA INCOLORA 8 mm, CÁMARA AIRE 8 mm;68.28;2024-01;2022-12;0.4965;0.2779;si;3.1996;desviacion_fuerte
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;3;VL03900;DOBLE LUNA INCOLORA 4 mm, CÁMARA AIRE 6 mm;27.16;2024-01;2022-12;0.4390;0.2779;si;1.2727;
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;4;VL04350;DOBLE LUNA INCOLORA 6mm, CÁMARA DE AIRE 4mm;38.4;2024-01;2022-12;0.4390;0.2779;si;1.7994;
+MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;5;VL04200;DOBLE LUNA INCOLORA 10 mm, CÁMARA AIRE 6 mm;88.82;2024-01;2022-12;0.4378;0.2779;si;4.1621;desviacion_fuerte
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;1;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.5015;0.1006;si;0.4504;desviacion_fuerte
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;2;RT01600;PLACA FIBRA DE VIDRIO;4.38;2024-01;2022-01;0.3430;0.1006;si;0.1277;desviacion_fuerte
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;3;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3172;0.1006;si;0.0437;desviacion_fuerte
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;4;JEMLLOOMD;Vidrio emplomado 2mm pb;2000;2024-01;2023-03;0.2930;0.1006;si;58.3090;desviacion_fuerte
+MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.3;5;CW00510;TEJIDO DE FIBRA DE VIDRIO;2.45;2024-01;2022-01;0.2865;0.1006;si;0.0714;desviacion_fuerte
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;1;MB00100;BOMBA DE AGOTAMIENTO, AGUA Y FANGOS;4.02;2024-01;2022-12;0.5021;0.2082;si;1.1426;
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;2;MB00200;BOMBA DE HORMIGONAR;98.06;2024-01;2022-12;0.3513;0.0731;si;27.8705;desviacion_fuerte
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;3.518421;3;MP80010;EQUIPO PERFORACIONES PROFUNDAS C/BOMBA PRESIÓN;407.83;2024-01;2022-12;0.1710;0.0731;si;115.9128;desviacion_fuerte
+MQ-RECUP-GAS;maquinaria;h;7;pendiente;9.529057;;;;;;;;;;;sin_candidato
+MT-ASPERSOR;materiales;ud;7;en_revision;5.45;;;;;;;;;;;sin_candidato
+MT-BLOQUE-ALIV;materiales;ud;7;pendiente;1.082278;1;FB80010;BLOQUE ARCILLA ALIGERADA 30x19x19 cm;1.05;2024-01;2022-12;0.4265;0.2883;si;0.9702;
+MT-BLOQUE-ALIV;materiales;ud;7;pendiente;1.082278;2;FB80000;BLOQUE ARCILLA ALIGERADA 30x19x14 cm;1;2024-01;2022-12;0.3508;0.2883;si;0.9240;
+MT-BLOQUE-ALIV;materiales;ud;7;pendiente;1.082278;3;FB80020;BLOQUE ARCILLA ALIGERADA 30x19x24 cm;1.18;2024-01;2022-12;0.3474;0.2883;si;1.0903;
+MT-BLOQUE-ALIV;materiales;ud;7;pendiente;1.082278;4;FB80030;BLOQUE ARCILLA ALIGERADA 30x19x29 cm;1.23;2024-01;2022-12;0.3398;0.2883;si;1.1365;
+MT-BLOQUE-ALIV;materiales;ud;7;pendiente;1.082278;5;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.3253;0.1345;si;0.8685;
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;1;RA00800;DINTEL GRANITO GRIS 25/30x2 cm;35.24;2024-01;2021-12;0.2207;0.1253;si;5.3072;desviacion_fuerte
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;2;RA01800;DINTEL PIEDRA ARTIFICIAL 25/30x2 cm;8.04;2024-01;2021-12;0.2186;0.1253;si;1.2108;
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;3;RA01600;DINTEL MÁRMOL TRAVERTINO 25/30x2 cm;25.49;2024-01;2021-12;0.2152;0.1253;si;3.8389;desviacion_fuerte
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;4;RA01000;DINTEL GRANITO ROSA 25/30x2 cm;31.78;2024-01;2021-12;0.2126;0.1253;si;4.7861;desviacion_fuerte
+MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;5;RA00700;DINTEL GRANITO GRIS 12/15x2 cm;20.24;2024-01;2021-12;0.2114;0.1253;si;3.0482;desviacion_fuerte
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;1;HILOAUX005;CABLE CU 1 KV LH 1X16 MM2;1.96;2024-01;2023-03;0.3169;0.1245;si;0.6975;
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;2;HILOAUX006;CABLE CU 1 KV LH 1X6 MM2;0.9;2024-01;2023-03;0.3158;0.1245;si;0.3203;desviacion_fuerte
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;3;HR00300;CABLE DE DESLIZAMIENTO DE RED;4.06;2024-01;2022-01;0.2712;0.1245;si;1.4448;
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;4;IE02730N;CABLE COBRE 1x4 mm2 RZ1-K(AS);4.4;2024-01;2022-02;0.2509;0.1245;si;1.5658;
+MT-ELE-PROV;materiales;m;7;en_revision;2.81;5;IE02500;CABLE COBRE 1x10 mm2 RZ1-K(AS);3.91;2024-01;2022-12;0.2497;0.1245;si;1.3915;
+MT-EPP;materiales;ud;7;pendiente;47.848101;;;;;;;;;;;sin_candidato
+MT-ESCALERILLA;materiales;m;7;en_revision;2.41;;;;;;;;;;;sin_candidato
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;1;CW00510;TEJIDO DE FIBRA DE VIDRIO;2.45;2024-01;2022-01;0.7135;0.1750;si;0.0220;desviacion_fuerte
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;2;QW00900;TEJIDO ANTIRRAICES;1.21;2024-01;2022-01;0.4541;0.1028;si;0.0109;desviacion_fuerte
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;3;QW00800;TEJIDO ANTIPUNZONAMIENTO 100 gr/m2;0.97;2024-01;2022-01;0.3102;0.1028;si;0.0087;desviacion_fuerte
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;4;QW008001N;TEJIDO ANTIPUNZONAMIENTO 100 gr/m2;1;2024-01;2022-02;0.3102;0.1028;si;0.0090;desviacion_fuerte
+MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;5;QW01000;TEJIDO SEPARADOR 70 gr/m2;0.79;2024-01;2022-01;0.3073;0.1028;si;0.0071;desviacion_fuerte
+MT-LACA-MADERA;materiales;l;7;en_revision;11.98;1;PL00200;LACA NITROCELULÓSICA INCOLORA;14.5;2024-01;2022-12;0.7440;0.3333;si;1.2104;
+MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;1;XT12210;MANTA FIB. VIDR. 40 mm ESP. 50 kg/m3 CARA PROT.;3.99;2024-01;2016-02;0.1554;0.1462;si;1.1875;
+MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;2;XT10800;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 50 mm 50 kg/m3 DENS.;15.38;2024-01;2021-12;0.1383;0.1462;si;4.5774;desviacion_fuerte
+MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;3;XT10700;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 40 mm 50 kg/m3 DENS.;12.93;2024-01;2021-12;0.1294;0.1462;si;3.8482;desviacion_fuerte
+MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;4;XT10900;MANTA FIB. VIDR. TELA METÁLICA GALV. ESP. 60 mm 50 kg/m3 DENS.;17.99;2024-01;2021-12;0.1279;0.1462;si;5.3542;desviacion_fuerte
+MT-RESINA-INYEC;materiales;l;7;pendiente;20.506329;1;GR00200;RESINA EPOXI;21.45;2024-01;2022-12;0.4554;0.0953;si;1.0460;
+MT-RESINA-INYEC;materiales;l;7;pendiente;20.506329;2;PI00500;FONDO FIJADOR DE SILICATOS Y RESINA ACRÍLICA;9.34;2024-01;2022-12;0.1626;0.0953;si;0.4555;desviacion_fuerte
+MT-SUBESTRUCTURA;materiales;m2;7;pendiente;20.506329;;;;;;;;;;;sin_candidato
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;1;QT01100;TEJA DE VENTILACION DE HORMIGÓN;12;2024-01;2022-12;0.3855;0.1587;si;9.1603;desviacion_fuerte
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;2;QT00800;TEJA CERÁMICA PLANA;1.65;2024-01;2022-12;0.3503;0.1587;si;1.2595;
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;3;QT01000;TEJA DE ALERO DE HORMIGÓN;2.32;2024-01;2021-12;0.3469;0.1587;si;1.7710;
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;4;QT00200;CUMBRERA DE TEJA DE HORMIGÓN;4.8;2024-01;2022-12;0.3419;0.1587;si;3.6641;desviacion_fuerte
+MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;5;QT00300;LIMATESA DE TEJA DE HORMIGÓN;4.6;2024-01;2022-12;0.3419;0.1587;si;3.5115;desviacion_fuerte
+MT-BARANDA-PROV;materiales;m;6;pendiente;5.126582;;;;;;;;;;;sin_candidato
+MT-BOTIQUIN;materiales;ud;6;pendiente;39.873418;1;HW00200;BOTIQUÍN PORTATIL;12.38;2024-01;2017-07;0.4799;0.1694;si;0.3105;desviacion_fuerte
+MT-BOTIQUIN;materiales;ud;6;pendiente;39.873418;2;HW00300;ELEMENTOS DE REPOSICIÓN PARA BOTIQUÍN POR MES;22;2024-01;2017-07;0.4787;0.3531;si;0.5517;
+MT-BOTIQUIN;materiales;ud;6;pendiente;39.873418;3;HW00100;BOTIQUÍN REGLAMENTARIO DE OBRA, INSTALADO;137.51;2024-01;2017-07;0.3206;0.1694;si;3.4487;desviacion_fuerte
+MT-CANAL-DREN;materiales;m;6;en_revision;14.67;;;;;;;;;;;sin_candidato
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;1;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.5303;0.2235;no;1.1235;numeros_diferentes
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;2;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.5303;0.2235;no;2.0144;"numeros_diferentes;desviacion_fuerte"
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;3;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.5192;0.2235;no;1.4856;numeros_diferentes
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;4;XT80010;PANEL DE LANA MINERAL DE 15 mm;4.12;2024-01;2021-12;0.5181;0.2235;no;0.8477;numeros_diferentes
+MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;5;XT12723;PANEL SEMIRRÍGIDO LANA MINERAL 60 mm DENSIDAD 30 kg/m3;5.6;2024-01;2021-12;0.3863;0.3145;si;1.1523;
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;1;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.4722;0.1659;si;3.8909;desviacion_fuerte
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;2;P08MA040;Pasta niveladora;0.58;2024-01;2023-03;0.4424;0.1035;si;1.0545;
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;3;GP00100;PASTA ADHESIVA;0.23;2024-01;2021-12;0.4226;0.1035;si;0.4182;desviacion_fuerte
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;4;PA00300;PASTA PÉTREA PARA RAYAR;2.24;2024-01;2022-12;0.3790;0.1659;si;4.0727;desviacion_fuerte
+MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;5;GP00210;PASTA CAL PIGMENTADA PARA ESTUCO;2.36;2024-01;2021-12;0.3265;0.1659;si;4.2909;desviacion_fuerte
+MT-FUNGICIDA;materiales;l;6;en_revision;13.81;1;PW00170;SOLUCION FUNGICIDA;0.95;2024-01;2021-12;1.0000;0.2718;si;0.0688;desviacion_fuerte
+MT-GRANO-MARMOL;materiales;kg;6;en_revision;0.09;;;;;;;;;;;sin_candidato
+MT-HERRAJE-CORRED;materiales;ud;6;pendiente;20.506329;1;HJJHFDF;Herrajes;200;2024-01;2023-03;1.0000;0.1370;si;9.7531;desviacion_fuerte
+MT-HERRAJE-CORRED;materiales;ud;6;pendiente;20.506329;2;JFJFGFD;Herrajes;100;2024-01;2023-03;1.0000;0.1370;si;4.8765;desviacion_fuerte
+MT-HERRAJE-CORRED;materiales;ud;6;pendiente;20.506329;3;VW00800;HERRAJES UNION LUNAS TEMPLADAS ACERO INOXIDABLE;36.9;2024-01;2022-01;0.2121;0.1370;si;1.7994;
+MT-IMP-PRIM;materiales;l;6;en_revision;1.74;1;IS11;Imprimación color a elegir;6.26;2024-01;2018-07;0.3696;0.0925;si;3.5977;desviacion_fuerte
+MT-MADERA-PERGOLA;materiales;m;6;pendiente;7.746835;;;;;;;;;;;sin_candidato
+MT-MANGUERA;materiales;m;6;en_revision;0.36;;;;;;;;;;;sin_candidato
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;1;XI02350;MEMBRANA BETÚN MODIF. SBS ARM. POLIESTER LBM 40 FP SBS;4.85;2024-01;2017-07;0.2414;0.2276;si;0.1595;desviacion_fuerte
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;2;XI02000;MEMBRANA BETÚN MODIF. ARM. POLIETILENO DE 3 mm;6.68;2024-01;2021-12;0.1900;0.1200;si;0.2197;desviacion_fuerte
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;3;XI02000N;MEMBRANA BETÚN MODIF. ARM. POLIETILENO DE 3 mm;6.23;2024-01;2022-02;0.1900;0.1200;si;0.2049;desviacion_fuerte
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;4;XI01800;MEMBRANA BETÚN MODIF. ARM. DOBLE POLIETILENO 4 mm;7.66;2024-01;2021-12;0.1657;0.1200;si;0.2520;desviacion_fuerte
+MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.4;5;XI02100;MEMBRANA BETÚN MODIF. ARM. VELO VIDRIO DE 3 mm;4.54;2024-01;2021-12;0.1580;0.1200;si;0.1493;desviacion_fuerte
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;1;WW00302N;PANEL COMPOSITE;98;2024-01;2022-02;0.3778;0.1009;si;4.8732;desviacion_fuerte
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;2;QP02200;PANEL SANDWICH 40 mm ACABADO INT. Y EXT. EN POLIÉSTER;26.84;2024-01;2021-12;0.3086;0.2481;si;1.3347;
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;3;QP02000;PANEL SANDWICH 30 mm ACABADO INT. Y EXT. EN POLIÉSTER;24.8;2024-01;2021-12;0.3086;0.2481;si;1.2332;
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;4;QP02300;PANEL SANDWICH 50 mm ACABADO INT. Y EXT. EN POLIÉSTER;29.81;2024-01;2021-12;0.3065;0.2481;si;1.4823;
+MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;5;RL00500;PANEL CORCHO 5 mm;14.05;2024-01;2022-01;0.2942;0.1009;si;0.6987;
+MT-VIDRIO-ARENA;materiales;m2;6;pendiente;31.898734;1;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.5015;0.0952;si;0.4843;desviacion_fuerte
+MT-VIDRIO-ARENA;materiales;m2;6;pendiente;31.898734;2;RT01600;PLACA FIBRA DE VIDRIO;4.38;2024-01;2022-01;0.3430;0.0952;si;0.1373;desviacion_fuerte
+MT-VIDRIO-ARENA;materiales;m2;6;pendiente;31.898734;3;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3172;0.0952;si;0.0470;desviacion_fuerte
+MT-VIDRIO-ARENA;materiales;m2;6;pendiente;31.898734;4;JEMLLOOMD;Vidrio emplomado 2mm pb;2000;2024-01;2023-03;0.2930;0.0952;si;62.6984;desviacion_fuerte
+MT-VIDRIO-ARENA;materiales;m2;6;pendiente;31.898734;5;CW00510;TEJIDO DE FIBRA DE VIDRIO;2.45;2024-01;2022-01;0.2865;0.0952;si;0.0768;desviacion_fuerte
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;1;IC90066;ADHESIVO PARA COQUILLA ELASTOMÉRICA;10.28;2024-01;2022-02;0.4492;0.1532;no;60.4706;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;2;XI00200;ADHESIVO PVC LÍQUIDO;14.95;2024-01;2021-12;0.3646;0.0996;no;87.9412;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;3;XI03000;ADHESIVO POLIURETANO BI-COMPONENTE;21.47;2024-01;2022-12;0.3591;0.0996;no;126.2941;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.3556;0.0996;no;32.5294;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-C1;materiales;kg;5;en_revision;0.17;5;XI00100;ADHESIVO CAUCHO SINTETICO EN DISOLUCIÓN;4.73;2024-01;2021-12;0.2503;0.0996;no;27.8235;"numeros_diferentes;desviacion_fuerte"
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;1;XI03000;ADHESIVO POLIURETANO BI-COMPONENTE;21.47;2024-01;2022-12;0.6357;0.2247;si;6.4474;desviacion_fuerte
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;2;IC90066;ADHESIVO PARA COQUILLA ELASTOMÉRICA;10.28;2024-01;2022-02;0.4492;0.1953;si;3.0871;desviacion_fuerte
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;3;XI00200;ADHESIVO PVC LÍQUIDO;14.95;2024-01;2021-12;0.3646;0.1269;si;4.4895;desviacion_fuerte
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;4;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.3556;0.1269;si;1.6607;
+MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;5;XI00100;ADHESIVO CAUCHO SINTETICO EN DISOLUCIÓN;4.73;2024-01;2021-12;0.2503;0.1269;si;1.4204;
+MT-ADITIVO;materiales;l;5;en_revision;2.11;;;;;;;;;;;sin_candidato
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;1;SB00800;BAJANTE PVC DIÁM. 90 mm;3.11;2024-01;2021-12;0.5669;0.1752;si;0.3554;desviacion_fuerte
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;2;SB00900;BAJANTE PVC DIÁM. 110 mm;4.45;2024-01;2022-12;0.5535;0.1752;si;0.5086;
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;3;SB01000;BAJANTE PVC DIÁM. 125 mm;5.65;2024-01;2022-12;0.5501;0.1752;si;0.6457;
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;4;SB01100;BAJANTE PVC DIÁM. 160 mm;6.8;2024-01;2022-12;0.5257;0.1752;si;0.7771;
+MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;5;SB02000;BAJANTE PVC DIÁM. 90 MM INSONORIZADO;11.43;2024-01;2022-12;0.4015;0.1752;si;1.3063;
+MT-BARRA-APOYO;materiales;ud;5;pendiente;31.898734;1;UU008900;BARRA DE SALTOS;246.61;2024-01;2022-12;0.4267;0.1327;si;7.7310;desviacion_fuerte
+MT-BARRA-APOYO;materiales;ud;5;pendiente;31.898734;2;UU008700;BARRAS DE EQUILIBRIO;507.76;2024-01;2022-12;0.4184;0.1327;si;15.9179;desviacion_fuerte
+MT-BARRA-APOYO;materiales;ud;5;pendiente;31.898734;3;UU009000;BARRAS PARALELAS;665.1;2024-01;2022-12;0.4184;0.1327;si;20.8504;desviacion_fuerte
+MT-BARRA-APOYO;materiales;ud;5;pendiente;31.898734;4;UU008800;BARRAS SUSPENDIDAS;708.01;2024-01;2022-12;0.4071;0.1327;si;22.1956;desviacion_fuerte
+MT-BARRA-APOYO;materiales;ud;5;pendiente;31.898734;5;UU009100;BARRAS DE FLEXIONES;550.67;2024-01;2022-12;0.4071;0.1327;si;17.2631;desviacion_fuerte
+MT-BARRA-TIERRA;materiales;ud;5;pendiente;20.506329;1;XW01000;ELECTRODO SISTEMA ELECTRO-OSMOSIS-FORESIS;1.23;2024-01;2022-01;0.2579;0.1514;si;0.0600;desviacion_fuerte
+MT-BLQ-ARC-15;materiales;ud;5;pendiente;0.45;1;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.6317;0.4227;no;1.7556;numeros_diferentes
+MT-BLQ-ARC-15;materiales;ud;5;pendiente;0.45;2;FB80010;BLOQUE ARCILLA ALIGERADA 30x19x19 cm;1.05;2024-01;2022-12;0.5593;0.4916;no;2.3333;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-15;materiales;ud;5;pendiente;0.45;3;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.5414;0.2910;no;2.0889;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-15;materiales;ud;5;pendiente;0.45;4;FB80150;BLOQUE HORMIGÓN LIGERO C/ARCILLA EXP. 50x20x15 cm;2.71;2024-01;2022-12;0.4883;0.6227;no;6.0222;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-15;materiales;ud;5;pendiente;0.45;5;FB80000;BLOQUE ARCILLA ALIGERADA 30x19x14 cm;1;2024-01;2022-12;0.4601;0.4916;no;2.2222;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-EST-15;materiales;ud;5;pendiente;1.002532;1;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.8062;0.3410;si;0.7880;
+MT-BLQ-EST-15;materiales;ud;5;pendiente;1.002532;2;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.2578;no;0.9376;numeros_diferentes
+MT-BLQ-EST-15;materiales;ud;5;pendiente;1.002532;3;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.2578;no;0.5386;numeros_diferentes
+MT-BLQ-EST-15;materiales;ud;5;pendiente;1.002532;4;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.5901;0.2578;no;0.7182;numeros_diferentes
+MT-BLQ-EST-15;materiales;ud;5;pendiente;1.002532;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.2578;no;0.6683;numeros_diferentes
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;1;RS00050;CINTA ANTIDESLIZANTE 40 mm, BASE ALUMINIO;0.43;2024-01;2022-01;0.5133;0.3681;si;0.9773;
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;2;IW04800;CINTA SEÑALIZACION;0.2;2024-01;2022-12;0.5000;0.1819;si;0.4545;desviacion_fuerte
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;3;WW00700;CINTA DE POLIETILENO AUTOADHESIVA;0.85;2024-01;2017-07;0.3535;0.1819;si;1.9318;
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;4;UE06000;CINTA DE PE PARA SEÑALIZACIÓN DE CANALIZACIÓN ELÉCTRICA;0.31;2024-01;2022-12;0.3442;0.2735;si;0.7045;
+MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;5;IC42100;CINTA TEXTIL DE 63mm DE ANCHURA ALUMINIZADA;0.3;2024-01;2021-12;0.1928;0.1819;si;0.6818;
+MT-CONTENEDOR;materiales;ud;5;pendiente;74.050633;;;;;;;;;;;sin_candidato
+MT-CORNISA;materiales;m;5;en_revision;7.15;1;KS04200;PERFIL SOPORTE;5.88;2024-01;2021-12;0.5502;0.1172;si;0.8224;
+MT-CORNISA;materiales;m;5;en_revision;7.15;2;VW01500;"PERFIL EN ""U"" DE NEOPRENO";0.4;2024-01;2017-07;0.4616;0.1172;si;0.0559;desviacion_fuerte
+MT-CORNISA;materiales;m;5;en_revision;7.15;3;RT00800;PERFIL SECUNDARIO;1.02;2024-01;2021-12;0.4509;0.1172;si;0.1427;desviacion_fuerte
+MT-CORNISA;materiales;m;5;en_revision;7.15;4;RT00600;PERFIL PERIMETRAL;0.76;2024-01;2021-12;0.4244;0.1172;si;0.1063;desviacion_fuerte
+MT-CORNISA;materiales;m;5;en_revision;7.15;5;RT00700;PERFIL PRIMARIO;1.02;2024-01;2021-12;0.4244;0.1172;si;0.1427;desviacion_fuerte
+MT-DESMOLD-COLOR;materiales;kg;5;en_revision;3.12;;;;;;;;;;;sin_candidato
+MT-GROUT;materiales;kg;5;en_revision;0.52;;;;;;;;;;;sin_candidato
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;1;RW02150;LADRILLO 14X28 CM VIDRIADO;0.75;2024-01;2022-12;0.2679;0.2369;si;2.5862;desviacion_fuerte
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;2;RW02000;LADRILLO 14x28 cm GOTERA CABEZA;0.5;2024-01;2022-12;0.2109;0.2369;si;1.7241;
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;3;RW02100;LADRILLO 14x28 cm GOTERA SOGA;0.5;2024-01;2022-12;0.2046;0.2369;si;1.7241;
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;4;RW02200;LADRILLO VIDRIADO 14x28 cm GOTERA CABEZA;0.75;2024-01;2022-12;0.1730;0.2369;si;2.5862;desviacion_fuerte
+MT-LADRILLO;materiales;ud;5;en_revision;0.29;5;RW02300;LADRILLO VIDRIADO 14x28 cm GOTERA SOGA;0.75;2024-01;2022-12;0.1688;0.2369;si;2.5862;desviacion_fuerte
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;1;RW02150;LADRILLO 14X28 CM VIDRIADO;0.75;2024-01;2022-12;0.2679;0.1226;si;1.7045;
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;2;RW02000;LADRILLO 14x28 cm GOTERA CABEZA;0.5;2024-01;2022-12;0.2109;0.1226;si;1.1364;
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;3;RW02100;LADRILLO 14x28 cm GOTERA SOGA;0.5;2024-01;2022-12;0.2046;0.1226;si;1.1364;
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;4;RW02200;LADRILLO VIDRIADO 14x28 cm GOTERA CABEZA;0.75;2024-01;2022-12;0.1730;0.1226;si;1.7045;
+MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;5;RW02300;LADRILLO VIDRIADO 14x28 cm GOTERA SOGA;0.75;2024-01;2022-12;0.1688;0.1226;si;1.7045;
+MT-LLAVE-PROV;materiales;ud;5;pendiente;6.835443;1;IF21820N;"LLAVE PASO DIÁM. 2""";25.42;2024-01;2022-02;0.6378;0.1989;si;3.7189;desviacion_fuerte
+MT-LLAVE-PROV;materiales;ud;5;pendiente;6.835443;2;IG01700;LLAVE DE PASO DIÁM. 8 mm;5.31;2024-01;2022-01;0.5925;0.1989;si;0.7768;
+MT-LLAVE-PROV;materiales;ud;5;pendiente;6.835443;3;US01400;LLAVE DE PASO DIÁM. 100 mm;77;2024-01;2021-12;0.5923;0.1989;si;11.2648;desviacion_fuerte
+MT-LLAVE-PROV;materiales;ud;5;pendiente;6.835443;4;US01200;LLAVE DE PASO DIÁM. 60 mm;51.34;2024-01;2021-12;0.5907;0.1989;si;7.5109;desviacion_fuerte
+MT-LLAVE-PROV;materiales;ud;5;pendiente;6.835443;5;US01600;LLAVE DE PASO DIÁM. 200 mm;184.68;2024-01;2021-12;0.5871;0.1989;si;27.0180;desviacion_fuerte
+MT-MADERA-ENTIB;materiales;m2;5;pendiente;3.873418;;;;;;;;;;;sin_candidato
+MT-PASIVANTE;materiales;l;5;pendiente;11.164557;;;;;;;;;;;sin_candidato
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;1;KS04100;PERFIL MARCO ALUMINIO;6.87;2024-01;2021-12;0.6145;0.1976;si;1.1585;
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;2;KS04200;PERFIL SOPORTE;5.88;2024-01;2021-12;0.5502;0.1190;si;0.9916;
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;3;VW01400;"PERFIL EN ""U"" DE CIERRE DE ALUMINIO DE 16 mm";2.58;2024-01;2022-01;0.5000;0.1976;si;0.4351;desviacion_fuerte
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;4;VW01500;"PERFIL EN ""U"" DE NEOPRENO";0.4;2024-01;2017-07;0.4616;0.1190;si;0.0675;desviacion_fuerte
+MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;5;RT00800;PERFIL SECUNDARIO;1.02;2024-01;2021-12;0.4509;0.1190;si;0.1720;desviacion_fuerte
+MT-PLACA-FACHADA;materiales;m2;5;pendiente;47.848101;1;WW00302N;PANEL COMPOSITE;98;2024-01;2022-02;1.0000;0.1553;si;2.0481;desviacion_fuerte
+MT-PLACA-FACHADA;materiales;m2;5;pendiente;47.848101;2;RL00500;PANEL CORCHO 5 mm;14.05;2024-01;2022-01;0.2942;0.0587;si;0.2936;desviacion_fuerte
+MT-PLACA-FACHADA;materiales;m2;5;pendiente;47.848101;3;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.2369;0.0587;si;0.1141;desviacion_fuerte
+MT-PLACA-FACHADA;materiales;m2;5;pendiente;47.848101;4;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.2369;0.0587;si;0.2046;desviacion_fuerte
+MT-PLACA-FACHADA;materiales;m2;5;pendiente;47.848101;5;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.2320;0.0587;si;0.1509;desviacion_fuerte
+MT-PYL-PLACA-HD;materiales;m2;5;en_revision;4.4;1;FP01200N2;PLACA DE YESO LAMINADO DE 13 mm ALTA DUREZA;4.16;2024-01;2017-07;0.8537;0.3271;no;0.9455;numeros_diferentes
+MT-PYL-PLACA-HD;materiales;m2;5;en_revision;4.4;2;FP01100;PLACA DE YESO LAMINADO DE 10 mm;4.58;2024-01;2022-12;0.7984;0.1699;no;1.0409;numeros_diferentes
+MT-PYL-PLACA-HD;materiales;m2;5;en_revision;4.4;3;FP01300;PLACA DE YESO LAMINADO DE 15 mm;5.43;2024-01;2022-12;0.7860;0.1699;no;1.2341;numeros_diferentes
+MT-PYL-PLACA-HD;materiales;m2;5;en_revision;4.4;4;FP02905N;PLACA DE YESO LAMINADO DE 15WR mm;6.99;2024-01;2022-01;0.7860;0.1699;no;1.5886;numeros_diferentes
+MT-PYL-PLACA-HD;materiales;m2;5;en_revision;4.4;5;RT02000;PLACA YESO LAMINADO 60 X 60 cm;8.64;2024-01;2022-01;0.7784;0.1699;no;1.9636;numeros_diferentes
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;1;FP01100;PLACA DE YESO LAMINADO DE 10 mm;4.58;2024-01;2022-12;0.7984;0.2619;no;0.6173;numeros_diferentes
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;2;FP01300;PLACA DE YESO LAMINADO DE 15 mm;5.43;2024-01;2022-12;0.7860;0.2619;no;0.7318;numeros_diferentes
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;3;FP02905N;PLACA DE YESO LAMINADO DE 15WR mm;6.99;2024-01;2022-01;0.7860;0.2619;no;0.9420;numeros_diferentes
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;4;RT02000;PLACA YESO LAMINADO 60 X 60 cm;8.64;2024-01;2022-01;0.7784;0.2619;no;1.1644;numeros_diferentes
+MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;5;FP01200;PLACA DE YESO LAMINADO DE 13 mm;4.7;2024-01;2022-12;0.7518;0.2619;no;0.6334;numeros_diferentes
+MT-QUIMICO-LIMP-AC;materiales;ud;5;pendiente;9.683544;;;;;;;;;;;sin_candidato
+MT-RED-SEG;materiales;m2;5;pendiente;3.189873;1;HR00700;RED DE SEGURIDAD DE POLIAMIDA;1.3;2024-01;2022-01;1.0000;0.2592;si;0.4075;desviacion_fuerte
+MT-REGISTRO;materiales;ud;5;en_revision;22.73;1;US02400;TAPA HIDRANTE;26.94;2024-01;2021-12;0.4458;0.1064;si;1.1852;
+MT-REGISTRO;materiales;ud;5;en_revision;22.73;2;IK00265N;TAPA CIEGA;1.52;2024-01;2022-02;0.4423;0.1064;si;0.0669;desviacion_fuerte
+MT-REGISTRO;materiales;ud;5;en_revision;22.73;3;UT00100;TAPA METÁLICA ARQUETA REGISTRO CTNE D;230.53;2024-01;2021-12;0.3733;0.2244;si;10.1421;desviacion_fuerte
+MT-REGISTRO;materiales;ud;5;en_revision;22.73;4;UT00200;TAPA METÁLICA ARQUETA REGISTRO CTNE H;203.56;2024-01;2021-12;0.3733;0.2244;si;8.9556;desviacion_fuerte
+MT-REGISTRO;materiales;ud;5;en_revision;22.73;5;UE03900;TAPA DE FUNDICIÓN 60X60 cm;83.95;2024-01;2021-12;0.3700;0.1064;si;3.6934;desviacion_fuerte
+MT-SELLA-FISURA;materiales;kg;5;en_revision;9.48;1;GHJFUUOIJB;Sellador elástico de poliuretano monocomponente para juntas;8.06;2024-01;2023-03;0.6609;0.4535;si;0.8502;
+MQ-DOBLAD-TUBO;maquinaria;h;4;pendiente;3.811623;;;;;;;;;;;sin_candidato
+MT-ANTI-GRAFFITI;materiales;l;4;en_revision;76.73;;;;;;;;;;;sin_candidato
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;1;IS09;Mortero para capa base;0.68;2024-01;2018-07;0.6469;0.2851;si;1.1525;
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;2;GM00120;MORTERO CEMENTO HIDROFUGADO;0.24;2024-01;2022-12;0.5951;0.2183;si;0.4068;desviacion_fuerte
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;3;GM01100;MORTERO FORESIS;7.65;2024-01;2021-12;0.4105;0.1000;si;12.9661;desviacion_fuerte
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;4;IS031;Mortero impermeabilizante;0.42;2024-01;2018-07;0.4023;0.1000;si;0.7119;
+MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;5;GM01000;MORTERO DRAINING;2.32;2024-01;2022-12;0.3912;0.1000;si;3.9322;desviacion_fuerte
+MT-CANON;materiales;m3;4;pendiente;7;1;ET00100;CANON VERTIDO TIERRAS INERTES;1.07;2024-01;2021-12;0.4941;0.3624;si;0.1529;desviacion_fuerte
+MT-CANON;materiales;m3;4;pendiente;7;2;ET00200;CANON GESTION DE TIERRAS;2.42;2024-01;2021-12;0.3381;0.1733;si;0.3457;desviacion_fuerte
+MT-CANON;materiales;m3;4;pendiente;7;3;EH00150N;CANON GESTION DE MEZCLA BITUMINOSA;4.75;2024-01;2022-01;0.2433;0.1733;si;0.6786;
+MT-CANON;materiales;m3;4;pendiente;7;4;ER00100;CANON GESTION DE RESIDUOS MIXTOS;13.44;2024-01;2021-12;0.2421;0.1733;si;1.9200;
+MT-CANON;materiales;m3;4;pendiente;7;5;EH00100;CANON GESTION DE RESIDUOS PETREOS;9.67;2024-01;2021-12;0.2369;0.1733;si;1.3814;
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;1;ET00100;CANON VERTIDO TIERRAS INERTES;1.07;2024-01;2021-12;0.7204;0.4436;si;0.5000;
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;2;ET00200;CANON GESTION DE TIERRAS;2.42;2024-01;2021-12;0.6619;0.2848;si;1.1308;
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;3;AW00300;CANON ADQUISICIÓN DE TIERRAS DE PRÉSTAMO;0.77;2024-01;2022-12;0.4584;0.2848;si;0.3598;desviacion_fuerte
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;4;EH00150N;CANON GESTION DE MEZCLA BITUMINOSA;4.75;2024-01;2022-01;0.2433;0.1455;si;2.2196;desviacion_fuerte
+MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;5;ER00100;CANON GESTION DE RESIDUOS MIXTOS;13.44;2024-01;2021-12;0.2421;0.1455;si;6.2804;desviacion_fuerte
+MT-CIELO-METAL;materiales;m2;4;pendiente;15.949367;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.1078;si;2.1944;desviacion_fuerte
+MT-CIELO-METAL;materiales;m2;4;pendiente;15.949367;2;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.1078;si;0.0433;desviacion_fuerte
+MT-CIELO-METAL;materiales;m2;4;pendiente;15.949367;3;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.1078;si;0.9731;
+MT-CIELO-METAL;materiales;m2;4;pendiente;15.949367;4;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.2692;0.1078;si;0.1542;desviacion_fuerte
+MT-CIELO-METAL;materiales;m2;4;pendiente;15.949367;5;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.2692;0.1078;si;0.1962;desviacion_fuerte
+MT-CIELO-PVC;materiales;m2;4;pendiente;18.227848;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.0904;si;1.9201;
+MT-CIELO-PVC;materiales;m2;4;pendiente;18.227848;2;XI01501;LÁMINA VINILICA PVC CON ARM. POLIESTIRENO 1,5 mm;16.83;2024-01;2021-12;0.3428;0.2097;si;0.9233;
+MT-CIELO-PVC;materiales;m2;4;pendiente;18.227848;3;XI01500;LÁMINA VINILICA PVC CON ARM. POLIESTIRENO 1,2 mm;9.85;2024-01;2021-12;0.3322;0.2097;si;0.5404;
+MT-CIELO-PVC;materiales;m2;4;pendiente;18.227848;4;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.0904;si;0.0379;desviacion_fuerte
+MT-CIELO-PVC;materiales;m2;4;pendiente;18.227848;5;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.0904;si;0.8514;
+MT-CONC-180;materiales;m3;4;pendiente;92;;;;;;;;;;;sin_candidato
+MT-DIFERENCIAL;materiales;ud;4;en_revision;55.01;1;IE08600;INTERRUPTOR DIFERENCIAL II 40 A/30 mA TIPO AC;62.04;2024-01;2022-12;0.5964;0.2535;si;1.1278;
+MT-DIFERENCIAL;materiales;ud;4;en_revision;55.01;2;IE09100;INTERRUPTOR DIFERENCIAL IV 40 A/30 mA TIPO AC;278.1;2024-01;2022-12;0.5964;0.2535;si;5.0554;desviacion_fuerte
+MT-DIFERENCIAL;materiales;ud;4;en_revision;55.01;3;IE08500;INTERRUPTOR DIFERENCIAL II 25 A/30 Ma TIPO AC;62.04;2024-01;2022-12;0.5827;0.2535;si;1.1278;
+MT-DIFERENCIAL;materiales;ud;4;en_revision;55.01;4;IE09000;INTERRUPTOR DIFERENCIAL IV 25 A/30 mA TIPO AC;269.24;2024-01;2022-12;0.5827;0.2535;si;4.8944;desviacion_fuerte
+MT-DIFERENCIAL;materiales;ud;4;en_revision;55.01;5;IE08800;INTERRUPTOR DIFERENCIAL II 40 A/300 mA TIPO AC;144.04;2024-01;2022-12;0.5660;0.2535;si;2.6184;desviacion_fuerte
+MT-DISOL-ADH;materiales;l;4;pendiente;5.924051;1;PW00100;DISOLVENTE;1.96;2024-01;2022-12;1.0000;0.1209;si;0.3309;desviacion_fuerte
+MT-DOMO;materiales;ud;4;pendiente;82.025316;;;;;;;;;;;sin_candidato
+MT-ESTRUCT-MESON;materiales;m;4;pendiente;13.670886;;;;;;;;;;;sin_candidato
+MT-ESTUCO-VEN;materiales;kg;4;pendiente;6.835443;1;GP00210;PASTA CAL PIGMENTADA PARA ESTUCO;2.36;2024-01;2021-12;0.7218;0.4376;si;0.3453;desviacion_fuerte
+MT-ESTUCO-VEN;materiales;kg;4;pendiente;6.835443;2;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.4722;0.1980;si;0.3131;desviacion_fuerte
+MT-ESTUCO-VEN;materiales;kg;4;pendiente;6.835443;3;P08MA040;Pasta niveladora;0.58;2024-01;2023-03;0.4424;0.1235;si;0.0849;desviacion_fuerte
+MT-ESTUCO-VEN;materiales;kg;4;pendiente;6.835443;4;GP00100;PASTA ADHESIVA;0.23;2024-01;2021-12;0.4226;0.1235;si;0.0336;desviacion_fuerte
+MT-ESTUCO-VEN;materiales;kg;4;pendiente;6.835443;5;PA00300;PASTA PÉTREA PARA RAYAR;2.24;2024-01;2022-12;0.3790;0.1980;si;0.3277;desviacion_fuerte
+MT-EXTINTOR;materiales;ud;4;en_revision;63;1;IP06900;EXTINTOR A.F.P.G. 6 kg;51.25;2024-01;2021-12;0.5846;0.1196;si;0.8135;
+MT-EXTINTOR;materiales;ud;4;en_revision;63;2;IP07000;EXTINTOR A.F.P.G. 12 kg;69.08;2024-01;2021-12;0.5615;0.1196;si;1.0965;
+MT-EXTINTOR;materiales;ud;4;en_revision;63;3;IP07901;EXTINTOR MOVIL, DE POLVO ABC, CON 12KG;61.88;2024-01;2021-12;0.4702;0.3119;si;0.9822;
+MT-EXTINTOR;materiales;ud;4;en_revision;63;4;IP07100;EXTINTOR DE CO2. 6 kg;86.09;2024-01;2021-12;0.4538;0.1196;si;1.3665;
+MT-EXTINTOR;materiales;ud;4;en_revision;63;5;IP08000;EXTINTOR MÓVIL, POLVO ABC, 25 kg CON EQUIPO RUEDAS;213.05;2024-01;2021-12;0.3896;0.3119;si;3.3817;desviacion_fuerte
+MT-GRAMA;materiales;m2;4;pendiente;3.64557;1;UJ00900;GRAMA;1.4;2024-01;2022-01;1.0000;0.2433;si;0.3840;desviacion_fuerte
+MT-GROUT-CELDA;materiales;m3;4;pendiente;143.544304;;;;;;;;;;;sin_candidato
+MT-HIDROFUG-FACH;materiales;l;4;en_revision;6.28;;;;;;;;;;;sin_candidato
+MT-LAMP-OBRA;materiales;ud;4;pendiente;10.822785;1;UE03400;LUMINARIA ESTANCA CON REFLECTOR Y GLOBO;96.36;2024-01;2021-12;0.3720;0.2539;si;8.9034;desviacion_fuerte
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;1;KL00600;MAMPARA FIJA ALUM. (T-IV);26.62;2024-01;2021-12;0.3956;0.1127;si;0.2029;desviacion_fuerte
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;2;KA00700;MAMPARA FIJA AC. GALVANIZADO (T-IV);25.21;2024-01;2021-12;0.3784;0.1127;si;0.1921;desviacion_fuerte
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;3;KP00200;MAMPARA FIJA PVC (T-IV) BLANCO;75.75;2024-01;2021-12;0.3086;0.1127;si;0.5773;
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;4;KP00210;MAMPARA FIJA PVC (T-IV) COLOR;89.77;2024-01;2021-12;0.3044;0.1127;si;0.6842;
+MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;5;KL00800;MAMPARA FIJA ALUM. NO MODULADA (T-IV);29.13;2024-01;2021-12;0.2986;0.1127;si;0.2220;desviacion_fuerte
+MT-MICROCEM;materiales;kg;4;pendiente;6.265823;;;;;;;;;;;sin_candidato
+MT-PEGA-MURAL;materiales;kg;4;en_revision;16.36;;;;;;;;;;;sin_candidato
+MT-PERSIANA-ALU;materiales;m2;4;pendiente;62.658228;1;KS04400;PERSIANA ENROLLABLE ALUMINIO;47.99;2024-01;2021-12;1.0000;0.2362;si;0.7659;
+MT-PERSIANA-ALU;materiales;m2;4;pendiente;62.658228;2;KS04500;PERSIANA ENROLLABLE ALUMINIO LACADO;54.3;2024-01;2021-12;0.7722;0.2362;si;0.8666;
+MT-PERSIANA-ALU;materiales;m2;4;pendiente;62.658228;3;KS04600;PERSIANA ENROLLABLE PVC DE 1 mm;19.67;2024-01;2021-12;0.6186;0.1750;si;0.3139;desviacion_fuerte
+MT-PERSIANA-ALU;materiales;m2;4;pendiente;62.658228;4;KS04700;PERSIANA ENROLLABLE PVC DE O,6 mm;14.1;2024-01;2021-12;0.5794;0.1750;si;0.2250;desviacion_fuerte
+MT-PERSIANA-ALU;materiales;m2;4;pendiente;62.658228;5;KL03600EA;VENTANA ABATIBLE COMPACTA PVC CON PERSIANA CAJÓN EXTERIOR;291.56;2024-01;2018-07;0.4001;0.2536;si;4.6532;desviacion_fuerte
+MT-PIN-SEMIBRILLO;materiales;l;4;pendiente;5.240506;1;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.0857;si;1.2556;
+MT-PIN-SEMIBRILLO;materiales;l;4;pendiente;5.240506;2;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.0857;si;3.6180;desviacion_fuerte
+MT-PIN-SEMIBRILLO;materiales;l;4;pendiente;5.240506;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.0857;si;1.2174;
+MT-PIN-SEMIBRILLO;materiales;l;4;pendiente;5.240506;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.2022;0.0857;si;1.0419;
+MT-PYL-PLACA-IG;materiales;m2;4;en_revision;7.92;1;FP80020;PLACA DE YESO LAMINADO DE 15mm RESISTENTE AL FUEGO;6.78;2024-01;2022-12;1.0000;0.5920;si;0.8561;
+MT-PYL-PLACA-IG;materiales;m2;4;en_revision;7.92;2;FP01300;PLACA DE YESO LAMINADO DE 15 mm;5.43;2024-01;2022-12;1.0000;0.3374;si;0.6856;
+MT-PYL-PLACA-IG;materiales;m2;4;en_revision;7.92;3;FP02905N;PLACA DE YESO LAMINADO DE 15WR mm;6.99;2024-01;2022-01;1.0000;0.3374;si;0.8826;
+MT-PYL-PLACA-IG;materiales;m2;4;en_revision;7.92;4;FP80020A;PLACA DE YESO LAMINADO DE 13mm RESISTENTE AL FUEGO;6.43;2024-01;2017-07;0.8559;0.5198;no;0.8119;numeros_diferentes
+MT-PYL-PLACA-IG;materiales;m2;4;en_revision;7.92;5;FP80020N;PLACA DE YESO LAMINADO DE 13mm RESISTENTE AL FUEGO;6.2;2024-01;2022-01;0.8559;0.5198;no;0.7828;numeros_diferentes
+MT-RESINA-ACRIL;materiales;kg;4;pendiente;10.253165;1;PA00900;RESINA ACRÍLICA;3.76;2024-01;2021-12;1.0000;0.2196;si;0.3667;desviacion_fuerte
+MT-RESINA-ACRIL;materiales;kg;4;pendiente;10.253165;2;XI02800;PINTURA RESINA ACRILICA UN COMPONENTE;5.73;2024-01;2021-12;0.4963;0.2196;si;0.5589;
+MT-RESINA-ACRIL;materiales;kg;4;pendiente;10.253165;3;PP00200;RESINA PLÁSTICA;2.85;2024-01;2022-12;0.4299;0.1000;si;0.2780;desviacion_fuerte
+MT-RESINA-ACRIL;materiales;kg;4;pendiente;10.253165;4;RS05600;PINTURA RESINA DE POLIURETANO;5.11;2024-01;2021-12;0.3409;0.1000;si;0.4984;desviacion_fuerte
+MT-RESINA-ACRIL;materiales;kg;4;pendiente;10.253165;5;MT012577;Adhesivo resina epoxi;5.53;2024-01;2016-12;0.2935;0.1000;si;0.5393;
+MT-SELLA-CONC;materiales;l;4;en_revision;6.06;;;;;;;;;;;sin_candidato
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;1;P124004;Tabique 13+13+48+13+48+13+13;62.17;2024-01;2023-03;0.3783;0.1434;si;0.1331;desviacion_fuerte
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;2;P124007;Tabique 48+13+48+13+13;39.64;2024-01;2023-03;0.3783;0.1434;si;0.0849;desviacion_fuerte
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;3;GHFDHGHSDU;Tabique 15+15+46+15+15 FOG;43.45;2024-01;2023-03;0.2625;0.1434;si;0.0930;desviacion_fuerte
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;4;HGDBSNSN;tabique pladur 13+13+46+13+13 WA;48.45;2024-01;2023-03;0.2584;0.1434;si;0.1037;desviacion_fuerte
+MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;5;ÑKLLKJKJ;tabique pladur 13+13wa+46+13+13wa;55.09;2024-01;2023-03;0.2584;0.1434;si;0.1179;desviacion_fuerte
+MT-TOLDO;materiales;m2;4;pendiente;54.683544;1;HR01000;TOLDO DE LONA PLASTIFICADA;0.7;2024-01;2022-01;0.6765;0.2537;si;0.0128;desviacion_fuerte
+MT-TOLDO;materiales;m2;4;pendiente;54.683544;2;08WWW01;TOLDO ENROLLABLE TEJIDO SCREEN;42.5;2024-01;2016-10;0.2638;0.1247;si;0.7772;
+MQ-BANO-PORT;maquinaria;ud;3;pendiente;110;1;MP01000;ALQUILER DE EQUIPO JET-GROUTING;303.54;2024-01;2022-12;0.2952;0.1192;si;2.7595;desviacion_fuerte
+MQ-BANO-PORT;maquinaria;ud;3;pendiente;110;2;MP00700;ALQUILER EQUIPO PARA ANCLAJE EN INYECCIONES;192.74;2024-01;2022-12;0.2690;0.1192;si;1.7522;
+MQ-BANO-PORT;maquinaria;ud;3;pendiente;110;3;MP00100;EQUIPO PANTALLA Y GRÚA AUXILIAR (ALQUILER);268.21;2024-01;2022-12;0.2420;0.1192;si;2.4383;desviacion_fuerte
+MQ-LIJAD-PISO;maquinaria;h;3;pendiente;9.529057;;;;;;;;;;;sin_candidato
+MQ-PERF-PILOTE;maquinaria;h;3;en_revision;80.630482;1;MP80000;EQUIPO PERFORACIÓN MICROPILOTES;407.83;2024-01;2022-12;0.5000;0.1480;si;5.0580;desviacion_fuerte
+MQ-VENT-SUC;maquinaria;h;3;pendiente;4.104825;;;;;;;;;;;sin_candidato
+MT-ADOQUIN;materiales;m2;3;pendiente;17.658228;;;;;;;;;;;sin_candidato
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;1;KA80170;"ANCLAJE ACERO INOX. EN ""T""";2.67;2024-01;2021-12;0.6745;0.1777;si;0.4450;desviacion_fuerte
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;2;P124010;Anclaje hormigón;0.71;2024-01;2023-03;0.5953;0.1102;si;0.1183;desviacion_fuerte
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;3;HR00200;ANCLAJE DE RED;0.82;2024-01;2022-01;0.5184;0.1102;si;0.1367;desviacion_fuerte
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;4;VW01200;PATILLAS APARENTES ANCLAJE, ACERO INOXIDABLE;17.06;2024-01;2022-01;0.4833;0.2816;si;2.8433;desviacion_fuerte
+MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6;5;HR00100;ANCLAJE DE PESCANTE;1.81;2024-01;2022-01;0.4424;0.1102;si;0.3017;desviacion_fuerte
+MT-ARNES;materiales;ud;3;en_revision;44.93;1;HC02300;ARNES DE SEGURIDAD DE SUJECIÓN POLIESTER;33;2024-01;2022-12;0.3001;0.1264;si;0.7345;
+MT-ARNES;materiales;ud;3;en_revision;44.93;2;HC02200;ARNES DE SEGURIDAD DE SUJECIÓN POLIAMIDA;117;2024-01;2022-12;0.2889;0.1264;si;2.6041;desviacion_fuerte
+MT-BARRERA-ANTICAP;materiales;m;3;en_revision;0.87;;;;;;;;;;;sin_candidato
+MT-BENTONITA;materiales;m2;3;en_revision;15.2;;;;;;;;;;;sin_candidato
+MT-BLQ-ARC-10;materiales;ud;3;pendiente;0.432911;1;FB80010;BLOQUE ARCILLA ALIGERADA 30x19x19 cm;1.05;2024-01;2022-12;0.5593;0.4963;no;2.4254;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-10;materiales;ud;3;pendiente;0.432911;2;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.5414;0.2938;no;2.1713;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-10;materiales;ud;3;pendiente;0.432911;3;FB80000;BLOQUE ARCILLA ALIGERADA 30x19x14 cm;1;2024-01;2022-12;0.4601;0.4963;no;2.3099;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-10;materiales;ud;3;pendiente;0.432911;4;FB80020;BLOQUE ARCILLA ALIGERADA 30x19x24 cm;1.18;2024-01;2022-12;0.4556;0.4963;no;2.7257;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-ARC-10;materiales;ud;3;pendiente;0.432911;5;FB80030;BLOQUE ARCILLA ALIGERADA 30x19x29 cm;1.23;2024-01;2022-12;0.4457;0.4963;no;2.8412;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-EST-20;materiales;ud;3;pendiente;1.253165;1;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.2812;si;0.7501;
+MT-BLQ-EST-20;materiales;ud;3;pendiente;1.253165;2;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.6093;0.2812;si;0.6304;
+MT-BLQ-EST-20;materiales;ud;3;pendiente;1.253165;3;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.2812;si;0.4309;desviacion_fuerte
+MT-BLQ-EST-20;materiales;ud;3;pendiente;1.253165;4;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.5901;0.2812;si;0.5745;
+MT-BLQ-EST-20;materiales;ud;3;pendiente;1.253165;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.2812;si;0.5346;
+MT-CASETA-BIEN;materiales;ud;3;pendiente;136.708861;;;;;;;;;;;sin_candidato
+MT-CIERRA-PUERTA;materiales;ud;3;en_revision;19.01;1;KW04400;CIERRA-PUERTA HIDRÁULICO PARA 1 HOJA;89.43;2024-01;2022-01;0.7191;0.4704;si;4.7044;desviacion_fuerte
+MT-CINTA-LED;materiales;m;3;pendiente;7.063291;1;IW04800;CINTA SEÑALIZACION;0.2;2024-01;2022-12;0.5000;0.1469;si;0.0283;desviacion_fuerte
+MT-CINTA-LED;materiales;m;3;pendiente;7.063291;2;RS00050;CINTA ANTIDESLIZANTE 40 mm, BASE ALUMINIO;0.43;2024-01;2022-01;0.3944;0.2283;si;0.0609;desviacion_fuerte
+MT-CINTA-LED;materiales;m;3;pendiente;7.063291;3;WW00700;CINTA DE POLIETILENO AUTOADHESIVA;0.85;2024-01;2017-07;0.3535;0.1469;si;0.1203;desviacion_fuerte
+MT-CINTA-LED;materiales;m;3;pendiente;7.063291;4;UE06000;CINTA DE PE PARA SEÑALIZACIÓN DE CANALIZACIÓN ELÉCTRICA;0.31;2024-01;2022-12;0.2290;0.1469;si;0.0439;desviacion_fuerte
+MT-CINTA-LED;materiales;m;3;pendiente;7.063291;5;IC42100;CINTA TEXTIL DE 63mm DE ANCHURA ALUMINIZADA;0.3;2024-01;2021-12;0.1928;0.1469;si;0.0425;desviacion_fuerte
+MT-CONC-300;materiales;m3;3;pendiente;118;;;;;;;;;;;sin_candidato
+MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;1;AS00200;ÁRIDO DE SÍLICE, CORINDÓN Y CUARZO;0.81;2024-01;2022-12;0.4864;0.3076;si;0.3279;desviacion_fuerte
+MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;2;AM00200;ÁRIDO MÁRMOL SELECCIONADO;0.72;2024-01;2022-12;0.3484;0.1459;si;0.2915;desviacion_fuerte
+MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;3;AS00120;ÁRIDO SELECCIONADO MONOCAPA;0.65;2024-01;2022-12;0.3177;0.1459;si;0.2632;desviacion_fuerte
+MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;4;AS00300;ÁRIDO SÍLICE TRATADO;0.36;2024-01;2022-12;0.3048;0.1459;si;0.1457;desviacion_fuerte
+MT-DECAP;materiales;l;3;en_revision;12.89;1;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;1.0000;0.2301;si;0.5105;
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;1;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.5769;0.1660;si;0.1335;desviacion_fuerte
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;2;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.5025;0.1660;si;0.4758;desviacion_fuerte
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;3;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.5025;0.1660;si;0.6054;
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;4;XT13001;LÁMINA DE POLIETILENO RETICULADO 5 mm;1.97;2024-01;2021-12;0.4880;0.1660;si;0.3810;desviacion_fuerte
+MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;5;XT13101;LÁMINA DE POLIETILENO NO RETICULADO 5 mm;1.28;2024-01;2021-12;0.4880;0.1660;si;0.2476;desviacion_fuerte
+MT-LINEA-VIDA;materiales;m;3;pendiente;7.063291;1;HC02520;LINEA DE VIDA HORIZONTAL DE POLIESTER;2.95;2024-01;2022-12;0.7915;0.3875;si;0.4177;desviacion_fuerte
+MT-LINEA-VIDA;materiales;m;3;pendiente;7.063291;2;IC90010;LÍNEA FRIGORÍFICA DOBLE REALIZADA CON TUBERÍA FLEXIBLE DE COBRE 1/4+5/8;8.87;2024-01;2022-02;0.1666;0.1839;si;1.2558;
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;1;WW00302N;PANEL COMPOSITE;98;2024-01;2022-02;1.0000;0.2065;si;2.8201;desviacion_fuerte
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;2;CM00450;PANEL METÁLICO REVESTIMIENTO TABLERO FENOLICO;199;2024-01;2022-12;0.4029;0.1988;si;5.7266;desviacion_fuerte
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;3;RL00500;PANEL CORCHO 5 mm;14.05;2024-01;2022-01;0.2942;0.0780;si;0.4043;desviacion_fuerte
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;4;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.2369;0.0780;si;0.1571;desviacion_fuerte
+MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;5;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.2369;0.0780;si;0.2817;desviacion_fuerte
+MT-PER-BANDA;materiales;m;3;en_revision;1.11;1;XA90000;BANDA ELASTICA 10 mm;0.12;2024-01;2021-12;0.6378;0.1558;si;0.1081;desviacion_fuerte
+MT-PER-BANDA;materiales;m;3;en_revision;1.11;2;US26015;BANDA DE SEÑALIZACIÓN;0.29;2024-01;2021-12;0.4950;0.1008;no;0.2613;"numeros_diferentes;desviacion_fuerte"
+MT-PER-BANDA;materiales;m;3;en_revision;1.11;3;PW02000;BANDAS DE PAPEL O PLASTICO ADHESIVO;0.07;2024-01;2021-12;0.2708;0.1008;no;0.0631;"numeros_diferentes;desviacion_fuerte"
+MT-PIN-IGNFUGA;materiales;l;3;pendiente;13.670886;1;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;1.0000;0.2880;si;1.3869;
+MT-PIN-IGNFUGA;materiales;l;3;pendiente;13.670886;2;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.1163;si;0.4813;desviacion_fuerte
+MT-PIN-IGNFUGA;materiales;l;3;pendiente;13.670886;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.1163;si;0.4667;desviacion_fuerte
+MT-PIN-IGNFUGA;materiales;l;3;pendiente;13.670886;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.2022;0.1163;si;0.3994;desviacion_fuerte
+MT-PLANCHA-ACERO;materiales;kg;3;pendiente;2.506329;1;QW00600;PLOMO EN PLANCHAS;1.79;2024-01;2017-07;0.4548;0.1431;si;0.7142;
+MT-PLANCHA-ACERO;materiales;kg;3;pendiente;2.506329;2;QP03070;PLANCHA DE ACERO INOXIDABLE 0,80 mm ESP.;2.83;2024-01;2021-12;0.3707;0.2342;si;1.1291;
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;1;FP01700;PASTA PARA AGARRE DE PLACAS DE YESO LAMINADO;0.87;2024-01;2022-12;1.0000;0.4118;si;1.9333;
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;2;FP01800;PASTA PARA JUNTAS DE PLACAS DE YESO LAMINADO;1.17;2024-01;2022-12;0.8223;0.3208;si;2.6000;desviacion_fuerte
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;3;GP80030;PASTA PARA JUNTAS YESO;2.14;2024-01;2022-12;0.7366;0.1938;si;4.7556;desviacion_fuerte
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;4;GP80010;PASTA AGARRE PARA PEGADO PANEL YESO LAMINADO;0.64;2024-01;2022-12;0.6818;0.3583;si;1.4222;
+MT-PYL-PASTA-AGARRE;materiales;kg;3;confirmado_referencia;0.45;5;P08MA040;Pasta niveladora;0.58;2024-01;2023-03;0.4424;0.0775;si;1.2889;
+MT-REFUERZO-PYL;materiales;m;3;en_revision;5.78;;;;;;;;;;;sin_candidato
+MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;1;HS02800;CORDÓN BALIZAMIENTO;1.18;2024-01;2017-07;0.4893;0.1225;si;0.3522;desviacion_fuerte
+MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;2;IV02000;CORDÓN RIZADO;13.52;2024-01;2021-12;0.4624;0.1225;si;4.0358;desviacion_fuerte
+MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;3;RW03900;CORDÓN SOLDADURA PVC;0.26;2024-01;2021-12;0.4151;0.1225;si;0.0776;desviacion_fuerte
+MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;4;XT14800;CORDÓN FIBRA VIDRIO 30 mm DIÁM. DENSIDAD 120 kg/m3;1.65;2024-01;2021-12;0.1919;0.1225;si;0.4925;desviacion_fuerte
+MT-TABLERO-DIST;materiales;ud;3;pendiente;54.683544;1;TBA00001;TABLERO PARA PINTAR;189.74;2024-01;2023-03;0.5517;0.1447;si;3.4698;desviacion_fuerte
+MT-TABLERO-DIST;materiales;ud;3;pendiente;54.683544;2;IE11800;TABLERO AISLANTE;8.41;2024-01;2021-12;0.4465;0.0884;si;0.1538;desviacion_fuerte
+MT-TABLERO-DIST;materiales;ud;3;pendiente;54.683544;3;UU02300;JUEGO CANASTAS BALONCESTO FIJAS CON TABLERO DE MADERA;519.89;2024-01;2022-01;0.2353;0.1452;si;9.5072;desviacion_fuerte
+MT-TABLERO-DIST;materiales;ud;3;pendiente;54.683544;4;UU02400;JUEGO CANASTAS BALONCESTO MÓVILES CON TABLERO DE MADERA;2387.73;2024-01;2022-01;0.2229;0.1452;si;43.6645;desviacion_fuerte
+MT-VIGUETA;materiales;m;3;en_revision;7.84;1;CV00200;VIGUETA AUTORRESISTENTE PRETENSADA;6.77;2024-01;2022-12;0.6574;0.2861;si;0.8635;
+MT-VIGUETA;materiales;m;3;en_revision;7.84;2;CV00400;VIGUETA SEMIRRESISTENTE PRETENSADA;5.53;2024-01;2022-12;0.6574;0.2861;si;0.7054;
+MT-VIGUETA;materiales;m;3;en_revision;7.84;3;CV00100;VIGUETA AUTORRESISTENTE DE ARMADURA RÍGIDA;5.07;2024-01;2022-12;0.2463;0.1370;si;0.6467;
+MT-VIGUETA;materiales;m;3;en_revision;7.84;4;CV00300;VIGUETA SEMIRRESISTENTE DE ARMADURA RÍGIDA;5.33;2024-01;2022-12;0.2463;0.1370;si;0.6798;
+MQ-ESTAMP;maquinaria;h;2;pendiente;7.036842;;;;;;;;;;;sin_candidato
+MQ-TELUROMETRO;maquinaria;h;2;pendiente;17.592105;;;;;;;;;;;sin_candidato
+MT-ACC-BOMBA;materiales;ud;2;pendiente;31.898734;;;;;;;;;;;sin_candidato
+MT-BARNIZ-MARINO;materiales;l;2;en_revision;10.44;;;;;;;;;;;sin_candidato
+MT-BLQ-12;materiales;ud;2;pendiente;0.592405;1;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.8123;0.5090;si;1.2154;
+MT-BLQ-12;materiales;ud;2;pendiente;0.592405;2;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.3698;no;1.5868;numeros_diferentes
+MT-BLQ-12;materiales;ud;2;pendiente;0.592405;3;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.6093;0.3698;no;1.3335;numeros_diferentes
+MT-BLQ-12;materiales;ud;2;pendiente;0.592405;4;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.3698;no;0.9115;numeros_diferentes
+MT-BLQ-12;materiales;ud;2;pendiente;0.592405;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.3698;no;1.1310;numeros_diferentes
+MT-BLQ-20;materiales;ud;2;en_revision;0.68;1;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.7587;0.4296;si;1.3824;
+MT-BLQ-20;materiales;ud;2;en_revision;0.68;2;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;0.79;2024-01;2022-12;0.6093;0.4296;si;1.1618;
+MT-BLQ-20;materiales;ud;2;en_revision;0.68;3;FB00300;BLOQUE HORMIGÓN 40x20x6 cm;0.54;2024-01;2022-12;0.6022;0.4296;si;0.7941;
+MT-BLQ-20;materiales;ud;2;en_revision;0.68;4;FB00500;BLOQUE HORMIGÓN 40x20x12 cm;0.72;2024-01;2022-12;0.5901;0.4296;si;1.0588;
+MT-BLQ-20;materiales;ud;2;en_revision;0.68;5;FB00400;BLOQUE HORMIGÓN 40x20x9 cm;0.67;2024-01;2022-12;0.5670;0.4296;si;0.9853;
+MT-BLQ-VIDRIO;materiales;ud;2;pendiente;7.860759;1;FB80010;BLOQUE ARCILLA ALIGERADA 30x19x19 cm;1.05;2024-01;2022-12;0.3996;0.2014;no;0.1336;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-VIDRIO;materiales;ud;2;pendiente;7.860759;2;FB80000;BLOQUE ARCILLA ALIGERADA 30x19x14 cm;1;2024-01;2022-12;0.3287;0.2014;no;0.1272;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-VIDRIO;materiales;ud;2;pendiente;7.860759;3;FB80020;BLOQUE ARCILLA ALIGERADA 30x19x24 cm;1.18;2024-01;2022-12;0.3255;0.2014;no;0.1501;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-VIDRIO;materiales;ud;2;pendiente;7.860759;4;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;0.94;2024-01;2022-12;0.3253;0.1002;no;0.1196;"numeros_diferentes;desviacion_fuerte"
+MT-BLQ-VIDRIO;materiales;ud;2;pendiente;7.860759;5;FB80030;BLOQUE ARCILLA ALIGERADA 30x19x29 cm;1.23;2024-01;2022-12;0.3184;0.2014;no;0.1565;"numeros_diferentes;desviacion_fuerte"
+MT-CONECTOR-CORTE;materiales;ud;2;en_revision;1.81;;;;;;;;;;;sin_candidato
+MT-ENDURECEDOR;materiales;kg;2;en_revision;0.63;;;;;;;;;;;sin_candidato
+MT-GAS-REFRIG;materiales;kg;2;pendiente;20.506329;1;IP02800;GAS FM-200;58.54;2024-01;2021-12;0.5187;0.1210;si;2.8547;desviacion_fuerte
+MT-GAS-REFRIG;materiales;kg;2;pendiente;20.506329;2;IP02900;GAS FE-13;35.27;2024-01;2021-12;0.4879;0.1210;si;1.7200;
+MT-GAS-REFRIG;materiales;kg;2;pendiente;20.506329;3;IC81250;GAS REFRIGERANTE ALTA SEGURIDAD R-410A;8.95;2024-01;2016-02;0.4018;0.3282;si;0.4365;desviacion_fuerte
+MT-GAS-REFRIG;materiales;kg;2;pendiente;20.506329;4;IC40800;GAS FRIGORÍFICO;9.87;2024-01;2021-12;0.3685;0.1210;si;0.4813;desviacion_fuerte
+MT-IMPERM-ASF;materiales;l;2;pendiente;5.126582;;;;;;;;;;;sin_candidato
+MT-LASUR;materiales;l;2;en_revision;12.4;;;;;;;;;;;sin_candidato
+MT-MALLA-DREN;materiales;m2;2;en_revision;5.17;;;;;;;;;;;sin_candidato
+MT-MAT-PRESTAMO;materiales;m3;2;pendiente;18.227848;;;;;;;;;;;sin_candidato
+MT-MOSAICO;materiales;m2;2;en_revision;12.4;1;RS05000;PARQUE MOSAICO ROBLE;27.19;2024-01;2021-12;0.3860;0.1308;si;2.1927;desviacion_fuerte
+MT-PANEL-LIV;materiales;m2;2;pendiente;15.949367;1;WW00302N;PANEL COMPOSITE;98;2024-01;2022-02;0.3778;0.0748;si;6.1444;desviacion_fuerte
+MT-PANEL-LIV;materiales;m2;2;pendiente;15.949367;2;RL00500;PANEL CORCHO 5 mm;14.05;2024-01;2022-01;0.2942;0.0748;si;0.8809;
+MT-PANEL-LIV;materiales;m2;2;pendiente;15.949367;3;XT11200;PANEL LANA MINERAL 40 mm;5.46;2024-01;2021-12;0.2369;0.0748;si;0.3423;desviacion_fuerte
+MT-PANEL-LIV;materiales;m2;2;pendiente;15.949367;4;XT80020;PANEL LANA MINERAL DE 40 mm;9.79;2024-01;2021-12;0.2369;0.0748;si;0.6138;
+MT-PANEL-LIV;materiales;m2;2;pendiente;15.949367;5;XT80000;PANEL DE LANA MINERAL DE 25 mm;7.22;2024-01;2021-12;0.2320;0.0748;si;0.4527;desviacion_fuerte
+MT-PERFIL-CORTINERO;materiales;m;2;pendiente;8.43038;;;;;;;;;;;sin_candidato
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;1;IF23000;PEDESTAL PORCELANA C. BLANCO DE 1ª CALIDAD;42.44;2024-01;2021-12;0.2812;0.1272;si;18.3723;desviacion_fuerte
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;2;IF23600;PEDESTAL PORCELANA C. SUAVE DE 1ª CALIDAD;47.47;2024-01;2021-12;0.2639;0.1272;si;20.5498;desviacion_fuerte
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;3;IF23100;PEDESTAL PORCELANA C. BLANCO CALIDAD MEDIA;23.84;2024-01;2021-12;0.2617;0.1272;si;10.3203;desviacion_fuerte
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;4;IF23300;PEDESTAL PORCELANA C. FUERTE DE 1ª CALIDAD;74.28;2024-01;2021-12;0.2610;0.1272;si;32.1558;desviacion_fuerte
+MT-PLOT-REG;materiales;ud;2;en_revision;2.31;5;IF22900;PEDESTAL PORCELANA C. BLANCO CAL. ESPECIAL;60.24;2024-01;2021-12;0.2602;0.1272;si;26.0779;desviacion_fuerte
+MT-POLIUREA;materiales;kg;2;en_revision;5.8;;;;;;;;;;;sin_candidato
+MT-POLIURETANO-PISO;materiales;kg;2;pendiente;13.670886;;;;;;;;;;;sin_candidato
+MT-SILOXANO;materiales;l;2;en_revision;6.28;;;;;;;;;;;sin_candidato
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;1;FPLOMO1;LAMINA DE PLOMO 2MM.;35;2024-01;2023-03;0.3643;0.0970;si;1.2094;
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;2;XI01100;LÁMINA POLIETILENO 0,2 mm;0.69;2024-01;2021-12;0.3091;0.0970;si;0.0238;desviacion_fuerte
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;3;RL04000;LÁMINA FORMICA CALIDAD PF;15.52;2024-01;2021-12;0.3050;0.0970;si;0.5363;
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;4;XT13002;LÁMINA DE POLIETILENO RETICULADO 10 mm;2.46;2024-01;2021-12;0.2692;0.0970;si;0.0850;desviacion_fuerte
+MT-STEELDECK;materiales;m2;2;en_revision;28.94;5;XT13102;LÁMINA DE POLIETILENO NO RETICULADO 10 mm;3.13;2024-01;2021-12;0.2692;0.0970;si;0.1082;desviacion_fuerte
+MT-TABLERO-PROV;materiales;ud;2;pendiente;51.265823;1;IE11800;TABLERO AISLANTE;8.41;2024-01;2021-12;0.4465;0.0976;si;0.1640;desviacion_fuerte
+MT-TABLERO-PROV;materiales;ud;2;pendiente;51.265823;2;TBA00001;TABLERO PARA PINTAR;189.74;2024-01;2023-03;0.3371;0.0976;si;3.7011;desviacion_fuerte
+MT-TABLERO-PROV;materiales;ud;2;pendiente;51.265823;3;UU02300;JUEGO CANASTAS BALONCESTO FIJAS CON TABLERO DE MADERA;519.89;2024-01;2022-01;0.2353;0.1602;si;10.1411;desviacion_fuerte
+MT-TABLERO-PROV;materiales;ud;2;pendiente;51.265823;4;UU02400;JUEGO CANASTAS BALONCESTO MÓVILES CON TABLERO DE MADERA;2387.73;2024-01;2022-01;0.2229;0.1602;si;46.5755;desviacion_fuerte
+MT-TEJA-ASF;materiales;m2;2;pendiente;11.962025;;;;;;;;;;;sin_candidato
+MT-TIMBRE;materiales;ud;2;pendiente;15.949367;;;;;;;;;;;sin_candidato
+MT-VAPOR;materiales;l;2;pendiente;2.734177;1;PW00170;SOLUCION FUNGICIDA;0.95;2024-01;2021-12;0.5201;0.1326;si;0.3475;desviacion_fuerte
+MT-ZIPPER;materiales;ud;2;pendiente;4.329114;1;KW01800;CIERRE DE LATÓN;4.07;2024-01;2022-01;0.4959;0.0857;si;0.9401;
+MT-ZIPPER;materiales;ud;2;pendiente;4.329114;2;KW01700;CIERRE AUTOMÁTICO;48.15;2024-01;2022-01;0.4915;0.0857;si;11.1224;desviacion_fuerte
+MT-ZIPPER;materiales;ud;2;pendiente;4.329114;3;11W00050N;SISTEMA DE CIERRE MULTIPUNTO PARA VENTANA CORREDERA;50;2024-01;2022-02;0.3677;0.1403;si;11.5497;desviacion_fuerte
+MT-ZIPPER;materiales;ud;2;pendiente;4.329114;4;KW04500;CIERRE HIDRÁULICO DE PUERTA;48.78;2024-01;2022-01;0.3511;0.0857;si;11.2679;desviacion_fuerte
+MT-ZIPPER;materiales;ud;2;pendiente;4.329114;5;IN00580;"VÁLVULA DE EQUILIBRADO Y CIERRE 1""";71.41;2024-01;2022-01;0.2820;0.0857;si;16.4953;desviacion_fuerte
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;1;IP03100;DETECTOR ÓPTICO DE HUMO;53.92;2024-01;2021-12;0.6388;0.3659;si;9.4101;desviacion_fuerte
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;2;IC26900;DETECTOR AUTOMÁTICO;30.62;2024-01;2021-12;0.5242;0.1714;si;5.3438;desviacion_fuerte
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;3;IP80150;DETECTOR DE FLUJO;263.15;2024-01;2021-12;0.4531;0.1714;si;45.9250;desviacion_fuerte
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;4;IE15005;DETECTOR ELEMENTOS DE PRESENCIA;57.71;2024-01;2022-12;0.4416;0.1714;si;10.0716;desviacion_fuerte
+MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;5;IP03200;DETECTOR TÉRMICO TERMOSTÁTICO;29.01;2024-01;2021-12;0.2983;0.1714;si;5.0628;desviacion_fuerte
+MT-ESMALTE-AGUA;materiales;l;1;en_revision;8.04;;;;;;;;;;;sin_candidato
+MT-FIBRA-NAT;materiales;m2;1;pendiente;25.063291;1;RL02800;REVESTIMIENTO VINÍLICO;9.09;2024-01;2017-07;0.4846;0.1013;si;0.3627;desviacion_fuerte
+MT-FIBRA-NAT;materiales;m2;1;pendiente;25.063291;2;CM00450;PANEL METÁLICO REVESTIMIENTO TABLERO FENOLICO;199;2024-01;2022-12;0.2448;0.1013;si;7.9399;desviacion_fuerte
+MT-GABINETE-MANG;materiales;ud;1;pendiente;227.848101;;;;;;;;;;;sin_candidato
+MT-PIEDRA-FACHADA;materiales;m2;1;pendiente;43.291139;;;;;;;;;;;sin_candidato
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;1;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.0707;si;1.3004;
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;2;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.0707;si;3.7470;desviacion_fuerte
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.0707;si;1.2609;
+MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.2022;0.0707;si;1.0791;
+MT-PIN-CAL;materiales;kg;1;pendiente;2.050633;1;PC00100;CAL LECHADA;1.5;2024-01;2022-12;0.3521;0.0671;si;0.7315;
+MT-PIN-CAL;materiales;kg;1;pendiente;2.050633;2;GP00210;PASTA CAL PIGMENTADA PARA ESTUCO;2.36;2024-01;2021-12;0.2740;0.1216;si;1.1509;
+MT-PIN-CAL;materiales;kg;1;pendiente;2.050633;3;GM00100;MORTERO CAL AÉREA;0.68;2024-01;2022-12;0.2608;0.0671;si;0.3316;desviacion_fuerte
+MT-PIN-CAL;materiales;kg;1;pendiente;2.050633;4;GM00150;MORTERO CAL AÉREA PIGMENTADO;1.3;2024-01;2022-12;0.1788;0.0671;si;0.6340;
+MT-PIN-CAL;materiales;kg;1;pendiente;2.050633;5;GM00110;MORTERO CAL PIGMENTADO EN MASA;0.79;2024-01;2022-12;0.1755;0.0671;si;0.3852;desviacion_fuerte
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;1;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.4257;0.1438;si;0.2485;desviacion_fuerte
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;2;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.0683;si;0.2995;desviacion_fuerte
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;3;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.0683;si;0.8630;
+MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;4;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.0683;si;0.2904;desviacion_fuerte
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;1;PW00330;DECAPANTE PINTURAS;6.58;2024-01;2021-12;0.4037;0.0736;si;0.3555;desviacion_fuerte
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;2;PX00970;PINTURA IGNÍFUGA;18.96;2024-01;2021-12;0.4037;0.0736;si;1.0243;
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;3;PW02100;FIJATIVO DE PINTURAS Y GELES;6.38;2024-01;2021-12;0.2529;0.0736;si;0.3447;desviacion_fuerte
+MT-PIN-TIZA;materiales;l;1;en_revision;18.51;4;PS00110;PINTURA TRANSPIRABLE A BASE DE SILICATOS;5.46;2024-01;2022-12;0.2022;0.0736;si;0.2950;desviacion_fuerte
+MT-PLATINA-DIV;materiales;m;1;pendiente;2.392405;;;;;;;;;;;sin_candidato
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;1;FP01300;PLACA DE YESO LAMINADO DE 15 mm;5.43;2024-01;2022-12;1.0000;0.4050;si;1.5559;
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;2;FP02905N;PLACA DE YESO LAMINADO DE 15WR mm;6.99;2024-01;2022-01;1.0000;0.4050;si;2.0029;desviacion_fuerte
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;3;FP01100;PLACA DE YESO LAMINADO DE 10 mm;4.58;2024-01;2022-12;0.7984;0.3183;no;1.3123;numeros_diferentes
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;4;RT02000;PLACA YESO LAMINADO 60 X 60 cm;8.64;2024-01;2022-01;0.7784;0.3183;no;2.4756;"numeros_diferentes;desviacion_fuerte"
+MT-PYL-PLACA;materiales;m2;1;en_revision;3.49;5;FP01200;PLACA DE YESO LAMINADO DE 13 mm;4.7;2024-01;2022-12;0.7518;0.3183;no;1.3467;numeros_diferentes
+MT-SOPORTE-ANTIVIB;materiales;ud;1;pendiente;5.696203;1;IV00040;SOPORTE PARA AMPLIFICADORES;6.66;2024-01;2021-12;0.5224;0.0923;si;1.1692;
+MT-SOPORTE-ANTIVIB;materiales;ud;1;pendiente;5.696203;2;UI00100;JUEGO DE SOPORTES PARA RÓTULO;9;2024-01;2022-01;0.4242;0.0923;si;1.5800;
+MT-SOPORTE-ANTIVIB;materiales;ud;1;pendiente;5.696203;3;HC06200;SOPORTE CUERDA;0.65;2024-01;2022-01;0.4017;0.0533;si;0.1141;desviacion_fuerte
+MT-SOPORTE-ANTIVIB;materiales;ud;1;pendiente;5.696203;4;HS02000;"SOPORTE EN ""T"" PARA PANELES DIRECCIONALES";72.66;2024-01;2017-07;0.3549;0.0923;si;12.7559;desviacion_fuerte
+MT-SOPORTE-ANTIVIB;materiales;ud;1;pendiente;5.696203;5;IC61600;SOPORTE PARA TUBERÍA DE HIERRO FUNDIDO;0.41;2024-01;2021-12;0.3337;0.0923;si;0.0720;desviacion_fuerte
+MT-TINTE-MAD;materiales;l;1;en_revision;10.96;;;;;;;;;;;sin_candidato
+MT-TRAMPA-GRASA;materiales;ud;1;pendiente;88.860759;;;;;;;;;;;sin_candidato
+MT-VIDRIO-DECOR;materiales;m2;1;pendiente;51.265823;1;VV00700;VIDRIO DOBLE;15.45;2024-01;2021-12;0.5015;0.1022;si;0.3014;desviacion_fuerte
+MT-VIDRIO-DECOR;materiales;m2;1;pendiente;51.265823;2;VV00800;VIDRIO IMPRESO COLOR 3 A 4 mm;18.96;2024-01;2021-12;0.3917;0.1943;si;0.3698;desviacion_fuerte
+MT-VIDRIO-DECOR;materiales;m2;1;pendiente;51.265823;3;RT01600;PLACA FIBRA DE VIDRIO;4.38;2024-01;2022-01;0.3430;0.1022;si;0.0854;desviacion_fuerte
+MT-VIDRIO-DECOR;materiales;m2;1;pendiente;51.265823;4;IS10;Malla de fibra de vidrio;1.5;2024-01;2018-07;0.3172;0.1022;si;0.0293;desviacion_fuerte
+MT-VIDRIO-DECOR;materiales;m2;1;pendiente;51.265823;5;VV00300;VIDRIO ARMADO COLOR 6 A 7 mm 12x12 mm;36.28;2024-01;2021-12;0.2930;0.1943;si;0.7077;
+MO-OF1;mano_obra;h;0;confirmado_referencia;23.18;1;TO02100;OFICIAL 1ª;23.17;2024-01;2022-12;1.0000;1.0000;si;0.9996;
+MO-OF1;mano_obra;h;0;confirmado_referencia;23.18;2;TO02200;OFICIAL 2ª;22.59;2024-01;2022-12;0.7070;0.7005;no;0.9745;numeros_diferentes
+MO-OF1;mano_obra;h;0;confirmado_referencia;23.18;3;TO02300;OFICIAL 1ª OBRA CIVIL;23.17;2024-01;2022-12;0.5617;1.0000;si;0.9996;
+MT-ALARMA;materiales;ud;0;pendiente;170.886076;1;IC50101N;SIRENA CON COMUNICACIÓN BIDIRECCIONAL CON CENTRAL VÍA RADIO;216;2024-01;2022-03;0.3665;0.2660;si;1.2640;
+MT-ALARMA;materiales;ud;0;pendiente;170.886076;2;IC16100;CENTRAL PROPORCIONAL TEMP. PARA UD. TRATAMIENTO AIRE;219.23;2024-01;2021-12;0.2794;0.1390;si;1.2829;
+MT-ALARMA;materiales;ud;0;pendiente;170.886076;3;IP11000;SISTEMA CENTRAL. PARA 8 CILINDROS DE 75 l FE-13 COMPLETO;2100.68;2024-01;2021-12;0.2420;0.1390;si;12.2929;desviacion_fuerte
+MT-ALARMA;materiales;ud;0;pendiente;170.886076;4;IP10800;SISTEMA CENTRAL. PARA 5 CILINDROS DE 75 l FE-13 COMPLETO;1833.31;2024-01;2021-12;0.2408;0.1390;si;10.7283;desviacion_fuerte
+MT-ALARMA;materiales;ud;0;pendiente;170.886076;5;IP01750;CENTRAL CONVENCIONAL DE 2 ZONAS;209.32;2024-01;2021-12;0.2350;0.0831;si;1.2249;
+MT-AUTOM-PORTON;materiales;ud;0;pendiente;205.063291;1;KW03000;MOTOR ELECTRICO Y MANDO AUTOMÁTICO;1006.63;2024-01;2022-01;0.5217;0.1815;si;4.9089;desviacion_fuerte
+MT-AUTOM-PORTON;materiales;ud;0;pendiente;205.063291;2;KW80020;CUADRO ELÉCTRICO MANDO Y PROTECCIÓN MOTOR PERSIANA;107.05;2024-01;2022-01;0.3558;0.1815;si;0.5220;
+MT-AUTOM-PORTON;materiales;ud;0;pendiente;205.063291;3;11W00046N;MOTOR DE APERTURA TIPO CADENA PARA VENTANA ABATIBLE;94.5;2024-01;2022-02;0.3242;0.1535;si;0.4608;desviacion_fuerte
+MT-BATERIA;materiales;ud;0;pendiente;250.632911;1;IG00110;BATERIA PARA 4 CONTADORES DE GAS NATURAL;375.68;2024-01;2022-01;0.2955;0.1349;si;1.4989;
+MT-BATERIA;materiales;ud;0;pendiente;250.632911;2;IG00120;BATERIA PARA 10 CONTADORES DE GAS NATURAL;776.5;2024-01;2022-01;0.2946;0.1349;si;3.0982;desviacion_fuerte
+MT-BATERIA;materiales;ud;0;pendiente;250.632911;3;IG00130;BATERIA PARA 16 CONTADORES DE GAS NATURAL;1538.84;2024-01;2022-01;0.2896;0.1349;si;6.1398;desviacion_fuerte
+MT-BATERIA;materiales;ud;0;pendiente;250.632911;4;IF01700;BATERIA EXTERIOR FREGADERO F Y C DE 1ª C.;50.77;2024-01;2021-12;0.2513;0.0784;si;0.2026;desviacion_fuerte
+MT-BATERIA;materiales;ud;0;pendiente;250.632911;5;IF06264;BATERIA DE POLIPROPILENO PARA 20 CONTADORES DIVIS. AGUA;207.67;2024-01;2021-12;0.2481;0.1349;si;0.8286;
+MT-BOMBA-AGUA;materiales;ud;0;pendiente;182.278481;1;IC09000;BOMBA RECIRCULACIÓN 20000 l/h Y 15 m.c.a. AGUA CALIENTE;1397.32;2024-01;2021-12;0.2725;0.1371;si;7.6659;desviacion_fuerte
+MT-BOMBA-AGUA;materiales;ud;0;pendiente;182.278481;2;IC09100;BOMBA RECIRCULACIÓN 25000 l/h Y 15 m.c.a. AGUA CALIENTE;1397.32;2024-01;2021-12;0.2718;0.1371;si;7.6659;desviacion_fuerte
+MT-BOMBA-AGUA;materiales;ud;0;pendiente;182.278481;3;IG00400;BOMBA DE PRESIÓN PARA GASOLEO C.DE 45 m.c.a. 500 l;205.05;2024-01;2022-01;0.2701;0.1260;si;1.1249;
+MT-BOMBA-AGUA;materiales;ud;0;pendiente;182.278481;4;IC08900;BOMBA RECIRCULACIÓN 20000 l/h Y 11 m.c.a. AGUA CALIENTE;932.48;2024-01;2021-12;0.2558;0.1371;si;5.1157;desviacion_fuerte
+MT-BOMBA-AGUA;materiales;ud;0;pendiente;182.278481;5;IC08600;BOMBA RECIRCULACIÓN 6000 l/h Y 5,0 m.c.a. AGUA CALIENTE;496.34;2024-01;2021-12;0.2518;0.1371;si;2.7230;desviacion_fuerte
+MT-CAMARA-CCTV;materiales;ud;0;pendiente;96.835443;;;;;;;;;;;sin_candidato
+MT-CONT-DESCARGAS;materiales;ud;0;pendiente;51.265823;1;IF06700;CONTADOR GENERAL 20 mm;112.79;2024-01;2022-12;0.6041;0.0974;si;2.2001;desviacion_fuerte
+MT-CONT-DESCARGAS;materiales;ud;0;pendiente;51.265823;2;IF06900;CONTADOR GENERAL 30 mm;330.92;2024-01;2022-12;0.6028;0.0974;si;6.4550;desviacion_fuerte
+MT-CONT-DESCARGAS;materiales;ud;0;pendiente;51.265823;3;IF07000;CONTADOR GENERAL 40 mm;511.64;2024-01;2021-12;0.6028;0.0974;si;9.9801;desviacion_fuerte
+MT-CONT-DESCARGAS;materiales;ud;0;pendiente;51.265823;4;IF06400;CONTADOR GENERAL 10 mm;80.45;2024-01;2022-12;0.5920;0.0974;si;1.5693;
+MT-CONT-DESCARGAS;materiales;ud;0;pendiente;51.265823;5;IF07100;CONTADOR GENERAL 50 mm;560.93;2024-01;2021-12;0.5863;0.0974;si;10.9416;desviacion_fuerte
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;1;IP08652;MÓDULO DE CONTROL DE 2 ENTRADA;51.86;2024-01;2021-12;0.5464;0.1367;si;0.8444;
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;2;IP08656;MÓDULO DE CONTROL DE 8 ENTRADAS;73.48;2024-01;2021-12;0.5169;0.1367;si;1.1964;
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;3;IP08661;MÓDULO DE CONTROL DE ZONA DE DETECCIÓN;79.89;2024-01;2021-12;0.4735;0.1367;si;1.3007;
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;4;IE11200;MODULO HOMOLOGADO PARA ALOJAMIENTO DE CONTADOR;57.97;2024-01;2021-12;0.3004;0.1095;si;0.9438;
+MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;5;IP08680;MÓDULO AISLADOR DE LINEA;47.04;2024-01;2021-12;0.2791;0.0675;si;0.7659;
+MT-DOM-CENTRAL;materiales;ud;0;pendiente;205.063291;1;IP08600;MODULO 2 ZONAS EXTINCIÓN PARA CENTRAL DETC. Y EXTINCION;85.15;2024-01;2021-12;0.2898;0.0968;si;0.4152;desviacion_fuerte
+MT-DOM-CENTRAL;materiales;ud;0;pendiente;205.063291;2;IP01750;CENTRAL CONVENCIONAL DE 2 ZONAS;209.32;2024-01;2021-12;0.2350;0.0466;si;1.0208;
+MT-DOM-CENTRAL;materiales;ud;0;pendiente;205.063291;3;IC16200;CENTRAL REGULACIÓN DE TEMPERATURA, CALEFACCIÓN;195.76;2024-01;2021-12;0.2220;0.0466;si;0.9546;
+MT-DOM-CENTRAL;materiales;ud;0;pendiente;205.063291;4;IC15700;CENTRAL DETECCIÓN CO, 2 MÓDULOS, 12 DETEC. POR MOD. 2 EXTRAC.;973.88;2024-01;2021-12;0.2193;0.0968;si;4.7492;desviacion_fuerte
+MT-DOM-CENTRAL;materiales;ud;0;pendiente;205.063291;5;IC15500;CENTRAL DETECCIÓN CO, 1 MÓDULOS, 12 DETEC. POR MOD. 1 EXTRAC.;800.27;2024-01;2021-12;0.2189;0.0968;si;3.9026;desviacion_fuerte
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;1;IP08600;MODULO 2 ZONAS EXTINCIÓN PARA CENTRAL DETC. Y EXTINCION;85.15;2024-01;2021-12;0.3834;0.2168;si;1.4580;
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;2;IE11200;MODULO HOMOLOGADO PARA ALOJAMIENTO DE CONTADOR;57.97;2024-01;2021-12;0.3004;0.1380;si;0.9926;
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;3;IP08680;MÓDULO AISLADOR DE LINEA;47.04;2024-01;2021-12;0.2791;0.0850;si;0.8055;
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;4;IP08652;MÓDULO DE CONTROL DE 2 ENTRADA;51.86;2024-01;2021-12;0.2698;0.0850;si;0.8880;
+MT-DOM-DIMMER;materiales;ud;0;en_revision;58.4;5;IP08672;MÓDULO DE MANIOBRA 2 SALIDAS;69.29;2024-01;2021-12;0.2608;0.0850;si;1.1865;
+MT-DOM-ENCHUFE;materiales;ud;0;pendiente;31.898734;1;IP08652;MÓDULO DE CONTROL DE 2 ENTRADA;51.86;2024-01;2021-12;0.5464;0.1868;si;1.6258;
+MT-DOM-ENCHUFE;materiales;ud;0;pendiente;31.898734;2;IP08656;MÓDULO DE CONTROL DE 8 ENTRADAS;73.48;2024-01;2021-12;0.5169;0.1868;si;2.3035;desviacion_fuerte
+MT-DOM-ENCHUFE;materiales;ud;0;pendiente;31.898734;3;IP08661;MÓDULO DE CONTROL DE ZONA DE DETECCIÓN;79.89;2024-01;2021-12;0.4735;0.1868;si;2.5045;desviacion_fuerte
+MT-DOM-ENCHUFE;materiales;ud;0;pendiente;31.898734;4;IE11200;MODULO HOMOLOGADO PARA ALOJAMIENTO DE CONTADOR;57.97;2024-01;2021-12;0.3004;0.1497;si;1.8173;
+MT-DOM-ENCHUFE;materiales;ud;0;pendiente;31.898734;5;IP08680;MÓDULO AISLADOR DE LINEA;47.04;2024-01;2021-12;0.2791;0.0922;si;1.4747;
+MT-DOM-PANEL;materiales;ud;0;pendiente;102.531646;1;IP08650;PANEL DE CONTROL DE EXTINCIÓN;463.84;2024-01;2021-12;0.6299;0.1594;si;4.5239;desviacion_fuerte
+MT-DOM-PANEL;materiales;ud;0;pendiente;102.531646;2;CM00600;PANEL METÁLICO 50x50 cm;50;2024-01;2022-12;0.3497;0.0707;si;0.4877;desviacion_fuerte
+MT-DOM-PANEL;materiales;ud;0;pendiente;102.531646;3;WW00301N;MATERIAL COMPLEMENTARIO O PZAS. ESPECIALES PARA PANEL;3.94;2024-01;2022-02;0.2705;0.1246;si;0.0384;desviacion_fuerte
+MT-DOM-PANEL;materiales;ud;0;pendiente;102.531646;4;CM00500;PANEL METÁLICO 50x300 cm;298.5;2024-01;2022-12;0.2605;0.0707;si;2.9113;desviacion_fuerte
+MT-DOM-PANEL;materiales;ud;0;pendiente;102.531646;5;CM00400;PANEL METÁLICO 50x250 cm;248.75;2024-01;2022-12;0.2598;0.0707;si;2.4261;desviacion_fuerte
+MT-DOM-PASARELA;materiales;ud;0;pendiente;102.531646;;;;;;;;;;;sin_candidato
+MT-DOM-PERSIANA;materiales;ud;0;pendiente;54.683544;1;IP08661;MÓDULO DE CONTROL DE ZONA DE DETECCIÓN;79.89;2024-01;2021-12;0.7165;0.2668;si;1.4610;
+MT-DOM-PERSIANA;materiales;ud;0;pendiente;54.683544;2;IP08652;MÓDULO DE CONTROL DE 2 ENTRADA;51.86;2024-01;2021-12;0.5464;0.1763;si;0.9484;
+MT-DOM-PERSIANA;materiales;ud;0;pendiente;54.683544;3;IP08656;MÓDULO DE CONTROL DE 8 ENTRADAS;73.48;2024-01;2021-12;0.5169;0.1763;si;1.3437;
+MT-DOM-PERSIANA;materiales;ud;0;pendiente;54.683544;4;IP08680;MÓDULO AISLADOR DE LINEA;47.04;2024-01;2021-12;0.2791;0.0871;si;0.8602;
+MT-DOM-PERSIANA;materiales;ud;0;pendiente;54.683544;5;IP08672;MÓDULO DE MANIOBRA 2 SALIDAS;69.29;2024-01;2021-12;0.2608;0.0871;si;1.2671;
+MT-DOM-REPETIDOR;materiales;ud;0;pendiente;51.265823;;;;;;;;;;;sin_candidato
+MT-DOM-SENSOR-GAS;materiales;ud;0;pendiente;34.177215;1;IC26900;DETECTOR AUTOMÁTICO;30.62;2024-01;2021-12;0.5242;0.1076;si;0.8959;
+MT-DOM-SENSOR-GAS;materiales;ud;0;pendiente;34.177215;2;IP80150;DETECTOR DE FLUJO;263.15;2024-01;2021-12;0.4531;0.1076;si;7.6996;desviacion_fuerte
+MT-DOM-SENSOR-GAS;materiales;ud;0;pendiente;34.177215;3;IE15005;DETECTOR ELEMENTOS DE PRESENCIA;57.71;2024-01;2022-12;0.4416;0.1076;si;1.6886;
+MT-DOM-SENSOR-GAS;materiales;ud;0;pendiente;34.177215;4;IC27000;DETECTOR MONÓXIDO CARBONO CON PILOTOS FUNCIONAM. Y ALARMA;104.28;2024-01;2021-12;0.3519;0.2798;si;3.0512;desviacion_fuerte
+MT-DOM-SENSOR-GAS;materiales;ud;0;pendiente;34.177215;5;IP03100;DETECTOR ÓPTICO DE HUMO;53.92;2024-01;2021-12;0.2992;0.1076;si;1.5777;
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;1;IC26900;DETECTOR AUTOMÁTICO;30.62;2024-01;2021-12;0.5242;0.0974;si;0.7853;
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;2;IP80150;DETECTOR DE FLUJO;263.15;2024-01;2021-12;0.4531;0.0974;si;6.7492;desviacion_fuerte
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;3;IE15005;DETECTOR ELEMENTOS DE PRESENCIA;57.71;2024-01;2022-12;0.4416;0.0974;si;1.4801;
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;4;IP03100;DETECTOR ÓPTICO DE HUMO;53.92;2024-01;2021-12;0.2992;0.0974;si;1.3829;
+MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;5;IP03200;DETECTOR TÉRMICO TERMOSTÁTICO;29.01;2024-01;2021-12;0.2983;0.0974;si;0.7440;
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;1;006902340;SENSOR DE HUMEDAD AMBIENTE;165.33;2024-01;2023-03;0.3188;0.1393;si;3.7686;desviacion_fuerte
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;2;5123008010;SENSOR DE TEMPERATURA PARA CONDUCTOS STD100-200;41.09;2024-01;2023-03;0.2628;0.2153;si;0.9366;
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;3;004600100;SENSOR TEMPERATURA AMBIENTE STR100;21.65;2024-01;2023-03;0.2096;0.1393;si;0.4935;desviacion_fuerte
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;4;5141100010;SENSOR DE TEMPERATURA EXTERIOR STO100;40.39;2024-01;2023-03;0.2095;0.1393;si;0.9207;
+MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;5;5123104010;SENSOR DE TEMPERATURA DE INMERSIÓN STP100-100;41.66;2024-01;2023-03;0.2032;0.1393;si;0.9496;
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;1;006902340;SENSOR DE HUMEDAD AMBIENTE;165.33;2024-01;2023-03;0.3188;0.1162;si;3.7686;desviacion_fuerte
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;2;5123008010;SENSOR DE TEMPERATURA PARA CONDUCTOS STD100-200;41.09;2024-01;2023-03;0.2628;0.1796;si;0.9366;
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;3;004602800;SENSOR TEMP. AMBIENTE CON DISPLAY STR150;65.82;2024-01;2023-03;0.2383;0.1802;si;1.5003;
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;4;004600100;SENSOR TEMPERATURA AMBIENTE STR100;21.65;2024-01;2023-03;0.2096;0.1162;si;0.4935;desviacion_fuerte
+MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;5;5141100010;SENSOR DE TEMPERATURA EXTERIOR STO100;40.39;2024-01;2023-03;0.2095;0.1162;si;0.9207;
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;1;006902340;SENSOR DE HUMEDAD AMBIENTE;165.33;2024-01;2023-03;0.3188;0.1156;si;4.2403;desviacion_fuerte
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;2;5123008010;SENSOR DE TEMPERATURA PARA CONDUCTOS STD100-200;41.09;2024-01;2023-03;0.2628;0.1786;si;1.0539;
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;3;004602800;SENSOR TEMP. AMBIENTE CON DISPLAY STR150;65.82;2024-01;2023-03;0.2383;0.1792;si;1.6881;
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;4;004600100;SENSOR TEMPERATURA AMBIENTE STR100;21.65;2024-01;2023-03;0.2096;0.1156;si;0.5553;
+MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;5;5141100010;SENSOR DE TEMPERATURA EXTERIOR STO100;40.39;2024-01;2023-03;0.2095;0.1156;si;1.0359;
+MT-DOM-SENSOR-TEMP;materiales;ud;0;pendiente;25.063291;1;006902340;SENSOR DE HUMEDAD AMBIENTE;165.33;2024-01;2023-03;1.0000;0.3957;si;6.5965;desviacion_fuerte
+MT-DOM-SENSOR-TEMP;materiales;ud;0;pendiente;25.063291;2;004600100;SENSOR TEMPERATURA AMBIENTE STR100;21.65;2024-01;2023-03;0.6322;0.3805;si;0.8638;
+MT-DOM-SENSOR-TEMP;materiales;ud;0;pendiente;25.063291;3;004600500;SENSOR TEMPERATURA AMBIENTE STR106;55.98;2024-01;2023-03;0.5626;0.3805;si;2.2335;desviacion_fuerte
+MT-DOM-SENSOR-TEMP;materiales;ud;0;pendiente;25.063291;4;006902331;SENSOR COMBINADA DE TEMPERATURA Y HUMEDAD SHD100-T;222.42;2024-01;2023-03;0.4984;0.3907;si;8.8743;desviacion_fuerte
+MT-DOM-SENSOR-TEMP;materiales;ud;0;pendiente;25.063291;5;5141100010;SENSOR DE TEMPERATURA EXTERIOR STO100;40.39;2024-01;2023-03;0.4165;0.2508;si;1.6115;
+MT-DOM-TECLADO;materiales;ud;0;pendiente;39.873418;1;IN00351N;TECLADO COMUNICACIÓN VÍA RADIO;95.25;2024-01;2022-03;0.2751;0.1422;si;2.3888;desviacion_fuerte
+MT-DOM-TERMOSTATO;materiales;ud;0;pendiente;62.658228;1;IC26700;CUADRO CONTROL REMOTO CON TERMOSTATO, VENTILOCONVECTOR;49.95;2024-01;2021-12;0.4486;0.2070;si;0.7972;
+MT-DOM-TERMOSTATO;materiales;ud;0;pendiente;62.658228;2;IF31700;ACUMULADOR PARA A.C.S. 100 l ACERO INOX. CON TERMOSTATO;576.24;2024-01;2021-12;0.4162;0.1763;si;9.1966;desviacion_fuerte
+MT-DOM-TERMOSTATO;materiales;ud;0;pendiente;62.658228;3;IF32000;ACUMULADOR PARA A.C.S. 300 l ACERO INOX. CON TERMOSTATO;1690.31;2024-01;2021-12;0.4116;0.1763;si;26.9767;desviacion_fuerte
+MT-DOM-TERMOSTATO;materiales;ud;0;pendiente;62.658228;4;IF32100;ACUMULADOR PARA A.C.S. 500 l ACERO INOX. CON TERMOSTATO;2471.12;2024-01;2021-12;0.4094;0.1763;si;39.4381;desviacion_fuerte
+MT-DOM-TERMOSTATO;materiales;ud;0;pendiente;62.658228;5;IF31800;ACUMULADOR PARA A.C.S. 140 l ACERO INOX. CON TERMOSTATO;622.35;2024-01;2021-12;0.3871;0.1763;si;9.9325;desviacion_fuerte
+MT-DPS-1;materiales;ud;0;en_revision;343.26;1;IE13800;PROTECTOR SOBRETENSIÓN TRANSITORIA (1P+N);178.38;2024-01;2022-12;0.7101;0.2729;si;0.5197;
+MT-DPS-1;materiales;ud;0;en_revision;343.26;2;IE13810;PROTECTOR SOBRETENSIÓN TRANSITORIA (3P+N);293.62;2024-01;2022-12;0.5809;0.2253;no;0.8554;numeros_diferentes
+MT-DPS-1;materiales;ud;0;en_revision;343.26;3;IE13820;PROTECTOR SOBRETENSIÓN PERMANENTE (1P+N);107.48;2024-01;2022-12;0.4144;0.1544;si;0.3131;desviacion_fuerte
+MT-DPS-1;materiales;ud;0;en_revision;343.26;4;MT50SPL080N;PROTECTOR PARA CABO, DE PVC, COLOR AMARILLO;4.8;2024-01;2022-02;0.3137;0.1616;no;0.0140;"numeros_diferentes;desviacion_fuerte"
+MT-DPS-1;materiales;ud;0;en_revision;343.26;5;IE13830;PROTECTOR SOBRETENSIÓN PERMANENTE (3P+N);204.98;2024-01;2022-12;0.2839;0.1068;no;0.5972;numeros_diferentes
+MT-DPS-2;materiales;ud;0;en_revision;197.54;1;IE13800;PROTECTOR SOBRETENSIÓN TRANSITORIA (1P+N);178.38;2024-01;2022-12;0.5861;0.2263;no;0.9030;numeros_diferentes
+MT-DPS-2;materiales;ud;0;en_revision;197.54;2;IE13810;PROTECTOR SOBRETENSIÓN TRANSITORIA (3P+N);293.62;2024-01;2022-12;0.5809;0.2263;no;1.4864;numeros_diferentes
+MT-DPS-2;materiales;ud;0;en_revision;197.54;3;MT50SPL080N;PROTECTOR PARA CABO, DE PVC, COLOR AMARILLO;4.8;2024-01;2022-02;0.3137;0.1623;no;0.0243;"numeros_diferentes;desviacion_fuerte"
+MT-DPS-2;materiales;ud;0;en_revision;197.54;4;IE13820;PROTECTOR SOBRETENSIÓN PERMANENTE (1P+N);107.48;2024-01;2022-12;0.2865;0.1072;no;0.5441;numeros_diferentes
+MT-DPS-2;materiales;ud;0;en_revision;197.54;5;IE13830;PROTECTOR SOBRETENSIÓN PERMANENTE (3P+N);204.98;2024-01;2022-12;0.2839;0.1072;no;1.0377;numeros_diferentes
+MT-DPS-3;materiales;ud;0;pendiente;28.481013;1;IE13830;PROTECTOR SOBRETENSIÓN PERMANENTE (3P+N);204.98;2024-01;2022-12;0.4198;0.1517;si;7.1971;desviacion_fuerte
+MT-DPS-3;materiales;ud;0;pendiente;28.481013;2;IE13810;PROTECTOR SOBRETENSIÓN TRANSITORIA (3P+N);293.62;2024-01;2022-12;0.4071;0.1517;si;10.3093;desviacion_fuerte
+MT-DPS-3;materiales;ud;0;pendiente;28.481013;3;MT50SPL080N;PROTECTOR PARA CABO, DE PVC, COLOR AMARILLO;4.8;2024-01;2022-02;0.3137;0.1553;no;0.1685;"numeros_diferentes;desviacion_fuerte"
+MT-DPS-3;materiales;ud;0;pendiente;28.481013;4;IE13820;PROTECTOR SOBRETENSIÓN PERMANENTE (1P+N);107.48;2024-01;2022-12;0.2865;0.1026;no;3.7737;"numeros_diferentes;desviacion_fuerte"
+MT-DPS-3;materiales;ud;0;pendiente;28.481013;5;IE13800;PROTECTOR SOBRETENSIÓN TRANSITORIA (1P+N);178.38;2024-01;2022-12;0.2778;0.1026;no;6.2631;"numeros_diferentes;desviacion_fuerte"
+MT-DPS-DATOS;materiales;ud;0;pendiente;34.177215;1;MT50SPL080N;PROTECTOR PARA CABO, DE PVC, COLOR AMARILLO;4.8;2024-01;2022-02;0.3137;0.1588;si;0.1404;desviacion_fuerte
+MT-DPS-DATOS;materiales;ud;0;pendiente;34.177215;2;IE13820;PROTECTOR SOBRETENSIÓN PERMANENTE (1P+N);107.48;2024-01;2022-12;0.2865;0.1049;si;3.1448;desviacion_fuerte
+MT-DPS-DATOS;materiales;ud;0;pendiente;34.177215;3;IE13830;PROTECTOR SOBRETENSIÓN PERMANENTE (3P+N);204.98;2024-01;2022-12;0.2839;0.1049;si;5.9976;desviacion_fuerte
+MT-DPS-DATOS;materiales;ud;0;pendiente;34.177215;4;IE13800;PROTECTOR SOBRETENSIÓN TRANSITORIA (1P+N);178.38;2024-01;2022-12;0.2778;0.1049;si;5.2193;desviacion_fuerte
+MT-DPS-DATOS;materiales;ud;0;pendiente;34.177215;5;IE13810;PROTECTOR SOBRETENSIÓN TRANSITORIA (3P+N);293.62;2024-01;2022-12;0.2753;0.1049;si;8.5911;desviacion_fuerte
+MT-HIDRONEUMATICO;materiales;ud;0;pendiente;273.417722;;;;;;;;;;;sin_candidato
+MT-INVERSOR;materiales;ud;0;pendiente;318.987342;1;TR05008N;INVERSOR TRIFÁSICO 20 kW;1832.68;2024-01;2022-03;0.3892;0.1567;si;5.7453;desviacion_fuerte
+MT-INVERSOR;materiales;ud;0;pendiente;318.987342;2;TR05009N;INVERSOR TRIFÁSICO 30 kW;1936.54;2024-01;2022-03;0.3887;0.1567;si;6.0709;desviacion_fuerte
+MT-INVERSOR;materiales;ud;0;pendiente;318.987342;3;TR05006N;INVERSOR TRIFÁSICO 10 kW;1511.37;2024-01;2022-03;0.3849;0.1567;si;4.7380;desviacion_fuerte
+MT-INVERSOR;materiales;ud;0;pendiente;318.987342;4;TR05007N;INVERSOR TRIFÁSICO 15 kW;1712.37;2024-01;2022-03;0.3782;0.1567;si;5.3681;desviacion_fuerte
+MT-INVERSOR;materiales;ud;0;pendiente;318.987342;5;TR05010N;INVERSOR TRIFÁSICO 60 kW;2098.89;2024-01;2022-03;0.3741;0.1567;si;6.5799;desviacion_fuerte
+MT-PANEL-SOLAR;materiales;ud;0;pendiente;205.063291;1;CM00600;PANEL METÁLICO 50x50 cm;50;2024-01;2022-12;0.3497;0.0925;si;0.2438;desviacion_fuerte
+MT-PANEL-SOLAR;materiales;ud;0;pendiente;205.063291;2;WXX00302N;PANEL SOLAR FOTOVOLTAICO MONOCRISTALINO 400Wp/24v;146.28;2024-01;2016-10;0.3398;0.2521;si;0.7133;
+MT-PANEL-SOLAR;materiales;ud;0;pendiente;205.063291;3;IP08650;PANEL DE CONTROL DE EXTINCIÓN;463.84;2024-01;2021-12;0.2794;0.0925;si;2.2619;desviacion_fuerte
+MT-PANEL-SOLAR;materiales;ud;0;pendiente;205.063291;4;WW00301N;MATERIAL COMPLEMENTARIO O PZAS. ESPECIALES PARA PANEL;3.94;2024-01;2022-02;0.2705;0.1630;si;0.0192;desviacion_fuerte
+MT-PANEL-SOLAR;materiales;ud;0;pendiente;205.063291;5;CM00500;PANEL METÁLICO 50x300 cm;298.5;2024-01;2022-12;0.2605;0.0925;si;1.4556;
+MT-PARARRAYOS-PDA;materiales;ud;0;pendiente;432.911392;;;;;;;;;;;sin_candidato
+MT-PARARRAYOS-PUNTA;materiales;ud;0;pendiente;74.050633;;;;;;;;;;;sin_candidato
+MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;1;DW01300;ROTULO DENOMINADOR DE PLANTA METACRILATO;31.78;2024-01;2022-12;0.2772;0.0850;si;0.0232;desviacion_fuerte
+MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;2;DW01200;ROTULO DENOMINADOR DE PLANTA CERÁMICO;42.61;2024-01;2022-12;0.2653;0.0850;si;0.0312;desviacion_fuerte
+MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;3;UJ01400;PLANTA TREPADORA BUEN PORTE;3.48;2024-01;2022-01;0.2317;0.0850;si;0.0025;desviacion_fuerte
+MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;4;UJ01500;PLANTA VIVÁCEA DECORATIVA Y DE FLOR;0.99;2024-01;2022-01;0.2317;0.0850;si;0.0007;desviacion_fuerte
+MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;5;DW01100;ROTULO DENOMINADOR DE PLANTA EN LATÓN PULIDO;23.53;2024-01;2022-12;0.2218;0.0850;si;0.0172;desviacion_fuerte

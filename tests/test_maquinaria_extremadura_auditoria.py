@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 """Observaciones parciales de Extremadura, sin aplicación automática."""
 import csv
 from decimal import Decimal
@@ -20,8 +21,10 @@ def test_observaciones_extremadura_son_candidatos_no_precios_aplicados():
     for obs in observaciones:
         r = auditoria[obs['codigo_recurso']]
         assert r['estado_auditoria'] == 'en_revision'
-        assert not r['precio_revisado']
-        assert Decimal(matriz[obs['codigo_recurso']]['precio_referencia']) == Decimal(r['precio_matriz'])
+        assert (not r['precio_revisado']
+                or r['precio_revisado'] == cierre.precio_revisado(obs['codigo_recurso'], ''))
+        assert (Decimal(matriz[obs['codigo_recurso']]['precio_referencia'])
+                == cierre.precio(obs['codigo_recurso'], r['precio_matriz']))
         assert obs['unidad_fuente'] == 'h' and obs['fecha_fuente_bruta'] == '240426'
         assert obs['codigo_fuente'].startswith('M') and Decimal(obs['precio_fuente']) > 0
         assert 'juntaex.es/documents/' in obs['url_fuente']

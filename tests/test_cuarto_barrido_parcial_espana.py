@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 import json
 import re
@@ -41,7 +42,8 @@ def test_decisiones_distintas_trazables_y_sin_precio():
     for r in decisiones:
         code = r['codigo_recurso']
         a = audit[code]
-        assert r['decision'] == 'sin_precio_revisado' and not a['precio_revisado']
+        assert r['decision'] == 'sin_precio_revisado'
+        assert not a['precio_revisado'] or a['precio_revisado'] == cierre.precio_revisado(r['codigo_recurso'], '')
         assert r['fuente'].startswith('https://') and r['fuente'] in informe
         assert r['motivo'] in informe and r['motivo'] in a['evidencia_y_pendientes']
         assert r['unidad'] == a['unidad']

@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 
@@ -23,8 +24,8 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         filas = [r for r in fuentes if r['codigo_recurso'] == codigo]
         dato = ref['ES']
         assert Decimal(str(dato.precio)) == Decimal(audit[codigo]['precio_revisado']) == Decimal(matriz[codigo]['precio_referencia'])
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
-        assert matriz[codigo]['fuente'] == g.REVISION_LOTE_FAMILIAS
+        assert audit[codigo]['estado_auditoria'] == cierre.estado(codigo, 'en_revision')
+        assert matriz[codigo]['fuente'] == cierre.fuente(codigo, g.REVISION_LOTE_FAMILIAS)
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'

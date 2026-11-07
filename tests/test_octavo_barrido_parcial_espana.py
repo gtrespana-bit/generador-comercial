@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 import json
 import re
@@ -41,7 +42,7 @@ def test_decisiones_y_trazabilidad():
     for r in decisiones:
         a = auditoria[r['codigo_recurso']]
         assert r['decision'] == 'sin_precio_revisado'
-        assert not a['precio_revisado'] and a['estado_auditoria'] == 'pendiente'
+        assert not a['precio_revisado'] and a['estado_auditoria'] == cierre.estado(r['codigo_recurso'], 'pendiente')
         assert r['unidad'] == a['unidad'] and int(r['usos']) == int(a['partidas_que_lo_usan']) == 1
         assert sum(r['codigo_recurso'] in refs(p) for p in ps) == 1
         assert r['fuente'].startswith('https://') and r['fuente'] in informe

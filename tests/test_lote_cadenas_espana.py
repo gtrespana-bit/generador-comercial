@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 
@@ -22,10 +23,12 @@ def test_observaciones_trazables_y_referencias_en_matriz_y_auditoria():
         m, a = matriz[codigo], auditoria[codigo]
         precio = Decimal(str(dato.precio))
         assert Decimal(m['precio_referencia']) == Decimal(m['precio_min']) == Decimal(m['precio_max']) == precio
-        assert m['fuente'] == g.REVISION_LOTE_CADENAS and m['fecha_consulta'] == '2026-11-07'
+        assert m['fuente'] == cierre.fuente(codigo, g.REVISION_LOTE_CADENAS)
+        assert m['fecha_consulta'] == '2026-11-07'
         assert m['confianza'] == 'derivado' and m['incluye_iva'] == 'no'
         assert m['incluye_transporte'] == 'no_confirmado'
-        assert a['estado_auditoria'] == 'en_revision' and Decimal(a['precio_revisado']) == precio
+        assert a['estado_auditoria'] == cierre.estado(codigo, 'en_revision')
+        assert Decimal(a['precio_revisado']) == precio
         assert all(x['url'] in a['fuente_observada'] for x in fuentes if x['codigo_recurso'] == codigo)
     assert Decimal(str(referencias['MT-PIN-MASILLA']['ES'].precio)) == Decimal('1.23')
     assert Decimal(str(referencias['MT-PYL-PLACA-HD']['ES'].precio)) == Decimal('4.40')
