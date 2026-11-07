@@ -21,3 +21,6 @@ logs/
 # Componente oficial descargado al crear el instalador (no se versiona).
 recursos/MicrosoftEdgeWebview2Setup.exe
 .venv-web/
+# Bases de precios oficiales descargadas (decenas de MB, licencia de la fuente).
+# Se descargan a demanda con tools/descargar_banco_bc3.py y no se versionan.
+bases_precios/
