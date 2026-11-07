@@ -43,9 +43,9 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 if __package__:
-    from .cruzar_precios_bc3 import limpiar, unidad
+    from .cruzar_precios_bc3 import leer_bc3, limpiar, unidad
 else:
-    from cruzar_precios_bc3 import limpiar, unidad
+    from cruzar_precios_bc3 import leer_bc3, limpiar, unidad
 
 ROOT = Path(__file__).resolve().parents[1]
 AUDITORIA = ROOT / "docs/auditoria_precios/espana_2026-11-06.csv"
@@ -128,6 +128,34 @@ def cargar_basicos(path: Path) -> tuple[list[dict], str, str]:
     if not precios:
         raise ValueError("El banco no contiene precios simples utilizables")
     return precios, sha, str(raiz.get("version") or "")
+
+
+def cargar_bc3(path: Path) -> tuple[list[dict], str, str]:
+    """Adapta una base FIEBDC-3 al mismo formato que el banco abierto CERP.
+
+    Se reutiliza el lector de BC3 ya probado (excluye descomposiciones, precios
+    por zona y unidades no reconocidas) para que el cribado sea idéntico.
+    """
+    import hashlib as _hashlib
+
+    precios_bc3, sha = leer_bc3(path)
+    if not precios_bc3:
+        raise ValueError("El BC3 no contiene precios simples utilizables")
+    precios = []
+    for p in precios_bc3:
+        texto = f"{p.descripcion} {p.texto}".strip()
+        precios.append({
+            "codigo": p.codigo,
+            "categoria": p.categoria,
+            "unidad": p.unidad,
+            "descripcion": p.descripcion or p.texto,
+            "precio": p.importe,
+            "edicion": "",
+            "fecha": p.fecha_fuente,
+            "region": "EX",
+            "tokens": set(tokens(p.descripcion or p.texto)),
+        })
+    return precios, sha, str(len(precios))
 
 
 def cribar(recursos: list[dict], precios: list[dict], precio_matriz: dict,
@@ -217,16 +245,33 @@ def leer_matriz(path: Path) -> dict:
 
 def main() -> int:
     analizador = argparse.ArgumentParser(description=__doc__)
-    analizador.add_argument("--basicos", type=Path, required=True,
+    analizador.add_argument("--basicos", type=Path,
                             help="basicos.json del banco abierto CERP (precios BCCA)")
+    analizador.add_argument("--bc3", type=Path,
+                            help="base FIEBDC-3 (p. ej. Extremadura 2026) en lugar de CERP")
+    analizador.add_argument("--banco", default="bcca",
+                            help="familia documental del banco cribado (bcca, extremadura…)")
+    analizador.add_argument("--edicion", default=EDICION_ESPERADA,
+                            help="edición que se anota en la tabla de candidatos")
     analizador.add_argument("--salida", type=Path, default=SALIDA)
     analizador.add_argument("--limite", type=int, default=5)
     argumentar = analizador.parse_args()
     if not 1 <= argumentar.limite <= 50:
         analizador.error("--limite debe estar entre 1 y 50")
-    precios, sha, version = cargar_basicos(argumentar.basicos)
+    if bool(argumentar.basicos) == bool(argumentar.bc3):
+        analizador.error("indique --basicos o --bc3, pero no ambos")
+    if argumentar.bc3:
+        precios, sha, version = cargar_bc3(argumentar.bc3)
+        version = f"BC3 {argumentar.banco} ({version} precios simples)"
+    else:
+        precios, sha, version = cargar_basicos(argumentar.basicos)
     recursos = leer_registro(AUDITORIA)
     filas = cribar(recursos, precios, leer_matriz(MATRIZ), argumentar.limite)
+    for fila in filas:
+        fila["banco"] = argumentar.banco
+        if argumentar.banco != "bcca":
+            fila["edicion_fuente"] = argumentar.edicion
+            fila["fecha_precio"] = fila["fecha_precio"] or argumentar.edicion
     argumentar.salida.parent.mkdir(parents=True, exist_ok=True)
     with argumentar.salida.open("w", encoding="utf-8-sig", newline="") as manejador:
         escritor = csv.DictWriter(manejador, fieldnames=list(filas[0]), delimiter=";",

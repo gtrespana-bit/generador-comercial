@@ -51,11 +51,12 @@ ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs/auditoria_precios"
 REGISTRO = DOC / "espana_2026-11-06.csv"
 MATRIZ = ROOT / "basedatos_partidas/salida/precios_recursos_espana.csv"
-CRIBADO = DOC / "espana_cribado_bcca_2026-11-07.csv"
+CRIBADO_GLOB = "espana_cribado_*.csv"
 ADJUDICACION = DOC / "espana_adjudicacion_2026-11-07.csv"
 SALIDA = DOC / "espana_verificacion_2026-11-07.csv"
 CONFIRMACIONES = DOC / "espana_confirmaciones_2026-11-07.csv"
 PENDIENTES = DOC / "espana_pendientes_verificacion_2026-11-07.csv"
+REVISION_MANUAL_GLOB = "espana_revision_manual_*.csv"
 BANDA = Decimal("0.15")
 # Comercios: dos tiendas no equivalen a una referencia oficial. Se registran
 # como contraste, pero no convierten un precio en confirmado.
@@ -139,10 +140,12 @@ def observaciones_de_fuentes() -> dict[str, list[dict]]:
     return salida
 
 
-def observaciones_de_bcca() -> dict[str, list[dict]]:
-    """Candidatos del banco oficial que acreditan especificación."""
+def observaciones_de_cribado() -> dict[str, list[dict]]:
+    """Candidatos de cada banco cribado (BCCA, Extremadura…) con especificación acreditada."""
     salida: dict[str, list[dict]] = defaultdict(list)
-    for fila in leer(CRIBADO):
+    filas = [f for ruta in sorted(glob.glob(str(DOC / CRIBADO_GLOB)))
+             for f in leer(Path(ruta))]
+    for fila in filas:
         if not fila["codigo_fuente"]:
             continue
         try:
@@ -154,14 +157,15 @@ def observaciones_de_bcca() -> dict[str, list[dict]]:
         precio = numero(fila["precio_fuente"])
         if precio is None:
             continue
+        banco = (fila.get("banco") or "bcca").strip() or "bcca"
         salida[fila["codigo_recurso"]].append({
             "codigo": fila["codigo_fuente"],
-            "familia": "bcca",
+            "familia": banco,
             "precio": precio,
             "unidad": fila["unidad"],
-            "url": (f"BCCA ed. {fila['edicion_fuente']} código {fila['codigo_fuente']} "
+            "url": (f"{banco} ed. {fila['edicion_fuente']} código {fila['codigo_fuente']} "
                     f"(precio declarado {fila['fecha_precio']})"),
-            "fichero": CRIBADO.name,
+            "fichero": banco,
             "detalle": fila["descripcion_fuente"][:90],
             "precision": precision,
         })
@@ -229,12 +233,27 @@ def es_independiente(obs: dict, citadas: set[str]) -> bool:
     return obs["familia"] not in citadas
 
 
+def revisiones_manuales() -> dict[str, dict]:
+    """Correcciones humanas al cribado automático (código → veredicto y motivo).
+
+    El cribado propone; ninguna coincidencia se acepta sin revisar el producto.
+    Estas filas dejan constancia de los casos descartados a mano para que no se
+    vuelvan a proponer como confirmación en el siguiente banco que se ingiera.
+    """
+    salida = {}
+    for ruta in sorted(glob.glob(str(DOC / REVISION_MANUAL_GLOB))):
+        for fila in leer(Path(ruta)):
+            salida[fila["codigo_recurso"]] = fila
+    return salida
+
+
 def verificar() -> list[dict]:
     registro = {f["codigo_recurso"]: f for f in leer(REGISTRO)}
     matriz = {f["codigo_recurso"]: f for f in leer(MATRIZ) if f["pais_codigo"] == "ES"}
     fuentes = observaciones_de_fuentes()
-    bcca = observaciones_de_bcca()
+    bcca = observaciones_de_cribado()
     cierre = observaciones_de_cierre()
+    manuales = revisiones_manuales()
     filas = []
     for codigo, recurso in sorted(registro.items()):
         revisado = numero(recurso["precio_revisado"])
@@ -295,7 +314,8 @@ def verificar() -> list[dict]:
             "delta_pct": f"{delta * 100:+.1f}" if delta is not None else "",
             "codigo_independiente": elegida.get("codigo", "") if elegida else "",
             "detalle_independiente": elegida["detalle"] if elegida else "",
-            "veredicto": veredicto,
+            "veredicto": manuales.get(codigo, {}).get("veredicto") or veredicto,
+            "revision_manual": manuales.get(codigo, {}).get("motivo", ""),
             "descartes": " | ".join(descartadas[:3]),
         })
     return filas

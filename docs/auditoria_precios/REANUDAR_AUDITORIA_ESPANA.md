@@ -8,12 +8,12 @@ Se está auditando la matriz de precios de recursos para España, contrastando l
 
 | Estado en el registro | Recursos | Con precio revisado | Sin precio revisado |
 |---|---:|---:|---:|
-| Confirmado como referencia | 25 | 25 | 0 |
-| En revisión | 363 | 195 | 168 |
+| Confirmado como referencia | 32 | 32 | 0 |
+| En revisión | 356 | 188 | 168 |
 | Pendiente | 0 | 0 | 0 |
 | **Total** | **388** | **220** | **168** |
 
-**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados en el cierre y los 7 confirmados después tienen evidencia documentada. Estado de verificación en [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md): 25 confirmados, 8 contrastes comerciales, 26 divergencias, 161 de fuente única y 168 sin precio auditado. Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 220 precios revisados comprenden 211 materiales y 9 recursos de mano de obra. **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
+**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados en el cierre y los 7 confirmados después tienen evidencia documentada. Estado de verificación en [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md): 32 confirmados, 7 contrastes comerciales, 56 divergencias, 125 de fuente única y 168 sin precio auditado. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 220 precios revisados comprenden 211 materiales y 9 recursos de mano de obra. **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
 
 ### Qué significa «precio revisado»
 
@@ -39,7 +39,7 @@ Ejemplos: `MT-CEMENTO`, 0,19 €/kg, es media de dos ofertas puntuales sin IVA n
 ## Cómo continuar
 
 1. Leer [el informe de cierre](ESPANA_CIERRE_2026-11-07.md) y [CONTINUIDAD.md](CONTINUIDAD.md). El primer ciclo está cerrado; lo que queda son cuatro frentes de método, no de búsqueda de precios.
-2. Para **confirmar más precios** hace falta una segunda fuente independiente: la Base de Extremadura 2026 (BC3 público) o un banco con licencia. Ver el apartado 7 de [la verificación](ESPANA_VERIFICACION_2026-11-07.md). Sin esa fuente, el techo es 25 confirmados.
+2. Para **seguir confirmando** ya no falta una base: con Extremadura 2026 ingerida se pasó de 25 a 32. Lo que bloquea los 125 de fuente única y los 168 sin precio son **especificaciones sin fijar** (sección de perfil, tipo de herraje, formato de consumible). Dos caminos: un banco con licencia nacional o fijar especificación y pedir cotización. Ver el apartado 7 de [la verificación](ESPANA_VERIFICACION_2026-11-07.md).
 3. Orden de trabajo recomendado por impacto: **desglosar los 64 recursos agregados** (`MT-CONS-DEM` 398 usos, `MT-ELE-CAJA` 177, `MT-PLO-SOP` 169, `MT-TORN` 154); **construir el modelo de coste horario** de la maquinaria de mayor uso (`MQ-TALADRO` 1.025, `MQ-SIERRA` 199, `MQ-ANDAMIO` 190, `MQ-ATORN` 162); **resolver las 23 alertas de divergencia** (`MT-PYL-PASTA` 99, `MT-MADERA-LISTON` 91, `MT-ALAMBRE` 49); y **buscar un banco nacional y vigente** con licencia de uso. Los usos se solapan entre recursos y no equivalen a frecuencia comercial ni impacto económico.
 3. Solicitar o buscar especificaciones y fuentes comparables que permitan resolver los bloqueos: unidad, prestaciones, alcance, zona, fecha, IVA, transporte, consumos y vida útil según corresponda. **No aplicar un precio solo por encontrar un número** ni dar por equivalente una partida instalada y un material, un alquiler diario y un coste horario, o una compra y su amortización.
 4. De los recursos sin precio revisado, 23 de uso cero no se mencionaban en los ocho barridos recientes; no son necesariamente inéditos en los demás informes. Antes de priorizarlos, valorar si tienen utilidad actual en el catálogo y consultar al usuario si procede.

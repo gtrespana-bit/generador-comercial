@@ -1,0 +1,4 @@
+codigo_recurso;veredicto;motivo
+MT-BLQ-20;divergencia_verificada;El candidato de Extremadura es bloque de 25x20x40 cm y el recurso pide 20x20x40: la medida no coincide aunque los números sean compatibles por subconjunto.
+MT-BREAKER;divergencia_verificada;El candidato es un interruptor bipolar de 16 A y el recurso es un interruptor termomagnético; son aparatos distintos y el recurso admite monopolar o bipolar sin fijar.
+MT-PYL-PASTA;divergencia_verificada;El recurso agrupa pasta de juntas y cinta de papel; el candidato cotiza solo pasta, de modo que confirmar el precio validaría un alcance incompleto.

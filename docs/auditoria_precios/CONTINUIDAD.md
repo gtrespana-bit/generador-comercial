@@ -2,6 +2,16 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Segunda base ingerida (Extremadura 2026) — 7 de noviembre de 2026
+
+**32 precios confirmados** (eran 25) al incorporar la Base de Precios de la Construcción de Extremadura 2026 en formato BC3. [Detalle en la verificación](ESPANA_VERIFICACION_2026-11-07.md).
+
+- Ingesta: 18,71 MB, FIEBDC-3/2020, `sha256=ac6f88c7…d5cafd5`; **30.137 precios simples utilizables** tras descartar descomposiciones, listas por zona y unidades ambiguas. Se añadió `--bc3` al cribador (misma lógica de núcleo, unidad y números que con el banco andaluz) y el lector de BC3 pasó a tolerar cp1252 con bytes sueltos. El archivo vive en `bases_precios/` y **no se versiona**.
+- Cribado: 339 recursos con candidato de núcleo común y 72 con precisión ≥ 0,75 y medidas compatibles (BCCA daba 253 y 63). Tabla: `espana_cribado_extremadura_2026-11-07.csv` (1.558 filas).
+- **7 confirmaciones nuevas** por coincidencia con Extremadura (`MT-CINTA-ENM`, `MT-PERFIL-ACERO`, `MT-POLIET`, `MT-BLQ-15`, `MT-BARNIZ-PISO`, `MT-BLQ-10`, `MT-REGISTRO`) y **3 candidatos rechazados a mano** con motivo escrito (`MT-BLQ-20` mide 25 y no 20; `MT-BREAKER` es otro aparato; `MT-PYL-PASTA` incluye cinta que el banco no cotiza). Fichero de revisiones: `espana_revision_manual_2026-11-07.csv`.
+- **30 divergencias nuevas** (56 en total): las más útiles son las de plomería seca, con precios vigentes muy por debajo de 2026 (`MT-PYL-MONT` 0,97 vs 2,07 €/m; `MT-PYL-CANAL` 0,90 vs 1,83). No se corrigen porque el recurso no fija sección ni espesor: quedan las primeras de la lista de corrección.
+- La base nueva **no aportó ni un precio** entre los 168 sin precio auditado: con la regla estricta solo hubo 2 candidatos y ambos se descartaron por alcance. Un banco más no sustituye a fijar especificaciones.
+
 ## Verificación cruzada de precios — 7 de noviembre de 2026
 
 **25 precios confirmados con evidencia independiente** (antes 18). [Reglas, resultados y cola de trabajo](ESPANA_VERIFICACION_2026-11-07.md).
