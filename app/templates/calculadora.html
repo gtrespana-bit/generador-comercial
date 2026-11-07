@@ -56,7 +56,7 @@
     </div>
     <div class="calc-campo calc-campo-corto">
       <label for="calc-cantidad">{{ 'calc.cantidad' | t(_idioma) }}</label>
-      <input id="calc-cantidad" name="cantidad" type="number" inputmode="decimal" min="0.01" step="any" value="{{ cantidad_valor }}">
+      <input id="calc-cantidad" name="cantidad" type="number" inputmode="decimal" min="0.01" max="100000" step="any" value="{{ cantidad_valor }}">
     </div>
     <div class="calc-campo calc-campo-corto">
       <label for="calc-unidad">{{ 'calc.unidad' | t(_idioma) }}</label>
@@ -86,6 +86,48 @@
     </ul>
     {% endif %}
 
+    {% if demo %}
+    {% set en = _idioma == 'en' %}
+    <section class="calc-demo" aria-labelledby="calc-demo-title">
+      <div class="calc-demo-head">
+        <div><span class="calc-demo-tag">{{ 'ONE ITEM · FREE DEMO' if en else 'UNA PARTIDA · DEMOSTRACIÓN GRATUITA' }}</span>
+          <h2 id="calc-demo-title">{{ 'See your estimate in action' if en else 'Así funciona tu presupuesto' }}</h2>
+          <p>{{ 'Try a real catalog item. Change your cost and selling price to see the result.' if en else 'Prueba con una partida del catálogo. Cambia tu coste y precio de venta para ver el resultado.' }}</p>
+        </div>
+      </div>
+      <div class="calc-demo-item"><span>{{ 'SELECTED ITEM' if en else 'PARTIDA SELECCIONADA' }}</span><strong>{{ demo.titulo }}</strong>
+        <a href="{{ demo.ruta_ficha }}">{{ 'View breakdown' if en else 'Ver descompuesto' }} →</a>
+      </div>
+      <p class="calc-demo-hint">{{ 'Choose another item in the table below.' if en else 'Puedes elegir otra partida en la tabla de abajo.' }}</p>
+      {% if demo.error %}<p role="alert">{{ 'Enter a valid non-negative price.' if en else 'Introduce un precio válido igual o superior a cero.' }}</p>{% endif %}
+      <form class="calc-demo-form" method="get" action="{{ ruta }}" id="calc-demo-form"
+            data-currency="{{ moneda }}" data-locale="{{ 'en-US' if en else 'es-ES' }}" data-hours="{{ demo.horas_unit }}"
+            data-na="{{ 'Not available' if en else 'No disponible' }}">
+        <input type="hidden" name="cc" value="{{ cc }}">
+        <input type="hidden" name="apartado" value="{{ _r.apartado.slug }}">
+        <input type="hidden" name="unidad" value="{{ _r.unidad }}">
+        <input type="hidden" name="partida" value="{{ demo.slug }}">
+        <div class="calc-demo-inputs">
+          <div class="calc-campo"><label for="demo-cantidad">{{ 'Quantity' if en else 'Cantidad' }} ({{ demo.unidad }})</label><input id="demo-cantidad" name="cantidad" type="number" min="0.01" max="100000" step="any" value="{{ demo.cantidad }}" required></div>
+          <div class="calc-campo"><label for="demo-coste">{{ 'Unit cost' if en else 'Coste unitario' }} ({{ moneda }})</label><input id="demo-coste" name="coste" type="number" min="0" max="1000000000" step="any" value="{{ demo.coste }}" required><small>{{ 'Catalog reference; editable' if en else 'Referencia del catálogo; editable' }}</small></div>
+          <div class="calc-campo"><label for="demo-precio">{{ 'Unit selling price' if en else 'Precio de venta unitario' }} ({{ moneda }})</label><input id="demo-precio" name="precio" type="number" min="0" max="1000000000" step="any" value="{{ demo.venta }}" required><small>{{ 'Catalog reference; editable' if en else 'Referencia del catálogo; editable' }}</small></div>
+        </div>
+        <button class="btn btn-secondary calc-demo-update" type="submit">{{ 'Update calculation' if en else 'Actualizar cálculo' }}</button>
+        <div class="calc-demo-results" aria-live="polite">
+          <div><span>{{ 'Total cost' if en else 'Coste total' }}</span><strong id="demo-total-coste">{{ demo.total_coste }}</strong></div>
+          <div><span>{{ 'Total before tax' if en else 'Venta sin impuestos' }}</span><strong id="demo-total-venta">{{ demo.total_venta }}</strong></div>
+          <div><span>{{ 'Gross profit' if en else 'Beneficio bruto' }}</span><strong id="demo-beneficio">{{ demo.beneficio }}</strong></div>
+          <div><span>{{ 'Margin on sales' if en else 'Margen sobre venta' }}</span><strong id="demo-margen">{{ (demo.margen ~ ' %') if demo.margen is not none else ('Not available' if en else 'No disponible') }}</strong></div>
+          <div><span>{{ 'Labour hours' if en else 'Horas de mano de obra' }}</span><strong id="demo-horas">{{ (demo.horas ~ ' h') if demo.horas_unit else ('Not available' if en else 'No disponible') }}</strong></div>
+        </div>
+      </form>
+      <p class="calc-demo-disclaimer">{{ 'Reference cost = direct cost + complementary costs; the catalog selling price includes a markup. Profit = sales − cost; margin = profit ÷ sales. Tax and other project costs are excluded. Labour hours are the sum of worker-hours from the item breakdown, not elapsed time; changing your cost does not change the catalog productivity. Actual prices and productivity depend on your project.' if en else 'Coste de referencia = coste directo + complementarios; el precio de venta del catálogo incluye un recargo. Beneficio = venta − coste; margen = beneficio ÷ venta. No incluye impuestos ni otros costes de la obra. Las horas son la suma de horas de trabajadores del descompuesto, no la duración de la obra; cambiar el coste no modifica el rendimiento del catálogo. Los precios y rendimientos reales dependen de tu obra.' }}</p>
+      <p class="calc-demo-disclaimer">{{ 'Catalog prices are references, not a guaranteed quote. Check the item breakdown and revision date:' if en else 'Los precios del catálogo son orientativos, no una oferta garantizada. Consulta el descompuesto y su fecha de revisión:' }} {{ demo.fecha or ('not available' if en else 'no disponible') }}.</p>
+      <a class="btn btn-primary" href="/acceso">{{ 'Create a full estimate in CotizaT' if en else 'Crear un presupuesto completo en CotizaT' }} →</a>
+      <p class="calc-demo-hint">{{ 'The demo is not saved or transferred to your account.' if en else 'La demostración no se guarda ni se transfiere a tu cuenta.' }}</p>
+    </section>
+    {% endif %}
+
     <table class="calc-tabla">
       <caption>{{ ('calc.tabla_caption' | t(_idioma)).format(apartado=_r.apartado.nombre, pais=_r.nombre_pais, moneda=_r.moneda) }}</caption>
       <thead>
@@ -98,7 +140,7 @@
       <tbody>
         {% for linea in _r.lineas %}
         <tr>
-          <th scope="row"><a href="{{ linea.ruta }}">{{ linea.titulo }}</a></th>
+          <th scope="row"><a href="{{ linea.ruta }}">{{ linea.titulo }}</a><br><a class="calc-elegir" href="{{ ruta }}?cc={{ cc }}&amp;apartado={{ _r.apartado.slug }}&amp;unidad={{ _r.unidad }}&amp;cantidad={{ _r.cantidad }}&amp;partida={{ linea.slug }}#calc-demo-title">{{ 'Try this item' if _idioma == 'en' else 'Probar esta partida' }}</a></th>
           <td>{{ linea.pu }}</td>
           {% if _r.cantidad %}<td>{{ linea.importe }}</td>{% endif %}
         </tr>
@@ -144,5 +186,6 @@
   </div>
 </section>
 {% include "_footer_publico_en.html" if _idioma == 'en' else "_footer_publico.html" %}
+<script src="{{ 'js/calculadora.js' | asset }}" defer></script>
 </body>
 </html>

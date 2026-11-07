@@ -455,6 +455,9 @@ def calculadora(request: Request):
         apartado=request.query_params.get("apartado", ""),
         cantidad=request.query_params.get("cantidad", ""),
         unidad=request.query_params.get("unidad", ""),
+        partida=request.query_params.get("partida", ""),
+        precio=request.query_params.get("precio", ""),
+        coste=request.query_params.get("coste", ""),
     )
     return TEMPLATES.TemplateResponse(request, "calculadora.html", ctx)
 

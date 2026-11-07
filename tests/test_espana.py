@@ -279,11 +279,16 @@ def test_matriz_espana_mano_obra_en_euros_de_mercado():
     filas = {f["codigo_recurso"]: f for f in _filas_matriz_espana()}
     oficial = float(filas["MO-OF1"]["precio_referencia"])
     peon = float(filas["MO-AYU"]["precio_referencia"])
-    # Coste empresa España 2026 (revisión 2026-08-25): oficial ~18-25 €/h (20.50 medio), peón ~12-18 €/h (15 medio).
-    # Antes era tarifa autónomo con beneficio 22-32/15-21 y daba doble margen.
-    assert 17 <= oficial <= 26, f"Oficial fuera de rango coste empresa ES: {oficial}"
-    assert 11 <= peon <= 19, f"Peón fuera de rango coste empresa ES: {peon}"
-    assert oficial > peon
+    # Punto medio documentado de escenarios Madrid/Barcelona, no nómina real.
+    assert oficial == pytest.approx(23.18)
+    assert peon == pytest.approx(20.39)
+    assert float(filas["MO-AYU-ESP"]["precio_referencia"]) == pytest.approx(20.59)
+    assert float(filas["MO-OF1-ALB"]["precio_referencia"]) == pytest.approx(oficial)
+    for codigo in ("MO-OF1", "MO-OF1-ALB", "MO-AYU", "MO-AYU-ESP"):
+        assert filas[codigo]["confianza"] == "derivado"
+        assert filas[codigo]["fecha_consulta"] == "2026-11-06"
+        assert "REFERENCIA_OPERATIVA" in filas[codigo]["fuente"]
+
 
 
 def test_matriz_espana_tiene_referencias_y_derivadas():

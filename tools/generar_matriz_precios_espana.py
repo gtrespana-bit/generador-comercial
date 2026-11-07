@@ -19,6 +19,7 @@ import csv
 import json
 import statistics
 from dataclasses import dataclass
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +31,12 @@ FECHA_METODOLOGIA = "2026-08-25"
 
 R_ES = "docs/INVESTIGACION_PRECIOS_ESPANA.md"
 METODOLOGIA = "docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md"
+REVISION_MO = "docs/auditoria_precios/ESPANA_REFERENCIA_OPERATIVA_2026.md"
+FUENTES_MO = ROOT / "docs/auditoria_precios/espana_mano_obra_provincias_2026.csv"
+FECHA_REVISION_MO = "2026-11-06"
+REVISION_MATERIALES = "docs/auditoria_precios/ESPANA_MATERIALES_2026.md"
+FUENTES_MATERIALES = ROOT / "docs/auditoria_precios/espana_materiales_ofertas_2026.csv"
+FECHA_REVISION_MATERIALES = "2026-11-06"
 # Tasa de corte usada solo para normalizar el precio base USD antes de
 # aplicarle el factor de mercado observado. El resultado queda congelado en
 # EUR y con fecha; no se recalcula silenciosamente en producción.
@@ -277,9 +284,9 @@ def referencias_mano_obra() -> dict[str, dict[str, Referencia]]:
                 incluye_iva="no_aplica",
                 incluye_transporte="no_aplica",
                 observaciones=(
-                    "Jornal del oficio normalizado a 8 h; tarifa facturada, no incluye automáticamente cargas del empleador."
+                    "Importe histórico por hora; alcance de costes empresariales pendiente de verificación."
                     if directo else
-                    "Tarifa derivada del oficial general por falta de jornal local del oficio; no incluye automáticamente cargas del empleador."
+                    "Importe histórico derivado del oficial general; alcance de costes empresariales pendiente de verificación."
                 ),
             )
     salida["MO-AYU"] = {
@@ -306,6 +313,123 @@ def referencias_mano_obra() -> dict[str, dict[str, Referencia]]:
 
 
 REFERENCIAS.update(referencias_mano_obra())
+
+
+def referencias_mano_obra_revisadas() -> dict[str, dict[str, Referencia]]:
+    """Promedio simple Madrid/Barcelona de escenarios empresariales 2026.
+
+    Retribución de tabla más pensión se usa como aproximación de ambas bases;
+    incluye cuotas empresa del 37,35 % y cuota FLC del 0,35 %, sin aplicar
+    reducciones. Las 1.736 h son jornada de convenio, no horas productivas.
+    El resultado es una referencia derivada, no coste real garantizado.
+    """
+    with FUENTES_MO.open(encoding="utf-8-sig", newline="") as fh:
+        datos = {(r["provincia"], r["categoria_fuente"]): r
+                 for r in csv.DictReader(fh, delimiter=";")}
+    categorias = {
+        "MO-AYU": ("Peón suelto", "Peón ordinario"),
+        "MO-AYU-ESP": ("Peón especializado", "Peón especialista"),
+        "MO-OF1": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-ALB": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-MON": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-CARPM": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-PISO": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-ALI": ("Oficial primera de oficio", "Oficial primera"),
+        "MO-OF1-CAB": ("Oficial primera de oficio", "Oficial primera"),
+
+    }
+    centimo = Decimal("0.01")
+    salida = {}
+    for codigo, nombres in categorias.items():
+        importes = []
+        for provincia, nombre in zip(("Madrid", "Barcelona"), nombres):
+            dato = datos[(provincia, nombre)]
+            if dato["ano_tabla"] != "2026" or not dato["pension_empresa_anual_eur"]:
+                raise ValueError(f"Fuente incompleta o de otro año: {provincia}/{nombre}")
+            salario = Decimal(dato["retribucion_tablas_anual_eur"])
+            pension = Decimal(dato["pension_empresa_anual_eur"])
+            horas = Decimal(dato["jornada_convenio_horas"])
+            if salario <= 0 or pension <= 0 or horas <= 0:
+                raise ValueError(f"Fuente inválida: {provincia}/{nombre}")
+            importes.append((salario + pension) * Decimal("1.377") / horas)
+        redondear = lambda v: v.quantize(centimo, rounding=ROUND_HALF_UP)
+        central = redondear(sum(importes) / len(importes))
+        minimo, maximo = redondear(min(importes)), redondear(max(importes))
+        salida[codigo] = {"ES": ref(
+            central, minimo, maximo, REVISION_MO, confianza="derivado",
+            incluye_iva="no_aplica", incluye_transporte="no_confirmado",
+            observaciones=("Punto medio estimado Madrid/Barcelona 2026: tabla, pensión, "
+                "cuotas empresa y FLC bajo convenio de construcción; bases aproximadas y jornada de convenio. "
+                "No incluye todos los costes indirectos ni beneficio; consultar metodología."),
+        )}
+    return salida
+
+
+REFERENCIAS.update(referencias_mano_obra_revisadas())
+
+
+def referencias_materiales_revisadas() -> dict[str, dict[str, Referencia]]:
+    """Promedio de dos ofertas sin IVA, por unidad física, sin porte.
+
+    Son precios puntuales de productos comparables, no una encuesta nacional.
+    No se redondea cada oferta antes de calcular la media.
+    """
+    agrupadas = {}
+    unidades = {"MT-SAC-ESC": "ud", "MT-CEMENTO": "kg", "MT-ADH-C2TE": "kg",
+                "MT-PYL-PLACA125": "m2", "MT-PYL-MONT": "m",
+                "MT-PYL-CANAL": "m", "MT-JUN-CG2": "kg", "MT-SIL-SAN": "ud",
+                "MT-ELECTRODO": "kg", "MT-MORT-REP-EST": "kg",
+                "MT-MALLA-OBRA": "m2", "MT-SELLA-ELAST": "l", "MT-MORT-IMPER": "kg",
+                "MT-PYL-BANDA": "m", "MT-PYL-PLACA": "m2",
+                "MT-PYL-PASTA-AGARRE": "kg", "MT-ELE-TUB20": "m",
+                "MT-MALLA-FACH": "m2", "MT-AUT-NIV": "kg"}
+    with FUENTES_MATERIALES.open(encoding="utf-8-sig", newline="") as fh:
+        for fila in csv.DictReader(fh, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in unidades or fila["unidad"] != unidades[codigo]:
+                raise ValueError(f"Código o unidad inesperados: {codigo}/{fila['unidad']}")
+            precio, cantidad, iva = (Decimal(fila[k]) for k in
+                                     ("precio_con_iva_eur", "cantidad_unidades_catalogo", "iva_decimal"))
+            if (not all(v.is_finite() for v in (precio, cantidad, iva))
+                    or precio <= 0 or cantidad <= 0 or not 0 <= iva <= 1):
+                raise ValueError(f"Oferta inválida: {codigo}")
+            if fila["fecha_consulta"] != FECHA_REVISION_MATERIALES or not fila["url"]:
+                raise ValueError(f"Oferta sin fecha o fuente válida: {codigo}")
+            agrupadas.setdefault(codigo, []).append(precio / (1 + iva) / cantidad)
+    if set(agrupadas) != set(unidades) or any(len(v) != 2 for v in agrupadas.values()):
+        raise ValueError("Se requieren exactamente dos ofertas por material revisado")
+    observaciones = {
+        "MT-SAC-ESC": "Media de dos ofertas de 10 sacos 50x80 cm; resistencia exacta sin verificar.",
+        "MT-CEMENTO": "Media de dos ofertas CEM I 42,5 R; una sulforresistente.",
+        "MT-ADH-C2TE": "Media de dos ofertas C2 TE para porcelánico; marcas y color pueden diferir.",
+        "MT-PYL-PLACA125": "Media de placas estándar 12,5 mm; Bauhaus la denomina BA 13.",
+        "MT-PYL-MONT": "Media de montantes galvanizados de 70 mm; verificar espesor del sistema.",
+        "MT-PYL-CANAL": "Media de canales galvanizados de 70 mm; espesores 0,55 y 0,6 mm.",
+        "MT-JUN-CG2": "Media de morteros CG2 WA; color y precio final sujetos a confirmación.",
+        "MT-SIL-SAN": "Media de cartuchos sanitarios de 300 ml; comprobar compatibilidad del soporte.",
+        "MT-ELECTRODO": "Media de E7018 3,2 mm; comprobar procedimiento, homologación y conservación.",
+        "MT-MORT-REP-EST": "Media de Morcemseal Todo1 R4; verificar condiciones de aplicación estructural.",
+        "MT-MALLA-OBRA": "Media de mallas naranjas 1x50 m; gramaje de una oferta no indicado.",
+        "MT-SELLA-ELAST": "Media de Soudaflex 45FC en bolsas de 600 ml; juntas hasta capacidad del producto.",
+        "MT-MORT-IMPER": "Media de SikaTop 107 Plus; movimientos de fisura no cubiertos; verificar sistema.",
+        "MT-PYL-BANDA": "Media de bandas estancas de polietileno autoadhesivo para perfiles de 70 mm.",
+        "MT-PYL-PLACA": "Media de placas estándar Pladur BA 15 mm; confirmar stock y disponibilidad.",
+        "MT-PYL-PASTA-AGARRE": "Media de pasta Pladur PA en saco de 20 kg; no usar con aislante adherido.",
+        "MT-ELE-TUB20": "Media de tubo PVC corrugado de 20 mm; comprobar reacción al fuego y normativa.",
+        "MT-MALLA-FACH": "Media de mallas antiálcalis SATE de 160 g/m2; validar sistema completo.",
+        "MT-AUT-NIV": "Media de Niveland 10 para 2 a 10 mm; validar disponibilidad y aplicación.",
+    }
+    salida = {}
+    for codigo, importes in agrupadas.items():
+        redondear = lambda v: v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        salida[codigo] = {"ES": ref(
+            redondear(sum(importes) / len(importes)), redondear(min(importes)),
+            redondear(max(importes)), REVISION_MATERIALES, confianza="derivado",
+            incluye_iva="no", incluye_transporte="no",
+            observaciones=(observaciones[codigo] + " Sin IVA deducible ni porte; "
+                "ofertas puntuales, no media estadística nacional ni coste garantizado."),
+        )}
+    return salida
 
 
 def iter_recursos(data):
@@ -388,13 +512,16 @@ def _numero(valor: float) -> str:
 
 def main():
     data = json.loads(SRC.read_text(encoding="utf-8"))
+    # La canasta histórica se mantiene congelada: una revisión individual no
+    # debe recalibrar silenciosamente cientos de recursos aún pendientes.
     factores = completar_referencias_derivadas(data)
+    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas()}
     rows = []
     codigos = set()
     for codigo, categoria, item in iter_recursos(data):
         codigos.add(codigo)
         for pais, moneda in PAISES:
-            dato = REFERENCIAS.get(codigo, {}).get(pais)
+            dato = referencias_finales.get(codigo, {}).get(pais)
             rows.append({
                 "codigo_recurso": codigo,
                 "descripcion": item["descripcion"],
@@ -408,6 +535,8 @@ def main():
                 "fuente": dato.fuente if dato else "",
                 "fecha_consulta": (
                     FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
+                    else FECHA_REVISION_MO if dato and dato.fuente == REVISION_MO
+                    else FECHA_REVISION_MATERIALES if dato and dato.fuente == REVISION_MATERIALES
                     else FECHA if dato else ""
                 ),
                 "confianza": dato.confianza if dato else "pendiente",
@@ -417,7 +546,7 @@ def main():
                 "observaciones": dato.observaciones if dato else "Pendiente de investigación específica.",
             })
 
-    referencias_huerfanas = sorted(set(REFERENCIAS) - codigos)
+    referencias_huerfanas = sorted(set(referencias_finales) - codigos)
     if referencias_huerfanas:
         raise ValueError(f"Referencias de recursos inexistentes: {referencias_huerfanas}")
     pendientes = [r for r in rows if r["origen"] == "pendiente"]

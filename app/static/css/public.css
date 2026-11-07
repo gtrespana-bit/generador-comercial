@@ -5860,3 +5860,24 @@ button.btn:disabled:hover,
 .btn:is(:disabled, [aria-disabled="true"]) > *,
 button.btn:disabled > * { color: inherit; }
 .btn:is(:disabled, [aria-disabled="true"])::after { display: none; }
+
+/* Muestra de una sola partida: el presupuesto completo permanece en la app. */
+.calc-demo { margin: 1.5rem 0 2rem; padding: clamp(1rem, 3vw, 1.7rem); border: 1px solid #c7d7e7; border-radius: 18px; background: #f4f8fc; }
+.calc-demo-head h2 { margin: .3rem 0; color: #102c50; }
+.calc-demo-head p, .calc-demo-hint { color: #52637b; font-size: .9rem; margin: .35rem 0 .8rem; }
+.calc-demo-tag { color: #386039; font-size: .72rem; font-weight: 800; letter-spacing: .08em; }
+.calc-demo-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem .8rem; padding: .8rem 1rem; background: white; border: 1px solid #dbe5ef; border-radius: 12px; }
+.calc-demo-item span { flex-basis: 100%; color: #64748b; font-size: .72rem; font-weight: 800; letter-spacing: .05em; }
+.calc-demo-item strong { flex: 1 1 260px; }
+.calc-demo-item a, .calc-elegir { font-size: .85rem; font-weight: 700; }
+.calc-demo-inputs { display: flex; flex-wrap: wrap; gap: .8rem; margin: 1rem 0; }
+.calc-demo-inputs .calc-campo { flex: 1 1 170px; }
+.calc-demo-inputs small { color: #52637b; font-size: .76rem; }
+.calc-demo-update { margin-bottom: 1rem; }
+.calc-demo-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .6rem; }
+.calc-demo-results div { padding: .8rem; background: white; border: 1px solid #dbe5ef; border-radius: 10px; min-width: 0; }
+.calc-demo-results span, .calc-demo-results strong { display: block; }
+.calc-demo-results span { color: #52637b; font-size: .76rem; font-weight: 700; }
+.calc-demo-results strong { margin-top: .3rem; font-size: 1.05rem; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.calc-demo-disclaimer { color: #52637b; font-size: .8rem; line-height: 1.55; margin: .9rem 0; }
+@media (max-width: 640px) { .calc-demo-inputs .calc-campo { flex-basis: 100%; } .calc-demo-results { grid-template-columns: repeat(2, minmax(0, 1fr)); } .calc-demo .btn-primary { width: 100%; text-align: center; } }

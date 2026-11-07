@@ -120,9 +120,11 @@ def test_la_moneda_del_documento_manda(alicatado):
         alicatado, pais="España", moneda_documento="MXN", tasa=17.06
     )
     assert resultado.moneda == "MXN"
-    # 27,46 EUR = 30,90 USD = 527,20 MXN. Etiquetar 27,46 como pesos es el
-    # fallo que esto vigila.
-    assert resultado.precio == pytest.approx(527.20, abs=1.0)
+    # La referencia de alicatado puede cambiar al revisar la matriz. Convertir
+    # el precio español actual usando 1 USD = 0,8886 EUR y 17,06 MXN, sin
+    # confundir la tasa del documento con la de origen.
+    euros = precio_de_partida(alicatado, pais="España", moneda_documento="EUR")
+    assert resultado.precio == pytest.approx(euros.precio / 0.8886 * 17.06, abs=0.2)
 
 
 def test_sin_tasa_verificada_no_se_cambia_la_etiqueta(alicatado):
@@ -198,11 +200,17 @@ def test_el_desglose_que_ve_el_cliente_es_el_de_venta(catalogo):
     """El importe de cada línea incluye su parte de margen, como en la ficha."""
     partida = catalogo.query(Partida).filter(Partida.codigo_interno == ALICATADO).one()
     resultado = precio_de_partida(partida, pais="España", moneda_documento="EUR")
-    # El coste real es ~20,14 EUR y el precio 27,46: las líneas son de venta.
+    # El coste procede de la ficha publicada; las líneas son de venta.
+    from app.services import precios_publicos as pp
+
+    indice = pp._indice("ES")
+    ficha = indice["partidas"][indice["por_codigo"][ALICATADO]]
     assert sum(f["importe"] for f in resultado.filas) == pytest.approx(
         resultado.precio, rel=0.01
     )
-    assert resultado.coste_total == pytest.approx(20.14, abs=0.5)
+    assert resultado.coste_total == pytest.approx(
+        ficha["directo"] + ficha["complementarios"], abs=0.01
+    )
     assert resultado.coste_total < resultado.precio
 
 

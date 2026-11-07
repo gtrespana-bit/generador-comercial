@@ -46,11 +46,16 @@ from .services import precios_publicos as pp
 #: ``m2`` conviven en los mismos apartados). Se agrupan para no ofrecer dos
 #: opciones que significan lo mismo.
 _UNIDADES = {
-    "m2": ("m²", "m2", "sq ft", "sf", "sqft", "ft²"),
-    "m3": ("m³", "m3", "cu ft", "cf"),
-    "ml": ("ml", "m", "lf", "lin m", "ft"),
+    "m2": ("m²", "m2"),
+    "ft2": ("sq ft", "sf", "sqft", "ft²"),
+    "m3": ("m³", "m3"),
+    "ft3": ("cu ft", "cf"),
+    "ml": ("ml", "m", "lin m"),
+    "ft": ("lf", "ft", "lin ft"),
     "ud": ("ud", "u", "uds", "ea", "each", "unit"),
-    "kg": ("kg", "lb", "lbs", "t", "tn"),
+    "kg": ("kg",),
+    "lb": ("lb", "lbs"),
+    "t": ("t", "tn"),
     "h": ("h", "hr", "hour"),
     "día": ("día", "dia", "d", "day"),
 }
@@ -85,9 +90,9 @@ def _etiqueta_unidad(clave: str, lang: str) -> str:
     return por_defecto.get(clave, clave)
 
 
-def _importe(valor: float, pais: dict, decimales: int = 2) -> str:
+def _importe(valor: float, pais: dict, decimales: int = 2, ajustar_decimales: bool = True) -> str:
     """Importe con los separadores del país y su moneda."""
-    if valor >= 100_000:
+    if ajustar_decimales and abs(valor) >= 100_000:
         decimales = 0
     miles = str(pais.get("separador_miles") or ",")
     decimal = str(pais.get("separador_decimal") or ".")
@@ -118,7 +123,7 @@ def _numero(texto) -> float:
         valor = float(str(texto).strip().replace(",", "."))
     except (TypeError, ValueError):
         return 0.0
-    if valor != valor:  # NaN
+    if not math.isfinite(valor):  # NaN o infinito
         return 0.0
     return max(0.0, min(valor, 100_000.0))
 
@@ -250,6 +255,7 @@ def calcular(
         lineas.append(
             {
                 "titulo": partida["titulo"],
+                "slug": partida["slug"],
                 "ruta": pp.ruta_partida(codigo, slug_apartado, partida["slug"]),
                 "pu": _importe(pu, pais),
                 "pu_n": pu,
@@ -370,6 +376,9 @@ def contexto_calculadora(
     apartado: str = "",
     cantidad: str = "",
     unidad: str = "",
+    partida: str = "",
+    precio: str = "",
+    coste: str = "",
 ) -> dict:
     """Contexto de la página-herramienta (país y cálculo opcionales)."""
     lang = "en" if getattr(request.state, "lang", "es") == "en" else "es"
@@ -428,10 +437,56 @@ def contexto_calculadora(
         else []
     )
 
+    # La demostración es una única partida concreta, nunca la media del
+    # apartado. Todos los importes parten de su descompuesto publicado.
+    demo = None
+    if resultado and resultado["lineas"]:
+        opciones = resultado["lineas"]
+        elegida = next((x for x in opciones if x["slug"] == partida), opciones[0])
+        ficha = pp.partida(codigo, slug, elegida["slug"])
+        if ficha:
+            def entrada(valor, defecto):
+                if not str(valor or "").strip():
+                    return defecto, False
+                try:
+                    n = float(str(valor).strip().replace(",", "."))
+                    if not math.isfinite(n) or n < 0 or n > 1_000_000_000:
+                        raise ValueError
+                    return n, False
+                except ValueError:
+                    return defecto, True
+
+            # El precio editable se presenta con dos decimales y se calcula
+            # con exactamente lo que ve el usuario; no se redondea el coste de
+            # referencia hasta mostrar el total.
+            venta_ref = round(float(ficha["pu"]), 2)
+            coste_ref = round(float(ficha["directo"]) + float(ficha["complementarios"]), 4)
+            venta, error_venta = entrada(precio, venta_ref)
+            coste_unit, error_coste = entrada(coste, coste_ref)
+            cantidad_demo = resultado["cantidad"]
+            total_coste = coste_unit * cantidad_demo
+            total_venta = venta * cantidad_demo
+            beneficio = total_venta - total_coste
+            demo = {
+                "slug": elegida["slug"], "titulo": ficha["titulo"],
+                "ruta_ficha": elegida["ruta"], "unidad": ficha["unidad"],
+                "venta": venta, "coste": coste_unit,
+                "coste_ref": coste_ref, "venta_ref": venta_ref,
+                "error": error_venta or error_coste,
+                "cantidad": cantidad_demo,
+                "total_coste": _importe(total_coste, PAISES[codigo], ajustar_decimales=False),
+                "total_venta": _importe(total_venta, PAISES[codigo], ajustar_decimales=False),
+                "beneficio": _importe(beneficio, PAISES[codigo], ajustar_decimales=False),
+                "margen": f"{(beneficio / total_venta * 100):.2f}" if total_venta else None,
+                "horas": round(float(ficha.get("horas_mo") or 0) * cantidad_demo, 2),
+                "horas_unit": float(ficha.get("horas_mo") or 0),
+                "fecha": ficha.get("fecha_revision") or "",
+            }
+
     titulo = (
         "Construction cost calculator with real unit prices"
         if en
-        else "Calculadora de presupuesto de obra con precios reales"
+        else "Calculadora de presupuesto de obra con precios de referencia"
     )
     # ≤158 caracteres: por encima, Google corta la meta description a media
     # frase y lo que se lee en el resultado es un final truncado.
@@ -483,6 +538,7 @@ def contexto_calculadora(
         "cc": codigo,
         "obras": obras,
         "resultado": resultado,
+        "demo": demo,
         "hermanos": hermanos,
         "cantidad_valor": _cantidad(_numero(cantidad) or 10),
         "ruta_catalogo": pp.ruta_indice(codigo) if codigo else "",

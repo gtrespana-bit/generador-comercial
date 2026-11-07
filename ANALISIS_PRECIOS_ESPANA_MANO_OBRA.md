@@ -1,5 +1,8 @@
 # Análisis precios España en EUR — mano de obra a fondo (2026-08-25)
 
+> **Aviso de auditoría (2026-11-06):** Las hipótesis y precios de mano de obra de este documento son históricos y no están confirmados. En particular, la hipótesis de AT del 1,50 % no puede generalizarse a todos los oficios y el cálculo de 3.431,76 €/mes requiere revisión. Consulte la [revisión de coste empresarial](docs/auditoria_precios/ESPANA_MANO_OBRA_2026.md) antes de utilizar estas cifras. **Corrección:** la tabla de Barcelona con oficial a 31.290,43 €/año es de 2025, no de 2026; véase [contraste provincial](docs/auditoria_precios/ESPANA_CONTRASTE_PROVINCIAL_2026.md).
+
+
 **Pregunta:** ¿Estamos poniendo un precio muy alto en España, sobre todo mano de obra?  
 **Respuesta corta:** Sí, la matriz anterior usaba **tarifa de autónomo con beneficio** (27 €/h oficial, 18 peón) y generaba doble margen. Se corrige a **coste empresa** 21 €/h oficial y 15 €/h peón (zona media), con especialidades 20-24 €/h. Es 22% más barato y está alineado con coste real 20,50 €/h.
 

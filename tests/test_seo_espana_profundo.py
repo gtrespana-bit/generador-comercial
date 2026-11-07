@@ -89,9 +89,9 @@ def test_tabla_seo_usa_los_mismos_precios_que_la_matriz_espanola():
         }
     tabla = _tabla_mano_obra()
     por_oficio = {fila[0]: fila for fila in tabla["filas"]}
-    assert por_oficio["Oficial de 1.ª albañil"][1] == f"{matriz['MO-OF1-ALB']['precio_referencia']} €/h"
-    assert por_oficio["Peón o ayudante"][1] == f"{matriz['MO-AYU']['precio_referencia']} €/h"
-    assert por_oficio["Oficial electricista"][1] == f"{matriz['MO-OF1-ELE']['precio_referencia']} €/h"
+    assert por_oficio["Oficial de 1.ª albañil"][1] == f"{matriz['MO-OF1-ALB']['precio_referencia'].replace('.', ',')} €/h"
+    assert por_oficio["Peón o ayudante"][1] == f"{matriz['MO-AYU']['precio_referencia'].replace('.', ',')} €/h"
+    assert por_oficio["Oficial electricista"][1] == f"{matriz['MO-OF1-ELE']['precio_referencia'].replace('.', ',')} €/h"
 
 
 def test_tabla_seo_deriva_su_fecha_de_la_matriz_espanola():

@@ -128,6 +128,7 @@ def test_la_calculadora_funciona_en_todos_los_mercados_publicados(cc):
     with _cliente() as client:
         html = client.get(f"/calculadora?cc={cc}&cantidad=10").text
     assert 'class="calc-resultado"' in html, cc
+    assert 'id="calc-demo-form"' in html, cc
     assert pp.ruta_indice(cc) in html, cc
 
 
@@ -171,3 +172,53 @@ def test_la_calculadora_esta_en_el_sitemap_y_en_el_mapa_del_sitio():
     with _cliente() as client:
         assert 'href="/calculadora"' in client.get("/mapa-del-sitio").text
         assert 'href="/en/calculadora"' in client.get("/en/mapa-del-sitio").text
+
+
+def test_demo_calcula_una_partida_con_coste_precio_y_horas_reales():
+    from app.calculadora import contexto_calculadora
+    from starlette.requests import Request
+    ficha = pp.partida("MX", "azulejo-y-porcelanato-en-paredes",
+                       "recubrimiento-de-paramento-interior-con-pieza-azulejo-o-porcelanato-en-capa-fina")
+    request = Request({"type": "http", "method": "GET", "path": "/calculadora", "headers": [], "scheme": "https", "server": ("cotizat.online", 443), "query_string": b""})
+    ctx = contexto_calculadora(request, cc="MX", apartado=ficha["slug_apartado"],
+                              cantidad="20", partida=ficha["slug"], precio="400", coste="250")
+    demo = ctx["demo"]
+    assert demo["titulo"] == ficha["titulo"]
+    assert demo["total_coste"] == "5,000.00 MXN"
+    assert demo["total_venta"] == "8,000.00 MXN"
+    assert demo["beneficio"] == "3,000.00 MXN"
+    assert demo["margen"] == "37.50"
+    assert demo["horas"] == round(ficha["horas_mo"] * 20, 2)
+    assert demo["coste_ref"] == round(ficha["directo"] + ficha["complementarios"], 4)
+
+
+def test_demo_perdida_venta_cero_y_entrada_invalida():
+    from app.calculadora import contexto_calculadora
+    from starlette.requests import Request
+    request = Request({"type": "http", "method": "GET", "path": "/calculadora", "headers": [], "scheme": "https", "server": ("cotizat.online", 443), "query_string": b""})
+    ctx = contexto_calculadora(request, cc="MX", cantidad="10", precio="0", coste="250")
+    assert ctx["demo"]["beneficio"] == "-2,500.00 MXN"
+    assert ctx["demo"]["margen"] is None
+    invalido = contexto_calculadora(request, cc="MX", precio="nan", coste="inf")
+    assert invalido["demo"]["error"]
+    assert invalido["demo"]["venta"] == invalido["demo"]["venta_ref"]
+    assert invalido["demo"]["coste"] == invalido["demo"]["coste_ref"]
+
+
+def test_demo_elegir_partida_no_transfiere_ni_crea_presupuesto():
+    slug = "recubrimiento-de-paramento-interior-con-pieza-azulejo-o-porcelanato-en-capa-fina"
+    with _cliente() as client:
+        html = client.get(f"/calculadora?cc=MX&apartado=azulejo-y-porcelanato-en-paredes&cantidad=20&partida={slug}").text
+    assert 'id="calc-demo-form"' in html
+    assert f'name="partida" value="{slug}"' in html
+    assert 'href="/acceso"' in html
+    assert 'La demostración no se guarda ni se transfiere' in html
+    assert 'Horas de mano de obra' in html
+
+
+def test_unidades_diferentes_no_se_mezclan_sin_conversion():
+    from app.calculadora import _canonica
+    assert _canonica("m²") == _canonica("m2")
+    assert _canonica("sq ft") != _canonica("m2")
+    assert _canonica("lb") != _canonica("kg")
+    assert _canonica("t") != _canonica("kg")
