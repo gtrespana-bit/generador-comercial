@@ -333,7 +333,11 @@
     </div>
     <div class="lp2-value-grid">
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Mira un presupuesto completo", "See a full estimate") }}</h3><p>{{ L("Abre el PDF de ejemplo: capítulos, mediciones, coste interno, beneficio, impuesto de tu mercado y un documento con aspecto profesional.", "Open the sample PDF: sections, measurements, internal cost, profit, your market's tax and a professional-looking document.") }}</p><a href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Abrir el PDF de ejemplo →", "Open the sample PDF →") }}</a></article>
+      {% if pais_codigo in ("CL", "ES") %}
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Incluido en el plan", "Included in the plan") }}</span><h3>{{ L("Tu catálogo ya viene cargado", "Your catalog is ready to use") }}</h3><p>{{ L("Al crear tu espacio en CotizaT, recibes partidas de tu mercado con su APU, listas para presupuestar. No empiezas desde cero.", "When you create your CotizaT workspace, you get local items with their unit price analysis, ready to estimate. You don't start from scratch.") }}</p><a href="#primer-valor">{{ L("Ver cómo funciona el software →", "See how the software works →") }}</a></article>
+      {% else %}
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Revisa precios y APU reales", "Review real prices and unit prices") }}</h3><p>{{ L("El catálogo público muestra partidas con su descompuesto: materiales, mano de obra y equipo. Puedes comprobar de dónde sale cada número.", "The public catalog shows items with their breakdown: materials, labor and equipment. You can check where each number comes from.") }}</p><a href="{{ catalogo_precios.indice if catalogo_precios else '/precios-comparados' }}">{{ L("Explorar precios de obra →", "Explore construction prices →") }}</a></article>
+      {% endif %}
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Calcula tu coste de oportunidad", "Calculate your opportunity cost") }}</h3><p>{{ L("Usa tus propios presupuestos por semana y horas por documento. El resultado es inmediato y no se envía a ningún servidor.", "Use your own estimates per week and hours per document. The result is immediate and isn't sent to any server.") }}</p><a href="#problema" data-ga-event="ir_calculadora">{{ L("Usar la calculadora de arriba →", "Use the calculator above →") }}</a></article>
     </div>
   </div>
@@ -491,7 +495,7 @@
 </section>
 
 {# Puente al catálogo público de precios: enlaces internos de autoridad. #}
-{% if catalogo_precios %}
+{% if catalogo_precios and pais_codigo not in ("CL", "ES") %}
 <section class="mercados-precios" aria-label="{{ L('Precios unitarios publicados', 'Published unit prices') }}">
   <div class="mercados-precios-int">
     <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
@@ -504,7 +508,7 @@
     </ul>
   </div>
 </section>
-{% elif indices_catalogos %}
+{% elif indices_catalogos and pais_codigo not in ("CL", "ES") %}
 <section class="mercados-precios" aria-label="{{ L('Catálogos de precios publicados', 'Published price catalogs') }}">
   <div class="mercados-precios-int">
     <span class="lp2-eyebrow lp2-kicker">{{ L("Catálogo abierto, sin registro", "Open catalog, no signup") }}</span>
