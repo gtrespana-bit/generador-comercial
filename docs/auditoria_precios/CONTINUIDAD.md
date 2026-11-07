@@ -2,6 +2,17 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Maquinaria: modelo de coste horario y decisiones abiertas — 7 de noviembre de 2026
+
+**Sin cambios de precio; el banco no puede confirmar maquinaria.** Informe: [maquinaria y decisiones](ESPANA_MAQUINARIA_DECISION_2026-11-07.md).
+
+- Las tarifas horarias del banco no forman un modelo: 0,84 €/h para un taladro de 750 W y 8,11 €/h para una taladradora mecánica. Invirtiendo el cálculo, el taladro implica ≈230 h de vida útil y la motosierra eléctrica ≈41 h para la misma convención. Son tarifas de origen distinto, así que **ninguna ficha confirma** un recurso horario.
+- Se publica un modelo con parámetros explícitos (`tools/coste_horario_maquinaria_espana.py`) y precios de adquisición con fuente para cuatro máquinas: `MQ-TALADRO` 149,33 € (Bosch GBH 2-26, 180,69 € IVA incl.), `MQ-SIERRA` 72,57 € (Einhell GC-EC 2040), `MQ-CORT-AGUA` 296,69 € (Zipper ZI-FS200) y `MQ-ATORN` 95,00 € (sin batería). Con 250 h de vida el taladro sale a 0,78 €/h frente a los 2,199 €/h actuales; con 1.000 h, 0,27 €/h. **La sensibilidad al parámetro es el resultado**: sin fijar vida útil, energía y consumibles no hay precio defendible.
+- Ocho máquinas siguen sin precio de adquisición con fuente (`MQ-MEZCL`, `MQ-MART-ELEC`, `MQ-LIJAD`, `MQ-BATID`, `MQ-DETECTOR`, `MQ-AMOLA`, `MQ-ASPIR`, `MQ-SOLDADORA`) y el banco no tiene ficha equivalente. `MQ-ANDAMIO` no es convertible a €/h: el banco alquila en €/m²·día y cobra el montaje en €/m².
+- Decisión pendiente y no aplicada: (1) convención de vida útil 250/500/1.000 h; (2) precio de la energía con factura real; (3) cotizar brocas, discos y cadenas o cambiar la descripción; (4) sustituir o no el precio actual (aplicar 0,78 €/h en `MQ-TALADRO` bajaría el coste de 1.025 partidas un 64 %).
+- Los 19 recursos agregados no se tocan: desglosarlos exige crear recursos y **reescribir 968 partidas**.
+- Nota de entorno: el BC3 de Extremadura (18,7 MB, `gitignore`) ya no está en el espacio de trabajo; para volver a cribar hay que subirlo otra vez a la rama.
+
 ## Auditoría de identidad del artículo (Extremadura 2026) — 7 de noviembre de 2026
 
 **37 precios confirmados** (eran 32). Informe: [auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md).

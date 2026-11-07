@@ -1,0 +1,14 @@
+﻿codigo_recurso;precio_actual_eur_h;precio_adquisicion_sin_iva_eur;fuente_precio;coste_250h;coste_500h;coste_1000h;vida_implicita_banco_h;banda_banco_min_eur_h;banda_banco_max_eur_h;fichas_banco;nota
+MQ-TALADRO;2.199013;149.33;DoctorMartillo, Bosch GBH 2-26 DRE 790 W (180,69 EUR IVA incluido);0.78;0.44;0.27;230;0.84;8.11;"M11T010 y M16A590 (taladro 750 W); M03L010 y M11T030 (taladradora mecánica)";El recurso incluye brocas: su coste por hora no está cotizado y no se estima aquí.
+MQ-SIERRA;4.251425;72.57;Ferretería Ibermadrid, Einhell GC-EC 2040 2.000 W espada 40 cm (87,81 EUR IVA incluido);0.57;0.41;0.32;41;2.26;4.36;"M09AM010 motosierra eléctrica 2,26; M09AM060 y M16A440 2,89/3,11; M09AM030 y M09AM020 3,83/4,36";"La banda del banco separa motosierra eléctrica de gasolina; el recurso mezcla sierra circular y motosierra."
+MQ-CORT-AGUA;4.691228;296.69;ManoMano, Zipper ZI-FS200 800 W corte 60 cm (359,00 EUR IVA incluido);1.46;0.78;0.44;38;9.15;33.52;M13F010 y M10HC030/M10HC040/M10HC010: cortadoras de pavimento, no cortadora de azulejo;El banco no tiene cortadora de azulejo con agua: su banda corresponde a otro artículo.
+MQ-ATORN;2.052412;95.00;Ferretería Lozano, atornillador pladur 18 V sin batería ni cargador (114,95 EUR IVA incluido);0.44;0.22;0.11;;;;Sin ficha equivalente: el banco no publica atornilladoras;Precio sin batería ni cargador: el conjunto con dos baterías ronda 172-360 EUR según marca.
+MQ-MEZCL;3;;;;;;;0.81;2.75;"M10Q010 mezcladora-batidora de mortero 0,81; M03HM010 amasadora 2,75";Falta cotización de la mezcladora de 1 saco.
+MQ-MART-ELEC;5.717434;;;;;;;1.9;3.66;"M06MI010 picador 9 kg 1,90; M06MP005 perforador 16 kg 3,66";Falta cotización del martillo de 5 kg.
+MQ-LIJAD;3.078618;;;;;;;2.03;2.03;M10B170 lijadora de gotelé 2,03;Única ficha del banco: la lijadora con aspiración puede costar más.
+MQ-BATID;2.345614;;;;;;;0.81;2.75;"M10Q010 0,81 (mezcladora de mortero); M03HM010 amasadora 2,75";La ficha de 0,81 es una mezcladora de bidón, no una batidora de varilla.
+MQ-AMOLA;3.518421;;;;;;;;;Sin ficha en el banco;Falta cotización.
+MQ-DETECTOR;3.811623;;;;;;;;;Sin ficha en el banco;Falta cotización.
+MQ-ASPIR;3.078618;;;;;;;;;Solo barredora autopropulsada 109,56 EUR/h, otro artículo;Falta cotización.
+MQ-SOLDADORA;5.277632;;;;;;;18.3;18.3;M10PE010 equipo eléctrico de soldadura de polietileno 18,30 (otro artículo);"Falta cotización; el banco no tiene soldadura por arco."
+MQ-ANDAMIO;2.8;;;;;;;;;M12AA010-M12AA046: alquiler en EUR/m2 y dia (0,11-0,36) y montaje en EUR/m2 (5,22-7,46);No es comparable en EUR/h: el banco alquila por superficie y día.
