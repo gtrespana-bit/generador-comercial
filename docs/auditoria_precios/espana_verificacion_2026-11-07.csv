@@ -17,30 +17,30 @@ MO-OF1-PLO;mano_obra;h;218;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_pr
 MO-OF1-SOLD;mano_obra;h;127;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_propio;1;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio
 MO-OF1-VIDR;mano_obra;h;92;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_propio;1;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio
 MQ-ALISADORA;maquinaria;h;9;en_revision;;7.623246;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-AMOLA;maquinaria;h;50;en_revision;;3.518421;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
+MQ-AMOLA;maquinaria;h;50;en_revision;1.86;3.518421;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-ANDAMIO;maquinaria;h;190;en_revision;;2.8;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-ASPIR;maquinaria;h;91;en_revision;;3.078618;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-ATORN;maquinaria;h;162;en_revision;;2.052412;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-ASPIR;maquinaria;h;91;en_revision;0.61;3.078618;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MQ-ATORN;maquinaria;h;162;en_revision;0.62;2.052412;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-BANO-PORT;maquinaria;ud;3;en_revision;;110;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-BATID;maquinaria;h;60;en_revision;;2.345614;extremadura;extremadura;1;0;;;;;;sin_precio_revisado;;extremadura: ya sostiene el precio
+MQ-BATID;maquinaria;h;60;en_revision;0.67;2.345614;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;;3.518421;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
 MQ-BOMBA-CONC;maquinaria;h;9;en_revision;;78;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
 MQ-CIZALLA;maquinaria;h;45;en_revision;;3.078618;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-COMPACT-SALTO;maquinaria;h;10;en_revision;;6.597039;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
-MQ-CORT-AGUA;maquinaria;h;91;en_revision;;4.691228;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-CORT-AGUA;maquinaria;h;91;en_revision;1.95;4.691228;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-DESBROZ;maquinaria;h;9;en_revision;4.36;4.36;extremadura;extremadura;3;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MQ-DETECTOR;maquinaria;h;61;en_revision;;3.811623;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-DETECTOR;maquinaria;h;61;en_revision;0.30;3.811623;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-DOBLAD-TUBO;maquinaria;h;4;en_revision;;3.811623;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-ESMERIL;maquinaria;h;40;en_revision;;3.37182;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-ESTAMP;maquinaria;h;2;en_revision;;7.036842;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-GRUA;maquinaria;h;40;en_revision;50.59;50.59;palencia;bcca,comercial,extremadura,palencia;3;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MQ-HIDROLAV;maquinaria;h;28;en_revision;;6.157237;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
 MQ-INYECTORA;maquinaria;h;9;en_revision;5.35;5.35;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MQ-LIJAD;maquinaria;h;60;en_revision;;3.078618;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-LIJAD;maquinaria;h;60;en_revision;0.95;3.078618;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-LIJAD-PISO;maquinaria;h;3;en_revision;;9.529057;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-MART-ELEC;maquinaria;h;110;en_revision;;5.717434;palencia;bcca,palencia;0;0;;;;;;sin_precio_revisado;;
+MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;5.717434;palencia;palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-MART-NEUM;maquinaria;h;45;en_revision;;11;palencia;bcca,palencia;2;0;;;;;;sin_precio_revisado;;bcca: ya sostiene el precio | bcca: ya sostiene el precio
-MQ-MEZCL;maquinaria;h;120;en_revision;;3;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
+MQ-MEZCL;maquinaria;h;120;en_revision;1.25;3;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-MONTAC;maquinaria;h;46;en_revision;;13.927083;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
 MQ-NIVEL-LASER;maquinaria;h;41;en_revision;;3.225219;extremadura;extremadura;1;0;;;;;;sin_precio_revisado;;extremadura: ya sostiene el precio
 MQ-OXICORTE;maquinaria;h;48;en_revision;6.90;6.9;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
@@ -50,11 +50,11 @@ MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.14;9.14;extremadura;extremadura;0;0
 MQ-PULIDORA;maquinaria;h;16;en_revision;;6.597039;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
 MQ-RECUP-GAS;maquinaria;h;7;en_revision;;9.529057;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-RETRO;maquinaria;h;63;en_revision;38.68;38.68;palencia;bcca,comercial,extremadura,palencia;3;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio | bcca: ya sostiene el precio | extremadura: ya sostiene el precio
-MQ-RODILLO;maquinaria;h;151;en_revision;;1.319408;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-RODILLO;maquinaria;h;151;en_revision;0.50;1.319408;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-ROZAD;maquinaria;h;30;en_revision;;6.157237;extremadura;extremadura;1;0;;;;;;sin_precio_revisado;;extremadura: ya sostiene el precio
-MQ-SIERRA;maquinaria;h;199;en_revision;;4.251425;palencia;bcca,extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
-MQ-SOLDADORA;maquinaria;h;105;en_revision;;5.277632;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
-MQ-TALADRO;maquinaria;h;1025;en_revision;;2.199013;palencia;bcca,extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
+MQ-SIERRA;maquinaria;h;199;en_revision;0.97;4.251425;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
+MQ-SOLDADORA;maquinaria;h;105;en_revision;1.43;5.277632;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-TALADRO;maquinaria;h;1025;en_revision;1.03;2.199013;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-TELUROMETRO;maquinaria;h;2;en_revision;;17.592105;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-TERMOF;maquinaria;h;23;en_revision;;2.638816;sin_documento;;0;0;;;;;;sin_precio_revisado;;
 MQ-VENT-SUC;maquinaria;h;3;en_revision;;4.104825;sin_documento;;0;0;;;;;;sin_precio_revisado;;

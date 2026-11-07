@@ -28,7 +28,8 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
-    assert not audit['MQ-ASPIR']['precio_revisado']
+    assert (not audit['MQ-ASPIR']['precio_revisado']
+            or 'MODELO-MQ' in audit['MQ-ASPIR']['codigo_fuente'])
     assert not audit['MT-HERRAJE-CORRED']['precio_revisado']
     masilla = next(r for r in fuentes if r['codigo_recurso'] == 'MT-MASTIC-CORTAFUEGO')
     assert masilla['cantidad_por_envase'] == '0.465' and masilla['criterio_iva'] == 'neto en ficha'

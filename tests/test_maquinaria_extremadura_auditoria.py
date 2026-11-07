@@ -33,5 +33,5 @@ def test_observaciones_extremadura_son_candidatos_no_precios_aplicados():
     assert (por_codigo['MQ-TALADRO']['codigo_fuente'], por_codigo['MQ-TALADRO']['precio_fuente']) == ('M11T010', '0.84')
     assert (por_codigo['MQ-BOMBA-CONC']['codigo_fuente'], por_codigo['MQ-BOMBA-CONC']['precio_fuente']) == ('M01HA010', '212.50')
     # Las observaciones de Palencia no se sustituyen por las de Extremadura.
-    assert auditoria['MQ-TALADRO']['codigo_fuente'] == 'U02SW650'
-    assert auditoria['MQ-MEZCL']['codigo_fuente'] == 'U02L020'
+    assert auditoria['MQ-TALADRO']['codigo_fuente'].startswith('U02SW650')
+    assert auditoria['MQ-MEZCL']['codigo_fuente'].startswith('U02L020')

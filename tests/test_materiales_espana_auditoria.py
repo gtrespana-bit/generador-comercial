@@ -57,7 +57,8 @@ def test_auditoria_preserva_fotografia_y_no_confirma_resistencia_de_sacos():
         assert auditoria[codigo]['precio_revisado'] == despues
     assert auditoria['MT-SAC-ESC']['estado_auditoria'] == 'en_revision'
     assert 'Resistencia exacta' in auditoria['MT-SAC-ESC']['criterio_revisado']
-    for codigo in ('MQ-TALADRO', 'MT-CONS-DEM'):
+    # MQ-ANDAMIO sigue sin modelo: el banco solo lo cotiza por m2 y dia.
+    for codigo in ('MQ-ANDAMIO', 'MT-CONS-DEM'):
         assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
         assert not auditoria[codigo]['precio_revisado']
 

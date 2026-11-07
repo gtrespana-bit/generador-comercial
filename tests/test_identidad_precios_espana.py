@@ -103,8 +103,8 @@ def test_el_concreto_se_confirma_por_clase_de_resistencia_sin_cambiar_el_precio(
 
 def test_la_tabla_de_huecos_se_reproduce_y_cubre_todos_los_recursos_sin_precio():
     publicada = leer(auditor.SALIDA)
-    assert len(publicada) == 164
-    assert len({f["codigo_recurso"] for f in publicada}) == 164
+    assert len(publicada) == 151
+    assert len({f["codigo_recurso"] for f in publicada}) == 151
     registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
     sin_precio = {c for c, f in registro.items() if not f["precio_revisado"].strip()}
     assert {f["codigo_recurso"] for f in publicada} == sin_precio
@@ -118,7 +118,7 @@ def test_la_tabla_de_huecos_se_reproduce_y_cubre_todos_los_recursos_sin_precio()
                    "consumibles de"))
 
 
-@pytest.mark.parametrize("codigo", ["MQ-TALADRO", "MQ-ATORN", "MT-CONS-DEM"])
+@pytest.mark.parametrize("codigo", ["MQ-ANDAMIO", "MQ-CIZALLA", "MT-CONS-DEM"])
 def test_los_huecos_de_alta_frecuencia_estan_clasificados(codigo):
     filas = {f["codigo_recurso"]: f for f in leer(auditor.SALIDA)}
     assert codigo in filas

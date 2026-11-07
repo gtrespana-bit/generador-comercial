@@ -1,86 +1,103 @@
-# Maquinaria: por qué el banco no la confirma y qué hace falta para cerrarla
+# Maquinaria: modelo de compra y amortización, aplicado
 
-Fecha: 2026-11-07 · 14 recursos de maquinaria sin precio (1.415 usos) · Base de contraste:
-Extremadura 2026 · Parámetros: `espana_maquinaria_horaria_parametros_2026-11-07.csv` ·
-Resultado: `espana_maquinaria_horaria_propuesta_2026-11-07.csv`
-(reproducible con `tools/coste_horario_maquinaria_espana.py`).
+Fecha: 2026-11-07 · 13 recursos de maquinaria (2.185 usos) · Decisión del titular:
+**no se modela el alquiler, se modela la compra dividida por la vida útil** ·
+Parámetros: `espana_maquinaria_horaria_parametros_2026-11-07.csv` · Resultado:
+`espana_maquinaria_horaria_propuesta_2026-11-07.csv` · Impacto:
+`espana_impacto_maquinaria_2026-11-07.csv` · Reproducible con
+`tools/coste_horario_maquinaria_espana.py`, `tools/adjudicar_maquinaria_espana.py` y
+`tools/impacto_maquinaria_espana.py`.
 
-## 1. La tarifa horaria del banco no es un modelo de coste
+## 1. Qué se ha decidido y con qué aritmética
 
-Buscando la misma máquina en la base aparecen tarifas que no pueden convivir en un
-mismo modelo de amortización:
+El precio de cada máquina es lo que cuesta tenerla en obra una hora, comprándola:
 
-| Máquina | Fichas del banco | €/h |
-|---|---|---|
-| Taladro 750 W | `M11T010`, `M16A590` | 0,84 / 0,91 |
-| Taladradora mecánica | `M03L010`, `M11T030` | **8,11 / 8,27** |
-| Motosierra eléctrica | `M09AM010` | 2,26 |
-| Martillo picador 9 kg | `M06MI010` | 1,90 |
-| Martillo picador 12 kg | `M06MI020` | **21,64** |
-| Cortadora de pavimentos | `M13F010` | 9,15 |
+    coste_h = adquisición / vida_útil × (1 + tasa_mantenimiento)
+              + potencia_kW × 0,20 €/kWh × factor_carga
+              + consumibles_€/h
 
-Si se invierte el cálculo —qué vida útil implicaría cada tarifa con un precio de
-adquisición real— el taladro de 750 W implica **≈230 h** de vida y la motosierra
-eléctrica **≈41 h** para la misma convención. No es un modelo: son tarifas de origen
-distinto (alquiler, precio de mercado, conserje incluido…). Por eso **ninguna de estas
-fichas puede «confirmar»** el precio de un recurso horario: confirmaríamos una convención
-desconocida.
+* **Adquisición**: precio de tienda con IVA, convertido a neto, con URL y fecha en la
+  ficha de parámetros. Una máquina, una fuente.
+* **Vida útil**: hipótesis de ingeniería declarada por máquina (herramienta ligera 250 h,
+  herramienta de uso medio 400–500 h, equipo con motor de inducción o electrónica 500–1.000 h).
+  Es el parámetro que más mueve el resultado, así que cada precio se publica con su
+  sensibilidad a ×0,5 y ×2 de vida.
+* **Mantenimiento**: 10–15 % del valor de compra repartido en la vida (correas, escobillas,
+  rodamientos, reparaciones). No incluye mano de obra de taller.
+* **Energía**: 0,20 €/kWh fijado por el titular, con factor de carga 0,4–0,8 según si la
+  máquina trabaja por impulsos (taladro) o de forma continua (soldadora, aspirador, hormigonera).
+* **Consumibles**: sí, incluidos, porque el recurso los describe («con brocas», «con disco de
+  diamante»). Se valoran a precio de tienda y se reparten por horas de uso reales: brocas SDS
+  cada 100 h, disco de diamante cada 25 h, electrodo a 0,20 kg/h, cadena de motosierra cada 40 h.
 
-## 2. El modelo, con parámetros explícitos
+## 2. Los 13 precios publicados
 
-    coste_h = adquisición / vida_útil × (1 + mantenimiento)
-              + potencia × precio_energía × factor de carga
-              + consumibles
+| Recurso | Usos | Antes €/h | **Ahora €/h** | Adquisición neta | Vida | Mant. | Consumibles | Sensibilidad ×0,5–×2 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `MQ-TALADRO` | 1.025 | 2,199 | **1,03** | 149,33 € (Bosch GBH 2-26 DRE) | 250 h | 15 % | 0,25 (brocas SDS cada 100 h) | 1,72–0,69 |
+| `MQ-SIERRA` | 199 | 4,251 | **0,97** | 72,57 € (Einhell GC-EC 2040) | 300 h | 15 % | 0,45 (cadena + aceite) | 1,25–0,83 |
+| `MQ-ATORN` | 162 | 2,052 | **0,62** | 142,15 € (pladur 18 V, 2 baterías) | 300 h | 15 % | 0,08 (puntas) | 1,17–0,35 |
+| `MQ-RODILLO` | 151 | 1,319 | **0,50** | 49,59 € (juego completo de pintura) | 100 h | — | incluidos (se repone el juego) | 0,99–0,25 |
+| `MQ-MEZCL` | 120 | 3,000 | **1,25** | 350,72 € (hormigonera Hecht 200 l) | 500 h | 15 % | 0,20 (paletas) | 2,05–0,84 |
+| `MQ-MART-ELEC` | 110 | 5,717 | **2,09** | 461,40 € (SDS-Max 1.100 W) | 400 h | 15 % | 0,63 (punta/cincel cada 40 h) | 3,42–1,43 |
+| `MQ-SOLDADORA` | 105 | 5,278 | **1,43** | 148,76 € (inverter 200 A) | 800 h | 15 % | 0,70 (electrodo 0,20 kg/h) | 1,65–1,33 |
+| `MQ-ASPIR` | 91 | 3,079 | **0,61** | 180,00 € (1.400 W / 30 l) | 800 h | 15 % | 0,13 (sacos y filtros) | 0,87–0,48 |
+| `MQ-CORT-AGUA` | 91 | 4,691 | **1,95** | 296,69 € (Zipper ZI-FS200) | 400 h | 15 % | 1,00 (disco diamante cada 25 h) | 2,80–1,52 |
+| `MQ-DETECTOR` | 61 | 3,812 | **0,30** | 255,37 € (Bosch D-tect 120) | 1.000 h | 10 % | 0,02 (pilas) | 0,58–0,16 |
+| `MQ-BATID` | 60 | 2,346 | **0,67** | 119,39 € (mezcladora 1.600 W) | 500 h | 15 % | 0,20 (varilla) | 0,94–0,53 |
+| `MQ-LIJAD` | 60 | 3,079 | **0,95** | 122,31 € (lijadora de pared 750 W) | 250 h | 15 % | 0,30 (lijas) | 1,52–0,67 |
+| `MQ-AMOLA` | 50 | 3,518 | **1,86** | 198,00 € (2.400 W, 230 mm) | 400 h | 15 % | 1,00 (disco diamante cada 25 h) | 2,43–1,57 |
 
-Precios de adquisición con fuente y fecha (IVA incluido en la ficha, convertido a neto):
+Los precios ya están volcados en el registro maestro y en la matriz
+(`basedatos_partidas/salida/precios_recursos_espana.csv`), con código de fuente
+`MODELO-MQ-2026-11-07`, ámbito «España (modelo propio, sin banco)» y estado
+`en_revision`: el modelo sustituye a la tarifa, no la confirma.
 
-| Recurso | Precio actual | Adquisición | Fuente | Modelo 250 h | Modelo 500 h | Modelo 1.000 h |
-|---|---|---|---|---|---|---|
-| `MQ-TALADRO` (1.025 usos) | 2,199 | 149,33 € | Bosch GBH 2-26 DRE 790 W, 180,69 € IVA incl. | **0,78** | 0,44 | 0,27 |
-| `MQ-SIERRA` (199) | 4,251 | 72,57 € | Einhell GC-EC 2040 2.000 W, 87,81 € IVA incl. | **0,57** | 0,41 | 0,32 |
-| `MQ-CORT-AGUA` (91) | 4,691 | 296,69 € | Zipper ZI-FS200 800 W, 359,00 € IVA incl. | **1,46** | 0,78 | 0,44 |
-| `MQ-ATORN` (162) | 2,052 | 95,00 € | Atornillador pladur 18 V, 114,95 € IVA incl. (sin batería) | **0,44** | 0,22 | 0,11 |
+## 3. Por qué el precio baja entre un 47 % y un 92 %
 
-Energía 0,20 €/kWh y factor de carga 0,6 — **parámetros de trabajo, no datos**: hay que
-fijarlos con la factura eléctrica y la práctica de taller. Con 250 h de vida, el modelo
-del taladro (0,78 €/h) coincide con la ficha del banco (0,84 €/h) y deja el precio actual
-(2,199 €/h) en 2,8 veces el coste de la máquina. La diferencia razonable son las **brocas**,
-que el recurso incluye y que nadie ha cotizado todavía.
+El precio anterior no era una tarifa de alquiler: era una referencia de mercado sin
+convención declarada. Ahora hay convención y se puede auditar. Dos comprobaciones
+independientes de que el orden de magnitud nuevo es el correcto:
 
-## 3. Lo que no se puede cerrar todavía
+1. **Inversión de la ficha del banco.** Extremadura 2026 publica el taladro de 750 W a
+   0,84 €/h. Con 149 € de adquisición, esa tarifa implica **≈230 h** de vida; nuestro
+   modelo, con 250 h declaradas y consumibles, da 1,03 €/h. Coherente.
+2. **BCCA 2023 (segunda base oficial, cargada en esta ronda).** Publica
+   `MARTILLO ELÉCTRICO` a **1,40 €/h**. Nuestro martillo SDS-Max de 5 kg, con punta y
+   cincel incluidos, sale a 2,09 €/h; el precio anterior era 5,72 €/h, **cuatro veces**
+   la base oficial andaluza. El modelo cae donde debe caer.
 
-Ocho máquinas no tienen aún precio de adquisición con fuente y por eso no llevan número:
-`MQ-MEZCL` (120 usos), `MQ-MART-ELEC` (110), `MQ-LIJAD` (60), `MQ-BATID` (60),
-`MQ-DETECTOR` (61), `MQ-AMOLA` (50), `MQ-ASPIR` (91), `MQ-SOLDADORA` (105). Para ellas el
-banco tampoco tiene ficha equivalente (solo barredora de 109,56 €/h, soldadura de
-polietileno de 18,30 €/h y lijadora de gotelé de 2,03 €/h, que son otros artículos).
+Las tarifas del banco siguen sin poder confirmar nada (0,84 frente a 8,11 €/h para dos
+taladros), así que la banda del banco se guarda como contraste, nunca como precio.
 
-`MQ-ANDAMIO` queda fuera del modelo por unidad: el banco lo alquila en €/m²·día
-(0,11–0,36) y cobra el montaje en €/m² (5,22–7,46); convertirlo a €/h exige un rendimiento
-de montaje y una superficie por persona que no están definidos.
+## 4. Efecto sobre el catálogo
 
-## 4. Decisión pendiente (no aplicada)
+`tools/impacto_maquinaria_espana.py` propaga el cambio con el rendimiento de cada
+descompuesto y el porcentaje de complementarios:
 
-1. **Convención de vida útil**: 250 h (una temporada, lo que parece usar el banco) frente a
-   500 o 1.000 h. Cambia el precio de un taladro entre 0,78 y 0,27 €/h.
-2. **Energía**: 0,20 €/kWh es un supuesto. Con factura real (0,14–0,25) el efecto es de
-   ±0,05 €/h en herramienta pequeña.
-3. **Brocas, discos y cadenas**: el recurso dice «con brocas» (taladro) y la cortadora
-   «con disco de diamante». Hay que cotizar consumible y vida, o cambiar la descripción
-   para que no los incluya.
-4. **Sustituir o no el precio actual**: la propuesta deja los precios como están hasta que
-   se fijen 1–3. Aplicar 0,78 €/h en `MQ-TALADRO` bajaría el coste de 1.025 partidas
-   (−64 %), un cambio que necesita decisión explícita, no un lote automático.
+* **1.511 partidas** afectadas de 2.016.
+* Efecto por partida: **mediana −0,5 %**, mínimo −10,8 %, máximo −0,0 %.
+* Efecto acumulado sobre la suma de precios unitarios: **−886,52 €** en todo el catálogo.
 
-## 5. El caso de los agregados: 968 partidas
+Es decir: la maquinaria pesa poco en el precio unitario, y ese poco estaba
+sobrevalorado. Ninguna partida cambia de orden de magnitud, que es la prueba de que el
+modelo no rompe el catálogo.
 
-19 recursos son cestas de artículos (`MT-CONS-DEM` 398 usos, `MQ-RODILLO` 151,
-`MQ-SOLDADORA` 105, `MT-OXI-CONS` 54…). Desglosarlos no es una búsqueda de precio: exige
-crear recursos nuevos y **reescribir los descompuestos de 968 partidas**. Es una decisión
-de catálogo, con impacto en presupuestos ya emitidos, y no se ha hecho.
+## 5. Qué queda fuera y por qué
 
-## 6. Reproducir
+* **`MQ-ANDAMIO` (190 usos)**: el banco lo cotiza en €/m²·día (0,11–0,36) y el montaje en
+  €/m² (5,22–7,46). El recurso está en €/h y no define superficie por persona ni
+  rendimiento de montaje; convertirlo sería inventar el rendimiento. No se toca.
+* **24 recursos de maquinaria** siguen en `requiere_modelo_propio` (grúa, retro, volquete,
+  extendedora, fresadora, etc.): son equipos que en obra real no se compran para una
+  actuación, y el banco sí los cotiza por hora o por día con convención razonable. Ahí el
+  modelo de compra no aplica y no se ha forzado.
+* **No se incluye** coste de financiación ni seguro del inmovilizado (≈0,05 €/h de orden
+  de magnitud). Está declarado como reserva en cada ficha.
 
-```bash
-python tools/coste_horario_maquinaria_espana.py --precio-energia 0.20
-```
+## 6. Reserva global
+
+El precio es una **estimación propia trazable**, no una tarifa contrastada: no existe
+ficha de banco equivalente para estas 13 máquinas. La vida útil es la hipótesis que hay
+que sustituir por horas reales de obra en cuanto haya partes de trabajo; cambiarla es
+editar una columna y volver a ejecutar dos comandos.

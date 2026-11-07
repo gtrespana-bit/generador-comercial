@@ -172,3 +172,16 @@ Pruebas nuevas: `tests/test_cierre_auditoria_espana.py` (10 pruebas: validación
 3. **Resolver las 23 alertas** con especificación y oferta 2026, empezando por `MT-PYL-PASTA`, `MT-MADERA-LISTON` y `MT-ALAMBRE`.
 4. **Conseguir un banco nacional y vigente** (o una suscripción con licencia de uso) para sustituir el contraste andaluz de 2022; mientras no exista, toda cifra nueva debe seguir declarando su ámbito provincial.
 5. **Repetir la cadena en el siguiente país** con el método del apartado 2.
+
+## 10. Anexo: maquinaria cerrada por modelo propio (7 de noviembre de 2026)
+
+El paso 2 de la lista anterior (modelo de coste horario para la maquinaria) está hecho: **13
+recursos de maquinaria (2.185 usos)** tienen ya precio propio calculado como compra dividida
+por vida útil, con energía a 0,20 €/kWh y consumibles incluidos. Siguen en revisión, porque un
+modelo propio no es una tarifa contrastada. `MQ-ANDAMIO` y los 24 recursos de maquinaria
+pesada quedan fuera del modelo con motivo escrito.
+
+* Detalle, fuentes de adquisición y sensibilidad: [decisión de maquinaria](ESPANA_MAQUINARIA_DECISION_2026-11-07.md).
+* Impacto en el catálogo: `espana_impacto_maquinaria_2026-11-07.csv` (1.511 partidas, mediana
+  −0,5 %, máximo −10,8 %).
+* Agregados, con criterio medido en lugar de intuición: [decisión de agregados](ESPANA_AGREGADOS_DECISION_2026-11-07.md).

@@ -173,9 +173,13 @@ def aplicar(adjudicacion: list[dict], registro: dict, matriz: dict) -> tuple[lis
             recurso["fuente_observada"] = unir(recurso["fuente_observada"], fila["fuente"])
             recurso["codigo_fuente"] = unir(recurso["codigo_fuente"], fila["codigo_fuente"])
             recurso["edicion_fuente"] = unir(recurso["edicion_fuente"], fila["edicion_fecha"])
-            recurso["ambito_fuente"] = unir(recurso["ambito_fuente"],
-                                            "Andalucía (BCCA)" if "BCCA" in fila["fuente"]
-                                            else "provincial (Palencia/Extremadura)")
+            if "Modelo propio" in fila["fuente"]:
+                ambito = "España (modelo propio, sin banco)"
+            elif "BCCA" in fila["fuente"]:
+                ambito = "Andalucía (BCCA)"
+            else:
+                ambito = "provincial (Palencia/Extremadura)"
+            recurso["ambito_fuente"] = unir(recurso["ambito_fuente"], ambito)
             recurso["criterio_revisado"] = fila["criterio"] + " " + fila["reserva"]
             recurso["fecha_revision"] = FECHA
             final = recurso["precio_revisado"]

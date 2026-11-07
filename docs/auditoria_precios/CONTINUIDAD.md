@@ -2,16 +2,42 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
-## Maquinaria: modelo de coste horario y decisiones abiertas — 7 de noviembre de 2026
+## Maquinaria: modelo de compra y amortización, aplicado — 7 de noviembre de 2026
 
-**Sin cambios de precio; el banco no puede confirmar maquinaria.** Informe: [maquinaria y decisiones](ESPANA_MAQUINARIA_DECISION_2026-11-07.md).
+**13 precios nuevos, 2.185 usos, 47–92 % por debajo del precio anterior.** Informe:
+[maquinaria y decisiones](ESPANA_MAQUINARIA_DECISION_2026-11-07.md).
 
-- Las tarifas horarias del banco no forman un modelo: 0,84 €/h para un taladro de 750 W y 8,11 €/h para una taladradora mecánica. Invirtiendo el cálculo, el taladro implica ≈230 h de vida útil y la motosierra eléctrica ≈41 h para la misma convención. Son tarifas de origen distinto, así que **ninguna ficha confirma** un recurso horario.
-- Se publica un modelo con parámetros explícitos (`tools/coste_horario_maquinaria_espana.py`) y precios de adquisición con fuente para cuatro máquinas: `MQ-TALADRO` 149,33 € (Bosch GBH 2-26, 180,69 € IVA incl.), `MQ-SIERRA` 72,57 € (Einhell GC-EC 2040), `MQ-CORT-AGUA` 296,69 € (Zipper ZI-FS200) y `MQ-ATORN` 95,00 € (sin batería). Con 250 h de vida el taladro sale a 0,78 €/h frente a los 2,199 €/h actuales; con 1.000 h, 0,27 €/h. **La sensibilidad al parámetro es el resultado**: sin fijar vida útil, energía y consumibles no hay precio defendible.
-- Ocho máquinas siguen sin precio de adquisición con fuente (`MQ-MEZCL`, `MQ-MART-ELEC`, `MQ-LIJAD`, `MQ-BATID`, `MQ-DETECTOR`, `MQ-AMOLA`, `MQ-ASPIR`, `MQ-SOLDADORA`) y el banco no tiene ficha equivalente. `MQ-ANDAMIO` no es convertible a €/h: el banco alquila en €/m²·día y cobra el montaje en €/m².
-- Decisión pendiente y no aplicada: (1) convención de vida útil 250/500/1.000 h; (2) precio de la energía con factura real; (3) cotizar brocas, discos y cadenas o cambiar la descripción; (4) sustituir o no el precio actual (aplicar 0,78 €/h en `MQ-TALADRO` bajaría el coste de 1.025 partidas un 64 %).
-- Los 19 recursos agregados no se tocan: desglosarlos exige crear recursos y **reescribir 968 partidas**.
-- Nota de entorno: el BC3 de Extremadura (18,7 MB, `gitignore`) ya no está en el espacio de trabajo; para volver a cribar hay que subirlo otra vez a la rama.
+- Decisión del titular: la maquinaria **no se alquila, se compra**; el precio horario es
+  `adquisición / vida útil × (1 + mantenimiento) + kW × 0,20 €/kWh × factor de carga +
+  consumibles`. Energía fijada en 0,20 €/kWh; los consumibles van dentro (brocas cada
+  100 h, disco de diamante cada 25 h, electrodo a 0,20 kg/h, cadena cada 40 h).
+- Cerradas las trece máquinas con precio de adquisición con fuente y URL: `MQ-TALADRO` 1,03
+  €/h (era 2,199), `MQ-SIERRA` 0,97 (4,251), `MQ-ATORN` 0,62 (2,052), `MQ-RODILLO` 0,50
+  (1,319), `MQ-MEZCL` 1,25 (3,00), `MQ-MART-ELEC` 2,09 (5,717), `MQ-SOLDADORA` 1,43 (5,278),
+  `MQ-ASPIR` 0,61 (3,079), `MQ-CORT-AGUA` 1,95 (4,691), `MQ-DETECTOR` 0,30 (3,812),
+  `MQ-BATID` 0,67 (2,346), `MQ-LIJAD` 0,95 (3,079), `MQ-AMOLA` 1,86 (3,518). Cada precio se
+  publica con su sensibilidad a vida útil ×0,5 y ×2.
+- **Contraste de magnitud**: BCCA 2023 (subida en esta ronda) publica `MARTILLO ELÉCTRICO`
+  a 1,40 €/h; el modelo da 2,09 €/h con punta y cincel incluidos, frente a 5,72 €/h del
+  precio anterior. La ficha de Extremadura del taladro (0,84 €/h) implica ≈230 h de vida:
+  coherente con las 250 h declaradas.
+- Impacto medido en `espana_impacto_maquinaria_2026-11-07.csv`: **1.511 partidas** de 2.016,
+  mediana −0,5 %, máximo −10,8 %, −886,52 € acumulados. Ninguna partida cambia de orden de
+  magnitud.
+- Fuera del modelo: `MQ-ANDAMIO` (el banco cotiza €/m²·día + montaje €/m²; convertirlo a €/h
+  sería inventar el rendimiento) y los 24 recursos de maquinaria pesada, que en obra no se
+  compran para una actuación y el banco sí cotiza por hora con convención razonable.
+- **Agregados**: decisión tomada con datos, no por intuición
+  ([informe](ESPANA_AGREGADOS_DECISION_2026-11-07.md)). Se recomponen solo siete, los que
+  pesan de verdad en el coste directo (`MT-HERRAJE-CLOSET` 27,4 % mediano y 40 partidas
+  >10 %, `MT-HERRAJE-PUERTA`, `MT-PLO-ACC4`, `MT-PLO-DESAG`, más tres pequeños). `MT-CONS-DEM`,
+  el agregado con más usos (398), pesa **1,3 %** y se queda documentado sin tocar: usar mucho
+  no es importar mucho. Nada aplicado en esta ronda; rehacer la receta de 200 partidas sin
+  cotizar componente a componente sería el error que la auditoría corrige.
+- Nota de entorno: los dos BC3 están versionados en `bases_precios/` (`BCEXTGREM_26_v1.bc3`
+  18,7 MB, `BCCA2023_V02.bc3` 4,4 MB). **El BCCA subido solo contiene 196 precios simples**
+  utilizables, no la base completa: aporta 7 candidatos con precisión alta y, sobre todo, el
+  contraste del martillo eléctrico.
 
 ## Auditoría de identidad del artículo (Extremadura 2026) — 7 de noviembre de 2026
 

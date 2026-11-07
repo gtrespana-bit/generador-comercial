@@ -1,6 +1,6 @@
 # Guía para reanudar la auditoría de precios de España
 
-**Corte: 7 de noviembre de 2026, tras el cierre del primer ciclo.** Este documento es el punto de entrada para retomar el trabajo; el historial detallado está en [CONTINUIDAD.md](CONTINUIDAD.md). Las cifras son una fotografía: recalcularlas desde los archivos antes de continuar si ha habido cambios posteriores.
+**Corte: 7 de noviembre de 2026, tras el cierre del primer ciclo y el modelo de maquinaria.** Este documento es el punto de entrada para retomar el trabajo; el historial detallado está en [CONTINUIDAD.md](CONTINUIDAD.md). Las cifras son una fotografía: recalcularlas desde los archivos antes de continuar si ha habido cambios posteriores.
 
 ## Objetivo y situación
 
@@ -9,15 +9,19 @@ Se está auditando la matriz de precios de recursos para España, contrastando l
 | Estado en el registro | Recursos | Con precio revisado | Sin precio revisado |
 |---|---:|---:|---:|
 | Confirmado como referencia | 37 | 37 | 0 |
-| En revisión | 351 | 187 | 164 |
+| En revisión | 351 | 200 | 151 |
 | Pendiente | 0 | 0 | 0 |
-| **Total** | **388** | **224** | **164** |
+| **Total** | **388** | **237** | **151** |
 
-**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados en el cierre y los 7 confirmados después tienen evidencia documentada. Estado de verificación en [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md): 37 confirmados, 7 contrastes comerciales, 54 divergencias, 126 de fuente única y 164 sin precio auditado. Los 164 huecos están clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md). La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 224 precios revisados comprenden 215 materiales y 9 recursos de mano de obra. **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
+**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados en el cierre y los 7 confirmados después tienen evidencia documentada. Estado de verificación en [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md): 37 confirmados, 7 contrastes comerciales, 54 divergencias, 126 de fuente única y 164 sin precio auditado. Los 164 huecos están clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md). La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 237 precios revisados comprenden 215 materiales, 9 recursos de mano de obra y 13 de maquinaria con modelo propio de compra y amortización (7 de noviembre). **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
+
+### Último cambio: maquinaria por compra y amortización (7 de noviembre)
+
+Los 13 recursos de maquinaria con precio propio se han modelado como **compra dividida por vida útil** (no alquiler), con energía a 0,20 €/kWh, mantenimiento del 10–15 % y consumibles incluidos. Bajan entre el 47 % y el 92 % y afectan a 1.511 partidas con mediana −0,5 %. Detalle, fuentes de cada precio de adquisición y sensibilidad: [decisión de maquinaria](ESPANA_MAQUINARIA_DECISION_2026-11-07.md). Los 19 agregados se han medido por su peso real en el coste directo y solo 7 pasan el corte de recompostura: [decisión de agregados](ESPANA_AGREGADOS_DECISION_2026-11-07.md).
 
 ### Qué significa «precio revisado»
 
-El campo `precio_revisado` del registro contiene una cifra nueva documentada y trasladada a la matriz local. **No significa necesariamente que el precio sea definitivo, universal ni apropiado para una obra concreta.** Muchos son estimaciones provisionales: 202 de los 224 todavía están `en_revision`. `confirmado_referencia` significa que se ha aceptado la referencia bajo el método y las condiciones documentados, no que se garantice el coste de cualquier proveedor o proyecto. `estado_auditoria` es independiente de la confianza que figure en la matriz y del estado del catálogo base.
+El campo `precio_revisado` del registro contiene una cifra nueva documentada y trasladada a la matriz local. **No significa necesariamente que el precio sea definitivo, universal ni apropiado para una obra concreta.** Muchos son estimaciones provisionales: 200 de los 237 todavía están `en_revision`. `confirmado_referencia` significa que se ha aceptado la referencia bajo el método y las condiciones documentados, no que se garantice el coste de cualquier proveedor o proyecto. `estado_auditoria` es independiente de la confianza que figure en la matriz y del estado del catálogo base.
 
 Ejemplos: `MT-CEMENTO`, 0,19 €/kg, es media de dos ofertas puntuales sin IVA ni porte, no media nacional; `MT-APEO`, 1,04 €/ud, es una hipótesis provisional de un apeo específico y tiene una alerta de posible solape de madera. Consultar siempre `criterio_revisado`, evidencias y fuente antes de interpretar o usar una cifra.
 

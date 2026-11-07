@@ -30,7 +30,10 @@ def test_referencias_trazadas_y_normalizadas():
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(row['url'] in audit[codigo]['fuente_observada'] for row in fuentes if row['codigo_recurso'] == codigo)
     for codigo in ('MT-SENAL-OBRA', 'MT-PIN-LIJA', 'MQ-LIJAD', 'MQ-DETECTOR'):
-        assert not audit[codigo]['precio_revisado']
+        # El lote no puso precio: si hoy hay uno, es el modelo de maquinaria
+        # (7 de noviembre), que se aplica después y por otra vía.
+        if audit[codigo]['precio_revisado']:
+            assert 'MODELO-MQ' in audit[codigo]['codigo_fuente']
 
 
 def test_fuentes_incompletas_o_invalidas_se_rechazan(monkeypatch, tmp_path):
