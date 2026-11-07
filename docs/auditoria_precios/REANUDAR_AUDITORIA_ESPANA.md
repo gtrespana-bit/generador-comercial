@@ -8,12 +8,12 @@ Se está auditando la matriz de precios de recursos para España, contrastando l
 
 | Estado en el registro | Recursos | Con precio revisado | Sin precio revisado |
 |---|---:|---:|---:|
-| Confirmado como referencia | 18 | 18 | 0 |
-| En revisión | 370 | 202 | 168 |
+| Confirmado como referencia | 25 | 25 | 0 |
+| En revisión | 363 | 195 | 168 |
 | Pendiente | 0 | 0 | 0 |
 | **Total** | **388** | **220** | **168** |
 
-**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados tienen una decisión documentada en [el cierre](ESPANA_CIERRE_2026-11-07.md), con criterio y reserva. Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 220 precios revisados comprenden 211 materiales y 9 recursos de mano de obra. **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
+**Ningún recurso queda pendiente de decisión:** los 375 recursos no confirmados en el cierre y los 7 confirmados después tienen evidencia documentada. Estado de verificación en [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md): 25 confirmados, 8 contrastes comerciales, 26 divergencias, 161 de fuente única y 168 sin precio auditado. Los 168 sin precio revisado conservan su referencia anterior y consta por qué no se ha sustituido. Los 220 precios revisados comprenden 211 materiales y 9 recursos de mano de obra. **Sin precio revisado no significa sin precio en la matriz**: esos recursos conservan una referencia previa que no se ha sustituido por una nueva cifra auditada.
 
 ### Qué significa «precio revisado»
 
@@ -39,7 +39,8 @@ Ejemplos: `MT-CEMENTO`, 0,19 €/kg, es media de dos ofertas puntuales sin IVA n
 ## Cómo continuar
 
 1. Leer [el informe de cierre](ESPANA_CIERRE_2026-11-07.md) y [CONTINUIDAD.md](CONTINUIDAD.md). El primer ciclo está cerrado; lo que queda son cuatro frentes de método, no de búsqueda de precios.
-2. Orden de trabajo recomendado por impacto: **desglosar los 64 recursos agregados** (`MT-CONS-DEM` 398 usos, `MT-ELE-CAJA` 177, `MT-PLO-SOP` 169, `MT-TORN` 154); **construir el modelo de coste horario** de la maquinaria de mayor uso (`MQ-TALADRO` 1.025, `MQ-SIERRA` 199, `MQ-ANDAMIO` 190, `MQ-ATORN` 162); **resolver las 23 alertas de divergencia** (`MT-PYL-PASTA` 99, `MT-MADERA-LISTON` 91, `MT-ALAMBRE` 49); y **buscar un banco nacional y vigente** con licencia de uso. Los usos se solapan entre recursos y no equivalen a frecuencia comercial ni impacto económico.
+2. Para **confirmar más precios** hace falta una segunda fuente independiente: la Base de Extremadura 2026 (BC3 público) o un banco con licencia. Ver el apartado 7 de [la verificación](ESPANA_VERIFICACION_2026-11-07.md). Sin esa fuente, el techo es 25 confirmados.
+3. Orden de trabajo recomendado por impacto: **desglosar los 64 recursos agregados** (`MT-CONS-DEM` 398 usos, `MT-ELE-CAJA` 177, `MT-PLO-SOP` 169, `MT-TORN` 154); **construir el modelo de coste horario** de la maquinaria de mayor uso (`MQ-TALADRO` 1.025, `MQ-SIERRA` 199, `MQ-ANDAMIO` 190, `MQ-ATORN` 162); **resolver las 23 alertas de divergencia** (`MT-PYL-PASTA` 99, `MT-MADERA-LISTON` 91, `MT-ALAMBRE` 49); y **buscar un banco nacional y vigente** con licencia de uso. Los usos se solapan entre recursos y no equivalen a frecuencia comercial ni impacto económico.
 3. Solicitar o buscar especificaciones y fuentes comparables que permitan resolver los bloqueos: unidad, prestaciones, alcance, zona, fecha, IVA, transporte, consumos y vida útil según corresponda. **No aplicar un precio solo por encontrar un número** ni dar por equivalente una partida instalada y un material, un alquiler diario y un coste horario, o una compra y su amortización.
 4. De los recursos sin precio revisado, 23 de uso cero no se mencionaban en los ocho barridos recientes; no son necesariamente inéditos en los demás informes. Antes de priorizarlos, valorar si tienen utilidad actual en el catálogo y consultar al usuario si procede.
 5. Al adoptar una cifra, documentar fuente, normalización, supuestos y reservas; actualizar de forma reproducible registro, generador y artefactos pertinentes, añadir pruebas y comprobar el impacto en partidas. Mantener el estado `en_revision` cuando falte validación. No sobrescribir precios propios de clientes ni ejecutar SQL o desplegar sin una decisión controlada.
@@ -50,6 +51,7 @@ Ejemplos: `MT-CEMENTO`, 0,19 €/kg, es media de dos ofertas puntuales sin IVA n
 - [Inventario integral actual](espana_inventario_integral_2026-11-07.csv): precios de la matriz local, usos, estados y candidatos. [Metodología y límites](ESPANA_INVENTARIO_INTEGRAL_2026-11-07.md).
 - [Continuidad y enlaces a todos los lotes](CONTINUIDAD.md); los valores de sus secciones antiguas son cortes históricos. En particular, el bloqueo antiguo de la suite por `tinycss2` quedó superado en el último corte.
 - [Octavo barrido](ESPANA_OCTAVO_BARRIDO_PARCIAL_2026-11-07.md) y [decisiones CSV](espana_decisiones_octavo_barrido_parcial_2026-11-07.csv); los barridos anteriores tienen informes y CSV equivalentes.
+- [Verificación cruzada](ESPANA_VERIFICACION_2026-11-07.md): reglas de independencia, las 7 confirmaciones nuevas (730 usos), las 26 divergencias explicadas y la cola de 363 recursos con lo que falta a cada uno.
 - [Cierre del primer ciclo](ESPANA_CIERRE_2026-11-07.md): método por lotes, 18 precios aplicados, 5 confirmaciones, lo descartado con motivo, impacto en partidas y límites. Artefactos: `espana_adjudicacion_2026-11-07.csv` (375 decisiones), `espana_referencias_cierre_2026-11-07.csv` (18 referencias aceptadas, las que consume el generador) y `espana_cierre_decisiones_2026-11-07.csv` (libro de decisiones).
 - `basedatos_partidas/datos/descompuestos/*.json`: descripciones, unidades y rendimientos reales de las partidas.
 - `basedatos_partidas/salida/precios_recursos_espana.csv`: matriz local actual. `basedatos_partidas/datos/precios_publicos/ES.json`: índice público local. `tools/generar_matriz_precios_espana.py` y `tools/inventario_precios_espana.py`: generadores. `docs/cargar_precios_referencia_espana_2026-11-06.sql`: SQL generado, **no ejecutado**.

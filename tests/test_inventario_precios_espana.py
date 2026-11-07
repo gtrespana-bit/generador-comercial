@@ -8,7 +8,7 @@ def test_inventario_integral_reproducible_y_estados_actuales():
     assert filas == i.leer(i.SALIDA)
     assert len(filas) == len({f['codigo_recurso'] for f in filas}) == 388
     assert Counter(f['estado_auditoria_actual'] for f in filas) == {
-        'confirmado_referencia': 18, 'en_revision': 370}
+        'confirmado_referencia': 25, 'en_revision': 363}
     assert sum(bool(f['primer_codigo_bcca']) for f in filas) == 359
     assert sum(bool(f['precio_revisado']) for f in filas) == 220
     assert all(int(f['numero_candidatos_bcca']) == 0 for f in filas if not f['primer_codigo_bcca'])

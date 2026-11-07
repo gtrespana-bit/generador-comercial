@@ -48,7 +48,11 @@ def test_libro_coincide_con_registro_y_matriz(datos):
     registro, matriz, adjudicacion, libro, _ = datos
     assert len(libro) == len(adjudicacion)
     for codigo, fila in libro.items():
-        assert fila["estado_final"] == registro[codigo]["estado_auditoria"]
+        # El libro fija el estado del cierre; una confirmación posterior (con su
+        # marca en el registro) solo puede haberlo elevado a confirmado.
+        if fila["estado_final"] != registro[codigo]["estado_auditoria"]:
+            assert registro[codigo]["estado_auditoria"] == "confirmado_referencia"
+            assert "Confirmación 2026-11-07" in registro[codigo]["evidencia_y_pendientes"]
         assert fila["fecha_revision"] == FECHA
         assert Decimal(fila["precio_final"]) == Decimal(matriz[codigo]["precio_referencia"])
         assert cierre.MARCA in registro[codigo]["evidencia_y_pendientes"]

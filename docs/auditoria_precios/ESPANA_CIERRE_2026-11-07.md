@@ -8,8 +8,8 @@
 |---|---:|
 | Recursos del catálogo | 388 |
 | Con precio revisado trazable | 220 |
-| Confirmados como referencia (`confirmado_referencia`) | 18 |
-| En revisión con precio revisado | 202 |
+| Confirmados como referencia (`confirmado_referencia`) | 18 → **25** tras la [verificación cruzada](ESPANA_VERIFICACION_2026-11-07.md) |
+| En revisión con precio revisado | 195 |
 | En revisión sin precio revisado | 168 |
 | Pendientes de decisión | **0** |
 
@@ -101,7 +101,7 @@ Cinco recursos ya revisados quedan **confirmados** al encontrar una referencia o
 | `MT-PYL-PLACA-HD` | 4,40 €/m2 | BCCA `FP01200N2` | −5,5 % |
 | `MT-SELLA-FISURA` | 9,48 €/kg | BCCA `GHJFUUOIJB` | −15,0 % |
 
-Con las 13 confirmaciones anteriores, el registro queda en **18 `confirmado_referencia`**.
+Con las 13 confirmaciones anteriores, el registro queda en **18 `confirmado_referencia`**; la verificación cruzada posterior lo eleva a **25** (ver [ESPANA_VERIFICACION_2026-11-07.md](ESPANA_VERIFICACION_2026-11-07.md)).
 
 ## 5. Lo que se ha decidido **no** aplicar
 

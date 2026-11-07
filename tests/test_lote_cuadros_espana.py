@@ -25,7 +25,8 @@ def test_precios_cuadros_en_matriz_y_auditoria():
         assert m['fuente'] == cierre.fuente(code, g.REVISION_LOTE_CUADROS)
         assert m['confianza'] == 'derivado'
         assert m['incluye_iva'] == m['incluye_transporte'] == 'no_confirmado'
-        assert a['estado_auditoria'] == cierre.estado(code, 'en_revision')
+        assert a['estado_auditoria'] in {cierre.estado(code, 'en_revision'),
+                                        'confirmado_referencia'}
         assert Decimal(a['precio_revisado']) == price
 
 

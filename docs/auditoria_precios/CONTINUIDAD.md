@@ -2,6 +2,16 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Verificación cruzada de precios — 7 de noviembre de 2026
+
+**25 precios confirmados con evidencia independiente** (antes 18). [Reglas, resultados y cola de trabajo](ESPANA_VERIFICACION_2026-11-07.md).
+
+- Regla nueva y explícita: una fuente **no puede confirmar el precio que ella misma originó**. Se descarta así la circularidad de usar la tabla BCCA para confirmar los oficios que ya se fijaron con ella.
+- **7 confirmaciones nuevas (730 usos)**: cinco oficios (`MO-OF1-MON` 319, `CARPM` 209, `PISO` 63, `ALI` 53, `CAB` 48) cuya cifra venía de un modelo de coste propio y coincide con la tabla oficial en 1 céntimo; `MT-AGUA-OBRA` (0,84 → respaldado por Extremadura 0,91) y `MT-AISL-TERM` (8,15 → respaldado por BCCA 7,22). Se corrigió la inconsistencia del cierre anterior, que había clasificado esos cinco oficios como «mantener sin cambio» cumpliendo la misma regla de confirmación.
+- Matriz de verificación de los 388: 25 `ya_confirmado`, 8 `contraste_comercial` (dos comercios coinciden pero no hay referencia oficial), 26 `divergencia_verificada` (la diferencia está explicada y no se toca el precio), 161 `solo_fuente_propia` y 168 `sin_precio_revisado`.
+- **Cola de 363 recursos** con el dato exacto que falta: 44 de esfuerzo alto (maquinaria que necesita modelo de coste horario, 3.215 usos), 287 de esfuerzo medio (segunda fuente independiente, 7.451 usos) y 32 sin uso actual.
+- Techo declarado: con una sola base completa accesible no se puede confirmar más. Para bajar de 363 hace falta la Base de Extremadura 2026 en BC3 (pública, ~20 MB, no ingerible desde este entorno por la red restringida del sandbox) o un banco con licencia. Pruebas: 7 nuevas (`tests/test_verificar_precios_espana.py`).
+
 ## Cierre del primer ciclo de España — 7 de noviembre de 2026
 
 **Los 388 recursos quedan adjudicados: 18 precios nuevos aplicados, 5 referencias confirmadas y 0 recursos pendientes.** [Informe de cierre con método, tablas e impacto](ESPANA_CIERRE_2026-11-07.md).

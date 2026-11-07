@@ -32,7 +32,7 @@ def test_referencias_y_artefactos():
         assert matriz[codigo]['incluye_iva'] == iva
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_REGIONAL
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        assert audit[codigo]['estado_auditoria'] in {'en_revision', 'confirmado_referencia'}
         assert audit[codigo]['precio_revisado'] == precio
 
 

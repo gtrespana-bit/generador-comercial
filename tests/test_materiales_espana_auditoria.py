@@ -118,7 +118,9 @@ def test_estados_y_oficios_condicionados_a_convenio():
         ROOT / 'docs/auditoria_precios/espana_2026-11-06.csv')}
     matriz = {r['codigo_recurso']: r for r in leer_csv(generador.OUT)}
     for codigo in ('MO-OF1-MON', 'MO-OF1-CARPM', 'MO-OF1-PISO', 'MO-OF1-ALI', 'MO-OF1-CAB'):
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        # El modelo de coste propio se contrasta con la tabla oficial: la
+        # verificación del 7 de noviembre elevó estos oficios a confirmados.
+        assert auditoria[codigo]['estado_auditoria'] in {'en_revision', 'confirmado_referencia'}
         assert 'convenio de construcción' in auditoria[codigo]['criterio_revisado']
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal('23.18')
         assert 'convenio de construcción' in matriz[codigo]['observaciones']
