@@ -1,0 +1,13 @@
+# España: lote de contraste regional y comercial — 7 de noviembre de 2026
+
+Se aplican tres puntos **provisionales**, no medias nacionales estadísticas ni precios garantizados. Las dos fuentes por recurso y las cifras originales están en [el CSV](espana_fuentes_lote_regional_2026-11-07.csv). El precio es la media aritmética de los importes unitarios sin redondear, redondeada a dos decimales. La fotografía anterior sigue en el inventario. El BC3 extremeño se consultó solo por fragmentos; no se ha descargado ni cruzado completo.
+
+| Recurso | Referencia 1 | Referencia 2 | Precio anterior → provisional | Restricción principal |
+|---|---|---|---|---|
+| MT-AGUA-OBRA | Palencia U45050, agua: 0,77 €/m³ | Extremadura P01DW010, agua: 0,91 €/m³ | 1,822785 → **0,84 €/m³** | Agua genérica; condiciones de suministro e IVA no se han podido verificar en los extractos. No contempla necesariamente acometida, depósito, camión o distribución. |
+| MT-MALLA-ELEC | Palencia U06GM106, B500T 6 mm 15×15: 2,03 €/m² | Aceropanel 6 mm 15×15: 47,75 € / panel 13,2 m² con impuestos; estimando IVA peninsular 21%, 2,98986 €/m² | 5,50 → **2,51 €/m²** | El catálogo no indica diámetro o retícula; la oferta no declara grado B500T. No extrapolar a todas las mallas. Condiciones de Palencia e IVA no confirmados. |
+| MT-CLAVOS | Ferrocano clavo plano 20×100, 2,5 kg: 9,28 € con impuestos | Suimther clavo plano 20×100, 2,5 kg: 10,13 € con IVA | 2,962025 → **3,21 €/kg** | Ambos convertidos con hipótesis de IVA peninsular 21%: 3,06777 y 3,34876 €/kg; el recurso también incluye tornillos y otras fijaciones, no representados por las ofertas. |
+
+Los dos cuadros oficiales son regionales y su fecha de edición 2026 no prueba el precio de una compra actual. Al desconocer IVA y transporte de los extractos oficiales, la matriz marca ambos `no_confirmado` en agua y malla, en vez de dar por segura su exclusión. En las ofertas comerciales no se ha añadido porte; sus precios y existencias pueden variar. Los tres recursos continúan **en revisión**. Las cantidades se refieren a suministro, sin instalación; el campo genérico de catálogo impide equivalencia universal. Antes de confirmar o utilizar en proyectos específicos se debe separar producto, dimensiones y alcance del suministro.
+
+También se han identificado áridos comparables por granulometría (Palencia y Extremadura), pero **no se aplica** el precio a `MT-GRAVILLA`: el catálogo requiere gravilla lavada y para cubiertas y la base extremeña no especifica lavado, ni se ha aclarado el transporte. Del mismo modo no se mezclan hormigones HM con HA para uso estructural, ni acero colocado con acero sin colocación. Se mantienen los precios anteriores de esos recursos hasta aclarar las condiciones.

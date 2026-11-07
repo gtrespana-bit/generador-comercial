@@ -1,0 +1,12 @@
+# España: lote comercial de materiales — 7 de noviembre de 2026
+
+Cuatro precios **provisionales, en revisión**: media aritmética de dos ofertas puntuales, calculada con decimales sin redondear y redondeada a céntimos. Los importes, cantidades, fechas y enlaces están en [el CSV de fuentes](espana_fuentes_lote_comercial_2026-11-07.csv). No son una media estadística nacional ni una cotización garantizada; son suministros sin montaje ni transporte. Para ofertas con impuestos se supone IVA 21%; Alcupi declara precio sin IVA. No hay ponderación geográfica.
+
+| Recurso (usos) | Referencia 1 | Referencia 2 | Anterior → provisional | Límites |
+|---|---|---|---|---|
+| Listón de obra (91) | Bedia, pino tratado 3 m 40×30, 3,00 € con IVA: 0,82645 €/m | Alcupi, pino abeto tratado 40×30, mazo 30 m, 24,36 € sin IVA: 0,812 €/m | 2,221519 → **0,82 €/m** | Una única sección, no todos los bastidores. Una imagen de Alcupi dice 58,5 m, pero título y descripción dicen 30 m; últimas unidades. |
+| Fondo acrílico (43) | Obramat, 5 l, 10,50 € IVA incluido: 1,73554 €/l | Pintakolor, 5 l, 38,95 € IVA incluido: 6,43802 €/l | 5,696203 → **4,09 €/l** | Dispersión elevada, posibles diferencias de calidad y formulación; la disponibilidad de Pintakolor es incierta por aviso general de agotado. Obramat muestra erróneamente 8,68 €/l sin IVA; se divide el envase entre 5. |
+| Separador (37) | BigMat, mortero con alambre 25 mm, 400 uds, 29,95 € IVA incluido: 0,06188 €/ud | Comercial Turró, universal 30 mm, 500 uds, 32,67 € IVA incluido: 0,054 €/ud | 0,091139 → **0,06 €/ud** | Diferentes geometrías y recubrimientos; material del universal no especificado y oferta de liquidación. No sustituye selección técnica del proyecto. |
+| Geotextil (25) | Sasmak, PET no tejido 150 g/m², rollo 250 m², 239,14 € IVA incluido: 0,79055 €/m² | G Duran, PET no tejido 150 g/m², rollo 275 m², 190,33 € impuestos incluidos: 0,57198 €/m² | 1,10 → **0,68 €/m²** | G Duran vende solo en Mallorca; 21% supuesto. Otros gramajes, prestaciones y formatos no están representados. |
+
+La suma de usos, 196, no indica partidas distintas pues pueden solaparse. Ofertas y stock cambian; no incluyen porte, mermas ni solapes. No se modifican bloque de hormigón, silicona, tornillos de cubierta ni lana: por ahora no se ha resuelto la equivalencia (bloque hueco o resistencia; silicona estructural frente a neutral; material de arandela; y lana desnuda frente a papel kraft y diferencias de stock). Tampoco se ejecutó un cruce masivo BC3 real: las bases oficiales solo se han consultado parcialmente.

@@ -432,6 +432,181 @@ def referencias_materiales_revisadas() -> dict[str, dict[str, Referencia]]:
     return salida
 
 
+
+# Segundo lote: fotografía independiente; no modifica la fecha de las ofertas anteriores.
+REVISION_MATERIALES_07 = "docs/auditoria_precios/ESPANA_MATERIALES_2026-11-07.md"
+FUENTES_MATERIALES_07 = ROOT / "docs/auditoria_precios/espana_materiales_ofertas_2026-11-07.csv"
+FECHA_MATERIALES_07 = "2026-11-07"
+
+
+def referencias_materiales_07() -> dict[str, dict[str, Referencia]]:
+    unidades = {"MT-CABLE-DATOS": "m", "MT-DESMOLD": "l", "MT-ALAMBRE": "kg"}
+    observaciones = {
+        "MT-CABLE-DATOS": "Media de dos bobinas Cat6 UTP cobre sólido AWG24 Dca LSZH de 305 m; verificar especificaciones del proyecto.",
+        "MT-DESMOLD": "Media de dos ofertas Sika LN 25 l listo al uso; principalmente metálicos, compatible con madera; otras formulaciones pueden costar menos.",
+        "MT-ALAMBRE": "Media de dos ofertas del mismo alambre recocido 1,3 mm en bobinas de 1 kg; posible proveedor común, precio minorista no extrapolable a volumen.",
+    }
+    agrupadas = {}
+    proveedores = {}
+    with FUENTES_MATERIALES_07.open(encoding="utf-8-sig", newline="") as fh:
+        for fila in csv.DictReader(fh, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in unidades or fila["unidad"] != unidades[codigo]:
+                raise ValueError(f"Código o unidad inesperados: {codigo}/{fila['unidad']}")
+            precio, cantidad, iva = (Decimal(fila[k]) for k in
+                                     ("precio_con_iva_eur", "cantidad_unidades_catalogo", "iva_decimal"))
+            if (not all(v.is_finite() for v in (precio, cantidad, iva))
+                    or precio <= 0 or cantidad <= 0 or not 0 <= iva <= 1):
+                raise ValueError(f"Oferta inválida: {codigo}")
+            if fila["fecha_consulta"] != FECHA_MATERIALES_07 or not fila["url"] or not fila["proveedor"]:
+                raise ValueError(f"Oferta sin fecha, proveedor o fuente válida: {codigo}")
+            agrupadas.setdefault(codigo, []).append(precio / (1 + iva) / cantidad)
+            proveedores.setdefault(codigo, set()).add(fila["proveedor"])
+    if set(agrupadas) != set(unidades) or any(len(v) != 2 for v in agrupadas.values()) or any(len(v) != 2 for v in proveedores.values()):
+        raise ValueError("Se requieren exactamente dos ofertas de proveedores distintos por material")
+    redondear = lambda v: v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return {codigo: {"ES": ref(
+        redondear(sum(importes) / 2), redondear(min(importes)), redondear(max(importes)),
+        REVISION_MATERIALES_07, confianza="derivado", incluye_iva="no", incluye_transporte="no",
+        observaciones=(observaciones[codigo] + " Sin IVA deducible ni porte; ofertas puntuales, no media estadística nacional ni coste garantizado."),
+    )} for codigo, importes in agrupadas.items()}
+
+
+
+REVISION_LOTE_REGIONAL = "docs/auditoria_precios/ESPANA_LOTE_REGIONAL_2026-11-07.md"
+FUENTES_LOTE_REGIONAL = ROOT / "docs/auditoria_precios/espana_fuentes_lote_regional_2026-11-07.csv"
+
+
+def referencias_lote_regional() -> dict[str, dict[str, Referencia]]:
+    unidades = {"MT-AGUA-OBRA": "m3", "MT-MALLA-ELEC": "m2", "MT-CLAVOS": "kg"}
+    notas = {
+        "MT-AGUA-OBRA": "Agua genérica, media de Palencia y Extremadura. IVA y alcance de suministro no confirmados.",
+        "MT-MALLA-ELEC": "Malla nominal 6 mm 15x15; Palencia y oferta minorista, calidad comercial y condiciones fiscales de Palencia no confirmadas; otros diámetros pueden diferir.",
+        "MT-CLAVOS": "Clavos planos 20x100 en paquetes de 2,5 kg; no representa necesariamente tornillos ni otras fijaciones incluidas en el recurso.",
+    }
+    return _referencias_dos_fuentes(FUENTES_LOTE_REGIONAL, unidades, notas, REVISION_LOTE_REGIONAL,
+                                    {"MT-CLAVOS"})
+
+
+REVISION_LOTE_COMERCIAL = "docs/auditoria_precios/ESPANA_LOTE_COMERCIAL_2026-11-07.md"
+FUENTES_LOTE_COMERCIAL = ROOT / "docs/auditoria_precios/espana_fuentes_lote_comercial_2026-11-07.csv"
+
+
+def referencias_lote_comercial() -> dict[str, dict[str, Referencia]]:
+    unidades = {"MT-MADERA-LISTON": "m", "MT-PIN-FONDO": "l",
+                "MT-SEPARADOR": "ud", "MT-GEOTEXTIL": "m2"}
+    notas = {
+        "MT-MADERA-LISTON": "Rastreles tratados 40x30 mm, no representa todas las secciones y calidades de listones de obra.",
+        "MT-PIN-FONDO": "Fijador acrílico al agua, calidades muy dispersas; disponibilidad de Pintakolor incierta.",
+        "MT-SEPARADOR": "Separadores de 25 y 30 mm; uno de mortero, otro universal de material no especificado; no todos los recubrimientos.",
+        "MT-GEOTEXTIL": "Geotextil no tejido poliéster 150 g/m2, uno con venta solo en Mallorca; no representa todos los gramajes o prestaciones.",
+    }
+    return _referencias_dos_fuentes(FUENTES_LOTE_COMERCIAL, unidades, notas, REVISION_LOTE_COMERCIAL,
+                                    set(unidades))
+
+
+REVISION_LOTE_PRIORITARIO = "docs/auditoria_precios/ESPANA_LOTE_PRIORITARIO_2026-11-07.md"
+FUENTES_LOTE_PRIORITARIO = ROOT / "docs/auditoria_precios/espana_fuentes_lote_prioritario_2026-11-07.csv"
+
+
+def referencias_lote_prioritario() -> dict[str, dict[str, Referencia]]:
+    unidades = {"MT-PYL-LANA": "m2", "MT-PLO-PPR20": "m",
+                "MT-TUB-PPR25": "m", "MT-PIN-CAUCHO": "l"}
+    notas = {
+        "MT-PYL-LANA": "Panel 60 mm URSA TERRA BASE; una oferta palet y otra paquete con descripción contradictoria sobre revestimiento; contrastar antes de comprar.",
+        "MT-PLO-PPR20": "PPR 20x3,4 PN20, solo suministro de tubo; accesorios y termofusión aparte.",
+        "MT-TUB-PPR25": "PPR 25x4,2 PN20, solo suministro de tubo; otras presiones, accesorios y termofusión aparte.",
+        "MT-PIN-CAUCHO": "Pintura acrílica mate blanca, una referencia sin tintabilidad especificada y otra lavabilidad clase 4; no representa todas las calidades.",
+    }
+    return _referencias_dos_fuentes(FUENTES_LOTE_PRIORITARIO, unidades, notas, REVISION_LOTE_PRIORITARIO, set(unidades))
+
+
+REVISION_LOTE_TIENDAS = "docs/auditoria_precios/ESPANA_LOTE_TIENDAS_2026-11-07.md"
+FUENTES_LOTE_TIENDAS = ROOT / "docs/auditoria_precios/espana_fuentes_lote_tiendas_2026-11-07.csv"
+
+
+def referencias_lote_tiendas() -> dict[str, dict[str, Referencia]]:
+    unidades = {"MT-PINT-ANTICORR": "l", "MT-POLIESTIRENO-EXT": "m2",
+                "MT-BANDA-REF": "m", "MT-CURADOR": "l", "MT-YESO-REP": "kg", "MT-PIN-ESMALTE": "l",
+                "MT-PLO-ABASTO": "ud", "MT-POLIUR-LIQ": "kg"}
+    notas = {
+        "MT-PINT-ANTICORR": "Imprimaciones sintéticas de uso general; distintas formulaciones y colores, compatibilidad con acabado y corrosividad por validar.",
+        "MT-POLIESTIRENO-EXT": "XPS 40 mm en paquetes, no representa otros espesores ni resistencias mecánicas.",
+        "MT-BANDA-REF": "Bandas de caucho de 130 mm de variantes Mapeband; compatibilidad con el sistema de impermeabilización por validar.",
+        "MT-CURADOR": "Antisol 3E en envase de 25 kg; volumen estimado usando densidad nominal 0,975 kg/l, sujeta a tolerancia.",
+        "MT-YESO-REP": "Yeso rápido manual para rozas, no representa morteros alternativos ni yesos especiales.",
+        "MT-PIN-ESMALTE": "Esmaltes sintéticos blancos brillantes de dos calidades; confirmar preparación e imprimación del soporte.",
+        "MT-PLO-ABASTO": "Latiguillo 40 cm M-H 3/8 con racores; no representa todas las conexiones, longitudes ni accesorios adicionales.",
+        "MT-POLIUR-LIQ": "Membranas monocomponentes de 25 kg; propiedades de sistema, imprimación y resistencia a tránsito por verificar.",
+    }
+    return _referencias_dos_fuentes(FUENTES_LOTE_TIENDAS, unidades, notas, REVISION_LOTE_TIENDAS, set(unidades) - {"MT-PINT-ANTICORR", "MT-PLO-ABASTO", "MT-POLIUR-LIQ"})
+
+
+REVISION_LOTE_POSTERIOR = "docs/auditoria_precios/ESPANA_LOTE_POSTERIOR_2026-11-07.md"
+FUENTES_LOTE_POSTERIOR = ROOT / "docs/auditoria_precios/espana_fuentes_lote_posterior_2026-11-07.csv"
+
+
+def referencias_lote_posterior():
+    # La rutina de dos fuentes se aplica a un fichero parcial temporal en memoria
+    # conceptualmente: cada grupo incluye dos ofertas, incluso los componentes.
+    unidades = {"MT-CABLE-ALARMA": "m", "MT-TORN-TECHO": "ud", "PASTA": "kg", "CINTA": "m"}
+    notas = {k: "Oferta puntual para el lote posterior." for k in unidades}
+    grupos = _referencias_dos_fuentes(FUENTES_LOTE_POSTERIOR, unidades, notas, REVISION_LOTE_POSTERIOR, set())
+    # No usar los valores redondeados de Referencia: calcular desde importes originales.
+    componentes = {}
+    with FUENTES_LOTE_POSTERIOR.open(encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f, delimiter=";"):
+            if row["codigo_recurso"] in {"PASTA", "CINTA"}:
+                valor = Decimal(row["importe_eur"]) / Decimal(row["cantidad"]) / (1 + Decimal(row["iva_decimal"]))
+                componentes.setdefault(row["codigo_recurso"], []).append(valor)
+    pasta, cinta = componentes["PASTA"], componentes["CINTA"]
+    ratio = Decimal("1.30") / Decimal("0.34")
+    q = lambda x: x.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    precio = q(sum(pasta) / 2 + ratio * sum(cinta) / 2)
+    minimo, maximo = q(min(pasta) + ratio * min(cinta)), q(max(pasta) + ratio * max(cinta))
+    grupos["MT-PYL-PASTA"] = {"ES": ref(precio, minimo, maximo, REVISION_LOTE_POSTERIOR,
+        confianza="derivado", incluye_iva="no", incluye_transporte="no_confirmado",
+        observaciones="Pasta y cinta: hipótesis 1,30 m de cinta por 0,34 kg de pasta, dependiente del sistema; sin mermas ni mano de obra. Provisional, no media nacional.")}
+    del grupos["PASTA"], grupos["CINTA"]
+    # Ambas ofertas incluyen IVA, pero sus portes no están confirmados.
+    for codigo, nota in {
+        "MT-CABLE-ALARMA": "Cable apantallado 4x0,22+2x0,75; trenzado en pares no acreditado y plazo por confirmar.",
+        "MT-TORN-TECHO": "Tornillos cincados con EPDM, 63 y 35 mm: medidas y precio por volumen distintos; verificar fijación para la cubierta.",
+    }.items():
+        dato = grupos[codigo]["ES"]
+        grupos[codigo] = {"ES": ref(dato.precio, dato.minimo, dato.maximo, REVISION_LOTE_POSTERIOR,
+            confianza="derivado", incluye_iva="no", incluye_transporte="no_confirmado",
+            observaciones=nota + " Estimación provisional, no media nacional ni precio garantizado.")}
+    return grupos
+
+
+def _referencias_dos_fuentes(archivo, unidades, notas, revision, condiciones_conocidas):
+    grupos, fuentes = {}, {}
+    with archivo.open(encoding="utf-8-sig", newline="") as fh:
+        for fila in csv.DictReader(fh, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in unidades or fila["unidad"] != unidades[codigo]:
+                raise ValueError(f"Código o unidad inesperados: {codigo}")
+            importe, cantidad = Decimal(fila["importe_eur"]), Decimal(fila["cantidad"])
+            iva = Decimal(fila["iva_decimal"]) if fila["iva_decimal"] else None
+            if (not importe.is_finite() or not cantidad.is_finite() or importe <= 0 or cantidad <= 0
+                    or (iva is not None and (not iva.is_finite() or not 0 <= iva <= 1))
+                    or not fila["fuente"] or not fila["url"] or fila["fecha_consulta"] != "2026-11-07"):
+                raise ValueError(f"Fuente inválida: {codigo}")
+            grupos.setdefault(codigo, []).append(importe / cantidad / (1 + iva if iva is not None else 1))
+            fuentes.setdefault(codigo, set()).add(fila["fuente"])
+    if set(grupos) != set(unidades) or any(len(v) != 2 for v in grupos.values()) or any(len(v) != 2 for v in fuentes.values()):
+        raise ValueError("Se requieren exactamente dos fuentes distintas por recurso")
+    def redondear(n):
+        return n.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return {codigo: {"ES": ref(
+        redondear(sum(valores) / 2), redondear(min(valores)), redondear(max(valores)),
+        revision, confianza="derivado",
+        incluye_iva="no" if codigo in condiciones_conocidas else "no_confirmado",
+        incluye_transporte="no" if codigo in condiciones_conocidas else "no_confirmado",
+        observaciones=notas[codigo] + " Estimación provisional, no media estadística nacional ni precio garantizado."
+    )} for codigo, valores in grupos.items()}
+
 def iter_recursos(data):
     for categoria in ("mano_obra", "materiales", "maquinaria"):
         for codigo, item in (data.get(categoria) or {}).items():
@@ -506,6 +681,750 @@ def completar_referencias_derivadas(data: dict) -> dict[tuple[str, str], tuple[f
     return factores
 
 
+REVISION_LOTE_BANCO = "docs/auditoria_precios/ESPANA_LOTE_BANCO_2026-11-07.md"
+FUENTES_LOTE_BANCO = ROOT / "docs/auditoria_precios/espana_fuentes_lote_banco_2026-11-07.csv"
+
+
+def referencias_lote_banco() -> dict[str, dict[str, Referencia]]:
+    """Referencias provisionales individuales, sin fingir rango de mercado."""
+    esperados = {"MT-ACERO-CAB", "MT-ELE-CABLE", "MT-CABLE-8", "MT-ELE-MECA", "MT-BREAKER", "MT-REJILLA-VENT", "MT-PLACA-CEM", "MT-PROT-OBRA", "MT-PROT-PLAST", "MT-PROT-CARTON"}
+    resultado = {}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    with FUENTES_LOTE_BANCO.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in esperados or codigo in resultado or fila["unidad"] != unidades.get(codigo) or not fila["url"] or not fila["codigo_fuente"] or not fila["alcance_y_reservas"] or fila["fecha_consulta"] != "2026-11-07":
+                raise ValueError(f"Fuente inválida o duplicada: {codigo}")
+            precio = Decimal(fila["precio_eur"])
+            if not precio.is_finite() or precio <= 0:
+                raise ValueError(f"Precio inválido: {codigo}")
+            resultado[codigo] = {"ES": ref(precio, precio, precio, REVISION_LOTE_BANCO, confianza="derivado", incluye_iva="no_confirmado", incluye_transporte="no_confirmado", observaciones="Estimación provisional de una sola descomposición; extremos iguales no son rango de mercado. " + fila["alcance_y_reservas"])}
+    if set(resultado) != esperados:
+        raise ValueError("Lote de banco incompleto")
+    return resultado
+
+
+REVISION_LOTE_CUADROS = "docs/auditoria_precios/ESPANA_LOTE_CUADROS_2026-11-07.md"
+FUENTES_LOTE_CUADROS = ROOT / "docs/auditoria_precios/espana_fuentes_cuadros_2026-11-07.csv"
+
+
+def referencias_lote_cuadros() -> dict[str, dict[str, Referencia]]:
+    """Básicos provinciales/regionales: valor individual, no rango ni media nacional."""
+    esperados = {"MT-MANTO-ASF", "MT-LANA-ROCA", "MT-TIERRA-ABON", "MT-AISL-TERM", "MT-LAMINA-OSB", "MT-LAMINA-DREN", "MT-VIGUETA", "MT-MALLA-DREN"}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    resultado = {}
+    with FUENTES_LOTE_CUADROS.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if codigo not in esperados or codigo in resultado or fila["unidad"] != unidades.get(codigo) or not fila["url"] or not fila["codigo_fuente"] or not fila["alcance_y_reservas"] or fila["ambito"] not in {"Palencia", "Extremadura"} or fila["fecha_consulta"] != "2026-11-07":
+                raise ValueError(f"Fuente inválida o duplicada: {codigo}")
+            precio = Decimal(fila["precio_eur"])
+            if not precio.is_finite() or precio <= 0:
+                raise ValueError(f"Precio inválido: {codigo}")
+            resultado[codigo] = {"ES": ref(precio, precio, precio, REVISION_LOTE_CUADROS, confianza="derivado", incluye_iva="no_confirmado", incluye_transporte="no_confirmado", observaciones="Estimación provisional de un cuadro de " + fila["ambito"] + "; extremos iguales no son rango de mercado. " + fila["alcance_y_reservas"])}
+    if set(resultado) != esperados:
+        raise ValueError("Lote de cuadros incompleto")
+    return resultado
+
+
+REVISION_LOTE_MATERIALES = "docs/auditoria_precios/ESPANA_LOTE_MATERIALES_2026-11-07.md"
+FUENTES_LOTE_MATERIALES = ROOT / "docs/auditoria_precios/espana_fuentes_lote_materiales_2026-11-07.csv"
+
+
+def referencias_lote_materiales() -> dict[str, dict[str, Referencia]]:
+    """Básicos individuales: procedencia verificable, no media nacional."""
+    esperados = {'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC'}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    resultado = {}
+    with FUENTES_LOTE_MATERIALES.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if (codigo not in esperados or codigo in resultado or fila["unidad"] != unidades.get(codigo)
+                or not fila["url"] or not fila["codigo_fuente"] or not fila["alcance_y_reservas"]
+                or fila["ambito"] not in {"Extremadura", "CYPE España"} or fila["fecha_consulta"] != "2026-11-07"):
+                raise ValueError(f"Fuente inválida o duplicada: {codigo}")
+            precio = Decimal(fila["precio_eur"])
+            if not precio.is_finite() or precio <= 0:
+                raise ValueError(f"Precio inválido: {codigo}")
+            resultado[codigo] = {"ES": ref(precio, precio, precio, REVISION_LOTE_MATERIALES, confianza="derivado", incluye_iva="no_confirmado", incluye_transporte="no_confirmado", observaciones="Estimación provisional individual; extremos iguales no son rango de mercado. " + fila["alcance_y_reservas"])}
+    if set(resultado) != esperados:
+        raise ValueError("Lote de materiales incompleto")
+    return resultado
+
+
+REVISION_LOTE_CADENAS = "docs/auditoria_precios/ESPANA_LOTE_CADENAS_2026-11-07.md"
+FUENTES_LOTE_CADENAS = ROOT / "docs/auditoria_precios/espana_fuentes_cadenas_2026-11-07.csv"
+
+
+def referencias_lote_cadenas() -> dict[str, dict[str, Referencia]]:
+    """Normaliza ofertas minoristas sin extrapolarlas a media nacional."""
+    esperados = {'MT-SILICONA-EST': 1, 'MT-PIN-MASILLA': 2, 'MT-LASUR': 1, 'MT-DECAP': 1, 'MT-PRESERV-MAD': 1, 'MT-PINT-TRAFICO': 1, 'MT-ESMALTE-AGUA': 1, 'MT-PIN-TIZA': 1, 'MT-SELLA-PIEDRA': 1, 'MT-BLQ-10': 1, 'MT-BLQ-15': 1, 'MT-BLQ-20': 1, 'MT-PYL-PLACA-HD': 1, 'MT-MOSQUITERO': 1, 'MT-ASPERSOR': 1, 'MT-DETECT-HUMO': 1, 'MT-ESPEJO': 1, 'MT-PERFIL-REMATE': 1, 'MT-BARNIZ-PISO': 1, 'MT-PIN-ANTIMOHO': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    agrupados = {}
+    with FUENTES_LOTE_CADENAS.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila["codigo_recurso"]
+            if (codigo not in esperados or fila["unidad"] != unidades.get(codigo) or not fila["url"]
+                    or not fila["producto"] or not fila["reserva"] or fila["vendedor"] not in {"Obramat", "Leroy Merlin"}
+                    or not fila["vendedor_identificado"] or fila["criterio_iva"] not in {"IVA 21% supuesto sobre PVP", "neto de ficha Obramat"}
+                    or fila["fecha_consulta"] != "2026-11-07"):
+                raise ValueError(f"Fuente de cadenas inválida: {codigo}")
+            precio, cantidad = Decimal(fila["importe_envase_sin_impuestos"]), Decimal(fila["cantidad_recurso"])
+            pvp = Decimal(fila["precio_envase_iva"])
+            if not pvp.is_finite() or pvp <= 0 or not precio.is_finite() or not cantidad.is_finite() or precio <= 0 or cantidad <= 0:
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if fila["criterio_iva"] == "IVA 21% supuesto sobre PVP" and abs(precio - pvp / Decimal("1.21")) > Decimal("0.000001"):
+                raise ValueError(f"IVA supuesto incoherente: {codigo}")
+            normalizado = (precio / cantidad).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            if normalizado != Decimal(fila["precio_normalizado"]):
+                raise ValueError(f"Normalización incoherente: {codigo}")
+            agrupados.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in agrupados.items()} != esperados:
+        raise ValueError("Lote de cadenas incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in agrupados.items():
+        urls = {f["url"] for f in filas}
+        if len(urls) != len(filas):
+            raise ValueError(f"Fuente duplicada: {codigo}")
+        precio = (sum(Decimal(f["precio_normalizado"]) for f in filas) / len(filas)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        notas = " ".join(f["reserva"] for f in filas)
+        resultado[codigo] = {"ES": ref(precio, precio, precio, REVISION_LOTE_CADENAS, confianza="derivado", incluye_iva="no", incluye_transporte="no_confirmado", observaciones="Estimación provisional minorista; no es media nacional ni rango de mercado. " + notas)}
+    return resultado
+
+
+REVISION_LOTE_PRIORIDAD = "docs/auditoria_precios/ESPANA_LOTE_PRIORIDAD_2026-11-07.md"
+FUENTES_LOTE_PRIORIDAD = ROOT / "docs/auditoria_precios/espana_fuentes_prioridad_2026-11-07.csv"
+
+
+def referencias_lote_prioridad() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {
+        'MT-PERNO-ANCLA': 2, 'MT-PERFIL-ACERO': 1, 'MT-PUENTE-ADH': 1,
+        'MT-CINTA-ENM': 2, 'MT-MANTA-ACUS': 1, 'MT-HIDROFUGO': 1,
+        'MT-SILOXANO': 1, 'MT-HIDROFUG-FACH': 1, 'MT-LIMP-QUIM': 1,
+        'MT-IMPRIM-ASF': 1, 'MT-CIELO-DESM': 1, 'MT-LACA-MADERA': 1,
+        'MT-BARNIZ-MARINO': 1, 'MT-PEGA-MURAL': 1, 'MT-TINTE-MAD': 1,
+        'MT-CERRADURA-MULTI': 1, 'MT-PIN-MAGNETICA': 1, 'MT-SELLA-CONC': 1,
+    }
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_PRIORIDAD.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or (codigo in {'MT-PUENTE-ADH', 'MT-HIDROFUGO', 'MT-SILOXANO', 'MT-HIDROFUG-FACH'}
+                        and not fila['url_tecnica'].startswith(('https://', 'http://')))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto de ficha Obramat', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto de ficha Obramat' and fila['fuente'] != 'Obramat')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de prioridad inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de prioridad incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_PRIORIDAD,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+REVISION_LOTE_ALTA_FRECUENCIA = "docs/auditoria_precios/ESPANA_LOTE_ALTA_FRECUENCIA_2026-11-07.md"
+FUENTES_LOTE_ALTA_FRECUENCIA = ROOT / "docs/auditoria_precios/espana_fuentes_alta_frecuencia_2026-11-07.csv"
+
+
+def referencias_lote_alta_frecuencia() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-PLO-SOP': 1, 'MT-TUB-FRIGO': 2, 'MT-FLOTANTE': 2, 'MT-MACHIH-MAD': 1, 'MT-MELAMINA': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_ALTA_FRECUENCIA.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto de ficha Obramat', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto de ficha Obramat' and fila['fuente'] != 'Obramat')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de alta frecuencia inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de alta frecuencia incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_ALTA_FRECUENCIA,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+REVISION_LOTE_FAMILIAS = "docs/auditoria_precios/ESPANA_LOTE_FAMILIAS_2026-11-07.md"
+FUENTES_LOTE_FAMILIAS = ROOT / "docs/auditoria_precios/espana_fuentes_familias_2026-11-07.csv"
+
+
+def referencias_lote_familias() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-IMP-PRIM': 1, 'MT-GRANO-MARMOL': 1, 'MT-MANGUERA': 1, 'MT-CINTA-ANTIDES': 1, 'MT-CANAL-DREN': 1, 'MT-TEJA-CRIOLLA': 1, 'MT-REGISTRO': 1, 'MT-CIERRA-PUERTA': 1, 'MT-SELLA-FISURA': 1, 'MT-REFUERZO-PYL': 1, 'MT-PANEL-SAND': 1, 'MT-MEMBRANA-PVC': 1, 'MT-GROUT': 1, 'MT-ADH-MADERA': 1, 'MT-SELLA-BENTONITA': 1, 'MT-CONECTOR-CORTE': 1, 'MT-VIDRIO-LAM': 1, 'MT-VIDRIO-DOBLE': 1, 'MT-DUCTO-VENT': 1, 'MT-TUB-GAS': 1, 'MT-VALV-CHECK': 2, 'MT-DPS-1': 1, 'MT-DPS-2': 1, 'MT-DIFERENCIAL': 1, 'MT-ANTI-GRAFFITI': 1, 'MT-DESMOLD-COLOR': 1, 'MT-FUNGICIDA': 1, 'MT-PLOT-REG': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_FAMILIAS.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto de ficha Obramat', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto de ficha Obramat' and fila['fuente'] != 'Obramat')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de familias inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de familias incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_FAMILIAS,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_COMPONENTES = "docs/auditoria_precios/ESPANA_LOTE_COMPONENTES_2026-11-07.md"
+FUENTES_LOTE_COMPONENTES = ROOT / "docs/auditoria_precios/espana_fuentes_componentes_2026-11-07.csv"
+
+
+def referencias_lote_componentes() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-PYL-PERF-CR': 9, 'MT-MALLA-JUNTA': 1, 'MT-ELE-PROV': 1, 'MT-DINTEL-PREF': 1, 'MT-POLICARB': 2, 'MT-ESTUCO-FINO': 1, 'MT-BAJANTE-PVC': 3, 'MT-PER-BANDA': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_COMPONENTES.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto de ficha Obramat', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto de ficha Obramat' and fila['fuente'] != 'Obramat')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de componentes inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de componentes incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_COMPONENTES,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_SISTEMAS = "docs/auditoria_precios/ESPANA_LOTE_SISTEMAS_2026-11-07.md"
+FUENTES_LOTE_SISTEMAS = ROOT / "docs/auditoria_precios/espana_fuentes_sistemas_2026-11-07.csv"
+
+
+def referencias_lote_sistemas() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-PERF-DESM': 9, 'MT-MADERA-EST': 1, 'MT-FIBRA-CARB': 2, 'MT-CAJON-PERS': 3, 'MT-BENTONITA': 1, 'MT-PASTA-YESO': 1, 'MT-ADITIVO': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_SISTEMAS.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto de ficha Obramat', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto de ficha Obramat' and fila['fuente'] != 'Obramat')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de sistemas inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de sistemas incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_SISTEMAS,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_BLOQUE_AMPLIO = "docs/auditoria_precios/ESPANA_LOTE_BLOQUE_AMPLIO_2026-11-07.md"
+FUENTES_LOTE_BLOQUE_AMPLIO = ROOT / "docs/auditoria_precios/espana_fuentes_bloque_amplio_2026-11-07.csv"
+
+
+def referencias_lote_bloque_amplio() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-CANAL-PVC': 1, 'MT-ESCALERILLA': 1, 'MT-TOMA-DATOS': 3, 'MT-LADRILLO-VISTO': 1, 'MT-TORNILLO-EST': 1, 'MT-STEELDECK': 1, 'MT-CANON-TIERRA': 1, 'MT-ENDURECEDOR': 1, 'MT-BARRERA-ANTICAP': 1, 'MT-ANCLA-PIEDRA': 1, 'MT-EXTINTOR': 1, 'MT-ARNES': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_BLOQUE_AMPLIO.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Jorge Fernández')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de bloque_amplio inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de bloque_amplio incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_BLOQUE_AMPLIO,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_VERIFICACION = "docs/auditoria_precios/ESPANA_LOTE_VERIFICACION_2026-11-07.md"
+FUENTES_LOTE_VERIFICACION = ROOT / "docs/auditoria_precios/espana_fuentes_verificacion_2026-11-07.csv"
+
+
+def referencias_lote_verificacion() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-MOLDURA-YESO': 2, 'MT-CORNISA': 1, 'MT-JUNTA-DILAT': 1, 'MT-HERRAJE-MAD': 1, 'MT-TABIQUE-MOVIL': 1, 'MT-MASTIC-CORTAFUEGO': 1, 'MT-TUBO-DREN': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_VERIFICACION.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Distriplac')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de verificacion inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de verificacion incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_VERIFICACION,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_CONTINUACION = "docs/auditoria_precios/ESPANA_LOTE_CONTINUACION_2026-11-07.md"
+FUENTES_LOTE_CONTINUACION = ROOT / "docs/auditoria_precios/espana_fuentes_continuacion_2026-11-07.csv"
+
+
+def referencias_lote_continuacion() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-GRAVILLA': 1, 'MT-CRU-NIV': 2, 'MT-MAMPARA-OFI': 1, 'MT-PANEL-PVC-BANO': 1, 'MT-MOSAICO': 1, 'MT-ADH-PIEDRA': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_CONTINUACION.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Distriplac')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de continuacion inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de continuacion incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_CONTINUACION,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_EVACUACION_EPOXI = "docs/auditoria_precios/ESPANA_LOTE_EVACUACION_EPOXI_2026-11-07.md"
+FUENTES_LOTE_EVACUACION_EPOXI = ROOT / "docs/auditoria_precios/espana_fuentes_evacuacion_epoxi_2026-11-07.csv"
+
+
+def referencias_lote_evacuacion_epoxi() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-PLO-PVC4': 3, 'MT-TRAGANTE': 1, 'MT-EPOXI-ANCLA': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_EVACUACION_EPOXI.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Tapas y Registros')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de evacuacion_epoxi inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de evacuacion_epoxi incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_EVACUACION_EPOXI,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_LOTE_30 = "docs/auditoria_precios/ESPANA_LOTE_30_2026-11-07.md"
+FUENTES_LOTE_30 = ROOT / "docs/auditoria_precios/espana_fuentes_lote_30_2026-11-07.csv"
+
+
+def referencias_lote_treinta() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-TUB-RIEGO': 1, 'MT-CUARZO-COLOR': 1, 'MT-POLIUREA': 1, 'MT-DOM-ACTUADOR': 1, 'MT-DOM-DIMMER': 1, 'MT-DOM-SENSOR-INUND': 1, 'MT-DOM-SENSOR-MOV': 1, 'MT-DOM-SENSOR-LUZ': 1, 'MT-DOM-SENSOR-PUERTA': 1}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_LOTE_30.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Tapas y Registros')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de 30 inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de 30 incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_LOTE_30,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
+
+REVISION_OTROS_30 = "docs/auditoria_precios/ESPANA_LOTE_OTROS_30_2026-11-07.md"
+FUENTES_OTROS_30 = ROOT / "docs/auditoria_precios/espana_fuentes_otros_30_2026-11-07.csv"
+
+
+def referencias_otros_treinta() -> dict[str, dict[str, Referencia]]:
+    """Suma componentes de ofertas puntuales sin confundirlos con una media."""
+    esperados = {'MT-APEO': 3}
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    grupos = {}
+    with FUENTES_OTROS_30.open(encoding="utf-8-sig", newline="") as f:
+        for fila in csv.DictReader(f, delimiter=";"):
+            codigo = fila['codigo_recurso']
+            criterio = fila['criterio_iva']
+            if (codigo not in esperados or fila['unidad'] != unidades.get(codigo)
+                    or not all(fila[k] for k in ('producto', 'fuente', 'url', 'url_precio', 'reserva'))
+                    or not fila['url'].startswith(('https://', 'http://'))
+                    or not fila['url_precio'].startswith(('https://', 'http://'))
+                    or fila['fecha_consulta'] != '2026-11-07'
+                    or criterio not in {'neto en ficha', 'IVA 21% supuesto', 'IVA no confirmado'}
+                    or (criterio == 'neto en ficha' and fila['fuente'] != 'Tapas y Registros')
+                    or (criterio == 'IVA no confirmado' and fila['fuente'] != 'CYPE')):
+                raise ValueError(f"Fuente de 30 inválida: {codigo}")
+            base, divisor, cantidad = (Decimal(fila[k]) for k in ('importe_base', 'cantidad_por_envase', 'cantidad_por_recurso'))
+            if any(not x.is_finite() or x <= 0 for x in (base, divisor, cantidad)):
+                raise ValueError(f"Precio o cantidad inválidos: {codigo}")
+            if criterio == 'IVA no confirmado':
+                if fila['precio_bruto']:
+                    raise ValueError(f"IVA no confirmado incompatible con PVP: {codigo}")
+            elif criterio == 'neto en ficha':
+                if fila['precio_bruto']:
+                    raise ValueError(f'Neto no debe llevar PVP: {codigo}')
+            else:
+                bruto = Decimal(fila['precio_bruto'])
+                if not bruto.is_finite() or bruto <= 0:
+                    raise ValueError(f"PVP inválido: {codigo}")
+                tolerancia = Decimal('0.000001') if criterio == 'IVA 21% supuesto' else Decimal('0.01')
+                if abs(base - bruto / Decimal('1.21')) > tolerancia:
+                    raise ValueError(f"IVA incoherente: {codigo}")
+            grupos.setdefault(codigo, []).append(fila)
+    if {k: len(v) for k, v in grupos.items()} != esperados:
+        raise ValueError("Lote de 30 incompleto o duplicado")
+    resultado = {}
+    for codigo, filas in grupos.items():
+        if len({f['producto'] for f in filas}) != len(filas):
+            raise ValueError(f"Componente duplicado: {codigo}")
+        precio = sum(Decimal(f['importe_base']) / Decimal(f['cantidad_por_envase']) * Decimal(f['cantidad_por_recurso']) for f in filas).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        if any(Decimal(f['precio_resultante']) != precio for f in filas):
+            raise ValueError(f"Normalización incoherente: {codigo}")
+        iva = 'por_verificar' if any(f['criterio_iva'] == 'IVA no confirmado' for f in filas) else 'no'
+        reservas = ' '.join(dict.fromkeys(f['reserva'] for f in filas))
+        resultado[codigo] = {'ES': ref(precio, precio, precio, REVISION_OTROS_30,
+            confianza='derivado', incluye_iva=iva, incluye_transporte='no_confirmado',
+            observaciones='Estimación provisional puntual; no es media nacional ni rango de mercado. ' + reservas)}
+    return resultado
+
+
 def _numero(valor: float) -> str:
     return f"{valor:.6f}".rstrip("0").rstrip(".")
 
@@ -515,7 +1434,7 @@ def main():
     # La canasta histórica se mantiene congelada: una revisión individual no
     # debe recalibrar silenciosamente cientos de recursos aún pendientes.
     factores = completar_referencias_derivadas(data)
-    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas()}
+    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas(), **referencias_materiales_07(), **referencias_lote_regional(), **referencias_lote_comercial(), **referencias_lote_prioritario(), **referencias_lote_tiendas(), **referencias_lote_posterior(), **referencias_lote_banco(), **referencias_lote_cuadros(), **referencias_lote_materiales(), **referencias_lote_cadenas(), **referencias_lote_prioridad(), **referencias_lote_alta_frecuencia(), **referencias_lote_familias(), **referencias_lote_componentes(), **referencias_lote_sistemas(), **referencias_lote_bloque_amplio(), **referencias_lote_verificacion(), **referencias_lote_continuacion(), **referencias_lote_evacuacion_epoxi(), **referencias_lote_treinta(), **referencias_otros_treinta()}
     rows = []
     codigos = set()
     for codigo, categoria, item in iter_recursos(data):
@@ -536,6 +1455,7 @@ def main():
                 "fecha_consulta": (
                     FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
                     else FECHA_REVISION_MO if dato and dato.fuente == REVISION_MO
+                    else FECHA_MATERIALES_07 if dato and dato.fuente in (REVISION_MATERIALES_07, REVISION_LOTE_REGIONAL, REVISION_LOTE_COMERCIAL, REVISION_LOTE_PRIORITARIO, REVISION_LOTE_TIENDAS, REVISION_LOTE_POSTERIOR, REVISION_LOTE_BANCO, REVISION_LOTE_CUADROS, REVISION_LOTE_MATERIALES, REVISION_LOTE_CADENAS, REVISION_LOTE_PRIORIDAD, REVISION_LOTE_ALTA_FRECUENCIA, REVISION_LOTE_FAMILIAS, REVISION_LOTE_COMPONENTES, REVISION_LOTE_SISTEMAS, REVISION_LOTE_BLOQUE_AMPLIO, REVISION_LOTE_VERIFICACION, REVISION_LOTE_CONTINUACION, REVISION_LOTE_EVACUACION_EPOXI, REVISION_LOTE_30, REVISION_OTROS_30)
                     else FECHA_REVISION_MATERIALES if dato and dato.fuente == REVISION_MATERIALES
                     else FECHA if dato else ""
                 ),

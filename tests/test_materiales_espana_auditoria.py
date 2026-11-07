@@ -75,7 +75,17 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
         'MO-OF1-MON', 'MO-OF1-CARPM', 'MO-OF1-PISO', 'MO-OF1-ALI', 'MO-OF1-CAB',
         'MT-ELECTRODO', 'MT-MORT-REP-EST', 'MT-MALLA-OBRA', 'MT-SELLA-ELAST', 'MT-MORT-IMPER',
         'MT-PYL-BANDA', 'MT-PYL-PLACA', 'MT-PYL-PASTA-AGARRE',
-        'MT-ELE-TUB20', 'MT-MALLA-FACH', 'MT-AUT-NIV'}
+        'MT-ELE-TUB20', 'MT-MALLA-FACH', 'MT-AUT-NIV',
+        'MT-CABLE-DATOS', 'MT-DESMOLD', 'MT-ALAMBRE',
+        'MT-AGUA-OBRA', 'MT-MALLA-ELEC', 'MT-CLAVOS',
+        'MT-MADERA-LISTON', 'MT-PIN-FONDO', 'MT-SEPARADOR', 'MT-GEOTEXTIL',
+        'MT-PYL-LANA', 'MT-PLO-PPR20', 'MT-TUB-PPR25', 'MT-PIN-CAUCHO',
+        'MT-PINT-ANTICORR', 'MT-POLIESTIRENO-EXT', 'MT-BANDA-REF', 'MT-CURADOR', 'MT-YESO-REP', 'MT-PIN-ESMALTE', 'MT-PLO-ABASTO', 'MT-POLIUR-LIQ', 'MT-PYL-PASTA', 'MT-CABLE-ALARMA', 'MT-TORN-TECHO',
+        'MT-ACERO-CAB', 'MT-ELE-CABLE', 'MT-CABLE-8', 'MT-ELE-MECA', 'MT-BREAKER',
+        'MT-REJILLA-VENT', 'MT-PLACA-CEM', 'MT-PROT-OBRA', 'MT-PROT-PLAST', 'MT-PROT-CARTON',
+        'MT-MANTO-ASF', 'MT-LANA-ROCA', 'MT-TIERRA-ABON', 'MT-AISL-TERM',
+        'MT-LAMINA-OSB', 'MT-LAMINA-DREN', 'MT-VIGUETA', 'MT-MALLA-DREN',
+        'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC'} | set(generador.referencias_lote_cadenas()) | set(generador.referencias_lote_prioridad()) | set(generador.referencias_lote_alta_frecuencia()) | set(generador.referencias_lote_familias()) | set(generador.referencias_lote_componentes()) | set(generador.referencias_lote_sistemas()) | set(generador.referencias_lote_bloque_amplio()) | set(generador.referencias_lote_verificacion()) | set(generador.referencias_lote_continuacion()) | set(generador.referencias_lote_evacuacion_epoxi()) | set(generador.referencias_lote_treinta()) | set(generador.referencias_otros_treinta())
 
 
 def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
