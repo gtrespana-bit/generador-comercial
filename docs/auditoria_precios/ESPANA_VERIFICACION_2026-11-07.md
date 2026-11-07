@@ -78,7 +78,7 @@ Para confirmar un precio hacen falta **dos observaciones independientes**. Hoy h
 
 Lo que desbloquearía el resto:
 
-1. **Base de Precios de Construcción de Extremadura 2026 (formato BC3, texto plano).** Está publicada y es accesible: `https://www.juntaex.es/documents/77055/621768/BCEXTGREM_26_v1.bc3/...`. Es la segunda base más útil porque incluye materiales, maquinaria y mano de obra con precios de 2026. **No se ha podido ingerir completa desde este entorno**: la red del sandbox solo permite GitHub y PyPI, y el archivo son ~20 MB servidos en 2.339 fragmentos por la herramienta de lectura de páginas. Con una descarga normal basta `tools/cruzar_precios_bc3.py`, que ya sabe leer BC3.
+1. **Base de Precios de Construcción de Extremadura 2026 (formato BC3, texto plano).** Página oficial: <https://www.juntaex.es/w/base-precios-construccion-2026> (documento «Base de precios de la construcción de Extremadura 2026 en formato bc3»). Enlace directo comprobado el 7 de noviembre de 2026: <https://www.juntaex.es/documents/77055/621768/BCEXTGREM_26_v1.bc3/8066c810-a694-eeed-c456-a64abca3cc2e?t=1782217730923>. Guardar el archivo como `bases_precios/BCEXTGREM_26_v1.bc3` (carpeta ignorada por git) y ejecutar `python3 tools/descargar_banco_bc3.py --cruzar`, o descargarlo directamente con ese mismo comando en un entorno con red abierta. También hay versión Presto y tres PDF (precios simples, auxiliares y descompuestos) para consultas puntuales. Está publicada y es accesible: `https://www.juntaex.es/documents/77055/621768/BCEXTGREM_26_v1.bc3/...`. Es la segunda base más útil porque incluye materiales, maquinaria y mano de obra con precios de 2026. **No se ha podido ingerir completa desde este entorno**: la red del sandbox solo permite GitHub y PyPI, y el archivo son ~20 MB servidos en 2.339 fragmentos por la herramienta de lectura de páginas. Con una descarga normal basta `tools/cruzar_precios_bc3.py`, que ya sabe leer BC3.
 2. **Banco con licencia de uso** (Generador de Precios de CYPE, Presto, ITeC). Es la vía que resuelve de una vez la cobertura nacional y la vigencia 2026, y la única que permite decir «precio de mercado» con fundamento.
 3. **Cotizaciones de proveedor** para los 287 recursos de esfuerzo medio, con la especificación que ya está descrita en el catálogo.
 4. **Precios de adquisición de maquinaria** para construir el modelo horario de los 44 recursos de esfuerzo alto.
@@ -86,6 +86,7 @@ Lo que desbloquearía el resto:
 ## 8. Reproducibilidad
 
 ```bash
+python3 tools/descargar_banco_bc3.py --cruzar         # descarga la base 2026 y cruza el catálogo
 python3 tools/verificar_precios_espana.py            # matriz de verificación + cola de trabajo
 python3 tools/verificar_precios_espana.py --aplicar  # + lote de confirmaciones
 python3 tools/confirmar_precios_espana.py            # valida sin escribir
