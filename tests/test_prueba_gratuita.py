@@ -647,6 +647,7 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
         v2d7f1a6b9c3_datos_bancarios_del_presupuesto as bancarios_migracion,
         w3m9k2p8v1n4_visitas_pagina_audiencia as visitas_migracion,
         x9m2k4p8v1n6_vistas_guardadas_favorita as favorita_migracion,
+        y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migracion,
     )
 
     assert ejemplo_migracion.down_revision == analitica_migracion.revision
@@ -663,7 +664,10 @@ def test_la_migracion_encadena_con_la_cabeza_anterior():
     assert visitas_migracion.down_revision == bancarios_migracion.revision
     # Sobre la audiencia cuelga la marca de vistas favoritas, cabeza vigente.
     assert favorita_migracion.down_revision == visitas_migracion.revision
-    assert favorita_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    # Sobre las vistas favoritas cuelga el índice de búsqueda por código del
+    # catálogo, que es la cabeza vigente.
+    assert indice_recursos_migracion.down_revision == favorita_migracion.revision
+    assert indice_recursos_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

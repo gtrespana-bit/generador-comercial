@@ -95,7 +95,9 @@ def test_las_revisiones_manuales_mandan_sobre_el_cribado():
 
 def test_confirmaciones_aplicadas_incluyen_la_segunda_base():
     confirmaciones = {f["codigo_recurso"]: f for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
-    assert len(confirmaciones) == 321
+    # 53 recursos ya confirmados en el cierre + las 337 confirmaciones cruzadas
+    # de esta tabla cubren los 390: no queda ninguno fuera.
+    assert len(confirmaciones) == 337
     extremadura = [c for c, f in confirmaciones.items() if f["fuente"] == "extremadura"]
     assert len(extremadura) > 0
     registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}

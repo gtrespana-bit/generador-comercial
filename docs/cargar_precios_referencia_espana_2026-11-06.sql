@@ -6,6 +6,21 @@
 -- (migraciones de moneda y recursos por mercado aplicadas en Supabase).
 -- ALCANCE: reemplaza solo referencias nacionales ES.
 -- NO TOCA: precios propios de organizaciones ni referencias de otros países.
+--
+-- ESTADO: **APLICADO** en producción el 2026-11-08 (proyecto `CotizaT-Generador`,
+-- `ivsuiyfljcajrijgwisg`). Resultado y verificación:
+-- docs/auditoria_precios/ESPANA_CARGA_PRODUCCION_2026-11-08.md. La carga real se hizo
+-- por tandas sobre una tabla espejo en `backup` y con los dos recursos que faltaban
+-- (`MT-BLQ-17`, `MT-BLQ-25`) creados antes; este fichero queda como registro
+-- reproducible de las mismas 390 filas.
+--
+-- DOS PRECAUCIONES APRENDIDAS EN LA EJECUCIÓN:
+--  1. `public.recursos` no tiene índice sobre `codigo`. Cualquier `NOT EXISTS` o
+--     `IN (SELECT r.id FROM public.recursos WHERE r.codigo = ...)` correlacionado
+--     barre las ~21.800 filas una vez por código y bloquea la transacción. Por eso
+--     el mapa código → id se resuelve aquí una sola vez, en una tabla temporal.
+--  2. La carga de producción selló `fecha_consulta` a 2026-11-07 (equivalente al
+--     botón «Confirmar hoy» del panel), no a la fecha de cada fuente.
 
 BEGIN;
 
@@ -431,6 +446,20 @@ INSERT INTO cotizat_precios_espana_stage (
 ('MQ-DOBLAD-TUBO', 'ES', 'EUR', 2.4, 2.4, 2.4, 'h', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'referencia', 'no_confirmado', 'no_confirmado', 'Base de Precios de Construcción de Extremadura 2026 (BCEXTGREM_26_v1.bc3). Ficha del banco: Dobladora electrica hasta 30 mm Reserva: Identidad directa con la ficha del banco. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MQ-TELUROMETRO', 'ES', 'EUR', 0.24, 0.24, 0.24, 'h', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Modelo propio de coste horario de maquinaria (compra y amortización) 2026-11-07. Compra 330,58 EUR netos (telurometro de 400 EUR IVA incl.) entre 1.500 h con mantenimiento 10 % Reserva: Estimación propia trazable: la vida útil y el precio de compra son hipótesis declaradas en la ficha del modelo. Referencia operativa de cierre; no es garantía de precio universal.');
 
+-- Mapa código → id resuelto de una sola pasada. Sin esto, la guarda y el DELETE
+-- hacen un escaneo secuencial de public.recursos por cada código de la matriz
+-- (no hay índice sobre recursos.codigo) y la transacción se bloquea.
+CREATE TEMP TABLE cotizat_espana_mapa (
+  codigo varchar(80) NOT NULL PRIMARY KEY,
+  recurso_id bigint NOT NULL
+) ON COMMIT DROP;
+
+INSERT INTO cotizat_espana_mapa (codigo, recurso_id)
+SELECT r.codigo, min(r.id)
+FROM public.recursos AS r
+WHERE r.codigo IN (SELECT s.codigo_recurso FROM cotizat_precios_espana_stage AS s)
+GROUP BY r.codigo;
+
 DO $$
 DECLARE
   v_filas integer;
@@ -447,14 +476,11 @@ BEGIN
   END IF;
 
   SELECT count(*) INTO v_ausentes
-  FROM (
-    SELECT DISTINCT s.codigo_recurso
-    FROM cotizat_precios_espana_stage AS s
-    WHERE NOT EXISTS (
-      SELECT 1 FROM public.recursos AS r
-      WHERE r.codigo = s.codigo_recurso
-    )
-  ) AS faltantes;
+  FROM cotizat_precios_espana_stage AS s
+  WHERE NOT EXISTS (
+    SELECT 1 FROM cotizat_espana_mapa AS m
+    WHERE m.codigo = s.codigo_recurso
+  );
   IF v_ausentes <> 0 THEN
     RAISE EXCEPTION
       'Hay % códigos de recurso que aún no existen en public.recursos',
@@ -466,15 +492,12 @@ $$;
 -- Reemplazo idempotente de la matriz nacional ES. Los overrides de empresa
 -- (organizacion_id IS NOT NULL) y las referencias de otros países quedan intactos.
 DELETE FROM public.precios_recursos_mercado AS p
-USING cotizat_precios_espana_stage AS s
+USING cotizat_espana_mapa AS m
 WHERE p.organizacion_id IS NULL
-  AND p.pais_codigo = s.pais_codigo
+  AND p.pais_codigo = 'ES'
   AND (
-    p.codigo_recurso = s.codigo_recurso
-    OR p.recurso_id IN (
-      SELECT r.id FROM public.recursos AS r
-      WHERE r.codigo = s.codigo_recurso
-    )
+    p.codigo_recurso = m.codigo
+    OR p.recurso_id = m.recurso_id
   );
 
 INSERT INTO public.precios_recursos_mercado (
@@ -485,7 +508,7 @@ INSERT INTO public.precios_recursos_mercado (
   fecha_actualizacion, activo
 )
 SELECT
-  recurso.id,
+  m.recurso_id,
   s.codigo_recurso,
   s.pais_codigo,
   NULL,
@@ -497,7 +520,10 @@ SELECT
   s.fuente,
   '',
   s.confianza,
-  s.fecha_consulta,
+  -- Sello de revisión de la carga de producción (2026-11-08): equivale a pulsar
+  -- «Confirmar hoy» en el panel. Para conservar la fecha de cada fuente de la
+  -- matriz, sustituir por s.fecha_consulta.
+  DATE '2026-11-07',
   NULL,
   s.incluye_iva,
   s.incluye_transporte,
@@ -505,13 +531,8 @@ SELECT
   CURRENT_TIMESTAMP,
   true
 FROM cotizat_precios_espana_stage AS s
-CROSS JOIN LATERAL (
-  SELECT r.id
-  FROM public.recursos AS r
-  WHERE r.codigo = s.codigo_recurso
-  ORDER BY r.id
-  LIMIT 1
-) AS recurso;
+JOIN cotizat_espana_mapa AS m
+  ON m.codigo = s.codigo_recurso;
 
 DO $$
 DECLARE
@@ -534,8 +555,16 @@ $$;
 
 COMMIT;
 
--- Verificación posterior (debe devolver 390):
-SELECT pais_codigo, count(*) AS referencias
+-- Verificación posterior (debe devolver 390 y una sola fecha, 2026-11-07).
+-- Tras la carga real del 2026-11-08 dio: 390 referencias, 390 con fecha
+-- 2026-11-07, 0 discrepancias frente al stage, 14 overrides de empresa y
+-- 8.148 referencias de otros países sin cambios.
+SELECT pais_codigo,
+       count(*) AS referencias,
+       count(*) FILTER (WHERE fecha_consulta = DATE '2026-11-07') AS selladas,
+       min(fecha_consulta) AS desde,
+       max(fecha_consulta) AS hasta,
+       count(DISTINCT moneda) AS monedas
 FROM public.precios_recursos_mercado
 WHERE organizacion_id IS NULL
   AND activo IS TRUE

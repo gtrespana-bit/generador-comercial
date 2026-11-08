@@ -7,8 +7,11 @@ def test_inventario_integral_reproducible_y_estados_actuales():
     filas = i.inventario(i.leer(i.AUDITORIA), i.leer(i.CANDIDATOS), i.leer(i.MATRIZ))
     assert filas == i.leer(i.SALIDA)
     assert len(filas) == len({f['codigo_recurso'] for f in filas}) == 390
+    # Tras el cierre total y la tanda de 337 confirmaciones cruzadas (53 que ya
+    # lo estaban + 337 = 390) ningún recurso queda en revisión: el registro no
+    # distingue un subconjunto «verificado» más pequeño que el confirmado.
     assert Counter(f['estado_auditoria_actual'] for f in filas) == {
-        'confirmado_referencia': 374, 'en_revision': 16}
+        'confirmado_referencia': 390}
     assert sum(bool(f['primer_codigo_bcca']) for f in filas) == 359
     assert sum(bool(f['precio_revisado']) for f in filas) == 390
     assert all(int(f['numero_candidatos_bcca']) == 0 for f in filas if not f['primer_codigo_bcca'])

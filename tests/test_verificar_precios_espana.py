@@ -95,7 +95,8 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
 
 def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
     filas = leer(confirmador.CONFIRMACIONES)
-    assert len(filas) == 321
+    # 337 confirmaciones cruzadas sobre 53 recursos que ya lo estaban: 390.
+    assert len(filas) == 337
     for fila in filas:
         recurso = registro[fila["codigo_recurso"]]
         assert recurso["estado_auditoria"] == "confirmado_referencia"
@@ -107,9 +108,11 @@ def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
 
 def test_valida_estado_banda_y_duplicados(registro):
     fila = leer(confirmador.CONFIRMACIONES)[0]
-    en_revision = {c: dict(r) for c, r in registro.items()
-                   if r["estado_auditoria"] == "en_revision" and r["precio_revisado"]}
+    # El registro ya no tiene recursos en revisión (el cierre confirmó los 390),
+    # así que el escenario se prepara a mano: mismo dato, estado en revisión.
+    en_revision = {c: dict(r) for c, r in registro.items() if r["precio_revisado"]}
     codigo = next(iter(en_revision))
+    en_revision[codigo]["estado_auditoria"] = "en_revision"
     # Fuera de la banda del 15 %: se rechaza.
     revisado = Decimal(en_revision[codigo]["precio_revisado"])
     fuera = dict(fila, codigo_recurso=codigo, precio=str(revisado * 2))
@@ -135,10 +138,11 @@ def test_aplicar_es_idempotente(registro):
     orden, cambios = confirmador.aplicar(filas, copia)
     assert cambios == []
     assert orden == [registro[c] for c in sorted(registro)]
-    # Y sobre un recurso en revisión la marca se escribe una sola vez.
-    en_revision = {c: dict(r) for c, r in registro.items()
-                   if r["estado_auditoria"] == "en_revision" and r["precio_revisado"]}
+    # Y sobre un recurso en revisión la marca se escribe una sola vez. No queda
+    # ninguno en el registro, así que se prepara el escenario a mano.
+    en_revision = {c: dict(r) for c, r in registro.items() if r["precio_revisado"]}
     codigo = next(iter(en_revision))
+    en_revision[codigo]["estado_auditoria"] = "en_revision"
     fila = dict(filas[0], codigo_recurso=codigo,
                 precio=en_revision[codigo]["precio_revisado"])
     primero = confirmador.aplicar([fila], en_revision)
