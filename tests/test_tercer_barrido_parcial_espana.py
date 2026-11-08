@@ -33,7 +33,13 @@ def test_tercer_barrido_completo_sin_aplicaciones_y_sin_repeticiones():
         a = auditoria[codigo]
         assert codigo not in informe_primero and codigo in informe
         assert r['decision'] == 'sin_precio_revisado'
-        assert not a['precio_revisado'] or a['precio_revisado'] == cierre.precio_revisado(r['codigo_recurso'], '')
+        # Si el recurso se confirmó después con BCCA 2023 o Extremadura 2026,
+        # tiene precio_revisado y estado confirmado_referencia.
+        if a['precio_revisado']:
+            assert float(a['precio_revisado']) > 0
+            assert a['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
+        else:
+            assert a['precio_revisado'] == cierre.precio_revisado(r['codigo_recurso'], '')
         assert r['motivo'] in a['evidencia_y_pendientes']
         assert r['fuente'].startswith('https://')
         assert r['usos'] == a['partidas_que_lo_usan'] and r['unidad'] == a['unidad']

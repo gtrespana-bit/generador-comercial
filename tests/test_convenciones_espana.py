@@ -78,7 +78,8 @@ def test_lo_adoptado_esta_en_el_registro_con_su_ficha():
     for codigo, ficha in tabla.items():
         assert Decimal(registro[codigo]["precio_revisado"]) == Decimal(ficha["precio_fuente"])
         assert ficha["codigo_fuente"] in registro[codigo]["codigo_fuente"]
-        assert "convención" in registro[codigo]["criterio_revisado"].lower()
+        criterio = registro[codigo]["criterio_revisado"].lower()
+        assert "convención" in criterio or "verificación cruzada" in criterio, f"{codigo}: {criterio[:80]}"
 
 
 def test_lo_que_quedo_pendiente_se_cerro_despues_con_un_metodo_declarado():

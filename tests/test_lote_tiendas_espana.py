@@ -24,7 +24,7 @@ def test_lote_y_conversiones():
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal(valor)
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_TIENDAS
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert Decimal(auditoria[codigo]['precio_revisado']) == Decimal(valor)
     for codigo in ('MT-PINT-ANTICORR', 'MT-PLO-ABASTO', 'MT-POLIUR-LIQ'):
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'

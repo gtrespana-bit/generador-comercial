@@ -24,7 +24,7 @@ def test_referencias_trazadas_y_normalizadas():
         assert Decimal(str(ref.precio)) == Decimal(valor)
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal(valor)
         assert Decimal(audit[codigo]['precio_revisado']) == Decimal(valor)
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        assert audit[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_ALTA_FRECUENCIA
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == 'no'

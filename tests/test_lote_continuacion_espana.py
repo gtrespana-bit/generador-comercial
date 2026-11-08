@@ -22,15 +22,20 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         filas = [r for r in fuentes if r['codigo_recurso'] == codigo]
         dato = ref['ES']
         assert Decimal(str(dato.precio)) == Decimal(audit[codigo]['precio_revisado']) == Decimal(matriz[codigo]['precio_referencia'])
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        # MT-CRU-NIV sigue en revision (sin fuente bancaria dentro del +/-15 %);
+        # los otros cinco se confirmaron con BCCA/Extremadura al mismo precio del lote.
+        assert audit[codigo]['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_CONTINUACION
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
-    # La convención de medida (7 de noviembre) sí le puso precio después.
-    assert (not audit['MT-ELE-CAJA']['precio_revisado']
-            or 'Convención de medida' in audit['MT-ELE-CAJA']['criterio_revisado'])
+        # MT-ELE-CAJA se confirmó con BCCA/Extremadura (verificación cruzada)
+        # en lugar de la convención de medida original.
+        criterio_caja = audit['MT-ELE-CAJA']['criterio_revisado']
+        assert (not audit['MT-ELE-CAJA']['precio_revisado']
+                or 'Convención de medida' in criterio_caja
+                or 'Verificación cruzada' in criterio_caja)
     gravilla = next(r for r in fuentes if r['codigo_recurso'] == 'MT-GRAVILLA')
     assert Decimal(gravilla['cantidad_por_recurso']) == Decimal('0.180') / Decimal('0.10')
     cunas = [r for r in fuentes if r['codigo_recurso'] == 'MT-CRU-NIV']

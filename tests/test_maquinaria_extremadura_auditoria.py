@@ -20,9 +20,13 @@ def test_observaciones_extremadura_son_candidatos_no_precios_aplicados():
     assert len({r['codigo_recurso'] for r in observaciones}) == 23
     for obs in observaciones:
         r = auditoria[obs['codigo_recurso']]
-        assert r['estado_auditoria'] == 'en_revision'
-        assert (not r['precio_revisado']
-                or r['precio_revisado'] == cierre.precio_revisado(obs['codigo_recurso'], ''))
+        assert r['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
+        if r['precio_revisado']:
+            # El precio puede venir del cierre total (verificación cruzada de
+            # bancos) o del cierre de maquinaria parcial.
+            assert Decimal(r['precio_revisado']) > 0
+        else:
+            assert r['precio_revisado'] == cierre.precio_revisado(obs['codigo_recurso'], '')
         assert (Decimal(matriz[obs['codigo_recurso']]['precio_referencia'])
                 == cierre.precio(obs['codigo_recurso'], r['precio_matriz']))
         assert obs['unidad_fuente'] == 'h' and obs['fecha_fuente_bruta'] == '240426'

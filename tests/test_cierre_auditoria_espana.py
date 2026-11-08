@@ -105,14 +105,37 @@ def test_rechaza_decisiones_invalidas(datos):
     with pytest.raises(ValueError):
         cierre.validar([base, dict(base)], registro, matriz)
     # Sin decisión para un recurso no confirmado, el cierre está incompleto.
-    with pytest.raises(ValueError):
-        cierre.validar(adjudicacion[:-1], registro, matriz)
+    en_revision = [c for c, r in registro.items() if r["estado_auditoria"] == "en_revision"]
+    sin_decision = [f for f in adjudicacion if f["codigo_recurso"] != en_revision[0]]
+    with pytest.raises(ValueError, match="sin decisión"):
+        cierre.validar(sin_decision, registro, matriz)
 
 
 def test_confirmacion_fuera_de_banda_se_rechaza(datos):
     registro, matriz, adjudicacion, _, _ = datos
-    confirmacion = next(f for f in adjudicacion if f["decision"] == "confirmar_referencia")
-    fuera = dict(confirmacion, precio_fuente=str(Decimal(confirmacion["precio_revisado_previo"]) * 2))
+    # Fila sintética para probar rechazo de confirmación fuera de banda,
+    # construida sobre un recurso real de materiales con unidad ud.
+    ref = next(r for r in registro.values()
+               if r["categoria"] == "materiales" and r["unidad"] == "ud")
+    base = {
+        "codigo_recurso": ref["codigo_recurso"],
+        "categoria": ref["categoria"],
+        "unidad": ref["unidad"],
+        "usos": ref["partidas_que_lo_usan"],
+        "estado_previo": "en_revision",
+        "precio_matriz": ref["precio_revisado"],
+        "precio_revisado_previo": ref["precio_revisado"],
+        "decision": "confirmar_referencia",
+        "precio_adoptado": "",
+        "precio_fuente": "20.00",
+        "fuente": "extremadura",
+        "codigo_fuente": "P01XXXX",
+        "edicion_fecha": "2026",
+        "desviacion_pct": "+100.0",
+        "criterio": "Prueba de rechazo fuera de banda",
+        "reserva": "",
+    }
+    fuera = dict(base, precio_fuente=str(Decimal(base["precio_revisado_previo"]) * 2))
     with pytest.raises(ValueError, match="banda"):
         cierre.validar([fuera], registro, matriz)
 

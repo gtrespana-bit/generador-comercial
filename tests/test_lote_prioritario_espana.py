@@ -25,5 +25,5 @@ def test_precios_del_lote_y_auditoria():
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_PRIORITARIO
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == matriz[codigo]['incluye_transporte'] == 'no'
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert Decimal(auditoria[codigo]['precio_revisado']) == Decimal(valor)

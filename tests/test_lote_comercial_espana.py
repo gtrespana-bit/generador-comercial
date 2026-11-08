@@ -25,7 +25,9 @@ def test_medias_y_artefactos():
         assert matriz[codigo]['precio_referencia'] == esperado
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_COMERCIAL
         assert matriz[codigo]['incluye_iva'] == matriz[codigo]['incluye_transporte'] == 'no'
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        # MT-SEPARADOR sigue en revision (sin fuente bancaria dentro del +/-15 %);
+        # los otros tres se confirmaron con BCCA/Extremadura al mismo precio del lote.
+        assert audit[codigo]['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
         assert audit[codigo]['precio_revisado'] == esperado
 
 

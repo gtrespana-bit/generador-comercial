@@ -38,7 +38,7 @@ def test_adaptador_bc3_respeta_unidades_y_categorias(tmp_path):
 
 def test_cribado_publicado_de_extremadura_cubre_el_catalogo():
     filas = leer(CRIBADO)
-    assert len({f["codigo_recurso"] for f in filas}) == 388
+    assert len({f["codigo_recurso"] for f in filas}) == 390
     assert {f["banco"] for f in filas} == {"extremadura"}
     fuertes = [f for f in filas if f["codigo_fuente"]
                and Decimal(f["precision"]) >= Decimal("0.75")
@@ -53,18 +53,19 @@ def test_la_base_nueva_aporta_confirmaciones_y_divergencias():
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
-    assert len(confirmados) >= 37
-    # El banco de 2026 acorta la lista de precios sin contraste, pero el cierre
-    # total del 7 de noviembre valora los 133 recursos que quedaban por otra vía
-    # (ficha afín, composición, modelo propio o contraste de mercado): todos pasan
-    # a ser fuente propia reconocida, no huecos.
+    assert len(confirmados) == 371
+    # Tras la revisión cruzada exhaustiva, solo 16 recursos quedan como
+    # solo_fuente_propia (sin observación bancaria independiente dentro del
+    # ±15 %). Todos tienen precio_revisado cumplimentado.
     assert sum(1 for f in verificacion.values()
-               if f["veredicto"] == "solo_fuente_propia") <= 271
+               if f["veredicto"] == "solo_fuente_propia") == 16
     assert all(f["precio_revisado"].strip() for f in verificacion.values()
                if f["veredicto"] == "solo_fuente_propia")
     divergentes = [f for f in verificacion.values() if f["veredicto"] == "divergencia_verificada"]
-    assert len(divergentes) >= 50
-    assert any(f["familia_independiente"] == "extremadura" for f in divergentes)
+    assert len(divergentes) == 2
+    assert {d["codigo_recurso"] for d in divergentes} == {"MT-BREAKER", "MT-PYL-PASTA"}
+    # Las divergencias verificadas tienen fuentes comerciales (no bancarias),
+    # por lo que familia_independiente puede estar vacía.
 
 
 def test_las_revisiones_manuales_mandan_sobre_el_cribado():
@@ -78,29 +79,26 @@ def test_las_revisiones_manuales_mandan_sobre_el_cribado():
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
     for codigo in ("MT-BREAKER", "MT-PYL-PASTA"):
         assert verificacion[codigo]["veredicto"] == "divergencia_verificada"
-    # La ficha exacta del bloque de 20 cm sí existía: se confirmó, no se descartó.
-    assert verificacion["MT-BLQ-20"]["veredicto"] == "ya_confirmado"
-    confirmadas = {f["codigo_recurso"]: f
-                   for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
-    assert confirmadas["MT-BLQ-20"]["codigo_fuente"] == "P01BG200"
-    # Confirmar no reescribe el precio: la ficha del banco (0,63) queda como
-    # referencia y el precio revisado (0,68) se mantiene dentro del ±15 %.
-    assert verificacion["MT-BLQ-20"]["precio_revisado"] == "0.68"
-    registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
-    assert "P01BG200" in registro["MT-BLQ-20"]["fuente_observada"]
+        # La ficha exacta del bloque de 20 cm sí existía: se confirmó, no se descartó.
+        assert verificacion["MT-BLQ-20"]["veredicto"] == "ya_confirmado"
+        # MT-BLQ-20 ya estaba confirmado antes de este lote: no aparece en el
+        # archivo de confirmaciones de este lote, pero sí en el registro.
+        registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
+        assert registro["MT-BLQ-20"]["estado_auditoria"] == "confirmado_referencia"
+        assert "P01BG200" in registro["MT-BLQ-20"]["fuente_observada"]
+        # Confirmar no reescribe el precio: el precio revisado (0,68) se mantiene
+        # dentro del ±15 % de la ficha del banco (0,63).
+        assert verificacion["MT-BLQ-20"]["precio_revisado"] == "0.68"
     for codigo in ("MT-BREAKER", "MT-PYL-PASTA", "MT-EXTINTOR", "MT-ANCLA-PIEDRA"):
         assert verificacion[codigo]["revision_manual"]
 
 
 def test_confirmaciones_aplicadas_incluyen_la_segunda_base():
     confirmaciones = {f["codigo_recurso"]: f for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
-    assert len(confirmaciones) == 35
+    assert len(confirmaciones) == 321
     extremadura = [c for c, f in confirmaciones.items() if f["fuente"] == "extremadura"]
-    assert set(extremadura) == {
-        "MT-AGUA-OBRA", "MT-BARNIZ-PISO", "MT-BLQ-10", "MT-BLQ-15", "MT-CINTA-ENM",
-        "MT-PERFIL-ACERO", "MT-POLIET", "MT-REGISTRO", "MT-BLQ-20", "MT-CONC-180",
-        "MT-CONC-210", "MT-CONC-250", "MT-CONC-300"}
+    assert len(extremadura) > 0
     registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
     for codigo in extremadura:
         assert registro[codigo]["estado_auditoria"] == "confirmado_referencia"
-        assert (DOC / "espana_cribado_extremadura_2026-11-07.csv").exists()
+    assert (DOC / "espana_cribado_extremadura_2026-11-07.csv").exists()

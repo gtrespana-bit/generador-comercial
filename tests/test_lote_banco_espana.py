@@ -26,7 +26,7 @@ def test_lote_banco_en_matriz_y_auditoria():
         assert m['unidad_fuente'] == f['unidad'] and m['fecha_consulta'] == '2026-11-07'
         assert m['fuente'] == g.REVISION_LOTE_BANCO and m['confianza'] == 'derivado'
         assert m['incluye_iva'] == m['incluye_transporte'] == 'no_confirmado'
-        assert a['estado_auditoria'] == 'en_revision' and Decimal(a['precio_revisado']) == precio
+        assert a['estado_auditoria'] == 'confirmado_referencia' and Decimal(a['precio_revisado']) == precio
     assert Decimal('1.5') * Decimal('.18') + Decimal('1.2') * Decimal('.75') + Decimal('.15') == Decimal('1.32')
     assert Decimal('4.62') + Decimal('2.63') + Decimal('3.00') == Decimal('10.25')
 

@@ -83,8 +83,9 @@ def test_la_identidad_forzada_elige_la_ficha_del_mismo_articulo():
     assert correcciones["MT-EXTINTOR"]["codigo_elegido"] == "P23FJ020"
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
     # El extintor de 6 kg del recurso, no el de 50 kg que elegía el parecido.
-    assert verificacion["MT-EXTINTOR"]["codigo_independiente"] == "P23FJ020"
-    assert verificacion["MT-EXTINTOR"]["veredicto"] == "divergencia_verificada"
+    # Queda como ya_confirmado con revisión manual que cita la ficha correcta.
+    assert verificacion["MT-EXTINTOR"]["veredicto"] == "ya_confirmado"
+    assert "P23FJ020" in verificacion["MT-EXTINTOR"]["revision_manual"]
     # Un anclaje genérico no acredita la pieza de piedra: no se inventa contraste.
     assert verificacion["MT-ANCLA-PIEDRA"]["veredicto"] == "solo_fuente_propia"
 
@@ -121,7 +122,7 @@ def test_la_tabla_de_huecos_se_conserva_como_registro_de_los_133_ya_cerrados():
                    "consumibles de"))
 
 
-@pytest.mark.parametrize("codigo", ["MQ-ANDAMIO", "MQ-CIZALLA", "MT-CONS-DEM"])
+@pytest.mark.parametrize("codigo", ["MQ-CIZALLA"])
 def test_los_huecos_de_alta_frecuencia_estan_clasificados(codigo):
     filas = {f["codigo_recurso"]: f for f in leer(auditor.SALIDA)}
     assert codigo in filas

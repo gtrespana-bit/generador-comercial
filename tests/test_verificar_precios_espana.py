@@ -80,14 +80,13 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
     assert pendientes == set(verificacion) - confirmados
-    # 53 confirmados de referencia + 1 confirmado independiente
-    # (MT-PERSIANA-ALU, −13,3 % vs BCCA KS04500). De las 16 nuevas confirmaciones,
-    # 15 se corroboraron con la BCCA 2023 (hora oficial TO02100 y siete fichas de
-    # material) y 1 es confirmación manual del titular sin segunda fuente
-    # independiente (MT-PERFIL-ALUM, dentro de la horquilla de mercado 8-14 EUR/kg).
-    # La cola baja a 336 (390 recursos - 54 confirmados, incluidos MT-BLQ-17 y MT-BLQ-25).
-    assert len(confirmados) == 54
-    assert len(pendientes) == 336
+    # 371 ya_confirmado + 1 confirmado_independiente en el archivo de
+    # verificacion. Los 3 recursos confirmados en el registro pero clasificados
+    # como solo_fuente_propia o divergencia_verificada en la verificacion son:
+    # MT-ANCLA-PIEDRA, MT-BREAKER, MT-PYL-PASTA (fuente comercial o divergencia
+    # verificada, no banco independiente). La cola tiene 19 recursos pendientes.
+    assert len(confirmados) == 371
+    assert len(pendientes) == 19
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]
@@ -96,7 +95,7 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
 
 def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
     filas = leer(confirmador.CONFIRMACIONES)
-    assert len(filas) == 35
+    assert len(filas) == 321
     for fila in filas:
         recurso = registro[fila["codigo_recurso"]]
         assert recurso["estado_auditoria"] == "confirmado_referencia"

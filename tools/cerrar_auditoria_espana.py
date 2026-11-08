@@ -166,25 +166,29 @@ def aplicar(adjudicacion: list[dict], registro: dict, matriz: dict) -> tuple[lis
             precio = decimal(fila["precio_adoptado"], codigo)
             # Adoptar un precio no puede degradar un recurso ya confirmado:
             # la adjudicación se puede reejecutar sin perder verificaciones.
-            if recurso["estado_auditoria"] != "confirmado_referencia":
+            ya_confirmado = recurso["estado_auditoria"] == "confirmado_referencia"
+            if not ya_confirmado:
                 recurso["estado_auditoria"] = "en_revision"
             recurso["precio_revisado"] = str(precio.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
-            # Se conserva la observación previa (es evidencia) y se añade la del cierre.
-            recurso["fuente_observada"] = unir(recurso["fuente_observada"], fila["fuente"])
-            recurso["codigo_fuente"] = unir(recurso["codigo_fuente"], fila["codigo_fuente"])
-            recurso["edicion_fuente"] = unir(recurso["edicion_fuente"], fila["edicion_fecha"])
-            if "Modelo propio" in fila["fuente"]:
-                ambito = "España (modelo propio, sin banco)"
-            elif "Composición" in fila["fuente"]:
-                ambito = "España (composición declarada)"
-            elif "horquilla de mercado" in fila["fuente"]:
-                ambito = "España (contraste de mercado, sin banco)"
-            elif "BCCA" in fila["fuente"]:
-                ambito = "Andalucía (BCCA)"
-            else:
-                ambito = "provincial (Palencia/Extremadura)"
-            recurso["ambito_fuente"] = unir(recurso["ambito_fuente"], ambito)
-            recurso["criterio_revisado"] = fila["criterio"] + " " + fila["reserva"]
+            # Si ya está confirmado, no se sobrescribe la evidencia ni el criterio
+            # de la confirmación independiente previa (BCCA/Extremadura).
+            if not ya_confirmado:
+                # Se conserva la observación previa (es evidencia) y se añade la del cierre.
+                recurso["fuente_observada"] = unir(recurso["fuente_observada"], fila["fuente"])
+                recurso["codigo_fuente"] = unir(recurso["codigo_fuente"], fila["codigo_fuente"])
+                recurso["edicion_fuente"] = unir(recurso["edicion_fuente"], fila["edicion_fecha"])
+                if "Modelo propio" in fila["fuente"]:
+                    ambito = "España (modelo propio, sin banco)"
+                elif "Composición" in fila["fuente"]:
+                    ambito = "España (composición declarada)"
+                elif "horquilla de mercado" in fila["fuente"]:
+                    ambito = "España (contraste de mercado, sin banco)"
+                elif "BCCA" in fila["fuente"]:
+                    ambito = "Andalucía (BCCA)"
+                else:
+                    ambito = "provincial (Palencia/Extremadura)"
+                recurso["ambito_fuente"] = unir(recurso["ambito_fuente"], ambito)
+                recurso["criterio_revisado"] = fila["criterio"] + " " + fila["reserva"]
             recurso["fecha_revision"] = FECHA
             final = recurso["precio_revisado"]
             referencias.append({

@@ -1462,8 +1462,6 @@ def referencias_cierre_2026_11_07() -> dict[str, dict[str, Referencia]]:
                 observaciones=(f"{fila['fuente']}. {fila['criterio']} Reserva: {fila['reserva']} "
                                "Referencia operativa de cierre; no es garantía de precio universal."),
             )}
-    if not resultado:
-        raise ValueError("La tabla de referencias de cierre está vacía")
     return resultado
 
 

@@ -30,7 +30,7 @@ def test_precios_con_componentes_sin_redondeo_intermedio():
         assert r['fecha_consulta'] == '2026-11-07' and r['fuente'] == g.REVISION_LOTE_POSTERIOR
         assert r['incluye_iva'] == 'no' and r['incluye_transporte'] == 'no_confirmado'
         assert Decimal(r['precio_min']) <= valor <= Decimal(r['precio_max'])
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert Decimal(auditoria[codigo]['precio_revisado']) == valor
 
 
