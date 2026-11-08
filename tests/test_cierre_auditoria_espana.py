@@ -105,10 +105,14 @@ def test_rechaza_decisiones_invalidas(datos):
     with pytest.raises(ValueError):
         cierre.validar([base, dict(base)], registro, matriz)
     # Sin decisión para un recurso no confirmado, el cierre está incompleto.
-    en_revision = [c for c, r in registro.items() if r["estado_auditoria"] == "en_revision"]
-    sin_decision = [f for f in adjudicacion if f["codigo_recurso"] != en_revision[0]]
+    # El registro ya no deja ninguno en revisión (el cierre confirmó los 390),
+    # así que ese estado se prepara sobre una copia de un recurso real.
+    en_revision = {c: dict(r) for c, r in registro.items()}
+    codigo = next(iter(en_revision))
+    en_revision[codigo]["estado_auditoria"] = "en_revision"
+    sin_decision = [f for f in adjudicacion if f["codigo_recurso"] != codigo]
     with pytest.raises(ValueError, match="sin decisión"):
-        cierre.validar(sin_decision, registro, matriz)
+        cierre.validar(sin_decision, en_revision, matriz)
 
 
 def test_confirmacion_fuera_de_banda_se_rechaza(datos):

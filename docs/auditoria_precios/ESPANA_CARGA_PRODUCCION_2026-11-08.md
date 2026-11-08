@@ -6,6 +6,10 @@ organizaciones ni referencias de otros países.** Es el último punto abierto de
 (`arena/9350282b-generador-comercial`), que dejó la matriz auditada y el SQL generado
 pero no ejecutado.
 
+La misma sesión cierra los dos pendientes que la carga destapó: el **índice
+`ix_recursos_codigo`** (revisión `y1n3p5q7r9s2`, ya aplicada en producción) y las **seis
+pruebas de auditoría** que llevaban `main` en rojo desde el cierre total (§6 y §8).
+
 ## 1. Destino y punto de partida
 
 | Dato | Valor |
@@ -114,10 +118,23 @@ script barrían las ~21.800 filas de recursos una vez por cada código de la mat
 solución aplicada —y ya incorporada al script— es resolver el mapa código → `id` con un
 único recorrido agrupado y eliminar/insertar por `codigo_recurso`, que sí está indexado.
 
-**Recomendación abierta (no aplicada):** crear `ix_recursos_codigo` sobre
-`public.recursos(codigo)`. No es un cambio de datos, pero es un cambio de esquema: requiere
-migración y revisión aparte. Mientras tanto, cualquier consulta por `codigo` sobre
-`recursos` es un escaneo secuencial.
+**Índice aplicado el mismo día (2026-11-08):** la revisión de Alembic `y1n3p5q7r9s2`
+(`migrations/versions/y1n3p5q7r9s2_indice_codigo_de_recursos.py`) crea
+`ix_recursos_codigo` sobre `public.recursos(codigo)`. Ya está aplicada en producción, con
+su SQL de aplicación manual en `docs/staging_upgrade_y1n3p5q7r9s2.sql`, y
+`public.alembic_version` sellado en `y1n3p5q7r9s2`. El índice ocupa 176 kB y la consulta
+que antes tardaba minutos ya resuelve por él:
+
+```text
+Bitmap Heap Scan on recursos  (actual rows=56)
+  Recheck Cond: ((codigo)::text = 'MT-BLQ-15'::text)
+  ->  Bitmap Index Scan on ix_recursos_codigo  (actual rows=56)
+        Index Cond: ((codigo)::text = 'MT-BLQ-15'::text)
+```
+
+El índice **no es único** a propósito: el catálogo es multi-tenant y 56 organizaciones
+comparten el mismo código, que es justo lo que el índice acelera. SQLite ya lo creaba al
+migrar bases antiguas, así que la revisión iguala el esquema en ambos motores.
 
 ## 7. Reversión
 
@@ -144,33 +161,38 @@ Los dos recursos nuevos (`MT-BLQ-17`, `MT-BLQ-25`) no se deshacen con eso: si se
 la carga, hay que decidir si se eliminan las 112 filas de `public.recursos` o se dejan con
 precio propio 0 (no las usa ninguna partida desplegada).
 
-## 8. Suite de pruebas
+## 8. Suite de pruebas y arreglos que la desbloquean
 
-Esta carga **no toca código**: solo documentación y el script SQL. Aun así se ha pasado la
-suite completa tras el cambio:
+Antes de este cambio la suite de `main` estaba en rojo: **6 pruebas fallaban** porque el
+registro de auditoría se regeneró en el cierre total y las pruebas seguían describiendo el
+estado anterior. Se comprobó que los 6 fallos aparecían también en un árbol limpio de
+`HEAD` y en el CI de `main` (`36e1813`), así que no eran regresión de la carga.
+
+Se han corregido distinguiendo dos tipos de prueba:
+
+- **Recuentos de datos** (`test_inventario_integral_reproducible_y_estados_actuales`,
+  `test_confirmaciones_aplicadas_son_coherentes_con_el_registro`,
+  `test_confirmaciones_aplicadas_incluyen_la_segunda_base`): fijaban `374/16` estados y
+  `321` confirmaciones. Ahora fijan **390 confirmados** y **337 confirmaciones**, con el
+  comentario que explica el cálculo: 53 ya confirmados en el cierre + 337 de la tanda final
+  = 390.
+- **Pruebas de comportamiento** (`test_valida_estado_banda_y_duplicados`,
+  `test_aplicar_es_idempotente`, `test_rechaza_decisiones_invalidas`): necesitaban un
+  recurso en `en_revision` y ya no queda ninguno. En lugar de depender del dato de turno,
+  **preparan el escenario sobre una copia** de una fila real (mismo dato, estado en
+  revisión), de modo que sigan probando el rechazo y la idempotencia aunque el registro
+  cambie.
+
+No se han tocado los datos de auditoría: el registro sigue diciendo lo que dice el cierre.
 
 | Medida | Resultado |
 |---|---|
-| Pruebas | 3643 superadas, 13 omitidas, **6 fallidas** (total 3662) |
-| Mismo conjunto en un árbol limpio de `HEAD` (sin este cambio) | **los mismos 6 fallos** |
-| CI de `main` en el commit `36e1813` | **en rojo** (`failure`, igual que el commit anterior) |
+| Antes | 3643 superadas, 13 omitidas, 6 fallidas |
+| Después | **3649 superadas, 13 omitidas, 0 fallidas** |
 
-Los 6 fallos son previos y ajenos a esta carga:
-
-- `test_inventario_precios_espana::test_inventario_integral_reproducible_y_estados_actuales`
-  espera `374 confirmado_referencia / 16 en_revision`; el registro versionado ya tiene
-  **390 confirmados** tras el cierre total.
-- `test_confirmaciones_aplicadas_son_coherentes_con_el_registro` y
-  `test_confirmaciones_aplicadas_incluyen_la_segunda_base` fijan **321** confirmaciones;
-  `espana_confirmaciones_2026-11-07.csv` tiene **337**.
-- Los tres restantes (`test_valida_estado_banda_y_duplicados`, `test_aplicar_es_idempotente`,
-  `test_rechaza_decisiones_invalidas`) necesitan algún recurso `en_revision` y ya no queda
-  ninguno: el cierre total confirmó los 390.
-
-Causa común: el registro de auditoría se regeneró en el cierre total y las pruebas siguen
-describiendo el estado anterior. **No se han retocado ni los datos ni las pruebas**: decidir
-si el registro vuelve a distinguir `en_revision` o si las pruebas se actualizan a 390/337 es
-una decisión de auditoría, no de esta carga. Queda anotado como pendiente aparte.
+La suite también vigila el head de Alembic (`test_database_config`,
+`test_consentimiento`, `test_rls`, `test_telemetria`, `test_prueba_gratuita`): las cinco
+pruebas que fijaban `x9m2k4p8v1n6` como cadena se han encadenado a `y1n3p5q7r9s2`.
 
 ## 9. Lo que esta carga no dice
 

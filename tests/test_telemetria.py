@@ -37,6 +37,7 @@ from migrations.versions import (
     v2d7f1a6b9c3_datos_bancarios_del_presupuesto as bancarios_migracion,
     w3m9k2p8v1n4_visitas_pagina_audiencia as visitas_migracion,
     x9m2k4p8v1n6_vistas_guardadas_favorita as favorita_migracion,
+    y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -363,15 +364,18 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [favorita_migracion.revision], (
+    assert cabezas == [indice_recursos_migracion.revision], (
         f"La cadena Alembic debe tener una única cabeza "
-        f"({favorita_migracion.revision}); hay: {cabezas}"
+        f"({indice_recursos_migracion.revision}); hay: {cabezas}"
     )
     # La cabeza es la marca de vistas favoritas del operador; detrás queda la
     # audiencia de la web pública, la columna de datos bancarios por
     # presupuesto, el recordatorio de tarifas posponible, la revisión de
     # tarifas, la marca del ejemplo del alta y el resto de la cadena.
     assert favorita_migracion.down_revision == visitas_migracion.revision
+    # Sobre las vistas favoritas cuelga el índice de búsqueda por código del
+    # catálogo, que es la cabeza vigente.
+    assert indice_recursos_migracion.down_revision == favorita_migracion.revision
     assert visitas_migracion.down_revision == bancarios_migracion.revision
     assert bancarios_migracion.down_revision == recordatorio_migracion.revision
     assert recordatorio_migracion.down_revision == revision_tarifas_migracion.revision

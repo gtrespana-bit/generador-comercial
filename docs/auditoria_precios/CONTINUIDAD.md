@@ -22,10 +22,17 @@ Informe: [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md).
 - Fecha del panel: **2026-11-07** en las 390 (equivalente a «Confirmar hoy»), no la fecha
   de cada fuente. Con los umbrales de 180/365 días, el panel queda en 390 vigentes.
 - Intactos: 14 overrides de empresa y 8.148 referencias de otros países.
-- Incidencia: la primera tentativa se bloqueó porque `public.recursos` no tiene índice
+- Incidencia: la primera tentativa se bloqueó porque `public.recursos` no tenía índice
   sobre `codigo` y el `NOT EXISTS` correlacionado barría 21.800 filas por código. No hubo
   cambio parcial; se cancelaron los backends y se resolvió con un mapa precalculado, ya
-  incorporado al script. **Queda recomendado, sin aplicar, `ix_recursos_codigo`.**
+  incorporado al script.
+- Arreglada la causa de raíz: revisión de Alembic `y1n3p5q7r9s2` crea `ix_recursos_codigo`
+  sobre `public.recursos(codigo)`, aplicada en producción (176 kB, el plan ya resuelve por
+  índice) con su SQL manual en `docs/staging_upgrade_y1n3p5q7r9s2.sql`.
+- La suite vuelve a estar en verde (**3649 superadas, 13 omitidas, 0 fallidas**): las seis
+  pruebas que describían el registro anterior al cierre se han actualizado a 390
+  confirmados y 337 confirmaciones, y las que necesitaban un recurso `en_revision` lo
+  preparan ahora sobre una copia del dato.
 - Respaldo y reversión: `backup.precios_es_20261108` (388 filas previas),
   `backup.stage_es_20261108` (390 cargadas) y `backup.mapa_es_20261108`.
 

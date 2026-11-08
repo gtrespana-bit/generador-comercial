@@ -214,6 +214,7 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
         v2d7f1a6b9c3_datos_bancarios_del_presupuesto as bancarios_migration,
         w3m9k2p8v1n4_visitas_pagina_audiencia as visitas_migration,
         x9m2k4p8v1n6_vistas_guardadas_favorita as favorita_migration,
+        y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migration,
     )
     assert identidad_error_migration.down_revision == errores_internos_migration.revision
     assert borrado_cuenta_migration.down_revision == identidad_error_migration.revision
@@ -235,7 +236,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     # Sobre la audiencia cuelga la marca de vistas favoritas del operador, que
     # es la cabeza exigida por el arranque.
     assert favorita_migration.down_revision == visitas_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == favorita_migration.revision
+    # La cabeza vigente es el índice de búsqueda por código de los recursos.
+    assert indice_recursos_migration.down_revision == favorita_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == indice_recursos_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

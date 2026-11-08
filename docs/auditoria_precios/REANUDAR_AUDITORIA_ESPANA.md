@@ -10,12 +10,18 @@ Se está auditando la matriz de precios de recursos para España, contrastando l
 
 | Estado en el registro | Recursos | Con precio revisado | Sin precio revisado |
 |---|---:|---:|---:|
-| Confirmado como referencia | 53 | 53 | 0 |
-| En revisión | 335 | 335 | 0 |
+| Confirmado como referencia | 390 | 390 | 0 |
+| En revisión | 0 | 0 | 0 |
 | Pendiente | 0 | 0 | 0 |
-| **Total** | **388** | **388** | **0** |
+| **Total** | **390** | **390** | **0** |
 
-**Ningún recurso queda sin precio ni pendiente de decisión:** los 388 tienen cifra, fuente, código, criterio y reserva. Los 133 que estaban abiertos se cerraron el 7 de noviembre con un método declarado por recurso; ver [cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md). Estado de verificación en [ESPANIA_BANCOS_PRECIOS_2026-11-07.md](ESPANIA_BANCOS_PRECIOS_2026-11-07.md): 53 confirmados, 6 contrastes comerciales, 66 divergencias y 262 de fuente única (1 más confirmado independientemente); **ningún recurso sin precio auditado**. Ambos bancos están ingestados y cribados: BCCA 2023 con 5.925 precios simples leídos por `tools/leer_bcca.py` y Extremadura 2026 con su esquema nativo. Los 133 huecos que hubo quedaron clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md), que se conserva como registro histórico. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 388 precios revisados comprenden mano de obra, materiales, 25 fichas directas de banco, 28 analogías de familia, 12 composiciones, 13 máquinas con modelo propio, 2 alquileres y 54 contrastes de mercado. **Que un precio esté revisado no lo hace universal**: `en_revision` sigue significando que falta una segunda fuente independiente.
+**Cómo se llega a 390 confirmados:** 53 ya lo estaban al cerrar el 7 de noviembre y la
+tanda final de **337 confirmaciones cruzadas** (`espana_confirmaciones_2026-11-07.csv`,
+fuente y código en cada fila) elevó el resto. Por eso las cifras 53/335 que aparecen más
+abajo describen el estado **en el momento del cierre**, antes de esa tanda. Los dos bloques
+nuevos (`MT-BLQ-17`, `MT-BLQ-25`) entran en el recuento de 390.
+
+**Ningún recurso queda sin precio ni pendiente de decisión:** los 390 tienen cifra, fuente, código, criterio y reserva. Los 133 que estaban abiertos se cerraron el 7 de noviembre con un método declarado por recurso; ver [cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md). Estado de verificación en [ESPANIA_BANCOS_PRECIOS_2026-11-07.md](ESPANIA_BANCOS_PRECIOS_2026-11-07.md) —clasificación del 7 de noviembre, antes de la tanda de 337 confirmaciones—: 53 confirmados, 6 contrastes comerciales, 66 divergencias y 262 de fuente única (1 más confirmado independientemente); **ningún recurso sin precio auditado**. Ambos bancos están ingestados y cribados: BCCA 2023 con 5.925 precios simples leídos por `tools/leer_bcca.py` y Extremadura 2026 con su esquema nativo. Los 133 huecos que hubo quedaron clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md), que se conserva como registro histórico. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 390 precios revisados comprenden mano de obra, materiales, 25 fichas directas de banco, 28 analogías de familia, 12 composiciones, 13 máquinas con modelo propio, 2 alquileres y 54 contrastes de mercado. **Que un precio esté revisado no lo hace universal**: `en_revision` sigue significando que falta una segunda fuente independiente.
 
 ### Último cambio: cierre total, 133 recursos (7 de noviembre)
 
@@ -61,7 +67,7 @@ Ejemplos: `MT-CEMENTO`, 0,19 €/kg, es media de dos ofertas puntuales sin IVA n
 ## Cómo continuar
 
 1. Leer [el informe de cierre](ESPANA_CIERRE_2026-11-07.md) y [CONTINUIDAD.md](CONTINUIDAD.md). El primer ciclo está cerrado; lo que queda son cuatro frentes de método, no de búsqueda de precios.
-2. Para **seguir confirmando** ya no falta una base ni un precio: los 388 tienen cifra. Lo que bloquea los 271 de fuente única es una **segunda fuente independiente**. Orden rentable: (a) cotización de tienda con URL y fecha para los 54 de contraste de mercado, empezando por los 39 que usan partidas (`MT-PERFIL-ALUM` 74 usos, `MT-SENAL-OBRA` 73, `MT-REGUL-GAS` 37, `MT-SOPORTE-AC` 36, `MT-VIDRIO-TEMP` 35); (b) cerrar la especificación de los 28 de familia análoga para poder pedir cotización del artículo exacto; (c) resolver las 72 divergencias de la verificación.
+2. Para **seguir confirmando** ya no falta una base ni un precio: los 390 tienen cifra. Lo que bloquea los 271 de fuente única es una **segunda fuente independiente**. Orden rentable: (a) cotización de tienda con URL y fecha para los 54 de contraste de mercado, empezando por los 39 que usan partidas (`MT-PERFIL-ALUM` 74 usos, `MT-SENAL-OBRA` 73, `MT-REGUL-GAS` 37, `MT-SOPORTE-AC` 36, `MT-VIDRIO-TEMP` 35); (b) cerrar la especificación de los 28 de familia análoga para poder pedir cotización del artículo exacto; (c) resolver las 72 divergencias de la verificación.
 3. Orden de trabajo recomendado por impacto: **desglosar los 64 recursos agregados** (`MT-CONS-DEM` 398 usos, `MT-ELE-CAJA` 177, `MT-PLO-SOP` 169, `MT-TORN` 154); **construir el modelo de coste horario** de la maquinaria de mayor uso (`MQ-TALADRO` 1.025, `MQ-SIERRA` 199, `MQ-ANDAMIO` 190, `MQ-ATORN` 162); **resolver las 23 alertas de divergencia** (`MT-PYL-PASTA` 99, `MT-MADERA-LISTON` 91, `MT-ALAMBRE` 49); y **buscar un banco nacional y vigente** con licencia de uso. Los usos se solapan entre recursos y no equivalen a frecuencia comercial ni impacto económico.
 3. Solicitar o buscar especificaciones y fuentes comparables que permitan resolver los bloqueos: unidad, prestaciones, alcance, zona, fecha, IVA, transporte, consumos y vida útil según corresponda. **No aplicar un precio solo por encontrar un número** ni dar por equivalente una partida instalada y un material, un alquiler diario y un coste horario, o una compra y su amortización.
 4. De los recursos sin precio revisado, 23 de uso cero no se mencionaban en los ocho barridos recientes; no son necesariamente inéditos en los demás informes. Antes de priorizarlos, valorar si tienen utilidad actual en el catálogo y consultar al usuario si procede.

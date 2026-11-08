@@ -580,9 +580,14 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     assert bancarios_migracion.down_revision == recordatorio_migracion.revision
     # La cabeza vigente es el agregado de audiencia de la web pública.
     assert visitas_migracion.down_revision == bancarios_migracion.revision
-    # Sobre la audiencia cuelga la marca de vistas favoritas, cabeza vigente.
+    # Sobre la audiencia cuelga la marca de vistas favoritas y sobre ella el
+    # índice de búsqueda por código del catálogo, cabeza vigente.
     assert favorita_migracion.down_revision == visitas_migracion.revision
-    assert favorita_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    from migrations.versions import (
+        y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migracion,
+    )
+    assert indice_recursos_migracion.down_revision == favorita_migracion.revision
+    assert indice_recursos_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision
