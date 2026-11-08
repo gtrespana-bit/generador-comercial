@@ -1,6 +1,6 @@
 -- CotizaT — carga de precios referenciales nacionales España (EUR).
 -- Generado desde basedatos_partidas/salida/precios_recursos_espana.csv.
--- 388 recursos × 1 país = 388 referencias.
+-- 390 recursos × 1 país = 390 referencias.
 --
 -- PRECONDICIÓN: la tabla public.precios_recursos_mercado debe existir
 -- (migraciones de moneda y recursos por mercado aplicadas en Supabase).
@@ -540,3 +540,5 @@ WHERE organizacion_id IS NULL
   AND pais_codigo = 'ES'
 GROUP BY pais_codigo
 ORDER BY pais_codigo;
+('MT-BLQ-17', 'ES', 'EUR', 0.797468, 0.604211, 1.066667, 'ud', 'docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md', '2026-08-25', 'derivado', 'no', 'no_confirmado', 'Precio referencial nacional derivado de la canasta de mercado investigada para esta familia; no es una cotización de tienda.'),
+('MT-BLQ-25', 'ES', 'EUR', 0.86, 0.86, 0.86, 'ud', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'referencia', 'no_confirmado', 'no_confirmado', 'Base de Precios de Construcción de Extremadura 2026 (BCEXTGREM_26_v1.bc3). Identidad directa con P01BG100 (Bloque hormigón gris 40x25x20 cm = 0,86 EUR/ud, coincide con 25x20x40 cm). Reserva: Identidad directa con la ficha del banco. Referencia operativa de cierre; no es garantía de precio universal.'),

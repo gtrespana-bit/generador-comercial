@@ -3005,3 +3005,5 @@
 18.09.01.100;Instalación de sistema de monitorización de la producción fotovoltaica. El sistema lo elige el cliente.;31.48;30.82;-0.66;-2.10;MO-OF1-ELE
 18.09.01.110;Mantenimiento del sistema fotovoltaico, con limpieza de paneles y revisión de conexiones.;27.71;27.05;-0.66;-2.38;MO-OF1-ELE
 18.09.01.120;Ejecución de estructura de soporte de paneles solares sobre techo inclinado, con fijación a la cubierta y sellado de los;25.38;24.46;-0.92;-3.62;MO-OF1-SOLD
+06.03.01.160;Pared de bloque de concreto de 17 cm.;;38.09;;;MO-AYU, MO-OF1-ALB, MQ-MEZCL, MT-ANCLA-MURO, MT-BLQ-17
+06.03.01.170;Pared de bloque de concreto de 25 cm.;;42.39;;;MO-AYU, MO-OF1-ALB, MQ-MEZCL, MT-ANCLA-MURO, MT-BLQ-25

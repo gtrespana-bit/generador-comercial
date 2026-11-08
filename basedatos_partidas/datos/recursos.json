@@ -2405,6 +2405,20 @@
       "descripcion": "Soporte antivibratorio de neopreno (silent block) para aislar equipos de bombas, compresores y maquinaria, con su tornillería.",
       "precio": 5.0,
       "estado": "provisional"
+    },
+    "MT-BLQ-17": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 17x20x40 cm.",
+      "precio": 0.7,
+      "estado": "derivado",
+      "fuente": "Interpolación entre bloque 15 cm (0,62 EUR) y 20 cm (0,78 EUR); sin cotización bancaria directa para 17 cm."
+    },
+    "MT-BLQ-25": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 25x20x40 cm.",
+      "precio": 0.86,
+      "estado": "verificado-mercado",
+      "fuente": "Extremadura BCEXTGREM_26_v1.bc3, P01BG100 Bloque hormigón gris 40x25x20 cm = 0,86 EUR/ud (25 cm de espesor)."
     }
   },
   "maquinaria": {

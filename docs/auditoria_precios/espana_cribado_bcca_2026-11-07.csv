@@ -1166,3 +1166,5 @@ MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;2;DW01200;ROTULO DENOMINADO
 MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;3;UJ01400;PLANTA TREPADORA BUEN PORTE;3.48;2024-01;2022-01;0.2317;0.0850;si;0.0025;desviacion_fuerte
 MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;4;UJ01500;PLANTA VIVÁCEA DECORATIVA Y DE FLOR;0.99;2024-01;2022-01;0.2317;0.0850;si;0.0007;desviacion_fuerte
 MT-PLANTA-ELEC;materiales;ud;0;pendiente;1367.088608;5;DW01100;ROTULO DENOMINADOR DE PLANTA EN LATÓN PULIDO;23.53;2024-01;2022-12;0.2218;0.0850;si;0.0172;desviacion_fuerte
+MT-BLQ-17;materiales;ud;1;en_revision;0.70;;;;;;;;;;;sin_candidato
+MT-BLQ-25;materiales;ud;1;en_revision;0.86;;;;;;;;;;;sin_candidato

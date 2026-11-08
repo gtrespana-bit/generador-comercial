@@ -1,6 +1,6 @@
 -- CotizaT — carga de precios referenciales nacionales España (EUR).
 -- Generado desde basedatos_partidas/salida/precios_recursos_espana.csv.
--- 388 recursos × 1 país = 388 referencias.
+-- 390 recursos × 1 país = 390 referencias.
 --
 -- PRECONDICIÓN: la tabla public.precios_recursos_mercado debe existir
 -- (migraciones de moneda y recursos por mercado aplicadas en Supabase).
@@ -384,6 +384,8 @@ INSERT INTO cotizat_precios_espana_stage (
 ('MT-CAMARA-CCTV', 'ES', 'EUR', 96.84, 96.84, 96.84, 'ud', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Precio de la matriz contrastado con horquilla de mercado 2026 (sin ficha de banco). Camara IP domo de 4 MP: horquilla de mercado 60-140 EUR/ud Reserva: Sin ficha de banco: se conserva el precio de la matriz por caer dentro de la horquilla declarada. Es el grupo con menor evidencia. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MT-ALARMA', 'ES', 'EUR', 471.82, 471.82, 471.82, 'ud', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Base de Precios de Construcción de Extremadura 2026 (BCEXTGREM_26_v1.bc3) — ficha de familia análoga. Central antirrobo de 96 zonas con teclado: el conjunto mas proximo a central con sensores y sirena Reserva: La ficha no es el artículo exacto: es la de la misma familia y unidad. Sirve como nivel de precio, no como cotización del artículo. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MT-SOPORTE-ANTIVIB', 'ES', 'EUR', 5.7, 5.7, 5.7, 'ud', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Precio de la matriz contrastado con horquilla de mercado 2026 (sin ficha de banco). Silent block de neopreno con tornilleria: horquilla de mercado 3-8 EUR/ud Reserva: Sin ficha de banco: se conserva el precio de la matriz por caer dentro de la horquilla declarada. Es el grupo con menor evidencia. Referencia operativa de cierre; no es garantía de precio universal.'),
+('MT-BLQ-17', 'ES', 'EUR', 0.797468, 0.604211, 1.066667, 'ud', 'docs/METODOLOGIA_PRECIOS_REFERENCIA_ESPANA.md', '2026-08-25', 'derivado', 'no', 'no_confirmado', 'Precio referencial nacional derivado de la canasta de mercado investigada para esta familia; no es una cotización de tienda.'),
+('MT-BLQ-25', 'ES', 'EUR', 0.86, 0.86, 0.86, 'ud', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'referencia', 'no_confirmado', 'no_confirmado', 'Base de Precios de Construcción de Extremadura 2026 (BCEXTGREM_26_v1.bc3). Identidad directa con P01BG100 (Bloque hormigón gris 40x25x20 cm = 0,86 EUR/ud, coincide con 25x20x40 cm). Reserva: Identidad directa con la ficha del banco. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MQ-CORT-AGUA', 'ES', 'EUR', 1.95, 1.95, 1.95, 'h', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Modelo propio de coste horario de maquinaria (compra / vida útil + mantenimiento + energía + consumibles), ficha espana_maquinaria_horaria_parametros_2026-11-07.csv. Modelo de compra y amortización, no de alquiler: 296.69 EUR sin IVA (ManoMano: Zipper ZI-FS200 800 W corte 60 cm, 359,00 EUR IVA incl.) entre 400 h de vida útil, con mantenimiento 15 % del valor de compra, energía 0.8 kW × 0,20 EUR/kWh × factor de carga 0.6 y consumibles 1.00 EUR/h (Disco de diamante 230 mm genérico 25 EUR cada 25 h). Resultado 1.95 EUR/h (sensibilidad 2.80–1.52 EUR/h al variar la vida útil ×0,5–×2). Reserva: Estimación propia: no es una tarifa de mercado contrastada ni hay ficha de banco equivalente. La vida útil es una hipótesis de ingeniería y el precio de adquisición no incluye financiación, seguro ni transporte. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MQ-BATID', 'ES', 'EUR', 0.67, 0.67, 0.67, 'h', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Modelo propio de coste horario de maquinaria (compra / vida útil + mantenimiento + energía + consumibles), ficha espana_maquinaria_horaria_parametros_2026-11-07.csv. Modelo de compra y amortización, no de alquiler: 119.39 EUR sin IVA (Ferretería Rosa Plata: mezcladora de mortero 1.600 W doble varilla, 144,46 EUR IVA incl.) entre 500 h de vida útil, con mantenimiento 15 % del valor de compra, energía 1.6 kW × 0,20 EUR/kWh × factor de carga 0.6 y consumibles 0.20 EUR/h (Varilla de repuesto 40 EUR cada 200 h). Resultado 0.67 EUR/h (sensibilidad 0.94–0.53 EUR/h al variar la vida útil ×0,5–×2). Reserva: Estimación propia: no es una tarifa de mercado contrastada ni hay ficha de banco equivalente. La vida útil es una hipótesis de ingeniería y el precio de adquisición no incluye financiación, seguro ni transporte. Referencia operativa de cierre; no es garantía de precio universal.'),
 ('MQ-MART-ELEC', 'ES', 'EUR', 2.09, 2.09, 2.09, 'h', 'docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md', '2026-11-07', 'derivado', 'no_confirmado', 'no_confirmado', 'Modelo propio de coste horario de maquinaria (compra / vida útil + mantenimiento + energía + consumibles), ficha espana_maquinaria_horaria_parametros_2026-11-07.csv. Modelo de compra y amortización, no de alquiler: 461.40 EUR sin IVA (Ferrovicmar: Makita SDS-Max 1.100 W, 461,40 EUR sin IVA (558,30 con IVA)) entre 400 h de vida útil, con mantenimiento 15 % del valor de compra, energía 1.1 kW × 0,20 EUR/kWh × factor de carga 0.6 y consumibles 0.63 EUR/h (Punta o cincel SDS-Max 25 EUR cada 40 h). Resultado 2.09 EUR/h (sensibilidad 3.42–1.43 EUR/h al variar la vida útil ×0,5–×2). Reserva: Estimación propia: no es una tarifa de mercado contrastada ni hay ficha de banco equivalente. La vida útil es una hipótesis de ingeniería y el precio de adquisición no incluye financiación, seguro ni transporte. Referencia operativa de cierre; no es garantía de precio universal.'),
@@ -438,9 +440,9 @@ BEGIN
   SELECT count(*), count(DISTINCT codigo_recurso)
     INTO v_filas, v_codigos
   FROM cotizat_precios_espana_stage;
-  IF v_filas <> 388 OR v_codigos <> 388 THEN
+  IF v_filas <> 390 OR v_codigos <> 390 THEN
     RAISE EXCEPTION
-      'Matriz incompleta: % filas y % recursos; se esperaban 388/388',
+      'Matriz incompleta: % filas y % recursos; se esperaban 390/390',
       v_filas, v_codigos;
   END IF;
 
@@ -522,9 +524,9 @@ BEGIN
    AND s.pais_codigo = p.pais_codigo
   WHERE p.organizacion_id IS NULL
     AND p.activo IS TRUE;
-  IF v_cargadas <> 388 THEN
+  IF v_cargadas <> 390 THEN
     RAISE EXCEPTION
-      'Carga incompleta: % referencias activas; se esperaban 388',
+      'Carga incompleta: % referencias activas; se esperaban 390',
       v_cargadas;
   END IF;
 END
@@ -532,7 +534,7 @@ $$;
 
 COMMIT;
 
--- Verificación posterior (debe devolver 388):
+-- Verificación posterior (debe devolver 390):
 SELECT pais_codigo, count(*) AS referencias
 FROM public.precios_recursos_mercado
 WHERE organizacion_id IS NULL

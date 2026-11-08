@@ -23,7 +23,7 @@ def contexto():
 
 def test_todos_los_recursos_tienen_precio_revisado_y_la_matriz_no_inventa_ninguno():
     registro = leer(cierre.REGISTRO)
-    assert len(registro) == 388
+    assert len(registro) == 390
     assert [f["codigo_recurso"] for f in registro if not f["precio_revisado"].strip()] == []
     matriz = leer(ROOT / "basedatos_partidas/salida/precios_recursos_espana.csv")
     assert {f["codigo_recurso"] for f in matriz} == {f["codigo_recurso"] for f in registro}

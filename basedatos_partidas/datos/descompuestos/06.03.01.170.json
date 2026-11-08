@@ -1,0 +1,40 @@
+{
+  "codigo": "06.03.01.170",
+  "ambito": "reforma",
+  "capitulo": "06",
+  "subcapitulo": "03",
+  "unidad": "m²",
+  "titulo": "Pared de bloque de concreto de 25 cm.",
+  "descripcion": "Pared de 25 cm de espesor ejecutada con bloque hueco de concreto de 25x20x40 cm recibido con mortero de pega, aparejado a soga con juntas de 1 cm enrasadas. Se emplea en cerramientos de fachada, paredes de linderos y paños que requieran mayor masa o resistencia. Incluye el replanteo, el humedecido de las piezas, la colocación de hiladas a nivel y plomo, la formación de huecos, el amarre a la estructura mediante conectores y la limpieza. No incluye el friso ni los dinteles. Medido a cinta corrida descontando huecos mayores de 2 m².",
+  "margen": 0.35,
+  "complementarios_pct": 1,
+  "recursos": [
+    {
+      "ref": "MT-BLQ-25",
+      "rendimiento": 12.6
+    },
+    {
+      "ref": "MT-MOR-PEGA",
+      "rendimiento": 0.02
+    },
+    {
+      "ref": "MT-ANCLA-MURO",
+      "rendimiento": 1.2
+    },
+    {
+      "ref": "MQ-MEZCL",
+      "rendimiento": 0.105
+    },
+    {
+      "ref": "MO-OF1-ALB",
+      "rendimiento": 0.7
+    },
+    {
+      "ref": "MO-AYU",
+      "rendimiento": 0.7
+    }
+  ],
+  "codigo_covenin": "",
+  "codigo_legacy": "CT-06-01-170",
+  "apartado": "01"
+}

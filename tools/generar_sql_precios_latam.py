@@ -48,14 +48,14 @@ def generar() -> tuple[int, int]:
         raise ValueError(f"Faltan columnas: {', '.join(faltantes)}")
     claves = {(f["codigo_recurso"], f["pais_codigo"]) for f in filas}
     paises_unicos = sorted({f["pais_codigo"] for f in filas})
-    esperadas = len(paises_unicos) * 388
+    recursos_unicos = {f["codigo_recurso"] for f in filas}
+    esperadas = len(paises_unicos) * len(recursos_unicos)
     if len(filas) != esperadas or len(claves) != esperadas:
         raise ValueError(
-            f"Se esperaban {esperadas} filas/claves ({len(paises_unicos)} países × 388); hay {len(filas)}/{len(claves)}"
+            f"Se esperaban {esperadas} filas/claves ({len(paises_unicos)} países × {len(recursos_unicos)} recursos); hay {len(filas)}/{len(claves)}"
         )
-    codigos = {f["codigo_recurso"] for f in filas}
-    if len(codigos) != 388:
-        raise ValueError(f"Se esperaban 388 recursos; hay {len(codigos)}")
+    if len(recursos_unicos) != 390:
+        raise ValueError(f"Se esperaban 390 recursos; hay {len(recursos_unicos)}")
     if any(not str(f["precio_referencia"] or "").strip() for f in filas):
         raise ValueError("La matriz contiene precios pendientes")
 
@@ -224,7 +224,7 @@ $$;
 
 COMMIT;
 
--- Verificación posterior (debe devolver 388 por país):
+-- Verificación posterior (debe devolver 390 por país):
 SELECT pais_codigo, count(*) AS referencias
 FROM public.precios_recursos_mercado
 WHERE organizacion_id IS NULL
@@ -234,7 +234,7 @@ GROUP BY pais_codigo
 ORDER BY pais_codigo;
 """
     SALIDA.write_text(sql, encoding="utf-8")
-    return len(filas), len(codigos)
+    return len(filas), len(recursos_unicos)
 
 
 if __name__ == "__main__":

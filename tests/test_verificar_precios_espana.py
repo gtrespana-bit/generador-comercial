@@ -54,7 +54,7 @@ def test_una_fuente_que_ya_sostiene_el_precio_no_lo_confirma():
 
 
 def test_matriz_de_verificacion_es_completa_y_coherente(verificacion, registro):
-    assert len(verificacion) == len(registro) == 388
+    assert len(verificacion) == len(registro) == 390
     for codigo, fila in verificacion.items():
         assert fila["veredicto"] in {"ya_confirmado", "confirmado_independiente",
                                      "contraste_comercial", "solo_fuente_propia",
@@ -85,9 +85,9 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     # 15 se corroboraron con la BCCA 2023 (hora oficial TO02100 y siete fichas de
     # material) y 1 es confirmación manual del titular sin segunda fuente
     # independiente (MT-PERFIL-ALUM, dentro de la horquilla de mercado 8-14 EUR/kg).
-    # La cola baja a 334.
+    # La cola baja a 336 (390 recursos - 54 confirmados, incluidos MT-BLQ-17 y MT-BLQ-25).
     assert len(confirmados) == 54
-    assert len(pendientes) == 334
+    assert len(pendientes) == 336
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]

@@ -72,7 +72,7 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
     snapshot = ROOT / 'docs/auditoria_precios/cargar_precios_espana_mano_obra_2026-11-06.sql'
     previo = dict(re.findall(patron, snapshot.read_text(encoding='utf-8')))
     nuevo = dict(re.findall(patron, archivo.read_text(encoding='utf-8')))
-    assert len(previo) == len(nuevo) == 388
+    assert len(previo) == len(nuevo) == 390
     cambiados = {c for c in previo if previo[c] != nuevo[c]}
     referenciados = {
         'MT-SAC-ESC', 'MT-CEMENTO', 'MT-ADH-C2TE',

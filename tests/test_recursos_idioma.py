@@ -81,7 +81,7 @@ def _vocablos(texto: str) -> set[str]:
 
 def test_los_388_recursos_tienen_traduccion():
     esperados = {codigo for _, codigo, _ in _recursos()}
-    assert len(esperados) == 388
+    assert len(esperados) == 390
     traducidos = set(_traducciones())
     assert esperados - traducidos == set(), (
         f"Recursos sin traducir: {sorted(esperados - traducidos)}"

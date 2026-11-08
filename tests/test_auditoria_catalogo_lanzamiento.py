@@ -8,19 +8,19 @@ from basedatos_partidas.auditar_lanzamiento import auditar_matriz, auditar_parti
 def test_las_3006_partidas_y_6062_lineas_de_mano_de_obra_son_validas():
     resultado = auditar_partidas()
     assert resultado.errores == []
-    assert resultado.resumen["partidas"] == 3006
-    assert resultado.resumen["partidas_con_mano_obra"] == 3006
-    assert resultado.resumen["lineas_mano_obra"] == 6062
-    assert resultado.resumen["recursos_fisicos"] == 388
+    assert resultado.resumen["partidas"] == 3008
+    assert resultado.resumen["partidas_con_mano_obra"] == 3008
+    assert resultado.resumen["lineas_mano_obra"] == 6066
+    assert resultado.resumen["recursos_fisicos"] == 390
 
 
 def test_matriz_cubre_cada_recurso_fisico_en_cada_pais():
-    resultado = auditar_matriz(388)
+    resultado = auditar_matriz(390)
     assert resultado.errores == []
     for pais in ("CO", "PE", "MX", "EC", "PA", "SV", "CL", "AR", "DO", "UY", "PY", "BO", "CR", "GT", "HN", "NI"):
-        assert resultado.resumen[pais]["total"] == 388
+        assert resultado.resumen[pais]["total"] == 390
         assert resultado.resumen[pais].get("pendiente", 0) == 0
-        assert resultado.resumen[pais]["con_referencia"] == 388
+        assert resultado.resumen[pais]["con_referencia"] == 390
 
 
 def test_matriz_distingue_observacion_directa_de_referencia_derivada():
@@ -60,10 +60,10 @@ def test_sql_de_carga_supabase_es_completo_idempotente_y_acotado():
 
     filas, codigos = generar()
     sql = Path(SALIDA).read_text(encoding="utf-8")
-    # 388 recursos × 16 países (CO, PE, MX, EC, PA, SV, CL, AR, DO, UY, PY, BO, CR, GT, HN, NI) = 6208 referencias
-    assert (filas, codigos) == (6208, 388)
+    # 390 recursos × 16 países (CO, PE, MX, EC, PA, SV, CL, AR, DO, UY, PY, BO, CR, GT, HN, NI) = 6240 referencias
+    assert (filas, codigos) == (6240, 390)
     assert "public.alembic_version = a4c8e2f7b1d6" in sql
-    assert f"v_filas <> {filas} OR v_codigos <> 388" in sql or f"v_filas <> {filas}" in sql
+    assert f"v_filas <> {filas} OR v_codigos <> 390" in sql or f"v_filas <> {filas}" in sql
     assert "p.organizacion_id IS NULL" in sql
     assert "p.pais_codigo = s.pais_codigo" in sql
     # Debe incluir los 8 países

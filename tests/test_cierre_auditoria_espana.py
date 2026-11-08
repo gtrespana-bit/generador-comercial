@@ -160,7 +160,7 @@ def test_cribado_filtra_y_ordena_por_precision(tmp_path):
 def test_cribado_publicado_cubre_el_catalogo():
     filas = leer(DOC / "espana_cribado_bcca_2026-11-07.csv")
     codigos = {f["codigo_recurso"] for f in filas}
-    assert len(codigos) == 388
+    assert len(codigos) == 390
     assert set(filas[0]) == {
         "codigo_recurso", "categoria", "unidad", "usos", "estado_auditoria", "precio_matriz",
         "rango", "codigo_fuente", "descripcion_fuente", "precio_fuente", "edicion_fuente",
@@ -200,7 +200,7 @@ def test_el_impacto_publicado_es_coherente():
 
     filas = leer(DOC / "espana_impacto_partidas_2026-11-07.csv")
     partidas = {ruta.stem for ruta in impacto.DESCOMPUESTOS.glob("*.json")}
-    assert len(filas) == len(partidas) == 3006
+    assert len(filas) == len(partidas) == 3008
     assert len({f["codigo_partida"] for f in filas}) == len(filas)
     movidas = [f for f in filas if Decimal(f["delta_pct"] or "0") != 0]
     assert len(movidas) == 1452

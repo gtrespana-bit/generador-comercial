@@ -18,7 +18,7 @@ MO-OF1-SOLD;mano_obra;h;127;confirmado_referencia;23.18;23.18;bcca;bcca,comercia
 MO-OF1-VIDR;mano_obra;h;92;confirmado_referencia;23.18;23.18;bcca;bcca,comercial,modelo_propio;2;0;;;;;;ya_confirmado;;bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MQ-ALISADORA;maquinaria;h;9;en_revision;1.92;1.92;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-AMOLA;maquinaria;h;50;en_revision;1.86;1.86;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MQ-ANDAMIO;maquinaria;h;190;en_revision;4.04;4.04;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-ANDAMIO;maquinaria;m2;190;en_revision;12.42;12.42;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-ASPIR;maquinaria;h;91;en_revision;0.61;0.61;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-ATORN;maquinaria;h;162;en_revision;0.62;0.62;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-BANO-PORT;maquinaria;ud;3;en_revision;110.00;110;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
@@ -100,7 +100,9 @@ MT-BLOQUE-ALIV;materiales;ud;7;en_revision;0.84;0.84;extremadura;extremadura;0;0
 MT-BLQ-10;materiales;ud;10;confirmado_referencia;0.47;0.47;extremadura;extremadura;2;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-BLQ-12;materiales;ud;2;confirmado_referencia;0.72;0.72;bcca;bcca;3;0;;;;;;ya_confirmado;;bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MT-BLQ-15;materiales;ud;22;confirmado_referencia;0.54;0.54;extremadura;extremadura;5;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
+MT-BLQ-17;materiales;ud;0;en_revision;0.70;0.797468;comercial:desconocido;bcca,extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BLQ-20;materiales;ud;2;confirmado_referencia;0.68;0.68;extremadura;extremadura;12;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
+MT-BLQ-25;materiales;ud;0;en_revision;0.86;0.86;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BLQ-ARC-10;materiales;ud;3;en_revision;0.50;0.5;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BLQ-ARC-15;materiales;ud;5;en_revision;0.59;0.59;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BLQ-EST-15;materiales;ud;5;en_revision;0.60;0.6;extremadura;extremadura;3;2;bcca;0.79;+31.7;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;divergencia_verificada;;extremadura: ya sostiene el precio
