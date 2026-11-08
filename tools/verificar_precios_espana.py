@@ -162,6 +162,11 @@ def observaciones_de_cribado() -> dict[str, list[dict]]:
             continue
         if precision < PRECISION_MINIMA or fila["numeros_compatibles"] != "si":
             continue
+        # Un código de ficha sin ningún dígito no identifica un artículo: en los
+        # archivos publicados convive con fichas de relleno («Herrajes», «Mecanismos»)
+        # de precio redondo que no pueden sostener ninguna comparación.
+        if not any(c.isdigit() for c in fila["codigo_fuente"]):
+            continue
         precio = numero(fila["precio_fuente"])
         if precio is None:
             continue

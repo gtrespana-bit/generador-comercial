@@ -22,7 +22,7 @@ def test_fuentes_auditoria_y_matriz():
     for codigo, (precio, iva) in esperados.items():
         assert Decimal(str(refs[codigo]['ES'].precio)) == Decimal(precio)
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal(precio) == Decimal(audit[codigo]['precio_revisado'])
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        assert audit[codigo]['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_EVACUACION_EPOXI
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == iva

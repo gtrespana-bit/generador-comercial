@@ -159,15 +159,27 @@ def cargar_basicos(path: Path, sinonimos: bool = False) -> tuple[list[dict], str
     return precios, sha, str(raiz.get("version") or "")
 
 
-def cargar_bc3(path: Path, sinonimos: bool = False) -> tuple[list[dict], str, str]:
+def cargar_bc3(path: Path, sinonimos: bool = False,
+               completo: bool = False) -> tuple[list[dict], str, str]:
     """Adapta una base FIEBDC-3 al mismo formato que el banco abierto CERP.
 
     Se reutiliza el lector de BC3 ya probado (excluye descomposiciones, precios
     por zona y unidades no reconocidas) para que el cribado sea idéntico.
+
+    Con ``completo`` se usa el lector de la BCCA, que reconoce su nomenclatura
+    (``A01JF006``, ``CA00220``…) y clasifica por unidad y descripción. Sin él,
+    de los 15.514 registros de la BCCA solo se aprovechan 196 (los que empiezan
+    por ``P``/``M``/``O``), porque esa no es su nomenclatura.
     """
     import hashlib as _hashlib
 
-    precios_bc3, sha = leer_bc3(path)
+    if completo:
+        from leer_bcca import precios as _precios_bcca
+        precios_bc3, sha = _precios_bcca(path)
+        region = "AN"
+    else:
+        precios_bc3, sha = leer_bc3(path)
+        region = "EX"
     if not precios_bc3:
         raise ValueError("El BC3 no contiene precios simples utilizables")
     precios = []
@@ -181,7 +193,7 @@ def cargar_bc3(path: Path, sinonimos: bool = False) -> tuple[list[dict], str, st
             "precio": p.importe,
             "edicion": "",
             "fecha": p.fecha_fuente,
-            "region": "EX",
+            "region": region,
             "tokens": set(tokens(p.descripcion or p.texto, sinonimos)),
         })
     return precios, sha, str(len(precios))
@@ -283,6 +295,8 @@ def main() -> int:
     analizador.add_argument("--edicion", default=EDICION_ESPERADA,
                             help="edición que se anota en la tabla de candidatos")
     analizador.add_argument("--salida", type=Path, default=SALIDA)
+    analizador.add_argument("--completo", action="store_true",
+                            help="lee la nomenclatura propia de la BCCA (5.966 precios en vez de 196)")
     analizador.add_argument("--limite", type=int, default=5)
     analizador.add_argument("--sinonimos", action="store_true",
                             help="colapsa variantes del mismo artículo (tornillería/tornillo)")
@@ -292,7 +306,8 @@ def main() -> int:
     if bool(argumentar.basicos) == bool(argumentar.bc3):
         analizador.error("indique --basicos o --bc3, pero no ambos")
     if argumentar.bc3:
-        precios, sha, version = cargar_bc3(argumentar.bc3, argumentar.sinonimos)
+        precios, sha, version = cargar_bc3(argumentar.bc3, argumentar.sinonimos,
+                                            argumentar.completo)
         version = f"BC3 {argumentar.banco} ({version} precios simples)"
     else:
         precios, sha, version = cargar_basicos(argumentar.basicos, argumentar.sinonimos)

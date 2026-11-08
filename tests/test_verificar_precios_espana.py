@@ -80,10 +80,13 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
     assert pendientes == set(verificacion) - confirmados
-    # 37 confirmados de referencia + 1 confirmado contra el banco de Andalucía
-    # (MT-PERSIANA-ALU, −13,3 %): la cola baja a 350.
-    assert len(confirmados) == 38
-    assert len(pendientes) == 350
+    # 52 confirmados de referencia + 1 confirmado independiente
+    # (MT-PERSIANA-ALU, −13,3 % vs BCCA KS04500). De las 15 nuevas confirmaciones,
+    # 15 se corroboraron con la BCCA 2023 (hora oficial TO02100 y siete fichas de
+    # material); Extremadura 2026 solo las diverge o ya era el origen de la matriz,
+    # así que no confirma por segunda vez lo mismo. La cola baja a 335.
+    assert len(confirmados) == 53
+    assert len(pendientes) == 335
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]
@@ -92,7 +95,7 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
 
 def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
     filas = leer(confirmador.CONFIRMACIONES)
-    assert len(filas) == 19
+    assert len(filas) == 34
     for fila in filas:
         recurso = registro[fila["codigo_recurso"]]
         assert recurso["estado_auditoria"] == "confirmado_referencia"

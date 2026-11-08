@@ -94,7 +94,7 @@ def test_las_revisiones_manuales_mandan_sobre_el_cribado():
 
 def test_confirmaciones_aplicadas_incluyen_la_segunda_base():
     confirmaciones = {f["codigo_recurso"]: f for f in leer(DOC / "espana_confirmaciones_2026-11-07.csv")}
-    assert len(confirmaciones) == 19
+    assert len(confirmaciones) == 34
     extremadura = [c for c, f in confirmaciones.items() if f["fuente"] == "extremadura"]
     assert set(extremadura) == {
         "MT-AGUA-OBRA", "MT-BARNIZ-PISO", "MT-BLQ-10", "MT-BLQ-15", "MT-CINTA-ENM",
