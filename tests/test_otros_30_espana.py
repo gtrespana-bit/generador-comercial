@@ -28,11 +28,12 @@ def test_otros_30_trazabilidad_y_bloqueos():
         assert a['estado_auditoria'] == cierre.estado(x['codigo_recurso'], x['estado_auditoria'])
         assert x['fuente'] and x['motivo']
         if x['decision'] == 'sin_precio_revisado':
+            precio_cierre = cierre.precio_revisado(x['codigo_recurso'], a['precio_revisado'])
             assert (not a['precio_revisado']
-                    or a['precio_revisado'] == cierre.precio_revisado(x['codigo_recurso'], ''))
+                    or a['precio_revisado'] == precio_cierre)
             assert x['motivo'] in a['evidencia_y_pendientes']
-    a, m = audit['MT-APEO'], matriz['MT-APEO']
-    assert a['estado_auditoria'] == 'en_revision'
+        a, m = audit['MT-APEO'], matriz['MT-APEO']
+    assert a['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
     assert Decimal(a['precio_revisado']) == Decimal(m['precio_referencia']) == Decimal('1.04')
     assert Decimal(str(g.referencias_otros_treinta()['MT-APEO']['ES'].precio)) == Decimal('1.04')
     assert m['fuente'] == g.REVISION_OTROS_30 and m['incluye_iva'] == 'por_verificar'

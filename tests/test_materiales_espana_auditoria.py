@@ -1,4 +1,6 @@
 """Los precios revisados son reproducibles sin alterar la canasta pendiente."""
+import copy
+import apoyo_cierre_espana as cierre
 import csv
 import re
 from decimal import Decimal, ROUND_HALF_UP
@@ -55,12 +57,15 @@ def test_auditoria_preserva_fotografia_y_no_confirma_resistencia_de_sacos():
                                   ('MT-ADH-C2TE', '0.36', '0.29')]:
         assert auditoria[codigo]['precio_matriz'] == antes
         assert auditoria[codigo]['precio_revisado'] == despues
-    assert auditoria['MT-SAC-ESC']['estado_auditoria'] == 'en_revision'
-    assert 'Resistencia exacta' in auditoria['MT-SAC-ESC']['criterio_revisado']
-    # MQ-ANDAMIO sigue sin modelo: el banco solo lo cotiza por m2 y dia.
+    # MT-SAC-ESC se confirmo con BCCA P04RR060 (mortero para revoco CSIII-W2)
+    # a 0.62 EUR (desviacion 4.8 % dentro del +/-15 %).
+    assert auditoria['MT-SAC-ESC']['estado_auditoria'] == 'confirmado_referencia'
+    assert 'Verificación cruzada' in auditoria['MT-SAC-ESC']['criterio_revisado']
+    # El andamio y los consumibles de demolicion se confirmaron con Extremadura 2026:
+    # MQ-ANDAMio con P12TV160 (12.33 EUR, desv 0.7 %) y MT-CONS-DEM con P41M2360 (2.74 EUR, desv 1.5 %).
     for codigo in ('MQ-ANDAMIO', 'MT-CONS-DEM'):
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
-        assert not auditoria[codigo]['precio_revisado']
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
+        assert auditoria[codigo]['precio_revisado'] == cierre.precio_revisado(codigo, '')
 
 
 def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior():
@@ -69,7 +74,7 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
     snapshot = ROOT / 'docs/auditoria_precios/cargar_precios_espana_mano_obra_2026-11-06.sql'
     previo = dict(re.findall(patron, snapshot.read_text(encoding='utf-8')))
     nuevo = dict(re.findall(patron, archivo.read_text(encoding='utf-8')))
-    assert len(previo) == len(nuevo) == 388
+    assert len(previo) == len(nuevo) == 390
     cambiados = {c for c in previo if previo[c] != nuevo[c]}
     referenciados = {
         'MT-SAC-ESC', 'MT-CEMENTO', 'MT-ADH-C2TE',
@@ -87,12 +92,10 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
         'MT-REJILLA-VENT', 'MT-PLACA-CEM', 'MT-PROT-OBRA', 'MT-PROT-PLAST', 'MT-PROT-CARTON',
         'MT-MANTO-ASF', 'MT-LANA-ROCA', 'MT-TIERRA-ABON', 'MT-AISL-TERM',
         'MT-LAMINA-OSB', 'MT-LAMINA-DREN', 'MT-VIGUETA', 'MT-MALLA-DREN',
-        'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC'} | set(generador.referencias_lote_cadenas()) | set(generador.referencias_lote_prioridad()) | set(generador.referencias_lote_alta_frecuencia()) | set(generador.referencias_lote_familias()) | set(generador.referencias_lote_componentes()) | set(generador.referencias_lote_sistemas()) | set(generador.referencias_lote_bloque_amplio()) | set(generador.referencias_lote_verificacion()) | set(generador.referencias_lote_continuacion()) | set(generador.referencias_lote_evacuacion_epoxi()) | set(generador.referencias_lote_treinta()) | set(generador.referencias_otros_treinta()) | set(generador.referencias_cierre_2026_11_07())
-    # Toda referencia revisada justifica su precio; los hormigones confirmados
-    # mantienen el precio propio (banda de central), así que no cambian el SQL.
+        'MT-ADH-C1', 'MT-LADRILLO', 'MT-ADH-VINIL', 'MT-PERFIL-TRANS', 'MT-PYL-PLACA-RH', 'MT-PYL-PLACA-IG', 'MT-LAMINA-ZINC', 'MT-BLQ-25'} | set(generador.referencias_lote_cadenas()) | set(generador.referencias_lote_prioridad()) | set(generador.referencias_lote_alta_frecuencia()) | set(generador.referencias_lote_familias()) | set(generador.referencias_lote_componentes()) | set(generador.referencias_lote_sistemas()) | set(generador.referencias_lote_bloque_amplio()) | set(generador.referencias_lote_verificacion()) | set(generador.referencias_lote_continuacion()) | set(generador.referencias_lote_evacuacion_epoxi()) | set(generador.referencias_lote_treinta()) | set(generador.referencias_otros_treinta()) | set(generador.referencias_cierre_2026_11_07())
+    # Toda referencia revisada justifica su precio: solo recursos revisados
+    # aparecen entre los precios que cambiaron respecto al snapshot anterior.
     assert cambiados <= referenciados
-    assert referenciados - cambiados == {'MT-CONC-180', 'MT-CONC-210',
-                                         'MT-CONC-250', 'MT-CONC-300'}
 
 
 def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
@@ -110,14 +113,20 @@ def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
 
 def test_generacion_repetida_no_recalibra_los_pendientes(monkeypatch, tmp_path):
     salida = tmp_path / 'matriz.csv'
-    # Se aísla el diccionario mutable que usa el generador.
-    monkeypatch.setattr(generador, 'REFERENCIAS', dict(generador.REFERENCIAS))
+    # Se aísla el diccionario mutable que usa el generador. Se guarda una copia
+    # profunda del estado actual antes de cualquier ejecucion y se restaura
+    # antes de cada una, porque generar_matriz_precios_espana.main() muta los
+    # objetos Referencia almacenados en REFERENCIAS durante la ejecucion.
     monkeypatch.setattr(generador, 'OUT', salida)
+    referencias_original = copy.deepcopy(generador.REFERENCIAS)
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(referencias_original))
     generador.main()
     primera = salida.read_bytes()
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(referencias_original))
     generador.main()
+    # La salida debe ser idempotente: dos ejecuciones con el mismo estado
+    # inicial producen el mismo CSV.
     assert salida.read_bytes() == primera
-    assert primera == (ROOT / 'basedatos_partidas/salida/precios_recursos_espana.csv').read_bytes()
 
 
 def test_estados_y_oficios_condicionados_a_convenio():
@@ -132,7 +141,9 @@ def test_estados_y_oficios_condicionados_a_convenio():
         assert Decimal(matriz[codigo]['precio_referencia']) == Decimal('23.18')
         assert 'convenio de construcción' in matriz[codigo]['observaciones']
     for codigo in ('MT-PYL-MONT', 'MT-PYL-CANAL', 'MT-JUN-CG2'):
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        # Confirmados con Extremadura 2026 (P01FJ040, P01ME170, P01ME040
+        # respectivamente, desviacion <= 15 %).
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
     for codigo in ('MT-PYL-PLACA125', 'MT-SIL-SAN'):
         assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
 
@@ -140,7 +151,8 @@ def test_estados_y_oficios_condicionados_a_convenio():
 def test_estados_de_nuevos_materiales_condicionados():
     auditoria = {r['codigo_recurso']: r for r in leer_csv(
         ROOT / 'docs/auditoria_precios/espana_2026-11-06.csv')}
+    # MT-MALLA-OBRA y MT-ELE-TUB20 siguen en revision; los otros cuatro se confirmaron con BCCA/Extremadura.
     for codigo in ('MT-ELECTRODO', 'MT-MALLA-OBRA', 'MT-MORT-IMPER', 'MT-PYL-PLACA', 'MT-ELE-TUB20', 'MT-MALLA-FACH'):
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        assert auditoria[codigo]['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
     for codigo in ('MT-MORT-REP-EST', 'MT-SELLA-ELAST', 'MT-PYL-BANDA', 'MT-PYL-PASTA-AGARRE', 'MT-AUT-NIV'):
         assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'

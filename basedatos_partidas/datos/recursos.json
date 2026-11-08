@@ -948,14 +948,14 @@
     },
     "MT-BLQ-ARC-15": {
       "unidad": "ud",
-      "descripcion": "Bloque hueco de arcilla de 15x20x30 cm.",
+      "descripcion": "Bloque hueco de arcilla de 15x20x40 cm.",
       "precio": 0.55,
       "estado": "verificado-mercado",
       "fuente": "Bloque de arcilla 15x20x40: 0,45-0,65 USD."
     },
     "MT-LADRILLO": {
       "unidad": "ud",
-      "descripcion": "Ladrillo macizo de arcilla cocida.",
+      "descripcion": "Ladrillo macizo de arcilla cocida, 24x11,5x5 cm.",
       "precio": 0.23,
       "estado": "verificado-mercado",
       "fuente": "Ladrillo de arcilla 0,18-0,28 USD/unidad."
@@ -2336,7 +2336,7 @@
     },
     "MT-LADRILLO-VISTO": {
       "unidad": "ud",
-      "descripcion": "Ladrillo caravista de arcilla para fachadas de ladrillo visto, con junta fina.",
+      "descripcion": "Ladrillo caravista de arcilla para fachadas de ladrillo visto, con junta fina, 24x11,5x5 cm.",
       "precio": 0.3,
       "estado": "provisional"
     },
@@ -2405,6 +2405,20 @@
       "descripcion": "Soporte antivibratorio de neopreno (silent block) para aislar equipos de bombas, compresores y maquinaria, con su tornillería.",
       "precio": 5.0,
       "estado": "provisional"
+    },
+    "MT-BLQ-17": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 17x20x40 cm.",
+      "precio": 0.7,
+      "estado": "derivado",
+      "fuente": "Interpolación entre bloque 15 cm (0,62 EUR) y 20 cm (0,78 EUR); sin cotización bancaria directa para 17 cm."
+    },
+    "MT-BLQ-25": {
+      "unidad": "ud",
+      "descripcion": "Bloque de concreto hueco de 25x20x40 cm.",
+      "precio": 0.86,
+      "estado": "verificado-mercado",
+      "fuente": "Extremadura BCEXTGREM_26_v1.bc3, P01BG100 Bloque hormigón gris 40x25x20 cm = 0,86 EUR/ud (25 cm de espesor)."
     }
   },
   "maquinaria": {
@@ -2493,7 +2507,7 @@
       "estado": "provisional"
     },
     "MQ-ANDAMIO": {
-      "unidad": "h",
+      "unidad": "m2",
       "descripcion": "Andamio tubular o de borriquetas para trabajos en altura, incluido montaje y desmontaje amortizados.",
       "precio": 1.9,
       "estado": "provisional"

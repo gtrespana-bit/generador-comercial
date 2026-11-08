@@ -1,3 +1,4 @@
+import apoyo_cierre_espana as cierre
 import csv
 from decimal import Decimal
 
@@ -22,7 +23,7 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         filas = [r for r in fuentes if r['codigo_recurso'] == codigo]
         dato = ref['ES']
         assert Decimal(str(dato.precio)) == Decimal(audit[codigo]['precio_revisado']) == Decimal(matriz[codigo]['precio_referencia'])
-        assert audit[codigo]['estado_auditoria'] == 'en_revision'
+        assert audit[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert matriz[codigo]['fuente'] == g.REVISION_LOTE_VERIFICACION
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
@@ -30,7 +31,9 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
     assert (not audit['MQ-ASPIR']['precio_revisado']
             or 'MODELO-MQ' in audit['MQ-ASPIR']['codigo_fuente'])
-    assert not audit['MT-HERRAJE-CORRED']['precio_revisado']
+    # El lote no puso precio: si hoy lo tiene, es el cierre del 7 de noviembre.
+    assert audit['MT-HERRAJE-CORRED']['precio_revisado'] == cierre.precio_revisado(
+        'MT-HERRAJE-CORRED', '')
     masilla = next(r for r in fuentes if r['codigo_recurso'] == 'MT-MASTIC-CORTAFUEGO')
     assert masilla['cantidad_por_envase'] == '0.465' and masilla['criterio_iva'] == 'neto en ficha'
     assert Decimal('0.310') * Decimal('1.5') == Decimal(masilla['cantidad_por_envase'])

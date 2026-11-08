@@ -6,7 +6,7 @@ Parámetros: `espana_maquinaria_horaria_parametros_2026-11-07.csv` · Resultado:
 `espana_maquinaria_horaria_propuesta_2026-11-07.csv` · Impacto:
 `espana_impacto_maquinaria_2026-11-07.csv` · Reproducible con
 `tools/coste_horario_maquinaria_espana.py`, `tools/adjudicar_maquinaria_espana.py` y
-`tools/impacto_maquinaria_espana.py`.
+`tools/impacto_recursos_espana.py`.
 
 ## 1. Qué se ha decidido y con qué aritmética
 
@@ -72,7 +72,7 @@ taladros), así que la banda del banco se guarda como contraste, nunca como prec
 
 ## 4. Efecto sobre el catálogo
 
-`tools/impacto_maquinaria_espana.py` propaga el cambio con el rendimiento de cada
+`tools/impacto_recursos_espana.py` propaga el cambio con el rendimiento de cada
 descompuesto y el porcentaje de complementarios:
 
 * **1.511 partidas** afectadas de 2.016.

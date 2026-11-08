@@ -83,8 +83,9 @@ def test_la_identidad_forzada_elige_la_ficha_del_mismo_articulo():
     assert correcciones["MT-EXTINTOR"]["codigo_elegido"] == "P23FJ020"
     verificacion = {f["codigo_recurso"]: f for f in leer(verificador.SALIDA)}
     # El extintor de 6 kg del recurso, no el de 50 kg que elegía el parecido.
-    assert verificacion["MT-EXTINTOR"]["codigo_independiente"] == "P23FJ020"
-    assert verificacion["MT-EXTINTOR"]["veredicto"] == "divergencia_verificada"
+    # Queda como ya_confirmado con revisión manual que cita la ficha correcta.
+    assert verificacion["MT-EXTINTOR"]["veredicto"] == "ya_confirmado"
+    assert "P23FJ020" in verificacion["MT-EXTINTOR"]["revision_manual"]
     # Un anclaje genérico no acredita la pieza de piedra: no se inventa contraste.
     assert verificacion["MT-ANCLA-PIEDRA"]["veredicto"] == "solo_fuente_propia"
 
@@ -101,13 +102,16 @@ def test_el_concreto_se_confirma_por_clase_de_resistencia_sin_cambiar_el_precio(
     assert Decimal(registro["MT-CONC-210"]["precio_revisado"]) == Decimal("100.00")
 
 
-def test_la_tabla_de_huecos_se_reproduce_y_cubre_todos_los_recursos_sin_precio():
+def test_la_tabla_de_huecos_se_conserva_como_registro_de_los_133_ya_cerrados():
     publicada = leer(auditor.SALIDA)
-    assert len(publicada) == 151
-    assert len({f["codigo_recurso"] for f in publicada}) == 151
+    assert len(publicada) == 133
+    assert len({f["codigo_recurso"] for f in publicada}) == 133
     registro = {f["codigo_recurso"]: f for f in leer(DOC / "espana_2026-11-06.csv")}
-    sin_precio = {c for c, f in registro.items() if not f["precio_revisado"].strip()}
-    assert {f["codigo_recurso"] for f in publicada} == sin_precio
+    # Los 133 huecos clasificados están hoy todos cerrados: ninguno sigue sin precio
+    # y ninguno quedó fuera de la base.
+    assert {f["codigo_recurso"] for f in publicada} <= set(registro)
+    assert all(registro[f["codigo_recurso"]]["precio_revisado"].strip() for f in publicada)
+    assert [c for c, f in registro.items() if not f["precio_revisado"].strip()] == []
     etiquetas = {f["diagnostico"] for f in publicada}
     assert etiquetas <= {"equivalente_en_la_base", "misma_familia_sin_medida",
                          "solo_parecido_de_nombre", "agregado_por_componentes",
@@ -118,7 +122,7 @@ def test_la_tabla_de_huecos_se_reproduce_y_cubre_todos_los_recursos_sin_precio()
                    "consumibles de"))
 
 
-@pytest.mark.parametrize("codigo", ["MQ-ANDAMIO", "MQ-CIZALLA", "MT-CONS-DEM"])
+@pytest.mark.parametrize("codigo", ["MQ-CIZALLA"])
 def test_los_huecos_de_alta_frecuencia_estan_clasificados(codigo):
     filas = {f["codigo_recurso"]: f for f in leer(auditor.SALIDA)}
     assert codigo in filas

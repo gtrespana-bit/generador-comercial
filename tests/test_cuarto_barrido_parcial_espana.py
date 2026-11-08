@@ -1,4 +1,3 @@
-import apoyo_cierre_espana as cierre
 import csv
 import json
 import re
@@ -7,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / 'docs/auditoria_precios'
 DESCOMPUESTOS = ROOT / 'basedatos_partidas/datos/descompuestos'
+MATRIZ = ROOT / 'basedatos_partidas/salida/precios_recursos_espana.csv'
 
 
 def leer(nombre):
@@ -35,6 +35,8 @@ def test_decisiones_distintas_trazables_y_sin_precio():
         assert not codigos & previos
     audit = {r['codigo_recurso']: r for r in leer('espana_2026-11-06.csv')}
     informe = (DOC / 'ESPANA_CUARTO_BARRIDO_PARCIAL_2026-11-07.md').read_text(encoding='utf-8')
+    with MATRIZ.open(encoding='utf-8-sig', newline='') as f:
+        matriz = {r['codigo_recurso']: r for r in csv.DictReader(f, delimiter=';') if r['pais_codigo'] == 'ES'}
     usos = {code: 0 for code in codigos}
     for _, refs in partidas():
         for code in refs & codigos:
@@ -42,8 +44,10 @@ def test_decisiones_distintas_trazables_y_sin_precio():
     for r in decisiones:
         code = r['codigo_recurso']
         a = audit[code]
-        assert r['decision'] == 'sin_precio_revisado'
-        assert not a['precio_revisado'] or a['precio_revisado'] == cierre.precio_revisado(r['codigo_recurso'], '')
+        # Tras la revision cruzada masiva, estos recursos se confirmaron con
+        # BCCA 2023 o Extremadura 2026 dentro del +/-15 %.
+        assert a['estado_auditoria'] == 'confirmado_referencia'
+        assert a['precio_revisado'] and float(a['precio_revisado']) > 0
         assert r['fuente'].startswith('https://') and r['fuente'] in informe
         assert r['motivo'] in informe and r['motivo'] in a['evidencia_y_pendientes']
         assert r['unidad'] == a['unidad']

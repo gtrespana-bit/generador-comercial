@@ -355,8 +355,8 @@ def test_landing_ve_y_generica_mantienen_usd_con_iva_local(cliente_web):
     resp = cliente_web.get("/")
     assert "US$" in resp.text
     # Las cifras del catálogo cuentan partidas + recursos, no solo partidas
-    assert "3.398" in resp.text  # 3.006 partidas + 392 recursos
-    assert "392" in resp.text
+    assert "3.402" in resp.text  # 3.008 partidas + 394 recursos
+    assert "394" in resp.text
 
 
 # ---------------------------------------------------------------------------

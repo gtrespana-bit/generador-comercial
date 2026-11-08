@@ -27,6 +27,7 @@ Uso:
 from __future__ import annotations
 
 import csv
+import os
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
@@ -134,6 +135,12 @@ def main() -> int:
         })
 
     salida.sort(key=lambda f: (-int(f["usos"] or 0), f["codigo_recurso"]))
+    if not salida:
+        # Auditoría cerrada: no se sobrescribe la tabla publicada, que es el
+        # registro histórico de los huecos que existieron y cómo se cerraron.
+        print("0 recursos sin precio revisado: la tabla publicada se conserva como "
+              f"registro histórico de {len(leer(SALIDA))} huecos ya cerrados.")
+        return os.EX_OK
     with SALIDA.open("w", encoding="utf-8-sig", newline="") as manejador:
         escritor = csv.DictWriter(manejador, fieldnames=list(salida[0]), delimiter=";",
                                   lineterminator="\n")

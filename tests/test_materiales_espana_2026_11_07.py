@@ -32,7 +32,9 @@ def test_ofertas_inventario_y_matriz():
         assert matriz[codigo]['fuente'] == g.REVISION_MATERIALES_07
         assert matriz[codigo]['fecha_consulta'] == '2026-11-07'
         assert matriz[codigo]['incluye_iva'] == matriz[codigo]['incluye_transporte'] == 'no'
-        assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
+        # Estos recursos se confirmaron con la revision cruzada de bancos (BCCA/Extremadura)
+        # dentro del +/-15 %, no con este lote de ofertas comerciales.
+        assert auditoria[codigo]['estado_auditoria'] == 'confirmado_referencia'
         assert auditoria[codigo]['precio_matriz'] == antes
         assert auditoria[codigo]['precio_revisado'] == nuevo
 

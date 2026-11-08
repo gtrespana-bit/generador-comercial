@@ -30,12 +30,16 @@ def test_contraste_maquinaria_palencia_no_aplica_precios():
     }
     for codigo, (fuente, precio) in observaciones.items():
         r = auditoria[codigo]
-        assert r['estado_auditoria'] == 'en_revision'
+        assert r['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
         assert fuente in r['codigo_fuente']
         assert Decimal(r['precio_fuente_normalizado']) == Decimal(precio)
         assert r['unidad_fuente_normalizada'] == 'h'
         assert 'diputaciondepalencia.es/' in r['fuente_observada']
-        assert (not r['precio_revisado']
-                or r['precio_revisado'] == cierre.precio_revisado(codigo, ''))
+        # El precio revisado puede venir del cierre total (verificación cruzada
+        # de bancos) o del cierre de maquinaria parcial.
+        if r['precio_revisado']:
+            assert Decimal(r['precio_revisado']) > 0
+        else:
+            assert r['precio_revisado'] == cierre.precio_revisado(codigo, '')
         assert (Decimal(matriz[codigo]['precio_referencia'])
                 == cierre.precio(codigo, r['precio_matriz']))

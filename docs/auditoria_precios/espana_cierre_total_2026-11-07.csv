@@ -1,0 +1,134 @@
+﻿codigo_recurso;metodo;precio;referencia;criterio;confianza
+MQ-ALISADORA;modelo_propio;1.92;MODELO-MQ-2026-11-07;Compra 1.157,02 EUR netos (helicoptero de 1.400 EUR IVA incl.) entre 1.200 h, mantenimiento 20 %, energia 5,5 kW x 0,20 x 0,6 y consumibles 0,10 EUR/h;media
+MQ-ANDAMIO;modelo_alquiler;12.42;CYPE-0XA110;Modelo CYPE 0XA110 (andamio tubular fachada ATES): montaje 4,03 EUR/m2 + desmontaje 2,73 EUR/m2 + transporte ida/vuelta 3,51 EUR/m2 + alquiler 30 dias 2,15 EUR/m2. Total 12,42 EUR/m2. Unidad cambiada de h a m2 segun modelo CYPE.;media
+MQ-BANO-PORT;alquiler_mercado;110.00;MERCADO-2026-11-07;Alquiler mensual de bano quimico con mantenimiento y vaciado: punto medio de la horquilla de mercado 90-130 EUR/mes;media
+MQ-BOMBA-CONC;banco;56.41;M16A050;Ficha del banco: Bomba hormigonar 20 m3/h;alta
+MQ-CIZALLA;compuesto;4.73;M10A010+M10A030;El recurso es cizalla y dobladora: 2,33 EUR/h (M10A010 cizalla electrica) mas 2,40 EUR/h (M10A030 dobladora electrica);media
+MQ-COMPACT-SALTO;modelo_propio;2.53;MODELO-MQ-2026-11-07;Compra 1.074,38 EUR netos (canguro de 1.300 EUR IVA incl.) entre 1.000 h, mantenimiento 20 % y gasolina 0,8 l/h x 1,55 EUR/l;media
+MQ-DOBLAD-TUBO;banco;2.40;M10A030;Ficha del banco: Dobladora electrica hasta 30 mm;alta
+MQ-ESMERIL;modelo_propio;0.40;MODELO-MQ-2026-11-07;Compra 111,49 EUR netos (esmeriladora de banco 200 mm 550 W de 134,90 EUR IVA incl.) entre 800 h, mantenimiento 15 %, 0,55 kW y muelas 0,17 EUR/h;media
+MQ-ESTAMP;modelo_propio;0.48;MODELO-MQ-2026-11-07;Compra 330,58 EUR netos (juego de moldes y rodillos de 400 EUR IVA incl.) entre 800 h con mantenimiento 15 %;baja
+MQ-HIDROLAV;modelo_propio;0.54;MODELO-MQ-2026-11-07;Compra 123,97 EUR netos (hidrolimpiadora 130 bar de 150 EUR IVA incl.) entre 600 h, mantenimiento 15 %, 1,8 kW y boquillas 0,05 EUR/h;media
+MQ-LIJAD-PISO;modelo_propio;2.65;MODELO-MQ-2026-11-07;Compra 1.487,60 EUR netos (lijadora de banda de 1.800 EUR IVA incl.) entre 1.000 h, mantenimiento 20 %, 2,2 kW y lijas 0,60 EUR/h;media
+MQ-MART-NEUM;modelo_propio;1.83;MODELO-MQ-2026-11-07;Compra del martillo neumatico de 10,5 kg a 646,00 EUR netos (781,66 EUR IVA incl.) entre 1.000 h mas compresor de 578,51 EUR entre 3.000 h, energia 2,2 kW x 0,20 x 0,6 y cinceles 0,60 EUR/h;media
+MQ-MONTAC;banco;5.40;M02MG030;Ficha del banco: Montacarga con guiaderas 1 t;alta
+MQ-PERF-PILOTE;banco_analogia;186.32;M16A270;Equipo de perforacion rotopercusion de 6 pulgadas con operador: la ficha mas proxima a la perforadora de pilotes;baja
+MQ-PLANCHA-COMP;modelo_propio;2.95;MODELO-MQ-2026-11-07;Compra 909,09 EUR netos (plancha de 1.100 EUR IVA incl.) entre 1.200 h, mantenimiento 20 % y gasolina 1,2 l/h x 1,55 EUR/l;media
+MQ-RECUP-GAS;modelo_propio;0.77;MODELO-MQ-2026-11-07;Compra del recuperador y bomba de vacio a 743,80 EUR netos (900 EUR IVA incl.) entre 1.200 h, mantenimiento 15 % y 0,5 kW;media
+MQ-ROZAD;banco;1.93;M11Z010;Ficha del banco: Rozadora electrica de 1 kW;alta
+MQ-TELUROMETRO;modelo_propio;0.24;MODELO-MQ-2026-11-07;Compra 330,58 EUR netos (telurometro de 400 EUR IVA incl.) entre 1.500 h con mantenimiento 10 %;media
+MQ-TERMOF;modelo_propio;0.29;MODELO-MQ-2026-11-07;Compra 99,17 EUR netos (termofusora de 120 EUR IVA incl.) entre 800 h, mantenimiento 15 % y 0,8 kW;media
+MQ-VENT-SUC;modelo_propio;0.30;MODELO-MQ-2026-11-07;Compra 413,22 EUR netos (juego de ventosas de 500 EUR IVA incl.) entre 1.500 h con mantenimiento 10 %;baja
+MT-ACC-BOMBA;banco_analogia;44.82;P30IC050;Tubos y accesorios de conexion: el banco no desglosa el conjunto de accesorios de bomba;baja
+MT-ACRIL-IMPER;banco_analogia;6.73;P24FE040;Impermeabilizante antigoteras de la misma clase y unidad (l);baja
+MT-AISL-REFLECT;mercado_rango;;MERCADO-2026-11-07;Manta reflectiva de doble burbuja de 5 mm: horquilla de mercado 2-5 EUR/m2;baja
+MT-ALARMA;banco_analogia;471.82;P23RC090;Central antirrobo de 96 zonas con teclado: el conjunto mas proximo a central con sensores y sirena;baja
+MT-ANCLA-MURO;banco;0.77;P04TW220;Conector de empalme: misma funcion y unidad;media
+MT-ANIME-ALIV;banco_analogia;2.84;P03BP010;Bovedilla de poliestireno 50x50x17: mismo material y funcion de aligeramiento;media
+MT-AUTOM-PORTON;mercado_rango;;MERCADO-2026-11-07;Motor y automatismo de porton corredizo: horquilla de mercado 150-300 EUR/ud;baja
+MT-BARRA-APOYO;banco_analogia;26.06;P18CW065;Barra fija de accesibilidad de 70 cm: el recurso pide 40 cm y se adopta la ficha de la misma familia;media
+MT-BARRA-TIERRA;banco;15.03;P15EA010;Pica de toma de tierra 200/14,3 Fe+Cu;media
+MT-BATERIA;banco_analogia;236.95;P19GCB010;Bateria de 12 V: la ficha del banco mas proxima en capacidad;baja
+MT-BLOQUE-ALIV;banco;0.84;P01BE010;Bloque de arcilla expandida 40x20x10: mismo material de aligeramiento;media
+MT-BLQ-ARC-10;banco_analogia;0.50;P01BG180;Bloque hueco de 10 cm: misma medida, material de hormigon en lugar de arcilla;baja
+MT-BLQ-ARC-15;banco_analogia;0.59;P01BG190;Bloque hueco de 15 cm: misma medida, material de hormigon en lugar de arcilla;media
+MT-BLQ-EST-15;banco;0.60;P01BA020;Bloque ceramico 40x20x15: misma medida y funcion estructural;media
+MT-BLQ-EST-20;banco;0.75;P01BG080;Bloque de hormigon gris 40x20x20: misma medida y material;alta
+MT-BLQ-VIDRIO;mercado_rango;;MERCADO-2026-11-07;Paves de vidrio 19x19x8: horquilla de mercado 5-9 EUR/ud;baja
+MT-BOMBA-AGUA;mercado_rango;;MERCADO-2026-11-07;Bomba centrifuga domestica con su control: horquilla de mercado 150-400 EUR/ud;baja
+MT-CAMARA-CCTV;mercado_rango;;MERCADO-2026-11-07;Camara IP domo de 4 MP: horquilla de mercado 60-140 EUR/ud;baja
+MT-CANON;mercado_rango;;MERCADO-2026-11-07;Canon de vertido en vertedero autorizado: horquilla de mercado 5-12 EUR/m3;baja
+MT-CASETA-BIEN;mercado_rango;;MERCADO-2026-11-07;Caseta prefabricada de vestuario y comedor: horquilla de mercado 100-200 EUR/mes;baja
+MT-CERRADURA;banco_analogia;26.02;P11RP070;Pomo con cerradura: conjunto de cerradura y manilla de la misma clase;media
+MT-CIELO-METAL;mercado_rango;;MERCADO-2026-11-07;Lamina metalica para cielo raso: horquilla de mercado 12-30 EUR/m2;baja
+MT-CIELO-PVC;mercado_rango;;MERCADO-2026-11-07;Cielo raso de PVC con su perfileria: horquilla de mercado 10-22 EUR/m2;baja
+MT-CINTA-LED;mercado_rango;;MERCADO-2026-11-07;Cinta LED de 24 V y 300 lm/m con perfil: horquilla de mercado 6-12 EUR/m;baja
+MT-CONS-DEM;compuesto;2.70;;Punta SDS-Max a 25 EUR por 5 usos, disco de 230 mm a 25 EUR por 10 usos y hoja de espatula a 6 EUR por 10 usos: media del coste por uso;baja
+MT-CONS-LIMP;compuesto;0.24;P34J020;Detergente neutro al 5 % (0,81 EUR/l) a 0,05 l/m2 mas panos y bolsas 0,20 EUR/m2;baja
+MT-CONS-PULIDO;compuesto;1.50;;Disco diamantado a 25 EUR por 25 m2 mas abrasivo 0,30 y cristalizador 0,20 EUR/m2;baja
+MT-CONT-DESCARGAS;mercado_rango;;MERCADO-2026-11-07;Contador de descargas de pararrayos: horquilla de mercado 40-90 EUR/ud;baja
+MT-CONTENEDOR;mercado_rango;;MERCADO-2026-11-07;Alquiler mensual de contenedor de 5 m3 con retirada y vaciado: horquilla de mercado 60-90 EUR/mes;media
+MT-CUMBRERA;banco_analogia;10.17;P10BB100;Tapa de remate de hormigon: pieza de remate de cubierta de la misma funcion;baja
+MT-DISOL-ADH;banco;3.46;P01UL903;Disolvente: misma unidad y funcion;media
+MT-DOM-CENTRAL;banco_analogia;232.09;P20WC030;Modulo adicional de central: referencia de central de control;baja
+MT-DOM-ENCHUFE;banco_analogia;32.06;P22IMA060;Placa para modulo USB: modulo de mecanismo de la misma clase;baja
+MT-DOM-PANEL;mercado_rango;;MERCADO-2026-11-07;Panel tactil de pared: horquilla de mercado 70-150 EUR/ud;baja
+MT-DOM-PASARELA;banco_analogia;133.57;P42M370;Pasarela de comunicaciones para inversores: pasarela de integracion de la misma clase;baja
+MT-DOM-PERSIANA;banco_analogia;205.86;P33VBI140;Modulo electronico de control: modulo de actuacion de la misma clase;baja
+MT-DOM-REPETIDOR;mercado_rango;;MERCADO-2026-11-07;Repetidor de senal inalambrico: horquilla de mercado 30-70 EUR/ud;baja
+MT-DOM-SENSOR-GAS;banco;106.28;P22IO430;Detector de gas KNX: misma funcion y comunicacion;media
+MT-DOM-SENSOR-TEMP;mercado_rango;;MERCADO-2026-11-07;Sensor de temperatura y humedad Zigbee: horquilla de mercado 15-35 EUR/ud;baja
+MT-DOM-TECLADO;mercado_rango;;MERCADO-2026-11-07;Teclado o pulsador de escenas: horquilla de mercado 25-60 EUR/ud;baja
+MT-DOM-TERMOSTATO;banco_analogia;159.52;P15HB250;Termostato digital: misma funcion;baja
+MT-DOMO;banco_analogia;107.33;P05FG070;Placa de fibrocemento con claraboya 152x110: la unica claraboya del banco;baja
+MT-DPS-3;mercado_rango;;MERCADO-2026-11-07;Protector de sobretensiones tipo 3: horquilla de mercado 18-40 EUR/ud;baja
+MT-DPS-DATOS;banco;96.14;P23PF340;Protector de lineas de datos;media
+MT-EPP;compuesto;29.40;P31IA010;Casco 2,41 mas guantes 2,16 mas botas 14,00 mas gafas 2,41 mas chaleco 8,42: dotacion completa por trabajador con fichas del banco;media
+MT-ESTRUCT-MESON;mercado_rango;;MERCADO-2026-11-07;Estructura de soporte de meson: horquilla de mercado 10-18 EUR/m;baja
+MT-ESTUCO-VEN;banco;9.03;P24VE030;Pasta de estuco tipo Marmoris: misma clase;media
+MT-FIBRA-NAT;mercado_rango;;MERCADO-2026-11-07;Revestimiento de fibra natural tejida: horquilla de mercado 15-40 EUR/m2;baja
+MT-GABINETE-MANG;mercado_rango;;MERCADO-2026-11-07;Gabinete de incendios con manguera de 25 m: horquilla de mercado 150-300 EUR/ud;baja
+MT-GAS-REFRIG;mercado_rango;;MERCADO-2026-11-07;Gas refrigerante R-32: horquilla de mercado 15-30 EUR/kg;baja
+MT-GRAMA;mercado_rango;;MERCADO-2026-11-07;Grama natural en panes o alfombra: horquilla de mercado 2-6 EUR/m2;media
+MT-GROUT-CELDA;banco_analogia;112.00;P01MC080;Mortero de cemento gris M-20: hormigon fluido de relleno de la misma clase;media
+MT-HERRAJE-CLOSET;compuesto;8.90;;Dos bisagras de cazoleta 2,40 mas tirador 3,50 mas cuatro soportes 2,40 mas tornilleria 0,60;baja
+MT-HERRAJE-CORRED;banco_analogia;41.40;P11WH220;Herrajes de persiana corredera: misma familia de herraje de corredera;baja
+MT-HERRAJE-PUERTA;compuesto;11.70;;Tres bisagras 5,40 mas tope 1,50 mas herrajes de colgar 4,00 mas tornilleria 0,80;baja
+MT-HIDRONEUMATICO;mercado_rango;;MERCADO-2026-11-07;Grupo hidroneumatico con bomba y tanque: horquilla de mercado 200-500 EUR/ud;baja
+MT-IMPERM-ASF;banco_analogia;6.73;P24FE040;Impermeabilizante antigoteras: misma clase de impermeabilizante liquido;baja
+MT-INVERSOR;mercado_rango;;MERCADO-2026-11-07;Inversor de respaldo con control de carga: horquilla de mercado 200-450 EUR/ud;baja
+MT-LAMP-OBRA;mercado_rango;;MERCADO-2026-11-07;Reflector de obra amortizado por uso: horquilla de mercado 8-15 EUR/ud;media
+MT-LINEA-VIDA;mercado_rango;;MERCADO-2026-11-07;Linea de vida horizontal con anclajes y absorbedor: horquilla de mercado 5-12 EUR/m;baja
+MT-LLAVE-PROV;banco;6.69;P41V350;Llave de paso de 1/2 pulgada;media
+MT-MADERA-ENTIB;banco;6.41;P01EB170;Amortizacion de tablon machiembrado de 22 mm: mismo concepto de amortizacion por usos;alta
+MT-MADERA-PERGOLA;banco;1.95;P01EW080;Liston de madera de pino 2,5x7,5 cm: el recurso pide viga y liston tratada;media
+MT-MALLA-ESQ;banco_analogia;4.70;P43XP320;Perfil cantonera con malla y goteron: misma funcion de refuerzo de esquina;media
+MT-MARCO-PUERTA;compuesto;7.02;P01EW080;Liston de pino 2,5x7,5 a 1,95 EUR/m por 3,6 m de madera por metro de marco;baja
+MT-MAT-PRESTAMO;banco;9.00;P01AD051;Zahorra natural: material granular de prestamo;media
+MT-MICROCEM;banco;3.85;P08CM030;Microcemento monocomponente de capa decorativa;media
+MT-OXI-CONS;compuesto;7.57;P01US010;Veinte electrodos a 0,054 EUR/ud (1,07) mas disco de corte de metal 3,50 mas boquilla 3,00;baja
+MT-PANEL-LIV;banco_analogia;25.30;P05CS112;Panel de chapa prelacada de 100 mm: panel prefabricado de tabiqueria de la misma clase;baja
+MT-PANEL-SOLAR;mercado_rango;;MERCADO-2026-11-07;Panel fotovoltaico de 450 W con estructura: horquilla de mercado 150-300 EUR/ud;baja
+MT-PARARRAYOS-PDA;mercado_rango;;MERCADO-2026-11-07;Pararrayos PDA con mastil y fijaciones: horquilla de mercado 300-600 EUR/ud;baja
+MT-PARARRAYOS-PUNTA;mercado_rango;;MERCADO-2026-11-07;Pararrayos de punta Franklin con su soporte: horquilla de mercado 60-150 EUR/ud;baja
+MT-PASIVANTE;mercado_rango;;MERCADO-2026-11-07;Recubrimiento pasivante cementoso: horquilla de mercado 8-15 EUR/l;baja
+MT-PERFIL-ALUM;mercado_rango;;MERCADO-2026-11-07;Perfil de aluminio de carpinteria con accesorios: horquilla de mercado 8-14 EUR/kg;media
+MT-PERFIL-CORTINERO;mercado_rango;;MERCADO-2026-11-07;Riel de cortinero con soportes: horquilla de mercado 5-12 EUR/m;baja
+MT-PERSIANA-ALU;mercado_rango;;MERCADO-2026-11-07;Persiana enrollable de aluminio con cajon y accionamiento: horquilla de mercado 40-90 EUR/m2;media
+MT-PIEDRA-FACHADA;mercado_rango;;MERCADO-2026-11-07;Aplacado de piedra natural de 20 mm con fijacion: horquilla de mercado 35-70 EUR/m2;baja
+MT-PIEDRA-PIC;banco;11.99;P01AG150;Grava 40/80 mm: piedra picada para bases y drenajes;media
+MT-PIN-CAL;banco;0.50;P24CC010;Cal: misma unidad y producto;media
+MT-PIN-LIJA;compuesto;1.28;P11WP060;Banda de lija a 2,33 EUR por 3 usos mas cinta 0,35 y plastico 0,15;baja
+MT-PIN-SEMIBRILLO;banco_analogia;6.99;P24IP020;Pintura acrilica lavable: misma clase de pintura de interior;media
+MT-PLACA-FACHADA;banco;68.01;P04FT040;Panel composite de aluminio de 4 mm;alta
+MT-PLANCHA-ACERO;banco;1.05;P13TC010;Chapa galvanizada de 1 mm a 1,05 EUR/kg;media
+MT-PLANTA-ELEC;mercado_rango;;MERCADO-2026-11-07;Grupo electrogeno de 20 kVA con tablero: horquilla de mercado 6000-12000 EUR/ud. El precio de la matriz queda muy por debajo y debe revisarse;baja
+MT-PLATINA-DIV;mercado_rango;;MERCADO-2026-11-07;Platina divisoria de aluminio: horquilla de mercado 1,5-4 EUR/m;baja
+MT-PLO-ACC20;banco;1.76;P20TP050;Accesorios de polipropileno de D=20 mm;media
+MT-PLO-ACC4;banco;2.98;P02TC030;Codo de 87,5 grados de PVC junta pegada de 75 mm;media
+MT-PLO-DESAG;compuesto;7.37;P17SC010;Sifon botella 5,07 mas brida y adaptadores 1,50 mas pegamento 0,80;baja
+MT-POLIURETANO-PISO;banco_analogia;18.22;P08CR060;Recubrimiento epoxi en base acuosa: recubrimiento continuo de piso de la misma clase;baja
+MT-QUIMICO-LIMP-AC;mercado_rango;;MERCADO-2026-11-07;Espumante limpiador de serpentines: horquilla de mercado 6-15 EUR/ud;baja
+MT-REGUL-GAS;mercado_rango;;MERCADO-2026-11-07;Regulador domestico de 1,5 m3/h con llave de corte: horquilla de mercado 15-40 EUR/ud;media
+MT-RESINA-ACRIL;banco_analogia;8.49;P30IR070;Resina de poliester: resina para revestimiento continuo;baja
+MT-RESINA-INYEC;banco;17.12;P01UA010;Resina epoxi: misma unidad y funcion;media
+MT-RIEL-CORRED;mercado_rango;;MERCADO-2026-11-07;Riel y carros para puerta corredera: horquilla de mercado 12-30 EUR/m;media
+MT-SAN-FIJA;mercado_rango;;MERCADO-2026-11-07;Kit de fijacion de aparato sanitario: horquilla de mercado 4-8 EUR/ud;baja
+MT-SELLA-PASE;mercado_rango;;MERCADO-2026-11-07;Kit de sellado de pase con collarín y masilla: horquilla de mercado 4-8 EUR/ud;baja
+MT-SENAL-OBRA;mercado_rango;;MERCADO-2026-11-07;Senalizacion de obra (senal, cinta y conos): horquilla de mercado 3-10 EUR/ud;media
+MT-SOPORTE-AC;mercado_rango;;MERCADO-2026-11-07;Soporte galvanizado para unidad exterior: horquilla de mercado 15-60 EUR/ud;media
+MT-SOPORTE-ANTIVIB;mercado_rango;;MERCADO-2026-11-07;Silent block de neopreno con tornilleria: horquilla de mercado 3-8 EUR/ud;media
+MT-SUBESTRUCTURA;banco_analogia;68.00;P04FT200;Subestructura de perfiles de aluminio para fachada composite;media
+MT-TABLERO-DIST;mercado_rango;;MERCADO-2026-11-07;Tablero de distribucion empotrable con barraje: horquilla de mercado 40-90 EUR/ud;media
+MT-TABLERO-PROV;mercado_rango;;MERCADO-2026-11-07;Cuadro provisional de obra con diferencial: horquilla de mercado 40-80 EUR/ud;media
+MT-TEJA-ASF;mercado_rango;;MERCADO-2026-11-07;Teja asfaltica tipo shingle con fieltro: horquilla de mercado 8-20 EUR/m2;media
+MT-TIMBRE;mercado_rango;;MERCADO-2026-11-07;Timbre con pulsador y transformador: horquilla de mercado 12-25 EUR/ud;media
+MT-TOLDO;mercado_rango;;MERCADO-2026-11-07;Toldo extensible de lona con brazos: horquilla de mercado 45-90 EUR/m2;media
+MT-TRAMPA-GRASA;mercado_rango;;MERCADO-2026-11-07;Trampa de grasa prefabricada: horquilla de mercado 60-150 EUR/ud;baja
+MT-VAPOR;mercado_rango;;MERCADO-2026-11-07;Solucion humectante para papel pintado: horquilla de mercado 2-5 EUR/l;baja
+MT-VIDRIO-6;banco_analogia;26.36;P14CI020;Vidrio impreso incoloro de 6 mm: misma medida, distinto acabado;media
+MT-VIDRIO-ARENA;banco_analogia;26.36;P14CI020;Vidrio impreso incoloro de 6 mm como vidrio esmerilado de privacidad;baja
+MT-VIDRIO-DECOR;mercado_rango;;MERCADO-2026-11-07;Vidrio decorativo lacado o grabado: horquilla de mercado 35-70 EUR/m2;media
+MT-VIDRIO-TEMP;mercado_rango;;MERCADO-2026-11-07;Vidrio templado de 10 mm con cantos pulidos: horquilla de mercado 60-110 EUR/m2;media
+MT-VIGA-APEO;compuesto;5.85;P01EW080;Tres listones de pino 2,5x7,5 a 1,95 EUR/m por metro de viga;baja
+MT-ZIPPER;mercado_rango;;MERCADO-2026-11-07;Cierre de cremallera para barrera antipolvo: horquilla de mercado 3-6 EUR/ud;media

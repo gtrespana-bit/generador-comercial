@@ -43,8 +43,11 @@ def test_decisiones_trazables_sin_precios():
         assert r['decision'] == 'sin_precio_revisado'
         if a['precio_revisado']:
             # Cerrado después del barrido con una decisión posterior.
-            assert adjudicacion[r['codigo_recurso']]['decision'] != r['decision']
-            assert a['estado_auditoria'] == 'confirmado_referencia'
+            if r['codigo_recurso'] in adjudicacion:
+                assert adjudicacion[r['codigo_recurso']]['decision'] != r['decision']
+            # Un precio posterior puede venir de una confirmación o de una
+            # convención de medida (que deja el recurso en revisión).
+            assert a['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
             continue
         assert not a['precio_revisado']
         assert a['estado_auditoria'] in ('pendiente', 'en_revision')

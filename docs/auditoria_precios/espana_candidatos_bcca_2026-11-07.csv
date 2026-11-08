@@ -1665,3 +1665,5 @@ MT-PLANTA-ELEC;Planta eléctrica de respaldo con motor diésel o gasolina y tabl
 MT-PLANTA-ELEC;Planta eléctrica de respaldo con motor diésel o gasolina y tablero de arranque, para suministro de emergencia.;ud;materiales;0;pendiente;KW03000;MOTOR ELECTRICO Y MANDO AUTOMÁTICO;;ud;1006.63;2024-01;2022-01;3;0.1298;motor;;pendiente_revision
 MT-PLANTA-ELEC;Planta eléctrica de respaldo con motor diésel o gasolina y tablero de arranque, para suministro de emergencia.;ud;materiales;0;pendiente;KW80020;CUADRO ELÉCTRICO MANDO Y PROTECCIÓN MOTOR PERSIANA;;ud;107.05;2024-01;2022-01;4;0.1298;motor;;pendiente_revision
 MT-PLANTA-ELEC;Planta eléctrica de respaldo con motor diésel o gasolina y tablero de arranque, para suministro de emergencia.;ud;materiales;0;pendiente;DW01100;ROTULO DENOMINADOR DE PLANTA EN LATÓN PULIDO;Medida la cantidad útil descargada;ud;23.53;2024-01;2022-12;5;0.1221;planta;;pendiente_revision
+MT-BLQ-17;Bloque de concreto hueco de 17x20x40 cm.;ud;materiales;1;en_revision;;;;;;;;;;;sin_candidato_bcca;pendiente_revision
+MT-BLQ-25;Bloque de concreto hueco de 25x20x40 cm.;ud;materiales;1;en_revision;;;;;;;;;;;sin_candidato_bcca;pendiente_revision

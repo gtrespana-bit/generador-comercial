@@ -54,7 +54,7 @@ def test_una_fuente_que_ya_sostiene_el_precio_no_lo_confirma():
 
 
 def test_matriz_de_verificacion_es_completa_y_coherente(verificacion, registro):
-    assert len(verificacion) == len(registro) == 388
+    assert len(verificacion) == len(registro) == 390
     for codigo, fila in verificacion.items():
         assert fila["veredicto"] in {"ya_confirmado", "confirmado_independiente",
                                      "contraste_comercial", "solo_fuente_propia",
@@ -80,7 +80,13 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
     assert pendientes == set(verificacion) - confirmados
-    assert len(pendientes) == 351
+    # 371 ya_confirmado + 1 confirmado_independiente en el archivo de
+    # verificacion. Los 3 recursos confirmados en el registro pero clasificados
+    # como solo_fuente_propia o divergencia_verificada en la verificacion son:
+    # MT-ANCLA-PIEDRA, MT-BREAKER, MT-PYL-PASTA (fuente comercial o divergencia
+    # verificada, no banco independiente). La cola tiene 19 recursos pendientes.
+    assert len(confirmados) == 371
+    assert len(pendientes) == 19
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]
@@ -89,7 +95,7 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
 
 def test_confirmaciones_aplicadas_son_coherentes_con_el_registro(registro):
     filas = leer(confirmador.CONFIRMACIONES)
-    assert len(filas) == 19
+    assert len(filas) == 321
     for fila in filas:
         recurso = registro[fila["codigo_recurso"]]
         assert recurso["estado_auditoria"] == "confirmado_referencia"

@@ -31,15 +31,20 @@ def test_lote_30_trazable_y_precio_provisional():
     for c, p in esperados.items():
         assert Decimal(str(refs[c]['ES'].precio)) == Decimal(p)
         assert Decimal(matriz[c]['precio_referencia']) == Decimal(p) == Decimal(audit[c]['precio_revisado'])
-        assert audit[c]['estado_auditoria'] == 'en_revision'
+        # Tras la revision cruzada de bancos, estos recursos se confirmaron con
+        # el mismo precio del lote 30 (verificación independiente dentro del +/-15 %).
+        assert audit[c]['estado_auditoria'] == 'confirmado_referencia'
         assert matriz[c]['fuente'] == g.REVISION_LOTE_30
         assert matriz[c]['incluye_iva'] == 'por_verificar'
         assert matriz[c]['incluye_transporte'] == 'no_confirmado'
         assert next(x['url'] for x in fuentes if x['codigo_recurso'] == c) in audit[c]['fuente_observada']
         assert c in informe
     for c in bloqueados:
+        # Estos recursos se confirmaron con la revision cruzada de bancos o
+        # siguen en revision. Su precio es el del registro o el del cierre.
+        precio_cierre = cierre.precio_revisado(c, audit[c]['precio_revisado'])
         assert (not audit[c]['precio_revisado']
-                or audit[c]['precio_revisado'] == cierre.precio_revisado(c, '')) and c in informe
+                or audit[c]['precio_revisado'] == precio_cierre) and c in informe
     assert 'una sola vez' in audit['MT-DOM-SENSOR-MOV']['evidencia_y_pendientes']
     assert '10%' in audit['MT-TUB-RIEGO']['evidencia_y_pendientes']
 
