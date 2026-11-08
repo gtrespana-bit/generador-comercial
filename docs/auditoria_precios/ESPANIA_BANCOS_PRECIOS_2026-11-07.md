@@ -46,7 +46,9 @@ Tras el cribado contra los dos bancos y revisión caso a caso (no es un gate aut
 | MT-CANON-TIERRA | 2,14 €/m3 | ET00200 canon gestión tierras | 2,42 | +13,1 % | 4 |
 | MT-PERSIANA-ALU | 62,66 €/m2 | KS04500 persiana enrollable Al lacado | 54,30 | −13,3 % | 4 |
 
-Total en el registro: **52 `confirmado_referencia` (2.346 usos)** y **336 `en_revision`**; 1 más está `confirmado_independiente` (MT-PERSIANA-ALU ya lo estaba desde el ciclo anterior contra KS04500). Reserva escrita en cada confirmación: referencia operativa contrastada, no media nacional ni coste de proveedor concreto; IVA y transporte sin confirmar.
+Total en el registro: **53 `confirmado_referencia` (2.420 usos)** y **335 `en_revision`**; 1 más está `confirmado_independiente` (MT-PERSIANA-ALU, ya desde el ciclo anterior contra KS04500).
+
+Añadida por decisión del titular: **MT-PERFIL-ALUM** (perfil de aluminio para carpintería de ventanas y puertas, 10,82 €/kg, 74 usos), confirmada manualmente dentro de la horquilla de mercado declarada 8–14 €/kg. **Sin segunda fuente independiente:** se confirma por decisión de propietario, no por contraste bancario, y se deja constancia de la reserva. Reserva escrita en cada confirmación: referencia operativa contrastada, no media nacional ni coste de proveedor concreto; IVA y transporte sin confirmar.
 
 Nota: Extremadura 2026 cotiza exactamente lo mismo que la matriz para `MQ-OXICORTE` (6,90 €/h, M11O010) y `MQ-DESBROZ` (4,51 €/h vs 4,36 revisado), pero esos precios **vienen de ese mismo banco** (la matriz ya los adoptó de Extremadura 2026), así que no son una segunda fuente independiente: siguen `en_revision` con la reserva escrita.
 

@@ -8,12 +8,12 @@ Se está auditando la matriz de precios de recursos para España, contrastando l
 
 | Estado en el registro | Recursos | Con precio revisado | Sin precio revisado |
 |---|---:|---:|---:|
-| Confirmado como referencia | 52 | 52 | 0 |
-| En revisión | 336 | 336 | 0 |
+| Confirmado como referencia | 53 | 53 | 0 |
+| En revisión | 335 | 335 | 0 |
 | Pendiente | 0 | 0 | 0 |
 | **Total** | **388** | **388** | **0** |
 
-**Ningún recurso queda sin precio ni pendiente de decisión:** los 388 tienen cifra, fuente, código, criterio y reserva. Los 133 que estaban abiertos se cerraron el 7 de noviembre con un método declarado por recurso; ver [cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md). Estado de verificación en [ESPANIA_BANCOS_PRECIOS_2026-11-07.md](ESPANIA_BANCOS_PRECIOS_2026-11-07.md): 52 confirmados, 6 contrastes comerciales, 66 divergencias y 263 de fuente única (1 más confirmado independientemente); **ningún recurso sin precio auditado**. Ambos bancos están ingestados y cribados: BCCA 2023 con 5.925 precios simples leídos por `tools/leer_bcca.py` y Extremadura 2026 con su esquema nativo. Los 133 huecos que hubo quedaron clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md), que se conserva como registro histórico. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 388 precios revisados comprenden mano de obra, materiales, 25 fichas directas de banco, 28 analogías de familia, 12 composiciones, 13 máquinas con modelo propio, 2 alquileres y 54 contrastes de mercado. **Que un precio esté revisado no lo hace universal**: `en_revision` sigue significando que falta una segunda fuente independiente.
+**Ningún recurso queda sin precio ni pendiente de decisión:** los 388 tienen cifra, fuente, código, criterio y reserva. Los 133 que estaban abiertos se cerraron el 7 de noviembre con un método declarado por recurso; ver [cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md). Estado de verificación en [ESPANIA_BANCOS_PRECIOS_2026-11-07.md](ESPANIA_BANCOS_PRECIOS_2026-11-07.md): 53 confirmados, 6 contrastes comerciales, 66 divergencias y 262 de fuente única (1 más confirmado independientemente); **ningún recurso sin precio auditado**. Ambos bancos están ingestados y cribados: BCCA 2023 con 5.925 precios simples leídos por `tools/leer_bcca.py` y Extremadura 2026 con su esquema nativo. Los 133 huecos que hubo quedaron clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md), que se conserva como registro histórico. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 388 precios revisados comprenden mano de obra, materiales, 25 fichas directas de banco, 28 analogías de familia, 12 composiciones, 13 máquinas con modelo propio, 2 alquileres y 54 contrastes de mercado. **Que un precio esté revisado no lo hace universal**: `en_revision` sigue significando que falta una segunda fuente independiente.
 
 ### Último cambio: cierre total, 133 recursos (7 de noviembre)
 

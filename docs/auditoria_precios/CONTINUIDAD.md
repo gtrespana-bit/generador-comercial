@@ -22,7 +22,7 @@
   catálogo y marcada para revisión.
 - Impacto: **1.076 partidas**, mediana +0,1 %, mínimo −77,8 % (piedra picada y plancha
   compactadora con ficha de banco), máximo +36,9 % (subestructura de fachada).
-- Estado: 52 confirmados por verificación cruzada / 336 en revisión; matriz 388 filas
+- Estado: 53 confirmados por verificación cruzada / 335 en revisión; matriz 388 filas
   (43 directas + 345 derivadas); SQL de 388 filas **sin ejecutar**.
 
 ## Convención de medida para lo que no la fija — 7 de noviembre de 2026

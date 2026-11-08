@@ -270,7 +270,7 @@ MT-PEGA-MURAL;materiales;kg;4;en_revision;16.36;16.36;comercial:www.obramat.es;;
 MT-PER-BANDA;materiales;m;3;en_revision;1.11;1.11;comercial:carm.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento
 MT-PERF-DESM;materiales;m2;10;en_revision;8.17;8.17;comercial:carm.generadordeprecios.info;;9;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento
 MT-PERFIL-ACERO;materiales;kg;79;confirmado_referencia;1.54;1.54;extremadura;extremadura;5;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-PERFIL-ALUM;materiales;kg;74;en_revision;10.82;10.82;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PERFIL-ALUM;materiales;kg;74;confirmado_referencia;10.82;10.82;extremadura;bcca,extremadura;0;0;;;;;;ya_confirmado;;
 MT-PERFIL-CORTINERO;materiales;m;2;en_revision;8.43;8.43;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;2.85;comercial:www.obramat.es;;3;2;extremadura;9.3;+226.3;P08WP300;Perfil de transición aluminio H10 mm;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;5.93;comercial:generadordeprecios.info;;3;2;extremadura;9.3;+56.8;P08WP300;Perfil de transición aluminio H10 mm;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
