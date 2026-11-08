@@ -2,6 +2,29 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Cierre total: ningún recurso sin precio — 7 de noviembre de 2026
+
+**133 precios nuevos. 388/388 recursos con precio revisado, 0 huecos.** Informe:
+[cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md).
+
+- Decisión del titular: *«termina todos los recursos sin precio, todos, buscando la mejor
+  manera»*. Cada recurso lleva su método escrito en `espana_cierre_total_2026-11-07.csv`:
+  ficha del banco (25), familia análoga (28), composición de consumibles (12), modelo de
+  maquinaria por compra y amortización (12), alquiler calibrado (2) y contraste de mercado
+  (54).
+- Regla de alcance aplicada: **si la ficha no es el artículo, no se sustituye el precio**.
+  16 analogías que pasaban el filtro automático se descartaron al leer la ficha completa
+  (césped artificial por grama natural, lámina de PVC por cielo raso, ficha por unidad
+  para recurso por metro, precio de compra para recurso amortizado por uso).
+- Los 54 sin ficha de banco conservan el precio de la matriz **dentro de una horquilla de
+  mercado declarada**; 39 de ellos los usa alguna partida. Única excepción declarada:
+  `MT-PLANTA-ELEC` (1.367 €/ud frente a 6.000–12.000 €/ud de mercado), sin uso en el
+  catálogo y marcada para revisión.
+- Impacto: **1.076 partidas**, mediana +0,1 %, mínimo −77,8 % (piedra picada y plancha
+  compactadora con ficha de banco), máximo +36,9 % (subestructura de fachada).
+- Estado: 38 confirmados por verificación cruzada / 350 en revisión; matriz 388 filas
+  (43 directas + 345 derivadas); SQL de 388 filas **sin ejecutar**.
+
 ## Convención de medida para lo que no la fija — 7 de noviembre de 2026
 
 **18 precios nuevos, 621 usos.** Informe: [convenciones de medida](ESPANA_CONVENCIONES_MEDIDA_2026-11-07.md).
@@ -18,7 +41,8 @@
 - Límite de la regla: la convención **no rebaja una exigencia física**. `MT-VIDRIO-TEMP`
   pide 10 mm y el banco solo tiene 4 y 6: no se sustituye, se cita.
 - Impacto: 468 partidas, mediana −0,3 %, máximo +42 %, `espana_impacto_convenciones_2026-11-07.csv`.
-- Estado: 37 confirmados / 351 en revisión, **255 con precio revisado**, 133 sin precio.
+- Estado en ese momento: 37 confirmados / 351 en revisión, 255 con precio revisado,
+  133 sin precio. Los 133 se cierran en la primera sección de este documento.
 
 ## Maquinaria: modelo de compra y amortización, aplicado — 7 de noviembre de 2026
 

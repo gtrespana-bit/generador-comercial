@@ -81,11 +81,19 @@ def test_lo_adoptado_esta_en_el_registro_con_su_ficha():
         assert "convención" in registro[codigo]["criterio_revisado"].lower()
 
 
-def test_lo_pendiente_sigue_sin_precio_revisado():
+def test_lo_que_quedo_pendiente_se_cerro_despues_con_un_metodo_declarado():
     tabla = [f for f in leer(convenciones.CONVENCIONES)
              if f["estado"] == "pendiente_cotizacion"]
     registro = {f["codigo_recurso"]: f
                 for f in leer(DOC / "espana_2026-11-06.csv")}
+    cierre = {f["codigo_recurso"]: f
+              for f in leer(DOC / "espana_cierre_total_2026-11-07.csv")}
+    assert tabla
     for ficha in tabla:
-        assert not registro[ficha["codigo_recurso"]]["precio_revisado"].strip()
         assert ficha["motivo_pendiente"].strip()
+        # El cierre del 7 de noviembre cerró los 38 pendientes de cotización:
+        # ninguno sigue sin precio y todos tienen método y criterio escritos.
+        codigo = ficha["codigo_recurso"]
+        assert registro[codigo]["precio_revisado"].strip()
+        assert cierre[codigo]["metodo"] and cierre[codigo]["criterio"].strip()
+        assert cierre[codigo]["confianza"] in {"alta", "media", "baja"}

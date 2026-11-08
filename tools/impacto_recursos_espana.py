@@ -113,7 +113,7 @@ def main() -> int:
     print(f"{len(cambiados)} recursos con precio nuevo; {len(filas)} partidas afectadas")
     for codigo, datos in sorted(por_maquina.items(),
                                 key=lambda par: par[1]["efecto"]):
-        print(f"  {codigo:16} {datos['antes']:>9} → {datos['despues']:>6} EUR/h | "
+        print(f"  {codigo:16} {datos['antes']:>9} → {datos['despues']:>6} EUR/ud | "
               f"{datos['partidas']:>4} partidas | efecto {datos['efecto']:>9.2f} EUR")
     if filas:
         valores = [float(fila["delta_pct"]) for fila in filas]

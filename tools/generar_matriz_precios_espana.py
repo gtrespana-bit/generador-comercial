@@ -1427,6 +1427,7 @@ def referencias_otros_treinta() -> dict[str, dict[str, Referencia]]:
 
 
 REVISION_CIERRE = "docs/auditoria_precios/ESPANA_CIERRE_2026-11-07.md"
+BANCO_EX = "Base de Precios de Construcción de Extremadura 2026 (BCEXTGREM_26_v1.bc3)"
 FUENTES_CIERRE = ROOT / "docs/auditoria_precios/espana_referencias_cierre_2026-11-07.csv"
 
 
@@ -1449,8 +1450,13 @@ def referencias_cierre_2026_11_07() -> dict[str, dict[str, Referencia]]:
             if (not precio.is_finite() or precio <= 0 or minimo <= 0 or maximo < minimo
                     or not fila["fuente"].strip() or not fila["criterio"].strip()):
                 raise ValueError(f"Referencia de cierre inválida: {codigo}")
+            # Un precio igual a la ficha del banco, adoptado sin transformar, es un
+            # ancla observada; la convención de medida solo elige la ficha, no la cifra.
+            ancla = (fila["fuente"] == BANCO_EX
+                     or fila["fuente"].startswith(BANCO_EX + " con convención de medida"))
             resultado[codigo] = {"ES": ref(
-                precio, minimo, maximo, REVISION_CIERRE, confianza="derivado",
+                precio, minimo, maximo, REVISION_CIERRE,
+                confianza=("referencia" if ancla else "derivado"),
                 incluye_iva=("no" if fila["incluye_iva"] == "no" else "no_confirmado"),
                 incluye_transporte=("no" if fila["incluye_transporte"] == "no" else "no_confirmado"),
                 observaciones=(f"{fila['fuente']}. {fila['criterio']} Reserva: {fila['reserva']} "

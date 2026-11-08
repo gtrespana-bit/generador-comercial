@@ -175,6 +175,10 @@ def aplicar(adjudicacion: list[dict], registro: dict, matriz: dict) -> tuple[lis
             recurso["edicion_fuente"] = unir(recurso["edicion_fuente"], fila["edicion_fecha"])
             if "Modelo propio" in fila["fuente"]:
                 ambito = "España (modelo propio, sin banco)"
+            elif "Composición" in fila["fuente"]:
+                ambito = "España (composición declarada)"
+            elif "horquilla de mercado" in fila["fuente"]:
+                ambito = "España (contraste de mercado, sin banco)"
             elif "BCCA" in fila["fuente"]:
                 ambito = "Andalucía (BCCA)"
             else:

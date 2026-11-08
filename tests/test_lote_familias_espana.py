@@ -30,7 +30,8 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
-    assert not audit['MT-BARRA-APOYO']['precio_revisado']
+    # El lote no puso precio: si hoy lo tiene, es el cierre del 7 de noviembre.
+    assert audit['MT-BARRA-APOYO']['precio_revisado'] == cierre.precio_revisado('MT-BARRA-APOYO', '')
 
 
 def test_datos_invalidos_y_conjuntos_incompletos_se_rechazan(monkeypatch, tmp_path):

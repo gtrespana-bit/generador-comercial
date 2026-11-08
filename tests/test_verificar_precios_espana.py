@@ -80,7 +80,10 @@ def test_la_cola_de_pendientes_cubre_lo_no_confirmado(verificacion):
     confirmados = {c for c, f in verificacion.items()
                    if f["veredicto"] in {"ya_confirmado", "confirmado_independiente"}}
     assert pendientes == set(verificacion) - confirmados
-    assert len(pendientes) == 351
+    # 37 confirmados de referencia + 1 confirmado contra el banco de Andalucía
+    # (MT-PERSIANA-ALU, −13,3 %): la cola baja a 350.
+    assert len(confirmados) == 38
+    assert len(pendientes) == 350
     for fila in leer(verificador.PENDIENTES):
         assert fila["que_falta"] and fila["esfuerzo"] in {"alta", "media", "baja"}
     usos = [int(f["usos"]) for f in leer(verificador.PENDIENTES) if f["esfuerzo"] == "alta"]

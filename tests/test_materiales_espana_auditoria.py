@@ -1,4 +1,5 @@
 """Los precios revisados son reproducibles sin alterar la canasta pendiente."""
+import apoyo_cierre_espana as cierre
 import csv
 import re
 from decimal import Decimal, ROUND_HALF_UP
@@ -57,10 +58,11 @@ def test_auditoria_preserva_fotografia_y_no_confirma_resistencia_de_sacos():
         assert auditoria[codigo]['precio_revisado'] == despues
     assert auditoria['MT-SAC-ESC']['estado_auditoria'] == 'en_revision'
     assert 'Resistencia exacta' in auditoria['MT-SAC-ESC']['criterio_revisado']
-    # MQ-ANDAMIO sigue sin modelo: el banco solo lo cotiza por m2 y dia.
+    # El andamio y los consumibles de demolicion se cerraron despues: el banco no
+    # los cotiza por hora ni por uso, asi que el cierre los valora por otro metodo.
     for codigo in ('MQ-ANDAMIO', 'MT-CONS-DEM'):
         assert auditoria[codigo]['estado_auditoria'] == 'en_revision'
-        assert not auditoria[codigo]['precio_revisado']
+        assert auditoria[codigo]['precio_revisado'] == cierre.precio_revisado(codigo, '')
 
 
 def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior():
@@ -91,8 +93,16 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
     # Toda referencia revisada justifica su precio; los hormigones confirmados
     # mantienen el precio propio (banda de central), así que no cambian el SQL.
     assert cambiados <= referenciados
+    # Una referencia que adopta la misma cifra de la matriz no mueve el SQL: los
+    # hormigones confirmados y los recursos cerrados con contraste de mercado.
+    registro = {r['codigo_recurso']: r for r in leer_csv(
+        ROOT / 'docs/auditoria_precios/espana_2026-11-06.csv')}
+    sin_mover = {
+        codigo for codigo, dato in generador.referencias_cierre_2026_11_07().items()
+        if Decimal(str(dato['ES'].precio))
+        == Decimal(registro[codigo]['precio_matriz'])}
     assert referenciados - cambiados == {'MT-CONC-180', 'MT-CONC-210',
-                                         'MT-CONC-250', 'MT-CONC-300'}
+                                         'MT-CONC-250', 'MT-CONC-300'} | sin_mover
 
 
 def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):

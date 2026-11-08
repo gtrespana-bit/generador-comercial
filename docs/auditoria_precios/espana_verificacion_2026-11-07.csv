@@ -16,136 +16,136 @@ MO-OF1-PISO;mano_obra;h;63;confirmado_referencia;23.18;23.18;bcca;bcca,modelo_pr
 MO-OF1-PLO;mano_obra;h;218;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_propio,palencia;1;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio
 MO-OF1-SOLD;mano_obra;h;127;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_propio;1;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio
 MO-OF1-VIDR;mano_obra;h;92;en_revision;23.18;23.18;bcca;bcca,comercial,modelo_propio;1;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio
-MQ-ALISADORA;maquinaria;h;9;en_revision;;7.623246;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-ALISADORA;maquinaria;h;9;en_revision;1.92;1.92;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-AMOLA;maquinaria;h;50;en_revision;1.86;1.86;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MQ-ANDAMIO;maquinaria;h;190;en_revision;;2.8;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-ANDAMIO;maquinaria;h;190;en_revision;4.04;4.04;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-ASPIR;maquinaria;h;91;en_revision;0.61;0.61;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-ATORN;maquinaria;h;162;en_revision;0.62;0.62;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
-MQ-BANO-PORT;maquinaria;ud;3;en_revision;;110;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-BANO-PORT;maquinaria;ud;3;en_revision;110.00;110;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-BATID;maquinaria;h;60;en_revision;0.67;0.67;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
-MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;2.32;3.518421;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
-MQ-BOMBA-CONC;maquinaria;h;9;en_revision;;78;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
-MQ-CIZALLA;maquinaria;h;45;en_revision;;3.078618;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-COMPACT-SALTO;maquinaria;h;10;en_revision;;6.597039;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
+MQ-BOMBA-ACHI;maquinaria;h;7;en_revision;2.32;2.32;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
+MQ-BOMBA-CONC;maquinaria;h;9;en_revision;56.41;56.41;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
+MQ-CIZALLA;maquinaria;h;45;en_revision;4.73;4.73;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-COMPACT-SALTO;maquinaria;h;10;en_revision;2.53;2.53;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-CORT-AGUA;maquinaria;h;91;en_revision;1.95;1.95;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-DESBROZ;maquinaria;h;9;en_revision;4.36;4.36;extremadura;extremadura;3;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MQ-DETECTOR;maquinaria;h;61;en_revision;0.30;0.3;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
-MQ-DOBLAD-TUBO;maquinaria;h;4;en_revision;;3.811623;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-ESMERIL;maquinaria;h;40;en_revision;;3.37182;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-ESTAMP;maquinaria;h;2;en_revision;;7.036842;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-DOBLAD-TUBO;maquinaria;h;4;en_revision;2.40;2.4;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-ESMERIL;maquinaria;h;40;en_revision;0.40;0.4;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MQ-ESTAMP;maquinaria;h;2;en_revision;0.48;0.48;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-GRUA;maquinaria;h;40;en_revision;50.59;50.59;palencia;bcca,comercial,extremadura,palencia;3;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MQ-HIDROLAV;maquinaria;h;28;en_revision;;6.157237;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
+MQ-HIDROLAV;maquinaria;h;28;en_revision;0.54;0.54;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-INYECTORA;maquinaria;h;9;en_revision;5.35;5.35;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-LIJAD;maquinaria;h;60;en_revision;0.95;0.95;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
-MQ-LIJAD-PISO;maquinaria;h;3;en_revision;;9.529057;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-LIJAD-PISO;maquinaria;h;3;en_revision;2.65;2.65;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-MART-ELEC;maquinaria;h;110;en_revision;2.09;2.09;palencia;palencia;0;0;;;;;;solo_fuente_propia;;
-MQ-MART-NEUM;maquinaria;h;45;en_revision;;11;palencia;bcca,palencia;2;0;;;;;;sin_precio_revisado;;bcca: ya sostiene el precio | bcca: ya sostiene el precio
+MQ-MART-NEUM;maquinaria;h;45;en_revision;1.83;1.83;palencia;palencia;2;2;bcca;8.35;+356.3;MO00100;COMPRESOR DOS MARTILLOS;divergencia_verificada;;
 MQ-MEZCL;maquinaria;h;120;en_revision;1.25;1.25;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
-MQ-MONTAC;maquinaria;h;46;en_revision;;13.927083;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
-MQ-NIVEL-LASER;maquinaria;h;41;en_revision;1.00;3.225219;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
+MQ-MONTAC;maquinaria;h;46;en_revision;5.40;5.4;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-NIVEL-LASER;maquinaria;h;41;en_revision;1.00;1;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MQ-OXICORTE;maquinaria;h;48;en_revision;6.90;6.9;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
-MQ-PERF-PILOTE;maquinaria;h;3;en_revision;;80.630482;extremadura;extremadura;0;0;;;;;;sin_precio_revisado;;
-MQ-PLANCHA-COMP;maquinaria;h;20;en_revision;;5.570833;palencia;extremadura,palencia;0;0;;;;;;sin_precio_revisado;;
+MQ-PERF-PILOTE;maquinaria;h;3;en_revision;186.32;186.32;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-PLANCHA-COMP;maquinaria;h;20;en_revision;2.95;2.95;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-PROYECT-MORT;maquinaria;h;9;en_revision;9.14;9.14;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MQ-PULIDORA;maquinaria;h;16;en_revision;4.69;6.597039;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MQ-RECUP-GAS;maquinaria;h;7;en_revision;;9.529057;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-PULIDORA;maquinaria;h;16;en_revision;4.69;4.69;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MQ-RECUP-GAS;maquinaria;h;7;en_revision;0.77;0.77;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-RETRO;maquinaria;h;63;en_revision;38.68;38.68;palencia;bcca,comercial,extremadura,palencia;5;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio | bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MQ-RODILLO;maquinaria;h;151;en_revision;0.50;0.5;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
-MQ-ROZAD;maquinaria;h;30;en_revision;;6.157237;extremadura;extremadura;1;0;;;;;;sin_precio_revisado;;extremadura: ya sostiene el precio
+MQ-ROZAD;maquinaria;h;30;en_revision;1.93;1.93;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MQ-SIERRA;maquinaria;h;199;en_revision;0.97;0.97;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MQ-SOLDADORA;maquinaria;h;105;en_revision;1.43;1.43;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MQ-TALADRO;maquinaria;h;1025;en_revision;1.03;1.03;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
-MQ-TELUROMETRO;maquinaria;h;2;en_revision;;17.592105;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-TERMOF;maquinaria;h;23;en_revision;;2.638816;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MQ-VENT-SUC;maquinaria;h;3;en_revision;;4.104825;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MQ-TELUROMETRO;maquinaria;h;2;en_revision;0.24;0.24;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MQ-TERMOF;maquinaria;h;23;en_revision;0.29;0.29;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MQ-VENT-SUC;maquinaria;h;3;en_revision;0.30;0.3;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MQ-VIBRADOR;maquinaria;h;135;en_revision;3.72;3.72;palencia;bcca,comercial,extremadura,palencia;2;0;;;;;;solo_fuente_propia;;bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MQ-VOLQ;maquinaria;h;31;en_revision;51.02;51.02;palencia;palencia;0;0;;;;;;solo_fuente_propia;;
-MT-ACC-BOMBA;materiales;ud;2;en_revision;;31.898734;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ACC-BOMBA;materiales;ud;2;en_revision;44.82;44.82;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-ACERO-CAB;materiales;kg;106;en_revision;1.60;1.6;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-ACERO-INOX;materiales;kg;17;en_revision;5.15;15.949367;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MT-ACRIL-IMPER;materiales;l;10;en_revision;;5.012658;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ACERO-INOX;materiales;kg;17;en_revision;5.15;5.15;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-ACRIL-IMPER;materiales;l;10;en_revision;6.73;6.73;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-ADH-C1;materiales;kg;5;en_revision;0.17;0.17;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: mismo documento
 MT-ADH-C2TE;materiales;kg;47;confirmado_referencia;0.29;0.29;comercial:desconocido;comercial;0;0;;;;;;ya_confirmado;;
 MT-ADH-MADERA;materiales;kg;5;en_revision;3.33;3.33;comercial:generadordeprecios.info;;3;2;extremadura;7.58;+127.6;P30PW105;Adhesivo poliuretano;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-ADH-PIEDRA;materiales;kg;34;en_revision;3.08;3.08;comercial:mosafil.es;;2;1;extremadura;0.89;-71.1;P04RL010;Adhesivo.;divergencia_verificada;;comercial:mosafil.es: mismo documento
 MT-ADH-VINIL;materiales;kg;11;en_revision;4.09;4.09;comercial:generadordeprecios.info;;2;1;extremadura;0.89;-78.2;P04RL010;Adhesivo.;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-ADITIVO;materiales;l;5;en_revision;2.11;2.11;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-ADOQUIN;materiales;m2;3;en_revision;12.71;17.658228;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-ADOQUIN;materiales;m2;3;en_revision;12.71;12.71;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-AGUA-OBRA;materiales;m3;27;confirmado_referencia;0.84;0.84;palencia;extremadura,palencia;3;0;;;;;;ya_confirmado;;palencia: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-AISL-REFLECT;materiales;m2;9;en_revision;;3.64557;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-AISL-REFLECT;materiales;m2;9;en_revision;3.65;3.65;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-AISL-TERM;materiales;m2;11;confirmado_referencia;8.15;8.15;bcca;bcca,extremadura;5;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MT-ALAMBRE;materiales;kg;49;en_revision;4.92;4.92;comercial:desconocido;comercial;0;0;;;;;;solo_fuente_propia;;
-MT-ALARMA;materiales;ud;0;en_revision;;170.886076;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-ANCLA-MURO;materiales;ud;10;en_revision;;0.740506;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ALARMA;materiales;ud;0;en_revision;471.82;471.82;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-ANCLA-MURO;materiales;ud;10;en_revision;0.77;0.77;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-ANCLA-PIEDRA;materiales;ud;3;en_revision;6.00;6;comercial:catalogo.jorgefernandez.es;;4;3;extremadura;87.58;+1359.7;P30IE050;Anclaje acero inoxidable;solo_fuente_propia;El candidato de precio más cercano por nombre es un anclaje inoxidable genérico de 87,58 EUR y los pivotes ocultos de 0,37 EUR son otro producto (fijación de placa, no de pieza de piedra): ninguna ficha prueba el mismo artículo.;comercial:catalogo.jorgefernandez.es: mismo documento
-MT-ANIME-ALIV;materiales;ud;8;en_revision;;1.822785;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ANIME-ALIV;materiales;ud;8;en_revision;2.84;2.84;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-ANTI-GRAFFITI;materiales;l;4;en_revision;76.73;76.73;comercial:carm.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento
 MT-APEO;materiales;ud;54;en_revision;1.04;1.04;comercial:generadordeprecios.info;;5;2;extremadura;13.55;+1202.9;P31CB010;Puntal metálico telescópico 3 m.;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento | comercial:generadordeprecios.info: mismo documento | comercial:generadordeprecios.info: mismo documento
-MT-ARENA;materiales;m3;13;en_revision;16.50;28;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
+MT-ARENA;materiales;m3;13;en_revision;16.50;16.5;palencia;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MT-ARNES;materiales;ud;3;en_revision;44.93;44.93;comercial:www.atproteccion.com;;1;0;;;;;;solo_fuente_propia;;comercial:www.atproteccion.com: mismo documento
 MT-ASPERSOR;materiales;ud;7;en_revision;5.45;5.45;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-AUT-NIV;materiales;kg;4;confirmado_referencia;0.59;0.59;comercial:desconocido;;2;0;;;;;;ya_confirmado;;
-MT-AUTOM-PORTON;materiales;ud;0;en_revision;;205.063291;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-AUTOM-PORTON;materiales;ud;0;en_revision;205.06;205.06;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-BAJANTE-PVC;materiales;m;5;en_revision;8.75;8.75;comercial:carm.generadordeprecios.info;;3;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento
 MT-BANDA-REF;materiales;m;46;en_revision;3.01;3.01;comercial:amadosalvador.es;comercial;4;2;extremadura;0.15;-95.0;P01LW083;Banda elástica;divergencia_verificada;;comercial:amadosalvador.es: mismo documento | comercial:www.lechada.es: ya sostiene el precio
-MT-BARANDA-PROV;materiales;m;6;en_revision;6.68;5.126582;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-BARANDA-PROV;materiales;m;6;en_revision;6.68;6.68;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BARNIZ-MARINO;materiales;l;2;en_revision;10.44;10.44;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-BARNIZ-PISO;materiales;l;16;confirmado_referencia;11.57;11.57;extremadura;extremadura;3;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-BARRA-APOYO;materiales;ud;5;en_revision;;31.898734;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-BARRA-TIERRA;materiales;ud;5;en_revision;;20.506329;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-BARRA-APOYO;materiales;ud;5;en_revision;26.06;26.06;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-BARRA-TIERRA;materiales;ud;5;en_revision;15.03;15.03;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BARRERA-ANTICAP;materiales;m;3;en_revision;0.87;0.87;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
-MT-BATERIA;materiales;ud;0;en_revision;;250.632911;sin_documento;;1;1;;;;;;sin_precio_revisado;;
+MT-BATERIA;materiales;ud;0;en_revision;236.95;236.95;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MT-BENTONITA;materiales;m2;3;en_revision;15.20;15.2;comercial:www.generadordeprecios.info;;2;1;extremadura;8.44;-44.5;P06SR140;Geocompuesto Bentonita;divergencia_verificada;;comercial:www.generadordeprecios.info: mismo documento
-MT-BLOQUE-ALIV;materiales;ud;7;en_revision;;1.082278;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-BLOQUE-ALIV;materiales;ud;7;en_revision;0.84;0.84;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-BLQ-10;materiales;ud;10;confirmado_referencia;0.47;0.47;extremadura;extremadura;2;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-BLQ-12;materiales;ud;2;en_revision;0.72;0.72;bcca;bcca;2;1;extremadura;0.42;-41.7;P01BA010;Bloque cerámico 40x20x12;divergencia_verificada;;bcca: ya sostiene el precio
 MT-BLQ-15;materiales;ud;22;confirmado_referencia;0.54;0.54;extremadura;extremadura;4;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-BLQ-20;materiales;ud;2;confirmado_referencia;0.68;0.68;extremadura;extremadura;7;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-BLQ-ARC-10;materiales;ud;3;en_revision;;0.432911;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-BLQ-ARC-15;materiales;ud;5;en_revision;;0.45;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-BLQ-EST-15;materiales;ud;5;en_revision;;1.002532;sin_documento;;2;2;;;;;;sin_precio_revisado;;
-MT-BLQ-EST-20;materiales;ud;3;en_revision;;1.253165;sin_documento;;1;1;;;;;;sin_precio_revisado;;
-MT-BLQ-VIDRIO;materiales;ud;2;en_revision;;7.860759;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-BOMBA-AGUA;materiales;ud;0;en_revision;;182.278481;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-BOTIQUIN;materiales;ud;6;en_revision;40.32;39.873418;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
+MT-BLQ-ARC-10;materiales;ud;3;en_revision;0.50;0.5;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-BLQ-ARC-15;materiales;ud;5;en_revision;0.59;0.59;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-BLQ-EST-15;materiales;ud;5;en_revision;0.60;0.6;extremadura;extremadura;2;1;bcca;0.79;+31.7;FB00600;BLOQUE HORMIGÓN 40x20x15 cm;divergencia_verificada;;extremadura: ya sostiene el precio
+MT-BLQ-EST-20;materiales;ud;3;en_revision;0.75;0.75;extremadura;extremadura;1;1;bcca;0.94;+25.3;FB01000;BLOQUE HORMIGÓN 40x20X20 cm;divergencia_verificada;;
+MT-BLQ-VIDRIO;materiales;ud;2;en_revision;7.86;7.86;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-BOMBA-AGUA;materiales;ud;0;en_revision;182.28;480.4;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-BOTIQUIN;materiales;ud;6;en_revision;40.32;40.32;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MT-BREAKER;materiales;ud;18;en_revision;12.66;12.66;comercial:carm.generadordeprecios.info;;6;5;extremadura;14.37;+13.5;P15HB020;Interruptor bipolar 16A;divergencia_verificada;El candidato es un interruptor bipolar de 16 A y el recurso es un interruptor termomagnético;comercial:carm.generadordeprecios.info: mismo documento
 MT-CABLE-8;materiales;m;19;en_revision;2.80;2.8;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-CABLE-ALARMA;materiales;m;70;en_revision;0.62;0.62;comercial:desconocido;;2;2;comercial:srprosecure.com;0.6751;+8.9;BSC21549;Cable apantallado LSZH 4x0,22 + 2x0,75 100 m;contraste_comercial;;
-MT-CABLE-COBRE-DESN;materiales;m;23;en_revision;7.22;5.126582;extremadura;extremadura;1;1;bcca;11.96;+65.7;IE03100;CABLE COBRE 1x35 mm2 RZ1-K(AS);divergencia_verificada;;
+MT-CABLE-COBRE-DESN;materiales;m;23;en_revision;7.22;7.22;extremadura;extremadura;1;1;bcca;11.96;+65.7;IE03100;CABLE COBRE 1x35 mm2 RZ1-K(AS);divergencia_verificada;;
 MT-CABLE-DATOS;materiales;m;47;en_revision;0.42;0.42;comercial:desconocido;comercial;0;0;;;;;;solo_fuente_propia;;
 MT-CAJON-PERS;materiales;m;8;en_revision;67.35;67.35;comercial:cajaislant.generadordeprecios.info;;3;0;;;;;;solo_fuente_propia;;comercial:cajaislant.generadordeprecios.info: mismo documento | comercial:cajaislant.generadordeprecios.info: mismo documento | comercial:cajaislant.generadordeprecios.info: mismo documento
-MT-CAMARA-CCTV;materiales;ud;0;en_revision;;96.835443;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CAMARA-CCTV;materiales;ud;0;en_revision;96.84;96.84;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-CANAL-DREN;materiales;m;6;en_revision;14.67;14.67;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-CANAL-PVC;materiales;m;8;en_revision;10.11;10.11;comercial:jimten-aliaxis.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:jimten-aliaxis.generadordeprecios.info: mismo documento
-MT-CANON;materiales;m3;4;en_revision;;7;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CANON;materiales;m3;4;en_revision;7.00;7;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-CANON-TIERRA;materiales;m3;4;en_revision;2.14;2.14;comercial:generadordeprecios.info;;2;1;bcca;1.07;-50.0;ET00100;CANON VERTIDO TIERRAS INERTES;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
-MT-CASETA-BIEN;materiales;ud;3;en_revision;;136.708861;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-CELOSIA;materiales;m2;10;en_revision;106.31;29.620253;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-CASETA-BIEN;materiales;ud;3;en_revision;136.71;136.71;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-CELOSIA;materiales;m2;10;en_revision;106.31;106.31;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-CEMENTO;materiales;kg;11;confirmado_referencia;0.19;0.19;palencia;comercial,palencia;0;0;;;;;;ya_confirmado;;
-MT-CERRADURA;materiales;ud;25;en_revision;;36.455696;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CERRADURA;materiales;ud;25;en_revision;26.02;26.02;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-CERRADURA-MULTI;materiales;ud;9;en_revision;81.82;81.82;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-CIELO-DESM;materiales;m2;6;en_revision;4.86;4.86;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-CIELO-METAL;materiales;m2;4;en_revision;;15.949367;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-CIELO-PVC;materiales;m2;4;en_revision;;18.227848;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-CIELO-METAL;materiales;m2;4;en_revision;15.95;8.21;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-CIELO-PVC;materiales;m2;4;en_revision;18.23;8.21;extremadura;extremadura;2;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-CIERRA-PUERTA;materiales;ud;3;en_revision;19.01;19.01;comercial:www.obramat.es;;2;1;bcca;89.43;+370.4;KW04400;CIERRA-PUERTA HIDRÁULICO PARA 1 HOJA;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-CINTA-ANTIDES;materiales;m;5;en_revision;0.44;0.44;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-CINTA-ENM;materiales;ud;57;confirmado_referencia;1.83;1.83;extremadura;extremadura;3;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
-MT-CINTA-LED;materiales;m;3;en_revision;;7.063291;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CINTA-LED;materiales;m;3;en_revision;7.06;7.06;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-CLAVOS;materiales;kg;94;en_revision;3.21;3.21;comercial:ferrocanosuministros.es;;2;1;comercial:www.suimther.com;4.052;+26.2;;Clavos cabeza plana 20x100 paquete 2.5 kg;divergencia_verificada;;comercial:ferrocanosuministros.es: mismo documento
 MT-CONC-180;materiales;m3;4;confirmado_referencia;92.00;92;extremadura;extremadura;1;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-CONC-210;materiales;m3;106;confirmado_referencia;100.00;100;extremadura;extremadura;1;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-CONC-250;materiales;m3;66;confirmado_referencia;108.00;108;extremadura;extremadura;1;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-CONC-300;materiales;m3;3;confirmado_referencia;118.00;118;extremadura;extremadura;1;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio
 MT-CONECTOR-CORTE;materiales;ud;2;en_revision;1.81;1.81;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-CONS-DEM;materiales;ud;398;en_revision;;1.253165;comercial:desconocido;;0;0;;;;;;sin_precio_revisado;;
-MT-CONS-LIMP;materiales;m2;35;en_revision;;0.398734;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-CONS-PULIDO;materiales;m2;14;en_revision;;2.734177;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-CONT-DESCARGAS;materiales;ud;0;en_revision;;51.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-CONTENEDOR;materiales;ud;5;en_revision;;74.050633;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CONS-DEM;materiales;ud;398;en_revision;2.70;2.7;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-CONS-LIMP;materiales;m2;35;en_revision;0.24;0.24;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-CONS-PULIDO;materiales;m2;14;en_revision;1.50;1.5;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-CONT-DESCARGAS;materiales;ud;0;en_revision;51.27;51.27;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-CONTENEDOR;materiales;ud;5;en_revision;74.05;74.05;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-CORNISA;materiales;m;5;en_revision;7.15;7.15;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-CRU-NIV;materiales;ud;20;en_revision;0.19;0.19;comercial:www.misazulejos.com;;2;2;comercial:www.misazulejos.com;0.19;+0.0;;Bolsa 250 crucetas 2 mm;contraste_comercial;;
 MT-CUARZO-COLOR;materiales;kg;3;en_revision;2.47;2.47;comercial:pinturas-isaval.generadordeprecios.info;;2;1;extremadura;0.73;-70.4;P08TX040;Arido de cuarzo.;divergencia_verificada;;comercial:pinturas-isaval.generadordeprecios.info: mismo documento
-MT-CUMBRERA;materiales;m;8;en_revision;;7.291139;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-CUMBRERA;materiales;m;8;en_revision;10.17;10.17;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-CURADOR;materiales;l;40;en_revision;2.25;2.25;comercial:www.restatec.com;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.restatec.com: mismo documento | comercial:materiales-mobbyplad.com: ya sostiene el precio
 MT-DECAP;materiales;l;3;en_revision;12.89;12.89;comercial:www.obramat.es;;4;3;extremadura;10.43;-19.1;P34J130;Gel decapante eliminación pinturas;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-DESMOLD;materiales;l;45;en_revision;5.93;5.93;comercial:desconocido;comercial;0;0;;;;;;solo_fuente_propia;;
@@ -153,70 +153,70 @@ MT-DESMOLD-COLOR;materiales;kg;5;en_revision;3.12;3.12;comercial:generadordeprec
 MT-DETECT-HUMO;materiales;ud;1;en_revision;5.73;5.73;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-DIFERENCIAL;materiales;ud;4;confirmado_referencia;55.01;55.01;comercial:general-electric.generadordeprecios.info;bcca,comercial;1;0;;;;;;ya_confirmado;;comercial:general-electric.generadordeprecios.info: mismo documento
 MT-DINTEL-PREF;materiales;m;7;en_revision;6.64;6.64;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
-MT-DISOL-ADH;materiales;l;4;en_revision;;5.924051;sin_documento;;3;3;;;;;;sin_precio_revisado;;
+MT-DISOL-ADH;materiales;l;4;en_revision;3.46;3.46;extremadura;extremadura;3;2;bcca;1.96;-43.4;PW00100;DISOLVENTE;divergencia_verificada;;extremadura: ya sostiene el precio
 MT-DOM-ACTUADOR;materiales;ud;0;en_revision;61.42;61.42;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-DOM-CENTRAL;materiales;ud;0;en_revision;;205.063291;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-DOM-CENTRAL;materiales;ud;0;en_revision;232.09;232.09;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-DOM-DIMMER;materiales;ud;0;en_revision;58.40;58.4;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-DOM-ENCHUFE;materiales;ud;0;en_revision;;31.898734;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOM-PANEL;materiales;ud;0;en_revision;;102.531646;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOM-PASARELA;materiales;ud;0;en_revision;;102.531646;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOM-PERSIANA;materiales;ud;0;en_revision;;54.683544;sin_documento;;1;1;;;;;;sin_precio_revisado;;
-MT-DOM-REPETIDOR;materiales;ud;0;en_revision;;51.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOM-SENSOR-GAS;materiales;ud;0;en_revision;;34.177215;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-DOM-ENCHUFE;materiales;ud;0;en_revision;32.06;32.06;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-DOM-PANEL;materiales;ud;0;en_revision;102.53;102.53;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-DOM-PASARELA;materiales;ud;0;en_revision;133.57;133.57;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-DOM-PERSIANA;materiales;ud;0;en_revision;205.86;205.86;extremadura;extremadura;1;1;bcca;79.89;-61.2;IP08661;MÓDULO DE CONTROL DE ZONA DE DETECCIÓN;divergencia_verificada;;
+MT-DOM-REPETIDOR;materiales;ud;0;en_revision;51.27;51.27;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-DOM-SENSOR-GAS;materiales;ud;0;en_revision;106.28;106.28;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-DOM-SENSOR-INUND;materiales;ud;0;en_revision;38.99;38.99;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-DOM-SENSOR-LUZ;materiales;ud;0;en_revision;43.87;43.87;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-DOM-SENSOR-MOV;materiales;ud;0;en_revision;43.87;43.87;comercial:generadordeprecios.info;;2;1;extremadura;32.98;-24.8;P16LI2080;Sensor de movimiento IP65;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-DOM-SENSOR-PUERTA;materiales;ud;0;en_revision;38.99;38.99;comercial:carm.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento
-MT-DOM-SENSOR-TEMP;materiales;ud;0;en_revision;;25.063291;sin_documento;;1;1;;;;;;sin_precio_revisado;;
-MT-DOM-TECLADO;materiales;ud;0;en_revision;;39.873418;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOM-TERMOSTATO;materiales;ud;0;en_revision;;62.658228;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DOMO;materiales;ud;4;en_revision;;82.025316;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-DOM-SENSOR-TEMP;materiales;ud;0;en_revision;25.06;25.06;comercial:desconocido;;1;1;bcca;165.33;+559.7;006902340;SENSOR DE HUMEDAD AMBIENTE;divergencia_verificada;;
+MT-DOM-TECLADO;materiales;ud;0;en_revision;39.87;39.87;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-DOM-TERMOSTATO;materiales;ud;0;en_revision;159.52;159.52;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-DOMO;materiales;ud;4;en_revision;107.33;107.33;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-DPS-1;materiales;ud;0;en_revision;343.26;343.26;comercial:generadordeprecios.info;;2;1;bcca;178.38;-48.0;IE13800;PROTECTOR SOBRETENSIÓN TRANSITORIA (1P+N);divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-DPS-2;materiales;ud;0;en_revision;197.54;197.54;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-DPS-3;materiales;ud;0;en_revision;;28.481013;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-DPS-DATOS;materiales;ud;0;en_revision;;34.177215;sin_documento;;1;1;;;;;;sin_precio_revisado;;
+MT-DPS-3;materiales;ud;0;en_revision;28.48;28.48;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-DPS-DATOS;materiales;ud;0;en_revision;96.14;96.14;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MT-DUCTO-VENT;materiales;m;41;en_revision;9.75;9.75;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-ELE-CABLE;materiales;m;103;en_revision;1.06;1.06;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-ELE-CAJA;materiales;ud;177;en_revision;1.02;1.253165;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
+MT-ELE-CAJA;materiales;ud;177;en_revision;1.02;1.02;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MT-ELE-MECA;materiales;ud;20;en_revision;10.25;10.25;comercial:generadordeprecios.info;;2;1;bcca;300;+2826.8;FJGJKL;Mecanismos;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-ELE-PROV;materiales;m;7;en_revision;2.81;2.81;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-ELE-TUB20;materiales;m;18;en_revision;0.18;0.18;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-ELECTRODO;materiales;kg;71;en_revision;4.39;4.39;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-ENDURECEDOR;materiales;kg;2;en_revision;0.63;0.63;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-EPOXI-ANCLA;materiales;l;27;en_revision;24.23;24.23;comercial:drizoro.generadordeprecios.info;;1;1;comercial:drizoro.generadordeprecios.info;24.23;+0.0;;Resina Maxepox Injection mt09red150c;contraste_comercial;;
-MT-EPOXI-PISO;materiales;kg;13;en_revision;17.12;17.088608;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
-MT-EPP;materiales;ud;7;en_revision;;47.848101;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-EPOXI-PISO;materiales;kg;13;en_revision;17.12;17.12;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-EPP;materiales;ud;7;en_revision;29.40;29.4;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-ESCALERILLA;materiales;m;7;en_revision;2.41;2.41;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
 MT-ESMALTE-AGUA;materiales;l;1;en_revision;8.04;8.04;comercial:www.obramat.es;;2;1;extremadura;14.63;+82.0;P24JA110;Esmalte satinado;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-ESPEJO;materiales;m2;9;en_revision;29.52;29.52;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-ESTRUCT-MESON;materiales;m;4;en_revision;;13.670886;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ESTRUCT-MESON;materiales;m;4;en_revision;13.67;13.67;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-ESTUCO-FINO;materiales;kg;6;en_revision;0.55;0.55;comercial:www.obramat.es;;3;2;extremadura;1.25;+127.3;P04PW045;Pasta para juntas.;divergencia_verificada;;comercial:www.obramat.es: mismo documento
-MT-ESTUCO-VEN;materiales;kg;4;en_revision;;6.835443;sin_documento;;3;3;;;;;;sin_precio_revisado;;
+MT-ESTUCO-VEN;materiales;kg;4;en_revision;9.03;9.03;extremadura;extremadura;3;1;bcca;2.36;-73.9;GP00210;PASTA CAL PIGMENTADA PARA ESTUCO;divergencia_verificada;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-EXTINTOR;materiales;ud;4;en_revision;63.00;63;comercial:proextintor.es;;1;1;extremadura;34.08;-45.9;P23FJ020;;divergencia_verificada;La base sí tiene el mismo artículo (P23FJ020, polvo ABC 6 kg, 34,08 EUR): el cribado automático había elegido el extintor de 50 kg (421,04) solo por parecido de nombre. Queda como divergencia con la ficha correcta.;
 MT-FIBRA-CARB;materiales;m2;7;en_revision;111.13;111.13;comercial:carm.generadordeprecios.info;;4;2;bcca;2.45;-97.8;CW00510;TEJIDO DE FIBRA DE VIDRIO;divergencia_verificada;;comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento
-MT-FIBRA-NAT;materiales;m2;1;en_revision;;25.063291;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-FIBRA-NAT;materiales;m2;1;en_revision;25.06;22.6;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-FLOTANTE;materiales;ud;31;en_revision;8.16;8.16;comercial:mi-fontaneria.es;;2;2;comercial:mi-fontaneria.es;8.16;+0.0;;Válvula y varilla 1/2 pulgada;contraste_comercial;;
-MT-FORM-MADERA;materiales;m2;73;en_revision;25.56;10;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-FORM-MADERA;materiales;m2;73;en_revision;25.56;25.56;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-FUNGICIDA;materiales;l;6;en_revision;13.81;13.81;comercial:carm.generadordeprecios.info;;3;2;bcca;0.95;-93.1;PW00170;SOLUCION FUNGICIDA;divergencia_verificada;;comercial:carm.generadordeprecios.info: mismo documento
-MT-GABINETE-MANG;materiales;ud;1;en_revision;;227.848101;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-GAS-REFRIG;materiales;kg;2;en_revision;;20.506329;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-GABINETE-MANG;materiales;ud;1;en_revision;227.85;227.85;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-GAS-REFRIG;materiales;kg;2;en_revision;20.51;20.51;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-GEOTEXTIL;materiales;m2;25;en_revision;0.68;0.68;comercial:sasmak.com;comercial;2;0;;;;;;solo_fuente_propia;;comercial:sasmak.com: mismo documento | comercial:gdurantienda.com: ya sostiene el precio
-MT-GRAMA;materiales;m2;4;en_revision;;3.64557;sin_documento;;1;1;;;;;;sin_precio_revisado;;
+MT-GRAMA;materiales;m2;4;en_revision;3.65;40.04;extremadura;extremadura;1;1;bcca;1.4;-61.6;UJ00900;GRAMA;divergencia_verificada;;
 MT-GRANO-MARMOL;materiales;kg;6;en_revision;0.09;0.09;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-GRAVILLA;materiales;m3;21;en_revision;38.97;38.97;comercial:generadordeprecios.info;;2;1;bcca;14.82;-62.0;AG00500;GRAVILLA;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-GROUT;materiales;kg;5;en_revision;0.52;0.52;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-GROUT-CELDA;materiales;m3;4;en_revision;;143.544304;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-HERRAJE-CLOSET;materiales;ud;47;en_revision;;5.126582;sin_documento;;2;2;;;;;;sin_precio_revisado;;
-MT-HERRAJE-CORRED;materiales;ud;6;en_revision;;20.506329;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-GROUT-CELDA;materiales;m3;4;en_revision;112.00;112;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-HERRAJE-CLOSET;materiales;ud;47;en_revision;8.90;8.9;extremadura;extremadura;2;2;bcca;100;+1023.6;JFJFGFD;Herrajes;divergencia_verificada;;
+MT-HERRAJE-CORRED;materiales;ud;6;en_revision;41.40;41.4;extremadura;extremadura;2;2;bcca;100;+141.5;JFJFGFD;Herrajes;divergencia_verificada;;
 MT-HERRAJE-MAD;materiales;ud;15;en_revision;5.45;5.45;comercial:generadordeprecios.info;;3;2;bcca;100;+1734.9;JFJFGFD;Herrajes;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
-MT-HERRAJE-PUERTA;materiales;ud;44;en_revision;;14.810127;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-HERRAJE-PUERTA;materiales;ud;44;en_revision;11.70;11.7;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-HIDROFUG-FACH;materiales;l;4;en_revision;6.28;6.28;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-HIDROFUGO;materiales;l;14;en_revision;1.91;1.91;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-HIDRONEUMATICO;materiales;ud;0;en_revision;;273.417722;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-HIDRONEUMATICO;materiales;ud;0;en_revision;273.42;358.14;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-IMP-PRIM;materiales;l;6;en_revision;1.74;1.74;comercial:www.obramat.es;;3;2;extremadura;12.17;+599.4;P24OS040;Imprimación acrílica;divergencia_verificada;;comercial:www.obramat.es: mismo documento
-MT-IMPERM-ASF;materiales;l;2;en_revision;;5.126582;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-IMPERM-ASF;materiales;l;2;en_revision;6.73;6.73;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-IMPRIM-ASF;materiales;l;18;en_revision;5.31;5.31;comercial:www.bigmat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.bigmat.es: mismo documento
-MT-INVERSOR;materiales;ud;0;en_revision;;318.987342;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-INVERSOR;materiales;ud;0;en_revision;318.99;318.99;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-JUN-CG2;materiales;kg;64;en_revision;1.44;1.44;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-JUNTA-DILAT;materiales;m;17;en_revision;4.09;4.09;comercial:generadordeprecios.info;;2;1;extremadura;22;+437.9;P43XP340;Perfil para junta dilatación l=2,5 m;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-LACA-MADERA;materiales;l;7;en_revision;11.98;11.98;comercial:www.obramat.es;;2;1;bcca;14.5;+21.0;PL00200;LACA NITROCELULÓSICA INCOLORA;divergencia_verificada;;comercial:www.obramat.es: mismo documento
@@ -225,20 +225,20 @@ MT-LADRILLO-VISTO;materiales;ud;5;en_revision;0.44;0.44;comercial:www.generadord
 MT-LAMINA-DREN;materiales;m2;3;en_revision;5.17;5.17;palencia;palencia;6;5;extremadura;3.73;-27.9;P06BG080;Lámina drenante;divergencia_verificada;;palencia: mismo documento
 MT-LAMINA-OSB;materiales;m2;11;en_revision;21.07;21.07;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: mismo documento
 MT-LAMINA-ZINC;materiales;m2;15;en_revision;6.25;6.25;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
-MT-LAMP-OBRA;materiales;ud;4;en_revision;;10.822785;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-LAMP-OBRA;materiales;ud;4;en_revision;10.82;53;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-LANA-ROCA;materiales;m2;15;en_revision;6.16;6.16;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: mismo documento
 MT-LASUR;materiales;l;2;en_revision;12.40;12.4;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-LIMP-QUIM;materiales;l;10;en_revision;3.14;3.14;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-LINEA-VIDA;materiales;m;3;en_revision;;7.063291;sin_documento;;1;1;;;;;;sin_precio_revisado;;
-MT-LLAVE-PROV;materiales;ud;5;en_revision;;6.835443;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-LINEA-VIDA;materiales;m;3;en_revision;7.06;7.06;comercial:desconocido;;1;1;bcca;2.95;-58.2;HC02520;LINEA DE VIDA HORIZONTAL DE POLIESTER;divergencia_verificada;;
+MT-LLAVE-PROV;materiales;ud;5;en_revision;6.69;6.69;extremadura;extremadura;2;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-MACHIH-MAD;materiales;m2;13;en_revision;17.16;17.16;comercial:www.bauhaus.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.bauhaus.es: mismo documento
-MT-MADERA-ENTIB;materiales;m2;5;en_revision;;3.873418;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MADERA-ENTIB;materiales;m2;5;en_revision;6.41;6.41;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MADERA-EST;materiales;m3;17;en_revision;490.57;490.57;comercial:carm.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento
 MT-MADERA-LISTON;materiales;m;91;en_revision;0.82;0.82;comercial:bediaycabarga.com;comercial;2;0;;;;;;solo_fuente_propia;;comercial:bediaycabarga.com: mismo documento | comercial:alcupi.com: ya sostiene el precio
-MT-MADERA-PERGOLA;materiales;m;6;en_revision;;7.746835;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MADERA-PERGOLA;materiales;m;6;en_revision;1.95;1.95;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MALLA-DREN;materiales;m2;2;en_revision;5.17;5.17;palencia;palencia;1;0;;;;;;solo_fuente_propia;;palencia: mismo documento
 MT-MALLA-ELEC;materiales;m2;45;en_revision;2.51;2.51;palencia;palencia;2;1;comercial:aceropanel.es;3.6174;+44.1;1374-2356;Mallazo 6 mm 15x15 cm panel 13.2 m2;divergencia_verificada;;palencia: mismo documento
-MT-MALLA-ESQ;materiales;m;17;en_revision;;0.797468;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MALLA-ESQ;materiales;m;17;en_revision;4.70;4.7;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MALLA-FACH;materiales;m2;13;en_revision;1.17;1.17;comercial:desconocido;;7;7;extremadura;3.14;+168.4;P04RW070;Malla fibra vidrio antiálcalis 3x3 mm;divergencia_verificada;;
 MT-MALLA-JUNTA;materiales;m;65;en_revision;0.18;0.18;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
 MT-MALLA-OBRA;materiales;m2;20;en_revision;0.30;0.3;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
@@ -246,61 +246,61 @@ MT-MAMPARA-OFI;materiales;m2;4;en_revision;131.21;131.21;comercial:www.generador
 MT-MANGUERA;materiales;m;6;en_revision;0.36;0.36;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-MANTA-ACUS;materiales;m2;7;en_revision;3.36;3.36;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-MANTO-ASF;materiales;m2;16;en_revision;4.09;4.09;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: mismo documento
-MT-MARCO-PUERTA;materiales;m;30;en_revision;;7.974684;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MARCO-PUERTA;materiales;m;30;en_revision;7.02;7.02;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MASTIC-CORTAFUEGO;materiales;kg;14;en_revision;46.24;46.24;comercial:www.distriplac.com;;2;1;extremadura;28.46;-38.5;P02TW010;Masilla asfáltica para sellados;divergencia_verificada;;comercial:www.distriplac.com: mismo documento
-MT-MAT-PRESTAMO;materiales;m3;2;en_revision;;18.227848;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MAT-PRESTAMO;materiales;m3;2;en_revision;9.00;9;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MELAMINA;materiales;m2;51;en_revision;18.68;18.68;comercial:www.fesmes.com;;1;0;;;;;;solo_fuente_propia;;comercial:www.fesmes.com: mismo documento
 MT-MEMBRANA-PVC;materiales;m2;6;en_revision;30.40;30.4;comercial:www.leroymerlin.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.leroymerlin.es: mismo documento
-MT-MICROCEM;materiales;kg;4;en_revision;;6.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-MICROCEM;materiales;kg;4;en_revision;3.85;3.85;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-MOLDURA-YESO;materiales;m;9;en_revision;1.39;1.39;comercial:carm.generadordeprecios.info;;2;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento
 MT-MORT-IMPER;materiales;kg;39;en_revision;1.75;1.75;comercial:desconocido;;1;1;bcca;0.42;-76.0;IS031;Mortero impermeabilizante;divergencia_verificada;;
 MT-MORT-REP-EST;materiales;kg;31;confirmado_referencia;1.05;1.05;comercial:desconocido;comercial;0;0;;;;;;ya_confirmado;;
 MT-MOSAICO;materiales;m2;2;en_revision;12.40;12.4;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-MOSQUITERO;materiales;m2;8;en_revision;14.26;14.26;comercial:www.leroymerlin.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.leroymerlin.es: mismo documento
-MT-OXI-CONS;materiales;ud;54;en_revision;;4.443038;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PANEL-LIV;materiales;m2;2;en_revision;;15.949367;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-OXI-CONS;materiales;ud;54;en_revision;7.57;7.57;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PANEL-LIV;materiales;m2;2;en_revision;25.30;25.3;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-PANEL-PVC-BANO;materiales;m2;3;en_revision;34.75;34.75;comercial:generadordeprecios.info;;2;1;bcca;98;+182.0;WW00302N;PANEL COMPOSITE;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-PANEL-SAND;materiales;m2;6;en_revision;20.11;20.11;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-PANEL-SOLAR;materiales;ud;0;en_revision;;205.063291;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PARARRAYOS-PDA;materiales;ud;0;en_revision;;432.911392;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PARARRAYOS-PUNTA;materiales;ud;0;en_revision;;74.050633;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PASIVANTE;materiales;l;5;en_revision;;11.164557;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-PANEL-SOLAR;materiales;ud;0;en_revision;205.06;205.06;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-PARARRAYOS-PDA;materiales;ud;0;en_revision;432.91;432.91;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-PARARRAYOS-PUNTA;materiales;ud;0;en_revision;74.05;133.41;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PASIVANTE;materiales;l;5;en_revision;11.16;11.16;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-PASTA-YESO;materiales;kg;13;en_revision;0.29;0.29;comercial:www.obramat.es;;4;3;bcca;2.14;+637.9;GP80030;PASTA PARA JUNTAS YESO;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-PEGA-MURAL;materiales;kg;4;en_revision;16.36;16.36;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-PER-BANDA;materiales;m;3;en_revision;1.11;1.11;comercial:carm.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento
 MT-PERF-DESM;materiales;m2;10;en_revision;8.17;8.17;comercial:carm.generadordeprecios.info;;9;0;;;;;;solo_fuente_propia;;comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento | comercial:carm.generadordeprecios.info: mismo documento
 MT-PERFIL-ACERO;materiales;kg;79;confirmado_referencia;1.54;1.54;extremadura;extremadura;5;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-PERFIL-ALUM;materiales;kg;74;en_revision;;10.822785;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PERFIL-CORTINERO;materiales;m;2;en_revision;;8.43038;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-PERFIL-ALUM;materiales;kg;74;en_revision;10.82;6.58;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PERFIL-CORTINERO;materiales;m;2;en_revision;8.43;8.43;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-PERFIL-REMATE;materiales;m;68;en_revision;2.85;2.85;comercial:www.obramat.es;;3;2;extremadura;9.3;+226.3;P08WP300;Perfil de transición aluminio H10 mm;divergencia_verificada;;comercial:www.obramat.es: mismo documento
 MT-PERFIL-TRANS;materiales;m;5;en_revision;5.93;5.93;comercial:generadordeprecios.info;;3;2;extremadura;9.3;+56.8;P08WP300;Perfil de transición aluminio H10 mm;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
 MT-PERNO-ANCLA;materiales;ud;148;en_revision;1.55;1.55;comercial:www.generadordeprecios.info;;3;1;extremadura;1.8;+16.1;P01UT100;Arandela de 200x200 mm, para perno con tuerca;divergencia_verificada;;comercial:www.generadordeprecios.info: mismo documento | comercial:www.generadordeprecios.info: mismo documento
-MT-PERSIANA-ALU;materiales;m2;4;en_revision;;62.658228;sin_documento;;2;2;;;;;;sin_precio_revisado;;
-MT-PIEDRA-FACHADA;materiales;m2;1;en_revision;;43.291139;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PIEDRA-PIC;materiales;m3;10;en_revision;;30;sin_documento;palencia;0;0;;;;;;sin_precio_revisado;;
+MT-PERSIANA-ALU;materiales;m2;4;en_revision;62.66;157.66;extremadura;extremadura;2;2;bcca;54.3;-13.3;KS04500;PERSIANA ENROLLABLE ALUMINIO LACADO;confirmado_independiente;;
+MT-PIEDRA-FACHADA;materiales;m2;1;en_revision;43.29;43.29;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-PIEDRA-PIC;materiales;m3;10;en_revision;11.99;11.99;extremadura;extremadura,palencia;0;0;;;;;;solo_fuente_propia;;
 MT-PIN-ANTIMOHO;materiales;l;1;en_revision;5.06;5.06;comercial:www.obramat.es;;3;2;extremadura;10.11;+99.8;P24IE010;Pintura acrílica para suelo;divergencia_verificada;;comercial:www.obramat.es: mismo documento
-MT-PIN-CAL;materiales;kg;1;en_revision;;2.050633;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-PIN-CAL;materiales;kg;1;en_revision;0.50;0.5;extremadura;extremadura;2;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-PIN-CAUCHO;materiales;l;40;en_revision;3.35;3.35;comercial:ferreteriaxerez.com;comercial;2;0;;;;;;solo_fuente_propia;;comercial:ferreteriaxerez.com: mismo documento | comercial:www.sluciaconstruccion.com: ya sostiene el precio
 MT-PIN-ESMALTE;materiales;l;14;en_revision;9.84;9.84;comercial:desconocido;comercial;5;3;extremadura;13.51;+37.3;P24JA005;Esmalte sintético brillante;divergencia_verificada;;comercial:www.obramat.es: ya sostiene el precio | comercial:ferreteriacasadorioja.com: ya sostiene el precio
 MT-PIN-FONDO;materiales;l;43;en_revision;4.09;4.09;comercial:www.obramat.es;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento | comercial:pintakolor.es: ya sostiene el precio
-MT-PIN-IGNFUGA;materiales;l;3;en_revision;9.89;13.670886;extremadura;extremadura;3;2;bcca;18.96;+91.7;PX00970;PINTURA IGNÍFUGA;divergencia_verificada;;extremadura: ya sostiene el precio
-MT-PIN-LIJA;materiales;ud;86;en_revision;;0.968354;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-PIN-IGNFUGA;materiales;l;3;en_revision;9.89;9.89;extremadura;extremadura;3;2;bcca;18.96;+91.7;PX00970;PINTURA IGNÍFUGA;divergencia_verificada;;extremadura: ya sostiene el precio
+MT-PIN-LIJA;materiales;ud;86;en_revision;1.28;1.28;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-PIN-MAGNETICA;materiales;l;1;en_revision;21.97;21.97;comercial:www.leroymerlin.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.leroymerlin.es: mismo documento
 MT-PIN-MASILLA;materiales;kg;16;en_revision;1.23;1.23;comercial:www.obramat.es;;2;2;comercial:www.leroymerlin.es;1.67;+35.8;;Axton pasta para alisar 15 kg, PVP 30,40 €;divergencia_verificada;;
-MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;;5.240506;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-PIN-SEMIBRILLO;materiales;l;4;en_revision;6.99;6.99;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-PIN-TIZA;materiales;l;1;en_revision;18.51;18.51;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-PINT-ANTICORR;materiales;l;78;en_revision;7.75;7.75;comercial:www.obramat.es;comercial;4;2;extremadura;29.24;+277.3;P19GTW280;Imprimación anticorrosiva 1 l.;divergencia_verificada;;comercial:www.obramat.es: mismo documento | comercial:www.leroymerlin.es: ya sostiene el precio
 MT-PINT-TRAFICO;materiales;l;8;en_revision;7.03;7.03;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-PLACA-CEM;materiales;m2;17;en_revision;19.97;19.97;comercial:knauf.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:knauf.generadordeprecios.info: mismo documento
-MT-PLACA-FACHADA;materiales;m2;5;en_revision;;47.848101;sin_documento;;3;3;;;;;;sin_precio_revisado;;
-MT-PLANCHA-ACERO;materiales;kg;3;en_revision;;2.506329;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PLANTA-ELEC;materiales;ud;0;en_revision;;1367.088608;sin_documento;;1;1;;;;;;sin_precio_revisado;;
-MT-PLATINA-DIV;materiales;m;1;en_revision;;2.392405;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-PLACA-FACHADA;materiales;m2;5;en_revision;68.01;68.01;extremadura;extremadura;3;1;bcca;98;+44.1;WW00302N;PANEL COMPOSITE;divergencia_verificada;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
+MT-PLANCHA-ACERO;materiales;kg;3;en_revision;1.05;1.05;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PLANTA-ELEC;materiales;ud;0;en_revision;1367.09;1367.09;comercial:desconocido;;1;1;extremadura;1.05;-99.9;P06WW020;Plantas;divergencia_verificada;;
+MT-PLATINA-DIV;materiales;m;1;en_revision;2.39;2.39;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-PLO-ABASTO;materiales;ud;22;en_revision;2.21;2.21;comercial:desconocido;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.ferreteriaillanes.com: ya sostiene el precio | comercial:www.bricoguadalupe.com: ya sostiene el precio
-MT-PLO-ACC20;materiales;ud;17;en_revision;;0.911392;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PLO-ACC4;materiales;ud;31;en_revision;;3.303797;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PLO-DESAG;materiales;ud;18;en_revision;;6.151899;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-PLO-LLAVE;materiales;ud;17;en_revision;6.69;5.126582;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PLO-ACC20;materiales;ud;17;en_revision;1.76;1.76;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PLO-ACC4;materiales;ud;31;en_revision;2.98;2.98;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PLO-DESAG;materiales;ud;18;en_revision;7.37;7.37;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-PLO-LLAVE;materiales;ud;17;en_revision;6.69;6.69;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-PLO-PPR20;materiales;m;25;en_revision;0.91;0.91;comercial:fontacor.com;comercial;3;1;extremadura;1.63;+79.1;P20TP020;Tubería polipropileno D=20;divergencia_verificada;;comercial:fontacor.com: mismo documento | comercial:www.briaqua.com: ya sostiene el precio
 MT-PLO-PVC4;materiales;m;32;en_revision;10.36;10.36;comercial:tecnihogar.es;;3;3;comercial:tecnihogar.es;10.36;+0.0;;Tubo PVC serie B 110 mm 3 m ref 0082000000006;contraste_comercial;;
 MT-PLO-SOP;materiales;ud;169;en_revision;0.95;0.95;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
@@ -310,7 +310,7 @@ MT-POLIESTIRENO-EXT;materiales;m2;33;en_revision;4.74;4.74;comercial:www.leroyme
 MT-POLIET;materiales;m2;18;confirmado_referencia;0.69;0.69;bcca;bcca,extremadura;5;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-POLIUR-LIQ;materiales;kg;25;en_revision;7.85;7.85;comercial:desconocido;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.naminio.es: ya sostiene el precio | comercial:www.pinturas.es: ya sostiene el precio
 MT-POLIUREA;materiales;kg;2;en_revision;5.80;5.8;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-POLIURETANO-PISO;materiales;kg;2;en_revision;;13.670886;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-POLIURETANO-PISO;materiales;kg;2;en_revision;18.22;18.22;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-PRESERV-MAD;materiales;l;32;en_revision;13.17;13.17;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-PROT-CARTON;materiales;m2;8;en_revision;0.75;0.75;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-PROT-OBRA;materiales;m2;86;en_revision;1.32;1.32;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
@@ -328,62 +328,62 @@ MT-PYL-PLACA-HD;materiales;m2;5;confirmado_referencia;4.40;4.4;comercial:www.obr
 MT-PYL-PLACA-IG;materiales;m2;4;confirmado_referencia;7.92;7.92;comercial:promat.generadordeprecios.info;bcca,comercial;7;0;;;;;;ya_confirmado;;comercial:promat.generadordeprecios.info: mismo documento | bcca: ya sostiene el precio | bcca: ya sostiene el precio
 MT-PYL-PLACA-RH;materiales;m2;5;en_revision;7.42;7.42;comercial:promat.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:promat.generadordeprecios.info: mismo documento
 MT-PYL-PLACA125;materiales;m2;68;confirmado_referencia;3.18;3.18;comercial:desconocido;comercial;0;0;;;;;;ya_confirmado;;
-MT-QUIMICO-LIMP-AC;materiales;ud;5;en_revision;;9.683544;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-RED-SEG;materiales;m2;5;en_revision;1.91;3.189873;extremadura;extremadura;2;1;bcca;1.3;-31.9;HR00700;RED DE SEGURIDAD DE POLIAMIDA;divergencia_verificada;;extremadura: ya sostiene el precio
+MT-QUIMICO-LIMP-AC;materiales;ud;5;en_revision;9.68;9.68;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-RED-SEG;materiales;m2;5;en_revision;1.91;1.91;extremadura;extremadura;2;1;bcca;1.3;-31.9;HR00700;RED DE SEGURIDAD DE POLIAMIDA;divergencia_verificada;;extremadura: ya sostiene el precio
 MT-REFUERZO-PYL;materiales;m;3;en_revision;5.78;5.78;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-REGISTRO;materiales;ud;5;confirmado_referencia;22.73;22.73;extremadura;extremadura;3;0;;;;;;ya_confirmado;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
-MT-REGUL-GAS;materiales;ud;37;en_revision;;27.341772;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-REGUL-GAS;materiales;ud;37;en_revision;27.34;27.34;comercial:desconocido;;2;2;extremadura;118.5;+333.4;P19AC030;Regulador de presión;divergencia_verificada;;
 MT-REJILLA-VENT;materiales;ud;39;en_revision;9.19;9.19;comercial:generadordeprecios.info;;5;4;extremadura;1.32;-85.6;P19GBW300;Rejillas ventilación de 20x20;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento
-MT-RESINA-ACRIL;materiales;kg;4;en_revision;;10.253165;sin_documento;;2;2;;;;;;sin_precio_revisado;;
-MT-RESINA-INYEC;materiales;l;7;en_revision;;20.506329;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-RIEL-CORRED;materiales;m;17;en_revision;;15.949367;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-RESINA-ACRIL;materiales;kg;4;en_revision;8.49;8.49;extremadura;extremadura;2;2;bcca;3.76;-55.7;PA00900;RESINA ACRÍLICA;divergencia_verificada;;
+MT-RESINA-INYEC;materiales;l;7;en_revision;17.12;17.12;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-RIEL-CORRED;materiales;m;17;en_revision;15.95;41.4;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-SAC-ESC;materiales;ud;235;en_revision;0.42;0.42;comercial:desconocido;comercial;0;0;;;;;;solo_fuente_propia;;
-MT-SAN-FIJA;materiales;ud;13;en_revision;;5.468354;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-SAN-FIJA;materiales;ud;13;en_revision;5.47;5.47;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-SELLA-BENTONITA;materiales;m;3;en_revision;3.35;3.35;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-SELLA-CONC;materiales;l;4;en_revision;6.06;6.06;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-SELLA-ELAST;materiales;l;77;confirmado_referencia;13.13;13.13;comercial:desconocido;comercial;0;0;;;;;;ya_confirmado;;
 MT-SELLA-FISURA;materiales;kg;5;confirmado_referencia;9.48;9.48;comercial:www.obramat.es;bcca,comercial;1;0;;;;;;ya_confirmado;;comercial:www.obramat.es: mismo documento
-MT-SELLA-PASE;materiales;ud;17;en_revision;;5.240506;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-SELLA-PASE;materiales;ud;17;en_revision;5.24;4.05;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-SELLA-PIEDRA;materiales;l;15;en_revision;22.27;22.27;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-SENAL-OBRA;materiales;ud;73;en_revision;;6.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-SENAL-OBRA;materiales;ud;73;en_revision;6.27;6.27;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-SEPARADOR;materiales;ud;37;en_revision;0.06;0.06;comercial:www.bigmat.es;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.bigmat.es: mismo documento | comercial:www.comercturro.com: ya sostiene el precio
 MT-SIL-SAN;materiales;ud;55;confirmado_referencia;4.41;4.41;comercial:desconocido;;1;0;;;;;;ya_confirmado;;
 MT-SILICONA-EST;materiales;l;96;en_revision;11.17;11.17;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-SILOXANO;materiales;l;2;en_revision;6.28;6.28;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
-MT-SOPORTE-AC;materiales;ud;36;en_revision;;18.227848;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-SOPORTE-ANTIVIB;materiales;ud;1;en_revision;;5.696203;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-SOPORTE-AC;materiales;ud;36;en_revision;18.23;18.23;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-SOPORTE-ANTIVIB;materiales;ud;1;en_revision;5.70;5.7;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-STEELDECK;materiales;m2;2;en_revision;28.94;28.94;comercial:www.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:www.generadordeprecios.info: mismo documento
-MT-SUBESTRUCTURA;materiales;m2;7;en_revision;;20.506329;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-SUBESTRUCTURA;materiales;m2;7;en_revision;68.00;68;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-TABIQUE-MOVIL;materiales;m2;4;en_revision;467.09;467.09;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-TABLERO-DIST;materiales;ud;3;en_revision;;54.683544;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-TABLERO-PROV;materiales;ud;2;en_revision;;51.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-TEJA-ASF;materiales;m2;2;en_revision;;11.962025;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-TABLERO-DIST;materiales;ud;3;en_revision;54.68;54.68;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-TABLERO-PROV;materiales;ud;2;en_revision;51.27;51.27;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-TEJA-ASF;materiales;m2;2;en_revision;11.96;12.6;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-TEJA-CRIOLLA;materiales;ud;7;en_revision;1.31;1.31;comercial:www.obramat.es;;1;0;;;;;;solo_fuente_propia;;comercial:www.obramat.es: mismo documento
 MT-TIERRA-ABON;materiales;m3;12;en_revision;17.60;17.6;extremadura;extremadura;2;0;;;;;;solo_fuente_propia;;extremadura: mismo documento | extremadura: ya sostiene el precio
-MT-TIMBRE;materiales;ud;2;en_revision;;15.949367;sin_documento;;2;2;;;;;;sin_precio_revisado;;
+MT-TIMBRE;materiales;ud;2;en_revision;15.95;6.42;extremadura;extremadura;2;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio | extremadura: ya sostiene el precio
 MT-TINTE-MAD;materiales;l;1;en_revision;10.96;10.96;comercial:www.obramat.es;;2;1;extremadura;17.07;+55.7;P24PC020;Tinte al agua;divergencia_verificada;;comercial:www.obramat.es: mismo documento
-MT-TOLDO;materiales;m2;4;en_revision;;54.683544;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-TOLDO;materiales;m2;4;en_revision;54.68;54.68;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-TOMA-DATOS;materiales;ud;32;en_revision;39.16;39.16;comercial:www.generadordeprecios.info;;6;3;extremadura;3.5;-91.1;P22AA020;Placa toma TV;divergencia_verificada;;comercial:www.generadordeprecios.info: mismo documento | comercial:www.generadordeprecios.info: mismo documento | comercial:www.generadordeprecios.info: mismo documento
-MT-TORN;materiales;ud;154;en_revision;0.03;0.034177;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
+MT-TORN;materiales;ud;154;en_revision;0.03;0.03;extremadura;extremadura;1;0;;;;;;solo_fuente_propia;;extremadura: ya sostiene el precio
 MT-TORN-TECHO;materiales;ud;64;en_revision;0.21;0.21;comercial:desconocido;;2;2;comercial:entaban.es;0.21;+0.0;TSAND63;Tornillo 5,5/6,3x63 panel sándwich con EPDM;contraste_comercial;;
 MT-TORNILLO-EST;materiales;ud;17;en_revision;7.80;7.8;comercial:www.generadordeprecios.info;;2;1;extremadura;1.13;-85.5;P04FAV050;Tornilleria;divergencia_verificada;;comercial:www.generadordeprecios.info: mismo documento
 MT-TRAGANTE;materiales;ud;9;en_revision;37.82;37.82;comercial:www.tapasyregistros.com;;1;0;;;;;;solo_fuente_propia;;comercial:www.tapasyregistros.com: mismo documento
-MT-TRAMPA-GRASA;materiales;ud;1;en_revision;;88.860759;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-TRAMPA-GRASA;materiales;ud;1;en_revision;88.86;88.86;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
 MT-TUB-FRIGO;materiales;m;34;en_revision;5.53;5.53;comercial:www.obramat.es;;2;2;comercial:www.obramat.es;5.53;+0.0;;Par de cobre aislado 20 m;contraste_comercial;;
 MT-TUB-GAS;materiales;m;37;en_revision;2.13;2.13;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-TUB-PPR25;materiales;m;9;en_revision;1.41;1.41;comercial:fontacor.com;comercial;4;2;bcca;10.6;+651.8;VFR67;TUBERIA PPR 25MM;divergencia_verificada;;comercial:fontacor.com: mismo documento | comercial:www.briaqua.com: ya sostiene el precio
 MT-TUB-RIEGO;materiales;m;8;en_revision;1.19;1.19;comercial:terapia-urbana.generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:terapia-urbana.generadordeprecios.info: mismo documento
-MT-TUBO-ACERO;materiales;kg;36;en_revision;1.71;2.221519;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-TUBO-ACERO;materiales;kg;36;en_revision;1.71;1.71;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-TUBO-DREN;materiales;m;12;en_revision;6.50;6.5;comercial:tienda.allgrass.net;;1;0;;;;;;solo_fuente_propia;;comercial:tienda.allgrass.net: mismo documento
 MT-VALV-CHECK;materiales;ud;38;en_revision;17.22;17.22;comercial:generadordeprecios.info;;5;3;extremadura;44.01;+155.6;P19AC040;Válvula de retención;divergencia_verificada;;comercial:generadordeprecios.info: mismo documento | comercial:generadordeprecios.info: mismo documento
-MT-VAPOR;materiales;l;2;en_revision;;2.734177;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-VIDRIO-6;materiales;m2;23;en_revision;;38;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-VIDRIO-ARENA;materiales;m2;6;en_revision;;31.898734;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-VIDRIO-DECOR;materiales;m2;1;en_revision;;51.265823;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-VAPOR;materiales;l;2;en_revision;2.73;2.73;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
+MT-VIDRIO-6;materiales;m2;23;en_revision;26.36;26.36;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-VIDRIO-ARENA;materiales;m2;6;en_revision;26.36;26.36;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-VIDRIO-DECOR;materiales;m2;1;en_revision;51.27;18.36;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-VIDRIO-DOBLE;materiales;m2;8;en_revision;21.34;21.34;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
 MT-VIDRIO-LAM;materiales;m2;8;en_revision;34.30;34.3;comercial:generadordeprecios.info;;1;0;;;;;;solo_fuente_propia;;comercial:generadordeprecios.info: mismo documento
-MT-VIDRIO-TEMP;materiales;m2;35;en_revision;;77.468354;sin_documento;;0;0;;;;;;sin_precio_revisado;;
-MT-VIGA-APEO;materiales;m;23;en_revision;;3.303797;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-VIDRIO-TEMP;materiales;m2;35;en_revision;77.47;80.82;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
+MT-VIGA-APEO;materiales;m;23;en_revision;5.85;5.85;extremadura;extremadura;0;0;;;;;;solo_fuente_propia;;
 MT-VIGUETA;materiales;m;3;confirmado_referencia;7.84;7.84;palencia;bcca,comercial,palencia;1;0;;;;;;ya_confirmado;;palencia: mismo documento
 MT-YESO-REP;materiales;kg;57;en_revision;0.16;0.16;comercial:desconocido;comercial;2;0;;;;;;solo_fuente_propia;;comercial:www.bigmat.es: ya sostiene el precio | comercial:www.paratureforma.com: ya sostiene el precio
-MT-ZIPPER;materiales;ud;2;en_revision;;4.329114;sin_documento;;0;0;;;;;;sin_precio_revisado;;
+MT-ZIPPER;materiales;ud;2;en_revision;4.33;4.33;comercial:desconocido;;0;0;;;;;;solo_fuente_propia;;
