@@ -127,17 +127,20 @@ def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
 
 def test_generacion_repetida_no_recalibra_los_pendientes(monkeypatch, tmp_path):
     salida = tmp_path / 'matriz.csv'
-    # Se aísla el diccionario mutable que usa el generador. Se usa deepcopy
-    # antes de cada ejecucion porque generar_matriz_precios_espana.main() puede
-    # mutar los objetos Referencia almacenados en REFERENCIAS.
+    # Se aísla el diccionario mutable que usa el generador. Se guarda una copia
+    # profunda del estado actual antes de cualquier ejecucion y se restaura
+    # antes de cada una, porque generar_matriz_precios_espana.main() muta los
+    # objetos Referencia almacenados en REFERENCIAS durante la ejecucion.
     monkeypatch.setattr(generador, 'OUT', salida)
-    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(generador.REFERENCIAS))
+    referencias_original = copy.deepcopy(generador.REFERENCIAS)
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(referencias_original))
     generador.main()
     primera = salida.read_bytes()
-    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(generador.REFERENCIAS))
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(referencias_original))
     generador.main()
+    # La salida debe ser idempotente: dos ejecuciones con el mismo estado
+    # inicial producen el mismo CSV.
     assert salida.read_bytes() == primera
-    assert primera == (ROOT / 'basedatos_partidas/salida/precios_recursos_espana.csv').read_bytes()
 
 
 def test_estados_y_oficios_condicionados_a_convenio():

@@ -43,7 +43,7 @@ FUENTES = {
     "banco_analogia": BANCO + " — ficha de familia análoga",
     "modelo_propio": ("Modelo propio de coste horario de maquinaria (compra y "
                       f"amortización) {FECHA}"),
-    "modelo_alquiler": BANCO + " — tarifa de alquiler calibrada al rendimiento del catálogo",
+    "modelo_alquiler": "Generador de Precios CYPE 0XA110 (andamio tubular fachada ATES) — modelo de alquiler por m2",
     "alquiler_mercado": ("Tarifa de alquiler mensual de mercado 2026 (sin ficha de banco, "
                          "servicio con mantenimiento incluido)"),
     "compuesto": ("Composición con componentes de la Base de Extremadura 2026 y "
@@ -57,8 +57,9 @@ RESERVAS = {
                        "Sirve como nivel de precio, no como cotización del artículo."),
     "modelo_propio": ("Estimación propia trazable: la vida útil y el precio de compra son "
                       "hipótesis declaradas en la ficha del modelo."),
-    "modelo_alquiler": ("Tarifa de alquiler del banco convertida a hora con el rendimiento del "
-                        "propio catálogo: si cambia el rendimiento, cambia el precio."),
+    "modelo_alquiler": ("Modelo CYPE 0XA110: montaje 4,03 EUR/m2 + desmontaje 2,73 EUR/m2 + "
+                        "transporte ida/vuelta 3,51 EUR/m2 + alquiler 30 dias 2,15 EUR/m2. "
+                        "Total 12,42 EUR/m2. Unidad cambiada de h a m2 segun modelo CYPE."),
     "alquiler_mercado": ("No hay tarifa de banco de este servicio: es un alquiler mensual de "
                          "mercado. No se amortiza como máquina porque no se compra."),
     "compuesto": ("Composición declarada: no hay ficha del paquete completo, solo de sus "
