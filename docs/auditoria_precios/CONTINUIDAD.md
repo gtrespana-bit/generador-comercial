@@ -2,6 +2,33 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Carga en producción de las 390 referencias nacionales — 8 de noviembre de 2026
+
+**390 referencias ES cargadas y selladas a 2026-11-07; 0 discrepancias; nada más tocado.**
+Informe: [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md).
+
+- Se cierra el último punto abierto del PR #213: el SQL de
+  `docs/cargar_precios_referencia_espana_2026-11-06.sql` **ya está ejecutado** en
+  `CotizaT-Generador` (`ivsuiyfljcajrijgwisg`).
+- Antes: 388 referencias ES nacionales (315 con texto genérico, 73 auditadas, todas con
+  `fecha_consulta = 2026-10-20`). Después: **390**, todas con la observación y la fuente
+  auditadas, `moneda = EUR`, 350 `derivado` y 40 `referencia`.
+- Se crearon los dos recursos que faltaban, `MT-BLQ-17` y `MT-BLQ-25`, en las **56
+  organizaciones** con familia de bloque (112 filas, unidad `ud`, precio propio 0) para
+  poder cargar las 390 en lugar de las 388.
+- La matriz pasó primero por una tabla espejo `backup.stage_es_20261108` y se contrastó con
+  el CSV: md5 de códigos `f3daa656…`, de observaciones `4e7673dc…`, de fuentes `8f5cc43e…`
+  y sumas 12.563,3766 / 12.337,7890 / 12.829,8310, **idénticas** en origen y destino.
+- Fecha del panel: **2026-11-07** en las 390 (equivalente a «Confirmar hoy»), no la fecha
+  de cada fuente. Con los umbrales de 180/365 días, el panel queda en 390 vigentes.
+- Intactos: 14 overrides de empresa y 8.148 referencias de otros países.
+- Incidencia: la primera tentativa se bloqueó porque `public.recursos` no tiene índice
+  sobre `codigo` y el `NOT EXISTS` correlacionado barría 21.800 filas por código. No hubo
+  cambio parcial; se cancelaron los backends y se resolvió con un mapa precalculado, ya
+  incorporado al script. **Queda recomendado, sin aplicar, `ix_recursos_codigo`.**
+- Respaldo y reversión: `backup.precios_es_20261108` (388 filas previas),
+  `backup.stage_es_20261108` (390 cargadas) y `backup.mapa_es_20261108`.
+
 ## Cierre total: ningún recurso sin precio — 7 de noviembre de 2026
 
 **133 precios nuevos. 388/388 recursos con precio revisado, 0 huecos.** Informe:
@@ -23,7 +50,8 @@
 - Impacto: **1.076 partidas**, mediana +0,1 %, mínimo −77,8 % (piedra picada y plancha
   compactadora con ficha de banco), máximo +36,9 % (subestructura de fachada).
 - Estado: 53 confirmados por verificación cruzada / 335 en revisión; matriz 388 filas
-  (43 directas + 345 derivadas); SQL de 388 filas **sin ejecutar**.
+  (43 directas + 345 derivadas); SQL de 388 filas **sin ejecutar** en ese momento
+  (cargado el 8 de noviembre, con 390 filas: ver la entrada superior).
 
 ## Convención de medida para lo que no la fija — 7 de noviembre de 2026
 

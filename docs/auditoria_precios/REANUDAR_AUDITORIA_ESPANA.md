@@ -2,6 +2,8 @@
 
 **Corte: 7 de noviembre de 2026, tras el cierre total: los 388 recursos tienen precio.** Este documento es el punto de entrada para retomar el trabajo; el historial detallado está en [CONTINUIDAD.md](CONTINUIDAD.md). Las cifras son una fotografía: recalcularlas desde los archivos antes de continuar si ha habido cambios posteriores.
 
+**Estado de la carga en producción (8 de noviembre de 2026):** las **390** referencias nacionales de España están cargadas en Supabase y selladas a 2026-11-07; el SQL de `docs/cargar_precios_referencia_espana_2026-11-06.sql` ya se ejecutó, con `MT-BLQ-17` y `MT-BLQ-25` creados en las 56 organizaciones con familia de bloque. Verificación y reversión: [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md). La auditoría de contenido, en cambio, **sigue abierta**: 350 de las 390 referencias son `derivado`.
+
 ## Objetivo y situación
 
 Se está auditando la matriz de precios de recursos para España, contrastando las descripciones, unidades y usos de las partidas con fuentes trazables. El propósito es mejorar las referencias de presupuesto sin presentar estimaciones o precios provinciales como precios universales. **La auditoría no está terminada.**

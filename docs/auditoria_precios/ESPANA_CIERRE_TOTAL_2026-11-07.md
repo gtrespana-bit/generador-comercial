@@ -269,8 +269,11 @@ ficha del banco sustituye a estimaciones altas: `03.04.01.140` −77,8 %,
    siempre qué ficha se usó y en qué se diferencia.
 4. **La maquinaria depende de hipótesis declaradas**: vida útil, mantenimiento y precio
    de compra. Cambiar una hipótesis cambia el precio, y así está escrito.
-5. **El SQL sigue sin ejecutarse.** `docs/cargar_precios_referencia_espana_2026-11-06.sql`
-   tiene 388 filas listas; cargarlo es una decisión aparte.
+5. **El SQL ya está cargado** (8 de noviembre de 2026): 390 referencias nacionales ES,
+   selladas a 2026-11-07, con los dos recursos que faltaban creados para no dejar fuera
+   `MT-BLQ-17` ni `MT-BLQ-25`. Ver
+   [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md). Cargar no es verificar:
+   la carga no cambia los estados de auditoría ni convierte las estimaciones en cotizaciones.
 
 ## 10. Reproducibilidad
 
