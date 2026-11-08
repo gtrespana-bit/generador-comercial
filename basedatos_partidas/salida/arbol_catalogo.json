@@ -308,7 +308,7 @@
                   "codigo_legacy": "CT-01-01-080",
                   "titulo": "Protección de fachada con malla de obra.",
                   "unidad": "m²",
-                  "precio": 3.15,
+                  "precio": 2.98,
                   "horas": 0.2,
                   "producto_cliente": false
                 },
@@ -362,7 +362,7 @@
                   "codigo_legacy": "",
                   "titulo": "Protección de cielo raso existente.",
                   "unidad": "m2",
-                  "precio": 3.09,
+                  "precio": 3.01,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -496,7 +496,7 @@
                   "codigo_legacy": "CT-01-02-010",
                   "titulo": "Andamio tubular de fachada, montaje, alquiler mensual y desmontaje.",
                   "unidad": "m²",
-                  "precio": 11.39,
+                  "precio": 7.25,
                   "horas": 0.68,
                   "producto_cliente": false
                 },
@@ -505,7 +505,7 @@
                   "codigo_legacy": "CT-01-02-020",
                   "titulo": "Permanencia adicional de andamio de fachada, por mes.",
                   "unidad": "m²",
-                  "precio": 2.69,
+                  "precio": 1.26,
                   "horas": 0.06,
                   "producto_cliente": false
                 },
@@ -514,7 +514,7 @@
                   "codigo_legacy": "CT-01-02-030",
                   "titulo": "Andamio interior móvil o sobre borriquetas.",
                   "unidad": "m²",
-                  "precio": 1.88,
+                  "precio": 1.01,
                   "horas": 0.09,
                   "producto_cliente": false
                 },
@@ -532,7 +532,7 @@
                   "codigo_legacy": "CT-01-02-050",
                   "titulo": "Andamio colgante o silleta para trabajos en fachada.",
                   "unidad": "m²",
-                  "precio": 9.0,
+                  "precio": 7.57,
                   "horas": 0.36,
                   "producto_cliente": false
                 },
@@ -541,7 +541,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio tubular de fachada con plataforma.",
                   "unidad": "m2",
-                  "precio": 11.04,
+                  "precio": 10.26,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -550,7 +550,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio colgante para trabajos en fachada.",
                   "unidad": "m2",
-                  "precio": 9.81,
+                  "precio": 8.87,
                   "horas": 0.75,
                   "producto_cliente": false
                 },
@@ -559,7 +559,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio interior móvil.",
                   "unidad": "m2",
-                  "precio": 5.89,
+                  "precio": 5.25,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -568,7 +568,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio de borriquetas para interior.",
                   "unidad": "m2",
-                  "precio": 4.91,
+                  "precio": 4.36,
                   "horas": 0.36,
                   "producto_cliente": false
                 },
@@ -577,7 +577,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio de fachada con red de seguridad.",
                   "unidad": "m2",
-                  "precio": 12.33,
+                  "precio": 11.53,
                   "horas": 0.62,
                   "producto_cliente": false
                 },
@@ -586,7 +586,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio de fachada con protección de malla.",
                   "unidad": "m2",
-                  "precio": 9.48,
+                  "precio": 8.68,
                   "horas": 0.62,
                   "producto_cliente": false
                 },
@@ -1230,7 +1230,7 @@
                   "codigo_legacy": "CT-02-15-010",
                   "titulo": "Desmontaje de estructura metálica.",
                   "unidad": "kg",
-                  "precio": 0.54,
+                  "precio": 0.53,
                   "horas": 0.042,
                   "producto_cliente": false
                 },
@@ -1248,7 +1248,7 @@
                   "codigo_legacy": "CT-02-15-030",
                   "titulo": "Demolición de viga de concreto armado.",
                   "unidad": "m³",
-                  "precio": 138.54,
+                  "precio": 135.03,
                   "horas": 8.25,
                   "producto_cliente": false
                 },
@@ -1275,7 +1275,7 @@
                   "codigo_legacy": "CT-02-15-060",
                   "titulo": "Desmontaje de estructura de madera.",
                   "unidad": "m²",
-                  "precio": 13.5,
+                  "precio": 12.85,
                   "horas": 1.42,
                   "producto_cliente": false
                 },
@@ -1433,7 +1433,7 @@
                   "codigo_legacy": "CT-02-07-010",
                   "titulo": "Desmontaje de baranda o pasamanos de balcón.",
                   "unidad": "m",
-                  "precio": 6.1,
+                  "precio": 5.87,
                   "horas": 0.46,
                   "producto_cliente": false
                 },
@@ -1442,7 +1442,7 @@
                   "codigo_legacy": "CT-02-07-020",
                   "titulo": "Desmontaje de reja de protección en fachada.",
                   "unidad": "m²",
-                  "precio": 5.95,
+                  "precio": 5.75,
                   "horas": 0.42,
                   "producto_cliente": false
                 },
@@ -1451,7 +1451,7 @@
                   "codigo_legacy": "CT-02-07-030",
                   "titulo": "Demolición de muro de fachada de bloque o ladrillo.",
                   "unidad": "m²",
-                  "precio": 8.82,
+                  "precio": 8.15,
                   "horas": 0.76,
                   "producto_cliente": false
                 },
@@ -1460,7 +1460,7 @@
                   "codigo_legacy": "CT-02-07-040",
                   "titulo": "Desmontaje de cerramiento ligero de láminas metálicas.",
                   "unidad": "m²",
-                  "precio": 6.18,
+                  "precio": 5.6,
                   "horas": 0.58,
                   "producto_cliente": false
                 },
@@ -1469,7 +1469,7 @@
                   "codigo_legacy": "CT-02-07-050",
                   "titulo": "Picado de salpicado o graniplast en fachada.",
                   "unidad": "m²",
-                  "precio": 7.38,
+                  "precio": 6.87,
                   "horas": 0.7,
                   "producto_cliente": false
                 },
@@ -1478,7 +1478,7 @@
                   "codigo_legacy": "CT-02-07-060",
                   "titulo": "Picado de mortero monocapa en fachada.",
                   "unidad": "m²",
-                  "precio": 8.33,
+                  "precio": 7.76,
                   "horas": 0.78,
                   "producto_cliente": false
                 },
@@ -1487,7 +1487,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de muro cortina de vidrio.",
                   "unidad": "m2",
-                  "precio": 13.1,
+                  "precio": 12.77,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -1496,7 +1496,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de revestimiento de fachada ventilada.",
                   "unidad": "m2",
-                  "precio": 10.96,
+                  "precio": 10.65,
                   "horas": 1.6,
                   "producto_cliente": false
                 },
@@ -1505,7 +1505,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de celosía de fachada.",
                   "unidad": "m2",
-                  "precio": 8.94,
+                  "precio": 8.64,
                   "horas": 1.3,
                   "producto_cliente": false
                 },
@@ -1523,7 +1523,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de revestimiento de piedra en fachada.",
                   "unidad": "m2",
-                  "precio": 12.35,
+                  "precio": 12.04,
                   "horas": 1.6,
                   "producto_cliente": false
                 },
@@ -1532,7 +1532,7 @@
                   "codigo_legacy": "",
                   "titulo": "Demolición de muro de fachada de mampostería.",
                   "unidad": "m2",
-                  "precio": 17.66,
+                  "precio": 17.37,
                   "horas": 2.1,
                   "producto_cliente": false
                 },
@@ -1541,7 +1541,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de panel sándwich de fachada.",
                   "unidad": "m2",
-                  "precio": 8.94,
+                  "precio": 8.64,
                   "horas": 1.3,
                   "producto_cliente": false
                 },
@@ -1550,7 +1550,7 @@
                   "codigo_legacy": "",
                   "titulo": "Picado de aplacado cerámico de fachada.",
                   "unidad": "m2",
-                  "precio": 10.44,
+                  "precio": 10.14,
                   "horas": 1.3,
                   "producto_cliente": false
                 },
@@ -1559,7 +1559,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de bajante o canalón de fachada.",
                   "unidad": "m",
-                  "precio": 4.33,
+                  "precio": 4.17,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -1568,7 +1568,7 @@
                   "codigo_legacy": "",
                   "titulo": "Demolición de cornisa o remate de fachada.",
                   "unidad": "m2",
-                  "precio": 17.66,
+                  "precio": 17.37,
                   "horas": 2.1,
                   "producto_cliente": false
                 },
@@ -1577,7 +1577,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de marquesina de fachada.",
                   "unidad": "m2",
-                  "precio": 19.36,
+                  "precio": 19.13,
                   "horas": 1.0,
                   "producto_cliente": false
                 },
@@ -1586,7 +1586,7 @@
                   "codigo_legacy": "",
                   "titulo": "Demolición de antepecho de fachada.",
                   "unidad": "m2",
-                  "precio": 16.11,
+                  "precio": 15.82,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -1595,7 +1595,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de persiana de fachada.",
                   "unidad": "m2",
-                  "precio": 9.23,
+                  "precio": 9.0,
                   "horas": 1.35,
                   "producto_cliente": false
                 },
@@ -1604,7 +1604,7 @@
                   "codigo_legacy": "",
                   "titulo": "Picado de friso de fachada.",
                   "unidad": "m2",
-                  "precio": 10.96,
+                  "precio": 10.68,
                   "horas": 1.35,
                   "producto_cliente": false
                 },
@@ -1613,7 +1613,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de publicidad o letrero de fachada.",
                   "unidad": "m2",
-                  "precio": 9.65,
+                  "precio": 9.34,
                   "horas": 1.4,
                   "producto_cliente": false
                 }
@@ -1884,7 +1884,7 @@
                   "codigo_legacy": "CT-02-09-060",
                   "titulo": "Desmontaje de ventana con su marco.",
                   "unidad": "m²",
-                  "precio": 7.51,
+                  "precio": 7.26,
                   "horas": 0.84,
                   "producto_cliente": false
                 },
@@ -2069,7 +2069,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de canalón de alero.",
                   "unidad": "m",
-                  "precio": 4.33,
+                  "precio": 4.17,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -2132,7 +2132,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de cumbrera o remate de techo.",
                   "unidad": "m",
-                  "precio": 3.12,
+                  "precio": 3.0,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -2195,7 +2195,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de soporte de toldo.",
                   "unidad": "m",
-                  "precio": 3.51,
+                  "precio": 3.38,
                   "horas": 0.45,
                   "producto_cliente": false
                 }
@@ -2218,7 +2218,7 @@
                   "codigo_legacy": "CT-02-11-010",
                   "titulo": "Desmontaje de equipo de aire acondicionado tipo split.",
                   "unidad": "ud",
-                  "precio": 17.79,
+                  "precio": 17.4,
                   "horas": 2.5,
                   "producto_cliente": false
                 },
@@ -2338,7 +2338,7 @@
                   "codigo_legacy": "CT-02-11-050",
                   "titulo": "Desmontaje de luminaria.",
                   "unidad": "ud",
-                  "precio": 2.29,
+                  "precio": 2.17,
                   "horas": 0.28,
                   "producto_cliente": false
                 },
@@ -2634,7 +2634,7 @@
                   "codigo_legacy": "CT-02-13-010",
                   "titulo": "Desmontaje de canal de aguas lluvias.",
                   "unidad": "m",
-                  "precio": 2.81,
+                  "precio": 2.46,
                   "horas": 0.33,
                   "producto_cliente": false
                 },
@@ -2643,7 +2643,7 @@
                   "codigo_legacy": "CT-02-13-020",
                   "titulo": "Desmontaje de bajante de aguas lluvias.",
                   "unidad": "m",
-                  "precio": 2.9,
+                  "precio": 2.59,
                   "horas": 0.31,
                   "producto_cliente": false
                 },
@@ -2652,7 +2652,7 @@
                   "codigo_legacy": "CT-02-13-030",
                   "titulo": "Desmontaje de cubierta de teja.",
                   "unidad": "m²",
-                  "precio": 9.8,
+                  "precio": 9.1,
                   "horas": 0.91,
                   "producto_cliente": false
                 },
@@ -2661,7 +2661,7 @@
                   "codigo_legacy": "CT-02-13-040",
                   "titulo": "Desmontaje de cubierta de lámina metálica o acerolit.",
                   "unidad": "m²",
-                  "precio": 7.07,
+                  "precio": 6.48,
                   "horas": 0.61,
                   "producto_cliente": false
                 },
@@ -2670,7 +2670,7 @@
                   "codigo_legacy": "CT-02-13-050",
                   "titulo": "Desmontaje de estructura de techo.",
                   "unidad": "m²",
-                  "precio": 14.85,
+                  "precio": 14.13,
                   "horas": 1.21,
                   "producto_cliente": false
                 },
@@ -2688,7 +2688,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de cubierta de policarbonato.",
                   "unidad": "m2",
-                  "precio": 8.49,
+                  "precio": 8.3,
                   "horas": 1.3,
                   "producto_cliente": false
                 },
@@ -2697,7 +2697,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de cubierta de panel sándwich.",
                   "unidad": "m2",
-                  "precio": 8.53,
+                  "precio": 8.34,
                   "horas": 1.3,
                   "producto_cliente": false
                 },
@@ -2715,7 +2715,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de cubierta de lámina de zinc.",
                   "unidad": "m2",
-                  "precio": 7.21,
+                  "precio": 7.05,
                   "horas": 1.1,
                   "producto_cliente": false
                 },
@@ -2724,7 +2724,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de techo de fibrocemento.",
                   "unidad": "m2",
-                  "precio": 8.25,
+                  "precio": 8.06,
                   "horas": 1.25,
                   "producto_cliente": false
                 },
@@ -2751,7 +2751,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de claraboya o domo.",
                   "unidad": "m",
-                  "precio": 5.66,
+                  "precio": 5.49,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -2787,7 +2787,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de caballete de techo.",
                   "unidad": "m",
-                  "precio": 3.12,
+                  "precio": 3.0,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -2796,7 +2796,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de techo de lona o membrana tensada.",
                   "unidad": "m2",
-                  "precio": 5.83,
+                  "precio": 5.64,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -2805,7 +2805,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de canalón de cubierta.",
                   "unidad": "m2",
-                  "precio": 3.08,
+                  "precio": 2.96,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -2814,7 +2814,7 @@
                   "codigo_legacy": "",
                   "titulo": "Desmontaje de bajante de aguas lluvias con soportes.",
                   "unidad": "m",
-                  "precio": 2.97,
+                  "precio": 2.81,
                   "horas": 0.4,
                   "producto_cliente": false
                 }
@@ -3085,7 +3085,7 @@
                   "codigo_legacy": "CT-02-03-010",
                   "titulo": "Demolición de cielo raso de yeso laminado y su estructura.",
                   "unidad": "m²",
-                  "precio": 2.79,
+                  "precio": 2.61,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -3094,7 +3094,7 @@
                   "codigo_legacy": "CT-02-03-020",
                   "titulo": "Demolición de cielo raso de yeso vaciado o pasta.",
                   "unidad": "m²",
-                  "precio": 5.1,
+                  "precio": 4.87,
                   "horas": 0.48,
                   "producto_cliente": false
                 },
@@ -3103,7 +3103,7 @@
                   "codigo_legacy": "CT-02-03-030",
                   "titulo": "Desmontaje de cielo raso desmontable de fibra mineral.",
                   "unidad": "m²",
-                  "precio": 1.71,
+                  "precio": 1.55,
                   "horas": 0.18,
                   "producto_cliente": false
                 },
@@ -3112,7 +3112,7 @@
                   "codigo_legacy": "CT-02-03-040",
                   "titulo": "Desmontaje de cielo raso de machihembrado de madera.",
                   "unidad": "m²",
-                  "precio": 2.93,
+                  "precio": 2.7,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -3121,7 +3121,7 @@
                   "codigo_legacy": "CT-02-03-050",
                   "titulo": "Desmontaje de cielo raso de láminas de PVC o aluminio.",
                   "unidad": "m²",
-                  "precio": 1.82,
+                  "precio": 1.65,
                   "horas": 0.2,
                   "producto_cliente": false
                 },
@@ -3130,7 +3130,7 @@
                   "codigo_legacy": "CT-02-03-060",
                   "titulo": "Picado de friso en techo o cara inferior de losa.",
                   "unidad": "m²",
-                  "precio": 6.63,
+                  "precio": 6.32,
                   "horas": 0.64,
                   "producto_cliente": false
                 }
@@ -3189,7 +3189,7 @@
                   "codigo_legacy": "CT-02-05-020",
                   "titulo": "Desmontaje de moldura decorativa de yeso o poliestireno.",
                   "unidad": "m",
-                  "precio": 0.97,
+                  "precio": 0.9,
                   "horas": 0.13,
                   "producto_cliente": false
                 },
@@ -5367,7 +5367,7 @@
                   "codigo_legacy": "",
                   "titulo": "Impermeabilización de fundación con manto.",
                   "unidad": "m2",
-                  "precio": 16.88,
+                  "precio": 16.78,
                   "horas": 0.72,
                   "producto_cliente": false
                 },
@@ -6048,7 +6048,7 @@
                   "codigo_legacy": "CT-05-02-040",
                   "titulo": "Imprimación anticorrosiva de estructura metálica.",
                   "unidad": "m²",
-                  "precio": 6.79,
+                  "precio": 6.63,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -6057,7 +6057,7 @@
                   "codigo_legacy": "CT-05-02-050",
                   "titulo": "Correas metálicas para estructura de techo.",
                   "unidad": "kg",
-                  "precio": 3.71,
+                  "precio": 3.66,
                   "horas": 0.086,
                   "producto_cliente": false
                 },
@@ -6233,7 +6233,7 @@
                   "codigo_legacy": "CT-05-03-010",
                   "titulo": "Suministro y montaje de estructura de madera.",
                   "unidad": "m³",
-                  "precio": 536.72,
+                  "precio": 534.17,
                   "horas": 16.0,
                   "producto_cliente": false
                 },
@@ -6242,7 +6242,7 @@
                   "codigo_legacy": "CT-05-03-020",
                   "titulo": "Correas y viguetas de madera para cubierta o entrepiso.",
                   "unidad": "m",
-                  "precio": 12.58,
+                  "precio": 12.49,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -6251,7 +6251,7 @@
                   "codigo_legacy": "CT-05-03-030",
                   "titulo": "Tratamiento preservante de madera estructural.",
                   "unidad": "m²",
-                  "precio": 3.96,
+                  "precio": 3.86,
                   "horas": 0.22,
                   "producto_cliente": false
                 },
@@ -6693,7 +6693,7 @@
                   "codigo_legacy": "CT-05-05-040",
                   "titulo": "Escalera metálica estructural.",
                   "unidad": "kg",
-                  "precio": 5.08,
+                  "precio": 5.0,
                   "horas": 0.13,
                   "producto_cliente": false
                 },
@@ -7016,7 +7016,7 @@
                   "codigo_legacy": "CT-05-06-040",
                   "titulo": "Refuerzo estructural con tejido de fibra de carbono.",
                   "unidad": "m²",
-                  "precio": 99.68,
+                  "precio": 99.37,
                   "horas": 1.8,
                   "producto_cliente": false
                 },
@@ -7627,9 +7627,27 @@
                   "precio": 20.26,
                   "horas": 1.2,
                   "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.160",
+                  "codigo_legacy": "CT-06-01-160",
+                  "titulo": "Pared de bloque de concreto de 17 cm.",
+                  "unidad": "m²",
+                  "precio": 23.0,
+                  "horas": 1.24,
+                  "producto_cliente": false
+                },
+                {
+                  "codigo": "06.03.01.170",
+                  "codigo_legacy": "CT-06-01-170",
+                  "titulo": "Pared de bloque de concreto de 25 cm.",
+                  "unidad": "m²",
+                  "precio": 27.68,
+                  "horas": 1.4,
+                  "producto_cliente": false
                 }
               ],
-              "n": 15
+              "n": 17
             },
             {
               "codigo": "06.03.02",
@@ -7808,7 +7826,7 @@
               "n": 9
             }
           ],
-          "n": 33
+          "n": 35
         },
         {
           "codigo": "06.04",
@@ -8477,7 +8495,7 @@
                   "codigo_legacy": "CT-06-07-010",
                   "titulo": "Tratamiento y remate de frente de losa en fachada.",
                   "unidad": "m",
-                  "precio": 12.1,
+                  "precio": 11.74,
                   "horas": 0.68,
                   "producto_cliente": false
                 },
@@ -8615,7 +8633,7 @@
                   "codigo_legacy": "",
                   "titulo": "Sistema de aislamiento térmico exterior (SATE).",
                   "unidad": "m2",
-                  "precio": 33.89,
+                  "precio": 33.72,
                   "horas": 0.85,
                   "producto_cliente": false
                 },
@@ -8624,7 +8642,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE con acabado acrílico.",
                   "unidad": "m2",
-                  "precio": 28.4,
+                  "precio": 28.24,
                   "horas": 0.9,
                   "producto_cliente": false
                 },
@@ -8633,7 +8651,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE con panel de alta densidad.",
                   "unidad": "m2",
-                  "precio": 40.77,
+                  "precio": 40.61,
                   "horas": 0.9,
                   "producto_cliente": false
                 },
@@ -8642,7 +8660,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE en fachada con remates.",
                   "unidad": "m2",
-                  "precio": 23.26,
+                  "precio": 23.1,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -8651,7 +8669,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE con lana mineral.",
                   "unidad": "m2",
-                  "precio": 37.4,
+                  "precio": 37.23,
                   "horas": 0.9,
                   "producto_cliente": false
                 },
@@ -8660,7 +8678,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE de zócalo con panel de alta densidad.",
                   "unidad": "m2",
-                  "precio": 41.32,
+                  "precio": 41.2,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -8669,7 +8687,7 @@
                   "codigo_legacy": "",
                   "titulo": "SATE de muro con acabado texturado.",
                   "unidad": "m2",
-                  "precio": 24.0,
+                  "precio": 23.83,
                   "horas": 0.95,
                   "producto_cliente": false
                 }
@@ -8821,7 +8839,7 @@
                   "codigo_legacy": "CT-06-09-010",
                   "titulo": "Limpieza de fachada con hidrolavado.",
                   "unidad": "m²",
-                  "precio": 2.74,
+                  "precio": 2.46,
                   "horas": 0.26,
                   "producto_cliente": false
                 },
@@ -8830,7 +8848,7 @@
                   "codigo_legacy": "CT-06-09-020",
                   "titulo": "Tratamiento fungicida de fachada contra moho y verdín.",
                   "unidad": "m²",
-                  "precio": 4.66,
+                  "precio": 4.36,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -8839,7 +8857,7 @@
                   "codigo_legacy": "CT-06-09-030",
                   "titulo": "Limpieza química de fachada y eliminación de manchas.",
                   "unidad": "m²",
-                  "precio": 6.82,
+                  "precio": 6.51,
                   "horas": 0.42,
                   "producto_cliente": false
                 },
@@ -8848,7 +8866,7 @@
                   "codigo_legacy": "CT-06-09-040",
                   "titulo": "Aplicación de hidrofugante incoloro en fachada.",
                   "unidad": "m²",
-                  "precio": 6.67,
+                  "precio": 6.37,
                   "horas": 0.33,
                   "producto_cliente": false
                 },
@@ -8857,7 +8875,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada con proyección de arena.",
                   "unidad": "m2",
-                  "precio": 4.08,
+                  "precio": 3.79,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -8866,7 +8884,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada con cepillado en seco.",
                   "unidad": "m2",
-                  "precio": 2.55,
+                  "precio": 2.32,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -8875,7 +8893,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada con hidrolavado a presión.",
                   "unidad": "m2",
-                  "precio": 3.32,
+                  "precio": 3.04,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -8884,7 +8902,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tratamiento fungicida de fachada.",
                   "unidad": "m2",
-                  "precio": 3.79,
+                  "precio": 3.56,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -8893,7 +8911,7 @@
                   "codigo_legacy": "",
                   "titulo": "Eliminación de grafitis en fachada.",
                   "unidad": "m2",
-                  "precio": 7.87,
+                  "precio": 7.64,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -8902,7 +8920,7 @@
                   "codigo_legacy": "",
                   "titulo": "Eliminación de eflorescencias en fachada.",
                   "unidad": "m2",
-                  "precio": 6.08,
+                  "precio": 5.85,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -8911,7 +8929,7 @@
                   "codigo_legacy": "",
                   "titulo": "Reparación de fisuras en fachada.",
                   "unidad": "m2",
-                  "precio": 4.54,
+                  "precio": 4.41,
                   "horas": 0.35,
                   "producto_cliente": false
                 },
@@ -8929,7 +8947,7 @@
                   "codigo_legacy": "",
                   "titulo": "Restauración de revestimiento de fachada.",
                   "unidad": "m2",
-                  "precio": 9.83,
+                  "precio": 9.64,
                   "horas": 1.0,
                   "producto_cliente": false
                 },
@@ -8938,7 +8956,7 @@
                   "codigo_legacy": "",
                   "titulo": "Aplicación de hidrofugante en fachada.",
                   "unidad": "m2",
-                  "precio": 3.81,
+                  "precio": 3.58,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -8947,7 +8965,7 @@
                   "codigo_legacy": "",
                   "titulo": "Protección anti-graffiti de fachada.",
                   "unidad": "m2",
-                  "precio": 5.78,
+                  "precio": 5.55,
                   "horas": 0.36,
                   "producto_cliente": false
                 },
@@ -8956,7 +8974,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza química de fachada de piedra.",
                   "unidad": "m2",
-                  "precio": 7.84,
+                  "precio": 7.56,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -8965,7 +8983,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada de ladrillo visto.",
                   "unidad": "m2",
-                  "precio": 6.17,
+                  "precio": 5.87,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -8983,7 +9001,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tratamiento de humedad en fachada.",
                   "unidad": "m2",
-                  "precio": 4.74,
+                  "precio": 4.51,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -9001,7 +9019,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada con agua a baja presión.",
                   "unidad": "m2",
-                  "precio": 2.86,
+                  "precio": 2.58,
                   "horas": 0.36,
                   "producto_cliente": false
                 },
@@ -9010,7 +9028,7 @@
                   "codigo_legacy": "",
                   "titulo": "Restauración de moldura de fachada.",
                   "unidad": "m2",
-                  "precio": 12.07,
+                  "precio": 11.91,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -9019,7 +9037,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tratamiento anticarbónico de fachada.",
                   "unidad": "m2",
-                  "precio": 4.05,
+                  "precio": 3.82,
                   "horas": 0.3,
                   "producto_cliente": false
                 }
@@ -9030,7 +9048,7 @@
           "n": 23
         }
       ],
-      "n": 180
+      "n": 182
     },
     {
       "codigo": "07",
@@ -11380,7 +11398,7 @@
                   "codigo_legacy": "",
                   "titulo": "Remate de junta de fachada.",
                   "unidad": "m",
-                  "precio": 17.06,
+                  "precio": 16.93,
                   "horas": 0.23,
                   "producto_cliente": false
                 }
@@ -12881,7 +12899,7 @@
                   "codigo_legacy": "CT-13-01-020",
                   "titulo": "Canalización eléctrica en cielo raso o superficie.",
                   "unidad": "m",
-                  "precio": 6.8,
+                  "precio": 6.71,
                   "horas": 0.26,
                   "producto_cliente": false
                 },
@@ -13087,7 +13105,7 @@
                   "codigo_legacy": "CT-13-04-010",
                   "titulo": "Instalación de luminaria empotrada en cielo raso.",
                   "unidad": "ud",
-                  "precio": 4.74,
+                  "precio": 4.56,
                   "horas": 0.42,
                   "producto_cliente": true
                 },
@@ -13096,7 +13114,7 @@
                   "codigo_legacy": "CT-13-04-020",
                   "titulo": "Instalación de luminaria de sobreponer o colgante.",
                   "unidad": "ud",
-                  "precio": 5.64,
+                  "precio": 5.45,
                   "horas": 0.51,
                   "producto_cliente": true
                 },
@@ -13105,7 +13123,7 @@
                   "codigo_legacy": "CT-13-04-030",
                   "titulo": "Iluminación lineal con cinta LED.",
                   "unidad": "m",
-                  "precio": 12.35,
+                  "precio": 12.23,
                   "horas": 0.32,
                   "producto_cliente": false
                 },
@@ -13114,7 +13132,7 @@
                   "codigo_legacy": "CT-13-04-040",
                   "titulo": "Instalación de reflector o luminaria de exterior.",
                   "unidad": "ud",
-                  "precio": 11.57,
+                  "precio": 11.34,
                   "horas": 0.74,
                   "producto_cliente": true
                 },
@@ -13123,7 +13141,7 @@
                   "codigo_legacy": "CT-13-04-050",
                   "titulo": "Punto para ventilador de techo.",
                   "unidad": "ud",
-                  "precio": 46.51,
+                  "precio": 46.32,
                   "horas": 1.55,
                   "producto_cliente": false
                 },
@@ -14047,7 +14065,7 @@
                   "codigo_legacy": "CT-14-01-050",
                   "titulo": "Mantenimiento y limpieza de equipo de climatización.",
                   "unidad": "ud",
-                  "precio": 26.66,
+                  "precio": 26.42,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -14340,7 +14358,7 @@
                   "codigo_legacy": "CT-14-01-030",
                   "titulo": "Instalación de extractor o ventilador.",
                   "unidad": "ud",
-                  "precio": 41.39,
+                  "precio": 41.19,
                   "horas": 1.65,
                   "producto_cliente": true
                 },
@@ -14349,7 +14367,7 @@
                   "codigo_legacy": "CT-14-01-040",
                   "titulo": "Ducto de ventilación.",
                   "unidad": "m",
-                  "precio": 16.89,
+                  "precio": 16.75,
                   "horas": 0.47,
                   "producto_cliente": false
                 },
@@ -14971,7 +14989,7 @@
                   "codigo_legacy": "CT-14-03-020",
                   "titulo": "Instalación de detector de humo y alarma.",
                   "unidad": "ud",
-                  "precio": 43.34,
+                  "precio": 43.16,
                   "horas": 0.87,
                   "producto_cliente": false
                 },
@@ -15878,7 +15896,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pararrayos con dispositivo de cebado sobre mástil en cubierta.",
                   "unidad": "ud",
-                  "precio": 52.02,
+                  "precio": 51.23,
                   "horas": 4.5,
                   "producto_cliente": true
                 },
@@ -15896,7 +15914,7 @@
                   "codigo_legacy": "",
                   "titulo": "Malla captadora de cubierta para protección contra rayos.",
                   "unidad": "m2",
-                  "precio": 5.32,
+                  "precio": 5.16,
                   "horas": 0.23,
                   "producto_cliente": false
                 },
@@ -17369,7 +17387,7 @@
                   "codigo_legacy": "CT-10-04-030",
                   "titulo": "Aislamiento térmico reflectivo bajo cubierta.",
                   "unidad": "m²",
-                  "precio": 9.06,
+                  "precio": 8.82,
                   "horas": 0.36,
                   "producto_cliente": false
                 },
@@ -17405,7 +17423,7 @@
                   "codigo_legacy": "",
                   "titulo": "Aislamiento térmico de fachada por el exterior.",
                   "unidad": "m2",
-                  "precio": 20.83,
+                  "precio": 20.67,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -17701,7 +17719,7 @@
                   "codigo_legacy": "",
                   "titulo": "Impermeabilización de fundación con manto asfáltico.",
                   "unidad": "m2",
-                  "precio": 16.88,
+                  "precio": 16.78,
                   "horas": 0.72,
                   "producto_cliente": false
                 },
@@ -17726,7 +17744,7 @@
                   "codigo_legacy": "",
                   "titulo": "Impermeabilización de muro enterrado con manto.",
                   "unidad": "m2",
-                  "precio": 17.23,
+                  "precio": 17.13,
                   "horas": 0.77,
                   "producto_cliente": false
                 },
@@ -17830,7 +17848,7 @@
                   "codigo_legacy": "CT-10-01-010",
                   "titulo": "Impermeabilización de cubierta con manto asfáltico.",
                   "unidad": "m²",
-                  "precio": 16.88,
+                  "precio": 16.78,
                   "horas": 0.72,
                   "producto_cliente": false
                 },
@@ -17857,7 +17875,7 @@
                   "codigo_legacy": "",
                   "titulo": "Impermeabilización de cubierta con doble manto.",
                   "unidad": "m2",
-                  "precio": 27.76,
+                  "precio": 27.66,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -17875,7 +17893,7 @@
                   "codigo_legacy": "",
                   "titulo": "Impermeabilización de cubierta con protección de gravilla.",
                   "unidad": "m2",
-                  "precio": 18.05,
+                  "precio": 17.96,
                   "horas": 0.85,
                   "producto_cliente": false
                 },
@@ -18661,7 +18679,7 @@
                   "codigo_legacy": "",
                   "titulo": "Sellado de junta de dilatación en fachada.",
                   "unidad": "m",
-                  "precio": 17.37,
+                  "precio": 17.29,
                   "horas": 0.28,
                   "producto_cliente": false
                 },
@@ -18670,7 +18688,7 @@
                   "codigo_legacy": "",
                   "titulo": "Sellado de junta de dilatación en cubierta.",
                   "unidad": "m",
-                  "precio": 17.28,
+                  "precio": 17.2,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -18883,7 +18901,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pendientado de cubierta con mortero aligerado.",
                   "unidad": "m²",
-                  "precio": 14.69,
+                  "precio": 14.59,
                   "horas": 0.65,
                   "producto_cliente": false
                 },
@@ -18901,7 +18919,7 @@
                   "codigo_legacy": "",
                   "titulo": "Regularización de soporte de cubierta plana.",
                   "unidad": "m²",
-                  "precio": 6.17,
+                  "precio": 6.08,
                   "horas": 0.55,
                   "producto_cliente": false
                 },
@@ -19059,7 +19077,7 @@
                   "codigo_legacy": "",
                   "titulo": "Cubierta plana no transitable con membrana de PVC.",
                   "unidad": "m²",
-                  "precio": 22.73,
+                  "precio": 22.65,
                   "horas": 0.58,
                   "producto_cliente": false
                 },
@@ -19181,7 +19199,7 @@
                   "codigo_legacy": "CT-11-02-010",
                   "titulo": "Cubierta de teja criolla de arcilla.",
                   "unidad": "m²",
-                  "precio": 47.26,
+                  "precio": 46.66,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -19190,7 +19208,7 @@
                   "codigo_legacy": "CT-11-02-020",
                   "titulo": "Cubierta de teja asfáltica.",
                   "unidad": "m²",
-                  "precio": 42.3,
+                  "precio": 41.76,
                   "horas": 0.98,
                   "producto_cliente": false
                 },
@@ -19199,7 +19217,7 @@
                   "codigo_legacy": "CT-11-02-030",
                   "titulo": "Cumbrera y remates de cubierta de teja.",
                   "unidad": "m",
-                  "precio": 17.63,
+                  "precio": 17.39,
                   "horas": 0.54,
                   "producto_cliente": false
                 },
@@ -19321,7 +19339,7 @@
                   "codigo_legacy": "CT-11-03-010",
                   "titulo": "Cubierta de lámina metálica acanalada.",
                   "unidad": "m²",
-                  "precio": 27.57,
+                  "precio": 27.12,
                   "horas": 0.68,
                   "producto_cliente": false
                 },
@@ -19330,7 +19348,7 @@
                   "codigo_legacy": "CT-11-03-020",
                   "titulo": "Cubierta de panel sándwich aislado.",
                   "unidad": "m²",
-                  "precio": 47.24,
+                  "precio": 46.75,
                   "horas": 0.78,
                   "producto_cliente": false
                 },
@@ -19339,7 +19357,7 @@
                   "codigo_legacy": "CT-11-03-030",
                   "titulo": "Cubierta translúcida de policarbonato alveolar.",
                   "unidad": "m²",
-                  "precio": 39.58,
+                  "precio": 39.14,
                   "horas": 0.8,
                   "producto_cliente": false
                 },
@@ -19619,7 +19637,7 @@
                   "codigo_legacy": "CT-11-01-010",
                   "titulo": "Estructura metálica de techo.",
                   "unidad": "kg",
-                  "precio": 4.48,
+                  "precio": 4.43,
                   "horas": 0.106,
                   "producto_cliente": false
                 },
@@ -19628,7 +19646,7 @@
                   "codigo_legacy": "CT-11-01-020",
                   "titulo": "Estructura de madera de techo.",
                   "unidad": "m²",
-                  "precio": 56.0,
+                  "precio": 55.49,
                   "horas": 1.93,
                   "producto_cliente": false
                 },
@@ -19881,7 +19899,7 @@
                   "codigo_legacy": "CT-11-05-010",
                   "titulo": "Canal de recogida de aguas lluvias.",
                   "unidad": "m",
-                  "precio": 19.26,
+                  "precio": 18.91,
                   "horas": 0.54,
                   "producto_cliente": false
                 },
@@ -19890,7 +19908,7 @@
                   "codigo_legacy": "CT-11-05-020",
                   "titulo": "Bajante de aguas lluvias.",
                   "unidad": "m",
-                  "precio": 14.77,
+                  "precio": 14.46,
                   "horas": 0.47,
                   "producto_cliente": false
                 },
@@ -19908,7 +19926,7 @@
                   "codigo_legacy": "CT-11-05-040",
                   "titulo": "Alero y remate de borde de cubierta.",
                   "unidad": "m",
-                  "precio": 20.22,
+                  "precio": 19.91,
                   "horas": 0.64,
                   "producto_cliente": false
                 },
@@ -20195,7 +20213,7 @@
                   "codigo_legacy": "CT-16-01-020",
                   "titulo": "Preparación de paramento exterior para pintura.",
                   "unidad": "m²",
-                  "precio": 5.21,
+                  "precio": 4.9,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -20384,7 +20402,7 @@
                   "codigo_legacy": "",
                   "titulo": "Regularización de techo previo a cielo raso.",
                   "unidad": "m2",
-                  "precio": 16.94,
+                  "precio": 16.63,
                   "horas": 0.5,
                   "producto_cliente": false
                 },
@@ -20461,7 +20479,7 @@
                   "codigo_legacy": "CT-07-01-020",
                   "titulo": "Friso de mortero con hidrófugo en paramento exterior.",
                   "unidad": "m²",
-                  "precio": 15.0,
+                  "precio": 14.55,
                   "horas": 0.95,
                   "producto_cliente": false
                 },
@@ -20470,7 +20488,7 @@
                   "codigo_legacy": "CT-07-01-030",
                   "titulo": "Friso rústico texturado en fachada.",
                   "unidad": "m²",
-                  "precio": 14.47,
+                  "precio": 14.05,
                   "horas": 0.85,
                   "producto_cliente": false
                 },
@@ -20542,7 +20560,7 @@
                   "codigo_legacy": "",
                   "titulo": "Repello de paramento exterior con acabado liso.",
                   "unidad": "m2",
-                  "precio": 7.13,
+                  "precio": 6.97,
                   "horas": 0.62,
                   "producto_cliente": false
                 },
@@ -20551,7 +20569,7 @@
                   "codigo_legacy": "",
                   "titulo": "Friso con malla de refuerzo en fachada.",
                   "unidad": "m2",
-                  "precio": 9.25,
+                  "precio": 9.09,
                   "horas": 0.7,
                   "producto_cliente": false
                 },
@@ -20560,7 +20578,7 @@
                   "codigo_legacy": "",
                   "titulo": "Friso de mortero en techo.",
                   "unidad": "m2",
-                  "precio": 7.47,
+                  "precio": 7.16,
                   "horas": 0.7,
                   "producto_cliente": false
                 },
@@ -20657,7 +20675,7 @@
                   "codigo_legacy": "CT-07-02-040",
                   "titulo": "Moldura decorativa corrida de yeso.",
                   "unidad": "m",
-                  "precio": 7.95,
+                  "precio": 7.82,
                   "horas": 0.35,
                   "producto_cliente": false
                 },
@@ -20720,7 +20738,7 @@
                   "codigo_legacy": "",
                   "titulo": "Friso de yeso en techo.",
                   "unidad": "m2",
-                  "precio": 13.97,
+                  "precio": 13.66,
                   "horas": 0.63,
                   "producto_cliente": false
                 },
@@ -20779,7 +20797,7 @@
                   "codigo_legacy": "CT-07-03-030",
                   "titulo": "Enchapado cerámico en fachada o paramento exterior.",
                   "unidad": "m²",
-                  "precio": 18.72,
+                  "precio": 18.25,
                   "horas": 1.15,
                   "producto_cliente": true
                 },
@@ -20948,7 +20966,7 @@
                   "codigo_legacy": "CT-07-04-030",
                   "titulo": "Enchapado de piedra natural con anclaje mecánico.",
                   "unidad": "m²",
-                  "precio": 59.44,
+                  "precio": 58.91,
                   "horas": 1.75,
                   "producto_cliente": true
                 },
@@ -20993,7 +21011,7 @@
                   "codigo_legacy": "",
                   "titulo": "Enchapado de piedra con anclaje mecánico en fachada.",
                   "unidad": "m2",
-                  "precio": 28.09,
+                  "precio": 27.89,
                   "horas": 1.9,
                   "producto_cliente": false
                 },
@@ -21020,7 +21038,7 @@
                   "codigo_legacy": "",
                   "titulo": "Enchapado de piedra en fachada ventilada.",
                   "unidad": "m2",
-                  "precio": 28.0,
+                  "precio": 27.8,
                   "horas": 2.0,
                   "producto_cliente": false
                 },
@@ -22352,7 +22370,7 @@
                   "codigo_legacy": "CT-09-01-020",
                   "titulo": "Cielo raso de yeso laminado con placa resistente a la humedad.",
                   "unidad": "m²",
-                  "precio": 30.94,
+                  "precio": 30.71,
                   "horas": 1.03,
                   "producto_cliente": false
                 },
@@ -22361,7 +22379,7 @@
                   "codigo_legacy": "CT-09-01-030",
                   "titulo": "Cielo raso de yeso laminado con doble placa, acústico.",
                   "unidad": "m²",
-                  "precio": 42.86,
+                  "precio": 42.55,
                   "horas": 1.4,
                   "producto_cliente": false
                 },
@@ -22370,7 +22388,7 @@
                   "codigo_legacy": "CT-09-01-040",
                   "titulo": "Foso o cajón de cortina en cielo raso de yeso laminado.",
                   "unidad": "m",
-                  "precio": 24.14,
+                  "precio": 23.94,
                   "horas": 0.87,
                   "producto_cliente": false
                 },
@@ -22388,7 +22406,7 @@
                   "codigo_legacy": "CT-09-01-060",
                   "titulo": "Cielo raso de yeso laminado a doble nivel.",
                   "unidad": "m²",
-                  "precio": 36.41,
+                  "precio": 36.1,
                   "horas": 1.48,
                   "producto_cliente": false
                 },
@@ -22591,7 +22609,7 @@
                   "codigo_legacy": "CT-09-02-010",
                   "titulo": "Cielo raso desmontable de fibra mineral en retícula vista.",
                   "unidad": "m²",
-                  "precio": 31.48,
+                  "precio": 31.29,
                   "horas": 0.55,
                   "producto_cliente": false
                 },
@@ -22600,7 +22618,7 @@
                   "codigo_legacy": "CT-09-02-020",
                   "titulo": "Cielo raso desmontable de bandeja metálica.",
                   "unidad": "m²",
-                  "precio": 33.25,
+                  "precio": 33.02,
                   "horas": 0.7,
                   "producto_cliente": false
                 },
@@ -22679,7 +22697,7 @@
                   "codigo_legacy": "CT-09-03-010",
                   "titulo": "Cielo raso de láminas de PVC.",
                   "unidad": "m²",
-                  "precio": 38.39,
+                  "precio": 38.19,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -22688,7 +22706,7 @@
                   "codigo_legacy": "CT-09-03-020",
                   "titulo": "Cielo raso exterior en alero o porche.",
                   "unidad": "m²",
-                  "precio": 41.76,
+                  "precio": 41.46,
                   "horas": 0.72,
                   "producto_cliente": false
                 },
@@ -22722,7 +22740,7 @@
                   "codigo_legacy": "CT-09-04-010",
                   "titulo": "Cielo raso de machihembrado de madera.",
                   "unidad": "m²",
-                  "precio": 34.9,
+                  "precio": 34.61,
                   "horas": 0.82,
                   "producto_cliente": false
                 },
@@ -22774,7 +22792,7 @@
                   "codigo_legacy": "CT-09-05-010",
                   "titulo": "Moldura perimetral de remate en cielo raso.",
                   "unidad": "m",
-                  "precio": 7.74,
+                  "precio": 7.6,
                   "horas": 0.33,
                   "producto_cliente": false
                 },
@@ -22783,7 +22801,7 @@
                   "codigo_legacy": "CT-09-05-020",
                   "titulo": "Cornisa para iluminación indirecta en cielo raso.",
                   "unidad": "m",
-                  "precio": 14.04,
+                  "precio": 13.86,
                   "horas": 0.6,
                   "producto_cliente": false
                 },
@@ -22792,7 +22810,7 @@
                   "codigo_legacy": "CT-09-05-030",
                   "titulo": "Cortinero empotrado en cielo raso.",
                   "unidad": "m",
-                  "precio": 29.2,
+                  "precio": 29.04,
                   "horas": 0.72,
                   "producto_cliente": false
                 },
@@ -22887,7 +22905,7 @@
                   "codigo_legacy": "CT-16-02-030",
                   "titulo": "Pintura de cielo raso, dos manos.",
                   "unidad": "m²",
-                  "precio": 4.58,
+                  "precio": 4.37,
                   "horas": 0.32,
                   "producto_cliente": true
                 },
@@ -22995,7 +23013,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de techos altos con andamio.",
                   "unidad": "m2",
-                  "precio": 5.28,
+                  "precio": 4.81,
                   "horas": 0.39,
                   "producto_cliente": false
                 },
@@ -23144,7 +23162,7 @@
                   "codigo_legacy": "CT-16-03-010",
                   "titulo": "Pintura de caucho para exterior, dos manos.",
                   "unidad": "m²",
-                  "precio": 5.24,
+                  "precio": 4.87,
                   "horas": 0.37,
                   "producto_cliente": true
                 },
@@ -23153,7 +23171,7 @@
                   "codigo_legacy": "CT-16-03-020",
                   "titulo": "Pintura elastomérica impermeabilizante de fachada.",
                   "unidad": "m²",
-                  "precio": 12.39,
+                  "precio": 12.0,
                   "horas": 0.51,
                   "producto_cliente": false
                 },
@@ -23162,7 +23180,7 @@
                   "codigo_legacy": "CT-16-03-030",
                   "titulo": "Pintura sobre concreto visto o superficie mineral.",
                   "unidad": "m²",
-                  "precio": 7.64,
+                  "precio": 7.34,
                   "horas": 0.45,
                   "producto_cliente": false
                 },
@@ -23171,7 +23189,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de caucho exterior sobre friso nuevo, tres manos.",
                   "unidad": "m2",
-                  "precio": 6.35,
+                  "precio": 5.97,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -23180,7 +23198,7 @@
                   "codigo_legacy": "",
                   "titulo": "Repintado de fachada sobre pintura existente.",
                   "unidad": "m2",
-                  "precio": 4.81,
+                  "precio": 4.43,
                   "horas": 0.32,
                   "producto_cliente": false
                 },
@@ -23189,7 +23207,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con acabado satinado, dos manos.",
                   "unidad": "m2",
-                  "precio": 5.63,
+                  "precio": 5.27,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23198,7 +23216,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con acabado texturado.",
                   "unidad": "m2",
-                  "precio": 6.99,
+                  "precio": 6.63,
                   "horas": 0.45,
                   "producto_cliente": false
                 },
@@ -23207,7 +23225,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de muro de cerramiento o pared medianera.",
                   "unidad": "m2",
-                  "precio": 4.59,
+                  "precio": 4.23,
                   "horas": 0.32,
                   "producto_cliente": false
                 },
@@ -23216,7 +23234,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de cornisa, alero y remates de fachada.",
                   "unidad": "m2",
-                  "precio": 5.62,
+                  "precio": 5.25,
                   "horas": 0.45,
                   "producto_cliente": false
                 },
@@ -23225,7 +23243,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada sobre concreto visto.",
                   "unidad": "m2",
-                  "precio": 5.7,
+                  "precio": 5.33,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23234,7 +23252,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con hidrofugante previo.",
                   "unidad": "m2",
-                  "precio": 5.91,
+                  "precio": 5.55,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23252,7 +23270,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con puente de adherencia.",
                   "unidad": "m2",
-                  "precio": 7.6,
+                  "precio": 7.22,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -23261,7 +23279,7 @@
                   "codigo_legacy": "",
                   "titulo": "Tratamiento de salitre y pintura de muro exterior.",
                   "unidad": "m2",
-                  "precio": 7.09,
+                  "precio": 6.72,
                   "horas": 0.42,
                   "producto_cliente": false
                 },
@@ -23270,7 +23288,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada a dos colores.",
                   "unidad": "m2",
-                  "precio": 5.64,
+                  "precio": 5.28,
                   "horas": 0.44,
                   "producto_cliente": false
                 },
@@ -23288,7 +23306,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de cubierta o techo exterior.",
                   "unidad": "m2",
-                  "precio": 5.7,
+                  "precio": 5.33,
                   "horas": 0.4,
                   "producto_cliente": false
                 },
@@ -23297,7 +23315,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con acabado mate.",
                   "unidad": "m2",
-                  "precio": 5.31,
+                  "precio": 4.94,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23306,7 +23324,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con hidrolavado previo.",
                   "unidad": "m2",
-                  "precio": 4.97,
+                  "precio": 4.59,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23315,7 +23333,7 @@
                   "codigo_legacy": "",
                   "titulo": "Hidrofugación con siloxano de fachada.",
                   "unidad": "m2",
-                  "precio": 5.71,
+                  "precio": 5.55,
                   "horas": 0.26,
                   "producto_cliente": false
                 },
@@ -23324,7 +23342,7 @@
                   "codigo_legacy": "",
                   "titulo": "Protector anti-graffiti sobre fachada.",
                   "unidad": "m2",
-                  "precio": 5.75,
+                  "precio": 5.59,
                   "horas": 0.28,
                   "producto_cliente": false
                 },
@@ -23333,7 +23351,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de muro de contención exterior.",
                   "unidad": "m2",
-                  "precio": 5.31,
+                  "precio": 4.94,
                   "horas": 0.34,
                   "producto_cliente": false
                 },
@@ -23342,7 +23360,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada de bloque de concreto.",
                   "unidad": "m2",
-                  "precio": 5.91,
+                  "precio": 5.55,
                   "horas": 0.38,
                   "producto_cliente": false
                 },
@@ -23360,7 +23378,7 @@
                   "codigo_legacy": "",
                   "titulo": "Pintura de fachada con esquema de mantenimiento.",
                   "unidad": "m2",
-                  "precio": 4.83,
+                  "precio": 4.46,
                   "horas": 0.34,
                   "producto_cliente": false
                 }
@@ -23818,7 +23836,7 @@
                   "codigo_legacy": "",
                   "titulo": "Recubrimiento de fachada con mortero acrílico.",
                   "unidad": "m2",
-                  "precio": 17.21,
+                  "precio": 17.04,
                   "horas": 0.58,
                   "producto_cliente": false
                 },
@@ -23859,7 +23877,7 @@
                   "codigo_legacy": "",
                   "titulo": "Limpieza de fachada con hidrolavadora.",
                   "unidad": "m2",
-                  "precio": 2.43,
+                  "precio": 2.27,
                   "horas": 0.25,
                   "producto_cliente": false
                 },
@@ -23947,7 +23965,7 @@
                   "codigo_legacy": "",
                   "titulo": "Hidrofugación de fachada de piedra o ladrillo.",
                   "unidad": "m2",
-                  "precio": 5.6,
+                  "precio": 5.44,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -23983,7 +24001,7 @@
                   "codigo_legacy": "",
                   "titulo": "Hidrofugación de cubierta de teja.",
                   "unidad": "m2",
-                  "precio": 5.82,
+                  "precio": 5.7,
                   "horas": 0.3,
                   "producto_cliente": false
                 },
@@ -23992,7 +24010,7 @@
                   "codigo_legacy": "",
                   "titulo": "Protección anti-graffiti de fachada pintada.",
                   "unidad": "m2",
-                  "precio": 5.67,
+                  "precio": 5.51,
                   "horas": 0.28,
                   "producto_cliente": false
                 },
@@ -24001,7 +24019,7 @@
                   "codigo_legacy": "",
                   "titulo": "Hidrofugación de paramento de concreto.",
                   "unidad": "m2",
-                  "precio": 3.79,
+                  "precio": 3.67,
                   "horas": 0.26,
                   "producto_cliente": false
                 }
@@ -25749,7 +25767,7 @@
                 {
                   "codigo": "14.02.01.110",
                   "codigo_legacy": "",
-                  "titulo": "Peldaño de escalera exterior prefabricado.",
+                  "titulo": "Peldaño de escalera exterior prefabricado.",
                   "unidad": "ud",
                   "precio": 16.01,
                   "horas": 0.63,
@@ -28783,7 +28801,7 @@
                   "codigo_legacy": "",
                   "titulo": "Andamio con barandilla de protección.",
                   "unidad": "m²",
-                  "precio": 3.63,
+                  "precio": 3.31,
                   "horas": 0.48,
                   "producto_cliente": false
                 },
