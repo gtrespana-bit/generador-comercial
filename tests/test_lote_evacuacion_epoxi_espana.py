@@ -35,7 +35,9 @@ def test_fuentes_auditoria_y_matriz():
     assert sum(Decimal(r['importe_base']) / Decimal(r['cantidad_por_envase']) * Decimal(r['cantidad_por_recurso']) for r in tubo).quantize(Decimal('.01')) == Decimal('10.36')
     epoxi = next(r for r in fuentes if r['codigo_recurso'] == 'MT-EPOXI-ANCLA')
     assert epoxi['url_tecnica'] and 'aprox. 1 kg por litro' in epoxi['reserva']
-    assert not audit['MT-TUBO-ACERO']['precio_revisado']
+    # La convención de medida (7 de noviembre) sí le puso precio después.
+    assert (not audit['MT-TUBO-ACERO']['precio_revisado']
+            or 'Convención de medida' in audit['MT-TUBO-ACERO']['criterio_revisado'])
 
 
 def test_rechaza_componentes_invalidos_o_faltantes(monkeypatch, tmp_path):

@@ -45,7 +45,7 @@ def test_decisiones_sin_precio_independientes_y_trazables():
         if a['precio_revisado']:
             # El hueco se cerró después del barrido con una decisión posterior.
             assert adjudicacion[code]['decision'] != r['decision']
-            assert a['estado_auditoria'] == 'confirmado_referencia'
+            assert a['estado_auditoria'] in ('en_revision', 'confirmado_referencia')
             continue
         assert not a['precio_revisado'] and a['estado_auditoria'] == cierre.estado(r['codigo_recurso'], 'pendiente')
         assert r['fuente'].startswith('https://') and r['fuente'] in informe

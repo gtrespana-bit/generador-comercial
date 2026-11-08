@@ -2,6 +2,24 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Convención de medida para lo que no la fija — 7 de noviembre de 2026
+
+**18 precios nuevos, 621 usos.** Informe: [convenciones de medida](ESPANA_CONVENCIONES_MEDIDA_2026-11-07.md).
+
+- Política del titular: *si el recurso no fija medida, se usa la media de la práctica*
+  (bloque exterior 20-25, interior 15, caja 100×100, tornillo de placa 3,5×25…). Se escribe
+  la convención en el criterio y se busca la ficha del banco con esa medida exacta.
+- **Los 56 recursos sin medida tienen ya convención escrita**; 18 se han cerrado con ficha
+  del banco (621 usos) y 38 quedan `pendiente_cotizacion` **sin nada que decidir**: solo
+  falta buscar el precio.
+- Cambios que más pesan: `MT-ELE-CAJA` 1,253 → 1,02 (177 usos), `MT-TORN` 0,0342 → 0,03
+  (154), `MT-FORM-MADERA` 10,00 → 25,56 (73), `MT-CELOSIA` 29,62 → 106,31 (10, el precio
+  anterior era de PVC y el recurso dice aluminio).
+- Límite de la regla: la convención **no rebaja una exigencia física**. `MT-VIDRIO-TEMP`
+  pide 10 mm y el banco solo tiene 4 y 6: no se sustituye, se cita.
+- Impacto: 468 partidas, mediana −0,3 %, máximo +42 %, `espana_impacto_convenciones_2026-11-07.csv`.
+- Estado: 37 confirmados / 351 en revisión, **255 con precio revisado**, 133 sin precio.
+
 ## Maquinaria: modelo de compra y amortización, aplicado — 7 de noviembre de 2026
 
 **13 precios nuevos, 2.185 usos, 47–92 % por debajo del precio anterior.** Informe:

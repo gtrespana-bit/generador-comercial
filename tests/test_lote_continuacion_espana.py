@@ -28,7 +28,9 @@ def test_fuentes_matriz_y_auditoria_coinciden():
         assert matriz[codigo]['incluye_iva'] == ('por_verificar' if any(r['criterio_iva'] == 'IVA no confirmado' for r in filas) else 'no')
         assert matriz[codigo]['incluye_transporte'] == 'no_confirmado'
         assert all(r['url'] in audit[codigo]['fuente_observada'] for r in filas)
-    assert not audit['MT-ELE-CAJA']['precio_revisado']
+    # La convención de medida (7 de noviembre) sí le puso precio después.
+    assert (not audit['MT-ELE-CAJA']['precio_revisado']
+            or 'Convención de medida' in audit['MT-ELE-CAJA']['criterio_revisado'])
     gravilla = next(r for r in fuentes if r['codigo_recurso'] == 'MT-GRAVILLA')
     assert Decimal(gravilla['cantidad_por_recurso']) == Decimal('0.180') / Decimal('0.10')
     cunas = [r for r in fuentes if r['codigo_recurso'] == 'MT-CRU-NIV']

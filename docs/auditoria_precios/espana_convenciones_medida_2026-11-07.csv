@@ -1,0 +1,57 @@
+codigo_recurso;unidad;usos;especificacion_convencional;criterio_convencion;estado;codigo_fuente;descripcion_fuente;precio_fuente;motivo_pendiente
+MT-ELE-CAJA;ud;177;Caja de derivación/mecanismo de PVC, empotrada, 100x100 mm, con patilla;Medida más frecuente en instalación interior de vivienda (registro de mecanismo y caja de derivación son la misma familia al 100x100);adoptado_banco;P15GK010;Caja registro empotrar 100x100;1.02;
+MT-TORN;ud;154;Tornillo autotaladrante 3,5x25 mm para fijación de placa a perfil metálico;Es la fijación que el recurso describe (montaje de placas sobre estructura metálica). la alternativa de taco y tornillo es para fábrica, no para perfil;adoptado_banco;P04CA080;Tornillo fijación PYL a perfil metálico e 0,75-2,25 mm 3,5x25 mm;0.03;
+MT-FORM-MADERA;m2;73;Encofrado de madera en muros, con puntales y arriostramiento, amortizado por usos;El recurso ya dice «amortizado por número de usos»: la ficha del banco es exactamente ese concepto;adoptado_banco;P30IG040;Encofrado madera en muros;25.56;
+MQ-MART-NEUM;h;45;Martillo neumático de 11 kg con compresor de 2 m3/min, para demolición;Equipo tipo de demolición con aire comprimido en reforma. el banco solo tiene martillo en fondo (otra máquina);pendiente_cotizacion;;;;Modelo propio de maquinaria con precio de compra. falta cotizar martillo y compresor
+MQ-NIVEL-LASER;h;41;Nivel láser autonivelante de obra, alcance 20-30 m, con trípode;Equipo estándar de replanteo en obra de edificación;adoptado_banco;M11L040;Nivel Láser;1.00;
+MT-REGUL-GAS;ud;37;Regulador de presión doméstico de 1,5 m3/h con llave de corte;Instalación receptora de vivienda. el banco solo cotiza regulador industrial;pendiente_cotizacion;;;;El único regulador del banco (P19AC030, 118,50 EUR) es industrial y no es el artículo
+MT-SOPORTE-AC;ud;36;Soporte galvanizado en L para unidad exterior de hasta 7 kW, con anclajes;El recurso describe unidad condensadora de vivienda, no cubierta industrial;pendiente_cotizacion;;;;Sin ficha en el banco. requiere cotización de tienda
+MT-TUBO-ACERO;kg;36;Tubo estructural de acero rectangular de 2-3 mm para herrería;La herrería de rejas y barandas se ejecuta con tubo conformado rectangular;adoptado_banco;P03AT010;Acero en tubo rectangular;1.71;
+MT-VIDRIO-TEMP;m2;35;Vidrio templado de 10 mm con cantos pulidos y perforaciones (mampara);El recurso YA fija la medida: el hueco es del banco (solo 4 y 6 mm), y bajar a 6 mm incumpliría la resistencia exigible a una mampara;pendiente_cotizacion;;;;El banco no tiene templado de 10 mm. no se rebaja la medida por seguridad
+MQ-ROZAD;h;30;Rozadora eléctrica de doble disco de 125 mm, 1.400 W, con aspiración;Máquina estándar de rozas en tabique y muro. el banco no la tiene (sus rozadoras son de 30 t);pendiente_cotizacion;;;;Modelo propio de maquinaria con precio de compra
+MT-CABLE-COBRE-DESN;m;23;Conductor de cobre desnudo de 35 mm2;La sección viene fijada por el recurso y por la norma de pararrayos;adoptado_banco;P15EB010;Conductor cobre desnudo 35 mm2;7.22;
+MT-VIDRIO-6;m2;23;Vidrio flotado incoloro de 6 mm;Medida y tipo fijados por el recurso. el banco no publica vidrio flotado;pendiente_cotizacion;;;;Sin flotado en el banco. requiere cotización de cristalería
+MT-ACERO-INOX;kg;17;Acero inoxidable AISI 304 en perfil conformado (tubo para barandas);AISI 304 es el grado habitual en barandilla y pasamanos de interior. el 316 se reserva a ambiente agresivo;adoptado_banco;P39DBA020;Acero inoxidable austenítico en perfiles conformados;5.15;
+MT-PLO-LLAVE;ud;17;Llave de paso de esfera de 1/2 pulgada (PPR 20 mm);El diámetro 20 mm equivale a 1/2 pulgada en PPR: misma boca de instalación;adoptado_banco;P41V350;Llave de paso 1/2";6.69;
+MQ-PULIDORA;h;16;Pulidora/abrillantadora mecánica de piedra natural con aporte de agua;La ficha del banco es la máquina, no el consumible;adoptado_banco;M10HP010;Pulidora mecánica;4.69;
+MT-ARENA;m3;13;Arena de río 0/5 mm lavada;Árido de referencia para camas de asiento y relleno de zanja;adoptado_banco;P01AA030;Arena de río 0/5 mm;16.50;
+MT-EPOXI-PISO;kg;13;Resina epoxi bicomponente para piso continuo;El banco cotiza la resina base. el autonivelante se obtiene con la misma resina más árido;adoptado_banco;P01UA010;Resina epoxi;17.12;
+MT-CELOSIA;m2;10;Celosía fija de aluminio con su marco;El recurso dice aluminio: el precio anterior correspondía a PVC, no al material descrito;adoptado_banco;P12RC020;Celosía fija de aluminio;106.31;
+MT-AISL-REFLECT;m2;9;Manta reflectiva de doble burbuja con foil de aluminio, 5 mm;Producto único en el mercado español (no tiene medidas alternativas);pendiente_cotizacion;;;;Sin ficha en el banco. requiere cotización de tienda
+MQ-BOMBA-ACHI;h;7;Bomba sumergible de achique de 1,1 kW con manguera de descarga;Potencia típica para agotamiento de excavación de edificación;adoptado_banco;M01DS010;Bomba sumergible el.ag.lim.1,1 kW;2.32;
+MT-SUBESTRUCTURA;m2;7;Subestructura de aluminio extruido para fachada ventilada, sistema de cuelgue;El banco cotiza sistemas completos (68-96 EUR/m2) que incluyen el panel. el recurso es solo la subestructura;pendiente_cotizacion;;;;La ficha del banco mezcla subestructura y panel
+MT-BARANDA-PROV;m;6;Barandilla provisional de protección de huecos, montaje y desmontaje;Recurso de seguridad y salud: se mide por metro y se amortiza por obra;adoptado_banco;P31CB310;Barandilla protección huecos. Montaje y desmontaje;6.68;
+MT-BOTIQUIN;ud;6;Botiquín portátil de obra, dotado, con reposición;El banco distingue botiquín de urgencias de botiquín de obra: el recurso es el de obra;adoptado_banco;P31BM160;Botiquín portátil de obra;40.32;
+MT-BARRA-APOYO;ud;5;Barra de apoyo de acero inoxidable de 40 cm para baño adaptado;Medida normalizada de accesibilidad en vivienda;pendiente_cotizacion;;;;Sin ficha en el banco. requiere cotización
+MT-BARRA-TIERRA;ud;5;Pica de tierra de 2 m de cobre de 14,3 mm con conector y caja de inspección;La pica del banco (P15EA010, 15,03) no incluye conector ni caja, que el recurso sí pide;pendiente_cotizacion;;;;La ficha del banco no cubre conector y caja de inspección
+MT-BLQ-ARC-15;ud;5;Bloque hueco de arcilla 15x20x30 cm;El recurso ya fija la medida: tabique interior de 15 cm;pendiente_cotizacion;;;;Especificación fijada. falta ficha del banco con esa medida
+MT-BLQ-EST-15;ud;5;Bloque de concreto estructural 15x20x40 cm;El recurso ya fija la medida: muro de carga de 15 cm;pendiente_cotizacion;;;;Especificación fijada. falta ficha del banco con esa medida
+MT-LLAVE-PROV;ud;5;Llave de paso de 1/2 con adaptadores para punto de agua provisional;Instalación provisional de obra;pendiente_cotizacion;;;;Compuesto de varios artículos. requiere desglose
+MT-MADERA-ENTIB;m2;5;Tablón de 20 cm y puntal de madera para entibado de zanja, amortizado;Entibado ligero de zanja de instalaciones;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-PLACA-FACHADA;m2;5;Panel composite de aluminio de 4 mm para fachada ventilada;Acabado más frecuente en fachada ventilada de reforma;pendiente_cotizacion;;;;Sin ficha en el banco. requiere cotización
+MT-RED-SEG;m2;5;Red de seguridad de poliamida 7x7 D=3 mm, con cuerdas de atado;Red horizontal de uso habitual en obra de edificación;adoptado_banco;P31CR030;Red seguridad poliamida 7x7 D=3;1.91;
+MT-CIELO-PVC;m2;4;Lámina de PVC machihembrada de 0,92 mm con perfiles de remate;Solución habitual en cielo raso de reforma;pendiente_cotizacion;;;;El banco solo tiene revestimiento mural de PVC
+MT-DISOL-ADH;l;4;Disolvente removedor de adhesivos de base disolvente;Producto único;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-ESTUCO-VEN;kg;4;Estuco veneciano a la cal, acabado pulido;Acabado decorativo de referencia;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-GROUT-CELDA;m3;4;Concreto fluido de relleno de celdas, resistencia 20 N/mm2;Relleno de celdas de mampostería estructural;pendiente_cotizacion;;;;El banco cotiza hormigón en central, no el fluido de relleno
+MT-PERSIANA-ALU;m2;4;Persiana enrollable de lamas de aluminio de 40 mm con cajón;El recurso dice aluminio: el banco solo tiene PVC y madera;pendiente_cotizacion;;;;El banco no tiene persiana de aluminio
+MT-RESINA-ACRIL;kg;4;Resina acrílica para revestimiento continuo decorativo;Producto único;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-TOLDO;m2;4;Toldo extensible de lona acrílica con brazos, hasta 4 m de salida;El toldo eléctrico del banco (225,87 EUR/m2) es otro producto;pendiente_cotizacion;;;;La ficha del banco es toldo eléctrico de gran formato
+MQ-LIJAD-PISO;h;3;Lijadora de banda de 200 mm con orilladora y aspiración;Máquina estándar de lijado de parquet;pendiente_cotizacion;;;;Modelo propio de maquinaria con precio de compra
+MT-ADOQUIN;m2;3;Adoquín rectangular de hormigón 20x10x8 cm gris;El más frecuente en pavimento exterior de vivienda;adoptado_banco;P08CA010;Adoquín rectangular hormigón gris 20x10x8 cm;12.71;
+MT-BLQ-ARC-10;ud;3;Bloque hueco de arcilla 10x20x30 cm;El recurso ya fija la medida: tabique de 10 cm;pendiente_cotizacion;;;;Especificación fijada. falta ficha del banco con esa medida
+MT-BLQ-EST-20;ud;3;Bloque de concreto estructural 20x20x40 cm;El recurso ya fija la medida: muro de carga de 20 cm;pendiente_cotizacion;;;;Especificación fijada. falta ficha del banco con esa medida
+MT-CINTA-LED;m;3;Cinta LED de 24 V y 300 lm/m con perfil disipador;Tira de interior. el banco cotiza tiras profesionales IP66 DALI de 32-58 EUR/m, otro producto;pendiente_cotizacion;;;;La ficha del banco es gama profesional DALI
+MT-PIN-IGNFUGA;l;3;Pintura intumescente para protección de estructura metálica;Producto único en el banco;adoptado_banco;P24PF020;Pintura intumescente;9.89;
+MT-PANEL-LIV;m2;2;Panel prefabricado de núcleo aligerado con caras de mortero, 100 mm;Tabique industrializado de referencia;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-TIMBRE;ud;2;Timbre de 8-12 V con pulsador y transformador;Dotación mínima de vivienda;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-PIN-CAL;kg;1;Cal hidratada para pintura mineral de interiores;Producto único;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-SOPORTE-ANTIVIB;ud;1;Soporte antivibratorio de neopreno para bomba o compresor;Elemento normalizado;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-VIDRIO-DECOR;m2;1;Vidrio lacado de 6 mm para revestimiento de pared;Acabado decorativo;pendiente_cotizacion;;;;Sin ficha en el banco
+MT-BATERIA;ud;0;Batería de ciclo profundo de 12 V y 100 Ah;Elemento normalizado de respaldo;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-CAMARA-CCTV;ud;0;Cámara IP domo de 4 MP con infrarrojos;Equipo estándar de videovigilancia de vivienda;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-DOM-CENTRAL;ud;0;Central domótica KNX o Zigbee para 32 dispositivos;Sistema de referencia en vivienda;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-DOM-PASARELA;ud;0;Pasarela multiprotocolo Zigbee/Z-Wave/WiFi;Elemento de integración;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-DOM-SENSOR-TEMP;ud;0;Sensor de temperatura y humedad ambiente con comunicación Zigbee;Elemento de referencia;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-DPS-DATOS;ud;0;Protector de sobretensiones para línea de datos, categoría D;Elemento normalizado;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual
+MT-PLANTA-ELEC;ud;0;Grupo electrógeno diésel de 20 kVA con tablero de arranque automático;Potencia típica de respaldo de vivienda unifamiliar;pendiente_cotizacion;;;;Sin ficha en el banco. sin uso actual

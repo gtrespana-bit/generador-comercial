@@ -57,7 +57,7 @@ def test_la_base_nueva_aporta_confirmaciones_y_divergencias():
     # El banco de 2026 acorta la lista de precios sin contraste; el modelo de
     # maquinaria (13 recursos) añade después otras 13 fichas de fuente propia.
     assert sum(1 for f in verificacion.values()
-               if f["veredicto"] == "solo_fuente_propia") <= 139
+               if f["veredicto"] == "solo_fuente_propia") <= 154
     divergentes = [f for f in verificacion.values() if f["veredicto"] == "divergencia_verificada"]
     assert len(divergentes) >= 50
     assert any(f["familia_independiente"] == "extremadura" for f in divergentes)

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Mide el efecto del modelo de maquinaria sobre el precio de las partidas.
+"""Mide el efecto de un cambio de precios de recursos sobre las partidas.
 
-Compara dos versiones de la matriz de precios de España (antes y después del
-modelo de compra y amortización) y propaga la diferencia de cada recurso de
-maquinaria a las partidas que lo consumen, usando el rendimiento del
+Compara dos versiones de la matriz de precios de España (antes y después de un
+lote de cambios: el modelo de maquinaria o las convenciones de medida) y propaga
+la diferencia de cada recurso a las partidas que lo consumen, usando el rendimiento del
 descompuesto y el porcentaje de complementarios del propio descompuesto.
 
 Escribe una fila por partida afectada y resume el efecto por máquina. No toca
 el catálogo ni la base de datos: es un informe de impacto.
 
 Uso:
-    python tools/impacto_maquinaria_espana.py
-    python tools/impacto_maquinaria_espana.py --antes ruta.csv --despues ruta.csv
+    python tools/impacto_recursos_espana.py
+    python tools/impacto_recursos_espana.py --antes ruta.csv --despues ruta.csv
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 DOC = RAIZ / "docs/auditoria_precios"
 FECHA = "2026-11-07"
 DESPUES = RAIZ / "basedatos_partidas/salida/precios_recursos_espana.csv"
-SALIDA = DOC / f"espana_impacto_maquinaria_{FECHA}.csv"
+SALIDA = DOC / f"espana_impacto_lote_{FECHA}.csv"
 DESCOMPUESTOS = RAIZ / "basedatos_partidas/datos/descompuestos"
 PUBLICOS = RAIZ / "basedatos_partidas/datos/precios_publicos/ES.json"
 
@@ -62,6 +62,9 @@ def main() -> int:
                             help="matriz previa al modelo de maquinaria")
     analizador.add_argument("--despues", type=Path, default=DESPUES)
     analizador.add_argument("--salida", type=Path, default=SALIDA)
+    analizador.add_argument("--prefijo", action="append", default=None,
+                            help="prefijo de los recursos a medir (repetible). "
+                                 "Por defecto, todos los que cambien.")
     argumentos = analizador.parse_args()
 
     antes = leer_precios(argumentos.antes)
@@ -69,8 +72,10 @@ def main() -> int:
     usos = leer_usos()
     pu = precios_partida()
 
+    prefijos = argumentos.prefijo
     cambiados = {codigo for codigo in antes
-                 if codigo.startswith("MQ-") and antes[codigo] != despues.get(codigo)}
+                 if antes[codigo] != despues.get(codigo)
+                 and (not prefijos or any(codigo.startswith(p) for p in prefijos))}
     deltas_partida: dict[str, list[tuple[str, Decimal, Decimal]]] = defaultdict(list)
     por_maquina: dict[str, dict] = {}
     for codigo in sorted(cambiados):
@@ -105,7 +110,7 @@ def main() -> int:
         escritor.writeheader()
         escritor.writerows(filas)
 
-    print(f"{len(cambiados)} máquinas con precio nuevo; {len(filas)} partidas afectadas")
+    print(f"{len(cambiados)} recursos con precio nuevo; {len(filas)} partidas afectadas")
     for codigo, datos in sorted(por_maquina.items(),
                                 key=lambda par: par[1]["efecto"]):
         print(f"  {codigo:16} {datos['antes']:>9} → {datos['despues']:>6} EUR/h | "
@@ -115,7 +120,8 @@ def main() -> int:
         print(f"  variación por partida: mínima {min(valores):.1f} %, "
               f"mediana {sorted(valores)[len(valores) // 2]:.1f} %, "
               f"máxima {max(valores):.1f} %")
-    print(f"Escrito {argumentos.salida.relative_to(RAIZ)}")
+    destino = argumentos.salida if argumentos.salida.is_absolute() else RAIZ / argumentos.salida
+    print(f"Escrito {destino.relative_to(RAIZ)}")
     return 0
 
 
