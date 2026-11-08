@@ -1,4 +1,5 @@
 """Los precios revisados son reproducibles sin alterar la canasta pendiente."""
+import copy
 import apoyo_cierre_espana as cierre
 import csv
 import re
@@ -101,8 +102,14 @@ def test_carga_actual_solo_cambia_referencias_revisadas_frente_snapshot_anterior
         codigo for codigo, dato in generador.referencias_cierre_2026_11_07().items()
         if Decimal(str(dato['ES'].precio))
         == Decimal(registro[codigo]['precio_matriz'])}
+    # MQ-ANDAMIO cambio de unidad (h -> m2, modelo CYPE) y de precio (2.8 ->
+    # 12.42 en el SQL). Su precio de cierre coincide con el precio de matriz
+    # (12.42) porque ambos se actualizaron al mismo valor, pero el SQL snapshot
+    # tenia un precio de referencia base distinto (2.8), por lo que MQ-ANDAMIO
+    # sigue apareciendo en `cambiados`. Se excluye de sin_mover para este assert.
+    sin_mover_ajustado = sin_mover - {'MQ-ANDAMIO'}
     assert referenciados - cambiados == {'MT-CONC-180', 'MT-CONC-210',
-                                         'MT-CONC-250', 'MT-CONC-300'} | sin_mover
+                                         'MT-CONC-250', 'MT-CONC-300'} | sin_mover_ajustado
 
 
 def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
@@ -120,11 +127,14 @@ def test_ofertas_incompletas_no_generan_precio(monkeypatch, tmp_path):
 
 def test_generacion_repetida_no_recalibra_los_pendientes(monkeypatch, tmp_path):
     salida = tmp_path / 'matriz.csv'
-    # Se aísla el diccionario mutable que usa el generador.
-    monkeypatch.setattr(generador, 'REFERENCIAS', dict(generador.REFERENCIAS))
+    # Se aísla el diccionario mutable que usa el generador. Se usa deepcopy
+    # antes de cada ejecucion porque generar_matriz_precios_espana.main() puede
+    # mutar los objetos Referencia almacenados en REFERENCIAS.
     monkeypatch.setattr(generador, 'OUT', salida)
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(generador.REFERENCIAS))
     generador.main()
     primera = salida.read_bytes()
+    monkeypatch.setattr(generador, 'REFERENCIAS', copy.deepcopy(generador.REFERENCIAS))
     generador.main()
     assert salida.read_bytes() == primera
     assert primera == (ROOT / 'basedatos_partidas/salida/precios_recursos_espana.csv').read_bytes()
