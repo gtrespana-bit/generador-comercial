@@ -186,7 +186,7 @@ UPDATE public.precios_recursos_mercado
     codigos = ", ".join(_sql_texto(f["codigo_recurso"].strip())
                         for f in sorted(decisiones, key=lambda f: f["codigo_recurso"].strip()))
     sql = f"""-- CotizaT — cotizaciones reales de España ({FECHA}).
--- Cubre todas las decisiones cerradas en el registro de esa fecha (lotes 1 y 2);
+-- Cubre todas las decisiones cerradas en el registro de esa fecha (todos los lotes);
 -- repetir los UPDATE de un lote ya cargado es idempotente.
 -- Generado por tools/aplicar_cotizaciones_espana.py desde
 -- docs/auditoria_precios/espana_decision_cotizaciones_{FECHA}.csv y la matriz
