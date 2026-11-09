@@ -9,6 +9,13 @@
 
 **Esto no declara los países «SEO completo v1»:** despliegue, GSC/SERP, revisión profesional, PDFs locales, distribución y medición siguen pendientes. La implementación por lote adelanta la parte técnica/editorial; no simula haber ejecutado la investigación ni las seis semanas de cada país. Las secciones de auditoría y planificación originales que siguen son la fotografía previa a esta ampliación.
 
+**Actualización de foco (09/11/2026):** decisión del titular reordenando el esfuerzo de adquisición, que **no cambia el contenido ya publicado** (la guía de Venezuela sigue viva e indexable) sino dónde se invierten las horas:
+
+- **Los cinco mercados anglófonos (US, GB, AU, IE, CA) pasan a prioridad 1** para todo el esfuerzo de comunidad y distribución: son los que tienen el paquete de contenido completo y el catálogo de precios anunciado, y el 47 % del tráfico de Quora es de EE. UU.
+- **Venezuela sale del plan de adquisición**: 0 cuentas y 0 pagos en producción (`docs/EMBUDO_41_CUENTAS_4_PAGOS_2026-11-02.md`). No se elimina ni se despublica nada; simplemente no se le destina tiempo nuevo.
+- **Los mercados que pagan (EC, CR, DO) no son los que traen tráfico.** Se usa el canal correcto para ellos (grupos de Facebook, WhatsApp, foros), no el catálogo SEO.
+- El plan operativo de esta línea está en `docs/ESTRATEGIA_QUORA_2026-11-09.md`.
+
 ## 1. Respuesta corta
 
 Sí: para mejorar el SEO de forma sustancial hay que trabajar **un país cada vez**. Una landing con moneda, impuesto y vocabulario local es necesaria, pero no basta. Para que Google y una empresa local perciban autoridad, cada mercado necesita:

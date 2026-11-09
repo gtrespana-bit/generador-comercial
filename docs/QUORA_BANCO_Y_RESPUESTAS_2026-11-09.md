@@ -1,38 +1,44 @@
-# Banco de preguntas y respuestas para Quora — 2026-11-09
+# Banco de preguntas y respuestas para Quora — 2026-11-09 (inglés primero)
 
 Material operativo que acompaña a `docs/ESTRATEGIA_QUORA_2026-11-09.md`.
 
-Contenido de este archivo:
-
-1. **§1 — 20 preguntas candidatas**, con tipo (responder a un hilo existente /
-   pregunta propia), mercado, URL de destino y el ángulo de la respuesta.
-2. **§2 — 3 respuestas listas para publicar** (texto completo, solo hay que
-   sustituir los datos marcados y verificar el enlace).
-3. **§3 — 1 pregunta propia modelo** con su respuesta completa (la versión
-   legítima de "preguntar y publicitar").
+1. **§1 — 20 preguntas candidatas**: tipo (responder a un hilo existente /
+   pregunta propia), idioma, mercado, URL de destino y ángulo de la respuesta.
+2. **§2 — 4 respuestas listas para publicar** (3 en inglés, 1 en español), con
+   las cifras reales de la biblioteca de precios del repo.
+3. **§3 — 1 pregunta propia modelo** (en inglés) con su respuesta completa.
 4. **§4 — Checklist de publicación** (10 puntos, 30 segundos).
 5. **§5 — Plantilla de registro semanal.**
 
 ---
 
-## 0. Dos convenciones antes de empezar
+## 0. Tres convenciones antes de empezar
 
 **Tipo.** `R` = responder a una pregunta que **ya existe** en Quora (siempre
 preferencia). `P` = pregunta propia (solo si cumple las cinco condiciones de
 §5 de la estrategia).
 
-**Cifras.** Ninguna respuesta se publica con un número inventado. Los huecos
-se marcan así:
+**Idioma y mercado.** El hilo manda: si el hilo está en inglés, la respuesta
+es en inglés y el enlace apunta al mercado anglófono (`/en-us/…`, `/en-gb/…`,
+`/en-au/…`, `/en-ie/…`); si está en español, al mercado hispano (`/mx/…`,
+`/co/…`). **Nunca** se responde en un idioma a un hilo del otro, y nunca se
+enlaza a un mercado distinto del que pregunta.
+
+**Cifras.** Las cifras de este documento salen de la biblioteca de precios del
+propio repositorio (`basedatos_partidas/salida/precios_recursos_*.csv` y los
+artículos de `app/seo_articulos_mercados_en.py` / `app/seo_reino_unido.py`),
+con su fuente y fecha. **Los precios envejecen**: antes de publicar hay que
+comprobar que la fecha sigue siendo reciente y, si hace falta,actualizarlos.
+Lo que no exista en la biblioteca va marcado así:
 
 ```
-[[DATO: precio unitario real del catálogo para chapter demo en VE]]
+[[DATO: precio unitario real del catálogo del mercado]]
 ```
 
-y se sustituyen por el dato que exista en el catálogo del mercado
-(`basedatos_partidas/`, `app/services/precios_publicos.py`) o por una fuente
-citada. Si el dato no existe, la frase se escribe sin cifra ("va en el orden
-de…") o no se publica. Una cifra inventada en un hilo público es el tipo de
-error que un contratista detecta en dos minutos y no perdona.
+y se sustituye por el dato de `basedatos_partidas/` o por una fuente citada.
+Si el dato no existe, la frase se escribe sin cifra ("va en el orden de…") o
+no se publica. Una cifra inventada en un hilo público es el tipo de error que
+un contratista detecta en dos minutos y no perdona.
 
 ---
 
@@ -41,180 +47,231 @@ error que un contratista detecta en dos minutos y no perdona.
 Ordenadas por prioridad de filtro: primero las que tienen más probabilidad de
 tener hilo con tráfico en Google, después las de intención de mercado.
 
+### 1.1 Nivel A — inglés (prioridad, 60 % del tiempo)
+
 | # | Pregunta (con palabras de cliente) | Tipo | Mercado | URL de destino | Ángulo de la respuesta |
 | --- | --- | --- | --- | --- | --- |
-| 1 | ¿Cuánto cuesta remodelar un baño en Venezuela? | R | VE | `/ve/guia/presupuesto-usd-bs-venezuela` | Rango por m² + qué partidas mueven el precio (demolición vs. directazo) |
-| 2 | ¿Cuánto cuesta un pañete por metro cuadrado en Colombia? | R | CO | `/co/guia/apu-panete-colombia` | Cálculo del APU paso a paso, no solo el precio final |
-| 3 | ¿Vale la pena un software de presupuestos o sigo con Excel? | R | multi | `/precios-comparados` | Comparación honesta: qué sigue siendo mejor en Excel |
-| 4 | ¿Cómo hago un presupuesto de obra en Perú? | R | PE | `/pe/guia/metrados-peru` | Metrados + APU + IGV separado del comprobante |
-| 5 | ¿Cuánto cobra un maestro de obra por metro cuadrado en México? | R | MX | `/mx/guia/cotizar-remodelacion-mexico` | Precio de mercado vs. precio de venta: el margen va en la cotización |
-| 6 | ¿Cómo se cotiza en dólares en Ecuador? | R | EC | `/ec/guia/apu-dolares-ecuador` | Dólares nativos + RUC + IVA 15 % |
-| 7 | ¿Qué es un análisis de precios unitarios (APU)? | R | genérico | `/guia/analisis-precios-unitarios` | Explicar el método con un ejemplo numérico simple |
-| 8 | ¿Cómo presento un presupuesto para que el cliente no lo rechace? | R | genérico | `/guia/presupuesto-de-obra` | Estructura del documento: capítulos, mediciones, totales, validez |
-| 9 | ¿Cuánto margen de ganancia se pone a una obra? | R | multi | `/precios-comparados` | Rangos por tipo de obra y por tamaño de empresa |
-| 10 | ¿Cómo cotizo una obra en billones cuando cambia la tasa cada día? | R | VE | `/ve/guia/presupuesto-usd-bs-venezuela` | Tasa congelada en el presupuesto y fecha de vencimiento |
-| 11 | ¿Conviene dar anticipo a una obra? ¿Cuánto? | R | multi | `/como-funciona` | Porcentajes habituales y cómo quedan por escrito en el PDF |
-| 12 | ¿Cómo mido las cantidades de una obra sin metrar a ojo? | R | genérico | `/pe/guia/metrados-peru` (o `/calculadora`) | Sistema de mediciones por zonas y sumas automáticas |
-| 13 | ¿Por qué mi Excel de presupuestos se rompe cuando meto muchas partidas? | R | genérico | `/guia/analisis-precios-unitarios` | Causas reales: referencias cruzadas, filas variables, copiado |
-| 14 | ¿Qué incluye el precio unitario de un item? | R | genérico | `/guia/analisis-precios-unitarios` | Material + mano de obra + maquinaria + gastos + utilidad |
-| 15 | ¿Se puede cotizar una obra sin visitar el sitio? | R | multi | `/como-funciona` | Qué sí y qué no; qué datos pedir por foto para cotizar a distancia |
-| 16 | ¿Qué es mejor: un presupuesto en spreadsheet o uno con capítulos? | R | multi | `/guia/presupuesto-de-obra` | Cuándo cada formato gana (obra grande vs. reforma) |
-| 17 | ¿Cuánto cobra un maestro de obra por hora en Venezuela? | R | VE | `/ve/guia/presupuesto-usd-bs-venezuela` | Tarifa por hora + carga social; el clásico error de olvidar la carga |
-| 18 | ¿Cómo calculo el consumo de materiales en un presupuesto? | R | genérico | `/calculadora` | Rendimientos por m² y desperdicio por partida |
-| 19 | ¿Vale la pena pedirle al cliente un 50 % de anticipo? | R | multi | `/como-funciona` | Cómo se documenta y qué se hace si no se paga |
-| 20 | ¿Cuánto cuesta una obra por metro cuadrado en Venezuela? | **P** | VE | `/ve/guia/presupuesto-usd-bs-venezuela` | Pregunta propia modelo (§3): rango real por tipo de obra |
+| 1 | How much does it cost to remodel a bathroom? | R | US | `/en-us/guia/construction-labor-cost-per-hour` | Wage vs. employer cost por hora; por qué dos empresas del mismo pueblo cotizan 4.000 $ de diferencia |
+| 2 | What hourly rate should I charge as a tradie? | R | AU | `/en-au/guia/tradie-hourly-rates-australia` | Award rate vs. employer cost; super, workers comp y las 1.600/1.980 horas |
+| 3 | How do I handle CIS deductions on my construction invoices? | R | GB | `/en-gb/guia/cis-deduction-subcontractors` | 20 % / 30 % / gross, y que la base es la mano de obra, no la factura |
+| 4 | When do I apply the VAT domestic reverse charge on construction? | R | GB | `/en-gb/guia/vat-domestic-reverse-charge-construction` | Desde el 01/03/2021, B2B reportado bajo CIS; la nota que debe ir en la factura |
+| 5 | What should a construction estimate include so the client doesn't dispute the final invoice? | **P** | US | `/en-us/guia/construction-estimate-template` | Pregunta propia modelo (§3) |
+| 6 | Do contractors charge sales tax on construction? | R | US | `/en-us/guia/sales-tax-on-construction-by-state` | Qué estados gravan la construcción y cómo se muestra en la cotización |
+| 7 | What does a builder cost per hour in Ireland? | R | IE | `/en-ie/guia/builder-rates-ireland` | Salario SEO vs. coste de empresa; el día a 190 € frente a 260-315 € |
+| 8 | Does a house quote in Ireland include VAT at 13.5 %? | R | IE | `/en-ie/guia/vat-on-construction-ireland` | La regla de los dos tercios y el RCT |
+| 9 | Do I need to charge GST on building work in Australia? | R | AU | `/en-au/guia/gst-on-building-work-australia` | Umbral de registro y la retención del 47 % sin ABN |
+| 10 | How do I build a rate per square metre for a job? | R | GB | `/en-gb/guia/unit-price-analysis-uk` | "Un precio por m² es una decisión, no un precio": materiales, mano de obra, maquinaria |
+| 11 | What should a building quote include in Australia? | R | AU | `/en-au/guia/building-quote-template-australia` | ABN, licencia y GST en el documento |
+| 12 | Is it worth using estimating software instead of Excel? | R | multi EN | `/en/prices-comparison` | Comparación honesta: cuándo Excel sigue ganando |
+
+### 1.2 Nivel B — español (40 % del tiempo)
+
+| # | Pregunta (con palabras de cliente) | Tipo | Mercado | URL de destino | Ángulo de la respuesta |
+| --- | --- | --- | --- | --- | --- |
+| 13 | ¿Cuánto cuesta remodelar un baño en México? | R | MX | `/mx/guia/cotizar-remodelacion-mexico` | De la visita a la cotización: qué se mide y qué se escribe |
+| 14 | ¿Cómo armo un APU de pañete en Colombia? | R | CO | `/co/guia/apu-panete-colombia` | Material + oficial y ayudante + rendimiento; el oficial de 1ª a 19.937 COP/h de coste de empresa |
+| 15 | ¿Cómo metrado una obra en Perú? | R | PE | `/pe/guia/metrados-peru` | Medir por zonas y IGV aparte del comprobante |
+| 16 | ¿Conviene cotizar en dólares o en soles en Ecuador? | R | EC | `/ec/guia/apu-dolares-ecuador` | Dólares nativos, RUC e IVA 15 % |
+| 17 | ¿Qué es un análisis de precios unitarios? | R | genérico | `/guia/analisis-precios-unitarios` | El método con un ejemplo numérico simple |
+| 18 | ¿Cómo hago un presupuesto de obra que el cliente no rechace? | R | genérico | `/guia/presupuesto-de-obra` | Estructura del documento: capítulos, mediciones, totales, validez |
+| 19 | ¿Cuánto margen de ganancia se pone a una obra? | R | multi | `/precios-comparados` | Rangos por tipo de obra y por tamaño de empresa |
+| 20 | ¿Cómo cotizo una obra en México con IVA y anticipo? | R | MX | `/mx/guia/cotizar-remodelacion-mexico` | Qué se cobra por adelantado y cómo queda por escrito |
 
 **Cómo se usa la tabla.** Las 19 primeras son candidatas a **hilo existente**:
 antes de escribir, se busca el texto en Google. Si el hilo de Quora aparece en
 el top 5, se responde; si no aparece y el hilo tiene menos de 1.000 visitas,
-se pasa a la siguiente. La nº 20 es la única pregunta propia, y va la última
-a propósito: primero se responde, luego se pregunta.
+se pasa a la siguiente. La nº 5 es la única pregunta propia, y va la última a
+propósito: primero se responde, luego se pregunta.
 
 ---
 
-## 2. Tres respuestas listas para publicar
+## 2. Cuatro respuestas listas para publicar
 
-### 2.1 Respuesta A — para el hilo «¿Cuánto cuesta remodelar un baño en Venezuela?»
+### 2.1 Respuesta A (EN · US) — para el hilo «How much does it cost to remodel a bathroom?»
 
-> **Texto para pegar (sin el bloque de código):**
+> **Texto para pegar:**
 >
-> Si te dan un precio cerrado sin haber visto el sitio, ese precio es una
-> estimación, no un presupuesto. En Venezuela hay además una variable que no
-> existe en otros países: la tasa se mueve entre que mides y entre que cobran.
+> The number everyone quotes is the wrong number. A bathroom remodel is priced
+> on **hours of labour**, and most people price those hours with a wage when
+> they should be pricing them with an employer cost.
 >
-> El orden de magnitud, para un baño completo de unos 4-5 m², con acabados
-> medios (piso, revestimiento, pintura, muebles existentes que se reutilizan y
-> una lámpara), es de [[DATO: rango VE de baño completo en USD por m²]]
-> en dólares, con la mano de obra puesta por fuera y los materiales por
-> dentro. Ese número cambia mucho según dos cosas:
+> Take the US median wages from the 2026 BLS and load them with everything the
+> contractor actually pays: FICA 7.65 %, federal unemployment (0.6 % net on the
+> first $7,000), state unemployment, workers' compensation, paid time away from
+> the tools, and the non-billable hours every crew has. That is what our price
+> library carries:
 >
-> **1. Si hay que tocar la instalación o no.** Un baño "de directazo" (piso,
-> revestimiento, pintura) es una obra de acabados. Un baño con cambio de
-> tuberías, demolición del piso y nueva impermeabilización multiplica el
-> presupuesto, y no por el material sino por la demolición y el tiempo de
-> obra: ese suele ser el 60-70 % del costo cuando hay que romper.
+> | Trade | Median wage | Employer cost per billable hour |
+> | --- | --- | --- |
+> | Plumber | $30.67/h | $40.21/h |
+> | Electrician | $30.38/h | $39.76/h |
+> | Brick / block mason | $29.87/h | $39.78/h |
 >
-> **2. El desorden de la tasa.** Si el presupuesto se firma en bolívares y el
-> pago cae tres semanas después, ese presupuesto ya no vale lo mismo. La
-> forma sana de trabajar esto es cotizar en dólares y congelar la tasa de
-> referencia del día de la cotización, con fecha de vencimiento explícita.
-> En nuestra guía de presupuesto en USD y bolívares está el procedimiento
-> paso a paso ([guía de presupuesto USD/Bs para Venezuela](https://cotizat.online/ve/guia/presupuesto-usd-bs-venezuela?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=remodelacion-bano-ve)).
+> So a plumber quoted at the wage is under-priced by roughly a third before a
+> single line of overhead is added — tools, insurance, supervision, the gaps
+> between jobs, and profit. And workers' compensation is the swing item: cheap
+> for a painter, expensive for a roofer or a demolition crew, which is why the
+> same bathroom can legitimately move by $4,000 between two contractors in the
+> same town. One of them is estimating with wages and finding the difference at
+> the end of the job.
 >
-> Un último detalle que casi nadie pone por escrito y que luego genera
-> discusiones: **qué queda incluido y qué no**. Retiro de la demolición, retiro de
-> escombros, compra de materiales en tienda versus precios de maestro,
-> pintura de dos manos, cambio de instalación eléctrica. Si eso no está
-> escrito en el documento, cualquier diferencia de 15-20 % entre lo que dijo
-> el maestro y lo que dice el presupuesto es un problema de palabras, no de
-> números.
+> Two things worth writing on the quote so the client is not surprised later:
+> whether the number includes permits and inspection, and what happens to the
+> price if the wall turns out to be plaster rather than drywall. That second
+> one is where bathroom budgets actually die.
 >
-> Para que quede claro: trabajo en CotizaT, que desarrolla el software donde
-> hacemos estos presupuestos, y por eso el enlace de arriba va a nuestra
-> guía.
+> The full breakdown of how the hour is loaded — and what a $4,000 gap between
+> two quotes in the same street actually consists of — is in our guide to
+> [construction labor cost per hour](https://cotizat.online/en-us/guia/construction-labor-cost-per-hour?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=us-labour-cost).
+>
+> To be clear: I build CotizaT, the estimating software we use for these
+> quotes, which is why the link above goes to our own guide.
 
-**Preparación antes de publicar:** sustituir el `[[DATO: …]]` por el rango real
-del catálogo VE (capítulo de demo y baños) o por un rango citado de fuentes
-públicas del mercado; comprobar que la URL responde 200; verificar que el
-texto del enlace es el que se ve.
+**Preparación antes de publicar:** comprobar que las cifras de la tabla siguen
+vigentes (BLS y la fecha de nuestra biblioteca), que la URL responde 200 y que
+el texto del enlace es el que se ve.
 
 ---
 
-### 2.2 Respuesta B — para el hilo «¿Cuánto cuesta un pañete por metro cuadrado en Colombia?»
+### 2.2 Respuesta B (EN · AU) — para el hilo «What hourly rate should I charge as a tradie?»
 
-> Un pañete no tiene un precio: tiene un **precio unitario que depende de la
-> altura, del material y de quién lo aplica**. Por eso el número que circula
-> de boca en boca ("un pañete está como a X") es el menos útil de todos.
+> **Text to paste:**
 >
-> El cálculo real es un APU, y son cuatro sumandos:
+> There are two numbers, and most quotes get confused because they mix them.
 >
-> 1. **Material.** Cemento o mortero, arena, agua y, si es pañete con aditivo
->    o hidrófugo, el aditivo. El consumo típico está entre 0,35 y 0,45 kg de
->    mezcla seca por m² según el espesor; con 1 cm de espesor, ese es el orden
->    de magnitud que se repite en obra.
-> 2. **Mano de obra.** Depende de si el maestro trabaja solo o con ayudante, y
->    de si el precio que se pacta es por m² o por día. Este es el ítem que más
->    se olvida cuando se arma el presupuesto "a ojo".
-> 3. **Maquinaria y herramientas.** Mixer, nivel, andamio, transporte.
-> 4. **Gastos indirectos y utilidad.** Bodega, administración, transporte y
->   utilidad. Ahí es donde se decide el margen real de la obra, no en el
->    precio del material.
+> **The award rate is the floor, not the price.** Australian construction pay
+> is set by award — the Building and Construction General On-site Award
+> (MA000020), the Electrical Award (MA000025), the Plumbing Award (MA000036).
+> The ordinary hourly rate is what the award says; it is the minimum a
+> tradesperson costs you *before* superannuation, portable long service leave,
+> workers' compensation, and the hours nobody can bill.
 >
-> Un ejemplo para que se vea el orden de magnitud (no es una cotización):
-> para 20 m² de pañete a 1 cm, con mezcla estándar, el material pesa del orden
-> de [[DATO: kg de mezcla por m² y precio del saco en CO]] y la mano de obra
-> de [[DATO: precio de maestro por m² en CO]]; el total no baja de
-> [[DATO: total APU pañete por m² en CO]] por m² en pesos colombianos.
+> **The employer cost is what you price with.** Take the award rate and load it
+> with the 12 % superannuation guarantee, workers' compensation, annual and
+> personal leave, public holidays and RDOs, then divide by the hours you can
+> actually bill. Our price library carries it like this:
 >
-> El detalle que hace que el APU no se rompa al tres meses es guardar
-> **las unidades y la fuente de cada insumo** (no solo el precio), y que las
-> fórmulas sean referencias y no valores pegados: así, cuando el cemento sube
-> 8 %, se actualiza el APU y no el presupuesto entero. Está desarrollado paso a
-> paso, con las fórmulas, en nuestra [guía de APU de pañete en
-> Colombia](https://cotizat.online/co/guia/apu-panete-colombia?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=apu-panete-co).
+> | Trade | Award ordinary rate | Employer cost per billable hour |
+> | --- | --- | --- |
+> | Fit-out carpenter / carpenter and joiner (CW3 + tool allowance) | A$32.30/h | A$49.59/h |
 >
-> Si el pañete es exterior o va sobre mampostería nueva, cambia el punto de
-> partida: hay que hablar de mortero de pega o de pañete de fachada, no del
-> mismo producto.
+> The gap between the two columns is the whole argument. A year holds roughly
+> 1,600 billable hours against about 1,980 paid ones — the missing 380 are
+> annual leave, public holidays, RDOs, wet days and the time between jobs. That
+> is why a business that quotes from the raw award of A$31-32 lands in trouble
+> on its third job, and why a quote built from an employer cost of A$48-50 does
+> not look mysterious next to the market rate.
+>
+> And to be precise about the arithmetic: **employer cost is cost, not price.**
+> Your charge-out rate adds vehicle, tools, insurance, supervision and profit
+> on top, and then GST goes on the client's document.
+>
+> If you want the whole rate table — every trade, the award reference and the
+> loaded cost — it is in our guide to [tradie hourly rates in
+> Australia](https://cotizat.online/en-au/guia/tradie-hourly-rates-australia?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=au-tradie-rates).
+>
+> To be clear: I build CotizaT, the estimating software we use for these
+> quotes, which is why the link above goes to our own guide.
+
+**Preparación antes de publicar:** comprobar que la award rate y el 12 % de
+super siguen vigentes (la Superannuation Guarantee cambia cada 1 de julio) y que
+la tabla de la biblioteca está al día.
+
+---
+
+### 2.3 Respuesta C (EN · GB) — para el hilo «How do I handle CIS deductions on my construction invoices?»
+
+> **Text to paste:**
+>
+> Two mistakes cause most of the trouble, and both are about the **base** of
+> the deduction.
+>
+> **First: CIS is a percentage of the labour, not of the invoice.** A £4,000
+> invoice made up of £1,200 of tiles and £2,800 of labour is not deducted on
+> £4,000 — the deduction is calculated on the labour element. Get the base
+> wrong and it quietly eats your margin on every single job, because nobody
+> checks it until the year-end accounts.
+>
+> **Second: there are three rates, not two.** A subcontractor registered with
+> HMRC for CIS suffers a 20 % deduction. A subcontractor who is not registered,
+> or who cannot be verified, suffers 30 %. And a subcontractor can be paid
+> **gross** — no deduction at all — if their status allows it. The same tiler
+> can be at 20 % for one contractor and gross for another; the only
+> difference is their registration, which is exactly why the status needs to
+> travel with the quote rather than live in someone's head.
+>
+> Two practical points for the quote itself:
+>
+> - **Put the status in writing.** Under CIS a contractor needs your UTR and
+>   your verification status, because that is what decides whether they deduct
+>   20 %, 30 % or nothing. If your subcontractor quote does not state it, the
+>   contractor is guessing.
+> - **VAT is a separate trap.** Since 1 March 2021 most construction services
+>   supplied business to business and reported under CIS carry the domestic
+>   reverse charge: the supplier does not charge VAT and the customer accounts
+>   for it. Apply it to the wrong job, or forget the note on the invoice, and
+>   the problem surfaces months later.
+>
+> The rates, the calculation and the wording that goes on the quote are in our
+> guide to [CIS deductions for
+> subcontractors](https://cotizat.online/en-gb/guia/cis-deduction-subcontractors?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=gb-cis).
+>
+> To be clear: I build CotizaT, the estimating software we use for these
+> quotes, which is why the link above goes to our own guide.
+
+**Preparación antes de publicar:** verificar que los tres regímenes (20 %, 30 %
+y pago bruto) y la fecha del 01/03/2021 siguen vigentes en HMRC; comprobar que
+la URL responde 200.
+
+---
+
+### 2.4 Respuesta D (ES · CO) — para el hilo «¿Cómo armo un APU de pañete en Colombia?»
+
+> **Texto para pegar:**
+>
+> Un APU de pañete son cuatro sumandos y tres decisiones. Las decisiones
+> importan más que los números: es donde se gana o se pierde el margen de la
+> obra.
+>
+> **1. Material.** Cemento o mortero, arena, agua y, si el pañete va con
+> aditivo o hidrófugo, el aditivo. El consumo típico está en el orden de
+> 0,35-0,45 kg de mezcla seca por m² según el espesor; con 1 cm, ese es el
+> orden de magnitud que se repite en obra. El precio del saco se guarda con
+> su unidad y su fuente, no solo con su valor.
+>
+> **2. Mano de obra, y aquí está la primera decisión.** En nuestra biblioteca
+> de precios, un oficial de 1ª en Colombia cuesta **19.937 COP por hora de
+> coste de empresa** (rango 16.312-23.562 COP, con corte del 08/09/2026) y un
+> ayudante especializado, 16.539 COP/h. Son **costes de empresa**, no salarios:
+> ya incluyen ARL, pensión y prestaciones, por eso no se vuelven a sumar en el
+> APU. Si el APU se arma con el jornal y luego se le "carga" la carga social
+> otra vez, el presupuesto queda inflado; si se arma solo con el jornal, la
+> obra pierde plata.
+>
+> **3. Maquinaria y herramientas.** Mixer, nivel, andamio, transporte. Casi
+> siempre es una partida pequeña, pero es la que nadie escribe.
+>
+> **4. Gastos indirectos y utilidad.** Bodega, administración, transporte,
+> utilidad. **Aquí está la segunda decisión: el margen de la obra se decide
+> aquí, no en el precio del material.** Un maestro que pone 15 % de margen
+> sobre el material y 8 % sobre la mano de obra se está equivocando de
+> sitio.
+>
+> Y la tercera decisión es de forma: **las fórmulas tienen que ser
+> referencias, no valores pegados.** Si el cemento sube un 8 %, se actualiza
+> el APU y no el presupuesto entero. Es la diferencia entre un archivo que
+> aguanta tres meses y uno que se rompe el día que cambia un precio.
+>
+> El método completo, con las fórmulas y los errores que más se repiten, está
+> en nuestra [guía de APU de pañete en
+> Colombia](https://cotizat.online/co/guia/apu-panete-colombia?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=co-apu-panete).
 >
 > Para que quede claro: trabajo en CotizaT, que desarrolla el software donde
 > hacemos estos presupuestos, y por eso el enlace de arriba va a nuestra guía.
 
-**Preparación antes de publicar:** sustituir los tres `[[DATO: …]]` por el
-precio real del saco de mezcla en Colombia y por el precio de mano de obra
-vigente en el mercado objetivo; si son datos propios del catálogo, mantener el
-"no es una cotización".
-
----
-
-### 2.3 Respuesta C — para el hilo «¿Vale la pena un software de presupuestos o sigo con Excel?»
-
-> Depende del tamaño de la obra y de la cantidad de presupuestos al mes. No es
-> una respuesta publicitaria, así que va con las dos partes.
->
-> **Excel sigue siendo mejor que cualquier software cuando:**
->
-> - Haces dos o tres presupuestos al mes, todos de un mismo tipo de obra.
-> - No necesitas dar el presupuesto al cliente en un formato presentable (lo
->   entregas en PDF hecho a mano o con una plantilla que ya tienes).
-> - No hay cambios de alcance: la obra se resuelve en un viaje y se cobra.
->
-> En ese caso, un software no te ahorra tiempo: te cuesta.
->
-> **Un software empieza a pagar cuando aparece una de estas cosas:**
->
-> - **El catálogo se repite.** Si las mismas 60 partidas aparecen en cada obra,
->   estás reescribiendo el mismo precio unitario cada vez. Ahí el valor está
->   en el catálogo, no en el editor.
-> - **Hay capítulos y subcapítulos.** Una obra de 15 capítulos con 200 partidas
->   en Excel termina en una hoja con celdas combinadas, referencias rotas y
->   subtotales que alguien corrige a mano antes de enviarlo.
-> - **Cambian los alcances durante la obra.** Cuando hay adiciones y faltantes,
->   lo que importa es poder emitir un presupuesto ajustado con los mismos datos
->   base, no rehacer el archivo desde cero.
-> - **Hay que entregar un documento presentable** con capítulos, mediciones,
->   IVA y total, y que el cliente lo pueda leer sin que el autor explique nada.
-> - **La cotización va en una moneda que se mueve** y hace falta congelar la
->   tasa de referencia con fecha.
->
-> Un matiz importante: el software no sustituye al criterio de presupuesto. La
-> estructura del presupuesto (capítulos, precios unitarios, mediciones) es la
-> misma de siempre; lo que cambia es que el catálogo se reutiliza, los
-> subtotales se calculan solos y el documento sale con la firma del cliente y
-> el total al pie. En nuestra [comparativa de precios](https://cotizat.online/precios-comparados?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=excel-vs-software)
-> está el detalle de qué incluye cada opción.
->
-> Mi resumen: si haces una obra al mes, Excel. Si haces obras con capítulos y
-> entregas presupuesto tras presupuesto, el ahorro de horas aparece en la
-> tercera.
->
-> Para que quede claro: trabajo en CotizaT, que desarrolla el software donde
-> hacemos estos presupuestos, y por eso el enlace de arriba va a nuestra
-> comparativa.
-
-**Preparación antes de publicar:** comprobar que `/precios-comparados` responde
-200 y que la tabla de la comparativa sigue al día (si no, actualizarla antes de
-publicar la respuesta).
+**Preparación antes de publicar:** actualizar las cifras de mano de obra a la
+fecha de publicación (la biblioteca se corta el 08/09/2026) y mantener la
+frase "costo de empresa" para no inducir a error.
 
 ---
 
@@ -225,74 +282,77 @@ real, la respuesta resuelve, la marca aparece una vez y el enlace va en medio**.
 
 ### 3.1 La pregunta (texto exacto)
 
-> **¿Cuánto cuesta una obra por metro cuadrado en Venezuela?**
+> **What should a construction estimate include so the client doesn't dispute the
+> final invoice?**
 
-Requisitos que cumple: la formulan los clientes con esas palabras; no
-contiene marca ni nombres de competidores; tiene intención de mercado (VE);
-y la respuesta puede apoyarse en datos reales del catálogo.
+Requisitos que cumple: la formulan los clientes con esas palabras; no contiene
+marca ni nombres de competidores; tiene intención de mercado (US); y la
+respuesta puede apoyarse en datos reales.
 
 ### 3.2 La respuesta completa
 
-> La respuesta corta es "depende de qué obra", y la larga es la que sigue.
-> Cualquier cifra sin esas cuatro variables — tipo de obra, terminación, ciudad
-> y qué incluye el precio — es un número de pasillo.
+> Most of the disputes I see are not about money. They are about **scope that
+> nobody wrote down**. The invoice says $18,400 and the client expected
+> $14,000, and both numbers are reasonable, because different work is included
+> in each. Here is what an estimate has to carry to survive that conversation.
 >
-> **1. Por tipo de obra (orden de magnitud, en dólares por m²):**
+> **1. The scope, item by item, with quantities.** Not "bathroom
+> renovation — $8,500", but the lines: remove and dispose of the existing
+> floor, install waterproofing to the shower area, replace the plasterboard,
+> fit three fixtures, tile X m² at Y. The client can only dispute a number
+> they can see. A lump sum is an invitation to argue about what it contained.
 >
-> - Obra nueva, terminación básica: [[DATO: rango VE obra nueva básica USD/m²]]
-> - Obra nueva, terminación media: [[DATO: rango VE obra nueva media USD/m²]]
-> - Remodelación de vivienda: [[DATO: rango VE remodelación USD/m²]]
-> - Remodelación de local comercial: [[DATO: rango VE local comercial USD/m²]]
-> - Obra con localización premium (pisos especiales, carpintería a medida,
->   exteriores cuidada): [[DATO: rango VE premium USD/m²]]
+> **2. What is explicitly excluded.** This is the part everyone omits and
+> everybody misses. If the estimate does not say "does not include painting,
+> electrical upgrades, disposal of the old units", then on the day the client
+> expects those to be inside the number. Exclusions are not distrust: they are
+> the difference between a fixed price and a slow-motion negotiation.
 >
-> **2. Qué mueve el precio dentro de cada rango:**
+> **3. The unit prices behind the totals.** If the estimate says $18,400 and
+> the client wants to know why, "labour, materials, 18 % overhead and 10 %
+> margin" is an answer. A single total is not, and a client who cannot see the
+> build-up assumes the worst.
 >
-> - **La terminación**, sobre todo el flooring y la pintura: cambiar el tipo de
->   piso puede mover la obra entre un 15 % y un 25 %.
-> - **La estructura**: si hay que demoler, hacer muro de carga o modificar
->   instalaciones, el costo estructural domina todo lo demás.
-> - **La altura y los acabados**: en una vivienda de 3 pisos, la mano de obra
->   de acabados sube por andamio y por traslados.
-> - **La ciudad**: no por el mismo trabajo, sino por el precio del material y
->   del maestro, que no es el mismo en Maracaibo que en Caracas.
+> **4. The labour assumption, in writing.** This is where the two quotes in
+> the same street end up $4,000 apart. One contractor priced the plumber at
+> the median wage — $30.67/h — and the other priced the employer cost per
+> billable hour — $40.21/h — after FICA, unemployment insurance, workers'
+> compensation and the hours nobody can bill. Both quotes are honest; only
+> one of them survives the job.
 >
-> **3. Qué se incluye en el precio (esto es lo que más se olvida):**
+> **5. The commercial terms.** Deposit and how it is applied, stage payments,
+> when the price is fixed until, what invalidates it (the wall turns out to be
+> plaster, not drywall), how long the price is valid, and what happens on
+> cancellation. All of it fits in a page.
 >
-> Un precio "por m²" puede incluir o no: material, mano de obra, indirectos
-> (bodega, administración, transporte), utilidad, alquiler de equipos, limpieza
-> final y retiro de escombros. Un precio que no dice si incluye materiales no
-> se puede comparar con otro. Cuando comparen dos presupuestos, lo primero
-> que hay que preguntar es eso, no el número final.
+> **6. The signature.** A signed estimate is not a formality: it is the
+> evidence of what was agreed and when. Ours carries the client's signature
+> block for that reason.
 >
-> **4. El detalle local: la tasa.**
+> **7. The revisions.** Any change after the estimate is accepted is a
+> variation, with its own price and its own date — not a silent edit to the
+> original document. A client who knows the rule in advance does not feel
+> ambushed by it later.
 >
-> Cotizar en bolívares y cobrar semanas después obliga a hablar de una tasa
-> de referencia con fecha de congelación. La guía completa del procedimiento,
-> con la tasa, los pasos y cómo presentarlo para que el cliente lo entienda,
-> está en [presupuesto en USD y bolívares para
-> Venezuela](https://cotizat.online/ve/guia/presupuesto-usd-bs-venezuela?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=cuanto-cuesta-m2-ve).
+> The template we use, with the commercial terms and the revision clause
+> written out, is in our guide to [what a construction estimate must
+> include](https://cotizat.online/en-us/guia/construction-estimate-template?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=us-estimate-template).
 >
-> Si la respuesta debe quedar en una línea: en Venezuela, una obra nueva de
-> terminación media anda por el orden de [[DATO: media ponderada USD/m²]] por
-> m², y una remodelación de vivienda se queda unos [[DATO: media
-> remodelación USD/m²]] por m²; la tercera parte de ese número es
-> terminación, la cuarta estructura y el resto es margen.
->
-> Para que quede claro: trabajo en CotizaT, que desarrolla el software donde
-> hacemos estos presupuestos, y por eso el enlace de arriba va a nuestra guía.
+> To be clear: I build CotizaT, the estimating software we use for these
+> quotes, which is why the link above goes to our own guide.
 
-**Preparación antes de publicar:** sustituir **todos** los `[[DATO: …]]` por
-cifras del catálogo VE o por rangos de fuentes públicas citadas. Si al final
-quedan huecos, la respuesta **no se publica**: una respuesta con huecos es
-peor que no tener respuesta, porque se nota.
+**Preparación antes de publicar:** comprobar que las cifras del punto 4 siguen
+vigentes y que el artículo de destino (`/en-us/guia/construction-estimate-template`)
+cubre realmente los siete puntos; si no los cubre, el hilo sirve para
+detectar esa carencia.
 
 ### 3.3 Qué hacer con el hilo después
 
 - Responder a los comentarios con datos y sin defender el producto a ultranza.
-- Actualizar la respuesta si cambia el catálogo (añadir fecha de revisión).
+- Actualizar la respuesta si cambia la biblioteca de precios (añadir fecha de
+  revisión).
 - No pedir votos. Los upvotes se ganan respondiendo bien a otras preguntas.
-- Publicar **una** versión (en español). No clonar en cinco idiomas.
+- Publicar **una** versión (en inglés). No clonar en cinco idiomas.
 
 ---
 
@@ -300,15 +360,14 @@ peor que no tener respuesta, porque se nota.
 
 - [ ] ¿Es una pregunta **real** (la haría un cliente) y **sin marca**?
 - [ ] ¿La respuesta **se entiende entera** sin hacer clic?
+- [ ] ¿Está escrita **en el idioma del hilo**?
+- [ ] ¿El enlace apunta al **mercado del lector** (`/en-us/…`, `/mx/…`)?
 - [ ] ¿Hay **un solo enlace**, y **no está en la primera ni en la última frase**?
-- [ ] ¿El texto del enlace **describe** el destino (no "haz clic aquí")?
-- [ ] ¿El destino es una URL **indexable** del **mercado** del lector?
+- [ ] ¿El texto del enlace **describe** el destino (no "click here")?
+- [ ] ¿El destino es una URL **indexable** (comprobar con `app.seo.es_indexable`)?
 - [ ] ¿Lleva **UTM** (`utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=…`)?
-- [ ] ¿He **sustituido todos** los `[[DATO: …]]` por cifras reales o fuentes citadas?
-- [ ] ¿He **declarado la afiliación** ("trabajo en CotizaT…")?
-- [ ] ¿He **respondido a la pregunta concreta**, sin convertir la respuesta en un anuncio de lo que vendo?
-- [ ] ¿Es **texto propio**, no copiado del artículo del sitio (el hilo es la
-      versión social, el artículo es la canónica)?
+- [ ] ¿He **actualizado las cifras** a la fecha de publicación?
+- [ ] ¿He **declarado la afiliación** ("I build CotizaT…")?
 
 Si falla uno, no se publica.
 
@@ -319,9 +378,9 @@ Si falla uno, no se publica.
 Una fila por respuesta publicada. Es una tabla (Google Sheets o similar); no
 hace falta más.
 
-| fecha | url_hilo | mercado | tipo | url_destino | vistas_7d | vistas_30d | upvotes | clics | registros | notas |
+| fecha | url_hilo | idioma | mercado | url_destino | vistas_7d | vistas_30d | upvotes | clics | registros | notas |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-11-16 | https://quora.com/... | VE | R | /ve/guia/presupuesto-usd-bs-venezuela | | | | | | |
+| 2026-11-16 | https://quora.com/... | EN | US | /en-us/guia/construction-labor-cost-per-hour | | | | | | |
 | | | | | | | | | | | |
 
 Columnas derivadas: `vistas_30d / semanas` = ritmo. Si una respuesta sigue
@@ -334,15 +393,17 @@ sustituye.
 2. ¿Alguna fue colapsada o eliminada? → se anota el motivo y se corrige el
    patrón, no la respuesta aislada.
 3. ¿Los clics van a URLs indexables? (comprobar con `app.seo.es_indexable`)
-4. ¿Cuántos registros trae el canal en total? (GA4 → Adquisición → Referrals →
-   quora.com, y el panel de altas)
+4. ¿Cuántos registros trae el canal en total, y **cuáles por mercado**? (GA4
+   → Adquisición → Referrals → quora.com, y el panel de altas)
 
 ---
 
 ## 6. Documentos relacionados
 
-- `docs/ESTRATEGIA_QUORA_2026-11-09.md` — la estrategia, el porqué y el piloto
-  de 90 días.
+- `docs/ESTRATEGIA_QUORA_2026-11-09.md` — la estrategia, el porqué, el orden de
+  mercados y el piloto de 90 días.
 - `docs/HOJA_DE_RUTA_SEO.md` — contenidos por país y ritmo general.
 - `app/seo.py` — `es_indexable()`: la función que decide si una URL puede
   enlazarse desde fuera.
+- `basedatos_partidas/salida/precios_recursos_*.csv` — de dónde salen las
+  cifras de estas respuestas.

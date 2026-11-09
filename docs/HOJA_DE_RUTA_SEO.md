@@ -196,12 +196,15 @@ Lista de **enlaces que un constructor sí haría clic**, todos gratis:
 
 Criterio de hecho: 8–12 enlaces de dominio distintos, ninguno pagado, ninguno recíproco masivo.
 
-> **Actualización 09/11/2026 — Quora entra en la fila de comunidades.** Quora es
-> el canal de esta lista donde el contenido (las respuestas) vive años y
-> además lo citan los motores de IA, pero su política prohíbe el uso de la
-> pregunta como soporte publicitario. El plan concreto (12-16 respuestas al mes
-> reutilizando las guías de mercado, una pregunta propia al mes como máximo,
-> enlaces solo a URLs indexables, UTM y criterio de cierre a 90 días) está en
+> **Actualización 09/11/2026 — Quora entra en la fila de comunidades, en
+> inglés primero.** Quora es el canal de esta lista donde el contenido (las
+> respuestas) vive años y además lo citan los motores de IA, pero su política
+> prohíbe el uso de la pregunta como soporte publicitario. El plan concreto
+> (12-16 respuestas al mes, **60 % en inglés**: US, GB, AU, IE; 40 % en
+> español: MX, CO, CL, ES; **Venezuela fuera de plan** por decisión del
+> titular —0 cuentas en producción y 0 pagos—, reutilizando las guías de
+> mercado, una pregunta propia al mes como máximo, enlaces solo a URLs
+> indexables, UTM y criterio de cierre a 90 días) está en
 > `docs/ESTRATEGIA_QUORA_2026-11-09.md`, con el material listo para publicar en
 > `docs/QUORA_BANCO_Y_RESPUESTAS_2026-11-09.md`.
 
