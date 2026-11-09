@@ -1,16 +1,30 @@
 -- CotizaT — cotizaciones reales de España (2026-11-08).
--- Cubre todas las decisiones cerradas en el registro de esa fecha (lotes 1 y 2);
+-- Cubre todas las decisiones cerradas en el registro de esa fecha (todos los lotes);
 -- repetir los UPDATE de un lote ya cargado es idempotente.
 -- Generado por tools/aplicar_cotizaciones_espana.py desde
 -- docs/auditoria_precios/espana_decision_cotizaciones_2026-11-08.csv y la matriz
 -- basedatos_partidas/salida/precios_recursos_espana.csv.
 --
 -- ALCANCE: solo las referencias nacionales ES (sin organizacion_id) de los
--- 8 recursos cotizados. NO TOCA precios propios de empresas ni otros países.
+-- 12 recursos cotizados. NO TOCA precios propios de empresas ni otros países.
 -- MONEDA: EUR, precios sin IVA (la tabla guarda la moneda de cada mercado).
 
 BEGIN;
 
+-- MT-AISL-REFLECT: cotizacion_directa · adopta 3.6 EUR (Leroy Merlin mantas reflectivas OPTIMER RF1 y BLH y rollo multicapa (consulta 2026-11-08))
+UPDATE public.precios_recursos_mercado
+   SET precio = 3.6,
+       precio_min = 2.32,
+       precio_max = 4.25,
+       moneda = 'EUR',
+       confianza = 'referencia',
+       incluye_iva = 'no',
+       fuente = 'Leroy Merlin mantas reflectivas OPTIMER RF1 y BLH y rollo multicapa (consulta 2026-11-08)',
+       fecha_consulta = DATE '2026-11-08',
+       observaciones = 'Cotización real contrastada el 2026-11-08 (cotizacion_directa). Banda medida: 2.32-4.25 EUR/m2, precio adoptado 3.60 EUR/m2 sin IVA. Tres rollos con foil de aluminio y burbuja de polietileno: RF1 de 4 mm y 42 m2 a 118 EUR (2,32 EUR/m2 sin IVA), BLH de 8 mm y 36 m2 a 185 EUR (4,25 EUR/m2 sin IVA) y el multicapa de doble burbuja de 48 m2 a 209 EUR (3,60 EUR/m2 sin IVA). Se adopta 3,60 porque es el único cuya ficha declara doble capa de burbuja, que es lo que pide el recurso. Banda 2,32-4,25 medida sobre precios de venta por m2 que publica la propia tienda.'
+ WHERE codigo_recurso = 'MT-AISL-REFLECT'
+   AND pais_codigo = 'ES'
+   AND organizacion_id IS NULL;
 -- MT-CIELO-PVC: cotizacion_directa · adopta 18.01 EUR (Leroy Merlin, lámina alveolar Renolam y panel alero de 10 mm (consulta 2026-11-08))
 UPDATE public.precios_recursos_mercado
    SET precio = 18.01,
@@ -65,6 +79,48 @@ UPDATE public.precios_recursos_mercado
        fecha_consulta = DATE '2026-11-08',
        observaciones = 'Cotización real contrastada el 2026-11-08 (banco_y_minorista). Banda medida: 11.36-15.69 EUR/ud, precio adoptado 15.69 EUR/ud sin IVA. El banco BCCA de 2024-01 valora el regulador de butano en 11,36 EUR y el de propano de 1/2 pulgada en 14,64 EUR por unidad. El minorista de 2026 lo confirma: 18,99 EUR con IVA en Bauhaus con llave de corte (15,69 sin IVA) y 13,99 EUR el conjunto regulador con tubo y abrazadera de Leroy Merlin (11,56 sin IVA). Banda 11,36-15,69. Se adopta 15,69 porque es el único que declara llave de corte incluida y 30 mbar con 2,5 kg por hora. Desmiente la horquilla declarada 15-40 al alza.'
  WHERE codigo_recurso = 'MT-REGUL-GAS'
+   AND pais_codigo = 'ES'
+   AND organizacion_id IS NULL;
+-- MT-RIEL-CORRED: cotizacion_directa · adopta 15.95 EUR (Leroy Merlin kits de herrajes INDAUX JUNIOR-1 y EVOTRADE y kit Tourly completo (consulta 2026-11-08))
+UPDATE public.precios_recursos_mercado
+   SET precio = 15.95,
+       precio_min = 5.12,
+       precio_max = 20.62,
+       moneda = 'EUR',
+       confianza = 'referencia',
+       incluye_iva = 'no',
+       fuente = 'Leroy Merlin kits de herrajes INDAUX JUNIOR-1 y EVOTRADE y kit Tourly completo (consulta 2026-11-08)',
+       fecha_consulta = DATE '2026-11-08',
+       observaciones = 'Cotización real contrastada el 2026-11-08 (cotizacion_directa). Banda medida: 5.12-20.62 EUR/m, precio adoptado 15.95 EUR/m sin IVA. El recurso no distingue armario de puerta pesada y el mercado sí: el kit INDAUX JUNIOR-1 trae dos rieles de 2 m con carros y ruedas por 24,80 EUR con IVA (5,12 EUR por metro de riel), el kit de dos puertas con perfil de 2 m y topes cuesta 49,90 EUR (20,62 EUR/m) y el kit completo Tourly de 183 cm cuesta 41,99 EUR (18,96 EUR/m). Se mantiene 15,95 porque cae dentro de una banda que va del herraje de armario al kit de puerta corredera pesada, y el recurso no permite elegir sin cambiar su alcance.'
+ WHERE codigo_recurso = 'MT-RIEL-CORRED'
+   AND pais_codigo = 'ES'
+   AND organizacion_id IS NULL;
+-- MT-SAN-FIJA: banco_y_minorista · adopta 8.9 EUR (Bricosanitarios anillo de cera OATEY y banco BCCA IF17200 juego de tornillos (consulta 2026-11-08))
+UPDATE public.precios_recursos_mercado
+   SET precio = 8.9,
+       precio_min = 5.65,
+       precio_max = 8.9,
+       moneda = 'EUR',
+       confianza = 'referencia',
+       incluye_iva = 'no',
+       fuente = 'Bricosanitarios anillo de cera OATEY y banco BCCA IF17200 juego de tornillos (consulta 2026-11-08)',
+       fecha_consulta = DATE '2026-11-08',
+       observaciones = 'Cotización real contrastada el 2026-11-08 (banco_y_minorista). Banda medida: 5.65-8.90 EUR/ud, precio adoptado 8.90 EUR/ud sin IVA. El kit son dos piezas con precio propio: el anillo de cera OATEY cuesta 6,83 EUR con IVA (5,65 sin IVA) en Bricosanitarios y el juego de tornillos de fijación cromados está en 3,25 EUR sin IVA en el banco BCCA IF17200. La suma da 8,90 EUR por aparato. El anillo solo ya cuesta más que el precio derivado 5,47, así que la horquilla era baja. Banda 5,65-8,90 formada por las dos piezas que el recurso nombra.'
+ WHERE codigo_recurso = 'MT-SAN-FIJA'
+   AND pais_codigo = 'ES'
+   AND organizacion_id IS NULL;
+-- MT-SELLA-PASE: cotizacion_directa · adopta 9.96 EUR (Tienda Reco collares de sellado Tyvek-EPDM para penetraciones y masilla LAP-SEALANT (consulta 2026-11-08))
+UPDATE public.precios_recursos_mercado
+   SET precio = 9.96,
+       precio_min = 4.5,
+       precio_max = 17.2,
+       moneda = 'EUR',
+       confianza = 'referencia',
+       incluye_iva = 'no',
+       fuente = 'Tienda Reco collares de sellado Tyvek-EPDM para penetraciones y masilla LAP-SEALANT (consulta 2026-11-08)',
+       fecha_consulta = DATE '2026-11-08',
+       observaciones = 'Cotización real contrastada el 2026-11-08 (cotizacion_directa). Banda medida: 4.50-17.20 EUR/ud, precio adoptado 9.96 EUR/ud sin IVA. Collares de sellado de aire Tyvek-EPDM por diámetro: 5,45 EUR con IVA el de 4-8 mm (4,50 sin IVA), 12,05 EUR el de 40-55 mm (9,96 sin IVA) y 20,81 EUR el de 100-110 mm (17,20 sin IVA). Se adopta el de 40-55 mm, que es el diámetro habitual de los pases de fontanería y saneamiento que valoran las partidas. La masilla LAP-SEALANT cuesta 15,95 EUR sin IVA el cartucho y rinde 8 m de junta, así que por pase aporta menos de 1 EUR y no desplaza el precio. Banda 4,50-17,20 según diámetro.'
+ WHERE codigo_recurso = 'MT-SELLA-PASE'
    AND pais_codigo = 'ES'
    AND organizacion_id IS NULL;
 -- MT-SENAL-OBRA: cotizacion_directa · adopta 9.9 EUR (Atproteccion Lopez Parra y Leroy Merlin conos de 75 cm con banda reflectante (consulta 2026-11-08))
@@ -124,11 +180,11 @@ UPDATE public.precios_recursos_mercado
    AND pais_codigo = 'ES'
    AND organizacion_id IS NULL;
 
--- Comprobación: debe devolver 8 filas con la banda coherente.
+-- Comprobación: debe devolver 12 filas con la banda coherente.
 SELECT codigo_recurso, precio, precio_min, precio_max, moneda, confianza,
        incluye_iva, fecha_consulta
   FROM public.precios_recursos_mercado
- WHERE codigo_recurso IN ('MT-CIELO-PVC', 'MT-PERFIL-ALUM', 'MT-PERSIANA-ALU', 'MT-REGUL-GAS', 'MT-SENAL-OBRA', 'MT-SOPORTE-AC', 'MT-TRAMPA-GRASA', 'MT-VIDRIO-TEMP')
+ WHERE codigo_recurso IN ('MT-AISL-REFLECT', 'MT-CIELO-PVC', 'MT-PERFIL-ALUM', 'MT-PERSIANA-ALU', 'MT-REGUL-GAS', 'MT-RIEL-CORRED', 'MT-SAN-FIJA', 'MT-SELLA-PASE', 'MT-SENAL-OBRA', 'MT-SOPORTE-AC', 'MT-TRAMPA-GRASA', 'MT-VIDRIO-TEMP')
    AND pais_codigo = 'ES'
    AND organizacion_id IS NULL
  ORDER BY codigo_recurso;

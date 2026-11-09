@@ -2,6 +2,33 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Cotizaciones reales de España, lote 3 — 8 de noviembre de 2026
+
+**Los cuatro últimos recursos del punto 2 con uso relevante pasan a cotización: 56 usos en 39 partidas; 52 referencias ES con `confianza = referencia` (antes 48).**
+Informe: [cotizaciones, lote 3](ESPANA_COTIZACIONES_LOTE3_2026-11-08.md).
+
+- `MT-SELLA-PASE` 5,24 → **9,96** (+90,1 %, 17 usos): el collar Tyvek-EPDM de 40-55 mm,
+  que es el diámetro de las bajantes que valoran las partidas, cuesta 9,96 € sin IVA; la
+  masilla rinde 8 m por cartucho y no desplaza el precio.
+- `MT-SAN-FIJA` 5,47 → **8,90** (+62,7 %, 13 usos): son dos piezas con precio propio, el
+  anillo de cera OATEY (5,65 €) y el juego de tornillos del banco `IF17200` (3,25 €). El
+  anillo solo ya superaba el precio derivado.
+- `MT-AISL-REFLECT` 3,65 → **3,60** (−1,4 %, 9 usos): tres rollos reflexivos dan
+  2,32-4,25 €/m² y se adopta el único de doble burbuja, que es lo que pide el recurso.
+- `MT-RIEL-CORRED` **mantiene** 15,95 (17 usos): el mercado va de 5,12 €/m (herraje de
+  armario) a 20,62 €/m (kit de puerta de paso) y el recurso no distingue los dos casos,
+  así que se deja dentro de la banda con el motivo escrito.
+- Los cuatro candidatos del banco BCCA se descartaron al leer la ficha (conexión de
+  radiador, equipo de puente grúa, inodoro de discapacitado y EPS): solo `IF17200` sirve,
+  y para la tornillería.
+- Impacto: 39 partidas, mediana +5,54 %, mínimo −0,64 % y máximo +43,01 %
+  (`08.04.01.070`, sellado de paso de tubería con collarín).
+- El SQL de la fecha cubre ya los doce recursos del registro; repetir los `UPDATE` de un
+  lote cargado no cambia nada.
+- Con este lote el punto 2 queda agotado en lo que importa: de las 39 referencias
+  `mercado_rango` con uso real, 12 están cotizadas y las 27 que quedan mueven entre 1 y 5
+  partidas cada una.
+
 ## Cotizaciones reales de España, lote 2 — 8 de noviembre de 2026
 
 **Los tres recursos de mayor uso que quedaban pasan a cotización: 184 usos en 183 partidas; 48 referencias ES con `confianza = referencia` (antes 45).**

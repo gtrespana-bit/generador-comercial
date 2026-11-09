@@ -1,7 +1,7 @@
-"""Cotizaciones reales de España (lotes 1 y 2): registro, matriz y SQL dicen lo mismo.
+"""Cotizaciones reales de España (lotes 1, 2 y 3): registro, matriz y SQL dicen lo mismo.
 
 El 7 de noviembre los 54 recursos sin ficha de banco se quedaron con el precio
-derivado de la matriz. Los dos lotes empiezan a sustituirlos por ofertas publicadas
+derivado de la matriz. Los tres lotes empiezan a sustituirlos por ofertas publicadas
 y comprobadas, con banco donde el banco tiene el artículo. Las pruebas atan las tres piezas para que ninguna se mueva sola:
 el registro de decisiones, la matriz de carga y el SQL acotado que se ejecuta en
 producción.
@@ -37,7 +37,7 @@ def matriz() -> dict[str, dict[str, str]]:
 
 def test_el_registro_cotiza_recursos_que_existen_en_la_matriz_espanola():
     registro, catalogo = decisiones(), matriz()
-    assert len(registro) == 8
+    assert len(registro) == 12
     assert set(registro) <= set(catalogo)
     for codigo, fila in registro.items():
         assert catalogo[codigo]["pais_codigo"] == "ES"
@@ -164,3 +164,49 @@ def test_el_perfil_de_aluminio_mantiene_precio_y_gana_evidencia():
     assert Decimal(fila["precio_min"]) <= Decimal("10.82") <= Decimal(fila["precio_max"])
     ofertas = [o for o in leer(OFERTAS) if o["codigo_recurso"] == "MT-PERFIL-ALUM"]
     assert {o["tienda"] for o in ofertas} >= {"Arialpro", "Proycsa"}
+
+
+def test_el_lote_3_cotiza_los_cuatro_recursos_de_mas_uso_que_quedaban():
+    """17, 17, 13 y 9 usos: los cuatro últimos con partidas detrás."""
+    registro = decisiones()
+    esperado = {
+        # código: (precio adoptado, mínimo, máximo, método)
+        "MT-SELLA-PASE": ("9.96", "4.50", "17.20", "cotizacion_directa"),
+        "MT-RIEL-CORRED": ("15.95", "5.12", "20.62", "cotizacion_directa"),
+        "MT-SAN-FIJA": ("8.90", "5.65", "8.90", "banco_y_minorista"),
+        "MT-AISL-REFLECT": ("3.60", "2.32", "4.25", "cotizacion_directa"),
+    }
+    for codigo, (precio, minimo, maximo, metodo) in esperado.items():
+        fila = registro[codigo]
+        assert Decimal(fila["precio"]) == Decimal(precio), codigo
+        assert Decimal(fila["precio_min"]) == Decimal(minimo), codigo
+        assert Decimal(fila["precio_max"]) == Decimal(maximo), codigo
+        assert fila["metodo"] == metodo, codigo
+        assert fila["confianza"] == "referencia", codigo
+
+
+def test_el_riel_corredizo_es_el_unico_que_mantiene_precio_en_el_lote_3():
+    """El recurso no distingue armario de puerta pesada: la banda lo enmarca."""
+    catalogo = matriz()
+    fila = catalogo["MT-RIEL-CORRED"]
+    assert Decimal(fila["precio_referencia"]) == Decimal("15.95")
+    assert Decimal(fila["precio_min"]) == Decimal("5.12")
+    assert Decimal(fila["precio_max"]) == Decimal("20.62")
+    assert Decimal(fila["precio_min"]) < Decimal("15.95") < Decimal(fila["precio_max"])
+    # Los otros tres sí se mueven respecto al derivado del 7 de noviembre.
+    for codigo, antes in (("MT-SELLA-PASE", "5.24"), ("MT-SAN-FIJA", "5.47"),
+                          ("MT-AISL-REFLECT", "3.65")):
+        assert Decimal(catalogo[codigo]["precio_referencia"]) != Decimal(antes), codigo
+
+
+def test_el_kilo_de_anillo_de_cera_sostiene_el_kit_sanitario():
+    """El anillo solo (5,65) ya supera el derivado 5,47: la horquilla era baja."""
+    ofertas = [o for o in leer(OFERTAS) if o["codigo_recurso"] == "MT-SAN-FIJA"]
+    assert len(ofertas) == 2
+    assert {o["tienda"] for o in ofertas} == {"Bricosanitarios", "Banco BCCA 2024-01"}
+    anillo = next(o for o in ofertas if o["tienda"] == "Bricosanitarios")
+    assert Decimal(anillo["precio_sin_iva_por_unidad"]) > Decimal("5.47")
+    decision = decisiones()["MT-SAN-FIJA"]
+    assert Decimal(decision["precio"]) == sum(
+        Decimal(o["precio_sin_iva_por_unidad"]) for o in ofertas
+    ).quantize(Decimal("0.01"))
