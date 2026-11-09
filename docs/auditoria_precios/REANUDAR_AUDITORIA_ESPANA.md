@@ -2,7 +2,7 @@
 
 **Corte: 7 de noviembre de 2026, tras el cierre total: los 388 recursos tienen precio.** Este documento es el punto de entrada para retomar el trabajo; el historial detallado está en [CONTINUIDAD.md](CONTINUIDAD.md). Las cifras son una fotografía: recalcularlas desde los archivos antes de continuar si ha habido cambios posteriores.
 
-**Estado de la carga en producción (8 de noviembre de 2026):** las **390** referencias nacionales de España están cargadas en Supabase y selladas a 2026-11-07; el SQL de `docs/cargar_precios_referencia_espana_2026-11-06.sql` ya se ejecutó, con `MT-BLQ-17` y `MT-BLQ-25` creados en las 56 organizaciones con familia de bloque. Verificación y reversión: [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md). La auditoría de contenido, en cambio, **sigue abierta**: 345 de las 390 referencias son `derivado` (eran 350 antes del primer lote de cotizaciones reales del 8 de noviembre).
+**Estado de la carga en producción (8 de noviembre de 2026):** las **390** referencias nacionales de España están cargadas en Supabase y selladas a 2026-11-07; el SQL de `docs/cargar_precios_referencia_espana_2026-11-06.sql` ya se ejecutó, con `MT-BLQ-17` y `MT-BLQ-25` creados en las 56 organizaciones con familia de bloque. Verificación y reversión: [carga en producción](ESPANA_CARGA_PRODUCCION_2026-11-08.md). La auditoría de contenido, en cambio, **sigue abierta**: 342 de las 390 referencias son `derivado` (eran 350 antes de los dos lotes de cotizaciones reales del 8 de noviembre; 48 tienen ya evidencia con URL y fecha).
 
 **Estado del catálogo de partidas (8 de noviembre de 2026):** `CATALOGO_VERSION = 4` y las partidas `06.03.01.160` y `06.03.01.170` (paredes de bloque de 17 y 25 cm) se despliegan por fin a las organizaciones al abrir el catálogo. Ver [despliegue del catálogo v4](../CATALOGO_V4_PAREDES_DE_BLOQUE_2026-11-08.md).
 
@@ -25,7 +25,16 @@ nuevos (`MT-BLQ-17`, `MT-BLQ-25`) entran en el recuento de 390.
 
 **Ningún recurso queda sin precio ni pendiente de decisión:** los 390 tienen cifra, fuente, código, criterio y reserva. Los 133 que estaban abiertos se cerraron el 7 de noviembre con un método declarado por recurso; ver [cierre total](ESPANA_CIERRE_TOTAL_2026-11-07.md). Estado de verificación en [ESPANIA_BANCOS_PRECIOS_2026-11-07.md](ESPANIA_BANCOS_PRECIOS_2026-11-07.md) —clasificación del 7 de noviembre, antes de la tanda de 337 confirmaciones—: 53 confirmados, 6 contrastes comerciales, 66 divergencias y 262 de fuente única (1 más confirmado independientemente); **ningún recurso sin precio auditado**. Ambos bancos están ingestados y cribados: BCCA 2023 con 5.925 precios simples leídos por `tools/leer_bcca.py` y Extremadura 2026 con su esquema nativo. Los 133 huecos que hubo quedaron clasificados por causa en [la auditoría de identidad](ESPANA_IDENTIDAD_EXTREMADURA_2026-11-07.md), que se conserva como registro histórico. La base de Extremadura 2026 ya está ingerida (`bases_precios/`, no versionada). Los 390 precios revisados comprenden mano de obra, materiales, 25 fichas directas de banco, 28 analogías de familia, 12 composiciones, 13 máquinas con modelo propio, 2 alquileres y 54 contrastes de mercado. **Que un precio esté revisado no lo hace universal**: `en_revision` sigue significando que falta una segunda fuente independiente.
 
-### Último cambio: cotizaciones reales, lote 1 (8 de noviembre)
+### Último cambio: cotizaciones reales, lote 2 (8 de noviembre)
+
+Los tres recursos de más uso que quedaban pasan de precio derivado a cotizado:
+`MT-SENAL-OBRA` 6,27 → **9,90** (73 usos), `MT-REGUL-GAS` 27,34 → **15,69** (37 usos)
+y `MT-PERFIL-ALUM`, que **mantiene** 10,82 (74 usos) porque cuatro ofertas de dos
+distribuidores lo enmarcan entre 7,54 y 14,46 €/kg. Son 184 usos en 183 partidas:
+mediana 0,0 %, mínimo −25,1 % y máximo +62,8 %. Las referencias ES con evidencia real
+pasan de 45 a **48**. Detalle y ofertas: [cotizaciones, lote 2](ESPANA_COTIZACIONES_LOTE2_2026-11-08.md).
+
+### Cambio anterior: cotizaciones reales, lote 1 (8 de noviembre)
 
 Cinco recursos pasan de precio derivado a precio cotizado, con dos ofertas publicadas
 cada uno: `MT-SOPORTE-AC` 18,23 → **10,98** (36 usos), `MT-PERSIANA-ALU` 62,66 →
