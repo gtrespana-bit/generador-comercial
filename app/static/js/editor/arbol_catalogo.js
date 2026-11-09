@@ -415,11 +415,24 @@
   function hojasDeApartado(bloqueApartado) {
     var apartado = bloqueApartado && bloqueApartado._catalogoApartado;
     if (!apartado) return [];
-    if (!consultaActual) return apartado.hojas;
-    return apartado.hojas.filter(function (hoja) {
+    if (!consultaActual) return apartado.hojas || [];
+    return (apartado.hojas || []).filter(function (hoja) {
       return hoja.buscable.indexOf(consultaActual) !== -1 ||
         (idsBusquedaRemota && idsBusquedaRemota[String(hoja.dato.id)]);
     });
+  }
+
+  // Recuento de un apartado. Sin búsqueda manda el total que declara el
+  // servidor: con el índice diferido las hojas todavía no han llegado (se
+  // piden al abrir el apartado), y contar solo lo cargado dejaba a cero los
+  // 3.006 recuentos y ocultaba los dieciocho capítulos. Con búsqueda manda lo
+  // que de verdad coincide, que ya está cargado para poder filtrarlo.
+  function contarApartado(bloqueApartado) {
+    var apartado = bloqueApartado && bloqueApartado._catalogoApartado;
+    if (!consultaActual && apartado && typeof apartado.total === "number" && apartado.total > 0) {
+      return apartado.total;
+    }
+    return hojasDeApartado(bloqueApartado).length;
   }
 
   function urlHojas(apartado) {
@@ -516,7 +529,7 @@
       bloqueCap.querySelectorAll(".arbol-subcapitulo").forEach(function (bloqueSub) {
         var vistasSub = 0;
         bloqueSub.querySelectorAll(".arbol-apartado").forEach(function (bloqueApartado) {
-          var vistasApartado = hojasDeApartado(bloqueApartado).length;
+          var vistasApartado = contarApartado(bloqueApartado);
           bloqueApartado.hidden = vistasApartado === 0;
           var cabApartado = bloqueApartado.querySelector(".arbol-apartado-head");
           var cuerpoApartado = bloqueApartado.querySelector(".arbol-apartado-body");
@@ -552,7 +565,10 @@
       var cuerpoCap = bloqueCap.querySelector(".arbol-cap-body");
       if (cabCap) {
         cabCap.querySelector(".arbol-cuenta").textContent = String(vistasCap);
-        var abrirCap = Boolean(consultaActual) && vistasCap > 0;
+        // Sin búsqueda, los capítulos se abren para que se vea la estructura
+        // del catálogo desde el primer segundo; con búsqueda, solo los que
+        // conservan resultados.
+        var abrirCap = vistasCap > 0;
         cuerpoCap.hidden = !abrirCap;
         cabCap.classList.toggle("abierto", abrirCap);
         cabCap.setAttribute("aria-expanded", abrirCap ? "true" : "false");
@@ -674,6 +690,182 @@
   }
 
   // ---------------------------------------------------------------------
+  // Ancho del panel: arrastrar el borde derecho
+  //
+  // El panel podía plegarse pero no ensancharse: con nombres de partida
+  // largos y el precio al lado, 280 px obligaban a leer de reojo. El ancho se
+  // guarda por navegador y se aplica a la columna del grid (variable CSS), no
+  // al panel, para que el espacio de trabajo se reparta de verdad.
+  // ---------------------------------------------------------------------
+
+  var ANCHO_MIN = 260;
+  var ANCHO_MAX = 720;
+  var ANCHO_POR_DEFECTO = 340;
+  var ANCHOS_COMODOS = [340, 460, 580, 700];
+  var CLAVE_ANCHO = "arbol-catalogo-ancho";
+  var EN_INGLES = String((document.documentElement && document.documentElement.lang) || "")
+    .toLowerCase().indexOf("en") === 0;
+  function texto(es, en) { return EN_INGLES ? en : es; }
+
+  function layoutDelPanel() {
+    return panel.closest(".builder-con-arbol") || panel.parentElement;
+  }
+
+  function anchoMaximo() {
+    var disponible = window.innerWidth ? Math.round(window.innerWidth * 0.62) : ANCHO_MAX;
+    return Math.max(ANCHO_MIN, Math.min(ANCHO_MAX, disponible));
+  }
+
+  var anchoAplicado = 0;
+
+  function anchoActual() {
+    if (anchoAplicado > 0) return anchoAplicado;
+    var caja = panel.getBoundingClientRect ? panel.getBoundingClientRect() : null;
+    return caja && caja.width ? Math.round(caja.width) : ANCHO_POR_DEFECTO;
+  }
+
+  function siguienteAncho(actual) {
+    var tope = anchoMaximo();
+    for (var i = 0; i < ANCHOS_COMODOS.length; i += 1) {
+      if (ANCHOS_COMODOS[i] > actual + 8 && ANCHOS_COMODOS[i] <= tope) return ANCHOS_COMODOS[i];
+    }
+    // Al llegar al ancho más cómodo que cabe, el botón vuelve al de partida
+    // en vez de quedarse pulsado sin efecto.
+    return ANCHOS_COMODOS[0];
+  }
+
+  function aplicarAncho(ancho, guardar) {
+    var destino = Math.round(Math.min(anchoMaximo(), Math.max(ANCHO_MIN, Number(ancho) || ANCHO_POR_DEFECTO)));
+    var layout = layoutDelPanel();
+    // La CSP del proyecto no admite escribir `.style` desde JS: las
+    // propiedades dinámicas van por la hoja con nonce de `csp_styles.js`.
+    if (layout && window.CotizatStyles && window.CotizatStyles.set) {
+      window.CotizatStyles.set(layout, "--arbol-ancho", destino + "px");
+    }
+    if (guardar !== false) {
+      try { localStorage.setItem(CLAVE_ANCHO, String(destino)); } catch (e) {}
+    }
+    var separador = panel.querySelector(".arbol-resize");
+    if (separador) separador.setAttribute("aria-valuenow", String(destino));
+    anchoAplicado = destino;
+    if (guardar !== false) panel.dataset.anchoGuardado = String(destino);
+    return destino;
+  }
+
+  function conectarRedimensionado() {
+    if (panel.querySelector(".arbol-resize")) return;
+    var separador = document.createElement("div");
+    separador.className = "arbol-resize";
+    separador.setAttribute("role", "separator");
+    separador.setAttribute("aria-orientation", "vertical");
+    separador.setAttribute("aria-label", texto("Ancho del catálogo", "Catalog width"));
+    separador.setAttribute("aria-valuemin", String(ANCHO_MIN));
+    separador.setAttribute("aria-valuemax", String(anchoMaximo()));
+    separador.setAttribute("aria-valuenow", String(anchoActual()));
+    separador.tabIndex = 0;
+    separador.title = texto("Arrastra para ensanchar el catálogo · doble clic para restablecer",
+                            "Drag to widen the catalog · double click to reset");
+    panel.appendChild(separador);
+
+    // Además del arrastre, un botón explícito: el asa se descubre tarde.
+    var cabecera = panel.querySelector(".arbol-head");
+    if (cabecera && !cabecera.querySelector(".arbol-head-acciones")) {
+      var acciones = document.createElement("div");
+      acciones.className = "arbol-head-acciones";
+      var cerrar = cabecera.querySelector(".arbol-toggle");
+      cabecera.appendChild(acciones);
+      if (cerrar) acciones.appendChild(cerrar);
+      var ensanchar = document.createElement("button");
+      ensanchar.type = "button";
+      ensanchar.className = "arbol-ancho-toggle";
+      ensanchar.id = "arbol-ancho-toggle";
+      ensanchar.textContent = "⤢";
+      ensanchar.title = texto("Ensanchar el catálogo", "Widen the catalog");
+      ensanchar.setAttribute("aria-label", ensanchar.title);
+      acciones.appendChild(ensanchar);
+      ensanchar.addEventListener("click", function (evento) {
+        evento.preventDefault();
+        aplicarAncho(siguienteAncho(anchoActual()), true);
+      });
+    }
+
+    var arrastrando = false;
+    var inicioX = 0;
+    var inicioAncho = ANCHO_POR_DEFECTO;
+
+    function soltar(evento) {
+      if (!arrastrando) return;
+      arrastrando = false;
+      document.body.classList.remove("arbol-redimensionando");
+      try {
+        if (evento && separador.releasePointerCapture && evento.pointerId != null) {
+          separador.releasePointerCapture(evento.pointerId);
+        }
+      } catch (e) {}
+      aplicarAncho(anchoActual(), true);
+    }
+
+    separador.addEventListener("pointerdown", function (evento) {
+      if (window.matchMedia && window.matchMedia("(max-width: 1100px)").matches) return;
+      if (evento.button != null && evento.button !== 0) return;
+      arrastrando = true;
+      inicioX = evento.clientX;
+      inicioAncho = anchoActual();
+      try {
+        if (separador.setPointerCapture && evento.pointerId != null) {
+          separador.setPointerCapture(evento.pointerId);
+        }
+      } catch (e) {}
+      document.body.classList.add("arbol-redimensionando");
+      evento.preventDefault();
+    });
+
+    separador.addEventListener("pointermove", function (evento) {
+      if (!arrastrando) return;
+      aplicarAncho(inicioAncho + (evento.clientX - inicioX), false);
+      evento.preventDefault();
+    });
+
+    separador.addEventListener("pointerup", soltar);
+    separador.addEventListener("pointercancel", soltar);
+
+    separador.addEventListener("dblclick", function (evento) {
+      evento.preventDefault();
+      aplicarAncho(ANCHO_POR_DEFECTO, true);
+    });
+
+    separador.addEventListener("keydown", function (evento) {
+      var paso = evento.shiftKey ? 60 : 20;
+      if (evento.key === "ArrowLeft") aplicarAncho(anchoActual() - paso, true);
+      else if (evento.key === "ArrowRight") aplicarAncho(anchoActual() + paso, true);
+      else if (evento.key === "Home") aplicarAncho(ANCHO_MIN, true);
+      else if (evento.key === "End") aplicarAncho(anchoMaximo(), true);
+      else return;
+      evento.preventDefault();
+    });
+
+    // Si la ventana se estrecha, el ancho guardado se recorta sin perderlo.
+    if (!panel._arbolResizeWindow) {
+      panel._arbolResizeWindow = true;
+      window.addEventListener("resize", function () {
+        if (panel.classList.contains("plegado")) return;
+        var guardado = parseInt(panel.dataset.anchoGuardado || "", 10);
+        if (guardado > anchoMaximo()) aplicarAncho(anchoMaximo(), false);
+        else if (guardado > 0) aplicarAncho(guardado, false);
+      });
+    }
+  }
+
+  function restaurarAncho() {
+    var guardado = 0;
+    try { guardado = parseInt(localStorage.getItem(CLAVE_ANCHO) || "", 10); } catch (e) {}
+    if (guardado > 0) {
+      panel.dataset.anchoGuardado = String(guardado);
+      aplicarAncho(guardado, false);
+    }
+  }
+
+  // ---------------------------------------------------------------------
   // Arranque
   // ---------------------------------------------------------------------
 
@@ -695,6 +887,8 @@
   editor.reconstruirArbolCatalogo = reconstruir;
 
   function init() {
+    conectarRedimensionado();
+    restaurarAncho();
     reconstruir();
 
     cuerpo.addEventListener("click", function (event) {

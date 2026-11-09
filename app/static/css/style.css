@@ -4079,8 +4079,12 @@ body.beneficio-on .partida-row {
    ========================================================================== */
 
 .builder-con-arbol {
+  /* El ancho útil del catálogo es una variable: el asa de arrastre la cambia
+     y el navegador la recuerda. El mínimo garantiza que una partida se lea
+     sin tener que plegar el panel. */
+  --arbol-ancho: 340px;
   display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, var(--arbol-ancho)) minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
   transition: grid-template-columns var(--dur-slow) var(--ease-out);
@@ -4129,6 +4133,47 @@ body.beneficio-on .partida-row {
   margin: 0;
 }
 
+/* Asa del ancho. El panel es sticky, así que sirve de contexto de posición. */
+.arbol-resize {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 11px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+  z-index: 3;
+}
+.arbol-resize::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  width: 3px;
+  height: 46px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
+  transition: height var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+.arbol-resize:hover::after,
+.arbol-resize:focus-visible::after {
+  height: 96px;
+  background: var(--accent);
+}
+.arbol-resize:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+.arbol-catalogo.plegado .arbol-resize { display: none; }
+body.arbol-redimensionando { cursor: col-resize; user-select: none; }
+/* Al arrastrar, la columna sigue al puntero sin animación de por medio. */
+body.arbol-redimensionando .builder-con-arbol { transition: none; }
+body.arbol-redimensionando * { cursor: col-resize !important; }
+.arbol-body { padding-right: .75rem; }
+
 .arbol-head {
   display: flex;
   align-items: center;
@@ -4137,6 +4182,22 @@ body.beneficio-on .partida-row {
   padding: .7rem .8rem;
   border-bottom: 1px solid var(--border);
 }
+.arbol-head-acciones { display: flex; align-items: center; gap: .3rem; }
+.arbol-ancho-toggle {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  font-size: .9rem;
+}
+.arbol-ancho-toggle:hover { color: var(--accent); border-color: var(--accent-light); }
+/* Plegado y móvil no ensanchan: el ancho lo manda el layout. */
+.arbol-catalogo.plegado .arbol-ancho-toggle { display: none; }
 .arbol-titulo h3 { margin: .1rem 0 0; font-size: .95rem; }
 .arbol-toggle {
   flex: 0 0 auto;
@@ -4258,6 +4319,9 @@ body.beneficio-on .partida-row {
   .builder-con-arbol { grid-template-columns: minmax(0, 1fr); }
   .builder-con-arbol.arbol-plegado { grid-template-columns: minmax(0, 1fr); }
   .arbol-catalogo { position: static; max-height: 340px; }
+  /* En hoja inferior el ancho es el de la pantalla: el asa sobra. */
+  .arbol-resize { display: none; }
+  .arbol-ancho-toggle { display: none; }
   .arbol-catalogo.plegado {
     width: 100%;
     min-width: 0;
@@ -4526,9 +4590,10 @@ body.editor-focus .builder-general-card h2 {
 
 /* Workspace full-bleed, menos cajas */
 body.editor-focus .builder-con-arbol {
+  --arbol-ancho: 300px;
   gap: 0.75rem;
   margin: 0;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  grid-template-columns: minmax(240px, var(--arbol-ancho)) minmax(0, 1fr);
 }
 body.editor-focus .builder-con-arbol.arbol-plegado {
   grid-template-columns: 44px minmax(0, 1fr);
@@ -4767,7 +4832,7 @@ body.editor-focus .builder-command-bar:not(.editor-command-bar) {
   .ecb-actions { grid-area: actions; }
   .ecb-tools .ecb-label { display: none; }
   body.editor-focus .builder-con-arbol {
-    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+    grid-template-columns: minmax(200px, var(--arbol-ancho)) minmax(0, 1fr);
   }
   body.editor-focus .builder-con-arbol.arbol-plegado {
     grid-template-columns: 44px minmax(0, 1fr);
