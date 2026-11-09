@@ -191,10 +191,19 @@ Lista de **enlaces que un constructor sí haría clic**, todos gratis:
 | **Product Hunt / BetaList** | Un lanzamiento, no cinco | `/` |
 | **Cámaras y gremios** | Cámara de la Construcción (VE), CAMACOL (CO), CMIC (MX), CAPECO (PE), Cámara de la Construcción (EC): directorio de proveedores o nota de prensa de 400 palabras | Home de país |
 | **Perfiles de empresa** | Google Business Profile si hay domicilio fiscal; LinkedIn Company | `/` |
-| **Comunidades** | Responder (no spamear) en grupos de maestros de obra, Reddit r/Colombia, foros de CYPE en español. Enlace solo si aporta. | `/co/apu` o equivalente |
+| **Comunidades** | Responder (no spamear) en grupos de maestros de obra, Reddit r/Colombia, foros de CYPE en español y **Quora**. Enlace solo si aporta. | `/co/apu` o equivalente |
 | **PDF viajero** | Cada presupuesto de piloto que salga al mundo lleva `cotizat.online` en el pie. Es el backlink más natural del producto. | Home |
 
 Criterio de hecho: 8–12 enlaces de dominio distintos, ninguno pagado, ninguno recíproco masivo.
+
+> **Actualización 09/11/2026 — Quora entra en la fila de comunidades.** Quora es
+> el canal de esta lista donde el contenido (las respuestas) vive años y
+> además lo citan los motores de IA, pero su política prohíbe el uso de la
+> pregunta como soporte publicitario. El plan concreto (12-16 respuestas al mes
+> reutilizando las guías de mercado, una pregunta propia al mes como máximo,
+> enlaces solo a URLs indexables, UTM y criterio de cierre a 90 días) está en
+> `docs/ESTRATEGIA_QUORA_2026-11-09.md`, con el material listo para publicar en
+> `docs/QUORA_BANCO_Y_RESPUESTAS_2026-11-09.md`.
 
 ### Semanas 6–10 — un artículo realmente útil por país (hecho)
 
