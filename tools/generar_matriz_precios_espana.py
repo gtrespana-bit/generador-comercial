@@ -1465,6 +1465,51 @@ def referencias_cierre_2026_11_07() -> dict[str, dict[str, Referencia]]:
     return resultado
 
 
+FECHA_COTIZACIONES = "2026-11-08"
+FUENTES_COTIZACIONES = ROOT / "docs/auditoria_precios/espana_decision_cotizaciones_2026-11-08.csv"
+
+
+def referencias_cotizadas_espana() -> dict[str, dict[str, Referencia]]:
+    """Cotizaciones reales contrastadas, con prioridad sobre cualquier lote anterior.
+
+    Cada fila del registro es una decisión cerrada: código, método, precio
+    adoptado, banda medida, confianza, fuente y criterio. Se valida aquí otra
+    vez porque el registro es la única entrada de la capa que sustituye precios
+    ya publicados; un precio fuera de su banda o una fuente vacía no deben
+    llegar a la matriz.
+    """
+    catalogo = json.loads(SRC.read_text(encoding="utf-8"))
+    unidades = {codigo: item.get("unidad", "ud") for codigo, _, item in iter_recursos(catalogo)}
+    resultado = {}
+    with FUENTES_COTIZACIONES.open(encoding="utf-8-sig", newline="") as manejador:
+        for fila in csv.DictReader(manejador, delimiter=";"):
+            codigo = fila["codigo_recurso"].strip()
+            if codigo not in unidades:
+                raise ValueError(f"Cotización de recurso inexistente: {codigo}")
+            if codigo in resultado:
+                raise ValueError(f"Cotización duplicada: {codigo}")
+            precio = Decimal(fila["precio"])
+            minimo, maximo = Decimal(fila["precio_min"]), Decimal(fila["precio_max"])
+            if (not precio.is_finite() or precio <= 0 or minimo <= 0 or maximo < minimo
+                    or not minimo <= precio <= maximo):
+                raise ValueError(f"Cotización con banda incoherente: {codigo}")
+            if not fila["fuente"].strip() or not fila["criterio"].strip():
+                raise ValueError(f"Cotización sin fuente o criterio: {codigo}")
+            if fila["confianza"] not in {"alta", "media", "baja", "referencia", "derivado"}:
+                raise ValueError(f"Cotización con confianza desconocida: {codigo}")
+            unidad = unidades[codigo]
+            resultado[codigo] = {"ES": ref(
+                precio, minimo, maximo, fila["fuente"].strip(),
+                confianza=fila["confianza"], incluye_iva="no", incluye_transporte="no_confirmado",
+                observaciones=(
+                    f"Cotización real contrastada el {FECHA_COTIZACIONES} ({fila['metodo']}). "
+                    f"Banda medida: {minimo}-{maximo} EUR/{unidad}, precio adoptado "
+                    f"{precio} EUR/{unidad} sin IVA. {fila['criterio'].strip()}"
+                ),
+            )}
+    return resultado
+
+
 def _numero(valor: float) -> str:
     return f"{valor:.6f}".rstrip("0").rstrip(".")
 
@@ -1474,7 +1519,10 @@ def main():
     # La canasta histórica se mantiene congelada: una revisión individual no
     # debe recalibrar silenciosamente cientos de recursos aún pendientes.
     factores = completar_referencias_derivadas(data)
-    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas(), **referencias_materiales_07(), **referencias_lote_regional(), **referencias_lote_comercial(), **referencias_lote_prioritario(), **referencias_lote_tiendas(), **referencias_lote_posterior(), **referencias_lote_banco(), **referencias_lote_cuadros(), **referencias_lote_materiales(), **referencias_lote_cadenas(), **referencias_lote_prioridad(), **referencias_lote_alta_frecuencia(), **referencias_lote_familias(), **referencias_lote_componentes(), **referencias_lote_sistemas(), **referencias_lote_bloque_amplio(), **referencias_lote_verificacion(), **referencias_lote_continuacion(), **referencias_lote_evacuacion_epoxi(), **referencias_lote_treinta(), **referencias_otros_treinta(), **referencias_cierre_2026_11_07()}
+    # Las cotizaciones reales van al final: mandan sobre el cierre del 7 de
+    # noviembre y sobre cualquier lote anterior del mismo recurso.
+    cotizadas = referencias_cotizadas_espana()
+    referencias_finales = {**REFERENCIAS, **referencias_materiales_revisadas(), **referencias_materiales_07(), **referencias_lote_regional(), **referencias_lote_comercial(), **referencias_lote_prioritario(), **referencias_lote_tiendas(), **referencias_lote_posterior(), **referencias_lote_banco(), **referencias_lote_cuadros(), **referencias_lote_materiales(), **referencias_lote_cadenas(), **referencias_lote_prioridad(), **referencias_lote_alta_frecuencia(), **referencias_lote_familias(), **referencias_lote_componentes(), **referencias_lote_sistemas(), **referencias_lote_bloque_amplio(), **referencias_lote_verificacion(), **referencias_lote_continuacion(), **referencias_lote_evacuacion_epoxi(), **referencias_lote_treinta(), **referencias_otros_treinta(), **referencias_cierre_2026_11_07(), **cotizadas}
     rows = []
     codigos = set()
     for codigo, categoria, item in iter_recursos(data):
@@ -1493,7 +1541,8 @@ def main():
                 "precio_max": _numero(dato.maximo) if dato else "",
                 "fuente": dato.fuente if dato else "",
                 "fecha_consulta": (
-                    FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
+                    FECHA_COTIZACIONES if dato and codigo in cotizadas
+                    else FECHA_METODOLOGIA if dato and dato.fuente == METODOLOGIA
                     else FECHA_REVISION_MO if dato and dato.fuente == REVISION_MO
                     else FECHA_MATERIALES_07 if dato and dato.fuente in (REVISION_MATERIALES_07, REVISION_LOTE_REGIONAL, REVISION_LOTE_COMERCIAL, REVISION_LOTE_PRIORITARIO, REVISION_LOTE_TIENDAS, REVISION_LOTE_POSTERIOR, REVISION_LOTE_BANCO, REVISION_LOTE_CUADROS, REVISION_LOTE_MATERIALES, REVISION_LOTE_CADENAS, REVISION_LOTE_PRIORIDAD, REVISION_LOTE_ALTA_FRECUENCIA, REVISION_LOTE_FAMILIAS, REVISION_LOTE_COMPONENTES, REVISION_LOTE_SISTEMAS, REVISION_LOTE_BLOQUE_AMPLIO, REVISION_LOTE_VERIFICACION, REVISION_LOTE_CONTINUACION, REVISION_LOTE_EVACUACION_EPOXI, REVISION_LOTE_30, REVISION_OTROS_30, REVISION_CIERRE)
                     else FECHA_REVISION_MATERIALES if dato and dato.fuente == REVISION_MATERIALES
