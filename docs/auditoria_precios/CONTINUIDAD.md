@@ -2,6 +2,25 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Cotizaciones reales de España, lote 2 — 8 de noviembre de 2026
+
+**Los tres recursos de mayor uso que quedaban pasan a cotización: 184 usos en 183 partidas; 48 referencias ES con `confianza = referencia` (antes 45).**
+Informe: [cotizaciones, lote 2](ESPANA_COTIZACIONES_LOTE2_2026-11-08.md).
+
+- `MT-SENAL-OBRA` 6,27 → **9,90** (+57,9 %, 73 usos): la horquilla declarada 3–10 €/ud
+  tenía el suelo por debajo del cono más barato localizado (6,53 € sin IVA).
+- `MT-REGUL-GAS` 27,34 → **15,69** (−42,6 %, 37 usos): el banco BCCA (11,36 / 14,64 €)
+  y el minorista (11,56 / 15,69 €) coinciden; la horquilla 15–40 estaba al doble.
+- `MT-PERFIL-ALUM` **mantiene** 10,82 (74 usos): cuatro ofertas de dos distribuidores
+  lo enmarcan entre 7,54 y 14,46 €/kg y el recurso incluye herrajes que el perfil
+  desnudo no lleva. El banco BCCA no sirve de contraste aquí: sus candidatos son acero.
+- El perfil se vende por metro: 9,53 / 9,84 / 7,54 / 14,46 €/kg salen de dividir por los
+  kg/m que declara cada ficha. Sin esa división el error sería del triple.
+- El aplicador no cambia; el SQL de la fecha cubre ya los ocho recursos del registro
+  (los cinco del lote 1 se reescriben con los mismos valores, es idempotente).
+- Cargado en producción con dos filas de `historial_precios_recursos` (el perfil no
+  cambia de precio): 390 referencias ES, 48 con evidencia real, 0 overrides tocados.
+
 ## Cotizaciones reales de España, lote 1 — 8 de noviembre de 2026
 
 **Cinco recursos pasan de `mercado_rango` a cotización con dos ofertas publicadas cada uno; 45 referencias ES con `confianza = referencia` (antes 40).**
