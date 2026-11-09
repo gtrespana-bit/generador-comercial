@@ -478,6 +478,9 @@ Quora entra en el punto 4 y no en el 1.
 
 - `docs/QUORA_BANCO_Y_RESPUESTAS_2026-11-09.md` — las 20 preguntas
   candidatas y las respuestas listas para publicar (en inglés y en español).
+- `docs/PERFIL_QUORA_RUBEN_2026-11-09.md` — ficha completa del perfil de
+  Quora (nombre, titular, bio en dos versiones, credenciales, temas, Business
+  Profile) con el texto exacto para copiar.
 - `docs/HOJA_DE_RUTA_SEO.md` — canal de comunidades (Quora entra aquí) y
   ritmo general de contenidos.
 - `docs/EMBUDO_41_CUENTAS_4_PAGOS_2026-11-02.md` — de dónde vienen hoy las

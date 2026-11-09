@@ -402,6 +402,8 @@ sustituye.
 
 - `docs/ESTRATEGIA_QUORA_2026-11-09.md` — la estrategia, el porqué, el orden de
   mercados y el piloto de 90 días.
+- `docs/PERFIL_QUORA_RUBEN_2026-11-09.md` — ficha del perfil (bio, credenciales,
+  Business Profile, temas) y las frases de afiliación.
 - `docs/HOJA_DE_RUTA_SEO.md` — contenidos por país y ritmo general.
 - `app/seo.py` — `es_indexable()`: la función que decide si una URL puede
   enlazarse desde fuera.
