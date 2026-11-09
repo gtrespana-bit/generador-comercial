@@ -38,7 +38,13 @@ MARGEN_DEFECTO = 0.35
 # incorpora conceptos cuyo ``version_alta_catalogo`` sea posterior a la versión
 # ya aplicada a una organización. Las partidas nuevas (sin ``codigo_legacy``)
 # heredan esta versión como su ``version_alta_catalogo``.
-CATALOGO_VERSION = 3
+#
+# v4 (2026-11-08): incorpora las paredes de bloque de 17 y 25 cm
+# (``06.03.01.160`` y ``06.03.01.170``). Las dos llevan ``codigo_legacy``
+# reservado (``CT-06-01-…``), y sin el ``version_alta_catalogo`` explícito en su
+# JSON el sincronizador las habría leído como v1 (versión 2) y ninguna
+# organización ya migrada las habría recibido nunca.
+CATALOGO_VERSION = 4
 
 # Unidades del generador → las que acepta el validador de la app
 _EQUIV_UNIDADES = {

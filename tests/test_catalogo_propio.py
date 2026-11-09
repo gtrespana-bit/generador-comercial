@@ -278,15 +278,18 @@ def test_actualizacion_incremental_incorpora_nuevas_y_respeta_ocultas(monkeypatc
 
         base = construir_catalogo()
         nueva = dict(base["partidas"][0])
+        # La ampliación se prueba siempre una versión por delante de la vigente:
+        # así la prueba sigue sirviendo cuando el catálogo crece.
+        siguiente = servicio.CATALOGO_VERSION + 1
         nueva.update({
             "catalogo_uid": "COTIZAT-V4-PRUEBA-001",
             "codigo": "01.02.01.990",
             "codigo_legacy": "",
-            "nombre": "Partida oficial incorporada en versión 4",
-            "version_alta_catalogo": 4,
+            "nombre": f"Partida oficial incorporada en versión {siguiente}",
+            "version_alta_catalogo": siguiente,
         })
         fake = {**base, "partidas": [*base["partidas"], nueva], "n_partidas": 541}
-        monkeypatch.setattr(servicio, "CATALOGO_VERSION", 4)
+        monkeypatch.setattr(servicio, "CATALOGO_VERSION", siguiente)
         monkeypatch.setattr(servicio, "construir_catalogo", lambda: fake)
 
         resultado = servicio.actualizar_taxonomia_catalogo_propio(db)
@@ -296,9 +299,9 @@ def test_actualizacion_incremental_incorpora_nuevas_y_respeta_ocultas(monkeypatc
         ).one()
         assert creada.es_oficial is True
         assert creada.oculta is False
-        assert creada.version_alta_catalogo == 4
+        assert creada.version_alta_catalogo == siguiente
         assert db.get(Partida, oculta.id).oculta is True
-        assert db.query(Configuracion).one().version_catalogo == 4
+        assert db.query(Configuracion).one().version_catalogo == siguiente
 
         # Reintentar la misma versión no duplica ni reactiva nada.
         segundo = servicio.actualizar_taxonomia_catalogo_propio(db)
@@ -511,6 +514,85 @@ def test_normalizar_nombres_patron_hace_dos_consultas_en_lote():
         assert select_count == 2
         assert partida.nombre == "Enchapado de paramento interior con pieza cerámica o porcelanato, en capa fina."
         assert recurso.descripcion == "Oficial de 1ª enchapador."
+    finally:
+        db.close()
+        engine.dispose()
+
+
+# Las dos paredes de bloque de la v4 llevan ``codigo_legacy`` reservado porque
+# nacieron con el generador antiguo. Sin ``version_alta_catalogo`` explícito en
+# su JSON, ``construir_catalogo`` las leía como v1 (versión 2) y ninguna
+# organización ya migrada las recibía: se quedaban en 0 filas en producción.
+PAREDES_DE_BLOQUE = {"06.03.01.160": "MT-BLQ-17", "06.03.01.170": "MT-BLQ-25"}
+RAIZ_REPO = __import__("pathlib").Path(__file__).resolve().parents[1]
+
+
+def test_las_paredes_de_bloque_declaran_su_version_de_alta():
+    for codigo in sorted(PAREDES_DE_BLOQUE):
+        datos = json.loads(
+            (RAIZ_REPO / f"basedatos_partidas/datos/descompuestos/{codigo}.json")
+            .read_text(encoding="utf-8")
+        )
+        assert datos["version_alta_catalogo"] >= CATALOGO_VERSION, (
+            f"{codigo} declara una versión de alta anterior a la vigente: nunca "
+            "llegaría a las organizaciones ya migradas"
+        )
+        assert datos["recursos"], f"{codigo} no tiene descompuesto"
+
+    catalogo = {p["codigo"]: p for p in construir_catalogo()["partidas"]}
+    for codigo in sorted(PAREDES_DE_BLOQUE):
+        assert catalogo[codigo]["version_alta_catalogo"] >= CATALOGO_VERSION
+        assert catalogo[codigo]["precio_unitario"] > 0
+
+
+def test_las_paredes_de_bloque_llegan_a_quien_ya_tenia_el_catalogo():
+    """Regresión del alta v4: una organización en la versión anterior las recibe.
+
+    Simula el estado real de producción antes de este cambio —catálogo migrado
+    en la versión previa y ningún partida 06.03.01.160/170— y comprueba que el
+    sincronizador incremental las incorpora con su descompuesto y su precio.
+    """
+    engine, db = _session()
+    try:
+        sembrar_catalogo_propio(db)
+        db.query(Partida).filter(
+            Partida.codigo_interno.in_(PAREDES_DE_BLOQUE)
+        ).delete(synchronize_session=False)
+        db.query(Configuracion).update(
+            {Configuracion.version_catalogo: CATALOGO_VERSION - 1},
+            synchronize_session=False,
+        )
+        db.commit()
+        assert db.query(Partida).filter(
+            Partida.codigo_interno.in_(PAREDES_DE_BLOQUE)
+        ).count() == 0
+
+        resultado = actualizar_taxonomia_catalogo_propio(db)
+
+        assert resultado["incorporadas"] == len(PAREDES_DE_BLOQUE)
+        creadas = {
+            p.codigo_interno: p
+            for p in db.query(Partida).filter(
+                Partida.codigo_interno.in_(PAREDES_DE_BLOQUE)
+            )
+        }
+        assert set(creadas) == set(PAREDES_DE_BLOQUE)
+        for codigo, bloque in PAREDES_DE_BLOQUE.items():
+            partida = creadas[codigo]
+            assert partida.es_oficial is True
+            assert partida.version_alta_catalogo == CATALOGO_VERSION
+            assert partida.precio_unitario > 0
+            descomp = json.loads(partida.descomposicion_json)
+            codigos = {f["codigo"] for f in descomp["filas"] if f.get("codigo")}
+            assert bloque in codigos, f"{codigo} no lleva {bloque} en su descompuesto"
+        assert db.query(Configuracion).one().version_catalogo == CATALOGO_VERSION
+
+        # Repetir la migración no duplica nada.
+        segunda = actualizar_taxonomia_catalogo_propio(db)
+        assert segunda["incorporadas"] == 0
+        assert db.query(Partida).filter(
+            Partida.codigo_interno.in_(PAREDES_DE_BLOQUE)
+        ).count() == len(PAREDES_DE_BLOQUE)
     finally:
         db.close()
         engine.dispose()

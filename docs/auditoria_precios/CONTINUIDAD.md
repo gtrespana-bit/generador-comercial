@@ -2,6 +2,47 @@
 
 **Para retomar rápidamente:** [resumen actualizado, pendientes y pasos siguientes](REANUDAR_AUDITORIA_ESPANA.md). Las secciones siguientes conservan el historial y sus resultados de prueba son fotografías de cada momento.
 
+## Cotizaciones reales de España, lote 1 — 8 de noviembre de 2026
+
+**Cinco recursos pasan de `mercado_rango` a cotización con dos ofertas publicadas cada uno; 45 referencias ES con `confianza = referencia` (antes 40).**
+Informe: [cotizaciones, lote 1](ESPANA_COTIZACIONES_LOTE1_2026-11-08.md).
+
+- `MT-SOPORTE-AC` 18,23 → **10,98** (−39,8 %, 36 usos): la horquilla declarada 15–60 €/ud
+  estaba por encima del mercado real (7,68–10,98 € sin IVA).
+- `MT-TRAMPA-GRASA` 88,86 → **169,00** (+90,2 %): la horquilla 60–150 €/ud no existe; el
+  separador UNE-EN 1825 más barato localizado son 204,49 € con IVA.
+- `MT-PERSIANA-ALU` 62,66 → **56,19** y `MT-CIELO-PVC` 18,23 → **18,01**.
+- `MT-VIDRIO-TEMP` **mantiene** 77,47: banco CYPE 59,13 €/m² (material sin taladros) y
+  minorista 125,95 €/m² lo enmarcan, y el recurso incluye perforaciones.
+- Dos conversiones que se hacen explícitas en el registro: IVA (tienda con IVA, banco sin
+  IVA) y unidad (la persiana se vende por hueco, no por m²).
+- La banda medida entra en `precio_min` / `precio_max`, que hasta hoy repetían el precio.
+- Registro en tres piezas: `espana_cotizaciones_2026-11-08.csv` (ofertas),
+  `espana_decision_cotizaciones_2026-11-08.csv` (decisión por recurso) y
+  `tools/aplicar_cotizaciones_espana.py` (aplica a la matriz y emite el SQL acotado).
+- Cargado en producción (`ivsuiyfljcajrijgwisg`) con `historial_precios_recursos`: 5 filas,
+  4 con cambio de precio, `moneda = EUR`, `incluye_iva = 'no'`, `fecha_consulta = 2026-11-08`.
+  Comprobado: 390 referencias ES nacionales, 0 overrides tocados, 8.162 de otros países.
+- **Moneda resuelta sin conversión**: `recursos.json` es USD, pero los precios nacionales
+  viven en `precios_recursos_mercado`, que guarda la moneda de cada mercado y convierte
+  solo al dibujar el presupuesto con tasa verificada. No se toca el catálogo base.
+
+## Catálogo v4: paredes de bloque de 17 y 25 cm — 8 de noviembre de 2026
+
+**Las dos partidas que estaban en el repositorio pero en ninguna organización se
+despliegan por fin.** Informe: [catálogo v4](../CATALOGO_V4_PAREDES_DE_BLOQUE_2026-11-08.md).
+
+- Causa: con `codigo_legacy` y sin `version_alta_catalogo`, la versión de alta caía a 2 y
+  nunca superaba el `version_previa = 3` de las organizaciones. Subir solo
+  `CATALOGO_VERSION` no habría bastado.
+- Arreglo en dos piezas: `version_alta_catalogo: 4` en los dos descompuestos y
+  `CATALOGO_VERSION = 4` en `catalogo_propio.py`, más dos pruebas nuevas.
+- En producción solo la organización 75 tenía las dos filas (`version_alta_catalogo = 2`);
+  el resto las recibe al abrir el catálogo, porque la sincronización es perezosa
+  (`asegurar_catalogo_propio` en partidas, recursos y presupuesto nuevo).
+- Precios: `MT-BLQ-17` 0,70 y `MT-BLQ-25` 0,86 en `public.recursos`, que dan **23,00** y
+  **27,68 USD/m²** con el desglose del capítulo 06.
+
 ## Carga en producción de las 390 referencias nacionales — 8 de noviembre de 2026
 
 **390 referencias ES cargadas y selladas a 2026-11-07; 0 discrepancias; nada más tocado.**

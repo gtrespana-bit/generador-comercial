@@ -20,6 +20,21 @@ def leer(path):
         return list(csv.DictReader(manejador, delimiter=";"))
 
 
+def cotizados_despues_del_cierre() -> set[str]:
+    """Recursos cuyo precio ya manda un registro posterior al cierre del 7.
+
+    El cierre del 7 de noviembre es historia: describe con qué evidencia se
+    cerró cada recurso ese día. El 8 de noviembre se abrió el registro de
+    cotizaciones reales, que tiene prioridad en el generador de la matriz. Un
+    recurso que aparece en él ya no tiene que coincidir con el libro del
+    cierre, y la prueba no debe exigírselo: lo que sí se comprueba, en
+    `test_cotizaciones_espana.py`, es que la matriz y ese registro digan lo
+    mismo.
+    """
+    registro = DOC / "espana_decision_cotizaciones_2026-11-08.csv"
+    return {f["codigo_recurso"] for f in leer(registro)}
+
+
 @pytest.fixture(scope="module")
 def datos():
     registro = {r["codigo_recurso"]: r for r in leer(cierre.REGISTRO)}
@@ -54,6 +69,9 @@ def test_libro_coincide_con_registro_y_matriz(datos):
             assert registro[codigo]["estado_auditoria"] == "confirmado_referencia"
             assert "Confirmación 2026-11-07" in registro[codigo]["evidencia_y_pendientes"]
         assert fila["fecha_revision"] == FECHA
+        if codigo in cotizados_despues_del_cierre():
+            # Precio posterior, con su propia evidencia y su propia prueba.
+            continue
         assert Decimal(fila["precio_final"]) == Decimal(matriz[codigo]["precio_referencia"])
         assert cierre.MARCA in registro[codigo]["evidencia_y_pendientes"]
         if fila["decision"] in cierre.APLICA:
@@ -67,8 +85,16 @@ def test_las_referencias_aceptadas_alimentan_el_generador(datos):
     _, matriz, _, libro, referencias = datos
     generadas = generador.referencias_cierre_2026_11_07()
     assert set(generadas) == set(referencias)
+    posteriores = cotizados_despues_del_cierre() & set(generadas)
+    assert posteriores, "el registro posterior debe tener su capa propia"
     for codigo, dado in generadas.items():
         precio = Decimal(referencias[codigo]["precio"])
+        if codigo in posteriores:
+            # El generador aplica primero el cierre y después la cotización, así
+            # que la matriz ya no se atribuye a la revisión del 7 de noviembre:
+            # la fuente es la oferta publicada, aunque el precio no cambie.
+            assert matriz[codigo]["fuente"] != generador.REVISION_CIERRE
+            continue
         assert Decimal(str(dado["ES"].precio)) == precio
         assert Decimal(matriz[codigo]["precio_referencia"]) == precio
         assert matriz[codigo]["fuente"] == generador.REVISION_CIERRE
