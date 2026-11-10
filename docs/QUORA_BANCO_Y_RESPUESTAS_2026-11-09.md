@@ -275,6 +275,79 @@ frase "costo de empresa" para no inducir a error.
 
 ---
 
+### 2.5 Respuesta E (ES) — para el hilo «¿Conocen algún software de construcción para reducir costos?»
+
+**Idioma del hilo:** español. **Enlace:** uno solo, la guía de APU (indexable,
+con CTA de prueba dentro). **Afiliación:** declarada en la misma frase en la
+que se nombra la herramienta.
+
+Texto exacto para copiar y pegar:
+
+```
+Sí, existe, pero te voy a decir lo que no te cuentan esas páginas: el
+software no abarata la obra por sí solo. Lo que abarata es dejar de decidir a
+ojo. El programa es solo la forma barata de tener lo que en una hoja de
+cálculo se te rompe: precios con su fecha, mediciones que cuadran y cambios de
+alcance por escrito.
+
+El primer salto que yo haría no es el takeoff ni el 3D, es el precio
+unitario. Cada partida de tu presupuesto debería salir de un análisis de
+precios unitarios: materiales, rendimiento, horas y el precio con su fecha y
+su fuente. Ahí es donde se te va el dinero sin que te enteres. El mismo
+recurso con el precio del año pasado, o el mismo oficial más caro que hace
+dos años, y el presupuesto sigue viéndose igual en el papel.
+
+Herramientas en las que merece la pena mirar:
+
+- Medición y takeoff: Bluebeam Revu, Autodesk Takeoff, PlanSwift, CostX,
+  On-Screen Takeoff.
+- Presupuesto y control de obra: Buildertrend, eTakeoff y las hojas de
+  cálculo de toda la vida, que no van a morir.
+- Gestión de obra y cambios: Procore, Buildertrend, OpenProject, Fieldwire.
+  Aquí es donde se recupera el dinero: el cambio de alcance queda registrado
+  por escrito y el presupuesto se ajusta con la evidencia, no con una
+  discusión.
+
+Y para que conste, que es justo lo que Quora pide declarar: yo trabajo con
+obra todos los días y participo en el desarrollo de CotizaT, una herramienta
+para esto. Si te interesa el método más que la marca, escribí una guía sobre
+cómo montar un APU sin que se te rompa en cuanto cambias un precio:
+https://cotizat.online/guia/analisis-precios-unitarios?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=es-precios
+
+Un consejo antes de que pagues nada: mete en la prueba una obra que ya
+tengas cerrada y compara el importe que te devuelve con lo que de verdad te
+costó. Si se parece, la herramienta te sirve; si se va lejos del real,
+ningún programa te va a salvar.
+
+Si me dices el país y qué tipo de obra haces (residencial, reforma, obra
+pública), te digo por dónde empezaría y qué parte del presupuesto suele
+escaparse.
+```
+
+**Por qué así:**
+
+| Regla | Cómo se cumple |
+| --- | --- |
+| El hilo manda | Pregunta en español, respuesta en español, enlace a página en español |
+| Un solo enlace | La guía de APU; lleva dentro el CTA de prueba y el nombre de la marca |
+| Enlace en contexto | Va en el sixth párrafo, ni al principio ni al final |
+| Afiliación declarada | «participo en el desarrollo de CotizaT», en la misma frase que nombra la herramienta |
+| Nada de producto en la primera frase | La primera frase es una respuesta sobre software, no un anuncio |
+| Cifras sin inventar | Ninguna cifra: solo criterio y nombres reales de herramientas |
+| Cierre con pregunta | Invita a decir país y tipo de obra; baja el tono de la respuesta y suma hilo |
+| Sin repetirse | Si contesta, se agradece el detalle y no se pega lo mismo en otros hilos |
+
+**Si preguntan en comentarios:**
+
+- *«¿Es gratis?»* → hay 7 días de prueba sin tarjeta; el software es de pago.
+- *«¿Sirve para obra pública?»* → para la obra privada; el APU de contrato
+  estatal es otro sistema y no lo cubre.
+- *«¿En qué países?»* → 23 mercados con moneda e impuesto propios.
+- *«¿Puedes adaptar mi Excel?»* → sí, importan descompuestos .xlsx conservando
+  fórmulas y celdas combinadas, y se pega TSV o se importa .bc3 (FIEBDC-3).
+
+---
+
 ## 3. Pregunta propia modelo + su respuesta
 
 Esta es la versión legítima de "preguntar y publicitar": **la pregunta es
