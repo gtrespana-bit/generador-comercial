@@ -177,6 +177,82 @@ con prueba verificable.
 
 > En RemodelaT **no se pone año de fundación ni «años de experiencia»**: su propia web lo prohíbe ("empresa nueva; sin «años de experiencia» ni año de fundación"). Se aplica la misma regla aquí. De CotizaT sí se pone 2026, porque el proyecto está documentado desde esa fecha.
 
+### 5.1 La credencial «CONSTRUCCIÓN Y SOFTWARE» (pantalla *Editar credenciales*)
+
+Quora permite añadir credenciales de tipo **empleo**, **educación**,
+**ubicación**, **tema**, **idioma** y **espacio**. Para una etiqueta como
+«CONSTRUCCIÓN Y SOFTWARE» hay dos caminos, y la diferencia es cómo se lee
+justo debajo de tu nombre en cada respuesta.
+
+#### Opción A — Tema (recomendada si quieres que se lea tal cual)
+
+Elige **Tema / Topic**. El nombre de la credencial es la etiqueta que se ve,
+tal cual, bajo tu nombre. Si el tema no existe, Quora ofrece el botón
+**Create Topic** y lo crea.
+
+| Campo | Valor EN | Valor ES |
+| --- | --- | --- |
+| Tipo | Topic | Tema |
+| Nombre | `Construction and software` | `Construcción y software` |
+| Descripción (una o dos frases) | `Renovation contractor (RemodelaT, A Coruña) and creator of CotizaT, the construction estimating software we use to price our own work. I write about labour cost, unit rates, quoting and estimating software.` | `Constructor de reformas (RemodelaT, A Coruña) y creador de CotizaT, el software de presupuestos con el que cotizamos nuestro propio trabajo. Escribo sobre coste de mano de obra, precios unitarios, cotización y software de presupuestos.` |
+
+Se verá así: **Rubén · Construcción y software**. Limpio, corto y sin
+organización inventada.
+
+#### Opción B — Empleo (si quieres que se vea la empresa)
+
+Elige **Empleo / Employment**. Entonces el nombre va en el campo de cargo y
+la empresa en el de organización.
+
+| Campo | Valor EN | Valor ES |
+| --- | --- | --- |
+| Tipo | Employment | Empleo |
+| Cargo (title) | `Construction and software` | `Construcción y software` |
+| Organización | `CotizaT` | `CotizaT` |
+| Periodo | `2026 – Present` | `2026 – actual` |
+| Descripción | `Founder of CotizaT and owner of RemodelaT. We renovate homes in A Coruña and price the work with the software we build. 3,008-item catalogue, unit prices with sources and dates, 23 markets in local currency and tax terms.` | `Fundador de CotizaT y propietario de RemodelaT. Reformamos viviendas en A Coruña y cotizamos el trabajo con el software que construimos. Catálogo de 3.008 partidas, precios unitarios con fuente y fecha, 23 mercados en moneda e impuestos locales.` |
+
+Se verá así: **Rubén · Construcción y software en CotizaT**.
+
+> **Cuidado con las fechas en "Empleo":** Quora usa el año final para decir
+> "Former X". Si pones "actual" o dejas el final vacío, lo muestra como
+> "Current X". Si alguna vez se acaba la relación, **no** escribas "actual" en
+> ese campo.
+
+#### Mayúsculas: recomendación
+
+Quora pide credenciales "cortas, específicas, con gramática y ortografía
+correctas". En mayúsculas no se viola ninguna regla, pero **en un perfil en
+inglés se lee como gritar** y ocupa más espacio en la línea bajo el nombre
+(que se muestra en tamaño pequeño). Lo recomendado es `Construcción y
+software`, con la C en mayúscula y el resto en minúscula. Si aun así se
+prefiere el efecto visual en mayúsculas, que sea corto: `CONSTRUCCIÓN Y SOFTWARE` a secas,
+sin añadidos.
+
+#### El truco que casi nadie usa: "Set as Default"
+
+La credencial que sale junto a tu nombre **depende de la respuesta**, y se
+cambia en un clic:
+
+- En el perfil: *Credentials & Highlights* → *Edit* → **Set as Default**.
+- En una respuesta ya publicada: menú `⋯` → **Edit Credential** → se elige
+  la que debe salir en ese hilo.
+
+Cómo usarlo aquí: poner **"Construcción y software"** como credencial por
+defecto para las respuestas de costes, precios unitarios y plantillas
+(cuya respuesta habla de oficio), y cambiar a **"Fundador — CotizaT"** para
+las respuestas donde hables del software o de la fiscalidad. Así cada
+respuesta lleva el sello que le corresponde, y ninguna parece un anuncio.
+
+#### Las credenciales que NO debes añadir
+
+| No añadas | Por qué |
+| --- | --- |
+| "Experto en construcción" sin descripción | Una etiqueta sin respaldo se lee como título autoinventado. |
+| "Consultor de obras" | No es el oficio que describes: es reformas y presupuestos. |
+| Credenciales repetidas ("Construcción" y "Construcción y software") | Duplicados se ven como relleno. |
+| Más de 5 credenciales | El perfil se vuelve un curriculum colgado; menos es más. |
+
 **El campo de URL del perfil (website):**
 
 ```
