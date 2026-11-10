@@ -203,7 +203,7 @@ JavaScript 2.
 | **tumaquinaria** | Unidad de maquinaria de ocasión | En curso |
 | **Marketplace-vzla** (**VendeT**) | Marketplace venezolano generalista (coches, tecnología, moda, hogar), Next.js + Supabase, con `ESTADO-PROYECTO.md`, `ANALISIS-SEO.md` y `ANALISIS-CONVERSIÓN.md` | Operativo |
 | **vendet-inmuebles** | Portal inmobiliario venezolano: Next.js 15, React 18, Supabase, Cloudflare R2, migraciones SQL, RLS y buckets privados | Operativo |
-| **KHC-Auto-Import** | **Sistema integral** de venta de vehículos seleccionados en A Coruña y Galicia: web pública (`khcimport.autos`, Next.js) + **ERP interno** (React + Vite) en el mismo despliegue de Vercel con dos dominios; plan de negocio, inteligencia de mercado y simulación fiscal; importación de toda Europa con **12 meses de garantía** | Operativo |
+| **KHC-Auto-Import** | **Negocio físico propio** de compra, importación y venta de vehículos seleccionados en A Coruña y Galicia: **11 vehículos en stock real publicado** (verificado en `khcimport.autos` el 10/11/2026), garantía mínima de 12 meses, **nave de 465 m² en O Milladoiro (Ames, A Coruña)** con taller y zona de exposición, reforma hecha con mano de obra propia y capital propio. Web pública (Next.js) + **ERP interno** (React 19 + Vite + Tailwind v4) en el mismo despliegue de Vercel con dos dominios; motor de precios sobre 474 anuncios reales con la fuente declarada, regresión auditada (R² 0,892), motor fiscal con tarifas 2026 verificadas, plan de negocio y dossier de aval | Operativo |
 
 ### 6.2 RemodelaT y reformas (6)
 

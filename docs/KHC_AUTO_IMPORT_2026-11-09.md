@@ -32,6 +32,78 @@ inaccesible. Un solo proyecto, dos dominios, una base de datos.
 importados—, que compran donde está la unidad correcta (no solo en Alemania) y
 que **todas las ventas salen con garantía mínima de 12 meses por escrito**.
 
+### El negocio real, verificado en producción (10/11/2026)
+
+No es un plan ni una idea: es una **empresa en marcha, de mi propiedad, con
+capital propio y con stock publicado**. Estas comprobaciones se han hecho
+contra los sistemas reales, no contra el repositorio:
+
+| Comprobación | Dónde | Resultado verificado |
+| --- | --- | --- |
+| Web pública viva | `khcimport.autos` | **11 vehículos en stock publicado**, con fotos, precio, año, kilometraje, combustible, cambio y país de origen |
+| ERP vivo | `app.khcimport.autos` | Login activo, datos alojados en la Unión Europea |
+| Despliegue | Vercel, proyecto `khc-import` | Producción en `READY`, rama `main`, cron diario de mantenimiento a las 06:00 |
+| Base de datos | Supabase (UE) | Postgres 17 + Storage, RLS y roles owner/manager/sales/accountant |
+| Capital propio | Plan de negocio v7 | **41.500 € de caja del negocio** tras costes de arranque, sin financiación externa |
+| Local | Análisis de nave | **Nave de 465 m² en O Milladoiro** (Ames, A Coruña), 1.200 €/mes |
+
+**El stock publicado hoy son 11 vehículos, todos importados**: Volvo XC40
+(18.500 €), Mercedes-Benz Clase C Estate (23.990 €), Renault Talisman (15.990 €),
+Fiat 500X (13.990 €), VW Golf (18.700 €), BMW Serie 3 Touring (17.250 €),
+Audi A3 (15.990 €), BMW Serie 1 (12.475 €), VW Golf GTI (18.500 €), Honda
+Civic Type R EP3 (25.900 €) y VW Golf GTI Performance (24.850 €). Todos con
+etiqueta C y garantía de 12 meses. La web lo dice y es exacto: **la mayor
+parte de los coches se venden por encargo**.
+
+**La nave, decidida el 12/10/2026.** 465 m² en el polígono de O Milladoiro
+(Ames), a 1.200 €/mes, sustituyendo la de San Marcos porque triplica la
+superficie por solo 100 €/mes más: 8 metros de altura libre, patio de maniobra
+de 100 m² para camiones, entreplanta de 60 m² con 4 despachos, zona de
+exposición interior de 200 m² para 8-10 coches, zona de detallado de 80 m²,
+taller técnico de 60 m² con corriente trifásica y sistema BIES. **Reforma de
+Fase 1 presupuestada en 5.115,47 €, gastos fijos de 2.098,69 €/mes y 7.604,94 €
+el día 1.** La decisión que dejó el plan cerrado fue empezar **sin financiación
+y con la reforma aplazada**, para no comprometer la caja de circulante.
+
+**El equipamiento de recepción ya está comprado, con precios reales y
+enlace:** scanner bidireccional LAUNCH CRP919E/X BT (368,40 €), medidor de
+espesor de pintura GOYOJO GMT-CTG-2 (50,39 €), arrancador de litio 12 V
+(57,39 €), pack de 10 informes de historial carVertical (145,08 € con IVA),
+tapamatrículas, carpetas y llaveros con la marca, kit de detallado y
+tratamiento nano cerámico. **CAPEX del día 0: 822,90 €**, cerrado y con
+comprobante.
+
+**Los números del plan están cerrados y son reproducibles** (`datos_nave_milladoiro.py`
+es la fuente única de datos): alquiler 1.200 €/mes, fianza de 2.400 € (dos
+mensualidades, LAU art. 36.1), gastos fijos de 2.098,69 €/mes con internet
+(50 €/mes), fondo de tres meses de 6.296,07 € y **reforma de Fase 1 de
+5.115,47 € con IVA**: suelo epoxi 400 m² (905 €), pintura (479 €), iluminación
+LED (1.230 €), señalización y cartelería (496,36 €), mobiliario de oficina
+(800 €), seguridad (414,99 €) y limpieza, extintores y herramientas (790,12 €).
+**La reforma la hace él mismo con su propia mano de obra.** Siete líneas se
+aplazan al mes 2 para no comprometer el fondo. **Caja al cerrar el día 1:
+6.346,48 €**, es decir, 50,41 € por encima del fondo, con dos coches ya
+comprados. A 36 meses el plan proyecta 12 coches y 141.830,56 €, con sueldo
+propio desde el mes 6. Hay además un **escalón intermedio (1.5)**: autónomo con
+REBU y alta VIES sin local físico por 284,14 €/mes, y un **dossier de aval** con
+el plan de viabilidad financiera para el landlord.
+
+**El ciclo real de caja:** entre 28 y 40 días por coche inmovilizado. 36-40
+días si baja en camión portacoches (1.000 € + AXA 50,97 €); 28-32 días si
+baja rodando, que devuelve el dinero 8 días antes.
+
+**El escandallo a céntimo de las tres unidades del piloto** (lo presenta el
+plan como simulación del caso realista, no como ventas ya cerradas):
+
+| Unidad | Compra en Alemania | Coste puesto en A Coruña | Precio de venta | Beneficio neto |
+| --- | --- | --- | --- | --- |
+| Ford Focus ST 2.3 EcoBoost 280 CV | 17.900 € | 20.710,73 € | 24.490 € | +2.733,42 € |
+| VW Golf 7.5 GTI Performance 245 CV DSG | 19.400 € | 22.212,00 € | 26.290 € | +2.970,62 € |
+| Porsche Cayenne E-Hybrid / Audi Q7 TFSIe | 29.500 € | 31.339,50 € | 36.900 € | +3.985,80 € |
+
+El coste puesto incluye compra, logística, homologación, ITV de Galicia, IVTM,
+DGT, placas, Modelo 576, taller, filtros, anuncios y detallado.
+
 ---
 
 ## 2. Las dos fases
@@ -39,7 +111,9 @@ que **todas las ventas salen con garantía mínima de 12 meses por escrito**.
 ### Fase 1 — Prueba de concepto (validación con 3 vehículos)
 
 Operar **como particular**: compra a nombre propio en Europa, matriculación en
-la DGT de A Coruña, venta a compradores finales en Galicia.
+la DGT de A Coruña, venta a compradores finales en Galicia. En esta fase se
+opera **sin local**, enseñando los vehículos con cita previa en A Coruña: el
+alquiler se aplaza hasta que la rotación lo justifique, no antes.
 
 - **Tributación limpia:** ganancia patrimonial declarada en el IRPF anual
   (base imponible del ahorro) y liquidación previa de los impuestos obligatorios
@@ -53,8 +127,15 @@ la DGT de A Coruña, venta a compradores finales en Galicia.
 
 - **Alta en el IAE** (Comercio al por menor de vehículos) como autónomo o S.L.
 - **Régimen REBU:** IVA únicamente sobre el margen, no sobre el importe total.
-- **Showroom** en los polígonos del área metropolitana de A Coruña
-  (PO.CO.MA.CO, Agrela, Espírito Santo, Bergondo, Morás).
+- **Showroom ya decidido:** nave de **465 m² en O Milladoiro (Ames, A Coruña)**,
+  1.200 €/mes, 8 m de altura libre, 100 m² de patio de maniobra, 200 m² de
+  exposición interior para 8-10 coches, taller de 60 m² y entreplanta de 60 m²
+  con 4 despachos. Reforma de Fase 1 presupuestada en **5.115,47 €** y gastos
+  fijos de **2.098,69 €/mes**, con la reforma aplazada para no tocar la caja de
+  circulante.
+- **Financiación propia:** decisión del 12/10/2026 de empezar **sin
+  financiación**, con capital propio y la caja del negocio en 41.500 € tras
+  costes de arranque.
 - **Garantía comercial** respaldada por pólizas de garantía mecánica
   profesional (GarantiPLUS, Atlántica) sobre la garantía legal del RDL 1/2007.
 
@@ -287,6 +368,14 @@ gratuito no se pause.
   contenido comercial: nunca costes, márgenes, VIN ni matrícula.
 - La garantía de 12 meses, el sistema de referencias y las relaciones con
   talleres, transportistas e ingenierías.
+- **Que hay stock real disponible ahora mismo**: 11 vehículos publicados en la
+  web con fotos, precio, kilometraje y país de origen. Es comprobable en un
+  clic y es el mejor argumento de venta que existe.
+- **Que el negocio es físico y propio**: nave de 465 m² en O Milladoiro
+  (Ames, A Coruña), con taller propio, zona de exposición y entreplanta de
+  oficinas, y reforma hecha con mano de obra propia.
+- **Que el capital es propio y el arranque está cerrado**: el equipamiento de
+  revisión está comprado y el modelo financiero va al céntimo.
 
 ### 10.2 No se dice
 
@@ -300,16 +389,21 @@ gratuito no se pause.
 | **Que la Fase 1 es "vender como particular"** | Es una decisión fiscal interna. En público: "operamos en el marco legal que corresponda en cada fase" |
 | **Cifras de facturación o de unidades vendidas** | No hay dato público que las sostenga |
 | **Los proveedores de garantía (GarantiPLUS, Atlántica)** | Se pueden mencionar como cobertura, pero no usarlo como referencia comercial sin acuerdo |
+| **El desglose económico interno**: capital, fianza, desglose de la reforma, fondo, flujo diario y proyección a 36 meses | Son datos financieros de la empresa, no argumentos de venta. En público, la existencia del local y del capital propio |
+| **El dossier de aval y el plan de viabilidad para el landlord** | Documento interno para el propietario, con cifras de la empresa. No es material público |
+| **Datos personales de la socia, de la familia y del equipo** | La carpeta `plan-negocio/` incluye un estudio de carga familiar y despachos con nombres; nada de eso se publica |
 
 ### 10.3 El bloque de descripción listo para copiar
 
 **ES — largo**
 
 ```
-KHC Auto Import compra, importa y vende vehículos seleccionados en A Coruña
-y Galicia. Compramos donde está la unidad correcta —no solo en Alemania, sino
-también en el mercado nacional— y todas las ventas salen con garantía
-mínima de 12 meses por escrito.
+KHC Auto Import es mi negocio de compra, importación y venta de vehículos
+seleccionados en A Coruña y Galicia. Compramos donde está la unidad correcta
+—no solo en Alemania, sino también en el mercado nacional— y todas las
+ventas salen con garantía mínima de 12 meses por escrito. Tengo stock real
+disponible ahora mismo y una nave de 465 m² en O Milladoiro con taller
+propio.
 
 Detrás hay un sistema propio, no una hoja de cálculo: un ERP de gestión con
 catálogo de más de mil variantes, simulador de importación con los impuestos
@@ -327,19 +421,20 @@ rentabilizan y cuáles no.
 **ES — corto (para directorios, notas de prensa o firma)**
 
 ```
-KHC Auto Import: compra, importación y venta de vehículos seleccionados en
-A Coruña y Galicia, con garantía mínima de 12 meses. Sistema propio de
-gestión, precios calculados sobre anuncios reales y web pública sin
-excedentes.
+KHC Auto Import: mi negocio de importación y venta de vehículos seleccionados
+en A Coruña y Galicia, con garantía mínima de 12 meses, stock real disponible
+y nave propia con taller. Sistema de gestión propio, precios calculados
+sobre anuncios reales y web pública sin excedentes.
 ```
 
 **EN — largo**
 
 ```
-KHC Auto Import buys, imports and sells selected vehicles in A Coruña and
-Galicia. We buy where the right car is —not only in Germany, but also on the
-national market—and every sale carries a minimum 12-month warranty in
-writing.
+KHC Auto Import is my own business: buying, importing and selling selected
+vehicles in A Coruña and Galicia. We buy where the right car is —not only in
+Germany, but also on the national market—and every sale carries a minimum
+12-month warranty in writing. We have real stock available now and our own
+465 m² workshop with a service bay in O Milladoiro.
 
 Behind it is our own system, not a spreadsheet: an operations ERP with a
 catalogue of more than a thousand variants, an import simulator with the
@@ -354,6 +449,15 @@ built from more than fifty thousand listings that tells you which segments
 pay and which do not.
 ```
 
+**EN — corto**
+
+```
+KHC Auto Import is my own business: importing and selling selected cars in
+A Coruña and Galicia, with a minimum 12-month warranty, real stock available
+and our own workshop. In-house management system, prices calculated from real
+listings, and a public site with no excess information.
+```
+
 ---
 
 ## 11. Fuentes
@@ -362,5 +466,23 @@ pay and which do not.
   `erp/src/data/catalog/marketEvidence.js`, `erp/src/data/catalog/priceModel.js`,
   `scripts/opportunities.mjs`, `data/autoscout*`, `data/milanuncios`,
   `data/mobilede`, `app/`, `erp/src/components/`.
-- Web pública: `khcimport.autos` · ERP: `app.khcimport.autos`.
+- Plan de negocio (carpeta interna `plan-negocio/`): `README.md`,
+  `01_PRESUPUESTO_ARRANQUE_Y_ASIGNACION_CAPITAL.md`,
+  `02_ESCANDALLO_UNITARIO_Y_GASTOS_POR_COCHE.md`,
+  `03_PLAN_FINANCIERO_PILOTO_Y_FLUJO_CAJA.md`, `ANALISIS_NAVE_SANTIAGO_MILLADOIRO.md`,
+  `RESUMEN_CAMBIOS_NAVE.md`, `REFORMA_FASE1_COMPLETA.md`,
+  `datos_nave_milladoiro.py`, `DOCUMENTOS LEGALES KHC IMPORT/`.
+- **Verificado en producción el 10/11/2026**: web pública `khcimport.autos`
+  (11 vehículos en stock publicado), ERP `app.khcimport.autos` (login activo),
+  despliegue de Vercel en estado `READY` con cron diario, dominios
+  `khcimport.autos`, `www`, `app` y `khc-import.vercel.app`.
 - Descripción pública de Rubén: `docs/DESCRIPCION_PUBLICA_RUBEN_2026-11-09.md`.
+
+> ⚠️ **Aviso de exposición (10/11/2026):** el repositorio `KHC-Auto-Import` es
+> **público**, y la carpeta `plan-negocio/` —marcada como confidential, con el
+> capital, la fianza, el desglose de la reforma, el dossier de aval y datos
+> personales del equipo— está **leíble públicamente en GitHub**. El
+> `.vercelignore` solo la excluye de los despliegues web; no protege el
+> repositorio. Y aunque se borrara ahora, seguiría en el historial de Git.
+> Antes de publicar nada sobre este negocio hay que mover esa carpeta a un
+> repositorio privado (o a una rama privada) y rotar el historial.
