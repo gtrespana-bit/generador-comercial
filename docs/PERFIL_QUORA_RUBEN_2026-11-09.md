@@ -20,7 +20,10 @@ frases de la bio y en la primera frase de cada respuesta.
 | Nombre | Rubén | El titular |
 | Edad | 40 años | El titular |
 | Idioma nativo | Español; inglés de trabajo (el producto está íntegramente traducido) | `docs/HOJA_DE_RUTA_MERCADOS_INGLESES.md` |
-| Empresa 1 | **RemodelaT** — reformas y remodelación de viviendas en A Coruña y su área metropolitana (Arteixo, Oleiros, Culleredo, Cambre, Sada, Bergondo, Betanzos, Carral, Abegondo). Portfolio real de obras ejecutadas por el fundador | `gtrespana-bit/RemodelaT-Galicia` (README) |
+| Empresa 1 | **RemodelaT Coruña S.L.** — reformas y remodelación de viviendas en A Coruña y su área metropolitana (Arteixo, Oleiros, Culleredo, Cambre, Sada, Bergondo, Betanzos, Carral, Abegondo). **Empresa nueva al 100 %**: S.L. unipersonal, se constituye en enero de 2027 y opera desde febrero-marzo de 2027. Portfolio real de 7 obras ejecutadas por el fundador en España | `gtrespana-bit/RINCOCARABOBO` (`02-plan-de-negocio/00-resumen-ejecutivo.md`, `datos-confirmados.md`) · `gtrespana-bit/RemodelaT-Galicia` (README) |
+| Formación | **Ingeniero** (titulación exacta a detallar) | `RINCOCARABOBO/01-empresa/fundador/perfil-ruben.md` |
+| Trayectoria | Empresas propias de reformas y construcción en **Las Palmas** y en **Madrid**; **últimos 2 años en Venezuela** remodelando propiedades; vuelta a **A Coruña en diciembre de 2026** | `perfil-ruben.md` |
+| Obra real | **7 proyectos documentados** en España (P-ES-001…007): dos cocinas integrales, cinco baños (uno accesible, uno a planta abierta, uno de lujo en dos salas). Fotografías autorizadas por contrato | `RINCOCARABOBO/06-obras-y-proyectos/historicos-espana/` |
 | Empresa 2 | **CotizaT** — software de presupuestos y control comercial de obra | `app/branding.py`, `README.md` |
 | Producto | CotizaT: capítulos y partidas, mediciones por zonas, catálogo de **3.008 partidas**, precios unitarios, PDF profesional, firma del cliente, envío por WhatsApp, catálogo de precios por mercado, importación de descompuestos CYPE (.xlsx) | `README.md`, `basedatos_partidas/salida/catalogo_partidas.csv` |
 | Mercados | **23**: ES, VE, CO, MX, EC, PE, CL, AR, DO, UY, PY, BO, PA, CR, GT, HN, SV, NI, US, GB, AU, CA, IE | `app/paises.py` (`ORDEN_SELECTOR`) |
@@ -86,25 +89,33 @@ Presupuestos de obra y precios unitarios | Constructor de reformas | Creo el sof
 ### 4.1 EN · corta (2 frases) — recomendada para empezar
 
 ```
-I run RemodelaT, a renovation company in A Coruña, Spain, and I build CotizaT,
-the construction estimating software we use to price our own work. The numbers
-I post are the ones we actually quote with — labour cost per billable hour,
-award rates, CIS and VAT treatment — not figures pulled from a blog.
+I'm an engineer who has run renovation work in Spain (Las Palmas and Madrid)
+and for the last two years in Venezuela, and I build CotizaT, the construction
+estimating software we use to price it. The numbers I post are the ones we
+actually quote with — labour cost per billable hour, award rates, CIS and VAT
+treatment — not figures pulled from a blog.
 ```
 
 ### 4.2 EN · media (la que mejor funciona: 4 frases)
 
 ```
-I own RemodelaT, a home renovation company in A Coruña, Spain, and I also build
-CotizaT, the construction estimating software we use to price our own jobs.
-That means the numbers I put on this site are the ones our price library
-carries: employer cost per billable hour rather than raw wages, award rates
-loaded with super and workers' compensation, CIS deductions calculated on
-labour rather than on the invoice.
+I have been in renovation work for years: my own construction and renovation
+businesses in Las Palmas and Madrid, and the last two years remodelling
+properties in Venezuela. I am now opening RemodelaT Coruña, a renovation
+company in A Coruña, Spain, and I build CotizaT, the construction estimating
+software we use to price the work.
 
-I've also spent years building software for other businesses — marketplaces,
-property portals, clinics and shops — so I write about estimating software the
-way an estimator would, not the way a brochure would.
+That combination is why I answer questions here. Most estimating advice online
+quotes a number; the number is only half of it. A plumber is not a wage, it is
+a wage plus FICA, unemployment insurance, workers' compensation and the hours
+nobody can bill — and getting that wrong is the difference between a quote
+that holds and a job that loses money. I keep a price library for 23 markets
+(Spain, the UK, Ireland, the US, Australia, Canada and Latin America) with the
+sources and dates on every figure, and I publish what is in it.
+
+I have also built marketplaces, property portals and business software for other
+people, so I write about estimating software the way an estimator would, not
+the way a brochure would.
 
 Ask me about cost, rates, quotes or what a client actually disputes.
 ```
@@ -112,10 +123,13 @@ Ask me about cost, rates, quotes or what a client actually disputes.
 ### 4.3 EN · larga (si prefieres que el perfil sea una carta de presentación)
 
 ```
-I run RemodelaT, a home renovation and remodeling company in A Coruña and its
-metropolitan area, and I build CotizaT, the construction estimating software we
-use to price our own work: budgets by chapters and line items, measurements by
-room, unit prices, professional PDF quotes, client signature and change orders.
+I run renovation work: my own construction and renovation businesses in Las
+Palmas and Madrid, two years remodelling properties in Venezuela, and from
+2027 RemodelaT Coruña, a home renovation and remodeling company in A Coruña and
+its metropolitan area. I also build CotizaT, the construction estimating
+software we use to price the work: budgets by chapters and line items,
+measurements by room, unit prices, professional PDF quotes, client signature
+and change orders.
 
 That combination is why I answer questions here. Most estimating advice online
 quotes a number; the number is only half of it. A plumber is not a wage, it is
@@ -126,7 +140,9 @@ that holds and a job that loses money. I keep a price library for 23 markets
 sources and dates on every figure, and I publish what is in it.
 
 Before CotizaT I built marketplaces, property portals and business sites for
-other people, so I am comfortable with software as well as with brickwork.
+other people, so I am comfortable with software as well as with brickwork —
+and the seven renovations I have documented from Spain are the reason I know
+which numbers are wrong.
 
 Questions on construction costs, labour rates, estimating software, quotes,
 CIS, VAT, GST or sales tax are welcome — especially if you want the working
@@ -136,19 +152,22 @@ out, not just the answer.
 ### 4.4 ES · corta
 
 ```
-Soy dueño de RemodelaT, una empresa de reformas y remodelación en A Coruña, y
-creo CotizaT, el software de presupuestos con el que cotizamos nuestro propio
-trabajo. Los números que publico son los con los que cotizamos de verdad.
+Soy ingeniero: he dirigido empresas propias de reformas en Las Palmas y en
+Madrid y los últimos dos años he remodelado propiedades en Venezuela. Creo
+CotizaT, el software de presupuestos con el que cotizamos ese trabajo. Los
+números que publico son los con los que cotizamos de verdad.
 ```
 
 ### 4.5 ES · media (recomendada para el nivel B)
 
 ```
-Dirijo RemodelaT, una empresa de reformas y remodelación de viviendas en A
-Coruña y su área metropolitana, y desarrollo CotizaT, el software de
-presupuestos de obra que usamos para cotizar nuestro propio trabajo: capítulos
-y partidas, mediciones por zonas, precios unitarios, PDF profesional, firma del
-cliente y control de cambios de alcance.
+Llevo años en el oficio: empresas propias de construcción y reformas en Las
+Palmas y en Madrid, y los últimos dos años remodelando propiedades en
+Venezuela. Ahora abro RemodelaT Coruña, una empresa de reformas y remodelación
+de viviendas en A Coruña, y desarrollo CotizaT, el software de presupuestos de
+obra que usamos para cotizar ese trabajo: capítulos y partidas, mediciones por
+zonas, precios unitarios, PDF profesional, firma del cliente y control de
+cambios de alcance.
 
 Por eso contesto aquí. Casi todos los artículos sobre presupuestar dan un
 número, y el número es solo la mitad: un plomero no es un salario, es un
@@ -171,7 +190,8 @@ con prueba verificable.
 | # | Tipo | Texto EN | Texto ES |
 | --- | --- | --- | --- |
 | 1 | Trabajo | `Founder — CotizaT (2026–present) · Construction estimating software for 23 markets` | `Fundador — CotizaT (2026–actual) · Software de presupuestos de obra para 23 mercados` |
-| 2 | Trabajo | `Owner — RemodelaT · Home renovation and remodeling, A Coruña, Spain` | `Propietario — RemodelaT · Reformas y remodelación de viviendas, A Coruña` |
+| 1b | Trabajo | `Renovation contractor — Las Palmas, Madrid and Venezuela (own companies)` | `Constructor de reformas — Las Palmas, Madrid y Venezuela (empresas propias)` |
+| 2 | Trabajo | `Founder — RemodelaT Coruña (opening 2027) · Home renovation and remodeling, A Coruña, Spain` | `Fundador — RemodelaT Coruña (apertura 2027) · Reformas y remodelación de viviendas, A Coruña` |
 | 3 | Competencias | `Construction estimating · Unit rates · Labour cost · Quoting · APU` | `Presupuestos de obra · Precios unitarios · Coste de mano de obra · APU` |
 | 4 | Organización | `Member — 42 public repositories, from marketplaces to a full estimating platform` | `42 repositorios públicos: marketplaces, inmobiliarias y una plataforma completa de presupuestos` |
 
@@ -210,7 +230,7 @@ la empresa en el de organización.
 | Cargo (title) | `Construction and software` | `Construcción y software` |
 | Organización | `CotizaT` | `CotizaT` |
 | Periodo | `2026 – Present` | `2026 – actual` |
-| Descripción | `Founder of CotizaT and owner of RemodelaT. We renovate homes in A Coruña and price the work with the software we build. 3,008-item catalogue, unit prices with sources and dates, 23 markets in local currency and tax terms.` | `Fundador de CotizaT y propietario de RemodelaT. Reformamos viviendas en A Coruña y cotizamos el trabajo con el software que construimos. Catálogo de 3.008 partidas, precios unitarios con fuente y fecha, 23 mercados en moneda e impuestos locales.` |
+| Descripción | `Founder of CotizaT and of RemodelaT Coruña. I renovate homes and price the work with the software we build. 3,008-item catalogue, unit prices with sources and dates, 23 markets in local currency and tax terms.` | `Fundador de CotizaT y de RemodelaT Coruña. Reformamos viviendas y cotizamos el trabajo con el software que construimos. Catálogo de 3.008 partidas, precios unitarios con fuente y fecha, 23 mercados en moneda e impuestos locales.` |
 
 Se verá así: **Rubén · Construcción y software en CotizaT**.
 
@@ -248,6 +268,9 @@ respuesta lleva el sello que le corresponde, y ninguna parece un anuncio.
 
 | No añadas | Por qué |
 | --- | --- |
+| "I run a renovation company in A Coruña" | **RemodelaT Coruña aún no existe**: se constituye en enero de 2027. La versión exacta es "founder of RemodelaT Coruña, opening 2027". Decir que la diriges hoy es falso, y en un perfil B2B se nota. |
+| "20 years of experience" | Los años están `[PENDIENTE]` en tu propio repo maestro. Pon tus años concretos y verificables. |
+| "I have renovated 50 homes in A Coruña" | Son **7 obras reales** en España, con ubicación todavía provisional por decisión tuya. O las cuentas como 7 y sin ciudad, o con la ciudad cuando la fijes. |
 | "Experto en construcción" sin descripción | Una etiqueta sin respaldo se lee como título autoinventado. |
 | "Consultor de obras" | No es el oficio que describes: es reformas y presupuestos. |
 | Credenciales repetidas ("Construcción" y "Construcción y software") | Duplicados se ven como relleno. |
@@ -264,10 +287,13 @@ https://cotizat.online/en-us/?utm_source=quora&utm_medium=profile&utm_campaign=p
 > peso de las respuestas se desplaza a otro mercado. En la versión española del
 > perfil, la URL es `https://cotizat.online/es/?utm_source=quora&utm_medium=profile&utm_campaign=perfil`.
 
-**Ubicación:** la ciudad donde de verdad attendes a un cliente. Si es A Coruña,
-`A Coruña, Spain`; si sigues operando desde Venezuela, `Caracas, Venezuela` y
-se añade en la bio "also operating from Spain". Quora la usa para resultados
-locales, así que no se pone un sitio que no sea el real.
+**Ubicación:** `A Coruña, Spain`. Estás en Venezuela hasta diciembre de 2026
+y llegas a A Coruña ese mes: es donde se constituye la empresa (enero 2027) y
+donde empieza la obra (febrero–marzo 2027). Quora usa la ubicación para
+resultados locales, así que A Coruña es la correcta a partir de la llegada, y
+los dos años en Venezuela se cuentan en la bio, que es donde te diferencian.
+Si prefieres ser estricto con el "hoy", `Caracas, Venezuela` y se cambia en
+enero: son 30 segundos de trabajo en cualquier momento.
 
 ---
 
