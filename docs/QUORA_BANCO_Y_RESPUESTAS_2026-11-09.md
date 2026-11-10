@@ -4,7 +4,7 @@ Material operativo que acompaña a `docs/ESTRATEGIA_QUORA_2026-11-09.md`.
 
 1. **§1 — 20 preguntas candidatas**: tipo (responder a un hilo existente /
    pregunta propia), idioma, mercado, URL de destino y ángulo de la respuesta.
-2. **§2 — 4 respuestas listas para publicar** (3 en inglés, 1 en español), con
+2. **§2 — 6 respuestas listas para publicar** (3 en inglés, 3 en español), con
    las cifras reales de la biblioteca de precios del repo.
 3. **§3 — 1 pregunta propia modelo** (en inglés) con su respuesta completa.
 4. **§4 — Checklist de publicación** (10 puntos, 30 segundos).
@@ -85,7 +85,7 @@ propósito: primero se responde, luego se pregunta.
 
 ---
 
-## 2. Cuatro respuestas listas para publicar
+## 2. Seis respuestas listas para publicar
 
 ### 2.1 Respuesta A (EN · US) — para el hilo «How much does it cost to remodel a bathroom?»
 
@@ -284,44 +284,22 @@ que se nombra la herramienta.
 Texto exacto para copiar y pegar:
 
 ```
-Sí, existe, pero te voy a decir lo que no te cuentan esas páginas: el
-software no abarata la obra por sí solo. Lo que abarata es dejar de decidir a
-ojo. El programa es solo la forma barata de tener lo que en una hoja de
-cálculo se te rompe: precios con su fecha, mediciones que cuadran y cambios de
-alcance por escrito.
+Sí, existe, pero te voy a decir lo que no te cuentan esas páginas: el software no abarata la obra por sí solo. Lo que abarata es dejar de decidir a ojo. El programa es solo la forma barata de tener lo que en una hoja de cálculo se te rompe: precios con su fecha, mediciones que cuadran y cambios de alcance por escrito.
 
-El primer salto que yo haría no es el takeoff ni el 3D, es el precio
-unitario. Cada partida de tu presupuesto debería salir de un análisis de
-precios unitarios: materiales, rendimiento, horas y el precio con su fecha y
-su fuente. Ahí es donde se te va el dinero sin que te enteres. El mismo
-recurso con el precio del año pasado, o el mismo oficial más caro que hace
-dos años, y el presupuesto sigue viéndose igual en el papel.
+El primer salto que yo haría no es el takeoff ni el 3D, es el precio unitario. Cada partida de tu presupuesto debería salir de un análisis de precios unitarios: materiales, rendimiento, horas y el precio con su fecha y su fuente. Ahí es donde se te va el dinero sin que te enteres. El mismo recurso con el precio del año pasado, o el mismo oficial más caro que hace dos años, y el presupuesto sigue viéndose igual en el papel.
 
 Herramientas en las que merece la pena mirar:
 
-- Medición y takeoff: Bluebeam Revu, Autodesk Takeoff, PlanSwift, CostX,
-  On-Screen Takeoff.
-- Presupuesto y control de obra: Buildertrend, eTakeoff y las hojas de
-  cálculo de toda la vida, que no van a morir.
-- Gestión de obra y cambios: Procore, Buildertrend, OpenProject, Fieldwire.
-  Aquí es donde se recupera el dinero: el cambio de alcance queda registrado
-  por escrito y el presupuesto se ajusta con la evidencia, no con una
-  discusión.
+- Medición y takeoff: Bluebeam Revu, Autodesk Takeoff, PlanSwift, CostX, On-Screen Takeoff.
+- Presupuesto y control de obra: Buildertrend, eTakeoff y las hojas de cálculo de toda la vida, que no van a morir.
+- Gestión de obra y cambios: Procore, Buildertrend, OpenProject, Fieldwire. Aquí es donde se recupera el dinero: el cambio de alcance queda registrado por escrito y el presupuesto se ajusta con la evidencia, no con una discusión.
 
-Y para que conste, que es justo lo que Quora pide declarar: yo trabajo con
-obra todos los días y participo en el desarrollo de CotizaT, una herramienta
-para esto. Si te interesa el método más que la marca, escribí una guía sobre
-cómo montar un APU sin que se te rompa en cuanto cambias un precio:
+Y para que conste, que es justo lo que Quora pide declarar: yo trabajo con obra todos los días y participo en el desarrollo de CotizaT, una herramienta para esto. Si te interesa el método más que la marca, escribí una guía sobre cómo montar un APU sin que se te rompa en cuanto cambias un precio:
 https://cotizat.online/guia/analisis-precios-unitarios?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=es-precios
 
-Un consejo antes de que pagues nada: mete en la prueba una obra que ya
-tengas cerrada y compara el importe que te devuelve con lo que de verdad te
-costó. Si se parece, la herramienta te sirve; si se va lejos del real,
-ningún programa te va a salvar.
+Un consejo antes de que pagues nada: mete en la prueba una obra que ya tengas cerrada y compara el importe que te devuelve con lo que de verdad te costó. Si se parece, la herramienta te sirve; si se va lejos del real, ningún programa te va a salvar.
 
-Si me dices el país y qué tipo de obra haces (residencial, reforma, obra
-pública), te digo por dónde empezaría y qué parte del presupuesto suele
-escaparse.
+Si me dices el país y qué tipo de obra haces (residencial, reforma, obra pública), te digo por dónde empezaría y qué parte del presupuesto suele escaparse.
 ```
 
 **Por qué así:**
@@ -350,96 +328,53 @@ escaparse.
 
 ### 2.6 Respuesta F (ES) — para el hilo «¿Cuándo debería una empresa reemplazar Excel por una aplicación web empresarial?»
 
-**Hilo genérico de gestión**, no de construcción. La estrategia: responder al
-problema general (que es lo que el hilo pide) y meter el caso de CotizaT como
-**ejemplo real y declarado**, no como producto. **Un solo enlace**, en el
-cuarto párrafo de ocho, con la UTM de la estrategia.
+**Hilo genérico de gestión**, con audiencia amplia de dueños de negocio, técnicos y gerentes. La estrategia: responder de verdad al corte entre hoja y aplicación web, y meter **CotizaT como caso propio real** (declarando autoría) para que cualquier profesional de obra, reformas, arquitectura o instalaciones que lea el hilo vea qué resuelve exactamente, mientras el resto entiende el ejemplo sin sentir que le están vendiendo humo. **Un solo enlace**, en la mitad de la respuesta, con su UTM.
 
-Texto exacto para copiar y pegar:
+Texto exacto para copiar y pegar (sin cortes de línea a mitad de párrafo para pegar directo en el editor de Quora):
 
 ```
-La respuesta corta: cuando la hoja deja de ser una herramienta de cálculo y
-pasa a ser el estado de la empresa. Ese es el corte real, y no tiene nada que
-ver con el tamaño de la empresa.
+La respuesta corta: cuando la hoja deja de ser una calculadora y pasa a ser la memoria compartida de la empresa. Ese es el corte real, y tiene mucho menos que ver con el tamaño del equipo de lo que parece.
 
-Mientras el Excel lo usa una persona para analizar o simular, es la mejor
-herramienta que existe: gratis, rápido, flexible. El problema empieza cuando
-el archivo se convierte en la memoria compartida del negocio. Y ahí las
-señales se ven enseguida:
+Mientras el Excel lo usa una sola persona para analizar números o simular escenarios, es imbatible: rápido, flexible y prácticamente gratis. El problema empieza el día en que la operación diaria depende de ese archivo. Las señales suelen ser siempre las mismas:
 
-- Varias personas editan el mismo archivo y no hay historial: nadie sabe qué
-  cambió, cuándo ni quién.
-- El dato "oficial" está en el correo de una persona, no en un sitio al que
-  todo el mundo llega.
-- Todo el mundo ve y edita todo, incluidos precios, márgenes o datos fiscales
-  de clientes.
-- Nadie puede decir de dónde salió un número, y cada cifra tiene una fecha
-  distinta y ninguna escrita.
-- El proceso vive en la cabeza de una persona: si mañana no viene, se para.
-- Cada departamento tiene su propia versión y la reconciliación se hace a
-  mano, a fin de mes.
+- Varias personas tocan el mismo documento y nadie sabe quién cambió una celda, cuándo ni por qué.
+- El archivo "bueno" vive en el correo o en el escritorio de alguien ("presupuesto_final_v3_definitivo_este_si.xlsx").
+- Quien entra solo a cargar un dato ve también costes internos, márgenes o datos de clientes que no debería tocar.
+- Cambias una tarifa o un precio base y tienes que perseguir veinte pestañas rezando para no haber roto una fórmula de subtotal.
+- Si la persona que armó la plantilla enferma o se va de vacaciones, nadie se atreve a tocarla.
+- A fin de mes toca cuadrar a mano tres versiones distintas de la misma realidad.
 
-Mi caso, y lo digo con todas las letras porque Quora pide declarar la
-afiliación: yo vengo de la construcción y participo en el desarrollo de
-CotizaT, una aplicación web para presupuestos de obra. Es el caso típico: una
-hoja con precios que cambian cada semana, una regla que se rompe al cambiar
-una tarifa y tres versiones del mismo presupuesto. Si te interesa el método
-más que la marca, escribí una guía con el paso a paso y con lo que una
-aplicación tiene que hacer para no ser un trasto:
+Te pongo mi propio caso —y aclaro de frente que la herramienta es mía—: yo vengo de la construcción y terminé creando CotizaT precisamente porque el Excel se nos rompía presupuestando obra. Cambiaba el precio de un material o la hora del oficial y había que actualizar hojas una por una; un cliente pedía quitar dos partidas, reescribías encima, se descuadraba una suma y acababas enviando un PDF con el margen comido. Al pasarlo a aplicación web conectas tu catálogo de partidas con tus precios unitarios, actualizas un coste una sola vez sin alterar los presupuestos ya entregados, el sistema te avisa si dejas una partida a cero o el margen bajo mínimos y sacas el PDF con tu logo listo para mandar por WhatsApp guardando cada versión. Aquí dejé escrito cómo estructuramos ese paso para no depender de una hoja frágil:
 https://cotizat.online/guia/presupuesto-de-obra?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=es-excel-app
 
-Y al revés, para no llamar a comprar software que no hace falta: si la
-operación cabe en una hoja, una hoja bien hecha es más barata, más rápida y
-no necesita mantenimiento. Excel no está muerto; para un modelo, una
-simulación o un análisis puntual sigue siendo lo mejor que tienes. Cambiar
-de herramienta sin que el problema esté resuelto es gastar dinero para
-sentir que la empresa se ha modernizado.
+Ahora bien, igual de importante es saber cuándo NO salir de Excel. Si el proceso lo lleva una sola persona, cabe en una tabla limpia y un error se detecta en dos minutos, pagar o desarrollar una aplicación web es comprarte un problema nuevo. Cambiar de herramienta cuando el proceso sigue desordenado solo convierte un caos barato en un caos con cuota anual.
 
-Cuando sí toca migrar, tres cosas que se aprende viendo a empresas pasar por
-esto:
+Cuando sí toca dar el salto, tres cosas que se aprenden viendo migraciones reales:
 
-1. No se migra todo de golpe. Se elige UN proceso, el que más errores o más
-   horas consume, y se mueve ese. El resto sigue en la hoja hasta que toque.
-2. La aplicación tiene que hablar con lo que ya tienes: importar tu .xlsx o
-   tu CSV y exportar el archivo final, el PDF que ve tu cliente. Si la
-   migración te obliga a reconstruir un histórico que no tienes, el proyecto
-   muere en el segundo mes.
-3. Se mide con un solo indicador: si a los tres meses ese proceso ya no
-   necesita reconciliación manual, se ganó. Si sigue igual, el problema no
-   era la hoja.
+1. No migres toda la empresa de golpe. Elige un solo cuello de botella —presupuestos, inventario, partes de trabajo, cobros—, resuelve ese y deja el resto en hojas hasta que duela de verdad.
+2. Exige que la aplicación hable con lo que ya tienes: que importe tus .xlsx o CSV sin obligarte a picar todo de cero, y que exporte el PDF o el archivo limpio que tu cliente necesita leer. Si el primer mes se va en transcribir histórico, en la tercera semana el equipo vuelve al Excel a escondidas.
+3. Haz la cuenta que de verdad manda: cuánto te cuesta un solo error frente a lo que cuesta un año de herramienta. En presupuestos, en compras o en facturación, una sola fila mal sumada suele pagar varios años de licencia.
 
-Y el cálculo que casi nadie hace, que es el que de verdad decide: compara el
-coste del error con el coste de la herramienta. Si un solo error te cuesta
-más que un año de licencias, la pregunta no es si puedes permitirte la
-aplicación, es si puedes permitirte seguir con la hoja.
-
-Si me cuentas qué proceso os está costando más tiempo hoy, te digo por dónde
-empezaría y qué parte suele ser una hoja que no hace falta cambiar.
+¿Qué proceso es el que hoy te tiene dudando entre estirar más el Excel o jubilarlo? Si cuentas un poco de qué va tu empresa, es fácil decirte si ya te compensa migrar o si basta con ordenar la hoja.
 ```
 
-**Por qué así:**
+**Por qué funciona para atraer clientes a CotizaT sin que Quora la colapse:**
 
 | Regla | Cómo se cumple |
 | --- | --- |
-| Responde a lo que se pregunta | El cuerpo son señales y criterios de migración, no propaganda |
-| El enlace va en el centro | Cuarto párrafo de ocho; ni al principio ni al final |
-| Afiliación declarada | «participo en el desarrollo de CotizaT», en la frase que nombra la herramienta |
-| Un solo enlace | La guía «presupuesto de obra sin Excel que se rompe», indexable y con CTA |
-| Honestidad que genera confianza | El párrafo de cuándo **no** migrar, y el cálculo coste del error vs. licencia |
-| Sin afirmaciones inventadas | Ninguna cifra, ningún porcentaje, ningún «luego te ahorra un 40 %» |
-| Cierre con pregunta | «Qué proceso os está costando más tiempo» → respuestas y el hilo siguiente |
-| Sin repetir el mismo texto | Este hilo es genérico; el anterior era de construcción. No se pega lo mismo |
+| Responde primero a la pregunta | Abre con criterio claro y seis señales concretas que cualquier empresa reconoce |
+| Publicidad natural, de primera mano | Cuenta el dolor real de presupuestar obra en Excel y menciona qué hace CotizaT en la práctica (catálogo conectado, versiones congeladas, avisos de margen, PDF + WhatsApp) |
+| Afiliación declarada sin sonar robótico | «aclaro de frente que la herramienta es mía» — cumple la política de Quora sin repetir la frase plantilla de otras respuestas |
+| Un solo enlace, en mitad del texto | Apunta a `/guia/presupuesto-de-obra` (indexable, cuyo título en Quora despliega *«CotizaT: cómo hacer un presupuesto de obra paso a paso»* y lleva dentro el alta de 7 días gratis) |
+| Credibilidad humana | Incluye cuándo **no** dejar Excel; eso desactiva el rechazo al spam y multiplica votos positivos |
+| Español neutro (España + LatAm) | Usa *tú* sin localismos cerrados, válido para México, Colombia, Chile y España |
 
 **Si preguntan en comentarios:**
 
-- *«¿Cuánto cuesta?»* → 7 días de prueba sin tarjeta; luego es de pago.
-- *«¿Sirve para cualquier empresa?»* → CotizaT es vertical: presupuestos de
-  obra. Para otros procesos, el criterio de los siete puntos es el mismo.
-- *«¿Cuánto tarda migrar?»* → depende de si el histórico es recuperable; con
-  importación de .xlsx y CSV, la primera semana es datos, no historia.
-- *«¿Y si somos cuatro personas?»* → con cuatro, Excel suele ganar; el punto
-  de inflexión es cuando el proceso compartido y el control de acceso pesan
-  más que la flexibilidad.
+- *«¿Cuánto cuesta?»* → tiene 7 días de prueba gratis sin tarjeta y después plan anual de 89 USD/año.
+- *«¿Sirve para cualquier empresa?»* → CotizaT está enfocada en presupuestos de construcción, reformas e instalaciones; para otros sectores, el criterio de los seis puntos es exactamente el mismo.
+- *«¿Cuánto tarda pasar mis hojas?»* → importa catálogos y matrices en `.xlsx`, TSV pegado directo desde Excel o `.bc3`, así que no hay que picar partidas desde cero.
+- *«¿Y si somos una empresa pequeña de tres o cuatro personas?»* → si varias personas tocan presupuestos o precios a la vez, o si un descuadre en una partida se come el beneficio del trabajo, ya compensa; si todo lo cotiza una sola persona con cuatro líneas fijas, Excel todavía cumple.
 
 ---
 
