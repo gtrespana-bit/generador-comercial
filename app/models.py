@@ -3444,6 +3444,80 @@ class PruebaConcedida(Base):
     licencia = relationship("Licencia")
 
 
+class EnvioMarketing(Base):
+    """Registro de cada correo de marketing enviado (secuencia y campañas).
+
+    **No es una tabla de tenant**, igual que ``Licencia``: es un dato del
+    negocio del titular *sobre* qué comunicaciones ha recibido cada
+    organización. Una sesión de cliente no debe verla.
+
+    Sirve para tres cosas:
+
+    1. **Idempotencia.** La unicidad ``(organizacion_id, plantilla)`` hace que
+       cada correo de la secuencia de prueba se envíe una sola vez por
+       organización, aunque el cron se ejecute dos veces el mismo día.
+    2. **Auditoría.** Qué se envió, cuándo y con qué resultado (id de Resend),
+       para saber qué funcionó sin releer logs efímeros.
+    3. **Frecuencia.** El servicio de marketing consulta esta tabla para no
+       mandar más de un correo por día a la misma organización.
+    """
+
+    __tablename__ = "envios_marketing"
+    __table_args__ = (
+        UniqueConstraint(
+            "organizacion_id", "plantilla", name="uq_envio_marketing_org_plantilla"
+        ),
+        Index("ix_envios_marketing_enviado", "enviado_en"),
+        Index("ix_envios_marketing_email", "email"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    organizacion_id = Column(
+        Integer,
+        ForeignKey("organizaciones.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    #: Correo al que se envió (puede ser uno de varios administradores).
+    email = Column(String(254), nullable=False, default="")
+    #: Slug de la plantilla: ``bienvenida``, ``consejo_tarifas``, ``winback``…
+    plantilla = Column(String(60), nullable=False, default="")
+    #: ``enviado`` o ``fallido``: el fallo del proveedor también se registra,
+    #: para no reintentar en bucle un buzón que rebota.
+    estado = Column(String(20), nullable=False, default="enviado")
+    #: Id que devuelve Resend al confirmar el envío (vacío si falló).
+    proveedor_id = Column(String(120), nullable=False, default="")
+    enviado_en = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    organizacion = relationship("Organizacion")
+
+
+class BajaMarketing(Base):
+    """Bajas de correos de marketing: quién pidió no recibirlos.
+
+    **No es una tabla de tenant**, igual que ``Licencia``. La baja se pide
+    desde un enlace público con token firmado (``/baja-marketing``), sin
+    sesión: por eso la escritura entra por el servicio de marketing y la
+    lectura también, nunca por una sesión de cliente.
+
+    Solo detiene los correos de **marketing** (secuencia, consejos, campañas).
+    Los transaccionales —invitaciones, recibos, avisos de vencimiento— siguen
+    llegando: son el servicio que la persona contrató, no publicidad.
+    """
+
+    __tablename__ = "bajas_marketing"
+    __table_args__ = (
+        UniqueConstraint("email", name="uq_baja_marketing_email"),
+        Index("ix_bajas_marketing_creada", "creada_en"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(254), nullable=False)
+    #: Cómo se pidió la baja: ``enlace`` (token del correo) o ``manual``.
+    origen = Column(String(20), nullable=False, default="enlace")
+    creada_en = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+
 #: Roles del equipo que opera el producto (no roles de organización).
 ROLES_OPERADOR = ("superadmin", "admin", "soporte", "analista")
 

@@ -52,6 +52,17 @@ REGLAS = [
         "ejecutable": True,
     },
     {
+        "id": "marketing",
+        "nombre": "Secuencia de marketing (consejos + win-back)",
+        "descripcion": (
+            "Correos que enseñan a usar el producto durante la prueba y "
+            "recuperan a quien se fue: bienvenida, tarifas, presupuesto, PDF, "
+            "cierre y win-back a 7 y 30 días. Respeta bajas y pasos completados."
+        ),
+        "frecuencia": "Diaria · vercel.json · CRON_SECRET",
+        "ejecutable": True,
+    },
+    {
         "id": "clientes_sin_plan",
         "nombre": "Alertas de clientes sin plan",
         "descripcion": (
@@ -76,11 +87,45 @@ def estado_automatizaciones(db, *, hoy: date | None = None) -> dict:
     compras_pendientes = (
         db.query(CompraPlan).filter(CompraPlan.estado == "pendiente").count()
     )
+    # Marketing: cuántas orgs están en el día exacto de su plantilla.
+    try:
+        from ..models import BajaMarketing, EnvioMarketing, PruebaConcedida
+        from .marketing import PLANTILLAS_SECUENCIA, historial_enviado
+
+        marketing_hoy = 0
+        # Usa la misma lógica que la secuencia: días desde alta de prueba.
+        altas = {}
+        for pc in db.query(PruebaConcedida).all():
+            oid = int(getattr(pc, "organizacion_id", 0) or 0)
+            if oid and getattr(pc, "created_at", None):
+                try:
+                    altas[oid] = pc.created_at.date() if hasattr(pc.created_at, "date") else pc.created_at
+                except Exception:
+                    pass
+        # También licencias de prueba vigentes (orgs que aún no aparecen en pruebas_concedidas en SQLite de tests).
+        for f in filas:
+            oid = int(f["organizacion"].id)
+            lic = f.get("vigente")
+            if oid not in altas and lic and getattr(lic, "origen", "") == "prueba" and getattr(lic, "inicio", None):
+                altas[oid] = lic.inicio
+        for entrada in PLANTILLAS_SECUENCIA:
+            dia = int(entrada["dia"])
+            plantilla = str(entrada["plantilla"])
+            for oid, alta in altas.items():
+                try:
+                    if (hoy - alta).days == dia and not historial_enviado(db, oid, plantilla):
+                        marketing_hoy += 1
+                        break
+                except Exception:
+                    continue
+    except Exception:
+        marketing_hoy = 0
     return {
         "por_renovar": len(por_renovar),
         "recordatorios_hoy": len(recordatorios_hoy),
         "sin_plan": len(sin_plan),
         "compras_pendientes": compras_pendientes,
+        "marketing_hoy": marketing_hoy,
         "control": {
             "dispara_hoy": len(recordatorios_hoy) + len(sin_plan) + compras_pendientes,
         },
@@ -122,5 +167,10 @@ def ejecutar_regla(
         respaldo = ejecutar_respaldo_automatico(db)
         verificacion = ejecutar_verificacion_diaria()
         return {"respaldo": respaldo, "verificacion": verificacion}
+
+    if regla == "marketing":
+        from .marketing import enviar_secuencia_marketing
+
+        return enviar_secuencia_marketing(db, remitente=remitente)
 
     raise GestionAutomatizacionError("La regla indicada no existe o no es accionable.")

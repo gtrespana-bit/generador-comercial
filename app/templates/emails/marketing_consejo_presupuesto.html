@@ -1,0 +1,61 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Tu primer presupuesto en 5 minutos · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Consejo 2 · Presupuesto
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Tu primer presupuesto en 5 minutos
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+
+<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">
+  Ya tienes un presupuesto con capítulos, partidas, cantidades y precios reales.
+  No hace falta que lo rehagas — <strong style="color:#17211d;">hazlo tuyo</strong>:
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;background:#f7faf8;border:1px solid #e3ece7;border-radius:12px;">
+  <tr><td style="padding:18px 20px;">
+    <div style="font-size:14px;line-height:1.7;color:#17211d;">
+      <strong style="color:#0b5b38;">①</strong> Cambia el título y el cliente<br>
+      <strong style="color:#0b5b38;">②</strong> Ajusta cantidades (m², metros lineales, unidades)<br>
+      <strong style="color:#0b5b38;">③</strong> Quita o añade capítulos según tu obra
+    </div>
+  </td></tr>
+</table>
+<p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#475a51;">
+  {% if tiene_demo %}Tienes el ejemplo listo en tu cuenta: ábrelo y duplícalo.{% else %}Crea uno nuevo: añade capítulos y el generador te arma los precios solo.{% endif %}
+  Solo el <strong>17 %</strong> de quien prueba CotizaT llega a este paso — quien lo hace, se queda.
+</p>
+
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        Abrir mi presupuesto
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  Con el ejemplo duplica y listo — no necesitas empezar de cero.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

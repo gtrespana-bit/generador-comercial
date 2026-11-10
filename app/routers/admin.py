@@ -98,6 +98,11 @@ CRON_RECORDATORIOS_PATH = "/api/cron/recordatorios-vencimiento"
 #: Hobby admite hasta 2 trabajos diarios, Pro hasta 40.
 CRON_MANTENIMIENTO_PATH = "/api/cron/mantenimiento"
 
+#: Secuencia diaria de correos de marketing (bienvenida + consejos + win-back).
+#: Tercer trabajo de ``vercel.json`` → ``crons``; en Hobby se suma al tercero
+#: y en Pro no hay límite que preocupe.
+CRON_MARKETING_PATH = "/api/cron/marketing"
+
 # ---------------------------------------------------------------------------
 # Acciones del panel de operador (E1-060)
 #
@@ -714,6 +719,22 @@ def _resumen_recordatorios(resultado: dict) -> dict:
     }
 
 
+def _resumen_marketing(resultado: dict) -> dict:
+    """Resumen JSON del cron de marketing, sin exponer emails."""
+    return {
+        "enviados": len(resultado.get("enviadas", [])),
+        "organizaciones": sorted({nombre for nombre, _p, _e in resultado.get("enviadas", [])}),
+        "omitidos_baja": len(resultado.get("omitidas_baja", [])),
+        "omitidos_ya_enviada": len(resultado.get("omitidas_ya_enviada", [])),
+        "omitidos_completada": len(resultado.get("omitidas_completada", [])),
+        "sin_correo": len(resultado.get("sin_correo", [])),
+        "fallidos": [
+            {"organizacion": n, "plantilla": p, "error": e}
+            for n, p, _em, e in resultado.get("fallidas", [])
+        ],
+    }
+
+
 @router.get(CRON_RECORDATORIOS_PATH, include_in_schema=False)
 def cron_recordatorios_vencimiento(
     request: Request, db: Session = Depends(get_cron_db)
@@ -763,6 +784,170 @@ def cron_recordatorios_vencimiento(
         {"ok": True, "resumen": _resumen_recordatorios(resultado)},
         headers={"Cache-Control": "no-store"},
     )
+
+
+@router.get(CRON_MARKETING_PATH, include_in_schema=False)
+def cron_marketing(request: Request, db: Session = Depends(get_cron_db)):
+    """Secuencia diaria de marketing (bienvenida + consejos + win-back).
+
+    Tercer trabajo de ``vercel.json`` → ``crons``. Misma puerta que los demás
+    crons: ``Authorization: Bearer $CRON_SECRET``. Respeta bajas, idempotencia
+    por (organización, plantilla) y pasos del recorrido ya completados.
+    """
+    if not _verificar_cron_secret(request):
+        return JSONResponse(
+            {"ok": False, "error": "No autorizado."},
+            status_code=401,
+            headers={"Cache-Control": "no-store"},
+        )
+    from ..services.email import EmailNotConfigured
+    from ..services.marketing import enviar_secuencia_marketing
+
+    try:
+        resultado = enviar_secuencia_marketing(db)
+        db.commit()
+    except EmailNotConfigured as exc:
+        db.rollback()
+        return JSONResponse(
+            {"ok": False, "error": str(exc)},
+            status_code=503,
+            headers={"Cache-Control": "no-store"},
+        )
+    except Exception:
+        db.rollback()
+        log.error("Error en el cron de marketing:\n%s", traceback.format_exc())
+        return JSONResponse(
+            {"ok": False, "error": "Error interno."},
+            status_code=500,
+            headers={"Cache-Control": "no-store"},
+        )
+    return JSONResponse(
+        {"ok": True, "resumen": _resumen_marketing(resultado)},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Marketing: disparos manuales desde el panel de operador
+# ---------------------------------------------------------------------------
+
+VOLVER_MARKETING = "/admin/sistema?tab=correos"
+
+
+@router.post("/admin/marketing/ejecutar", include_in_schema=False)
+def ejecutar_marketing_web(
+    request: Request,
+    db: Session = Depends(get_operator_db),
+    volver: str = Form(""),
+):
+    """Dispara la secuencia programada a mano (mismo efecto que el cron)."""
+    from ..services.email import EmailNotConfigured
+    from ..services.marketing import enviar_secuencia_marketing
+
+    destino = _volver_valor(volver, VOLVER_MARKETING)
+    try:
+        resultado = enviar_secuencia_marketing(db)
+        db.commit()
+        _auditar_admin(
+            db, request,
+            accion="marketing.secuencia_ejecutada",
+            entidad="marketing",
+            detalle={"enviadas": len(resultado.get("enviadas", [])), "fallidas": len(resultado.get("fallidas", []))},
+        )
+    except EmailNotConfigured:
+        db.rollback()
+        return _redirect(destino, error="El correo no está configurado: faltan RESEND_API_KEY o COTIZAT_EMAIL_FROM.")
+    except Exception:
+        db.rollback()
+        log.error("Error ejecutando secuencia de marketing:\n%s", traceback.format_exc())
+        raise
+    enviadas = len(resultado.get("enviadas", []))
+    fallidas = resultado.get("fallidas", [])
+    msg = f"{enviadas} correo(s) de marketing enviado(s)."
+    if resultado.get("omitidas_baja"):
+        msg += f" {len(resultado['omitidas_baja'])} omitido(s) por baja."
+    if fallidas and not enviadas:
+        return _redirect(destino, error=f"No se pudo enviar ningún correo: {fallidas[0][3] if fallidas[0] else 'error del proveedor'}")
+    if fallidas:
+        return _redirect(destino, error=msg + f" Fallidos: {len(fallidas)}.")
+    if not enviadas:
+        return _redirect(destino, msg="Nada que enviar hoy: ninguna organización en el día de su secuencia o ya se les envió.")
+    return _redirect(destino, msg=msg)
+
+
+@router.post("/admin/marketing/campana", include_in_schema=False)
+async def enviar_campana_web(request: Request, db: Session = Depends(get_operator_db)):
+    """Lanza una campaña manual a un segmento (novedades / oferta / consejo)."""
+    from ..services.email import EmailNotConfigured
+    from ..services.marketing import enviar_campana
+
+    form = await request.form()
+    destino = _volver_valor(str(form.get("volver") or ""), VOLVER_MARKETING)
+    plantilla = str(form.get("plantilla") or "").strip()
+    segmento = str(form.get("segmento") or "").strip()
+    titulo = str(form.get("titulo") or "").strip()[:200]
+    cuerpo = str(form.get("cuerpo") or "").strip()[:5000]
+    cta_url = str(form.get("cta_url") or "").strip()[:500]
+    cta_label = str(form.get("cta_label") or "").strip()[:80]
+    if not plantilla or not segmento:
+        return _redirect(destino, error="Elige plantilla y segmento.")
+    try:
+        exigir_rol(db, "superadmin", "admin")
+        resultado = enviar_campana(
+            db,
+            plantilla=plantilla,
+            segmento=segmento,
+            titulo_campana=titulo,
+            cuerpo_campana=cuerpo,
+            cta_url=cta_url,
+            cta_label=cta_label,
+        )
+        db.commit()
+        _auditar_admin(
+            db, request,
+            accion="marketing.campana_enviada",
+            entidad="marketing",
+            detalle={"plantilla": plantilla, "segmento": segmento, "enviadas": len(resultado.get("enviadas", []))},
+        )
+    except ValueError as exc:
+        db.rollback()
+        return _redirect(destino, error=str(exc))
+    except EmailNotConfigured:
+        db.rollback()
+        return _redirect(destino, error="El correo no está configurado.")
+    except Exception:
+        db.rollback()
+        log.error("Error enviando campaña de marketing:\n%s", traceback.format_exc())
+        raise
+    enviadas = len(resultado.get("enviadas", []))
+    if not enviadas and resultado.get("fallidas"):
+        return _redirect(destino, error=f"No se pudo enviar la campaña: {resultado['fallidas'][0][3] if resultado['fallidas'][0] else 'error'}")
+    if not enviadas:
+        return _redirect(destino, msg="Nada que enviar: todas las organizaciones del segmento ya recibieron esta campaña o están de baja.")
+    return _redirect(destino, msg=f"Campaña «{plantilla}» enviada a {enviadas} destinatario(s) del segmento «{segmento}».")
+
+
+@router.post("/admin/marketing/baja/quitar", include_in_schema=False)
+async def quitar_baja_marketing_web(request: Request, db: Session = Depends(get_operator_db)):
+    """Reactiva un email que había pedido la baja (operador)."""
+    from ..services.marketing import quitar_baja
+
+    form = await request.form()
+    destino = _volver_valor(str(form.get("volver") or ""), VOLVER_MARKETING)
+    email = str(form.get("email") or "").strip().lower()
+    if not email:
+        return _redirect(destino, error="Indica un correo.")
+    try:
+        ok = quitar_baja(db, email)
+        db.commit()
+        if ok:
+            _auditar_admin(db, request, accion="marketing.baja_quitada", entidad="marketing", detalle={"email": email})
+            return _redirect(destino, msg=f"{email} reactivado: volverá a recibir correos de marketing.")
+        return _redirect(destino, error="Ese correo no estaba de baja.")
+    except Exception:
+        db.rollback()
+        log.error("Error quitando baja de marketing:\n%s", traceback.format_exc())
+        raise
 
 
 @router.get(CRON_MANTENIMIENTO_PATH, include_in_schema=False)

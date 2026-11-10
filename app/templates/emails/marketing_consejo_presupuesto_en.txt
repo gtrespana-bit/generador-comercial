@@ -1,0 +1,10 @@
+Your first estimate in 5 minutes — CotizaT
+
+You already have a full estimate. Make it yours:
+1. Change title and client
+2. Adjust quantities
+3. Add/remove chapters
+
+Open: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

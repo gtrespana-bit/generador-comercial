@@ -1,0 +1,62 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Tus precios deciden tu margen · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Consejo 1 · Tarifas
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Tus precios deciden tu margen
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+
+<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">
+  CotizaT calcula cada presupuesto con <strong style="color:#17211d;">tus</strong> tarifas — mano de obra, materiales y equipos.
+  Una empresa que paga 15 $/h a un oficial y otra que paga 25 $/h <strong style="color:#17211d;">deben cotizar distinto</strong>.
+  Si dejas las referencias de mercado, tu margen se va sin que lo notes.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr><td style="padding:16px 20px;">
+    <div style="font-size:13px;color:#8ba096;">Qué revisar primero</div>
+    <div style="margin-top:6px;font-size:14px;line-height:1.6;color:#17211d;">
+      <strong>Oficial y peón</strong> — el coste real por hora en tu zona<br>
+      <strong>Cemento, arena, bloques</strong> — precios de tu ferretería habitual<br>
+      <strong>Multiplicador de margen</strong> — tu ganancia limpia por partida
+    </div>
+  </td></tr>
+</table>
+<p style="margin:0 0 20px;font-size:13.5px;line-height:1.55;color:#28503f;background:#eef7f2;border:1px solid #cfe6da;border-radius:10px;padding:14px 18px;">
+  Tienes <strong>{{ total_tarifas }} tarifas</strong> listas. Revisa al menos la mano de obra hoy: 2 minutos que te ahorran perder dinero en la obra.
+</p>
+
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        Revisar mis tarifas
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  2 minutos hoy = presupuestos rentables todo el mes.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

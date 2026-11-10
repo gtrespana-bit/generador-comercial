@@ -1,0 +1,57 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Pick up where you left off? · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Te echamos de menos
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Pick up where you left off?
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+
+<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">
+  You tried CotizaT and left midway — happens a lot. Good news: <strong style="color:#17211d;">everything is still saved</strong>.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;background:#f7faf8;border:1px solid #e3ece7;border-radius:12px;">
+  <tr><td style="padding:18px 20px;">
+    <div style="font-size:14px;line-height:1.6;color:#17211d;">
+      <strong>What stopped you?</strong><br>
+      • Short on time? The sample does 80% of the work.<br>
+      • Unsure on prices? Fix labour rates in 2 minutes.<br>
+      • Other tool? CotizaT does in minutes what Excel takes hours.
+    </div>
+  </td></tr>
+</table>
+
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        Back to CotizaT
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  One click and you continue.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

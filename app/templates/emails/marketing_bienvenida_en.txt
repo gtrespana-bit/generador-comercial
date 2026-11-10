@@ -1,0 +1,19 @@
+Welcome to CotizaT — your trial is ready
+
+Hi, {{ organizacion_nombre }}!
+
+Your 7-day free trial is live. Unlimited estimates, branded PDF, catalogue and clients.
+
+Your first step (2 minutes):
+1. Open the sample estimate already created for you
+2. Change the client name and quantities
+3. Download the PDF
+
+Tip: don't start from scratch. Duplicate the sample.
+
+Open here: {{ cta_url }}
+
+Need help? Reply to this email or write to {{ soporte_email }}.
+
+© {{ anio }} {{ product_name }}
+Unsubscribe: {{ baja_url }}

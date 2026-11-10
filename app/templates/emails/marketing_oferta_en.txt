@@ -1,0 +1,7 @@
+{{ titulo_campana or 'A special offer for you' }}
+
+{{ cuerpo_campana or 'A limited-time promotion.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

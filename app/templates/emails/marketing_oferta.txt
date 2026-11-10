@@ -1,0 +1,7 @@
+{{ titulo_campana or 'Una oferta especial para ti' }}
+
+{{ cuerpo_campana or 'Una promoción por tiempo limitado.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

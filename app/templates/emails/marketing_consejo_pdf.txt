@@ -1,0 +1,11 @@
+El PDF que tu cliente va a firmar — CotizaT
+
+El PDF lleva tu logo, desglose por capítulos y total con IVA. Es lo que cierra la obra.
+
+Descárgalo y envíalo desde CotizaT a tu cliente.
+
+Ver presupuestos: {{ cta_url }}
+
+Truco: deja tu logo y RIF en Configuración y salen en cada PDF.
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

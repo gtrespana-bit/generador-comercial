@@ -1,0 +1,7 @@
+{{ titulo_campana or 'Un consejo para cerrar más obras' }}
+
+{{ cuerpo_campana or 'Cómo presupuestar sin regalar margen.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

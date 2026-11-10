@@ -42,14 +42,14 @@ SETTINGS = SupabaseAuthSettings(
 
 
 def test_el_catalogo_tiene_los_once_correos():
-    """Los tres avisos del negocio se suman a los ocho correos de producto.
+    """Catálogo base + marketing: todos deben aparecer para probarlos en un buzón real.
 
-    «venta», «registro» y «soporte» son los que hacen que el titular se entere
-    de un cobro, de un alta y de un mensaje sin abrir el panel; poder enviarlos
-    de prueba es lo que permite revisarlos en un cliente de correo real.
+    El catálogo original tenía 11 correos (8 de producto + 3 avisos del titular
+    —venta, registro, soporte—) y ahora suma 10 de marketing (secuencia +
+    campañas). Quitar o renombrar un slug rompería enlaces del panel y del CLI.
     """
     correos = correos_prueba.catalogo_correos()
-    assert len(correos) == 11
+    assert len(correos) == 21
     slugs = {c["slug"] for c in correos}
     assert slugs == {
         "recordatorio",
@@ -63,6 +63,16 @@ def test_el_catalogo_tiene_los_once_correos():
         "venta",
         "registro",
         "soporte",
+        "marketing_bienvenida",
+        "marketing_tarifas",
+        "marketing_presupuesto",
+        "marketing_pdf",
+        "marketing_cierre",
+        "marketing_winback7",
+        "marketing_winback30",
+        "marketing_novedades",
+        "marketing_oferta",
+        "marketing_consejo_obra",
     }
     for c in correos:
         assert c["titulo"]

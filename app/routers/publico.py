@@ -1213,6 +1213,65 @@ def landing_en_slash(request: Request):
     return RedirectResponse("/en-us/", status_code=301)
 
 
+# --- Baja de correos de marketing (un clic, sin sesión) --------------------
+@router.get("/baja-marketing", response_class=HTMLResponse, include_in_schema=False)
+def baja_marketing_get(request: Request, token: str = "", db: Session = Depends(get_db)):
+    """Página de confirmación de baja (GET) — muestra el formulario."""
+    from ..services.marketing import verificar_token_baja
+
+    email = verificar_token_baja(token) if token else None
+    ctx = {
+        "request": request,
+        "email": email or "",
+        "token": str(token or "").strip(),
+        "ya_baja": False,
+        "error": "" if email else ("Enlace no válido." if token else ""),
+    }
+    if email:
+        try:
+            from ..services.marketing import es_baja
+
+            ctx["ya_baja"] = bool(es_baja(db, email))
+        except Exception:
+            pass
+    try:
+        return templates.TemplateResponse(request, "publico/baja_marketing.html", ctx)
+    except Exception:
+        # Fallback mínimo si falta la plantilla
+        if email and ctx["ya_baja"]:
+            return HTMLResponse(f"<h1>Ya no recibes correos de marketing en {email}.</h1><p>Puedes cerrar esta pestaña.</p>")
+        if email:
+            return HTMLResponse(f'<h1>¿Dejar de recibir consejos y novedades en {email}?</h1><form method="post" action="/baja-marketing"><input type="hidden" name="token" value="{token}"><button type="submit">Confirmar baja</button></form>')
+        return HTMLResponse("<h1>Enlace de baja no válido</h1>", status_code=400)
+
+
+@router.post("/baja-marketing", include_in_schema=False)
+def baja_marketing_post(request: Request, token: str = Form(""), db: Session = Depends(get_db)):
+    """Confirma la baja (POST) y muestra el resultado."""
+    from ..services.marketing import registrar_baja, verificar_token_baja
+
+    email = verificar_token_baja(token) if token else None
+    ok = False
+    error = ""
+    if not email:
+        error = "Enlace no válido o caducado."
+    else:
+        try:
+            registrar_baja(db, email, origen="enlace")
+            db.commit()
+            ok = True
+        except Exception:
+            db.rollback()
+            error = "No se pudo guardar la baja. Inténtalo de nuevo."
+    ctx = {"request": request, "email": email or "", "token": token, "ok": ok, "error": error}
+    try:
+        return templates.TemplateResponse(request, "publico/baja_marketing_confirmada.html", ctx)
+    except Exception:
+        if ok:
+            return HTMLResponse(f"<h1>Baja confirmada</h1><p>Ya no recibirás correos de marketing en {email}. Los avisos de vencimiento y recibos seguirán llegando.</p>")
+        return HTMLResponse(f"<h1>Error</h1><p>{error}</p>", status_code=400)
+
+
 # --- Conmutador de idioma -------------------------------------------------
 @router.get("/idioma/{idioma}", include_in_schema=False)
 def cambiar_idioma(idioma: str, destino: str = "/"):

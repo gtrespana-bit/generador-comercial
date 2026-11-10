@@ -2330,11 +2330,30 @@ def _sistema_auditoria(request: Request, db, contexto: dict) -> None:
 def _sistema_correos(request: Request, db, contexto: dict) -> None:
     from ..services.correos_prueba import catalogo_correos
 
+    try:
+        from ..services.marketing import SEGMENTOS_CAMPANA as _SEG, PLANTILLAS_CAMPANA as _CAMP, resumen_marketing
+
+        marketing = resumen_marketing(db)
+        from ..models import BajaMarketing
+
+        bajas_recientes = (
+            db.query(BajaMarketing).order_by(BajaMarketing.creada_en.desc()).limit(20).all()
+        )
+        seg = dict(_SEG)
+        camp = list(_CAMP)
+    except Exception:
+        marketing = {"total_envios": 0, "total_bajas": 0, "por_plantilla": {}, "por_estado": {}, "plantillas": [], "campanas": [], "segmentos": {}}
+        bajas_recientes = []
+        seg = {}
+        camp = []
+
     contexto.update({
         "correos": catalogo_correos(),
-        # El destino queda en la URL para que, tras el envío, el formulario no
-        # vuelva a vacío (el operador repite destino a mano).
         "destino": _texto(request, "destino")["destino"] or str(db.info.get("auth_email") or ""),
+        "marketing": marketing,
+        "marketing_bajas": bajas_recientes,
+        "marketing_segmentos": seg,
+        "marketing_campanas": camp,
     })
 
 

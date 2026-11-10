@@ -1,0 +1,7 @@
+What's new in CotizaT this month
+
+Since you left we've polished the generator, catalogue and PDFs.
+
+Back: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}
