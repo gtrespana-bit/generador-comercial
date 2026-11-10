@@ -1,0 +1,57 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Tu prueba vence mañana · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Último día
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Tu prueba vence mañana
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+
+<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">
+  La prueba de <strong style="color:#17211d;">{{ organizacion_nombre }}</strong> termina el <strong style="color:#17211d;">{{ vence.strftime('%d/%m/%Y') }}</strong>.
+  Después se pausa sola — <strong>nada se borra</strong>: clientes, presupuestos, catálogo y archivos quedan como los dejaste.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border:1px solid #e3ece7;border-radius:12px;">
+  <tr><td style="padding:16px 20px;font-size:14px;color:#17211d;">
+    <strong style="color:#0b5b38;">Sigue trabajando sin cortes</strong> — elige un plan y tu acceso continúa.<br>
+    <span style="font-size:13px;color:#8ba096;">Sin permanencia. Sin cobros automáticos. Cancelas cuando quieras.</span>
+  </td></tr>
+</table>
+<p style="margin:0 0 20px;font-size:13.5px;line-height:1.55;color:#475a51;background:#f7faf8;border-left:3px solid #0b5b38;padding:12px 16px;border-radius:0 8px 8px 0;">
+  Constructoras como la tuya ya cotizan en minutos en lugar de horas. El atajo es el catálogo + el generador automático.
+</p>
+
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        Ver planes
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  Si aún dudas, responde a este correo y te ayudamos a decidir.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

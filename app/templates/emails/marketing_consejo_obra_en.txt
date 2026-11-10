@@ -1,0 +1,7 @@
+{{ titulo_campana or 'A tip to close more jobs' }}
+
+{{ cuerpo_campana or 'How to price without giving away margin.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

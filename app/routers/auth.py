@@ -970,6 +970,22 @@ async def crear_organizacion_web(
         organizacion_nombre=organizacion.nombre,
         prueba_texto=resultado_prueba.mensaje if resultado_prueba.concedida else "",
     )
+    # Bienvenida al cliente (marketing, no interna): primer correo de la
+    # secuencia. Best-effort como el aviso al titular — nunca rompe el alta.
+    try:
+        from ..services import marketing as _mkt
+
+        idioma_bienvenida = str(request.cookies.get("cotizat_idioma", "") or "").strip().lower()
+        _mkt.enviar_bienvenida(
+            db,
+            organizacion_id=organizacion.id,
+            organizacion_nombre=organizacion.nombre,
+            email=str(getattr(usuario, "email", "") or ""),
+            idioma=idioma_bienvenida or "es",
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
     return response
 
 

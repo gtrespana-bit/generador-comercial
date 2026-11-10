@@ -1131,6 +1131,139 @@ def enviar_resumen_errores_por_email(
     )
 
 
+# ---------------------------------------------------------------------------
+# Correos de marketing: secuencia de prueba + campañas (E1 — embudo)
+#
+# Cada plantilla vive en ``app/templates/emails/marketing_<slug>.html`` con su
+# variante ``_en``. El pie siempre lleva el enlace de baja firmado
+# (``/baja-marketing?token=…``): quien lo abre deja de recibir marketing sin
+# iniciar sesión, y la baja se respeta en el cron.
+# ---------------------------------------------------------------------------
+
+
+def _enviar_marketing(
+    *,
+    email: str,
+    asunto: str,
+    plantilla: str,
+    contexto: dict,
+    idioma: str = "es",
+) -> str:
+    """Renderiza ``marketing_<plantilla>`` y lo envía por Resend.
+
+    ``contexto`` ya viene con ``baja_url`` del servicio de marketing; se
+    completa aquí con ``product_name``, ``anio`` y ``soporte_email`` para que
+    ninguna plantilla viaje sin su pie legal. El envío respeta la misma
+    validación que el resto de correos al cliente.
+    """
+    from ..branding import PRODUCT_NAME as _PN
+
+    email = str(email or "").strip().lower()
+    if not email_destino_valido(email):
+        raise EmailValidationError("Dirección de marketing no válida.")
+    if not asunto.strip() or len(asunto) > 200 or "\n" in asunto or "\r" in asunto:
+        raise EmailValidationError("Asunto de marketing no válido.")
+    settings = EmailSettings.from_environment()
+    contexto = dict(contexto or {})
+    contexto.setdefault("product_name", _PN)
+    contexto.setdefault("anio", datetime.utcnow().year)
+    contexto.setdefault("soporte_email", _soporte_email())
+    html, texto = _render_correo(f"emails/marketing_{plantilla}", contexto, idioma)
+    # ``reply_to`` en soporte: responder al correo llega a un humano.
+    envio_id = _post_resend(
+        settings, to=email, subject=asunto[:200], html=html, text=texto, reply_to=_soporte_email()
+    )
+    logger.info("Marketing %s enviado a %s (id %s).", plantilla, email, envio_id)
+    return envio_id
+
+
+def enviar_bienvenida_por_email(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    contexto = dict(contexto or {})
+    org = str(contexto.get("organizacion_nombre") or "").strip() or "tu empresa"
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = (
+        f"Welcome to {contexto.get('product_name', PRODUCT_NAME)} — your 7-day trial is ready"
+        if en
+        else f"Bienvenido a {contexto.get('product_name', PRODUCT_NAME)} — tu prueba de 7 días ya está lista"
+    )
+    # CTA y copy de bienvenida vienen en el contexto del servicio de marketing.
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="bienvenida", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_consejo_tarifas(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = (
+        "Your margins start here — review your rates in 2 minutes"
+        if en
+        else "Tus márgenes empiezan aquí — revisa tus tarifas en 2 minutos"
+    )
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_tarifas", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_consejo_presupuesto(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = (
+        "Your first estimate in 5 minutes (with a shortcut)"
+        if en
+        else "Tu primer presupuesto en 5 minutos (con atajo)"
+    )
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_presupuesto", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_consejo_pdf(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = (
+        "The PDF your client will sign — download & send it"
+        if en
+        else "El PDF que tu cliente va a firmar — descárgalo y envíalo"
+    )
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_pdf", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_cierre_prueba(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    dias = int(contexto.get("dias_restantes") or 1)
+    asunto = (
+        f"Your trial ends in {dias} day{'s' if dias != 1 else ''} — keep your estimates"
+        if en
+        else f"Tu prueba vence en {dias} día{'s' if dias != 1 else ''} — conserva tus presupuestos"
+    )
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="cierre_prueba", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_winback_7(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = "Need a hand picking up where you left off?" if en else "¿Te echamos una mano para retomar?"
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="winback_7", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_winback_30(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = "What's new in CotizaT — and why come back now" if en else "Novedades de CotizaT — por qué volver ahora"
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="winback_30", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_novedades(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    camp = str(contexto.get("titulo_campana") or "").strip()
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = camp[:200] if camp else ("News from CotizaT" if en else "Novedades de CotizaT")
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="novedades", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_oferta(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    camp = str(contexto.get("titulo_campana") or "").strip()
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = camp[:200] if camp else ("A special offer for you" if en else "Una oferta especial para ti")
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="oferta", contexto=contexto, idioma=idioma)
+
+
+def enviar_marketing_consejo_obra(*, email: str, contexto: dict, idioma: str = "es") -> str:
+    camp = str(contexto.get("titulo_campana") or "").strip()
+    en = str(idioma or "es").strip().lower() == "en"
+    asunto = camp[:200] if camp else ("A tip to close more jobs" if en else "Un consejo para cerrar más obras")
+    return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_obra", contexto=contexto, idioma=idioma)
+
+
 def _soporte_email() -> str:
     from ..branding import SUPPORT_EMAIL
 

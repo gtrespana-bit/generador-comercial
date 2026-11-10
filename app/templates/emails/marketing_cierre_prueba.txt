@@ -1,0 +1,11 @@
+Tu prueba vence mañana — CotizaT
+
+La prueba de {{ organizacion_nombre }} termina el {{ vence.strftime('%d/%m/%Y') }}.
+Después se pausa sola — nada se borra.
+
+Sigue trabajando sin cortes: elige un plan (sin permanencia).
+Ver planes: {{ cta_url }}
+
+¿Dudas? Responde a este correo: {{ soporte_email }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

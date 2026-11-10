@@ -1,0 +1,13 @@
+Tus precios deciden tu margen — CotizaT
+
+CotizaT calcula cada presupuesto con tus tarifas. Si dejas las referencias de mercado, tu margen se va sin que lo notes.
+
+Qué revisar primero:
+- Oficial y peón: coste real por hora en tu zona
+- Cemento, arena, bloques: precios de tu ferretería
+- Multiplicador de margen: tu ganancia limpia
+
+Revisa tus tarifas: {{ cta_url }}
+
+© {{ anio }} {{ product_name }}
+Baja: {{ baja_url }}

@@ -1,0 +1,19 @@
+Bienvenido a CotizaT — tu prueba de 7 días ya está lista
+
+¡Hola, {{ organizacion_nombre }}!
+
+Acabas de crear tu cuenta. Tienes 7 días gratis para probar todo: presupuestos ilimitados, PDF con tu logo, catálogo y clientes.
+
+Tu primer paso (2 minutos):
+1. Abre el presupuesto de ejemplo que ya está creado
+2. Cámbiale el nombre del cliente y las cantidades
+3. Descarga el PDF — es lo que le enviarás a tu cliente
+
+Consejo: no empieces de cero. Duplica el ejemplo y ya tendrás tu primera propuesta.
+
+Entra aquí: {{ cta_url }}
+
+¿Ayuda? Responde a este correo o escribe a {{ soporte_email }}.
+
+© {{ anio }} {{ product_name }}
+No quieres estos consejos? Date de baja: {{ baja_url }}

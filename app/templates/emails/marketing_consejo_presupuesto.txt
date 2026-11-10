@@ -1,0 +1,10 @@
+Tu primer presupuesto en 5 minutos — CotizaT
+
+Ya tienes un presupuesto con capítulos, partidas y precios reales. Hazlo tuyo:
+1. Cambia título y cliente
+2. Ajusta cantidades
+3. Quita o añade capítulos
+
+Abre tu presupuesto: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

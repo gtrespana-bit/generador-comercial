@@ -1,0 +1,7 @@
+Pick up where you left off? — CotizaT
+
+You tried CotizaT and left midway. Everything is still saved.
+
+Back: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

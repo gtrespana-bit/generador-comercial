@@ -175,6 +175,33 @@ def _kwargs_registro(email: str) -> dict:
     )
 
 
+def _kwargs_marketing(email: str, plantilla: str) -> dict:
+    # Los correos de marketing comparten el mismo contexto de baja y marca:
+    # aquí basta con datos de ejemplo que hagan renderizar la plantilla.
+    return dict(
+        email=email,
+        contexto=dict(
+            organizacion_nombre="Constructora Andina, C.A.",
+            cta_url="https://cotizat.online/inicio",
+            cta_label="Abrir CotizaT",
+            baja_url=f"https://cotizat.online/baja-marketing?token=ejemplo_{plantilla}",
+            soporte_email="soporte@cotizat.online",
+            # Campos por plantilla (los que faltan caen a valores por omisión):
+            vence=_hoy() + timedelta(days=1),
+            dias_restantes=1,
+            es_prueba=True,
+            total_tarifas=42,
+            mano_obra_pendiente=5,
+            tiene_demo=True,
+            presupuesto_demo_id=123,
+            dias_desde_vencimiento=7,
+            titulo_campana="Novedad de ejemplo para tu obra",
+            cuerpo_campana="Este es un cuerpo de campaña de ejemplo. Reemplaza el copy en el panel al lanzar la campaña real.",
+            cta_url_campana="https://cotizat.online/novedades",
+        ),
+    )
+
+
 def _kwargs_soporte(email: str) -> dict:
     return dict(
         nombre="Ana Cliente",
@@ -285,6 +312,87 @@ _REGISTRO: tuple[tuple, ...] = (
         "interno",
         _kwargs_soporte,
         "enviar_mensaje_soporte_por_email",
+    ),
+    # --- Marketing (secuencia + campañas): mismos destinatarios que recordatorios ---
+    (
+        "marketing_bienvenida",
+        "Bienvenida — tu prueba ya está lista",
+        "Día 0: qué es CotizaT y tu primer paso (abrir el presupuesto de ejemplo).",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "bienvenida"),
+        "enviar_bienvenida_por_email",
+    ),
+    (
+        "marketing_tarifas",
+        "Consejo: revisa tus tarifas en 2 minutos",
+        "Día 1: por qué tus precios de mano de obra deciden tu margen.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "consejo_tarifas"),
+        "enviar_marketing_consejo_tarifas",
+    ),
+    (
+        "marketing_presupuesto",
+        "Consejo: tu primer presupuesto en 5 minutos",
+        "Día 2: del ejemplo al tuyo — duplica, cambia cliente y cantidades.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "consejo_presupuesto"),
+        "enviar_marketing_consejo_presupuesto",
+    ),
+    (
+        "marketing_pdf",
+        "Consejo: el PDF que tu cliente va a firmar",
+        "Día 4: descarga, revisa y envía tu propuesta.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "consejo_pdf"),
+        "enviar_marketing_consejo_pdf",
+    ),
+    (
+        "marketing_cierre",
+        "Último día de prueba — conserva tus presupuestos",
+        "Día 6: recordatorio amable con CTA a planes.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "cierre_prueba"),
+        "enviar_marketing_cierre_prueba",
+    ),
+    (
+        "marketing_winback7",
+        "Win-back: ¿retomamos donde lo dejaste?",
+        "7 días después de vencer: te echamos una mano, todo sigue guardado.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "winback_7"),
+        "enviar_marketing_winback_7",
+    ),
+    (
+        "marketing_winback30",
+        "Win-back: novedades de CotizaT",
+        "30 días después de vencer: qué ha mejorado y por qué volver.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "winback_30"),
+        "enviar_marketing_winback_30",
+    ),
+    (
+        "marketing_novedades",
+        "Campaña: Novedades del producto",
+        "Manual a segmento: qué hay de nuevo que tus clientes no tienen.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "novedades"),
+        "enviar_marketing_novedades",
+    ),
+    (
+        "marketing_oferta",
+        "Campaña: Oferta / promoción",
+        "Manual a segmento: descuento o plan especial por tiempo limitado.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "oferta"),
+        "enviar_marketing_oferta",
+    ),
+    (
+        "marketing_consejo_obra",
+        "Campaña: Consejo de obra",
+        "Manual a segmento: consejos de presupuestos que posicionan la marca.",
+        "cliente",
+        lambda email: _kwargs_marketing(email, "consejo_obra"),
+        "enviar_marketing_consejo_obra",
     ),
 )
 

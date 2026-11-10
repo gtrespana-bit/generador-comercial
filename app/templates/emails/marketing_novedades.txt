@@ -1,0 +1,7 @@
+{{ titulo_campana or 'Novedades de CotizaT' }}
+
+{{ cuerpo_campana or 'Tenemos novedades que te ahorran tiempo en cada presupuesto.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

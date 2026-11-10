@@ -1,0 +1,13 @@
+¿Retomamos donde lo dejaste? — CotizaT
+
+Probaste CotizaT y te quedaste a medias. Todo sigue guardado.
+
+¿Qué te frenó?
+- Falta de tiempo? El ejemplo hace el 80 %
+- Duda con precios? Revisa mano de obra en 2 min
+- Otra herramienta? En minutos lo que en Excel lleva horas
+
+Vuelve: {{ cta_url }}
+Responde a este correo y te ayudamos.
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

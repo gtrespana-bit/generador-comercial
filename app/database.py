@@ -91,7 +91,7 @@ DATABASE_URL = DATABASE.url
 DATABASE_BACKEND = DATABASE.backend
 DATABASE_IS_SQLITE = DATABASE.is_sqlite
 DB_PATH = DATABASE.sqlite_path
-EXPECTED_ALEMBIC_HEAD = "y1n3p5q7r9s2"
+EXPECTED_ALEMBIC_HEAD = "z3m9k2p8v1n7"
 
 # Copias de seguridad automáticas y manuales (solo corresponden al modo
 # SQLite local; PostgreSQL tendrá backups administrados fuera del proceso).

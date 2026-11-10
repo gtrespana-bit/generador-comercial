@@ -1,0 +1,66 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}Tu prueba de 7 días ya está lista, {{ organizacion_nombre }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  7 días de prueba
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  Tu prueba de 7 días ya está lista, {{ organizacion_nombre }}
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+
+<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">
+  Acabas de crear tu cuenta y ya puedes hacer tu primer presupuesto profesional.
+  Tienes <strong style="color:#17211d;">7 días gratis</strong> para probar todo —
+  presupuestos ilimitados, PDF con tu logo, catálogo y clientes.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;background:#eef7f2;border:1px solid #cfe6da;border-radius:12px;">
+  <tr><td style="padding:20px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:.5px;color:#0b5b38;text-transform:uppercase;margin-bottom:10px;">Tu primer paso (2 minutos)</div>
+    <div style="font-size:15px;line-height:1.6;color:#17211d;">
+      <strong>1.</strong> Abre el presupuesto de ejemplo que ya está creado.<br>
+      <strong>2.</strong> Cámbiale el nombre del cliente y las cantidades.<br>
+      <strong>3.</strong> Descarga el PDF — es exactamente lo que le enviarás a tu cliente.
+    </div>
+  </td></tr>
+</table>
+<p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#475a51;">
+  El 83 % de las personas que prueban CotizaT se queda atascado antes de crear su primer presupuesto real.
+  Con el ejemplo ya montado te ahorras ese paso: <strong style="color:#17211d;">ya tienes uno hecho</strong>, solo hazlo tuyo.
+</p>
+<p style="margin:0 0 24px;font-size:13.5px;line-height:1.55;color:#28503f;background:#f7faf8;border-left:3px solid #0b5b38;padding:12px 16px;border-radius:0 8px 8px 0;">
+  <strong>Consejo:</strong> No empieces de cero. Duplica el ejemplo, cambia el cliente y ya tendrás tu primera propuesta lista para enviar.
+</p>
+
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        Empezar ahora
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  Empieza hoy: el ejemplo ya te ahorra horas. Si quieres ayuda, responde a este correo.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

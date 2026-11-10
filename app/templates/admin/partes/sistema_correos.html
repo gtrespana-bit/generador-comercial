@@ -1,5 +1,91 @@
-{# Sistema › Correos de prueba. Enviar cualquier plantilla transaccional a un
-   buzón real, con el mismo remitente que producción. #}
+{# Sistema › Correos de prueba + Marketing. #}
+
+{# --- Marketing: estado, campaña y bajas --- #}
+{% if marketing is defined %}
+<div class="card" style="margin-bottom:22px;">
+  <div class="card-header">
+    <h2>Marketing por email</h2>
+    <span class="badge badge-success">{{ marketing.total_envios }} enviados · {{ marketing.total_bajas }} bajas</span>
+  </div>
+  <div class="card-body">
+    <p class="note-fine">Secuencia automática (bienvenida + consejos + win-back) y campañas manuales. Cada correo se envía una vez por organización y respeta las bajas. El cron diario es <code>/api/cron/marketing</code> a las 09:00 UTC.</p>
+
+    {% if marketing.por_plantilla %}
+    <div style="margin:12px 0;display:flex;flex-wrap:wrap;gap:8px;">
+      {% for plantilla, n in marketing.por_plantilla.items() %}
+        <span class="badge badge-neutral">{{ plantilla }}: {{ n }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;">
+      <form method="post" action="/admin/marketing/ejecutar">
+        <input type="hidden" name="volver" value="/admin/sistema?tab=correos">
+        <button class="btn btn-sm" type="submit">▶ Ejecutar secuencia ahora</button>
+      </form>
+      <span class="muted-note" style="align-self:center;">Dispara el mismo barrido que el cron (respeta bajas e idempotencia).</span>
+    </div>
+
+    <hr style="margin:18px 0;border:none;border-top:1px solid #e3ece7;">
+
+    <h3 style="font-size:15px;font-weight:800;margin:0 0 10px;">Lanzar campaña manual</h3>
+    <form method="post" action="/admin/marketing/campana" style="display:grid;gap:10px;max-width:640px;">
+      <input type="hidden" name="volver" value="/admin/sistema?tab=correos">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <label>Plantilla
+          <select name="plantilla" required style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;">
+            <option value="">— elige —</option>
+            {% for c in marketing_campanas %}
+            <option value="{{ c.plantilla }}">{{ c.titulo }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Segmento
+          <select name="segmento" required style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;">
+            <option value="">— elige —</option>
+            {% for k, v in marketing_segmentos.items() %}
+            <option value="{{ k }}">{{ v }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <label>Título (asunto) <input name="titulo" placeholder="Ej. Novedades de octubre — nueva forma de..." style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;"></label>
+      <label>Cuerpo <textarea name="cuerpo" rows="4" placeholder="Texto de la campaña. Si lo dejas vacío usa el de la plantilla." style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;"></textarea></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <label>CTA URL <input name="cta_url" placeholder="https://cotizat.online/novedades" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;"></label>
+        <label>CTA texto <input name="cta_label" placeholder="Ver novedades" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:8px;"></label>
+      </div>
+      <div><button class="btn btn-sm btn-primary" type="submit">Enviar campaña</button> <span class="muted-note">Una vez por organización; respeta bajas.</span></div>
+    </form>
+
+    {% if marketing_bajas %}
+    <hr style="margin:18px 0;border:none;border-top:1px solid #e3ece7;">
+    <h3 style="font-size:15px;font-weight:800;margin:0 0 10px;">Bajas recientes (reactivar)</h3>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+      <thead><tr style="color:#8ba096;text-align:left;"><th>Correo</th><th>Origen</th><th>Fecha</th><th></th></tr></thead>
+      <tbody>
+        {% for b in marketing_bajas %}
+        <tr style="border-top:1px solid #eef3f0;">
+          <td style="padding:6px 8px;">{{ b.email }}</td>
+          <td style="padding:6px 8px;">{{ b.origen }}</td>
+          <td style="padding:6px 8px;">{{ b.creada_en.strftime('%d/%m/%Y') if b.creada_en else '' }}</td>
+          <td style="padding:6px 8px;">
+            <form method="post" action="/admin/marketing/baja/quitar" style="display:inline;">
+              <input type="hidden" name="email" value="{{ b.email }}">
+              <input type="hidden" name="volver" value="/admin/sistema?tab=correos">
+              <button class="btn btn-xs" type="submit">Reactivar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="muted-note" style="margin-top:14px;">Sin bajas registradas. El enlace de cada correo es <code>/baja-marketing?token=…</code>.</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
 
 <div class="card">
   <div class="card-header">

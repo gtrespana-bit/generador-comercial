@@ -1,0 +1,13 @@
+Qué ha mejorado en CotizaT este mes
+
+Desde que nos dejaste hemos pulido el generador, el catálogo y los PDF.
+
+Por qué volver ahora:
+- Catálogo por país (VE · ES · CO · MX)
+- PDF white-label con tu logo
+- Soporte directo en horas
+
+Oferta: entra y prueba 7 días más gratis.
+Vuelve: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Baja: {{ baja_url }}

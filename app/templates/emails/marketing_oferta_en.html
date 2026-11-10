@@ -1,0 +1,43 @@
+{% extends "emails/_base.html" %}
+
+{% block title %}{{ titulo_campana or 'A special offer for you' }} · {{ product_name }}{% endblock %}
+
+{% block badge %}
+<div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
+  Oferta especial
+</div>
+{% endblock %}
+
+{% block content %}
+
+<h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">
+  {{ titulo_campana or 'A special offer for you' }}
+</h1>
+
+<p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
+  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+</p>
+
+{% if cuerpo_campana %}<p style="margin:0 0 20px;font-size:15px;line-height:1.65;color:#475a51;white-space:pre-wrap;">{{ cuerpo_campana }}</p>{% else %}<p style="margin:0 0 16px;font-size:15px;line-height:1.65;color:#475a51;">A limited-time promotion.</p>{% endif %}
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;">
+  <tr>
+    <td align="center">
+      <a href="{{ cta_url }}" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">
+        {{ cta_label or 'View offer' }}
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style="margin:0 0 22px;font-size:13px;line-height:1.6;color:#475a51;text-align:center;">
+  Limited-time offer. Reply if you have questions.
+</p>
+
+{% endblock %}
+
+{% block pie %}
+Recibes este correo porque creaste una cuenta en {{ product_name }}.
+Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
+o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+{% endblock %}

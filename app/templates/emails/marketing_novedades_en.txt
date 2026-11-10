@@ -1,0 +1,7 @@
+{{ titulo_campana or 'News from CotizaT' }}
+
+{{ cuerpo_campana or 'We have news that saves you time.' }}
+
+{{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

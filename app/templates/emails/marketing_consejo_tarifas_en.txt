@@ -1,0 +1,8 @@
+Your rates decide your margin — CotizaT
+
+CotizaT prices every estimate with your rates. Check labour and materials today.
+
+Review your rates: {{ cta_url }}
+
+© {{ anio }} {{ product_name }}
+Unsubscribe: {{ baja_url }}

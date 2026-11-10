@@ -1,0 +1,7 @@
+The PDF your client will sign — CotizaT
+
+The PDF is what your client sees. Download and send it from CotizaT.
+
+View estimates: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}

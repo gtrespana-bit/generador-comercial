@@ -1,0 +1,7 @@
+Your trial ends tomorrow — CotizaT
+
+Trial for {{ organizacion_nombre }} ends {{ vence.strftime('%d/%m/%Y') }}. Paused after — nothing deleted.
+
+View plans: {{ cta_url }}
+
+© {{ anio }} {{ product_name }} — Unsubscribe: {{ baja_url }}
