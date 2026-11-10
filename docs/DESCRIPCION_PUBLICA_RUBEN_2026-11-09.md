@@ -23,9 +23,10 @@ marcados como de uso restringido.
 Soy ingeniero y llevo toda mi carrera en la construcción: empresas propias
 de reformas y construcción en Las Palmas y en Madrid, y dos años en
 Venezuela remodelando propiedades. Hoy estoy abriendo RemodelaT Coruña, una
-empresa de reformas y remodelación de viviendas en A Coruña, y desarrollo
+empresa de reformas y remodelación de viviendas en A Coruña, desarrollo
 CotizaT, el software de presupuestos de obra que usamos para cotizar el
-trabajo.
+trabajo, y sostengo KHC Auto Import, mi negocio de importación y venta de
+coches en A Coruña.
 
 Mi forma de trabajar es la misma en los dos lados: lo que no sé medir, no lo
 presupuesto. Por eso escribí el software. CotizaT convierte un catálogo y
@@ -90,8 +91,9 @@ que he leído.
 I am an engineer and I have been in construction all my career: my own
 construction and renovation businesses in Las Palmas and Madrid, and two
 years in Venezuela remodelling properties. I am now opening RemodelaT
-Coruña, a home renovation company in A Coruña, Spain, and I build CotizaT,
-the construction estimating software we use to price the work.
+Coruña, a home renovation company in A Coruña, Spain, I build CotizaT, the
+construction estimating software we use to price the work, and I run KHC Auto
+Import, my own car import and sales business in A Coruña.
 
 The principle behind both sides of the business is the same: if you cannot
 measure it, you cannot price it — which is why I wrote the software.
@@ -205,12 +207,12 @@ workshop.
 > partidas— se perdía en un Excel, así que escribí el software que uso para
 > cotizar: hoy cotiza 23 países con sus impuestos y sus monedas. Con la
 > misma lógica he construido los marketplaces de camper y de maquinaria que
-> hay publicados, un portal inmobiliario en Venezuela, un ERP de importación
-> de coches —KHC Auto Import: compra, importación y venta de vehículos
-> seleccionados en A Coruña y Galicia, con garantía mínima de 12 meses, web
-> pública y ERP propio, y los precios calculados sobre anuncios reales con
-> la fuente declarada en cada ficha— y un asistente de IA que corre en tu
-> propio portátil. Ahora abro RemodelaT Coruña, mi empresa de reformas, y para
+> hay publicados, un portal inmobiliario en Venezuela, mi propio negocio de
+> importación de coches —KHC Auto Import: compro, importo y vendo vehículos
+> seleccionados en A Coruña y Galicia, con garantía mínima de 12 meses, taller
+> propio y los precios calculados sobre anuncios reales con la fuente
+> declarada en cada ficha— y un asistente de IA que corre en tu propio
+> portátil. Ahora abro RemodelaT Coruña, mi empresa de reformas, y para
 > ese proyecto me hace
 > falta gente que sepa de obra: por eso hago esta pregunta, y porque aquí es
 > donde se puede ver el trabajo de verdad."
@@ -224,7 +226,7 @@ workshop.
 Análisis repo a repo: qué es, con qué está hecho y qué hace. Todos con URL
 pública (Vercel) salvo los tres repositorios de documentación interna.
 
-### 5.1 Productos con motor propio (7)
+### 5.1 Productos con motor propio (6)
 
 | Repo | Qué es | Stack | URL |
 | --- | --- | --- | --- |
@@ -232,7 +234,6 @@ pública (Vercel) salvo los tres repositorios de documentación interna.
 | **maquinaria-ocasion** | Maquinaria agrícola, de obra y herramientas de ocasión en España. Clon del motor de CamperOcasión con marca, dominio y configuración propios; taxonomía y textos aún en Fase 1 | Next.js + TypeScript, Supabase, Stripe | maquinaria-ocasion.vercel.app |
 | **Marketplace-vzla** (**VendeT**) | Marketplace venezolano generalista: páginas por ciudad y por categoría, buscador, catálogo con filtros, ficha y edición de producto, publicación en 3 pasos, chat entre usuarios, créditos, favoritos, verificación y reputación, panel de administración con moderación, perfil público de vendedor | Next.js + TypeScript, Supabase (Postgres, Auth, Storage, Realtime), PWA | marketplacevzla.vercel.app |
 | **vendet-inmuebles** | Portal inmobiliario venezolano: propiedades, fichas, galerías, notificaciones por correo, vistas SQL públicas, RLS y buckets privados, scripts de indexación por lotes y envío de URLs a Search Console | Next.js 15, React 18, Supabase, Cloudflare R2, Python | vendet-inmuebles.vercel.app |
-| **KHC-Auto-Import** | **Negocio físico propio** de compra, importación y venta de vehículos seleccionados en A Coruña y Galicia, con garantía mínima de 12 meses por escrito: 11 vehículos en stock publicado, nave de 465 m² en O Milladoiro (Ames) con taller y zona de exposición, reforma hecha con mano de obra propia y capital propio. Web pública (catálogo, fichas, guías por modelo y motor, valoración, garantía, captación) y **ERP propio de 15 módulos** (flota, simulador de importación con impuestos verificados, CRM, facturación por régimen, calendario fiscal, anuncios, publicación web en un clic) en un mismo despliegue con dos dominios. Precios calculados sobre **anuncios reales** con la fuente declarada, modelo de regresión auditado (R² 0,89) y ranking de oportunidades sobre 56.969 anuncios | Next.js + JavaScript, React 19 + Vite + Tailwind v4 (ERP), Supabase con RLS y roles, Stripe | khcimport.autos / app.khcimport.autos |
 | **testing** (**MiClaw**) | Asistente personal de IA que corre en el ordenador del usuario, con modelos gratuitos, memoria, RAG, herramientas, tareas, recordatorios e informes; panel de actividad en vivo, autoaprobación, modo rápido y acceso multidispositivo con PIN | Python | testing-eight-lake.vercel.app |
 | **Majestic** | Sitio Next.js con portfolio, contacto y dos páginas que casi nadie tiene: **rendimiento web** y **SEO** | Next.js + TypeScript | majesticweb-sooty.vercel.app |
 
@@ -247,12 +248,13 @@ pública (Vercel) salvo los tres repositorios de documentación interna.
 | **REFORMATNEW** | Reescritura de la web de reformas en TypeScript | TypeScript | — |
 | **reformat** | Repositorio original de la web de reformas | — | — |
 
-### 5.3 Negocio físico y plan de negocio (2)
+### 5.3 Negocio físico y plan de negocio (3)
 
-| Repo | Qué es |
-| --- | --- |
-| **KHC-Tienda** | Plan de negocio de KHC, tienda de ropa infantil de marca propia en Oleiros (A Coruña): inversión inicial, gastos fijos mensuales, márgenes y costes variables en CSV; proveedores, ayudas y subvenciones, locales disponibles en A Coruña, autónoma frente a S.L.; y un generador en Python que renderiza el plan completo en HTML y PDF con gráficos |
-| **Vigia** | Sistema de videovigilancia sobre cámaras IP: captura, streaming, grabación, detección, analítica, eventos, notificaciones push, autenticación y ajustes, con API propia |
+| Repo | Qué es | Stack | URL |
+| --- | --- | --- | --- |
+| **KHC-Auto-Import** | **Negocio físico propio** de compra, importación y venta de vehículos seleccionados en A Coruña y Galicia, con garantía mínima de 12 meses por escrito: stock real publicado, nave de 465 m² en O Milladoiro (Ames) con taller propio y zona de exposición, reforma hecha con mano de obra propia y capital propio. Web pública (catálogo, fichas, guías por modelo y motor, valoración, garantía, captación) y **ERP propio de 15 módulos** (flota, simulador de importación con impuestos verificados, CRM, facturación por régimen, calendario fiscal, anuncios, publicación web en un clic) en un mismo despliegue con dos dominios. Precios calculados sobre **anuncios reales** con la fuente declarada, modelo de regresión auditado (R² 0,89) y ranking de oportunidades sobre 56.969 anuncios | Next.js + JavaScript, React 19 + Vite + Tailwind v4 (ERP), Supabase con RLS y roles, Stripe | khcimport.autos / app.khcimport.autos |
+| **KHC-Tienda** | Plan de negocio de KHC, tienda de ropa infantil de marca propia en Oleiros (A Coruña): inversión inicial, gastos fijos mensuales, márgenes y costes variables en CSV; proveedores, ayudas y subvenciones, locales disponibles en A Coruña, autónoma frente a S.L.; y un generador en Python que renderiza el plan completo en HTML y PDF con gráficos | Python | — |
+| **Vigia** | Sistema de videovigilancia sobre cámaras IP: captura, streaming, grabación, detección, analítica, eventos, notificaciones push, autenticación y ajustes, con API propia | FastAPI | — |
 
 ### 5.4 Inmobiliarias de Lanzarote (5)
 
@@ -327,11 +329,9 @@ particular y el diferencial ES/DE sin medir) en
 
 Sobre todo, de ese negocio **no se publica nada de su carpeta interna de
 plan de negocio**: capital, fianza, desglose de la reforma, flujo diario,
-proyección a 36 meses, dossier de aval ni datos personales del equipo. Y hay
-un aviso técnico abierto: el repositorio `KHC-Auto-Import` es **público** y
-esa carpeta se puede leer en GitHub, porque el `.vercelignore` solo la excluye
-de los despliegues web. Antes de darlo por cerrado hay que moverla a un
-repositorio privado y rotar el historial.
+proyección a 36 meses, dossier de aval ni datos personales del equipo. En
+público solo entran el negocio, la garantía, el stock, el taller y el
+sistema de precios.
 
 **Lo que sí se puede decir siempre, porque es verificable en un clic:** los
 repositorios de `github.com/gtrespana-bit`, las URLs en producción, las

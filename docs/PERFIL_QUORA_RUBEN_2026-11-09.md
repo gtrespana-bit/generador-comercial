@@ -184,14 +184,15 @@ negocios, así que me manejo tanto con la obra como con el software.
 ## 5. Credenciales (lo que se ve bajo cada respuesta)
 
  Quora muestra las credenciales al lado de cada respuesta. Son el "sello de
-garantía". Recomendación: **4 como máximo**, dos de ellas con fecha y una
-con prueba verificable.
+garantía". Recomendación: **4 como máximo** (5 si añades KHC Auto Import),
+dos de ellas con fecha y una con prueba verificable.
 
 | # | Tipo | Texto EN | Texto ES |
 | --- | --- | --- | --- |
 | 1 | Trabajo | `Founder — CotizaT (2026–present) · Construction estimating software for 23 markets` | `Fundador — CotizaT (2026–actual) · Software de presupuestos de obra para 23 mercados` |
 | 1b | Trabajo | `Renovation contractor — Las Palmas, Madrid and Venezuela (own companies)` | `Constructor de reformas — Las Palmas, Madrid y Venezuela (empresas propias)` |
 | 2 | Trabajo | `Founder — RemodelaT Coruña (opening 2027) · Home renovation and remodeling, A Coruña, Spain` | `Fundador — RemodelaT Coruña (apertura 2027) · Reformas y remodelación de viviendas, A Coruña` |
+| 2b | Trabajo | `Owner — KHC Auto Import (2026–present) · Car import and sales, A Coruña, Spain · 12-month warranty on every car` | `Propietario — KHC Auto Import (2026–actual) · Importación y venta de coches, A Coruña · Garantía de 12 meses en cada coche` |
 | 3 | Competencias | `Construction estimating · Unit rates · Labour cost · Quoting · APU` | `Presupuestos de obra · Precios unitarios · Coste de mano de obra · APU` |
 | 4 | Organización | `Member — 42 public repositories, from marketplaces to a full estimating platform` | `42 repositorios públicos: marketplaces, inmobiliarias y una plataforma completa de presupuestos` |
 
@@ -427,7 +428,7 @@ perfil sin tráfico se queda en cero visitas y no da información útil.
 3. [ ] Nombre visible, titular y **biografía en las dos versiones** (§2, §3, §4).
 4. [ ] Foto: persona, no logotipo (§6).
 5. [ ] URL del perfil con UTM (§5).
-6. [ ] Credenciales: las cuatro de la tabla (§5).
+6. [ ] Credenciales: las de la tabla (§5).
 7. [ ] Temas: 8-12 (§7).
 8. [ ] **Business Profile de CotizaT** con logo y descripción (§8).
 9. [ ] Publicar la **primera respuesta** (§10) y comprobar a las 48 h que no
