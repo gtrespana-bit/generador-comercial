@@ -348,6 +348,101 @@ escaparse.
 
 ---
 
+### 2.6 Respuesta F (ES) — para el hilo «¿Cuándo debería una empresa reemplazar Excel por una aplicación web empresarial?»
+
+**Hilo genérico de gestión**, no de construcción. La estrategia: responder al
+problema general (que es lo que el hilo pide) y meter el caso de CotizaT como
+**ejemplo real y declarado**, no como producto. **Un solo enlace**, en el
+cuarto párrafo de ocho, con la UTM de la estrategia.
+
+Texto exacto para copiar y pegar:
+
+```
+La respuesta corta: cuando la hoja deja de ser una herramienta de cálculo y
+pasa a ser el estado de la empresa. Ese es el corte real, y no tiene nada que
+ver con el tamaño de la empresa.
+
+Mientras el Excel lo usa una persona para analizar o simular, es la mejor
+herramienta que existe: gratis, rápido, flexible. El problema empieza cuando
+el archivo se convierte en la memoria compartida del negocio. Y ahí las
+señales se ven enseguida:
+
+- Varias personas editan el mismo archivo y no hay historial: nadie sabe qué
+  cambió, cuándo ni quién.
+- El dato "oficial" está en el correo de una persona, no en un sitio al que
+  todo el mundo llega.
+- Todo el mundo ve y edita todo, incluidos precios, márgenes o datos fiscales
+  de clientes.
+- Nadie puede decir de dónde salió un número, y cada cifra tiene una fecha
+  distinta y ninguna escrita.
+- El proceso vive en la cabeza de una persona: si mañana no viene, se para.
+- Cada departamento tiene su propia versión y la reconciliación se hace a
+  mano, a fin de mes.
+
+Mi caso, y lo digo con todas las letras porque Quora pide declarar la
+afiliación: yo vengo de la construcción y participo en el desarrollo de
+CotizaT, una aplicación web para presupuestos de obra. Es el caso típico: una
+hoja con precios que cambian cada semana, una regla que se rompe al cambiar
+una tarifa y tres versiones del mismo presupuesto. Si te interesa el método
+más que la marca, escribí una guía con el paso a paso y con lo que una
+aplicación tiene que hacer para no ser un trasto:
+https://cotizat.online/guia/presupuesto-de-obra?utm_source=quora&utm_medium=referral&utm_campaign=comunidad&utm_content=es-excel-app
+
+Y al revés, para no llamar a comprar software que no hace falta: si la
+operación cabe en una hoja, una hoja bien hecha es más barata, más rápida y
+no necesita mantenimiento. Excel no está muerto; para un modelo, una
+simulación o un análisis puntual sigue siendo lo mejor que tienes. Cambiar
+de herramienta sin que el problema esté resuelto es gastar dinero para
+sentir que la empresa se ha modernizado.
+
+Cuando sí toca migrar, tres cosas que se aprende viendo a empresas pasar por
+esto:
+
+1. No se migra todo de golpe. Se elige UN proceso, el que más errores o más
+   horas consume, y se mueve ese. El resto sigue en la hoja hasta que toque.
+2. La aplicación tiene que hablar con lo que ya tienes: importar tu .xlsx o
+   tu CSV y exportar el archivo final, el PDF que ve tu cliente. Si la
+   migración te obliga a reconstruir un histórico que no tienes, el proyecto
+   muere en el segundo mes.
+3. Se mide con un solo indicador: si a los tres meses ese proceso ya no
+   necesita reconciliación manual, se ganó. Si sigue igual, el problema no
+   era la hoja.
+
+Y el cálculo que casi nadie hace, que es el que de verdad decide: compara el
+coste del error con el coste de la herramienta. Si un solo error te cuesta
+más que un año de licencias, la pregunta no es si puedes permitirte la
+aplicación, es si puedes permitirte seguir con la hoja.
+
+Si me cuentas qué proceso os está costando más tiempo hoy, te digo por dónde
+empezaría y qué parte suele ser una hoja que no hace falta cambiar.
+```
+
+**Por qué así:**
+
+| Regla | Cómo se cumple |
+| --- | --- |
+| Responde a lo que se pregunta | El cuerpo son señales y criterios de migración, no propaganda |
+| El enlace va en el centro | Cuarto párrafo de ocho; ni al principio ni al final |
+| Afiliación declarada | «participo en el desarrollo de CotizaT», en la frase que nombra la herramienta |
+| Un solo enlace | La guía «presupuesto de obra sin Excel que se rompe», indexable y con CTA |
+| Honestidad que genera confianza | El párrafo de cuándo **no** migrar, y el cálculo coste del error vs. licencia |
+| Sin afirmaciones inventadas | Ninguna cifra, ningún porcentaje, ningún «luego te ahorra un 40 %» |
+| Cierre con pregunta | «Qué proceso os está costando más tiempo» → respuestas y el hilo siguiente |
+| Sin repetir el mismo texto | Este hilo es genérico; el anterior era de construcción. No se pega lo mismo |
+
+**Si preguntan en comentarios:**
+
+- *«¿Cuánto cuesta?»* → 7 días de prueba sin tarjeta; luego es de pago.
+- *«¿Sirve para cualquier empresa?»* → CotizaT es vertical: presupuestos de
+  obra. Para otros procesos, el criterio de los siete puntos es el mismo.
+- *«¿Cuánto tarda migrar?»* → depende de si el histórico es recuperable; con
+  importación de .xlsx y CSV, la primera semana es datos, no historia.
+- *«¿Y si somos cuatro personas?»* → con cuatro, Excel suele ganar; el punto
+  de inflexión es cuando el proceso compartido y el control de acceso pesan
+  más que la flexibilidad.
+
+---
+
 ## 3. Pregunta propia modelo + su respuesta
 
 Esta es la versión legítima de "preguntar y publicitar": **la pregunta es
