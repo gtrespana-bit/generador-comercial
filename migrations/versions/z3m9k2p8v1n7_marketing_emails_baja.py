@@ -71,20 +71,30 @@ def upgrade() -> None:
     if not _postgres():
         return
 
-    # RLS: solo operador (igual que licencias / pruebas_concedidas)
-    for tabla in ("envios_marketing", "bajas_marketing"):
-        op.execute(f"REVOKE ALL ON TABLE public.{tabla} FROM PUBLIC")
-        op.execute(f"ALTER TABLE public.{tabla} ENABLE ROW LEVEL SECURITY")
-        op.execute(f"ALTER TABLE public.{tabla} FORCE ROW LEVEL SECURITY")
-        op.execute(f"GRANT SELECT, INSERT, UPDATE ON TABLE public.{tabla} TO {APP_ROLE}")
-        op.execute(f"GRANT USAGE, SELECT ON SEQUENCE public.{tabla}_id_seq TO {APP_ROLE}")
-        op.execute(
-            f"DROP POLICY IF EXISTS cotizat_{tabla}_operador ON public.{tabla}"
-        )
-        op.execute(
-            f"CREATE POLICY cotizat_{tabla}_operador ON public.{tabla} "
-            f"FOR ALL TO {APP_ROLE} USING ({IS_OPERATOR}) WITH CHECK ({IS_OPERATOR})"
-        )
+    # RLS: solo operador (igual que licencias / pruebas_concedidas).
+    # Grants explícitos por tabla (no en bucle con variable) para que
+    # tests/test_rls.py los detecte por nombre literal.
+    op.execute("REVOKE ALL ON TABLE public.envios_marketing FROM PUBLIC")
+    op.execute("ALTER TABLE public.envios_marketing ENABLE ROW LEVEL SECURITY")
+    op.execute("ALTER TABLE public.envios_marketing FORCE ROW LEVEL SECURITY")
+    op.execute("GRANT SELECT, INSERT, UPDATE ON TABLE public.envios_marketing TO cotizat_app")
+    op.execute("GRANT USAGE, SELECT ON SEQUENCE public.envios_marketing_id_seq TO cotizat_app")
+    op.execute("DROP POLICY IF EXISTS cotizat_envios_marketing_operador ON public.envios_marketing")
+    op.execute(
+        f"CREATE POLICY cotizat_envios_marketing_operador ON public.envios_marketing "
+        f"FOR ALL TO cotizat_app USING ({IS_OPERATOR}) WITH CHECK ({IS_OPERATOR})"
+    )
+
+    op.execute("REVOKE ALL ON TABLE public.bajas_marketing FROM PUBLIC")
+    op.execute("ALTER TABLE public.bajas_marketing ENABLE ROW LEVEL SECURITY")
+    op.execute("ALTER TABLE public.bajas_marketing FORCE ROW LEVEL SECURITY")
+    op.execute("GRANT SELECT, INSERT, UPDATE ON TABLE public.bajas_marketing TO cotizat_app")
+    op.execute("GRANT USAGE, SELECT ON SEQUENCE public.bajas_marketing_id_seq TO cotizat_app")
+    op.execute("DROP POLICY IF EXISTS cotizat_bajas_marketing_operador ON public.bajas_marketing")
+    op.execute(
+        f"CREATE POLICY cotizat_bajas_marketing_operador ON public.bajas_marketing "
+        f"FOR ALL TO cotizat_app USING ({IS_OPERATOR}) WITH CHECK ({IS_OPERATOR})"
+    )
 
 
 def downgrade() -> None:

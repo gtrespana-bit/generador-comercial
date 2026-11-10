@@ -38,6 +38,7 @@ from migrations.versions import (
     w3m9k2p8v1n4_visitas_pagina_audiencia as visitas_migracion,
     x9m2k4p8v1n6_vistas_guardadas_favorita as favorita_migracion,
     y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migracion,
+    z3m9k2p8v1n7_marketing_emails_baja as marketing_migracion,
 )
 
 from tests.conftest import NOMBRE_ORG
@@ -364,17 +365,17 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [indice_recursos_migracion.revision], (
+    assert cabezas == [marketing_migracion.revision], (
         f"La cadena Alembic debe tener una única cabeza "
-        f"({indice_recursos_migracion.revision}); hay: {cabezas}"
+        f"({marketing_migracion.revision}); hay: {cabezas}"
     )
-    # La cabeza es la marca de vistas favoritas del operador; detrás queda la
-    # audiencia de la web pública, la columna de datos bancarios por
-    # presupuesto, el recordatorio de tarifas posponible, la revisión de
-    # tarifas, la marca del ejemplo del alta y el resto de la cadena.
+    # La cabeza es la nueva secuencia de marketing (envios/bajas); detrás queda
+    # el índice de búsqueda por código del catálogo, la marca de vistas favoritas,
+    # la audiencia, datos bancarios, recordatorio, revisión de tarifas y ejemplo.
+    assert marketing_migracion.down_revision == indice_recursos_migracion.revision
     assert favorita_migracion.down_revision == visitas_migracion.revision
     # Sobre las vistas favoritas cuelga el índice de búsqueda por código del
-    # catálogo, que es la cabeza vigente.
+    # catálogo, que ya no es cabeza: ahora cuelga marketing.
     assert indice_recursos_migracion.down_revision == favorita_migracion.revision
     assert visitas_migracion.down_revision == bancarios_migracion.revision
     assert bancarios_migracion.down_revision == recordatorio_migracion.revision

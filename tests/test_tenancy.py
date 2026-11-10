@@ -28,6 +28,8 @@ from app.models import (
     MensajeSoporte,
     VistaGuardada,
     VisitaPagina,
+    EnvioMarketing,
+    BajaMarketing,
     Membresia,
     Organizacion,
     PrecioRecursoMercado,
@@ -123,6 +125,12 @@ def test_todo_modelo_comercial_declara_propietario():
       solo como atribución de la visita, así que `TenantMixin` (que lo exige
       NOT NULL) no encaja. La tabla es global a propósito y no lleva políticas
       de inquilino porque no se consulta desde la sesión del cliente.
+    - `EnvioMarketing` y `BajaMarketing` son el historial de correos de
+      marketing y las bajas con un clic (revisión `z3m9k2p8v1n7`): datos del
+      **titular sobre las organizaciones**, no datos *de* un cliente. El
+      cron las escribe sin sesión de cliente (solo operador) y la baja se pide
+      desde un enlace público firmado, sin organización. Se aíslan con
+      `cotizat_envios_marketing_operador` / `cotizat_bajas_marketing_operador`.
     """
     identidades_globales = {Organizacion, Usuario, Membresia}
     no_tenant_justificados = {
@@ -146,6 +154,8 @@ def test_todo_modelo_comercial_declara_propietario():
         MensajeSoporte,
         ErrorInterno,
         VisitaPagina,
+        EnvioMarketing,
+        BajaMarketing,
     }
     sin_propietario = []
     for mapper in Base.registry.mappers:
