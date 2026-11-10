@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Baja de correos de marketing{% endblock %}
 {% block content %}
-<div style="max-width:560px;margin:40px auto;padding:28px;background:#fff;border:1px solid #e3ece7;border-radius:16px;">
-  <h1 style="margin:0 0 12px;font-size:22px;font-weight:900;color:#17211d;">Baja de correos de marketing</h1>
+<div class="page-head">
+  <div>
+    <h1>Baja de correos de marketing</h1>
+    <p class="subtitle">Gestiona tus preferencias de consejos y promociones</p>
+  </div>
+</div>
+<div class="card">
   {% if error %}
-    <p style="color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;padding:12px 16px;border-radius:10px;">{{ error }}</p>
-    <p style="margin-top:14px;font-size:14px;color:#475a51;">Si el enlace no funciona, escríbenos a <a href="mailto:soporte@cotizat.online">soporte@cotizat.online</a> y lo gestionamos.</p>
+    <div class="alert alert-error">{{ error }}</div>
+    <p class="muted">Si el enlace no funciona, escríbenos a <a href="mailto:soporte@cotizat.online">soporte@cotizat.online</a> y lo gestionamos.</p>
   {% elif ya_baja %}
-    <p style="font-size:15px;line-height:1.6;color:#475a51;">
-      Ya no recibes correos de marketing en <strong style="color:#17211d;">{{ email }}</strong>. No tienes que hacer nada más.
-    </p>
-    <p style="font-size:13px;color:#8ba096;">Seguirás recibiendo avisos de vencimiento, recibos y mensajes de tu equipo si los tienes. Solo se detienen los consejos y promociones.</p>
+    <h2>Ya no recibes correos de marketing en {{ email }}</h2>
+    <p>No tienes que hacer nada más.</p>
+    <p class="muted">Seguirás recibiendo avisos de vencimiento, recibos y mensajes de tu equipo si los tienes. Solo se detienen los consejos y promociones.</p>
   {% elif email %}
-    <p style="font-size:15px;line-height:1.6;color:#475a51;">
-      ¿Quieres dejar de recibir consejos, novedades y ofertas en <strong style="color:#17211d;">{{ email }}</strong>?
-    </p>
-    <p style="font-size:13px;color:#8ba096;">Los correos importantes (invitaciones, recibos, avisos de vencimiento) seguirán llegando: son el servicio que contrataste, no publicidad.</p>
-    <form method="post" action="/baja-marketing" style="margin-top:18px;">
+    <h2>¿Dejar de recibir consejos en {{ email }}?</h2>
+    <p>Los correos importantes (invitaciones, recibos, avisos de vencimiento) seguirán llegando: son el servicio que contrataste, no publicidad.</p>
+    <form method="post" action="/baja-marketing">
       <input type="hidden" name="token" value="{{ token }}">
-      <button type="submit" style="background:#0b5b38;color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:800;cursor:pointer;">Confirmar baja</button>
-      <a href="/" style="margin-left:12px;font-size:14px;color:#475a51;">Cancelar</a>
+      <button type="submit" class="btn btn-danger">Confirmar baja</button>
+      <a href="/" class="btn">Cancelar</a>
     </form>
   {% endif %}
 </div>

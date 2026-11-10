@@ -67,6 +67,9 @@ ACCIONES_LECIBLES = {
     "web.flag_cambiado": "Feature flag cambiado",
     "soporte.mensaje_estado": "Estado de mensaje de soporte",
     "error_interno.resuelto": "Error interno marcado como resuelto",
+    "marketing.secuencia_ejecutada": "Secuencia de marketing ejecutada",
+    "marketing.campana_enviada": "Campaña de marketing enviada",
+    "marketing.baja_quitada": "Baja de marketing reactivada",
 }
 
 #: Resultados posibles en el registro; el panel los ofrece como filtro.
