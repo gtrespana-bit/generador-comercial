@@ -105,7 +105,7 @@
         {% set crm = crm_por_org.get(org.id) %}
         <tr>
           <td class="org-name">
-            <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a>
+            <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a> {% if fila.es_test %}<span class="badge badge-neutral" title="Cuenta de prueba: no cuenta en métricas">TEST</span>{% endif %}
             <div class="org-sub">{{ org.slug }}{% for email in fila.emails[:2] %} · <a href="/admin/clientes?tab=directorio&q={{ email|urlencode }}" title="Ver las empresas de {{ email }}">{{ email }}</a>{% endfor %}{% if fila.emails|length > 2 %} +{{ fila.emails|length - 2 }}{% endif %}</div>
           </td>
           <td class="muted" title="Fecha de registro">{{ org.created_at|local_fecha('%d/%m/%Y') if org.created_at else '—' }}</td>

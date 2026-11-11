@@ -5,7 +5,7 @@
 {% block page_title %}{{ ficha.organizacion.nombre }}{% endblock %}
 
 {% block page_subtitle %}
-  {{ ficha.organizacion.slug }} ·
+  {{ ficha.organizacion.slug }} · {% if ficha.organizacion.es_test is defined and ficha.organizacion.es_test %}<span class="badge badge-neutral">TEST — cuenta de prueba (no cuenta en métricas)</span> · {% endif %}
   {% if ficha.vigente %}
   acceso hasta {{ (ficha.vence_total or ficha.vigente.vence)|fecha }}
   {% if ficha.dias_restantes <= 3 %}<span class="badge badge-danger">{{ ficha.dias_restantes }} días</span>
@@ -27,6 +27,10 @@
 {% block page_acciones %}
   <a class="btn btn-secondary" href="/admin/clientes?tab=directorio">Volver al directorio</a>
   <a class="btn" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#conceder">Conceder o renovar</a>
+  <form method="post" action="/admin/clientes/{{ ficha.organizacion.id }}/alternar-test" style="display:inline">
+    <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}">
+    <button class="btn btn-secondary" type="submit">{% if ficha.organizacion.es_test is defined and ficha.organizacion.es_test %}Quitar marca TEST{% else %}Marcar como TEST{% endif %}</button>
+  </form>
 {% endblock %}
 
 {% block content %}

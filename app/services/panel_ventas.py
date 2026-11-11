@@ -97,15 +97,21 @@ def _limites_mes(mes: date) -> tuple[datetime, datetime]:
 
 def ventas_confirmadas(db) -> list[dict]:
     """Todas las ventas cobradas, de la más reciente a la más antigua."""
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test_compras = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_compras = set()
     compras = (
         db.query(CompraPlan)
         .filter(CompraPlan.estado == "activa")
         .order_by(CompraPlan.revisado_at.desc(), CompraPlan.id.desc())
         .all()
     )
+    if ids_test_compras:
+        compras = [c for c in compras if int(c.organizacion_id) not in ids_test_compras]
     if not compras:
         return []
-
     organizaciones = {o.id: o for o in db.query(Organizacion).all()}
     licencias = {
         lic.id: lic

@@ -70,6 +70,7 @@ ACCIONES_LECIBLES = {
     "marketing.secuencia_ejecutada": "Secuencia de marketing ejecutada",
     "marketing.campana_enviada": "Campaña de marketing enviada",
     "marketing.baja_quitada": "Baja de marketing reactivada",
+    "cliente.test_alternado": "Cuenta marcada como prueba",
 }
 
 #: Resultados posibles en el registro; el panel los ofrece como filtro.

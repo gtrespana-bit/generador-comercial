@@ -4,7 +4,7 @@
 
 {% block badge %}
 <div style="display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">
-  Consejo 2 · Presupuesto
+  Estimate tip
 </div>
 {% endblock %}
 
@@ -15,7 +15,7 @@
 </h1>
 
 <p style="margin:0 0 6px;font-size:13px;color:#8ba096;">
-  Para <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
+  {{ organization }} <strong style="color:#17211d;">{{ organizacion_nombre }}</strong>
 </p>
 
 
@@ -50,7 +50,7 @@
 {% endblock %}
 
 {% block pie %}
-Recibes este correo porque creaste una cuenta en {{ product_name }}.
-Si prefieres no recibir estos consejos, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">date de baja aquí</a>
-o escribe a {{ soporte_email }}. Tus presupuestos y datos nunca se borran al darte de baja de correos.
+You are receiving this because you created an account at {{ product_name }}.
+If you prefer not to receive these tips, <a href="{{ baja_url }}" style="color:#0b5b38;text-decoration:underline;">unsubscribe here</a>
+or write to {{ soporte_email }}. Your estimates and data are never deleted when you unsubscribe.
 {% endblock %}

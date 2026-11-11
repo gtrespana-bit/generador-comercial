@@ -90,15 +90,20 @@ def renovaciones_del_mes(
         fin = inicio.replace(month=inicio.month + 1, day=1)
 
     organizaciones = {o.id: o for o in db.query(Organizacion).all()}
-    licencias = db.query(Licencia).filter(
-        Licencia.estado != "cancelada"
-    ).all()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
+    licencias = [l for l in db.query(Licencia).filter(Licencia.estado != "cancelada").all() if int(l.organizacion_id) not in ids_test]
     por_org: dict[int, list[Licencia]] = defaultdict(list)
     for lic in licencias:
         por_org[lic.organizacion_id].append(lic)
 
     filas = []
     for org_id, grupo in por_org.items():
+        if int(org_id) in ids_test:
+            continue
         for lic in grupo:
             vence = lic.vence
             if not vence or not (inicio <= vence < fin):
@@ -186,8 +191,13 @@ def listar_renovaciones(
 def proximas_renovaciones(db, *, hoy: date | None = None, limite: int = 20) -> list[dict]:
     """Las renovaciones más próximas (para el dashboard y notificaciones)."""
     hoy = hoy or date.today()
-    organizaciones = {o.id: o for o in db.query(Organizacion).all()}
-    licencias = db.query(Licencia).filter(Licencia.estado != "cancelada").all()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test_p = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_p = set()
+    organizaciones = {o.id: o for o in db.query(Organizacion).all() if int(o.id) not in ids_test_p}
+    licencias = [l for l in db.query(Licencia).filter(Licencia.estado != "cancelada").all() if int(l.organizacion_id) not in ids_test_p]
     filas = []
     for lic in licencias:
         if not lic.vence:
