@@ -1526,6 +1526,47 @@ async def ejecutar_automatizacion_web(
     return _redirect(VOLVER_AUTOMATIZACIONES, msg=f"Regla «{regla}» ejecutada.")
 
 
+@router.post("/admin/clientes/{organizacion_id}/alternar-test", include_in_schema=False)
+def alternar_organizacion_test(
+    organizacion_id: int,
+    request: Request,
+    db: Session = Depends(get_operator_db),  # type: ignore[assignment]
+    volver: str = Form(""),
+):
+    """Marca o desmarca una organización como cuenta de prueba.
+
+    Las cuentas de prueba no cuentan en ninguna métrica del panel (MRR,
+    totales, embudo, cohortes) pero siguen visibles en el directorio con
+    etiqueta gris TEST. Solo cambia `organizaciones.es_test`; no toca RLS.
+    """
+    from ..models import Organizacion
+
+    destino = _volver_valor(volver, f"/admin/clientes/{organizacion_id}")
+    org = db.get(Organizacion, int(organizacion_id))
+    if not org:
+        return _redirect(destino, error="Organización no encontrada.")
+    valor_actual = bool(getattr(org, "es_test", False))
+    nuevo = not valor_actual
+    try:
+        org.es_test = nuevo  # type: ignore[attr-defined]
+        db.commit()
+        _auditar_admin(
+            db, request,
+            accion="cliente.test_alternado",
+            entidad="organizacion",
+            entidad_id=int(organizacion_id),
+            organizacion_id=int(organizacion_id),
+            detalle={"es_test": nuevo},
+        )
+    except Exception:
+        db.rollback()
+        import traceback
+        log.error("Error alternando es_test org #%s:\n%s", organizacion_id, traceback.format_exc())
+        return _redirect(destino, error="No se pudo actualizar la marca de prueba.")
+    etiqueta = "marcada como TEST" if nuevo else "desmarcada como TEST"
+    return _redirect(destino, msg=f"Organización {etiqueta}.")
+
+
 # ---------------------------------------------------------------------------
 # La web se gobierna desde el panel (C1/C2/C4/C5, D3): contenido, avisos,
 # versiones y flags. Todo se edita en la pantalla de Web y de Sistema › Accesos.

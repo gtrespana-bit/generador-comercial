@@ -85,6 +85,10 @@ class Organizacion(Base):
     )
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Marca de organización de prueba / interna: no cuenta en ninguna métrica
+    # del panel admin (MRR, totales, embudo, cohortes, ventas, renovaciones).
+    # Se activa manualmente desde el panel; por defecto toda org real es False.
+    es_test = Column(Boolean, nullable=False, default=False, server_default="false")
 
     membresias = relationship("Membresia", back_populates="organizacion", cascade="all, delete-orphan")
 

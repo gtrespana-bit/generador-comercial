@@ -72,6 +72,18 @@ def resumen_admin(
     organizaciones = (
         db.query(Organizacion).order_by(Organizacion.nombre, Organizacion.id).all()
     )
+    # IDs de orgs marcadas como test (helper tolera columna ausente)
+    try:
+        from .organizaciones_test import es_organizacion_test, ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        def es_organizacion_test(o):  # fallback
+            return bool(getattr(o, "es_test", False))
+        ids_test = set()
+        try:
+            ids_test = {o.id for o in organizaciones if es_organizacion_test(o)}
+        except Exception:
+            ids_test = set()
     licencias = db.query(Licencia).all()
     compras = db.query(CompraPlan).order_by(CompraPlan.created_at.asc()).all()
     membresias = (
@@ -127,9 +139,11 @@ def resumen_admin(
                 }
             )
 
+        es_test = int(organizacion.id) in ids_test if ids_test else es_organizacion_test(organizacion)
         filas.append(
             {
                 "organizacion": organizacion,
+                "es_test": bool(es_test),
                 "emails": sorted(set(emails_por_org.get(organizacion.id, []))),
                 "licencias": licencias_org,
                 "vigente": vigente,
@@ -157,19 +171,22 @@ def resumen_admin(
             }
         )
 
+    # Métricas: excluyen orgs de prueba
+    filas_reales = [f for f in filas if not f.get("es_test")]
+    pendientes_reales = [p for p in pendientes if int(p["compra"].organizacion_id) not in ids_test]
     totales = {
-        "clientes": len(filas),
-        "con_plan": sum(1 for f in filas if f["vigente"]),
-        "sin_plan": sum(1 for f in filas if not f["vigente"]),
-        "por_vencer": sum(1 for f in filas if f["estado"] == "por_vencer"),
-        # El aviso de la campana salta a 3 días y el contador decía «≤15»: son
-        # dos preguntas distintas y ahora cada una tiene su número.
+        "clientes": len(filas_reales),
+        "con_plan": sum(1 for f in filas_reales if f["vigente"]),
+        "sin_plan": sum(1 for f in filas_reales if not f["vigente"]),
+        "por_vencer": sum(1 for f in filas_reales if f["estado"] == "por_vencer"),
         "por_vencer_3": sum(
-            1 for f in filas
+            1 for f in filas_reales
             if f["estado"] == "por_vencer" and f["dias_restantes"] <= 3
         ),
-        "pendientes": len(pendientes),
-        "ingresos": sum(f["ingresos"] for f in filas),
+        "pendientes": len(pendientes_reales),
+        "ingresos": sum(f["ingresos"] for f in filas_reales),
+        # Debug: cuántas test hay (no contadas)
+        "clientes_test": sum(1 for f in filas if f.get("es_test")),
     }
     return {
         "filas": filas,

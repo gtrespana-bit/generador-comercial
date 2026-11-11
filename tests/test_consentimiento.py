@@ -586,10 +586,12 @@ def test_la_migracion_encadena_con_la_cabeza_anterior(migracion):
     from migrations.versions import (
         y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migracion,
         z3m9k2p8v1n7_marketing_emails_baja as marketing_migracion,
+        a8f1c3d9e7b2_organizacion_es_test as es_test_migracion,
     )
     assert indice_recursos_migracion.down_revision == favorita_migracion.revision
     assert marketing_migracion.down_revision == indice_recursos_migracion.revision
-    assert marketing_migracion.revision == EXPECTED_ALEMBIC_HEAD
+    assert es_test_migracion.down_revision == marketing_migracion.revision
+    assert es_test_migracion.revision == EXPECTED_ALEMBIC_HEAD
     assert chats_migracion.down_revision == uso_migracion.revision
     assert uso_migracion.down_revision == fase3_migracion.revision
     assert fase3_migracion.down_revision == fase2_migracion.revision

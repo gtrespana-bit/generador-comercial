@@ -175,24 +175,22 @@ def resumen_cobros(
     mes = mes or hoy.replace(day=1)
     inicio, fin = _mes_borde(mes)
 
-    # 1) Ingresos de licencias de pago (dato del titular, ya visible al operador).
-    licencias = db.query(Licencia).filter(
-        Licencia.origen == "pago",
-        Licencia.importe > 0,
-    ).all()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
+
+    # 1) Ingresos de licencias de pago
+    licencias = [l for l in db.query(Licencia).filter(Licencia.origen == "pago", Licencia.importe > 0).all() if int(l.organizacion_id) not in ids_test]
     if organizacion_id:
         licencias = [l for l in licencias if l.organizacion_id == organizacion_id]
 
-    compras = (
-        db.query(CompraPlan)
-        .filter(CompraPlan.created_at >= inicio, CompraPlan.created_at < fin)
-        .order_by(CompraPlan.created_at.desc())
-        .all()
-    )
+    compras = [c for c in db.query(CompraPlan).filter(CompraPlan.created_at >= inicio, CompraPlan.created_at < fin).order_by(CompraPlan.created_at.desc()).all() if int(c.organizacion_id) not in ids_test]
     if organizacion_id:
         compras = [c for c in compras if c.organizacion_id == organizacion_id]
 
-    orgs = {o.id: o for o in db.query(Organizacion).all()}
+    orgs = {o.id: o for o in db.query(Organizacion).all() if int(o.id) not in ids_test}
 
     movimientos = []
     for lic in licencias:
@@ -222,7 +220,10 @@ def resumen_cobros(
         })
 
     if not organizacion_id:
-        movimientos.extend(_cobros_tenant_mes(db, inicio, fin))
+        facturas_test = _cobros_tenant_mes(db, inicio, fin)
+        if ids_test:
+            facturas_test = [m for m in facturas_test if int(m.get("organizacion_id") or 0) not in ids_test]
+        movimientos.extend(facturas_test)
     else:
         for mov in _cobros_tenant_mes(db, inicio, fin):
             if mov["organizacion_id"] == int(organizacion_id):

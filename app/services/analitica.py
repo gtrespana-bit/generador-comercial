@@ -125,6 +125,11 @@ def _inicio_dia(dia: date) -> datetime:
 
 
 def _kpis(db, *, hoy: date, desde: datetime) -> dict:
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
     usuarios = db.query(func.count(Usuario.id)).scalar() or 0
     usuarios_recientes = (
         db.query(func.count(Usuario.id))
@@ -133,13 +138,16 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
         or 0
     )
     organizaciones = db.query(func.count(Organizacion.id)).scalar() or 0
-    org_recientes = (
-        db.query(func.count(Organizacion.id))
-        .filter(Organizacion.created_at >= desde)
-        .scalar()
-        or 0
-    )
-    licencias_pago = db.query(Licencia).filter(Licencia.origen == "pago").all()
+    if ids_test:
+        try:
+            organizaciones = db.query(func.count(Organizacion.id)).filter(~Organizacion.id.in_(ids_test)).scalar() or 0
+            org_recientes = db.query(func.count(Organizacion.id)).filter(Organizacion.created_at >= desde, ~Organizacion.id.in_(ids_test)).scalar() or 0
+        except Exception:
+            # columna ausente
+            org_recientes = db.query(func.count(Organizacion.id)).filter(Organizacion.created_at >= desde).scalar() or 0
+    else:
+        org_recientes = db.query(func.count(Organizacion.id)).filter(Organizacion.created_at >= desde).scalar() or 0
+    licencias_pago = [l for l in db.query(Licencia).filter(Licencia.origen == "pago").all() if int(l.organizacion_id) not in ids_test]
     orgs_que_pagaron = {l.organizacion_id for l in licencias_pago}
     ingresos = sum(l.importe for l in licencias_pago if l.importe > 0)
 
@@ -438,11 +446,15 @@ def _cohortes(db, *, hoy: date) -> list[dict]:
     desde_cohortes = datetime(
         int(claves[0][:4]), int(claves[0][5:7]), 1
     )
-    organizaciones = (
-        db.query(Organizacion.id, Organizacion.created_at)
-        .filter(Organizacion.created_at >= desde_cohortes)
-        .all()
-    )
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test_c = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_c = set()
+    organizaciones = [
+        r for r in db.query(Organizacion.id, Organizacion.created_at).filter(Organizacion.created_at >= desde_cohortes).all()
+        if int(r[0]) not in ids_test_c
+    ]
     orgs_por_cohorte: dict[str, list[int]] = defaultdict(list)
     for org_id, creado in organizaciones:
         if creado:
@@ -790,12 +802,23 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
         agregados = {}
         limitada = True
 
+    try:
+        from .organizaciones_test import es_organizacion_test, ids_organizaciones_test
+        ids_test_t = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_t = set()
+        def es_organizacion_test(o):
+            return bool(getattr(o, "es_test", False))
     organizaciones = (
         db.query(Organizacion)
         .order_by(Organizacion.created_at.desc(), Organizacion.id.desc())
-        .limit(MAXIMO_ORGANIZACIONES_TABLA)
+        .limit(MAXIMO_ORGANIZACIONES_TABLA + (len(ids_test_t) if ids_test_t else 0) + 200)
         .all()
     )
+    # Excluir test de la tabla pero marcarlas al final si se quieren ver
+    organizaciones_reales = [o for o in organizaciones if int(o.id) not in ids_test_t]
+    # cap real
+    organizaciones = organizaciones_reales[:MAXIMO_ORGANIZACIONES_TABLA]
 
     eventos = dict(
         db.query(EventoProducto.organizacion_id, func.count(EventoProducto.id))

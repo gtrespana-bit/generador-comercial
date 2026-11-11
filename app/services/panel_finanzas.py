@@ -67,9 +67,16 @@ def resumen_financiero(
         - timedelta(days=1)
     )
 
-    licencias = db.query(Licencia).all()
-    compras = db.query(CompraPlan).all()
-    organizaciones = db.query(Organizacion).count()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
+    licencias = [l for l in db.query(Licencia).all() if int(l.organizacion_id) not in ids_test]
+    compras = [c for c in db.query(CompraPlan).all() if int(c.organizacion_id) not in ids_test]
+    # Organizaciones reales = totales menos test
+    total_orgs = db.query(Organizacion).count()
+    organizaciones = total_orgs - len(ids_test) if ids_test else total_orgs
 
     # --- Ingresos por cliente (LTV real) --------------------------------
     ingresos_por_org: dict[int, float] = defaultdict(float)
@@ -349,7 +356,12 @@ def movimiento_mrr(
     cálculo y la tarjeta lo dice en vez de esconderlo.
     """
     hoy = hoy or date.today()
-    licencias = db.query(Licencia).all()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
+    licencias = [l for l in db.query(Licencia).all() if int(l.organizacion_id) not in ids_test]
     inicio_mes = hoy.replace(day=1)
 
     serie: list[dict] = []
