@@ -25,6 +25,7 @@ import logging
 import re
 
 from sqlalchemy import text
+from .organizaciones_test import registro_real
 
 from ..models import (
     ESTADOS_SOPORTE,
@@ -237,6 +238,7 @@ def _consulta_mensajes(db, *, estado: str = "", tipo: str = "", q: str = ""):
     consulta = db.query(MensajeSoporte, Organizacion.nombre).outerjoin(
         Organizacion, MensajeSoporte.organizacion_id == Organizacion.id
     )
+    consulta = consulta.filter(registro_real(db, MensajeSoporte.organizacion_id, MensajeSoporte.email))
     estado = normalizar_estado(estado) if estado else ""
     if estado:
         consulta = consulta.filter(MensajeSoporte.estado == estado)
@@ -318,6 +320,7 @@ def contadores_soporte(db) -> dict:
 
     filas = (
         db.query(MensajeSoporte.estado, func.count(MensajeSoporte.id))
+        .filter(registro_real(db, MensajeSoporte.organizacion_id, MensajeSoporte.email))
         .group_by(MensajeSoporte.estado)
         .all()
     )
@@ -332,7 +335,7 @@ def mensajes_sin_atender(db, *, limite: int = 5) -> list[MensajeSoporte]:
     """Los pendientes, para la campana y el «requiere tu acción» de Hoy."""
     return (
         db.query(MensajeSoporte)
-        .filter(MensajeSoporte.estado == "nuevo")
+        .filter(MensajeSoporte.estado == "nuevo", registro_real(db, MensajeSoporte.organizacion_id, MensajeSoporte.email))
         .order_by(MensajeSoporte.created_at.asc(), MensajeSoporte.id.asc())
         .limit(max(1, int(limite or 5)))
         .all()

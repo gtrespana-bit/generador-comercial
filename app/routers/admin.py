@@ -1536,8 +1536,8 @@ def alternar_organizacion_test(
     """Marca o desmarca una organización como cuenta de prueba.
 
     Las cuentas de prueba no cuentan en ninguna métrica del panel (MRR,
-    totales, embudo, cohortes) pero siguen visibles en el directorio con
-    etiqueta gris TEST. Solo cambia `organizaciones.es_test`; no toca RLS.
+    totales, embudo, cohortes) y se muestran en el área de pruebas.
+    Solo cambia `organizaciones.es_test`; no modifica las políticas RLS.
     """
     from ..models import Organizacion
 
@@ -1548,10 +1548,11 @@ def alternar_organizacion_test(
     valor_actual = bool(getattr(org, "es_test", False))
     nuevo = not valor_actual
     try:
-        from sqlalchemy import text as sql_text
+        from sqlalchemy import update
         res = db.execute(
-            sql_text("UPDATE public.organizaciones SET es_test = :nuevo, updated_at = NOW() WHERE id = :oid"),
-            {"nuevo": nuevo, "oid": int(organizacion_id)},
+            update(Organizacion).where(Organizacion.id == int(organizacion_id))
+            .values(es_test=nuevo, updated_at=datetime.utcnow())
+            .execution_options(synchronize_session=False)
         )
         if res.rowcount == 0:
             db.rollback()

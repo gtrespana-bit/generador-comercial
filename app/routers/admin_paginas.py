@@ -198,21 +198,29 @@ def pagina_hoy(request: Request, db: Session = Depends(get_operator_db)):
 
     hoy_fecha = date.today()
     hace_14 = datetime.utcnow() - timedelta(days=14)
-    licencias_vigentes = db.query(Licencia).filter(
+    try:
+        from ..services.organizaciones_test import ids_organizaciones_test
+        ids_test_hoy = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_hoy = set()
+    licencias_vigentes = [l for l in db.query(Licencia).filter(
         Licencia.origen == "pago",
         Licencia.estado == "activa",
         Licencia.inicio <= hoy_fecha,
         Licencia.vence >= hoy_fecha,
-    ).all()
+    ).all() if int(l.organizacion_id) not in ids_test_hoy]
     orgs_pagando = {l.organizacion_id for l in licencias_vigentes}
-    orgs_con_uso = {
+    _todos_con_uso = {
         r[0] for r in db.query(EventoProducto.organizacion_id).distinct()
         .filter(EventoProducto.created_at >= hace_14)
         .filter(EventoProducto.accion.notin_(("actividad.diaria", "sesion.activa", "sesion.login")))
         .all()
     }
+    orgs_con_uso = {oid for oid in _todos_con_uso if oid is not None and int(oid) not in ids_test_hoy} if ids_test_hoy else _todos_con_uso
     riesgo_churn = []
     for org_id in sorted(orgs_pagando - orgs_con_uso):
+        if int(org_id) in ids_test_hoy:
+            continue
         org = db.get(Organizacion, org_id)
         if org is None:
             continue
@@ -354,9 +362,16 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     )
 
     crm_por_org = _crm_por_organizacion(db)
-    resumen = resumen_admin(db)
+    resumen_completo = resumen_admin(db)
+    # TEST en área aislada: directorio/pipeline muestran solo reales.
+    if pestana == "pruebas":
+        base_filas = resumen_completo.get("filas_test", [])
+        base_totales = resumen_completo.get("totales_test", {})
+    else:
+        base_filas = resumen_completo.get("filas", [])
+        base_totales = resumen_completo.get("totales", {})
     visibles = filtrar_filas(
-        resumen["filas"],
+        base_filas,
         q=filtros.get("q", ""),
         estado=filtros.get("estado", ""),
         plan=filtros.get("plan", ""),
@@ -366,9 +381,9 @@ def pagina_clientes(request: Request, db: Session = Depends(get_operator_db)):
     )
     visibles = ordenar_filas(visibles, filtros["orden"], filtros["dir"])
     resumen = {
-        **resumen,
+        **resumen_completo,
         "filas": visibles,
-        "totales": {**resumen["totales"], "filtradas": len(visibles)},
+        "totales": {**base_totales, "filtradas": len(visibles)},
     }
 
     ruta = ruta_panel("clientes")

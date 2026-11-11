@@ -27,7 +27,7 @@
 {% block page_acciones %}
   <a class="btn btn-secondary" href="/admin/clientes?tab=directorio">Volver al directorio</a>
   <a class="btn" href="/admin/clientes/{{ ficha.organizacion.id }}?tab=acceso#conceder">Conceder o renovar</a>
-  <form method="post" action="/admin/clientes/{{ ficha.organizacion.id }}/alternar-test" style="display:inline">
+  <form method="post" action="/admin/clientes/{{ ficha.organizacion.id }}/alternar-test">
     <input type="hidden" name="volver" value="/admin/clientes/{{ ficha.organizacion.id }}">
     <button class="btn btn-secondary" type="submit">{% if ficha.organizacion.es_test is defined and ficha.organizacion.es_test %}Quitar marca TEST{% else %}Marcar como TEST{% endif %}</button>
   </form>

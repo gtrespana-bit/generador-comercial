@@ -365,9 +365,11 @@ def test_la_migracion_encadena_con_la_cabeza_vigente():
             if down:
                 referenciadas |= set(re.findall(r"['\"]([A-Za-z0-9]+)['\"]", down.group(1)))
     cabezas = [r for r in revisiones if r not in referenciadas]
-    assert cabezas == [marketing_migracion.revision], (
+    from app.database import EXPECTED_ALEMBIC_HEAD
+
+    assert cabezas == [EXPECTED_ALEMBIC_HEAD], (
         f"La cadena Alembic debe tener una única cabeza "
-        f"({marketing_migracion.revision}); hay: {cabezas}"
+        f"({EXPECTED_ALEMBIC_HEAD}); hay: {cabezas}"
     )
     # La cabeza es la nueva secuencia de marketing (envios/bajas); detrás queda
     # el índice de búsqueda por código del catálogo, la marca de vistas favoritas,

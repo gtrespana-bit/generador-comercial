@@ -226,7 +226,7 @@ def resumen_cobros(
         movimientos.extend(facturas_test)
     else:
         for mov in _cobros_tenant_mes(db, inicio, fin):
-            if mov["organizacion_id"] == int(organizacion_id):
+            if mov["organizacion_id"] == int(organizacion_id) and int(organizacion_id) not in ids_test:
                 movimientos.append(mov)
 
     movimientos.sort(key=lambda m: (m["fecha"] or date.min, m["numero"]), reverse=True)

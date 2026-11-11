@@ -216,6 +216,8 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
         x9m2k4p8v1n6_vistas_guardadas_favorita as favorita_migration,
         y1n3p5q7r9s2_indice_codigo_de_recursos as indice_recursos_migration,
         z3m9k2p8v1n7_marketing_emails_baja as marketing_migration,
+        a8f1c3d9e7b2_organizacion_es_test as es_test_migration,
+        bd832a2b009e_organizaciones_es_test_rls_operador as rls_test_migration,
     )
     assert identidad_error_migration.down_revision == errores_internos_migration.revision
     assert borrado_cuenta_migration.down_revision == identidad_error_migration.revision
@@ -240,7 +242,9 @@ def test_head_exigido_por_runtime_coincide_con_alembic():
     # La cabeza vigente es el índice de búsqueda por código de los recursos.
     assert indice_recursos_migration.down_revision == favorita_migration.revision
     assert marketing_migration.down_revision == indice_recursos_migration.revision
-    assert database_module.EXPECTED_ALEMBIC_HEAD == marketing_migration.revision
+    assert es_test_migration.down_revision == marketing_migration.revision
+    assert rls_test_migration.down_revision == es_test_migration.revision
+    assert database_module.EXPECTED_ALEMBIC_HEAD == rls_test_migration.revision
     assert fase3_migration.down_revision == fase2_migration.revision
     assert fase2_migration.down_revision == panel_migration.revision
     assert panel_migration.down_revision == telemetria_migration.revision

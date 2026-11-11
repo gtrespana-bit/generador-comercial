@@ -1,0 +1,98 @@
+{# Clientes › Cuentas de prueba (aisladas). #}
+<div class="card">
+  <div class="card-header">
+    <h2>🧪 Cuentas de prueba — área aislada</h2>
+    <span class="badge badge-neutral">{{ resumen.filas|length }} cuenta{{ 's' if resumen.filas|length != 1 else '' }} TEST</span>
+  </div>
+  <div class="card-body">
+    <p class="muted">Estas organizaciones están separadas del directorio y de los indicadores comerciales. Pueden volver al directorio quitando la marca.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Cuentas de prueba</h2>
+    <div class="card-header-acc">
+      <span class="badge badge-neutral">{{ resumen.filas|length }} fila{{ 's' if resumen.filas|length != 1 else '' }}</span>
+      {% for clave, valor in filtros_activos.items() %}
+      <span class="badge badge-info">{{ clave }}: {{ valor }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <form class="toolbar" method="get" action="/admin/clientes">
+    <input type="hidden" name="tab" value="pruebas">
+    <label class="visualmente-oculto" for="clientes-q-test">Buscar por nombre, slug o email</label>
+    <input class="toolbar-buscar" id="clientes-q-test" type="search" name="q" value="{{ q }}" placeholder="Nombre, slug o email…">
+    <label class="visualmente-oculto" for="clientes-estado-test">Estado del acceso</label>
+    <select id="clientes-estado-test" name="estado">
+      {% for valor, etiqueta in opciones_estado %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_estado == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <label class="visualmente-oculto" for="clientes-plan-test">Plan</label>
+    <select id="clientes-plan-test" name="plan">
+      {% for valor, etiqueta in opciones_plan %}
+      <option value="{{ valor }}" {{ 'selected' if filtro_plan == valor else '' }}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-sm" type="submit">Filtrar</button>
+    <span class="toolbar-limpiar">
+      {% if hay_filtros %}
+      <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=pruebas">Limpiar</a>
+      {% endif %}
+    </span>
+  </form>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Alta</th>
+          <th>Estado</th>
+          <th>Plan</th>
+          <th>Vencimiento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fila in resumen.filas %}
+        {% set org = fila.organizacion %}
+        <tr>
+          <td class="org-name">
+            <a href="/admin/clientes/{{ org.id }}">{{ org.nombre }}</a> <span class="badge badge-neutral">TEST</span>
+            <div class="org-sub">{{ org.slug }}{% for email in fila.emails[:2] %} · <a href="/admin/clientes?tab=pruebas&q={{ email|urlencode }}">{{ email }}</a>{% endfor %}{% if fila.emails|length > 2 %} +{{ fila.emails|length - 2 }}{% endif %}</div>
+          </td>
+          <td class="muted">{{ org.created_at|local_fecha('%d/%m/%Y') if org.created_at else '—' }}</td>
+          <td>
+            {% if fila.estado == 'activa' %}<span class="badge badge-success">{{ fila.estado_label }}</span>
+            {% elif fila.estado == 'por_vencer' %}<span class="badge badge-warning">{{ fila.estado_label }} · {{ fila.dias_restantes }}d</span>
+            {% elif fila.estado == 'vencida' %}<span class="badge badge-danger">{{ fila.estado_label }}</span>
+            {% else %}<span class="badge badge-neutral">{{ fila.estado_label }}</span>{% endif %}
+          </td>
+          <td class="muted">{{ fila.plan_label }}</td>
+          <td class="muted">{{ fila.vence.strftime('%d/%m/%Y') if fila.vence else '—' }}</td>
+          <td>
+            <div class="tabla-acciones">
+              <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Ficha</a>
+              <form method="post" action="/admin/clientes/{{ org.id }}/alternar-test">
+                <input type="hidden" name="volver" value="/admin/clientes?tab=pruebas{% if q %}&q={{ q|urlencode }}{% endif %}">
+                <button class="btn btn-sm" type="submit" title="Quitar marca TEST y devolver al directorio real">Quitar TEST → Directorio</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">
+          <div class="vacio">
+            <b>No hay cuentas de prueba.</b>
+            <p>Marca una organización como TEST desde el Directorio (botón <em>Marcar TEST</em>) y aparecerá aquí, fuera de toda métrica.</p>
+            <a class="btn btn-sm btn-secondary" href="/admin/clientes?tab=directorio">Ir al Directorio</a>
+          </div>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

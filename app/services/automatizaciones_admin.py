@@ -78,14 +78,14 @@ REGLAS = [
 def estado_automatizaciones(db, *, hoy: date | None = None) -> dict:
     """Info de lo que cada regla dispararía hoy (solo lee tablas del titular)."""
     hoy = hoy or date.today()
-    filas = resumen_organizaciones(db, hoy=hoy, dias_aviso=15)
+    filas = [f for f in resumen_organizaciones(db, hoy=hoy, dias_aviso=15) if not f["organizacion"].es_test]
     por_renovar = [f for f in filas if f["por_vencer"]]
     recordatorios_hoy = [
         f for f in por_renovar if f["dias_restantes"] in (5, 1)
     ]
     sin_plan = [f for f in filas if not f["vigente"]]
     compras_pendientes = (
-        db.query(CompraPlan).filter(CompraPlan.estado == "pendiente").count()
+        db.query(CompraPlan).filter(CompraPlan.estado == "pendiente", CompraPlan.organizacion_id.in_([f["organizacion"].id for f in filas])).count()
     )
     # Marketing: cuántas orgs están en el día exacto de su plantilla.
     try:
@@ -97,7 +97,7 @@ def estado_automatizaciones(db, *, hoy: date | None = None) -> dict:
         altas = {}
         for pc in db.query(PruebaConcedida).all():
             oid = int(getattr(pc, "organizacion_id", 0) or 0)
-            if oid and getattr(pc, "created_at", None):
+            if oid in {f["organizacion"].id for f in filas} and getattr(pc, "created_at", None):
                 try:
                     altas[oid] = pc.created_at.date() if hasattr(pc.created_at, "date") else pc.created_at
                 except Exception:

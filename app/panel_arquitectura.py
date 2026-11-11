@@ -184,6 +184,12 @@ SECCIONES: tuple[Seccion, ...] = (
                 "Lo que escriben clientes y visitantes: leer, responder y cerrar cada mensaje.",
                 roles_permitidos=("superadmin", "admin", "soporte"),
             ),
+            Pestana(
+                "pruebas",
+                "Cuentas de prueba",
+                "Organizaciones marcadas como TEST: aisladas de toda métrica y del directorio real.",
+                roles_permitidos=("superadmin", "admin"),
+            ),
         ),
     ),
     Seccion(

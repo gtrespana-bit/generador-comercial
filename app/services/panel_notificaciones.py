@@ -32,12 +32,12 @@ def notificaciones_admin(
     avisos: list[dict] = []
 
     # --- Licencias por vencer (≤15 días) ------------------------------
-    licencias = db.query(Licencia).all()
+    licencias = db.query(Licencia).join(Organizacion, Licencia.organizacion_id == Organizacion.id).filter(Organizacion.es_test.is_(False)).all()
     por_org: dict[int, list[Licencia]] = defaultdict(list)
     for lic in licencias:
         por_org[lic.organizacion_id].append(lic)
 
-    organizaciones = {o.id: o for o in db.query(Organizacion).all()}
+    organizaciones = {o.id: o for o in db.query(Organizacion).filter(Organizacion.es_test.is_(False)).all()}
     nombres = {o.id: o.nombre for o in organizaciones.values()}
 
     por_vencer = 0
@@ -71,7 +71,8 @@ def notificaciones_admin(
 
     # --- Compras pendientes de activar --------------------------------
     pendientes = db.query(CompraPlan).filter(
-        CompraPlan.estado == "pendiente"
+        CompraPlan.estado == "pendiente",
+        CompraPlan.organizacion_id.in_(db.query(Organizacion.id).filter(Organizacion.es_test.is_(False)))
     ).order_by(CompraPlan.created_at.asc()).limit(3).all()
     for compra in pendientes:
         nombre = nombres.get(compra.organizacion_id, "Cliente")
@@ -299,7 +300,7 @@ def _avisos_uso(db, hoy: date, nombres: dict[int, str], *, dias: int = 7) -> lis
 def _organizaciones_pagando(db, hoy: date) -> dict[int, date]:
     """Organización → fecha de fin de su cadena de licencias vigente."""
     try:
-        licencias = db.query(Licencia).all()
+        licencias = db.query(Licencia).join(Organizacion, Licencia.organizacion_id == Organizacion.id).filter(Organizacion.es_test.is_(False)).all()
     except Exception:
         return {}
     cadenas: dict[int, list[Licencia]] = defaultdict(list)
@@ -320,7 +321,7 @@ def _organizaciones_nuevas(db, hoy: date, *, dias: int = 7) -> list[int]:
     try:
         filas = (
             db.query(Organizacion.id, Organizacion.created_at)
-            .filter(Organizacion.created_at >= hoy - timedelta(days=dias))
+            .filter(Organizacion.created_at >= hoy - timedelta(days=dias), Organizacion.es_test.is_(False))
             .all()
         )
     except Exception:

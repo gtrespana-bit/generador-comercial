@@ -22,9 +22,13 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _is_postgres() -> bool:
+    return op.get_context().dialect.name == "postgresql"
+
+
 def upgrade() -> None:
-    # Solo en PostgreSQL; en SQLite no hay RLS y la app ya actualiza directo.
-    # La guarda IS NOT NULL evita fallo si la conexión es SQLite en tests.
+    if not _is_postgres():
+        return
     op.execute(
         """
         DO $$
@@ -42,4 +46,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    if not _is_postgres():
+        return
     op.execute("DROP POLICY IF EXISTS cotizat_org_update_operador ON public.organizaciones")

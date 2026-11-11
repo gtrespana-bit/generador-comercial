@@ -156,8 +156,8 @@ def test_clientes_usa_una_sola_lista_para_dos_vistas():
     """
     assert pestana_valida("clientes", "pipeline") == "pipeline"
     assert pestana_valida("clientes", "noexiste") == "directorio"
-    assert [p.vista_modulo for p in SECCIONES[1].pestanas] == ["clientes", "", ""]
-    assert [p.id for p in SECCIONES[1].pestanas] == ["directorio", "pipeline", "soporte"]
+    assert [p.vista_modulo for p in SECCIONES[1].pestanas] == ["clientes", "", "", ""]
+    assert [p.id for p in SECCIONES[1].pestanas] == ["directorio", "pipeline", "soporte", "pruebas"]
 
 
 def test_un_area_de_una_sola_pantalla_no_pinta_barra():
@@ -1048,3 +1048,83 @@ def test_los_enlaces_que_fabrican_los_servicios_apuntan_a_pantallas_reales(entor
     # Y el aviso de vencimiento de la campana lleva a la ficha del cliente.
     renovacion = next(a for a in notificaciones_admin(db) if a["tipo"] == "renovacion")
     assert renovacion["url"] == f"/admin/clientes/{datos['por_vencer']}?tab=acceso"
+
+
+def test_cuentas_test_aisladas_del_directorio_y_buscador(entorno):
+    from app.services.panel_admin import resumen_admin
+    from app.services.panel_busqueda import buscar_global
+
+    cliente, Session, datos = entorno
+    with Session() as db:
+        org = db.get(Organizacion, datos["por_vencer"])
+        org.es_test = True
+        db.commit()
+        resumen = resumen_admin(db)
+        assert resumen["totales"]["clientes"] == 2
+        assert resumen["totales_test"]["clientes"] == 1
+        assert {f["organizacion"].id for f in resumen["filas_test"]} == {org.id}
+        assert org.id not in {f["organizacion"].id for f in resumen["filas"]}
+        assert not buscar_global(db, "obra-norte")
+        assert not buscar_global(db, "cliente@example.com") or all(
+            "Obras Norte" not in r["titulo"] for r in buscar_global(db, "cliente@example.com")
+        )
+
+    directorio = cliente.get("/admin/clientes?tab=directorio")
+    pruebas = cliente.get("/admin/clientes?tab=pruebas")
+    assert directorio.status_code == pruebas.status_code == 200
+    assert "Obras Norte" not in directorio.text
+    assert "Obras Norte" in pruebas.text
+    assert "Reformas Sur" not in pruebas.text
+    assert "Quitar TEST" in pruebas.text
+
+
+def test_test_aisladas_de_analitica_soporte_y_avisos(entorno):
+    from app.models import EventoProducto, MensajeSoporte
+    from app.services.analitica import resumen_analitica
+    from app.services.panel_notificaciones import notificaciones_admin
+    from app.services.soporte import contadores_soporte, listar_mensajes
+    from app.services.web_admin import resumen_crm
+
+    _, Session, datos = entorno
+    with Session() as db:
+        test_org = db.get(Organizacion, datos["por_vencer"])
+        test_org.es_test = True
+        usuario = db.query(Usuario).filter_by(email="cliente@example.com").one()
+        usuario.ultimo_acceso_at = datetime.utcnow()
+        db.add_all([
+            EventoProducto(organizacion_id=test_org.id, actor_email=usuario.email, accion="presupuesto.creado"),
+            EventoProducto(organizacion_id=test_org.id, actor_email=usuario.email, accion="sesion.activa"),
+            EventoProducto(organizacion_id=None, actor_email=usuario.email, accion="cuenta.registrada", detalle='{"pais":"VE"}'),
+            MensajeSoporte(organizacion_id=test_org.id, email=usuario.email, mensaje="solo prueba"),
+            MensajeSoporte(organizacion_id=None, email=usuario.email, mensaje="prueba global"),
+            MensajeSoporte(organizacion_id=None, email="visitante@example.com", mensaje="visitante"),
+        ])
+        db.commit()
+        analitica = resumen_analitica(db)
+        assert analitica["kpis"]["usuarios"] == 0
+        assert analitica["kpis"]["presupuestos_hoy"] == 0
+        assert analitica["kpis"]["activas_hoy"] == 0
+        assert resumen_crm(db)["total"] == 2
+        assert contadores_soporte(db)["todos"] == 1
+        assert [f["mensaje"].mensaje for f in listar_mensajes(db)[0]] == ["visitante"]
+        assert all("Obras Norte" not in a["titulo"] for a in notificaciones_admin(db))
+        # Un usuario compartido con una empresa real sí cuenta; la actividad
+        # vinculada a la empresa TEST sigue excluida.
+        db.add(Membresia(organizacion_id=datos["al_dia"], usuario_id=usuario.id, rol="miembro"))
+        db.commit()
+        analitica = resumen_analitica(db)
+        assert analitica["kpis"]["usuarios"] == 1
+        assert analitica["kpis"]["presupuestos_hoy"] == 0
+        assert contadores_soporte(db)["todos"] == 2
+
+
+def test_alternar_test_mueve_la_cuenta_y_puede_revertirse(entorno):
+    cliente, Session, datos = entorno
+    oid = datos["por_vencer"]
+    for esperado in (True, False):
+        respuesta = cliente.post(f"/admin/clientes/{oid}/alternar-test", data={"volver": "/admin/clientes?tab=pruebas"}, follow_redirects=False)
+        assert respuesta.status_code == 303
+        with Session() as db:
+            assert db.get(Organizacion, oid).es_test is esperado
+        assert ("Obras Norte" in cliente.get("/admin/clientes?tab=pruebas").text) is esperado
+        assert ("Obras Norte" in cliente.get("/admin/clientes?tab=directorio").text) is not esperado
