@@ -1548,8 +1548,20 @@ def alternar_organizacion_test(
     valor_actual = bool(getattr(org, "es_test", False))
     nuevo = not valor_actual
     try:
-        org.es_test = nuevo  # type: ignore[attr-defined]
+        from sqlalchemy import text as sql_text
+        res = db.execute(
+            sql_text("UPDATE public.organizaciones SET es_test = :nuevo, updated_at = NOW() WHERE id = :oid"),
+            {"nuevo": nuevo, "oid": int(organizacion_id)},
+        )
+        if res.rowcount == 0:
+            db.rollback()
+            log.error("RLS bloqueó UPDATE organizaciones.es_test id=%s (esperaba %s). Falta política cotizat_org_update_operador.", organizacion_id, nuevo)
+            return _redirect(destino, error="No se pudo actualizar la marca de prueba (permiso denegado por RLS). Ejecuta docs/staging_upgrade_bd832a2b009e.sql en Supabase SQL Editor.")
         db.commit()
+        try:
+            db.refresh(org)
+        except Exception:
+            pass
         _auditar_admin(
             db, request,
             accion="cliente.test_alternado",

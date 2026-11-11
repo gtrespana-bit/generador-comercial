@@ -143,6 +143,10 @@
             <div class="tabla-acciones">
               <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Ficha</a>
               <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}?tab=gestion">Notas</a>
+              <form method="post" action="/admin/clientes/{{ org.id }}/alternar-test" style="display:inline" title="{% if fila.es_test %}Quitar marca TEST (volverá a contar en métricas){% else %}Marcar como TEST (excluir de métricas){% endif %}">
+                <input type="hidden" name="volver" value="/admin/clientes?tab=directorio{% if url_filtros %}&{{ url_filtros }}{% endif %}">
+                <button class="btn btn-sm {% if fila.es_test %}btn-secondary{% else %}btn-secondary{% endif %}" type="submit" style="{% if fila.es_test %}opacity:.55{% endif %}">{% if fila.es_test %}✓ TEST{% else %}Marcar TEST{% endif %}</button>
+              </form>
             </div>
           </td>
         </tr>
