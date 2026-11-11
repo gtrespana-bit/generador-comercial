@@ -47,11 +47,13 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
     ).join(
         Membresia, Membresia.usuario_id == Usuario.id
     ).filter(
-        _filtro_like(Usuario.email, q)
+        _filtro_like(Usuario.email, q),
+        Membresia.organizacion_id.in_(db.query(Organizacion.id).filter(Organizacion.es_test.is_(False)))
     ).order_by(Usuario.email).limit(LIMITE_CATEGORIA * 4).all():
         orgs_por_email.setdefault(organizacion_id, []).append(email)
 
     for org in db.query(Organizacion).filter(
+        Organizacion.es_test.is_(False),
         _filtro_like(Organizacion.nombre, q)
         | _filtro_like(Organizacion.slug, q)
     ).order_by(Organizacion.nombre).limit(LIMITE_CATEGORIA).all():
@@ -79,6 +81,7 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
     for lic in db.query(Licencia).join(
         Organizacion, Licencia.organizacion_id == Organizacion.id
     ).filter(
+        Organizacion.es_test.is_(False),
         _filtro_like(Organizacion.nombre, q)
         | _filtro_like(Organizacion.slug, q)
         | Licencia.creada_por_email.ilike(f"%{q}%")
@@ -98,6 +101,7 @@ def buscar_global(db, q: str, *, limite: int = LIMITE_TOTAL) -> list[dict]:
     for compra in db.query(CompraPlan).join(
         Organizacion, CompraPlan.organizacion_id == Organizacion.id
     ).filter(
+        Organizacion.es_test.is_(False),
         _filtro_like(Organizacion.nombre, q)
         | CompraPlan.creada_por_email.ilike(f"%{q}%")
         | CompraPlan.comprobante_nombre.ilike(f"%{q}%")

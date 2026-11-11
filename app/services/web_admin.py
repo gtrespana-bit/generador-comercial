@@ -545,6 +545,8 @@ def resumen_crm(db: Session) -> dict:
         filas = listar_crm(db)
     except Exception:
         return {"total": 0, "por_estado": {}, "proximos": []}
+    # El embudo comercial solo cuenta clientes reales.
+    filas = [fila for fila in filas if not fila["organizacion"].es_test]
     por_estado = {}
     for fila in filas:
         estado = fila["estado"] or "sin_asignar"

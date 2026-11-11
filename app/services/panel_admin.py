@@ -171,9 +171,11 @@ def resumen_admin(
             }
         )
 
-    # Métricas: excluyen orgs de prueba
+    # Métricas: excluyen orgs de prueba — TEST no existe para el negocio
     filas_reales = [f for f in filas if not f.get("es_test")]
+    filas_test = [f for f in filas if f.get("es_test")]
     pendientes_reales = [p for p in pendientes if int(p["compra"].organizacion_id) not in ids_test]
+    pendientes_test = [p for p in pendientes if int(p["compra"].organizacion_id) in ids_test]
     totales = {
         "clientes": len(filas_reales),
         "con_plan": sum(1 for f in filas_reales if f["vigente"]),
@@ -185,13 +187,27 @@ def resumen_admin(
         ),
         "pendientes": len(pendientes_reales),
         "ingresos": sum(f["ingresos"] for f in filas_reales),
-        # Debug: cuántas test hay (no contadas)
-        "clientes_test": sum(1 for f in filas if f.get("es_test")),
+        "clientes_test": len(filas_test),
+    }
+    totales_test = {
+        "clientes": len(filas_test),
+        "con_plan": sum(1 for f in filas_test if f["vigente"]),
+        "sin_plan": sum(1 for f in filas_test if not f["vigente"]),
+        "por_vencer": sum(1 for f in filas_test if f["estado"] == "por_vencer"),
+        "pendientes": len(pendientes_test),
+        "ingresos": sum(f["ingresos"] for f in filas_test),
     }
     return {
-        "filas": filas,
-        "pendientes": pendientes,
+        # Directorio real — TEST aisladas
+        "filas": filas_reales,
+        "filas_test": filas_test,
+        # compat: filas_todas por si algún consumidor legacy necesita todo
+        "filas_todas": filas,
+        "pendientes": pendientes_reales,
+        "pendientes_test": pendientes_test,
+        "pendientes_todas": pendientes,
         "totales": totales,
+        "totales_test": totales_test,
         "hoy": hoy,
     }
 

@@ -735,7 +735,7 @@ def enviar_secuencia_marketing(
         if not oid or oid in altas and altas[oid].get("vigente"):
             continue
         org = db.get(Organizacion, oid)
-        if not org:
+        if not org or org.es_test:
             continue
         # Si no estaba en el resumen (sin licencia vigente), añádela con su alta.
         if oid not in altas:
@@ -872,7 +872,8 @@ def _resumen_todas(db: Session, hoy: date | None = None):
     try:
         from .licencias import resumen_organizaciones
 
-        return resumen_organizaciones(db, hoy=hoy, dias_aviso=60)
+        return [fila for fila in resumen_organizaciones(db, hoy=hoy, dias_aviso=60)
+                if not fila["organizacion"].es_test]
     except Exception:
         # Fallback mínimo: todas las orgs con su licencia vigente si la hay.
         from ..models import Licencia, Organizacion
@@ -880,7 +881,7 @@ def _resumen_todas(db: Session, hoy: date | None = None):
         from .licencias import licencia_vigente as _lic_vigente
 
         filas = []
-        for org in db.query(Organizacion).all():
+        for org in db.query(Organizacion).filter(Organizacion.es_test.is_(False)).all():
             lic = None
             try:
                 lic = _lic_vigente(db, int(org.id), hoy=hoy)
@@ -940,7 +941,7 @@ def _orgs_por_segmento(db: Session, segmento: str, hoy: date | None = None) -> l
                 from ..models import Organizacion as _Org
 
                 org = db.get(_Org, oid)
-            if not org:
+            if not org or org.es_test:
                 continue
             # Si tiene plan pago, no es vencida sin compra.
             tiene_pago = (

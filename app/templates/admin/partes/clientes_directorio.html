@@ -4,6 +4,12 @@
 
 {# Cada contador abre SU lista: el número y lo que hay debajo son el mismo
    filtro, así que se pulsa y se ve exactamente a quién cuenta. #}
+{% if resumen.totales_test is defined and resumen.totales_test.clientes %}
+<div class="banner">
+  <span class="muted">🧪 Tienes <strong>{{ resumen.totales_test.clientes }} cuenta{{ 's' if resumen.totales_test.clientes != 1 else '' }} de prueba</strong> aislada{{ 's' if resumen.totales_test.clientes != 1 else '' }} — no cuenta en métricas.</span>
+  <a class="btn btn-sm" href="/admin/clientes?tab=pruebas">Ver cuentas de prueba →</a>
+</div>
+{% endif %}
 <div class="kpis">
   <a class="kpi-card enlaza" href="/admin/clientes?tab=directorio">
     <div class="kpi-value">{{ resumen.totales.filtradas }}</div>
@@ -143,9 +149,9 @@
             <div class="tabla-acciones">
               <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}">Ficha</a>
               <a class="btn btn-sm btn-secondary" href="/admin/clientes/{{ org.id }}?tab=gestion">Notas</a>
-              <form method="post" action="/admin/clientes/{{ org.id }}/alternar-test" style="display:inline" title="{% if fila.es_test %}Quitar marca TEST (volverá a contar en métricas){% else %}Marcar como TEST (excluir de métricas){% endif %}">
+              <form method="post" action="/admin/clientes/{{ org.id }}/alternar-test" title="{% if fila.es_test %}Quitar marca TEST (volverá a contar en métricas){% else %}Marcar como TEST (excluir de métricas){% endif %}">
                 <input type="hidden" name="volver" value="/admin/clientes?tab=directorio{% if url_filtros %}&{{ url_filtros }}{% endif %}">
-                <button class="btn btn-sm {% if fila.es_test %}btn-secondary{% else %}btn-secondary{% endif %}" type="submit" style="{% if fila.es_test %}opacity:.55{% endif %}">{% if fila.es_test %}✓ TEST{% else %}Marcar TEST{% endif %}</button>
+                <button class="btn btn-sm {% if fila.es_test %}btn-secondary{% else %}btn-secondary{% endif %}" type="submit">{% if fila.es_test %}✓ TEST{% else %}Marcar TEST{% endif %}</button>
               </form>
             </div>
           </td>

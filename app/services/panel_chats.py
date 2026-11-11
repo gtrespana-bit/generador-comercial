@@ -27,7 +27,10 @@ def _asegurar_operador(db) -> None:
 def _base(db):
     """Consulta global del panel, sin el filtro ORM de un tenant residual."""
     _asegurar_operador(db)
-    return db.query(ConversacionIA).execution_options(sin_filtro_organizacion=True)
+    return (db.query(ConversacionIA)
+            .filter(ConversacionIA.organizacion_id.in_(
+                db.query(Organizacion.id).filter(Organizacion.es_test.is_(False))))
+            .execution_options(sin_filtro_organizacion=True))
 
 
 def _aplicar_filtros(
@@ -152,7 +155,7 @@ def listar_conversaciones(
 def opciones_organizaciones(db) -> list[Organizacion]:
     """Organizaciones visibles al operador para el selector de filtro."""
     _asegurar_operador(db)
-    return db.query(Organizacion).order_by(Organizacion.nombre, Organizacion.id).all()
+    return db.query(Organizacion).filter(Organizacion.es_test.is_(False)).order_by(Organizacion.nombre, Organizacion.id).all()
 
 
 def obtener_conversacion(db, public_id: str) -> dict | None:

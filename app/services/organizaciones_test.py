@@ -1,7 +1,7 @@
 """Helper para excluir organizaciones de prueba de todas las métricas del panel.
 
 Toda cuenta que el titular marca como `es_test` en la ficha de cliente queda
-visible en el directorio (con badge gris) pero no debe mover ningún KPI:
+aislada del directorio real y no debe mover ningún KPI:
 MRR, totales, embudo, cohortes, ventas, cobros, renovaciones, analítica ni
 marketing. Este módulo centraliza el filtro para no repetir la lógica en los
 15 servicios del panel.
@@ -75,3 +75,36 @@ def es_compra_test(compra, ids_test: set[int] | None = None, db=None) -> bool:
     if db is not None:
         return int(org_id) in ids_organizaciones_test(db)
     return False
+
+
+def usuarios_solo_test(db):
+    """IDs asociados a test y a ninguna organización real; conserva usuarios sin empresa.
+
+    Un usuario que pertenece a ambos tipos sigue contando como usuario real.
+    Se consideran también membresías inactivas para no recuperar como registros
+    reales cuentas de prueba cuya membresía se desactivó.
+    """
+    from ..models import Membresia, Organizacion
+
+    test = db.query(Membresia.usuario_id).join(
+        Organizacion, Organizacion.id == Membresia.organizacion_id
+    ).filter(Organizacion.es_test.is_(True))
+    reales = db.query(Membresia.usuario_id).join(
+        Organizacion, Organizacion.id == Membresia.organizacion_id
+    ).filter(Organizacion.es_test.is_(False))
+    return test.filter(~Membresia.usuario_id.in_(reales))
+
+
+def registro_real(db, organizacion_id, email):
+    """Incluye registros globales salvo los atribuibles a usuarios solo TEST."""
+    from sqlalchemy import or_, and_, func
+    from ..models import Organizacion, Usuario
+
+    orgs_test = db.query(Organizacion.id).filter(Organizacion.es_test.is_(True))
+    emails_test = db.query(func.lower(Usuario.email)).filter(
+        Usuario.id.in_(usuarios_solo_test(db)), Usuario.email.isnot(None)
+    )
+    return or_(
+        and_(organizacion_id.isnot(None), ~organizacion_id.in_(orgs_test)),
+        and_(organizacion_id.is_(None), or_(email.is_(None), ~func.lower(email).in_(emails_test))),
+    )

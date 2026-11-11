@@ -51,6 +51,7 @@ from ..models import (
 from ..tiempo import a_local
 from .audiencia import resumen_audiencia
 from .licencias import vence_cadena
+from .organizaciones_test import registro_real, usuarios_solo_test
 from .telemetria import (
     ACCIONES,
     ACCIONES_RUIDO,
@@ -130,10 +131,10 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
         ids_test = ids_organizaciones_test(db)
     except Exception:
         ids_test = set()
-    usuarios = db.query(func.count(Usuario.id)).scalar() or 0
+    usuarios = db.query(func.count(Usuario.id)).filter(~Usuario.id.in_(usuarios_solo_test(db))).scalar() or 0
     usuarios_recientes = (
         db.query(func.count(Usuario.id))
-        .filter(Usuario.created_at >= desde)
+        .filter(Usuario.created_at >= desde, ~Usuario.id.in_(usuarios_solo_test(db)))
         .scalar()
         or 0
     )
@@ -154,7 +155,7 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
     inicio_hoy = _inicio_dia(hoy)
     usuarios_hoy = (
         db.query(func.count(Usuario.id))
-        .filter(Usuario.ultimo_acceso_at >= inicio_hoy)
+        .filter(Usuario.ultimo_acceso_at >= inicio_hoy, ~Usuario.id.in_(usuarios_solo_test(db)))
         .scalar()
         or 0
     )
@@ -162,6 +163,7 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
     usuarios_activos_hoy = int(
         db.query(func.count(func.distinct(EventoProducto.actor_email)))
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.created_at >= inicio_hoy,
             EventoProducto.actor_email != "",
         )
@@ -170,7 +172,7 @@ def _kpis(db, *, hoy: date, desde: datetime) -> dict:
     )
     usuarios_7d = (
         db.query(func.count(Usuario.id))
-        .filter(Usuario.ultimo_acceso_at >= _inicio_dia(hoy - timedelta(days=6)))
+        .filter(Usuario.ultimo_acceso_at >= _inicio_dia(hoy - timedelta(days=6)), ~Usuario.id.in_(usuarios_solo_test(db)))
         .scalar()
         or 0
     )
@@ -200,6 +202,7 @@ def _presupuestos_por_ventana(db, *, hoy: date) -> dict:
         return int(
             db.query(func.count(EventoProducto.id))
             .filter(
+                registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
                 EventoProducto.accion == "presupuesto.creado",
                 EventoProducto.created_at >= desde,
             )
@@ -223,6 +226,7 @@ def _actividad(db, *, dias: int) -> dict:
     latidos = (
         db.query(EventoProducto.organizacion_id, EventoProducto.created_at)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "actividad.diaria",
             EventoProducto.created_at >= desde_utc,
         )
@@ -237,6 +241,7 @@ def _actividad(db, *, dias: int) -> dict:
     presupuestos = (
         db.query(EventoProducto.created_at)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "presupuesto.creado",
             EventoProducto.created_at >= desde_utc,
         )
@@ -250,7 +255,7 @@ def _actividad(db, *, dias: int) -> dict:
     # Registros por día.
     registros = (
         db.query(Usuario.created_at)
-        .filter(Usuario.created_at >= desde_utc)
+        .filter(Usuario.created_at >= desde_utc, ~Usuario.id.in_(usuarios_solo_test(db)))
         .all()
     )
     registros_por_dia: dict[date, int] = defaultdict(int)
@@ -304,6 +309,7 @@ def _en_vivo(db, *, hoy: date | None = None) -> dict:
             EventoProducto.created_at,
         )
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "sesion.activa",
             EventoProducto.created_at >= corte,
         )
@@ -353,13 +359,14 @@ def _en_vivo(db, *, hoy: date | None = None) -> dict:
     inicio_hoy = _inicio_dia(hoy)
     logueados = (
         db.query(Usuario.id, Usuario.email, Usuario.nombre, Usuario.ultimo_acceso_at)
-        .filter(Usuario.ultimo_acceso_at >= inicio_hoy)
+        .filter(Usuario.ultimo_acceso_at >= inicio_hoy, ~Usuario.id.in_(usuarios_solo_test(db)))
         .order_by(Usuario.ultimo_acceso_at.desc())
         .all()
     )
     eventos_15 = int(
         db.query(func.count(EventoProducto.id))
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.created_at >= ahora - timedelta(minutes=15),
             EventoProducto.accion.notin_(tuple(ACCIONES_RUIDO)),
         )
@@ -409,6 +416,7 @@ def _funciones(db, *, desde: datetime) -> list[dict]:
     filas = (
         db.query(EventoProducto.accion, func.count(EventoProducto.id))
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.created_at >= desde,
             EventoProducto.accion.notin_(tuple(ACCIONES_RUIDO)),
         )
@@ -468,6 +476,7 @@ def _cohortes(db, *, hoy: date) -> list[dict]:
         latidos = (
             db.query(EventoProducto.organizacion_id, EventoProducto.created_at)
             .filter(
+                registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
                 EventoProducto.accion == "actividad.diaria",
                 EventoProducto.created_at >= desde_cohortes,
                 EventoProducto.organizacion_id.in_(ids_cohorte),
@@ -507,7 +516,12 @@ def _cohortes(db, *, hoy: date) -> list[dict]:
 
 def _riesgo(db, *, hoy: date) -> dict:
     """Organizaciones con plan activo pero sin uso reciente (churn)."""
-    licencias = db.query(Licencia).order_by(Licencia.inicio, Licencia.id).all()
+    try:
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test_r = ids_organizaciones_test(db)
+    except Exception:
+        ids_test_r = set()
+    licencias = [l for l in db.query(Licencia).order_by(Licencia.inicio, Licencia.id).all() if int(l.organizacion_id) not in ids_test_r]
     vigentes: dict[int, list[Licencia]] = defaultdict(list)
     for licencia in licencias:
         if licencia.vigente(hoy):
@@ -521,6 +535,7 @@ def _riesgo(db, *, hoy: date) -> dict:
             EventoProducto.organizacion_id, func.max(EventoProducto.created_at)
         )
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.organizacion_id.in_(list(vigentes)),
         )
         .group_by(EventoProducto.organizacion_id)
@@ -563,6 +578,7 @@ def _paises(db, *, desde: datetime) -> list[dict]:
     filas = (
         db.query(EventoProducto.detalle)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "cuenta.registrada",
             EventoProducto.created_at >= desde,
         )
@@ -599,6 +615,7 @@ def _origenes(db, *, desde: datetime) -> list[dict]:
     filas = (
         db.query(EventoProducto.detalle)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "cuenta.registrada",
             EventoProducto.created_at >= desde,
         )
@@ -648,6 +665,7 @@ def _horas_punta(db, *, desde: datetime) -> dict:
     filas = (
         db.query(EventoProducto.created_at)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.created_at >= desde,
             EventoProducto.accion.notin_(tuple(ACCIONES_RUIDO)),
         )
@@ -823,6 +841,7 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
     eventos = dict(
         db.query(EventoProducto.organizacion_id, func.count(EventoProducto.id))
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.created_at >= desde,
             EventoProducto.accion.notin_(tuple(ACCIONES_RUIDO)),
         )
@@ -854,6 +873,7 @@ def _tabla_organizaciones(db, *, desde: datetime, en_vivo: dict) -> dict:
     for org_id, creado in (
         db.query(EventoProducto.organizacion_id, EventoProducto.created_at)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion == "actividad.diaria",
             EventoProducto.created_at >= desde,
         )
@@ -1018,6 +1038,7 @@ def _eventos(db, *, filtros: dict, dias: int = 30) -> dict:
     consulta = db.query(EventoProducto, Organizacion.nombre).outerjoin(
         Organizacion, Organizacion.id == EventoProducto.organizacion_id
     )
+    consulta = consulta.filter(registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email))
     if filtros["ocultar_ruido"]:
         consulta = consulta.filter(
             EventoProducto.accion.notin_(tuple(ACCIONES_RUIDO))
@@ -1089,7 +1110,7 @@ def _eventos(db, *, filtros: dict, dias: int = 30) -> dict:
 
     organizaciones = [
         {"id": org.id, "nombre": org.nombre}
-        for org in db.query(Organizacion).order_by(Organizacion.nombre).all()
+        for org in db.query(Organizacion).filter(Organizacion.es_test.is_(False)).order_by(Organizacion.nombre).all()
     ]
     return {
         "eventos": eventos,
@@ -1200,7 +1221,7 @@ def resumen_analitica(
     orgs_con_presupuesto = {
         org_id
         for (org_id,) in db.query(EventoProducto.organizacion_id)
-        .filter(EventoProducto.accion == "presupuesto.creado")
+        .filter(EventoProducto.accion == "presupuesto.creado", registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email))
         .distinct()
         .all()
         if org_id
@@ -1208,7 +1229,7 @@ def resumen_analitica(
     orgs_que_enviaron = {
         org_id
         for (org_id,) in db.query(EventoProducto.organizacion_id)
-        .filter(EventoProducto.accion == "presupuesto.enviado_email")
+        .filter(EventoProducto.accion == "presupuesto.enviado_email", registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email))
         .distinct()
         .all()
         if org_id

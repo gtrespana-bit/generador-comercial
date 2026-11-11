@@ -265,20 +265,28 @@ def contadores_panel(db) -> dict:
     """
     hoy = date.today()
     try:
-        compras = db.query(CompraPlan).filter(CompraPlan.estado == "pendiente").count()
+        from .organizaciones_test import ids_organizaciones_test
+        ids_test = ids_organizaciones_test(db)
+    except Exception:
+        ids_test = set()
+    try:
+        q = db.query(CompraPlan).filter(CompraPlan.estado == "pendiente")
+        if ids_test:
+            # SQLite soporta NOT IN con set vacío; en PG evitamos IN vacío
+            q = q.filter(~CompraPlan.organizacion_id.in_(ids_test))
+        compras = q.count()
     except Exception:
         db.rollback()
         compras = 0
     try:
-        por_vencer = (
-            db.query(Licencia)
-            .filter(
+        q2 = db.query(Licencia).filter(
                 Licencia.estado == "activa",
                 Licencia.vence >= hoy,
                 Licencia.vence <= hoy + timedelta(days=15),
             )
-            .count()
-        )
+        if ids_test:
+            q2 = q2.filter(~Licencia.organizacion_id.in_(ids_test))
+        por_vencer = q2.count()
     except Exception:
         db.rollback()
         por_vencer = 0

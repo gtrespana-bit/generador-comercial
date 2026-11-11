@@ -354,11 +354,13 @@ def registros_recientes(db, *, limite: int = 6, dias: int = 30) -> list[dict]:
     panel cuenta el embudo completo sin abrir ninguna tabla de tenant.
     """
     from ..models import EventoProducto
+    from .organizaciones_test import registro_real
 
     desde = datetime.utcnow() - timedelta(days=max(1, int(dias or 30)))
     eventos = (
         db.query(EventoProducto)
         .filter(
+            registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
             EventoProducto.accion.in_(("cuenta.registrada", "organizacion.creada")),
             EventoProducto.created_at >= desde,
         )
@@ -403,6 +405,7 @@ def resumen_registros(db, *, hoy: date | None = None) -> dict:
     from sqlalchemy import func
 
     from ..models import EventoProducto
+    from .organizaciones_test import registro_real
 
     hoy = hoy or date.today()
     inicio_mes = datetime(hoy.year, hoy.month, 1)
@@ -413,6 +416,7 @@ def resumen_registros(db, *, hoy: date | None = None) -> dict:
         return int(
             db.query(func.count(EventoProducto.id))
             .filter(
+                registro_real(db, EventoProducto.organizacion_id, EventoProducto.actor_email),
                 EventoProducto.accion == "cuenta.registrada",
                 EventoProducto.created_at >= desde,
             )
