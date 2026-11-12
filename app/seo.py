@@ -1756,7 +1756,36 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
     # no depender solo de una plantilla con moneda y nombre sustituidos.
     comercial_local = bloques_comerciales(codigo) if tema == "software-presupuestos" else []
     if comercial_local:
-        body = comercial_local + body[2:]
+        # Una sola URL comercial por país cubre la misma intención de compra
+        # (generador, software o programa), sin abrir páginas duplicadas.
+        title = f"CotizaT: generador de presupuestos de obra en {nombre}"
+        if len(title) > MAX_TITULO:
+            title = f"Generador de presupuestos de obra en {nombre}"
+        h1 = f"Generador de presupuestos de construcción en {nombre}"
+        lead = (
+            f"CotizaT es un software para crear presupuestos de obra y cotizar "
+            f"remodelaciones en {nombre}. Trabaja con partidas y APU editables "
+            f"en {moneda}, revisa costes y margen y prepara un PDF para tu cliente."
+        )
+        description = (
+            f"Generador de presupuestos de construcción en {nombre}: "
+            "programa para cotizar obras con APU, costes, margen y PDF."
+        )
+        body = [
+            (
+                "Un programa para cotizar obras, no solo generar un PDF",
+                "Organiza las cantidades por partidas, revisa materiales, mano de obra y equipo "
+                "en el análisis de precios unitarios y calcula el margen antes de enviar. "
+                "Después genera una propuesta comercial en PDF; tu cliente no necesita una cuenta para recibirla.",
+            ),
+            *comercial_local,
+            (
+                "De los precios a la propuesta",
+                "Parte del catálogo de referencia o importa tus descompuestos desde Excel o BC3. "
+                "Comprueba unidades, costes y rendimiento con tus propios datos: los precios publicados "
+                "son orientativos y no sustituyen una cotización actual de tus proveedores.",
+            ),
+        ]
     body = list(body) + extra_hub(codigo, tema)
     for art in articulos_de_pais(codigo):
         related = list(related) + [
@@ -1780,6 +1809,30 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             "a": "89 US$ al año de lanzamiento o 9,99 US$ al mes el primer año. Sin permanencia.",
         },
     ]
+    if comercial_local:
+        # No fijar importes en una segunda fuente: los planes pueden cambiar.
+        faq[-1] = {
+            "q": "¿Dónde puedo consultar el precio?",
+            "a": "Consulta los planes y precios vigentes en la página de planes de CotizaT.",
+        }
+        faq.extend([
+            {
+                "q": "¿Puedo usar mis propios precios para cotizar?",
+                "a": "Sí. Puedes revisar y editar los recursos y partidas del catálogo con tus propios costes. Las referencias no sustituyen precios actualizados de tus proveedores o cuadrilla.",
+            },
+            {
+                "q": "¿Puedo empezar con una hoja de Excel?",
+                "a": "Puedes importar descompuestos desde Excel o BC3. Revisa códigos, unidades y recursos después de importar; una hoja que solo contiene precios finales no proporciona automáticamente el desglose de un APU.",
+            },
+            {
+                "q": "¿Mi cliente necesita una cuenta para recibir el presupuesto?",
+                "a": "No. Puedes generar el presupuesto comercial en PDF y enviárselo. El coste interno y el margen se revisan dentro de CotizaT.",
+            },
+            {
+                "q": "¿CotizaT emite facturas fiscales?",
+                "a": "No. CotizaT prepara presupuestos comerciales; no sustituye el sistema de facturación fiscal ni la revisión tributaria local.",
+            },
+        ])
     if faq_local:
         faq = faq_local + faq
     return _aplicar_prueba({
@@ -1790,6 +1843,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         "body": body,
         "faq": faq,
         "related": related,
+        "comercial_latam": bool(comercial_local),
         "codigo": codigo,
         "lang": hreflang_pais(codigo) if codigo else "es",
         "nombre_pais": nombre,

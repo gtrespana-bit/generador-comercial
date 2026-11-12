@@ -110,6 +110,9 @@
 (function(){
   var sel=document.getElementById('signup-pais');
   if(!sel) return;
+  // An explicit market in the signup URL takes precedence over an old cookie.
+  var paisUrl=new URLSearchParams(window.location.search).get('pais');
+  if(paisUrl && Array.from(sel.options).some(function(op){return op.value === paisUrl.toUpperCase();})) return;
   try{
     var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
     var code=m?decodeURIComponent(m[1]).toUpperCase():'';

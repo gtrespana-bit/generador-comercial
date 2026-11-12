@@ -47,6 +47,7 @@ _SECCIONES = (
     ("mano_obra", re.compile(r"^/[^/]+/mano-de-obra")),
     ("calculadora", re.compile(r"^/[^/]+/calculadora|^/calculadora")),
     ("guia", re.compile(r"^/[^/]+/guia/|^/guia/")),
+    ("software_comercial", re.compile(r"^/(?:[a-z]{2}/)?software-presupuestos/?$")),
     ("landing_pais", re.compile(r"^/[a-z]{2}(?:-[a-z]{2})?/?$")),
     ("planes", re.compile(r"^/(?:pago|planes)|^/en/pago")),
     ("como_funciona", re.compile(r"^/(?:como-funciona|en/how-it-works)")),
@@ -122,6 +123,8 @@ SECCIONES_CONOCIDAS = frozenset(
         # La variante nueva de la portada se mide por separado: si el
         # rediseño mejora o empeora el alta, tiene que verse en el panel.
         "landing_impulso",
+        # Página comercial de software de presupuestos por mercado.
+        "software_comercial",
     }
 )
 

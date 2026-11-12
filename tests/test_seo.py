@@ -264,8 +264,13 @@ def test_titulo_empieza_por_marca_y_describe_el_oficio():
         assert "presupuesto" in ficha["title"].lower()
         for tema in TEMAS:
             hub = ficha_tema(codigo, tema)
-            assert hub["title"].startswith("CotizaT:")
-            assert "software" in hub["title"].lower()
+            from app.seo_latam_comercial import ESCENARIOS
+            if codigo in ESCENARIOS and tema == "software-presupuestos":
+                assert "generador de presupuestos" in hub["title"].lower()
+                assert codigo == "DO" or hub["title"].startswith("CotizaT:")
+            else:
+                assert hub["title"].startswith("CotizaT:")
+                assert "software" in hub["title"].lower()
 
 
 # ---------------------------------------------------------------------------

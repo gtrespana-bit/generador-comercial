@@ -58,6 +58,7 @@
   <h2>{{ 'precios.rango.como' | t(_idioma) }}</h2>
   <p>{{ ('precios.rango.como.texto' | t(_idioma)).format(pais=nombre_pais) }}</p>
 
+  {% include "_puente_software_latam.html" %}
   <h2>{{ 'precios.rango.enlaces' | t(_idioma) }}</h2>
   <ul class="precios-lista">
     <li><a href="{{ ruta_indice }}">{{ ('precios.rango.indice' | t(_idioma)).format(pais=nombre_pais) }}</a></li>

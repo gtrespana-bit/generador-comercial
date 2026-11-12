@@ -146,7 +146,7 @@
             <div><span>{{ L("Plazo", "Duration") }}</span><strong>{{ ej.resumen.duracion }}</strong></div>
           </div>
         </div>
-        <a class="lp2-text-link lp2-hero-sample" href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Ver un presupuesto real antes de registrarte →", "See a real estimate before you sign up →") }}</a>
+        <a class="lp2-text-link lp2-hero-sample" href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Ver un presupuesto de ejemplo antes de registrarte →", "See a sample estimate before you sign up →") }}</a>
       </div>
 
       <div class="lp2-intent" aria-label="{{ L('Elige qué quieres resolver primero', 'Choose what you want to solve first') }}">
@@ -332,7 +332,7 @@
       <p class="lp2-lead">{{ L("Tres cosas que puedes hacer ahora, sin cuenta: son la mejor manera de decidir si esto encaja con tu forma de trabajar.", "Three things you can do now, without an account: the best way to decide if this fits how you work.") }}</p>
     </div>
     <div class="lp2-value-grid">
-      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Mira un presupuesto completo", "See a full estimate") }}</h3><p>{{ L("Abre el PDF de ejemplo: capítulos, mediciones, coste interno, beneficio, impuesto de tu mercado y un documento con aspecto profesional.", "Open the sample PDF: sections, measurements, internal cost, profit, your market's tax and a professional-looking document.") }}</p><a href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Abrir el PDF de ejemplo →", "Open the sample PDF →") }}</a></article>
+      <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Sin cuenta", "No account") }}</span><h3>{{ L("Mira un presupuesto completo", "See a full estimate") }}</h3><p>{{ L("Abre un PDF comercial de muestra con capítulos, mediciones y totales. Es un ejemplo ficticio de Venezuela en USD; tus datos e impuestos dependen de tu obra y mercado.", "Open a sample commercial PDF with sections, measurements and totals. It uses fictional Venezuelan data in USD; your figures and taxes depend on your project and market.") }}</p><a href="{{ '/static/pdf/presupuesto-ejemplo-en.pdf' if _en else '/static/pdf/presupuesto-ejemplo.pdf' }}" target="_blank" rel="noopener" data-ga-event="pdf_ejemplo_abierto">{{ L("Abrir el PDF de ejemplo →", "Open the sample PDF →") }}</a></article>
       {% if pais_codigo in ("CL", "ES") %}
       <article class="lp2-value-card"><span class="lp2-value-tag">{{ L("Incluido en el plan", "Included in the plan") }}</span><h3>{{ L("Tu catálogo ya viene cargado", "Your catalog is ready to use") }}</h3><p>{{ L("Al crear tu espacio en CotizaT, recibes partidas de tu mercado con su APU, listas para presupuestar. No empiezas desde cero.", "When you create your CotizaT workspace, you get local items with their unit price analysis, ready to estimate. You don't start from scratch.") }}</p><a href="#primer-valor">{{ L("Ver cómo funciona el software →", "See how the software works →") }}</a></article>
       {% else %}
