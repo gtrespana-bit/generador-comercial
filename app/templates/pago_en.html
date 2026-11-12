@@ -46,7 +46,7 @@
        with a `msg` has already used it up or is not entitled to it: telling
        them "free trial" again would be rubbing it in. #}
     {% if hay_prueba_gratuita() and not msg %}
-    <p class="pago-prueba">Haven’t tried it yet? <a href="/acceso">Start with {{ dias_de_prueba() }} days free</a>, no credit card.</p>
+    <p class="pago-prueba">Haven’t tried it yet? <a href="/acceso?alta=1&amp;origen=planes&amp;pais={{ pais_pago.codigo }}">Start with {{ dias_de_prueba() }} days free</a>, no credit card.</p>
     {% endif %}
   </div>
 </header>

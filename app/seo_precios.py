@@ -309,6 +309,8 @@ def ruta_calculadora(cc: str, apartado: str = "", cantidad: str = "") -> str:
 
 def _base(request: Request, cc: str, ruta: str, seo: dict, bloques: list,
           hreflang_links: list, crumbs: list) -> dict:
+    from .seo_latam_comercial import ESCENARIOS
+
     origen = origen_canonico(request)
     return {
         "seo": seo,
@@ -319,6 +321,7 @@ def _base(request: Request, cc: str, ruta: str, seo: dict, bloques: list,
         "crumbs": crumbs,
         "pais": PAISES[cc],
         "ruta_pais": ruta_mercado(cc),
+        "software_comercial_url": ruta_mercado(cc, "software-presupuestos") if cc in ESCENARIOS else "",
     }
 
 

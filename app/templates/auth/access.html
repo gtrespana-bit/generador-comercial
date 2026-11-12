@@ -122,6 +122,10 @@
   // por defecto del servidor y se borra la cookie obsoleta.
   var sel=document.getElementById('signup-pais');
   if(!sel) return;
+  // El país elegido por la URL de la página comercial tiene prioridad sobre
+  // una cookie de una visita anterior. El servidor ya validó la selección.
+  var paisUrl=new URLSearchParams(window.location.search).get('pais');
+  if(paisUrl && Array.from(sel.options).some(function(op){return op.value === paisUrl.toUpperCase();})) return;
   try{
     var m=document.cookie.match(/(?:^|; )cotizat_pais=([^;]*)/);
     var code=m?decodeURIComponent(m[1]).toUpperCase():'';

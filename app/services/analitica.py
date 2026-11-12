@@ -630,6 +630,7 @@ def _origenes(db, *, desde: datetime) -> list[dict]:
         "calculadora": "Calculadora",
         "guia": "Guía",
         "landing_pais": "Landing de país",
+        "software_comercial": "Software de presupuestos",
         "planes": "Planes y precios",
         "como_funciona": "Cómo funciona",
         "portada": "Portada",

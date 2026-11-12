@@ -58,6 +58,7 @@ def test_la_portada_y_las_paginas_comerciales_se_distinguen():
     assert atribucion.seccion_de("/pago") == "planes"
     assert atribucion.seccion_de("/precios-comparados") == "comparador"
     assert atribucion.seccion_de("/co/guia/apu-panete-colombia") == "guia"
+    assert atribucion.seccion_de("/mx/software-presupuestos") == "software_comercial"
 
 
 def test_lo_que_no_es_comercial_cae_en_otro():
