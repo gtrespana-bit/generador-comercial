@@ -1650,7 +1650,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         ]
         description = (
             f"Software de presupuestos de construcción para {nombre}. Catálogo con "
-            f"APU, {fiscal}, IVA {iva} % y PDF profesional. 7 días gratis."
+            f"APU, {fiscal}, {impuesto} {iva:g} % y PDF profesional. 7 días gratis."
         )
         related = [
             ("Análisis de precios unitarios (APU)", ruta_pais(codigo, "apu")),
@@ -1750,7 +1750,13 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
 
     from .seo_articulos import articulos_de_pais
     from .seo_contenido import extra_hub, faq_hub
+    from .seo_latam_comercial import bloques_comerciales
 
+    # La página comercial de cada mercado debe responder a un caso local,
+    # no depender solo de una plantilla con moneda y nombre sustituidos.
+    comercial_local = bloques_comerciales(codigo) if tema == "software-presupuestos" else []
+    if comercial_local:
+        body = comercial_local + body[2:]
     body = list(body) + extra_hub(codigo, tema)
     for art in articulos_de_pais(codigo):
         related = list(related) + [

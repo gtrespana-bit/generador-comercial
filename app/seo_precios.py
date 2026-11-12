@@ -660,9 +660,27 @@ def contexto_indice(request: Request, cc: str) -> dict | None:
          "lang": hreflang_pais(cc), "h1": h1},
         bloques, _hreflang(origen_canonico(request), rutas_alternas), crumbs,
     )
+    # Un catálogo parcialmente localizado puede tener fichas indexables en
+    # apartados que aún son noindex. Enlazarlas directamente desde el índice
+    # evita que su descubrimiento dependa del sitemap o de un listado noindex.
+    fichas_directas = []
+    if not pp.ficha_indexable(cc):
+        indice = pp._indice(cc) or {}
+        apartados_indexables = {
+            slug: pp.apartado_indexable(cc, slug)
+            for slug in (indice.get("apartados") or {})
+        }
+        for (slug_ap, slug), ficha in sorted((indice.get("partidas") or {}).items()):
+            if (not apartados_indexables.get(slug_ap)
+                    and pp.partida_indexable(cc, slug_ap, slug)):
+                fichas_directas.append({
+                    "nombre": ficha["titulo"],
+                    "ruta": pp.ruta_partida(cc, slug_ap, slug),
+                })
     ctx.update(
         {
             "resumen": {**resumen, "capitulos": capitulos},
+            "fichas_directas": fichas_directas,
             "mes_revision": mes,
             "alternates": _alternates_visibles(rutas_alternas, cc),
             "faq": faq,
@@ -1428,6 +1446,12 @@ def enlaces_catalogo(codigo_pais: str, semilla: str = "", limite: int = 5) -> di
     slugs = sorted(indice["apartados"])
     if not slugs:
         return None
+    # En mercados a medio localizar, favorecer apartados realmente indexables
+    # sin ocultar el catálogo al usuario cuando todavía no hay ninguno.
+    if not pp.ficha_indexable(cc):
+        indexables = [slug for slug in slugs if pp.apartado_indexable(cc, slug)]
+        if indexables:
+            slugs = indexables
     texto = str(semilla or cc)
     arranque = sum(ord(c) * (i + 1) for i, c in enumerate(texto)) % len(slugs)
     # Salto amplio (no consecutivos): así los enlaces caen en capítulos
