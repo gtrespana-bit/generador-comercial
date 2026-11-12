@@ -40,6 +40,17 @@
     </ul>
   </section>
   {% endfor %}
+  {% if fichas_directas %}
+  <section class="precios-capitulo">
+    <h2>Partidas con descripción local</h2>
+    <p>Consulta estas partidas y sus descompuestos directamente mientras se completa la revisión de sus apartados.</p>
+    <ul class="precios-lista">
+      {% for ficha in fichas_directas %}
+      <li><a href="{{ ficha.ruta }}">{{ ficha.nombre }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
   {% if faq %}
   <section class="precios-faq" id="preguntas">
     <h2>{{ 'precios.faq.titulo' | t(_idioma) }}</h2>

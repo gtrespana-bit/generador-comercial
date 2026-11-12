@@ -74,7 +74,7 @@
   <h2>Sigue leyendo</h2>
   <ul>
     {% for nombre, ruta in ficha.related %}
-    <li><a href="{{ ruta }}">{{ nombre }}{% if pais_codigo %} en {{ ficha.nombre_pais }}{% endif %}</a></li>
+    <li><a href="{{ ruta }}">{{ nombre }}</a></li>
     {% endfor %}
     <li><a href="/como-funciona">Cómo funciona {{ product_name }}, función por función</a></li>
     {% if guias is defined %}
