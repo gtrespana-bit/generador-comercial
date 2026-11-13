@@ -616,7 +616,10 @@ def cifras_catalogo() -> dict:
 
 TEMPLATES.env.filters["asset"] = _asset_url
 TEMPLATES.env.globals["STATIC_VERSION"] = STATIC_VERSION
+from ..datos_pago import PLANES as PLANES_PUBLICOS
+
 TEMPLATES.env.globals.update(
+    planes_publicos=PLANES_PUBLICOS,
     product_name=PRODUCT_NAME,
     database_is_sqlite=DATABASE_IS_SQLITE,
     titular_legal=LEGAL_ENTITY,

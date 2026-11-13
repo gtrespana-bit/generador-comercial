@@ -166,19 +166,12 @@ asesor: no damos asesoramiento fiscal.</p>
 <h2 id="precio">Precio y contratación</h2>
 
 <h3>¿Cuánto cuesta?</h3>
-<p>Los precios vigentes están en <a href="/pago">Planes</a>. Durante el
-acceso anticipado: <strong>89 US$ al año</strong> (habitual 109 US$) o
-<strong>9,99 US$ al mes el primer año</strong> (habitual 12,99 US$). El
+<p>Los precios vigentes están en <a href="/pago">Planes</a>. Los planes se cobran en dólares estadounidenses (USD). El
 precio que contrates se respeta durante todo el período pagado. Todas las
 funciones están incluidas: no hay un plan «pro» aparte.</p>
 
 <h3>¿Cómo se paga?</h3>
-<p>Con <strong>tarjeta</strong> (Visa, Mastercard, American Express, Apple Pay
-o Google Pay) el plan se activa al confirmar el cobro. El plan mensual y el
-anual se renuevan solos; puedes cancelar cuando quieras y conservas el período
-ya pagado. Si no usas tarjeta, eliges un método manual (Pago móvil, Binance,
-Kontigo, USDT) y subes el comprobante: lo verificamos en un máximo de 48 horas
-hábiles.</p>
+<p>{% if stripe_disponible() %}Con <strong>tarjeta</strong> el plan se activa al confirmar el cobro. La suscripción se renueva automáticamente; puedes cancelarla y conservar el período pagado. {% endif %}También puedes elegir un método manual disponible para tu país y subir el comprobante: lo verificamos en un máximo de 48 horas hábiles. Consulta los medios en <a href="/pago">planes</a>.</p>
 
 <h3>¿Hay permanencia?</h3>
 <p>No. Puedes cancelar cuando quieras y conservas el acceso hasta el final

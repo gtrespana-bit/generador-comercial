@@ -43,6 +43,7 @@
       {% if error %}<div class="alert error">{{ error | mensaje(_idioma) }}</div>{% endif %}
       {% if msg %}<div class="alert success">{{ msg | mensaje(_idioma) }}</div>{% endif %}
 
+      {% set formulario_acceso %}
       <h2>Sign in</h2>
       <form method="post" action="/acceso">
         <input type="hidden" name="next" value="{{ next }}">
@@ -57,6 +58,8 @@
         <button class="btn btn-primary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Sign in to {{ product_name }}</button>
         <p class="small text-muted mt-2"><a href="/recuperar-acceso">Forgot your password?</a></p>
       </form>
+      {% endset %}
+      {% if not alta_directa %}{{ formulario_acceso }}{% endif %}
 
       <form method="post" action="/registro">
         <h2>Create account</h2>
@@ -99,8 +102,9 @@
           </label>
           <p class="hint">Acceptance is recorded with the version of the terms in force on the day of signup (E4-038).</p>
         </div>
-        <button class="btn btn-secondary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Create my workspace</button>
+        <button class="btn {% if alta_directa %}btn-primary{% else %}btn-secondary{% endif %} btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Create my workspace</button>
       </form>
+      {% if alta_directa %}{{ formulario_acceso }}{% endif %}
 
       <p class="small text-muted mt-3">Passwords are sent directly to Supabase Auth and are not stored in the {{ product_name }} database.</p>
     </section>

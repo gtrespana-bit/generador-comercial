@@ -1071,8 +1071,8 @@
 </section>
 
 <section id="precios">
-  <h2>Precio de lanzamiento</h2>
-  <p class="intro">Oferta fundadora para las primeras empresas. El precio contratado se respeta durante todo el período pagado.</p>
+  <h2>Planes</h2>
+  <p class="intro">El precio contratado se respeta durante todo el período pagado. Los planes se cobran en USD.</p>
   {% if hay_prueba_gratuita() %}
   <div class="prueba-destacada">
     <h3>Empieza con {{ dias_de_prueba() }} días gratis</h3>
@@ -1082,15 +1082,9 @@
   {% endif %}
   <div class="precios">
     <a class="plan destacado" href="/pago">
-      <span class="etiqueta">PROMOCIÓN INICIAL</span>
+      <span class="etiqueta">PLAN</span>
       <h3>Plan anual</h3>
-      {% if pais_codigo == 'ES' %}
-      <div class="cifra">89 € <small>/ año</small></div>
-      <p><span class="antes">109 € / año</span> — precio habitual</p>
-      {% else %}
-      <div class="cifra">89 US$ <small>/ año</small></div>
-      <p><span class="antes">109 US$ / año</span> — precio habitual</p>
-      {% endif %}
+      <div class="cifra">{{ "%.2f"|format(planes_publicos.anual.importe)|replace('.', ',') }} US$ <small>/ a&ntilde;o</small></div>
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas: catálogo por país, APU, packs, PDF, versiones y cobros</li>
@@ -1100,15 +1094,9 @@
       </ul>
     </a>
     <a class="plan" href="/pago">
-      <span class="etiqueta">PROMOCIÓN INICIAL</span>
+      <span class="etiqueta">PLAN</span>
       <h3>Plan mensual</h3>
-      {% if pais_codigo == 'ES' %}
-      <div class="cifra">9,99 € <small>/ mes el primer año</small></div>
-      <p><span class="antes">12,99 € / mes</span> — precio habitual</p>
-      {% else %}
-      <div class="cifra">9,99 US$ <small>/ mes el primer año</small></div>
-      <p><span class="antes">12,99 US$ / mes</span> — precio habitual</p>
-      {% endif %}
+      <div class="cifra">{{ "%.2f"|format(planes_publicos.mensual.importe)|replace('.', ',') }} US$ <small>/ mes</small></div>
       <ul>
         {% if hay_prueba_gratuita() %}<li>Empieza con {{ dias_de_prueba() }} días gratis</li>{% endif %}
         <li>Todas las funciones incluidas</li>

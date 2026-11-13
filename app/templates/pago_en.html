@@ -16,10 +16,7 @@
     if (el.sheet) activar();
   })();
   </script>
-  {# Sin JS no hay quien active la hoja diferida, pero ya está enlazada
-     arriba (media="print" se aplica igual al imprimir): repetirla aquí
-     producía una SEGUNDA descarga con otra URL (la del noscript) y el
-     navegador aplicaba la misma hoja dos veces. #}
+  <noscript><link rel="stylesheet" href="{{ 'css/public.css' | asset }}"></noscript>
 </head>
 <body class="landing pago-page">
 {% include "_nav_en.html" %}
@@ -28,7 +25,7 @@
   <div class="pago-hero-int">
     <span class="section-kicker">Plans</span>
     <h1>Choose the plan that fits your company</h1>
-    <p class="sub">Pay by card (instant activation) or with the payment methods available in your country. As simple as that.</p>
+    <p class="sub">Choose an available payment method for your country. Plans are charged in US dollars (USD).</p>
     <form method="GET" action="/pago" class="pago-pais" data-pais-pago>
       <label for="pais-pago">Country you will pay from</label>
       <div class="pago-pais-control">
@@ -56,13 +53,7 @@
     <div class="plan destacado">
       <span class="etiqueta">BEST VALUE</span>
       <h3>Annual plan</h3>
-      {% if pais_pago.codigo == 'ES' %}
-      <div class="cifra">89 € <small>/ year</small></div>
-      <p><span class="antes">109 € / year</span> &mdash; regular price</p>
-      {% else %}
-      <div class="cifra">89 US$ <small>/ year</small></div>
-      <p><span class="antes">109 US$ / year</span> &mdash; regular price</p>
-      {% endif %}
+      <div class="cifra">{{ "%.2f"|format(planes_publicos.anual.importe) }} US$ <small>/ year</small></div>
       <ul>
         <li>Every feature included</li>
         <li>Margin and work time per item and total</li>
@@ -75,13 +66,7 @@
     <div class="plan">
       <span class="etiqueta">NO COMMITMENT</span>
       <h3>Monthly plan</h3>
-      {% if pais_pago.codigo == 'ES' %}
-      <div class="cifra">9.99 € <small>/ month the first year</small></div>
-      <p><span class="antes">12.99 € / month</span> &mdash; regular price</p>
-      {% else %}
-      <div class="cifra">9.99 US$ <small>/ month the first year</small></div>
-      <p><span class="antes">12.99 US$ / month</span> &mdash; regular price</p>
-      {% endif %}
+      <div class="cifra">{{ "%.2f"|format(planes_publicos.mensual.importe) }} US$ <small>/ month</small></div>
       <ul>
         <li>Every feature included</li>
         <li>Margin and work time per item and total</li>
@@ -95,7 +80,7 @@
 
 <section class="pago-metodos">
   <h2>Payment methods for {{ pais_pago.nombre }}</h2>
-  <p class="intro">A card activates the plan instantly. Manual payments are reviewed within 48 business hours at most.</p>
+  <p class="intro">{% if stripe_disponible() %}Card payments activate the plan when the charge is confirmed. {% endif %}Manual payments are reviewed within 48 business hours at most.</p>
   <div class="metodos-grid">
     {% if stripe_disponible() %}
     <article class="metodo">

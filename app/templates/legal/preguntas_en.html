@@ -162,19 +162,12 @@ advisor's: we do not provide tax advice.</p>
 <h2 id="precio">Pricing and contracting</h2>
 
 <h3>How much does it cost?</h3>
-<p>Current prices are at <a href="/pago">Plans</a>. During early access:
-<strong>89 US$ per year</strong> (usual 109 US$) or <strong>9.99 US$ per
-month the first year</strong> (usual 12.99 US$). The price you contract is
+<p>Current prices are at <a href="/pago">Plans</a>. Plans are charged in US dollars (USD). The price you contract is
 respected for the whole paid period. All features are included: there is no
 separate “pro” plan.</p>
 
 <h3>How is payment made?</h3>
-<p>By <strong>card</strong> (Visa, Mastercard, American Express, Apple Pay or
-Google Pay) the plan activates when the charge is confirmed. The monthly and
-annual plans renew automatically; you can cancel whenever you want and keep
-the period already paid. If you do not use a card, you choose a manual method
-(mobile payment, Binance, Kontigo, USDT) and upload the receipt: we verify it
-within a maximum of 48 business hours.</p>
+<p>{% if stripe_disponible() %}By <strong>card</strong>, the plan activates when the charge is confirmed. The subscription renews automatically; you can cancel and keep the paid period. {% endif %}You can also choose an available manual method for your country and upload the receipt: we review it within 48 business hours. See the available methods under <a href="/en/pago">plans</a>.</p>
 
 <h3>Is there a commitment?</h3>
 <p>No. You can cancel whenever you want and keep access until the end of the

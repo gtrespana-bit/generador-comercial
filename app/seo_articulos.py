@@ -60,7 +60,7 @@ ARTICULOS: dict[str, dict] = {
                 "De Excel a CotizaT",
                 [
                     "Si ya exportas matrices de descompuestos en Excel (.xlsx), importas el archivo y se clasifican materiales, mano de obra y complementarios, sin perder filas. También pegas TSV desde una hoja o importas .bc3 (FIEBDC-3). El catálogo propio trae más de 3.000 partidas descompuestas y cientos de recursos; no empiezas la base de cero.",
-                    "El plan de lanzamiento es 89 US$ al año (habitual 109) o 9,99 US$ al mes el primer año. 7 días de prueba, sin tarjeta.",
+                    "Consulta los precios vigentes en la página de planes. 7 días de prueba, sin tarjeta.",
                 ],
             ),
         ],
@@ -130,7 +130,7 @@ ARTICULOS: dict[str, dict] = {
             (
                 "Cuánto cuesta el software (no el baño)",
                 [
-                    "El plan de lanzamiento es 89 US$ al año (habitual 109) o 9,99 US$ al mes el primer año. 7 días de prueba completa, sin tarjeta. El catálogo trae más de 3.000 partidas descompuestas; no publicamos el precio del cemento de la semana porque no somos un índice de mercado.",
+                    "Consulta los precios vigentes en la página de planes. 7 días de prueba completa, sin tarjeta. El catálogo trae más de 3.000 partidas descompuestas; no publicamos el precio del cemento de la semana porque no somos un índice de mercado.",
                 ],
             ),
         ],
@@ -256,7 +256,7 @@ ARTICULOS: dict[str, dict] = {
             (
                 "Pago de la licencia desde Venezuela",
                 [
-                    "El plan de lanzamiento es 89 US$ al año. Puedes pagar con Pago móvil, Binance, Kontigo, USDT o tarjeta. La tarjeta activa al confirmar; los métodos manuales se revisan en un máximo de 48 horas hábiles. 7 días de prueba, sin tarjeta.",
+                    "Consulta los precios vigentes y los métodos disponibles para Venezuela en la página de planes. Los métodos manuales se revisan en un máximo de 48 horas hábiles. 7 días de prueba, sin tarjeta.",
                     "No publicamos el precio del saco de cemento de esta semana. Eso lo pones tú en Recursos, que es donde tiene que vivir.",
                 ],
             ),
@@ -318,7 +318,7 @@ ARTICULOS: dict[str, dict] = {
             (
                 "Precio del software",
                 [
-                    "89 US$ al año de lanzamiento (habitual 109) o 9,99 US$ al mes el primer año. 7 días de prueba, sin tarjeta. Sin permanencia.",
+                    "Consulta los precios vigentes en la página de planes. 7 días de prueba, sin tarjeta. Sin permanencia.",
                 ],
             ),
         ],
@@ -481,7 +481,7 @@ ARTICULOS_EN.update({
                 "From Excel to CotizaT",
                 [
                     "If you already export breakdown matrices in Excel (.xlsx), import the file and materials, labor and complementary costs are classified without losing rows. You can also paste TSV from Excel or import .bc3 (FIEBDC-3).",
-                    "Launch plan: 89 US$ per year (usual 109) or 9.99 US$ per month the first year. 7 free days, no card.",
+                    "See the plans page for current prices. 7 free days, no card.",
                 ],
             ),
         ],
@@ -539,7 +539,7 @@ ARTICULOS_EN.update({
             (
                 "What the software costs (not the bathroom)",
                 [
-                    "Launch plan: 89 US$ per year (usual 109) or 9.99 US$ per month the first year. 7 full free days, no card.",
+                    "See the plans page for current prices. 7 full free days, no card.",
                 ],
             ),
         ],
@@ -640,7 +640,7 @@ ARTICULOS_EN.update({
             (
                 "Paying the license from Venezuela",
                 [
-                    "Launch plan: 89 US$ per year. You can pay with Pago movil, Binance, Kontigo, USDT or card. Card activates on confirmation; manual methods are reviewed within 48 business hours.",
+                    "See the plans page for current prices and available payment methods in Venezuela. Manual methods are reviewed within 48 business hours.",
                     "We do not publish the price of a cement bag this week. You set that in Resources, where it belongs.",
                 ],
             ),
@@ -691,7 +691,7 @@ ARTICULOS_EN.update({
             (
                 "Software price",
                 [
-                    "89 US$ per year at launch (usual 109) or 9.99 US$ per month the first year. 7 free days, no card. No lock-in.",
+                    "See the plans page for current prices. 7 free days, no card. No lock-in.",
                 ],
             ),
         ],

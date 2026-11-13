@@ -43,6 +43,7 @@
       {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
       {% if msg %}<div class="alert success">{{ msg }}</div>{% endif %}
 
+      {% set formulario_acceso %}
       <h2>Iniciar sesión</h2>
       <form method="post" action="/acceso">
         <input type="hidden" name="next" value="{{ next }}">
@@ -57,6 +58,8 @@
         <button class="btn btn-primary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Entrar a {{ product_name }}</button>
         <p class="small text-muted mt-2"><a href="/recuperar-acceso">¿Olvidaste tu contraseña?</a></p>
       </form>
+      {% endset %}
+      {% if not alta_directa %}{{ formulario_acceso }}{% endif %}
 
       <form method="post" action="/registro">
         <h2>Crear cuenta</h2>
@@ -106,8 +109,9 @@
           </label>
           <p class="hint">La aceptación queda registrada con la versión de los términos vigente el día del alta (E4-038).</p>
         </div>
-        <button class="btn btn-secondary btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Crear mi espacio</button>
+        <button class="btn {% if alta_directa %}btn-primary{% else %}btn-secondary{% endif %} btn-block" type="submit" {% if not auth_configured %}disabled{% endif %}>Crear mi espacio</button>
       </form>
+      {% if alta_directa %}{{ formulario_acceso }}{% endif %}
 
       <p class="small text-muted mt-3">Las contraseñas se envían directamente a Supabase Auth y no se almacenan en la base de {{ product_name }}.</p>
     </section>

@@ -723,8 +723,7 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
             ),
             (
                 "Price",
-                "US$89 for the first year at launch price (US$109 afterwards) or "
-                "US$9.99 a month for the first year. 7-day full trial, no card, no "
+                "See the plans page for current prices. 7-day full trial, no card, no "
                 "commitment.",
             ),
         ]
@@ -843,8 +842,7 @@ def tema_en(codigo: str, tema: str) -> dict[str, Any] | None:
         {
             "q": "How much is it afterwards?",
             "a": (
-                "US$89 for the first year at launch price or US$9.99 a month for the "
-                "first year. No commitment."
+                "See the plans page for current prices. No commitment."
             ),
         },
     ]
@@ -918,7 +916,7 @@ _PAGINAS_ESTATICAS_EN: dict[str, dict[str, Any]] = {
         "title": "CotizaT: plans for the construction estimating software",
         "description": (
             "Annual and monthly plans for CotizaT, construction estimating software. "
-            "US$89 a year at launch price. 7 days free, no card."
+            "See current prices and available payment methods."
         ),
         "h1": "Plans for the construction estimating software",
         "software": True,
