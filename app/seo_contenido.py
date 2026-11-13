@@ -64,7 +64,7 @@ CUERPO_PAIS: dict[str, list[tuple[str, list[str]]]] = {
         (
             "Pago de la licencia desde Venezuela",
             [
-                "El plan de lanzamiento es 89 US$ al año. Desde Venezuela puedes pagar con Pago móvil, Binance, Kontigo, USDT o tarjeta. La tarjeta activa al confirmar; los métodos manuales se revisan en un máximo de 48 horas hábiles.",
+                "Consulta los precios vigentes y los métodos disponibles para Venezuela en la página de planes. Los métodos manuales se revisan en un máximo de 48 horas hábiles.",
             ],
         ),
     ],
@@ -1295,7 +1295,7 @@ FAQ_LEGAL: list[dict] = [
     },
     {
         "q": "¿Cuánto cuesta?",
-        "a": "89 US$ al año de lanzamiento (habitual 109) o 9,99 US$ al mes el primer año. Sin permanencia.",
+        "a": "Consulta los precios vigentes en la página de planes. Sin permanencia.",
     },
 ]
 

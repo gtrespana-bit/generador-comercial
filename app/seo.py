@@ -682,8 +682,7 @@ _LANDING: dict[str, dict] = {
             {
                 "q": "¿Cómo se paga desde Venezuela?",
                 "a": (
-                    "Pago móvil, Binance, Kontigo, USDT o tarjeta. El plan anual "
-                    "de lanzamiento es 89 US$."
+                    "Consulta los métodos disponibles para Venezuela y los precios vigentes en la página de planes."
                 ),
             },
             {
@@ -781,8 +780,7 @@ _LANDING: dict[str, dict] = {
             {
                 "q": "¿Cuánto cuesta?",
                 "a": (
-                    "89 US$ al año de lanzamiento (habitual 109) o 9,99 US$ al mes "
-                    "el primer año. 7 días de prueba sin tarjeta."
+                    "Consulta los precios vigentes en la página de planes. 7 días de prueba sin tarjeta."
                 ),
             },
         ],
@@ -1493,7 +1491,7 @@ _LANDING: dict[str, dict] = {
             {
                 "q": "¿Cuánto cuesta en España?",
                 "a": (
-                    "89 € al año (habitual 109 €) o 9,99 € al mes el primer año. "
+                    "Consulta los precios vigentes en la página de planes; los planes se cobran en USD. "
                     "7 días de prueba completa, sin tarjeta y sin permanencia."
                 ),
             },
@@ -1644,8 +1642,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
             ),
             (
                 "Precio",
-                "89 US$ al año de lanzamiento (habitual 109) o 9,99 US$ al mes el "
-                "primer año. 7 días de prueba completa, sin tarjeta. Sin permanencia.",
+                "Consulta los precios vigentes en la página de planes. 7 días de prueba completa, sin tarjeta. Sin permanencia.",
             ),
         ]
         description = (
@@ -1806,7 +1803,7 @@ def _bloques_tema(codigo: str, tema: str) -> dict:
         },
         {
             "q": "¿Cuánto cuesta después?",
-            "a": "89 US$ al año de lanzamiento o 9,99 US$ al mes el primer año. Sin permanencia.",
+            "a": "Consulta los precios vigentes en la página de planes. Sin permanencia.",
         },
     ]
     if comercial_local:
@@ -1942,6 +1939,8 @@ def jsonld_website(request: Request | None = None, lang: str = "es") -> dict:
 
 
 def jsonld_software(request: Request | None = None, codigo: str = "", lang: str = "es") -> dict:
+    from .datos_pago import PLANES
+
     origen = origen_canonico(request)
     lang = normalizar_idioma(lang)
     en = lang == "en"
@@ -1983,7 +1982,7 @@ def jsonld_software(request: Request | None = None, codigo: str = "", lang: str 
         "image": origen + OG_IMAGE,
         "offers": {
             "@type": "Offer",
-            "price": "89.00",
+            "price": f"{PLANES['anual']['importe']:.2f}",
             "priceCurrency": "USD",
             "availability": "https://schema.org/InStock",
             "url": url_precio,
@@ -2439,7 +2438,7 @@ _PAGINAS_ESTATICAS: dict[str, dict] = {
         "title": "CotizaT: planes del software de presupuestos de construcción",
         "description": (
             "Planes anuales y mensuales de CotizaT, software de presupuestos de "
-            "construcción. 89 US$/año de lanzamiento. 7 días gratis, sin tarjeta."
+            "construcción. Consulta los precios y métodos de pago disponibles."
         ),
         "h1": "Planes del software de presupuestos de construcción",
         "software": True,

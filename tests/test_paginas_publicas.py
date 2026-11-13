@@ -3,7 +3,7 @@
 Son fronteras públicas: no exponen datos de tenant, no requieren sesión y
 deben cumplir la CSP como el resto de la aplicación. La honestidad comercial
 del plan exige además que la landing no prometa facturación fiscal y que los
-precios promocionales muestren también el precio habitual.
+precios visibles coincidan con los importes realmente configurados.
 """
 import re
 
@@ -52,11 +52,11 @@ def test_landing_publica_sin_sesion():
         assert enlace in r.text, enlace
 
 
-def test_landing_muestra_promocion_con_precio_habitual():
-    """Un precio tachado sin el habitual al lado sería publicidad engañosa."""
+def test_landing_muestra_precios_vigentes():
+    """Se muestran precios actuales sin afirmar descuentos no verificados."""
     r = _get("/conocer")
-    assert "89" in r.text and "109" in r.text
-    assert "9,99" in r.text and "12,99" in r.text
+    assert "89,00 US$" in r.text
+    assert "9,99 US$" in r.text
     assert "no" in r.text.lower() and "facturas fiscales" in r.text
 
 
@@ -202,7 +202,7 @@ def test_preguntas_frecuentes_ya_no_promete_una_demo_por_correo():
     assert "demostración" not in texto
     assert "whatsapp" in texto
     assert "pack" in texto
-    assert "89" in texto
+    assert 'href="/pago"' in texto
 
 
 def test_condiciones_de_soporte_delimitan_incluido_y_excluido():
@@ -249,8 +249,8 @@ def test_pagina_pago_responde():
     assert "Kontigo" in r.text
     assert "USDT" in r.text
     # Planes
-    assert "89" in r.text and "109" in r.text
-    assert "9,99" in r.text and "12,99" in r.text
+    assert "89,00 US$" in r.text
+    assert "9,99 US$" in r.text
 
 
 def test_pagina_pago_cumple_csp():

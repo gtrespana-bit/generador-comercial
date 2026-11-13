@@ -90,7 +90,7 @@
     <div class="lp2-nav-mobile-panel">
       <a href="{{ '/en/como-funciona' if _en else '/como-funciona' }}">{{ L("Cómo funciona", "How it works") }}</a>
       <a href="{{ '/en/calculadora' if _en else '/calculadora' }}">{{ L("Calculadora", "Calculator") }}</a>
-      <a href="{{ '/en/prices-comparison' if _en else '/precios' }}">{{ L("Precios y planes", "Pricing and plans") }}</a>
+      <a href="{{ '/en/pago' if _en else '/pago' }}">{{ L("Precios y planes", "Pricing and plans") }}</a>
       <a href="{{ '/en/guia/presupuesto-de-obra' if _en else '/guia/presupuesto-de-obra' }}">{{ L("Guías", "Guides") }}</a>
       <a href="{{ '/en/legal/preguntas' if _en else '/legal/preguntas' }}">{{ L("Preguntas frecuentes", "FAQ") }}</a>
       <a href="{{ '/en/acceso' if _en else '/acceso' }}">{{ L("Iniciar sesión", "Sign in") }}</a>
@@ -668,17 +668,15 @@
     {% endif %}
     <div class="precios">
       <a class="plan destacado" href="{{ '/en/pago' if _en else '/pago' }}" data-ga-event="plan_anual">
-        <span class="etiqueta">{{ L("PROMOCIÓN INICIAL", "INITIAL PROMOTION") }}</span>
+        <span class="etiqueta">{{ L("PLAN ANUAL", "ANNUAL PLAN") }}</span>
         <h3>{{ L("Plan anual", "Annual plan") }}</h3>
-        {% if pais_codigo == 'ES' %}<div class="cifra">89 € <small>{{ L("/ año", "/ year") }}</small></div><p><span class="antes">{{ L("109 € / año", "€109 / year") }}</span> {{ L("— precio habitual", "— regular price") }}</p>
-        {% else %}<div class="cifra">{{ L("89 US$", "US$89") }} <small>{{ L("/ año", "/ year") }}</small></div><p><span class="antes">{{ L("109 US$ / año", "US$109 / year") }}</span> {{ L("— precio habitual", "— regular price") }}</p>{% endif %}
+        <div class="cifra">{% if _en %}{{ "%.2f"|format(planes_publicos.anual.importe) }}{% else %}{{ "%.2f"|format(planes_publicos.anual.importe)|replace(".", ",") }}{% endif %} US$ <small>{{ L("/ año", "/ year") }}</small></div>
         <ul>{% if prueba_activa %}<li>{{ L("Empieza con", "Start with") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}</li>{% endif %}<li>{{ L("Todas las funciones: catálogo por país, APU, packs, PDF, versiones y cobros", "All features: catalog by country, unit prices, packs, PDF, versions and payments") }}</li><li>{{ L("Configuración asistida de tu empresa y catálogo", "Assisted setup of your company and catalog") }}</li><li>{{ L("Soporte directo por email", "Direct support by email") }}</li><li>{{ L("Actualizaciones incluidas", "Updates included") }}</li></ul>
       </a>
       <a class="plan" href="{{ '/en/pago' if _en else '/pago' }}" data-ga-event="plan_mensual">
-        <span class="etiqueta">{{ L("PROMOCIÓN INICIAL", "INITIAL PROMOTION") }}</span>
+        <span class="etiqueta">{{ L("PLAN MENSUAL", "MONTHLY PLAN") }}</span>
         <h3>{{ L("Plan mensual", "Monthly plan") }}</h3>
-        {% if pais_codigo == 'ES' %}<div class="cifra">9,99 € <small>{{ L("/ mes el primer año", "/ month the first year") }}</small></div><p><span class="antes">{{ L("12,99 € / mes", "€12.99 / month") }}</span> {{ L("— precio habitual", "— regular price") }}</p>
-        {% else %}<div class="cifra">{{ L("9,99 US$", "US$9.99") }} <small>{{ L("/ mes el primer año", "/ month the first year") }}</small></div><p><span class="antes">{{ L("12,99 US$ / mes", "US$12.99 / month") }}</span> {{ L("— precio habitual", "— regular price") }}</p>{% endif %}
+        <div class="cifra">{% if _en %}{{ "%.2f"|format(planes_publicos.mensual.importe) }}{% else %}{{ "%.2f"|format(planes_publicos.mensual.importe)|replace(".", ",") }}{% endif %} US$ <small>{{ L("/ mes", "/ month") }}</small></div>
         <ul>{% if prueba_activa %}<li>{{ L("Empieza con", "Start with") }} {{ dias_prueba }} {{ L("días gratis", "free days") }}</li>{% endif %}<li>{{ L("Todas las funciones incluidas", "All features included") }}</li><li>{{ L("Sin permanencia: cancela cuando quieras", "No commitment: cancel anytime") }}</li><li>{{ L("Soporte directo por email", "Direct support by email") }}</li></ul>
       </a>
     </div>
