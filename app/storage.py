@@ -364,11 +364,12 @@ class SupabaseStorage(StorageBackend):
         objetos; solo se conservan los objetos, con su clave completa.
         """
         prefijo = validate_object_key(prefix.rstrip("/")) if prefix else ""
+        base = f"{prefijo}/" if prefijo else ""
         bucket = quote(self.bucket, safe="")
         raw = self._request(
             "POST", f"/storage/v1/object/list/{bucket}",
             data=json.dumps({
-                "prefix": prefijo + "/" if prefijo else "",
+                "prefix": base,
                 "limit": 1000,
                 "offset": 0,
             }).encode("utf-8"),
@@ -384,9 +385,9 @@ class SupabaseStorage(StorageBackend):
         for item in items:
             if not isinstance(item, dict) or item.get("id") is None:
                 continue  # carpeta
-            nombre = str(item.get("name") or "")
+            nombre = str(item.get("name") or "").lstrip("/")
             if nombre:
-                claves.append(prefijo + nombre)
+                claves.append(f"{base}{nombre}")
         return sorted(claves)
 
     def bucket_status(self) -> dict[str, Any] | None:

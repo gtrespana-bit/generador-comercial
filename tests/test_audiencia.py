@@ -42,6 +42,7 @@ def _audiencia_limpia():
 NAVEGADOR = {
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/140.0",
     "accept": "text/html,application/xhtml+xml",
+    "sec-fetch-mode": "navigate",
 }
 
 
@@ -161,3 +162,217 @@ def test_el_panel_de_analitica_pinta_la_audiencia_sin_romperse():
     assert audiencia["disponible"] is True
     assert audiencia["vistas_ventana"] == 3
     assert audiencia["serie"][-1]["fecha"] == HOY
+
+
+# ---------------------------------------------------------------------------
+# Regresión del 17/11/2026: contención de egress y tamaño de visitas_pagina.
+# ---------------------------------------------------------------------------
+
+
+def test_idioma_redirecciones_404_y_head_no_ensucian_visitas_pagina():
+    with TestClient(app) as cliente:
+        r_idioma = cliente.get(
+            "/idioma/en?destino=/", headers=NAVEGADOR, follow_redirects=False
+        )
+        assert r_idioma.status_code == 307
+        r_404 = cliente.get(
+            "/pagina-inexistente-audiencia-xyz", headers=NAVEGADOR
+        )
+        assert r_404.status_code == 404
+        cliente.head("/", headers=NAVEGADOR)
+        cliente.get("/en/acceso", headers=NAVEGADOR, follow_redirects=False)
+        cliente.get("/baja-marketing", headers=NAVEGADOR, follow_redirects=False)
+    assert _visitas() == []
+
+
+@pytest.mark.parametrize(
+    "agente",
+    [
+        "",
+        "curl/8.5.0",
+        "python-requests/2.32.0",
+        "Go-http-client/2.0",
+        "Mozilla/5.0 HeadlessChrome/140.0.0.0 Safari/537.36",
+        "facebookexternalhit/1.1",
+        "meta-externalagent/1.1",
+        # User-Agents sintéticos imposibles (fake-useragent en proxies):
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 12_7_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.6834.83 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.137 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 15.2; rv:134.0) Gecko/20100101 Firefox/134.0",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:128.0) Gecko/20100101 Firefox/128.0",
+    ],
+)
+def test_clientes_automatizados_y_sin_user_agent_no_cuentan(agente):
+    with TestClient(app) as cliente:
+        cliente.get("/", headers={"user-agent": agente, "accept": "text/html"})
+    assert _visitas() == []
+
+
+def test_https_exige_sec_fetch_mode_navigate_y_acepta_navegadores_reales():
+    ua_chrome_real = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    )
+    with TestClient(app, base_url="https://cotizat.test") as cliente:
+        # Sin Sec-Fetch-Mode en HTTPS -> scraper HTTP, no se cuenta.
+        cliente.get(
+            "/?bot=1",
+            headers={"user-agent": ua_chrome_real, "accept": "text/html"},
+        )
+        # Modo cors o prefetch -> no es navegación real.
+        cliente.get(
+            "/?bot=2",
+            headers={
+                "user-agent": ua_chrome_real,
+                "accept": "text/html",
+                "sec-fetch-mode": "cors",
+            },
+        )
+        cliente.get(
+            "/?bot=3",
+            headers={
+                "user-agent": ua_chrome_real,
+                "accept": "text/html",
+                "sec-fetch-mode": "navigate",
+                "sec-purpose": "prefetch",
+            },
+        )
+        assert _visitas() == []
+        # Navegación real de Chrome con UA reducido -> sí se cuenta.
+        cliente.get(
+            "/?real=1",
+            headers={
+                "user-agent": ua_chrome_real,
+                "accept": "text/html",
+                "sec-fetch-mode": "navigate",
+            },
+        )
+        assert len(_visitas()) == 1
+
+
+def test_referer_sintetico_sin_barra_final_no_cuenta_pero_real_si():
+    with TestClient(app, base_url="https://cotizat.test") as cliente:
+        cliente.get(
+            "/?scraper=1",
+            headers={**NAVEGADOR, "referer": "https://cotizat.test"},
+        )
+        assert _visitas() == []
+        cliente.get(
+            "/?humano=1",
+            headers={**NAVEGADOR, "referer": "https://cotizat.test/"},
+        )
+        assert len(_visitas()) == 1
+
+
+def test_interruptor_audiencia_bd_apaga_escrituras(monkeypatch):
+    monkeypatch.setenv("COTIZAT_AUDIENCIA_BD", "false")
+    with TestClient(app) as cliente:
+        r = cliente.get("/?audiencia=off", headers=NAVEGADOR)
+    assert r.status_code == 200
+    assert _visitas() == []
+
+
+def test_resumen_audiencia_agrega_en_sql_sin_descargar_tabla_cruda():
+    from sqlalchemy import event
+
+    from app.database import engine
+
+    with SessionLocal() as db:
+        db.add_all(
+            [
+                # Fuera de ventana: no debe entrar.
+                VisitaPagina(
+                    ruta="/vieja",
+                    ip_hash="c" * 64,
+                    created_at=datetime(2026, 9, 1, 8, 0),
+                ),
+                # Ruido histórico de /idioma: se excluye.
+                VisitaPagina(
+                    ruta="/idioma/en",
+                    ip_hash="d" * 64,
+                    created_at=datetime(2026, 11, 5, 9, 0),
+                ),
+                # Visita válida hace 10 días (entra en 30d, no en 7d).
+                VisitaPagina(
+                    ruta="/es/precios",
+                    ip_hash="e" * 64,
+                    referente="https://bing.com/",
+                    created_at=datetime(2026, 10, 26, 10, 0),
+                ),
+                # Visita válida hoy.
+                VisitaPagina(
+                    ruta="/",
+                    ip_hash="f" * 64,
+                    referente="https://www.google.com/",
+                    created_at=datetime(2026, 11, 5, 12, 0),
+                ),
+            ]
+        )
+        db.commit()
+
+    sentencias: list[str] = []
+
+    def _capturar(_conn, _cursor, statement, _params, _ctx, _many):
+        if "visitas_pagina" in statement.lower():
+            sentencias.append(statement.upper())
+
+    event.listen(engine, "before_cursor_execute", _capturar)
+    try:
+        with SessionLocal() as db:
+            datos = resumen_audiencia(db, dias=30, hoy=HOY)
+    finally:
+        event.remove(engine, "before_cursor_execute", _capturar)
+
+    assert sentencias, "no se consultó visitas_pagina"
+    assert all("GROUP BY" in s and "WHERE" in s for s in sentencias), sentencias
+    assert datos["vistas_hoy"] == 1
+    assert datos["visitantes_hoy"] == 1
+    assert datos["visitantes_7d"] == 1
+    assert datos["visitantes_ventana"] == 2
+    assert datos["vistas_ventana"] == 2
+    rutas = {p["ruta"] for p in datos["paginas_top"]}
+    assert rutas == {"/", "/es/precios"}
+    assert len(datos["referentes_top"]) == 2
+
+
+def test_purgar_visitas_audiencia_elimina_antiguas_e_idioma():
+    from app.services.audiencia import purgar_visitas_audiencia
+
+    with SessionLocal() as db:
+        db.add_all(
+            [
+                VisitaPagina(
+                    ruta="/antigua",
+                    ip_hash="1" * 64,
+                    created_at=datetime(2026, 9, 20, 10, 0),
+                ),
+                VisitaPagina(
+                    ruta="/idioma/en",
+                    ip_hash="2" * 64,
+                    created_at=datetime(2026, 11, 5, 10, 0),
+                ),
+                VisitaPagina(
+                    ruta="/vigente",
+                    ip_hash="3" * 64,
+                    created_at=datetime(2026, 11, 4, 10, 0),
+                ),
+            ]
+        )
+        db.commit()
+
+    with SessionLocal() as db:
+        resultado = purgar_visitas_audiencia(db, dias=30, hoy=HOY)
+
+    assert resultado["ok"] is True
+    assert resultado["eliminadas"] == 2
+    restantes = _visitas()
+    assert [v.ruta for v in restantes] == ["/vigente"]
+
+
+def test_robots_y_conmutador_de_idioma_frenan_rastreo_de_idioma():
+    with TestClient(app) as cliente:
+        robots = cliente.get("/robots.txt").text
+        portada = cliente.get("/", headers=NAVEGADOR).text
+
+    assert "Disallow: /idioma" in robots
+    assert 'rel="nofollow"' in portada

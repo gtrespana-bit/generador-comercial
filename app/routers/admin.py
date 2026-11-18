@@ -991,6 +991,29 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
         chats_expirados = None
 
     try:
+        from ..services.audiencia import purgar_visitas_audiencia
+
+        audiencia_poda = purgar_visitas_audiencia(db)
+    except Exception:
+        db.rollback()
+        log.error("Error podando visitas de audiencia:\n%s", traceback.format_exc())
+        audiencia_poda = {"ok": False, "error": "Error interno en la poda de audiencia."}
+
+    try:
+        from ..services.hibernacion_catalogo import hibernar_catalogos_inactivos
+
+        catalogos_hibernados = hibernar_catalogos_inactivos(db)
+    except Exception:
+        db.rollback()
+        log.error(
+            "Error hibernando catálogos inactivos:\n%s", traceback.format_exc()
+        )
+        catalogos_hibernados = {
+            "ok": False,
+            "error": "Error interno en la hibernación de catálogos.",
+        }
+
+    try:
         verificacion = ejecutar_verificacion_diaria()
     except Exception:
         log.error("Error en la verificación diaria del cron:\n%s", traceback.format_exc())
@@ -1022,6 +1045,8 @@ def cron_mantenimiento(request: Request, db: Session = Depends(get_cron_db)):
         {"ok": respaldo.get("ok", True) and verificacion.get("ok", True),
          "respaldo": respaldo,
          "conversaciones_expiradas": chats_expirados,
+         "audiencia_poda": audiencia_poda,
+         "catalogos_hibernados": catalogos_hibernados,
          "verificacion": verificacion,
          "resumen_errores": resumen_errores,
          "borrados_pendientes": borrados_pendientes},

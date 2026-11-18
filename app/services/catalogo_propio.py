@@ -17,9 +17,11 @@ from functools import lru_cache
 from pathlib import Path
 
 from sqlalchemy import func, inspect as sa_inspect, or_, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from ..models import CategoriaPartida, Configuracion, Partida, Recurso
+from .hibernacion_catalogo import CATALOGO_HIBERNADO
 
 log = logging.getLogger("cotizat")
 
@@ -462,25 +464,203 @@ def _sembrar_partidas(
     db: Session,
     partidas: list[dict],
     nodos: dict[str, CategoriaPartida],
-) -> int:
-    """Crea partidas oficiales ausentes en una instalación nueva."""
-    existentes = {p.nombre for p in db.query(Partida.nombre).all()}
-    creadas = 0
+) -> list[Partida]:
+    """Crea partidas oficiales ausentes respetando nombres y ``catalogo_uid``."""
+    filas = db.query(Partida.nombre, Partida.catalogo_uid).all()
+    existentes = {nombre for nombre, _ in filas if nombre}
+    uids_existentes = {uid for _, uid in filas if uid}
+    creadas: list[Partida] = []
     for item in partidas:
         nombre = (item.get("nombre") or "").strip()
-        if not nombre or nombre in existentes:
+        uid = (str(item.get("catalogo_uid") or "").strip())[:100]
+        if not nombre or nombre in existentes or (uid and uid in uids_existentes):
             continue
-        db.add(_crear_partida_oficial(item, nodos))
+        nueva = _crear_partida_oficial(item, nodos)
+        db.add(nueva)
         existentes.add(nombre)
-        creadas += 1
+        if uid:
+            uids_existentes.add(uid)
+        creadas.append(nueva)
     return creadas
 
 
-def sembrar_catalogo_propio(db: Session) -> dict:
+def _reaplicar_recursos_personalizados(
+    db: Session,
+    partidas_nuevas: list[Partida],
+    recursos_fuente: list[dict],
+) -> int:
+    """Propaga tarifas propias de ``Recurso`` a partidas recién repuestas.
+
+    No toca presupuestos emitidos ni partidas que ya existían; en el caso
+    habitual (ningún recurso con ``precio_revisado_at``) termina en una sola
+    consulta vacía.
+    """
+    if not partidas_nuevas:
+        return 0
+    try:
+        revisados = (
+            db.query(Recurso)
+            .filter(Recurso.precio_revisado_at.isnot(None))
+            .all()
+        )
+    except Exception:
+        return 0
+    if not revisados:
+        return 0
+
+    from .importer import recalcular_descompuesto_cype
+    from .recursos import clave_recurso, recurso_match
+
+    precios_base = {
+        clave_recurso(
+            r["codigo"], r["descripcion"], r["unidad"], r["categoria"]
+        ): float(r.get("precio") or 0)
+        for r in recursos_fuente
+    }
+    personalizados = [
+        rec
+        for rec in revisados
+        if abs(float(rec.precio or 0) - precios_base.get(rec.clave, float(rec.precio or 0)))
+        > 1e-9
+    ]
+    if not personalizados:
+        return 0
+
+    ajustadas = 0
+    for partida in partidas_nuevas:
+        try:
+            data = json.loads(partida.descomposicion_json or "[]")
+        except Exception:
+            continue
+        filas = data.get("filas") if isinstance(data, dict) else None
+        if not isinstance(filas, list) or not filas:
+            continue
+        cambiada = False
+        for fila in filas:
+            if not isinstance(fila, dict):
+                continue
+            if fila.get("tipo") not in (None, "recurso", "recurso "):
+                continue
+            for rec in personalizados:
+                if recurso_match(
+                    rec,
+                    fila.get("codigo", ""),
+                    fila.get("descripcion", ""),
+                    fila.get("unidad", ""),
+                    fila.get("categoria", ""),
+                ):
+                    nuevo = float(rec.precio or 0)
+                    fila["precio"] = nuevo
+                    fila["precio_unitario"] = nuevo
+                    rend = fila.get("rendimiento")
+                    if rend not in (None, "") and str(fila.get("unidad", "")).strip() != "%":
+                        try:
+                            fila["importe"] = round(
+                                float(str(rend).replace(",", ".")) * nuevo, 4
+                            )
+                        except Exception:
+                            pass
+                    cambiada = True
+                    break
+        if not cambiada:
+            continue
+        try:
+            res = recalcular_descompuesto_cype(filas)
+            costes = res.get("costes", {})
+            c_mat = float(costes.get("materiales", 0))
+            c_mo = float(costes.get("mano_obra", 0))
+            c_comp = float(costes.get("complementarios", 0))
+            c_otr = float(costes.get("otros", 0))
+            partida.coste_materiales = c_mat
+            partida.coste_mano_obra = c_mo
+            partida.coste_complementarios = c_comp
+            partida.coste_otros = c_otr
+            coste_total = c_mat + c_mo + c_comp + c_otr
+            if coste_total > 0:
+                partida.precio_unitario = round(
+                    coste_total * (1.0 + MARGEN_DEFECTO), 2
+                )
+            for idx, imp in res.get("importes", {}).items():
+                if 0 <= idx < len(filas):
+                    filas[idx]["importe"] = imp
+            for idx, precio_comp in res.get("precios_complementarios", {}).items():
+                if 0 <= idx < len(filas):
+                    filas[idx]["precio"] = precio_comp
+                    filas[idx]["precio_unitario"] = precio_comp
+        except Exception:
+            pass
+        data["filas"] = filas
+        partida.descomposicion_json = json.dumps(data, ensure_ascii=False)
+        ajustadas += 1
+    return ajustadas
+
+
+@lru_cache(maxsize=1)
+def total_partidas_fuente() -> int:
+    """Recuento de partidas del catálogo fuente sin escribir en base de datos."""
+    if not disponible():
+        return 0
+    total = 0
+    for ruta in _DESCOMPUESTOS.glob("*.json"):
+        try:
+            datos = json.loads(ruta.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(datos, list):
+            total += len(datos)
+        elif isinstance(datos, dict):
+            partidas = datos.get("partidas")
+            total += len(partidas) if isinstance(partidas, list) else 1
+    return total
+
+
+def preparar_catalogo_bajo_demanda(db: Session) -> dict:
+    """Siembra categorías y recursos y difiere las partidas al primer uso.
+
+    Deja ``configuracion.version_catalogo = CATALOGO_HIBERNADO`` (``-1``): la
+    organización dispone desde el primer segundo de sus ~390 recursos para
+    revisar tarifas y de su presupuesto de ejemplo, sin clonar ~3.000 filas en
+    ``partidas`` hasta que realmente abra el catálogo o el editor.
+    """
+    datos = construir_catalogo()
+    if not datos.get("ok"):
+        log.warning(
+            "Catálogo propio no disponible en %s; no se prepara catálogo.",
+            _BASE_DATOS,
+        )
+        return {"ok": False, "partidas": 0, "recursos": 0, "diferido": False}
+
+    _sembrar_categorias(db, datos["categorias"])
+    n_rec = _sembrar_recursos(db, datos["recursos"])
+    from .configuracion_tolerante import leer_configuracion
+
+    cfg = leer_configuracion(db)
+    if cfg is not None:
+        cfg.version_catalogo = CATALOGO_HIBERNADO
+    db.commit()
+    log.info(
+        "Catálogo propio preparado bajo demanda: %s recursos nuevos "
+        "(%s partidas oficiales diferidas hasta el primer uso).",
+        n_rec,
+        datos["n_partidas"],
+    )
+    return {
+        "ok": True,
+        "partidas": 0,
+        "recursos": n_rec,
+        "diferido": True,
+        "total_partidas": datos["n_partidas"],
+        "total_recursos": datos["n_recursos"],
+    }
+
+
+def sembrar_catalogo_propio(
+    db: Session, *, reaplicar_tarifas: bool = False
+) -> dict:
     """Siembra partidas, recursos y categorías del catálogo propio.
 
-    Idempotente: no duplica por nombre (partidas) ni por clave (recursos).
-    Devuelve contadores {partidas, recursos, ok}.
+    Idempotente: no duplica por nombre ni ``catalogo_uid`` (partidas) ni por
+    clave (recursos). Devuelve contadores {partidas, recursos, ok}.
     """
     datos = construir_catalogo()
     if not datos.get("ok"):
@@ -492,7 +672,10 @@ def sembrar_catalogo_propio(db: Session) -> dict:
 
     nodos = _sembrar_categorias(db, datos["categorias"])
     n_rec = _sembrar_recursos(db, datos["recursos"])
-    n_par = _sembrar_partidas(db, datos["partidas"], nodos)
+    nuevas = _sembrar_partidas(db, datos["partidas"], nodos)
+    n_par = len(nuevas)
+    if reaplicar_tarifas and nuevas:
+        _reaplicar_recursos_personalizados(db, nuevas, datos["recursos"])
     # Después de sembrar: la migración puede ir por detrás del código y esta
     # lectura no debe tumbar el alta del catálogo por una columna nueva.
     from .configuracion_tolerante import leer_configuracion
@@ -880,12 +1063,85 @@ def migrar_catalogo_prueba_a_propio(db: Session) -> dict:
     return resultado
 
 
+def _reactivar_catalogo_hibernado(db: Session, *, propias_previas: int) -> dict | None:
+    """Repone las partidas oficiales ausentes de un catálogo hibernado/diferido."""
+    try:
+        if propias_previas > 0:
+            _normalizar_nombres_patron(db)
+        resultado = sembrar_catalogo_propio(db, reaplicar_tarifas=True)
+        if not resultado.get("ok"):
+            return resultado
+        if propias_previas > 0:
+            # Si había partidas oficiales conservadas (usadas, ocultas o
+            # enlazadas) de una versión previa, alinea su ruta sin tocar su
+            # precio ni duplicar nada.
+            actualizar_taxonomia_catalogo_propio(db)
+        from .configuracion_tolerante import leer_configuracion
+
+        cfg = leer_configuracion(db)
+        if cfg is not None and not cfg.semilla_catalogo_aplicada:
+            cfg.semilla_catalogo_aplicada = True
+            db.commit()
+        db.info["_catalogo_no_hibernado"] = True
+        return resultado
+    except IntegrityError:
+        # Dos peticiones simultáneas despertaron el mismo catálogo a la vez: la
+        # primera ya insertó las filas; devolvemos la sesión limpia.
+        db.rollback()
+        db.info["_catalogo_no_hibernado"] = True
+        return None
+    except Exception:
+        log.exception("No se pudo reactivar el catálogo propio hibernado.")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return None
+
+
+def reactivar_si_hibernado(db: Session) -> dict | None:
+    """Despierta un catálogo hibernado con coste mínimo en el camino caliente.
+
+    A diferencia de ``asegurar_catalogo_propio`` (pensada para cargas de
+    página), en organizaciones ya activas solo lee ``version_catalogo`` una vez
+    por sesión y no consulta ``partidas`` en absoluto.
+    """
+    if db.info.get("_catalogo_no_hibernado"):
+        return None
+    try:
+        fila = db.query(Configuracion.version_catalogo).first()
+        version = int((fila[0] if fila else 0) or 0)
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return None
+    if version != CATALOGO_HIBERNADO:
+        db.info["_catalogo_no_hibernado"] = True
+        return None
+    if not disponible():
+        return None
+    try:
+        propias = _cantidad_partidas_oficiales(db)
+    except Exception:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        propias = 0
+    return _reactivar_catalogo_hibernado(db, propias_previas=propias)
+
+
 def asegurar_catalogo_propio(db: Session) -> dict | None:
     """Aplica de forma perezosa la semilla antigua y la taxonomía v2.
 
     Una organización que ya tiene el catálogo oficial se reclasifica una sola
     vez conservando ids, precios y borrados. Una instalación limpia o con un
     catálogo exclusivamente particular nunca recibe 540 partidas por sorpresa.
+    Si el catálogo estaba hibernado o diferido (``version_catalogo == -1``),
+    repone únicamente las partidas oficiales ausentes conservando cualquier
+    partida propia, editada, usada u oculta y las tarifas propias de recursos.
 
     Rendimiento: el caso normal (catálogo ya migrado) se resuelve con dos
     consultas de metadatos (fila de configuración + recuento). Antes esta
@@ -912,6 +1168,10 @@ def asegurar_catalogo_propio(db: Session) -> dict | None:
         except Exception:
             pass
         return None
+
+    if version == CATALOGO_HIBERNADO:
+        return _reactivar_catalogo_hibernado(db, propias_previas=propias)
+    db.info["_catalogo_no_hibernado"] = True
     # La normalización Alicatado→Enchapado es un arreglo de una sola vez.
     # Con la versión vigente ya aplicada no hay nada que renombrar: las
     # 10 consultas por nombre (que hidrataban Partida completa) se saltan

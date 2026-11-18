@@ -8,6 +8,7 @@ estáticos y las rutas de sistema (salud y favicon).
 """
 import logging
 import os
+import re
 import zipfile
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -255,13 +256,22 @@ _RUTAS_SIN_AUDIENCIA = (
     "/favicon.ico",
     "/healthz",
     "/readyz",
+    "/idioma",
+    "/baja-marketing",
     "/acceso",
     "/registro",
     "/recuperar-acceso",
     "/restablecer-clave",
     "/salir",
-    "/sitemap.xml",
+    "/sitemap",
     "/robots.txt",
+    "/llms.txt",
+    # Enlaces privados con token y utilidades: no son audiencia pública.
+    "/propuestas",
+    "/invitaciones",
+    "/archivos",
+    "/demo",
+    "/bienvenida",
     # Rutas de la app de cliente (tras el login): eso es uso del producto,
     # medida por telemetría, no audiencia de la web pública.
     "/inicio",
@@ -270,13 +280,73 @@ _RUTAS_SIN_AUDIENCIA = (
     "/partidas",
     "/planos",
     "/productos",
+    "/proyectos",
     "/recursos",
     "/plantillas",
     "/recetas",
+    "/reportes",
+    "/buscar",
+    "/configuracion",
+    "/equipo",
     "/cuenta",
     "/pago",
     "/clientes",
     "/facturas",
+)
+
+#: Patrones de User-Agent de rastreadores, previsualizadores y clientes HTTP
+#: automatizados que no deben contarse como visitantes humanos.
+_AGENTES_BOT_AUDIENCIA = (
+    "bot",
+    "spider",
+    "crawler",
+    "crawl",
+    "slurp",
+    "bingpreview",
+    "facebookexternalhit",
+    "meta-externalagent",
+    "whatsapp",
+    "telegram",
+    "discord",
+    "slack",
+    "headless",
+    "lighthouse",
+    "pagespeed",
+    "gtmetrix",
+    "uptime",
+    "pingdom",
+    "statuscake",
+    "python-requests",
+    "python-urllib",
+    "httpx",
+    "aiohttp",
+    "curl/",
+    "wget/",
+    "go-http-client",
+    "java/",
+    "okhttp",
+    "axios/",
+    "node-fetch",
+    "undici",
+    "scrapy",
+    "playwright",
+    "puppeteer",
+    "selenium",
+    "phantomjs",
+    "prerender",
+    "ia_archiver",
+    "mediapartners",
+)
+
+# Combinaciones de User-Agent imposibles en navegadores reales (generadas por
+# librerías tipo fake-useragent en redes de proxies residenciales):
+# - Chrome >= 110 congela build/parche en «.0.0.0» (User-Agent Reduction).
+# - macOS se congela en «Intel Mac OS X 10_15_7» / «10.15» en todos los motores.
+# - Firefox eliminó «WOW64» del User-Agent en Firefox 93.
+_RE_AGENTE_SINTETICO = re.compile(
+    r"chrome/1[1-9]\d\.0\.[1-9]"
+    r"|intel mac os x 1[1-9][._]"
+    r"|wow64;\s*rv:1\d\d"
 )
 
 
@@ -284,27 +354,76 @@ def _es_visita_audiencia(scope) -> bool:
     """¿Esta petición merece contarse como visitante de la web pública?"""
     if scope.get("type") != "http":
         return False
-    if scope.get("method") not in ("GET", "HEAD"):
+    # Solo GET reales: los HEAD son comprobadores, monitores y rastreadores.
+    if scope.get("method") != "GET":
+        return False
+    from .services.audiencia import audiencia_bd_activada
+
+    if not audiencia_bd_activada():
         return False
     path = scope.get("path") or ""
-    if path in _RUTAS_SIN_AUDIENCIA or any(
-        path.startswith(prefijo) for prefijo in _RUTAS_SIN_AUDIENCIA
+    ruta_base = path
+    if ruta_base.startswith("/en/"):
+        ruta_base = ruta_base[3:]
+    elif len(ruta_base) > 7 and ruta_base.startswith("/en-") and ruta_base[6] == "/":
+        ruta_base = ruta_base[6:]
+    if (
+        path.endswith(".xml")
+        or path.endswith(".txt")
+        or any(
+            candidata == prefijo or candidata.startswith(prefijo + "/")
+            for candidata in (path, ruta_base)
+            for prefijo in _RUTAS_SIN_AUDIENCIA
+        )
     ):
         return False
     aceptar = ""
+    agente = ""
+    referente = ""
+    host = ""
+    sec_fetch_mode = ""
+    x_proto = ""
+    proposito = ""
     for nombre, valor in scope.get("headers", []):
-        if nombre.decode("latin-1").lower() == "accept":
+        clave = nombre.decode("latin-1").lower()
+        if clave == "accept":
             aceptar = valor.decode("latin-1").lower()
-            break
+        elif clave == "user-agent":
+            agente = valor.decode("latin-1").strip().lower()
+        elif clave == "referer":
+            referente = valor.decode("latin-1").strip().lower()
+        elif clave == "host":
+            host = valor.decode("latin-1").strip().lower()
+        elif clave == "sec-fetch-mode":
+            sec_fetch_mode = valor.decode("latin-1").strip().lower()
+        elif clave == "x-forwarded-proto":
+            x_proto = valor.decode("latin-1").strip().lower()
+        elif clave in ("purpose", "sec-purpose"):
+            proposito = valor.decode("latin-1").strip().lower()
     if aceptar and "text/html" not in aceptar and "*/*" not in aceptar:
         return False
-    # Los buscadores y bots no son visitantes: su user-agent lo delata.
-    agente = ""
-    for nombre, valor in scope.get("headers", []):
-        if nombre.decode("latin-1").lower() == "user-agent":
-            agente = valor.decode("latin-1").lower()
-            break
-    if "bot" in agente or "spider" in agente or "crawler" in agente:
+    if "prefetch" in proposito or "prerender" in proposito:
+        return False
+    # En HTTPS todos los navegadores modernos envían ``Sec-Fetch-Mode: navigate``
+    # en navegaciones reales; los scrapers HTTP en proxies residenciales la
+    # omiten o envían otros modos (cors/no-cors).
+    if sec_fetch_mode and sec_fetch_mode != "navigate":
+        return False
+    es_https = scope.get("scheme") == "https" or x_proto.startswith("https")
+    if es_https and not sec_fetch_mode:
+        return False
+    # Sin User-Agent, con huella de bot o con versión sintética imposible: ignorar.
+    if (
+        not agente
+        or any(marca in agente for marca in _AGENTES_BOT_AUDIENCIA)
+        or _RE_AGENTE_SINTETICO.search(agente) is not None
+    ):
+        return False
+    # Un navegador real serializa siempre el origen con barra final
+    # (``https://host/``, RFC 9110 / W3C Referrer Policy). Un ``Referer`` igual
+    # a ``https://host`` sin barra es cabecera sintética de scraper (causó
+    # ~292 k filas en 4 días en noviembre de 2026).
+    if host and referente in (f"https://{host}", f"http://{host}"):
         return False
     return True
 
@@ -345,10 +464,22 @@ class AudienciaMiddleware:
 
         request = Request(scope)
         ruta = scope.get("path") or "/"
+        status_code = 0
+
+        async def _send_con_estado(message) -> None:
+            nonlocal status_code
+            if message.get("type") == "http.response.start":
+                status_code = int(message.get("status") or 0)
+            await send(message)
 
         # La respuesta ya se ha enviado cuando call_next devuelve: registrar
         # la visita después no retrasa al visitante.
-        await self.app(scope, receive, send)
+        await self.app(scope, receive, _send_con_estado)
+
+        # Solo páginas servidas con 200: redirecciones (301/307), 404 de
+        # sondeo y errores no son visitas reales y llenaban visitas_pagina.
+        if status_code != 200:
+            return
 
         # Usuarios con sesión válida: eso es uso del producto (telemetría),
         # no audiencia anónima de la web pública.
@@ -366,7 +497,7 @@ class AudienciaMiddleware:
                         ruta=str(ruta)[:300],
                         ip_hash=hash_ip(ip_de_request(request)),
                         usuario_agent=(
-                            str(request.headers.get("user-agent", "") or "")[:300]
+                            str(request.headers.get("user-agent", "") or "")[:160]
                             or None
                         ),
                         referente=(

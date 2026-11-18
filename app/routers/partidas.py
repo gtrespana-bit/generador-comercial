@@ -555,6 +555,9 @@ def filas_subcategoria_catalogo(
     El navegador construye las filas con el DOM API (sin inyectar HTML), de
     acuerdo con la política CSP estricta del proyecto.
     """
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     vista = "ocultas" if vista == "ocultas" else "activas"
     filas = (
         db.query(Partida)
@@ -665,6 +668,9 @@ def buscar_partidas_catalogo_api(
     sueltas esta misma consulta llegaba a 11 s en el catálogo real y su cola
     agotó el pooler de Supabase el 5/11/2026 (``ECHECKOUTTIMEOUT``).
     """
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     consulta = str(q or "").strip()[:120]
     limite = max(1, min(int(limite or 60), 100))
     query = db.query(Partida).filter(
@@ -923,6 +929,9 @@ def exportar_partidas(
 ):
     idioma = _idioma(request)
     """Exporta las partidas visibles; las ocultas son opt-in."""
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     query = db.query(Partida)
     if not incluir_ocultas:
         query = query.filter(Partida.oculta.is_(False))
@@ -1055,6 +1064,9 @@ def previsualizar_ajuste_precios(request: Request, porcentaje: str = "0", db: Se
     pct = _f(porcentaje)
     if pct < -100:
         return _redirect("/partidas", error="El porcentaje no puede ser menor que -100.")
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     partidas = db.query(Partida).filter(Partida.oculta.is_(False)).order_by(Partida.categoria, Partida.nombre).all()
     _moneda, _factor = _contexto_moneda(db)
     total = len(partidas)
@@ -1081,6 +1093,9 @@ def ajustar_precios(porcentaje: str = Form("0"), db: Session = Depends(get_db)):
     pct = _f(porcentaje)
     if pct < -100:
         return _redirect("/partidas", error="El porcentaje no puede ser menor que -100.")
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     partidas = db.query(Partida).all()
     if not partidas:
         return _redirect("/partidas", error="No hay partidas en el catálogo.")

@@ -1749,7 +1749,9 @@ def _etiquetas_catalogo_traducidas(db: Session, textos: list[str]) -> list[str]:
 def _arbol_catalogo_editor(db: Session) -> dict:
     """Esqueleto capítulo → subcapítulo → apartado con recuentos, sin hojas."""
     from sqlalchemy import func as _func
+    from ..services.catalogo_propio import reactivar_si_hibernado
 
+    reactivar_si_hibernado(db)
     filas = (
         db.query(
             Partida.categoria,
@@ -1825,6 +1827,9 @@ def _hojas_catalogo_editor(
     tasa: float | None = None,
 ) -> list[dict]:
     """Hojas de un apartado del árbol, ya convertidas a la moneda del editor."""
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     q = (
         db.query(Partida)
         .filter(Partida.oculta.is_(False))
@@ -1978,6 +1983,9 @@ def _indice_catalogo_para_editor(db: Session, moneda: str | None = None, tasa: f
     `moneda`/`tasa` son la moneda y la tasa del presupuesto en edición; si no
     se indican se usan los defaults de la organización.
     """
+    from ..services.catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     partidas = (
         db.query(Partida)
         .filter(Partida.oculta.is_(False))

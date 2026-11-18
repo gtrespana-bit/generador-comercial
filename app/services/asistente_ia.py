@@ -406,6 +406,9 @@ def buscar_partidas_catalogo(
         Partida.usos,
         Partida.oculta,
     )
+    from .catalogo_propio import reactivar_si_hibernado
+
+    reactivar_si_hibernado(db)
     candidatas = (
         db.query(Partida)
         .filter(Partida.oculta.is_(False))
