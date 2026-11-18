@@ -269,6 +269,14 @@ def _tokens_from_payload(payload: dict[str, Any]) -> AuthTokens:
     )
 
 
+#: Tipos de OTP que GoTrue admite en ``POST /auth/v1/verify``. Es una lista
+#: cerrada a propósito: el parámetro ``type`` viaja tal cual al proveedor y un
+#: valor inventado solo puede servir para tantear el endpoint.
+OTP_TYPES_VALIDOS = frozenset(
+    {"signup", "email", "recovery", "invite", "magiclink", "email_change"}
+)
+
+
 class SupabaseAuthClient:
     """Cliente pequeño para GoTrue sin incorporar el SDK completo al runtime."""
 
@@ -372,6 +380,34 @@ class SupabaseAuthClient:
         if not isinstance(result, dict):
             raise AuthError("Supabase Auth devolvió una respuesta no válida.")
         return result
+
+    def verify_otp(self, token_hash: str, otp_type: str) -> AuthTokens | None:
+        """Canjea el token de un correo de Supabase por una sesión.
+
+        Los enlaces que CotizaT pega en Supabase apuntan a
+        ``/confirmar-email`` del dominio propio (nunca a ``*.supabase.co``):
+        el canje con GoTrue ocurre aquí, en el servidor, así que un escáner
+        de enlaces que abra la URL del correo solo ve una página inerte y no
+        consume el token de un solo uso.
+
+        Devuelve ``None`` cuando el paso no entrega sesión: el primer clic de
+        un cambio de email (``email_change`` doble) confirma la mitad del
+        proceso y GoTrue responde sin ``access_token``. Eso no es un error.
+        """
+        token = str(token_hash or "").strip()
+        tipo = str(otp_type or "").strip().lower()
+        if not token or len(token) > 256:
+            raise InvalidCredentials("El enlace de confirmación no es válido.")
+        if tipo not in OTP_TYPES_VALIDOS:
+            raise InvalidCredentials("El enlace de confirmación no es válido.")
+        payload = self._request_json(
+            "POST",
+            "/auth/v1/verify",
+            {"token_hash": token, "type": tipo},
+        )
+        if not payload.get("access_token") or not payload.get("refresh_token"):
+            return None
+        return _tokens_from_payload(payload)
 
     def sign_in(self, email: str, password: str) -> AuthTokens:
         email = email.strip().lower()

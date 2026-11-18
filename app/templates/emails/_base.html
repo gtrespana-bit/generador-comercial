@@ -6,14 +6,24 @@
   <title>{% block title %}{{ product_name }}{% endblock %}</title>
 </head>
 <body style="margin:0;padding:0;background:#eef3f0;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#17211d;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+{#- Preheader: la primera línea que la bandeja muestra junto al asunto. Va
+    oculta en el cuerpo (los clientes de correo no leen <head>) y opcional: si
+    la plantilla no la define, no se envía nada. Es una de las señales que más
+    pesa en la bandeja de entrada —un preheader vacío o repetido huele a
+    envío masivo— y no cuesta nada cuidarla. -#}
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;opacity:0;">{% block preheader %}{% endblock %}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef3f0;padding:28px 12px;">
   <tr>
     <td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px rgba(10,48,34,.10);">
+      {#- Sin box-shadow ni degradados: Gmail y Outlook descartan la sombra y,
+          con ella, el borde de la tarjeta, y los degradados sucios de
+          linear-gradient son una señal clásica de plantilla masiva. Un borde
+          sólido se ve igual en todos los clientes. -#}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #dce6e1;border-radius:18px;overflow:hidden;">
 
         <!-- Cabecera de marca -->
         <tr>
-          <td style="background:#0b5b38;background-image:linear-gradient(135deg,#0b5b38 0%,#0a6b40 60%,#0f7a4a 100%);padding:26px 36px;">
+          <td style="background:#0b5b38;padding:26px 36px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td>
@@ -40,12 +50,18 @@
 
         <!-- Pie -->
         <tr>
-          <td style="background:#f7faf8;border-top:1px solid #e3ece7;padding:20px 36px;">
-            <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:#8ba096;text-align:center;">
+          <td style="background:#f7faf8;border-top:1px solid #dce6e1;padding:20px 36px;">
+            <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:#566b61;text-align:center;">
               {% block copyright %}© {{ anio }} {{ product_name }} · {% if lang == 'en' %}Estimates{% else %}Presupuestos{% endif %}{% endblock %}
             </p>
-            <p style="margin:0;font-size:11px;line-height:1.6;color:#a9b8b1;text-align:center;">
+            <p style="margin:0 0 8px;font-size:11px;line-height:1.6;color:#62776d;text-align:center;">
               {% block pie %}{% endblock %}
+            </p>
+            {#- El dominio siempre, aunque la plantilla reescriba el pie: un
+                correo transaccional sin la web del remitente es una de las
+                señales que empujan al filtro de spam. -#}
+            <p style="margin:0;font-size:11px;line-height:1.6;color:#62776d;text-align:center;">
+              <a href="https://cotizat.online" style="color:#0b5b38;text-decoration:underline;">cotizat.online</a>
             </p>
           </td>
         </tr>

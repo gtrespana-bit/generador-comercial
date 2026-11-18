@@ -349,13 +349,20 @@ def _origen_app_url(path: str) -> str:
 
 
 def _contexto_base(email: str, organizacion_nombre: str) -> dict:
+    # ``SUPPORT_EMAIL`` (a secas) no existe: el buzón real es
+    # ``COTIZAT_SUPPORT_EMAIL`` y su valor por omisión vive en ``app.branding``.
+    # Leer una variable inexistente hacía que el pie de cada correo de
+    # marketing se quedara clavado en la dirección histórica aunque el
+    # despliegue configurara otra.
+    from ..branding import SUPPORT_EMAIL
+
+    soporte = str(os.environ.get("COTIZAT_SUPPORT_EMAIL", "") or "").strip() or SUPPORT_EMAIL
     return {
         "organizacion_nombre": str(organizacion_nombre or "").strip() or "tu empresa",
         "cta_url": _origen_app_url("/inicio"),
         "cta_label": "Abrir CotizaT",
         "baja_url": url_baja(email),
-        "soporte_email": str(os.environ.get("SUPPORT_EMAIL", "") or "soporte@cotizat.online").strip()
-        or "soporte@cotizat.online",
+        "soporte_email": soporte,
     }
 
 

@@ -1,6 +1,6 @@
 """Rutas públicas: landing, legales, propuestas compartidas y descarga de archivos."""  # E4-001 — router por dominio
 
-from fastapi import APIRouter, Form, HTTPException, Request
+from fastapi import APIRouter, Form, HTTPException, Query, Request
 
 from ..indexnow import CLAVE as _CLAVE_INDEXNOW
 from ..indexnow import RUTA_CLAVE as _RUTA_CLAVE_INDEXNOW
@@ -1214,10 +1214,31 @@ def landing_en_slash(request: Request):
 
 
 # --- Baja de correos de marketing (un clic, sin sesión) --------------------
+#
+# RFC 8058: los clientes de correo ofrecen «Cancelar suscripción» en la propia
+# interfaz y hacen un POST a la URL de ``List-Unsubscribe`` con el cuerpo
+# ``List-Unsubscribe=One-Click``. Esa petición no trae Origin, ni Referer, ni
+# cookies de sesión: la autorización es el token HMAC firmado que viaja en la
+# propia URL. Por eso la ruta está exenta de CSRF (``app/security.py``) y usa
+# una sesión de operador (``get_baja_marketing_db``), porque RLS solo deja
+# escribir ``bajas_marketing`` con esa marca.
+_SIN_CACHE = {
+    # Un enlace con token no puede quedar en ningún caché intermedio, y no
+    # debe indexarse: la respuesta cambia con cada apertura (ya dado de baja o
+    # no) y el token es de un solo uso.
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow",
+}
+
+
 @router.get("/baja-marketing", response_class=HTMLResponse, include_in_schema=False)
-def baja_marketing_get(request: Request, token: str = "", db: Session = Depends(get_db)):
-    """Página de confirmación de baja (GET) — muestra el formulario."""
-    from ..services.marketing import verificar_token_baja
+def baja_marketing_get(
+    request: Request,
+    token: str = "",
+    db: Session = Depends(get_baja_marketing_db),
+):
+    """Muestra la página de confirmación de baja (GET, sin efectos)."""
+    from ..services.marketing import es_baja, verificar_token_baja
 
     email = verificar_token_baja(token) if token else None
     ctx = {
@@ -1225,51 +1246,78 @@ def baja_marketing_get(request: Request, token: str = "", db: Session = Depends(
         "email": email or "",
         "token": str(token or "").strip(),
         "ya_baja": False,
-        "error": "" if email else ("Enlace no válido." if token else ""),
+        "error": "Enlace de baja no válido o caducado." if token and not email else "",
     }
     if email:
         try:
-            from ..services.marketing import es_baja
-
             ctx["ya_baja"] = bool(es_baja(db, email))
         except Exception:
-            pass
-    try:
-        return templates.TemplateResponse(request, "publico/baja_marketing.html", ctx)
-    except Exception:
-        # Fallback mínimo si falta la plantilla
-        if email and ctx["ya_baja"]:
-            return HTMLResponse(f"<h1>Ya no recibes correos de marketing en {email}.</h1><p>Puedes cerrar esta pestaña.</p>")
-        if email:
-            return HTMLResponse(f'<h1>¿Dejar de recibir consejos y novedades en {email}?</h1><form method="post" action="/baja-marketing"><input type="hidden" name="token" value="{token}"><button type="submit">Confirmar baja</button></form>')
-        return HTMLResponse("<h1>Enlace de baja no válido</h1>", status_code=400)
+            # Un fallo leyendo el historial no impide ofrecer la baja: el POST
+            # es idempotente y volverá a comprobarlo.
+            log.warning("No se pudo comprobar la baja previa de %s.", email)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "publico/baja_marketing.html",
+        ctx,
+        status_code=400 if ctx["error"] else 200,
+        headers=_SIN_CACHE,
+    )
 
 
 @router.post("/baja-marketing", include_in_schema=False)
-def baja_marketing_post(request: Request, token: str = Form(""), db: Session = Depends(get_db)):
-    """Confirma la baja (POST) y muestra el resultado."""
+def baja_marketing_post(
+    request: Request,
+    token: str = Form(""),
+    token_query: str = Query("", alias="token"),
+    list_unsubscribe: str = Form("", alias="List-Unsubscribe"),
+    db: Session = Depends(get_baja_marketing_db),
+):
+    """Confirma la baja (POST): enlace del pie de correo o «One-Click» RFC 8058.
+
+    El token llega por el formulario del enlace (``token``) o por la query
+    (``?token=…``), que es como viaja en la cabecera ``List-Unsubscribe``. El
+    cuerpo puede ser ``form-urlencoded``, ``multipart/form-data`` o estar
+    vacío: en los tres casos el token de la query basta.
+    """
     from ..services.marketing import registrar_baja, verificar_token_baja
 
-    email = verificar_token_baja(token) if token else None
+    candidato = str(token or "").strip() or str(token_query or "").strip()
+    email = verificar_token_baja(candidato) if candidato else None
+    # «One-Click» es el valor que exige la RFC 8058 y viaja en el CUERPO
+    # (``List-Unsubscribe=One-Click``). Se acepta también como cabecera porque
+    # hay proveedores que lo mandan así y algún cliente hace el POST sin
+    # cuerpo: en los dos casos la baja es igual de válida. El enlace del pie de
+    # correo deja el campo vacío y se registra como «enlace».
+    one_click = str(list_unsubscribe or "").strip() or str(
+        request.headers.get("List-Unsubscribe") or ""
+    ).strip()
+    origen = "one-click" if one_click.lower() == "one-click" else "enlace"
     ok = False
     error = ""
     if not email:
-        error = "Enlace no válido o caducado."
+        error = "Enlace de baja no válido o caducado."
     else:
         try:
-            registrar_baja(db, email, origen="enlace")
+            registrar_baja(db, email, origen=origen)
             db.commit()
             ok = True
         except Exception:
             db.rollback()
+            log.warning("No se pudo registrar la baja de marketing de %s.", email)
             error = "No se pudo guardar la baja. Inténtalo de nuevo."
-    ctx = {"request": request, "email": email or "", "token": token, "ok": ok, "error": error}
-    try:
-        return templates.TemplateResponse(request, "publico/baja_marketing_confirmada.html", ctx)
-    except Exception:
-        if ok:
-            return HTMLResponse(f"<h1>Baja confirmada</h1><p>Ya no recibirás correos de marketing en {email}. Los avisos de vencimiento y recibos seguirán llegando.</p>")
-        return HTMLResponse(f"<h1>Error</h1><p>{error}</p>", status_code=400)
+    return TEMPLATES.TemplateResponse(
+        request,
+        "publico/baja_marketing_confirmada.html",
+        {
+            "request": request,
+            "email": email or "",
+            "token": candidato,
+            "ok": ok,
+            "error": error,
+        },
+        status_code=400 if error else 200,
+        headers=_SIN_CACHE,
+    )
 
 
 # --- Conmutador de idioma -------------------------------------------------

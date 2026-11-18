@@ -259,6 +259,14 @@ def test_toda_ruta_comercial_exige_sesion_salvo_fronteras_publicas_o_locales():
         ("POST", "/recuperar-acceso"),
         ("GET", "/restablecer-clave"),
         ("POST", "/restablecer-clave"),
+        # Enlace de confirmación de los correos de Supabase, servido desde el
+        # dominio propio: lleva un token de un solo uso, no una sesión.
+        ("GET", "/confirmar-email"),
+        ("POST", "/confirmar-email"),
+        # Baja de marketing: token HMAC firmado, sin sesión ni Origin (el POST
+        # «One-Click» de RFC 8058 lo envía el cliente de correo).
+        ("GET", "/baja-marketing"),
+        ("POST", "/baja-marketing"),
         ("GET", "/invitaciones/{token}"),
         ("GET", "/invitaciones/{token}/aceptar"),
         ("GET", "/propuestas/{token}"),

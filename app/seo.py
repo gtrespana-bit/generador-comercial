@@ -2947,6 +2947,7 @@ def robots_txt(request: Request | None = None) -> str:
         "Disallow: /demo",
         "Disallow: /idioma",
         "Disallow: /baja-marketing",
+        "Disallow: /confirmar-email",
         "",
         # Una sola referencia: el índice contiene ya el sitemap principal y
         # los hijos de precios. Anunciar también /sitemap.xml presentaba el

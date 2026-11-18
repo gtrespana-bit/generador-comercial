@@ -1,17 +1,45 @@
-{% extends "base.html" %}
-{% block title %}Baja confirmada{% endblock %}
-{% block content %}
-<div class="page-head"><h1>Baja de marketing</h1></div>
-<div class="card">
-  {% if ok %}
-    <div class="alert alert-success">Baja confirmada</div>
-    <p>Ya no recibirás correos de marketing en <strong>{{ email }}</strong>.</p>
-    <p class="muted">Puedes cerrar esta pestaña. Si cambias de opinión, responde a cualquier correo anterior nuestro y te reactivamos.</p>
-    <p><a href="/" class="btn">Volver al inicio</a></p>
-  {% else %}
-    <div class="alert alert-error">No se pudo completar</div>
-    <p>{{ error or "Enlace no válido." }}</p>
-    <p><a href="/" class="btn">Volver al inicio</a></p>
-  {% endif %}
+<!doctype html>{# Plantilla pública standalone ES/EN (una sola, sin gemela *_en): los
+   textos salen del catálogo app/locales vía t(). Es la respuesta al POST de
+   baja —también al «One-Click» de RFC 8058— y no extiende base.html: nadie
+   llega aquí con sesión. #}
+<html lang="{{ _idioma }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{ ('mkt.baja.confirmada' if ok else 'mkt.baja.titulo') | t(_idioma) }} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="auth-stage">
+  <main class="auth-card">
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ product_name }}
+    </a>
+
+    {% if ok %}
+      <h1>{{ 'mkt.baja.confirmada' | t(_idioma) }}</h1>
+      <div class="alert success">{{ 'mkt.baja.confirmada_detalle' | t(_idioma, email=email) }}</div>
+      <p class="text-soft">{{ 'mkt.baja.confirmada_nota' | t(_idioma) }}</p>
+      <a class="btn btn-block mt-2" href="/">{{ 'mkt.baja.volver' | t(_idioma) }}</a>
+    {% else %}
+      <h1>{{ 'mkt.baja.encabezado' | t(_idioma) }}</h1>
+      <div class="alert error">{{ (error or 'mkt.baja.error' | t(_idioma)) | mensaje(_idioma) }}</div>
+      <p class="small text-soft">{{ 'mkt.baja.error_ayuda' | t(_idioma, email=email_soporte) }}</p>
+      <a class="btn btn-block mt-2" href="/">{{ 'mkt.baja.volver' | t(_idioma) }}</a>
+    {% endif %}
+
+    <p class="auth-foot">{{ 'mkt.baja.soporte' | t(_idioma, email=email_soporte) }}</p>
+  </main>
 </div>
-{% endblock %}
+</body>
+</html>
