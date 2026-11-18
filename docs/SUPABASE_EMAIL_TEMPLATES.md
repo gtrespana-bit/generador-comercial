@@ -68,6 +68,45 @@ dirección y el segundo cierra el cambio. CotizaT responde al primer clic con un
 mensaje en `/acceso` («revisa tu bandeja») y, al segundo, con la sesión abierta
 en `/cuenta`.
 
+### No confundas «Change email» con la notificación de seguridad
+
+El panel tiene **dos** entradas que se llaman casi igual y solo **una** lleva el
+enlace. Es el error fácil de cometer al pegar, y el más caro: si el HTML cae en
+la equivocada, el enlace bueno no se llega a enviar nunca.
+
+| Entrada del panel de Supabase | Qué envía | Qué pegar |
+| --- | --- | --- |
+| **Change email address** (a veces «Confirm change of email») | El correo **con enlace** para confirmar la dirección nueva (`type=email_change`). Trae `{{ .TokenHash }}`. | `docs/supabase_templates/email_change.html` |
+| **Email address changed** (notificación de seguridad) | Un aviso de que la dirección **ya cambió**. No trae token ni enlace: solo admite `{{ .Email }}`. | Nada, o un texto corto en español. **Nunca** el HTML de `email_change.html`. |
+
+Si `email_change.html` acaba en la notificación, pasan dos cosas a la vez: el
+aviso sale con un `{{ .TokenHash }}` que Supabase no rellena (enlace roto) y la
+plantilla real de **Change email** sigue siendo la inglesa por defecto, con
+`{{ .ConfirmationURL }}` → vuelve el enlace a `supabase.co` y con él el problema
+de los escáneres que se come el token.
+
+Por lo mismo, la notificación **no** debe llevar el asunto «Confirma tu nuevo
+email»: la dirección ya está confirmada cuando se envía. Lo que toca ahí es un
+asunto de aviso («Tu email en CotizaT ha cambiado») y un párrafo del tipo «si no
+has sido tú, escríbenos a soporte@cotizat.online».
+
+### Comprobación rápida después de pegar
+
+Con el buscador del navegador (Ctrl/⌘+F) sobre el campo **Body** de cada
+plantilla, sin salir del panel:
+
+1. **Confirm signup** → contiene `token_hash={{ .TokenHash }}` y `type=signup`.
+2. **Reset password** → contiene `token_hash={{ .TokenHash }}` y `type=recovery`.
+3. **Change email address** → contiene `token_hash={{ .TokenHash }}` y
+   `type=email_change`.
+4. **Ninguna** plantilla → `ConfirmationURL`, `supabase.co`, `linear-gradient`
+   ni `box-shadow`.
+5. **Password changed** → `{{ .Email }}` y `mailto:soporte@cotizat.online`, sin
+   enlaces.
+
+Si alguno falla, es que el HTML no está en la entrada que toca o el guardado no
+llegó a aplicarse.
+
 ---
 
 ## Cómo pegarlas (paso a paso)
