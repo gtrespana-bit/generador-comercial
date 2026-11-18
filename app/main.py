@@ -258,6 +258,9 @@ _RUTAS_SIN_AUDIENCIA = (
     "/readyz",
     "/idioma",
     "/baja-marketing",
+    # Canje del token de un correo de Supabase desde el dominio propio: un
+    # enlace de un solo uso no es audiencia pública.
+    "/confirmar-email",
     "/acceso",
     "/registro",
     "/recuperar-acceso",

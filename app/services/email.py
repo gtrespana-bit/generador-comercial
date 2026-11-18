@@ -27,12 +27,13 @@ import logging
 import os
 from pathlib import Path
 import re
+import uuid
 from urllib.error import HTTPError, URLError
 from urllib.request import Request as UrlRequest, urlopen
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from ..branding import PRODUCT_NAME
+from ..branding import PRODUCT_NAME, SUPPORT_EMAIL
 from ..database import BASE_DIR
 
 logger = logging.getLogger("cotizat.email")
@@ -128,6 +129,7 @@ def _post_resend(
     text: str,
     reply_to: str = "",
     attachments: tuple[EmailAttachment, ...] = (),
+    headers: dict[str, str] | None = None,
 ) -> str:
     """Envía el correo y devuelve el id confirmado por Resend.
 
@@ -135,6 +137,14 @@ def _post_resend(
     la API REST. Se limita el total antes de construir el cuerpo para no agotar
     memoria en una función serverless ni convertir este método en un envío de
     archivos arbitrarios.
+
+    ``headers`` añade cabeceras MIME propias (``List-Unsubscribe`` y
+    ``List-Unsubscribe-Post`` para la baja en un clic de RFC 8058). Se rechaza
+    cualquier nombre o valor con salto de línea —la vía clásica de inyección de
+    cabeceras— y siempre viaja ``X-Entity-Ref-ID``: Resend lo usa para que dos
+    correos con el mismo asunto y destinatario no se agrupen en la misma
+    conversación, y da a los filtros antispam del receptor una referencia única
+    por envío que no depende del cuerpo.
     """
     if not _direccion_valida(to) or "<" in to:
         raise EmailValidationError("La dirección de destino no es válida.")
@@ -147,12 +157,23 @@ def _post_resend(
     if sum(len(adjunto.content) for adjunto in attachments) > 8 * 1024 * 1024:
         raise EmailValidationError("Los archivos adjuntos superan 8 MB.")
 
+    cabeceras: dict[str, str] = {"X-Entity-Ref-ID": uuid.uuid4().hex}
+    for clave, valor in (headers or {}).items():
+        nombre = str(clave or "").strip()
+        contenido = str(valor or "").strip()
+        if not nombre or not contenido:
+            continue
+        if "\r" in nombre or "\n" in nombre or "\r" in contenido or "\n" in contenido:
+            raise EmailValidationError("Las cabeceras del correo no son válidas.")
+        cabeceras[nombre] = contenido
+
     payload = {
         "from": settings.from_address,
         "to": [to],
         "subject": subject.strip(),
         "html": html,
         "text": text,
+        "headers": cabeceras,
     }
     if reply_to:
         payload["reply_to"] = reply_to
@@ -244,10 +265,24 @@ def enviar_invitacion_por_email(
         "anio": datetime.utcnow().year,
     }
     asunto = f"{invitador} te invitó a {organizacion_nombre} · {PRODUCT_NAME}"
+    # Responder a la invitación debe llegar a una persona: al invitador si su
+    # dirección es válida, y si no al buzón de soporte. Un correo sin
+    # ``Reply-To`` acaba en ``no-responder@`` y el invitado se queda sin
+    # forma de contestar.
+    responder_a = (
+        invitador_email.strip().lower()
+        if invitador_email and email_destino_valido(invitador_email)
+        else _soporte_email()
+    )
     html, texto = _render_correo("emails/invitacion", contexto, lang)
     try:
         envio_id = _post_resend(
-            settings, to=email, subject=asunto, html=html, text=texto
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            reply_to=responder_a,
         )
     except EmailSendError as exc:
         logger.warning("No se pudo enviar la invitación a %s (%s).", email, exc)
@@ -304,6 +339,9 @@ def enviar_presupuesto_por_email(
         "presupuesto_titulo": str(presupuesto_titulo or "").strip(),
         "total_texto": str(total_texto or "").strip(),
         "mensaje": mensaje,
+        # La plantilla solo promete respuesta directa a la empresa cuando
+        # esa dirección existe; si no, el Reply-To va a soporte sin prometer
+        # nada que no podamos cumplir.
         "permite_responder": bool(responder_a),
         "anio": datetime.utcnow().year,
     }
@@ -317,7 +355,9 @@ def enviar_presupuesto_por_email(
             subject=asunto,
             html=html,
             text=texto,
-            reply_to=responder_a,
+            # Sin dirección de respuesta del usuario se responde a soporte, no
+            # a un buzón sin dueño: el cliente siempre tiene a quién contestar.
+            reply_to=responder_a or _soporte_email(),
             attachments=(EmailAttachment(filename=nombre_pdf, content=pdf),),
         )
     except EmailSendError as exc:
@@ -381,7 +421,7 @@ def enviar_respuesta_propuesta_por_email(
             subject=asunto,
             html=html,
             text=texto,
-            reply_to=contexto["respondido_por_email"],
+            reply_to=contexto["respondido_por_email"] or _soporte_email(),
         )
     except EmailSendError as exc:
         logger.warning(
@@ -430,7 +470,16 @@ def enviar_aviso_licencia(
     )
     html, texto = _render_correo("emails/aviso_licencia", contexto, lang)
     try:
-        envio_id = _post_resend(settings, to=email, subject=asunto, html=html, text=texto)
+        envio_id = _post_resend(
+            settings,
+            to=email,
+            subject=asunto,
+            html=html,
+            text=texto,
+            # Responder al aviso llega a soporte: la renovación se acuerda
+            # por correo con una persona, no con un buzón sin dueño.
+            reply_to=_soporte_email(),
+        )
     except EmailSendError as exc:
         logger.warning(
             "No se pudo enviar el aviso de vencimiento a %s (%s).", email, exc
@@ -603,6 +652,7 @@ def enviar_activacion_plan_por_email(
             html=html,
             text=texto,
             attachments=adjuntos,
+            reply_to=_soporte_email(),
         )
     except EmailSendError as exc:
         logger.warning(
@@ -1169,9 +1219,30 @@ def _enviar_marketing(
     contexto.setdefault("anio", datetime.utcnow().year)
     contexto.setdefault("soporte_email", _soporte_email())
     html, texto = _render_correo(f"emails/marketing_{plantilla}", contexto, idioma)
+    # RFC 8058: el cliente de correo puede dar de baja con un clic sin abrir el
+    # enlace. ``List-Unsubscribe-Post`` es lo que habilita ese botón nativo en
+    # Gmail y Apple Mail; sin él, el destinatario solo ve «marcar como spam»,
+    # que es exactamente lo que hay que evitar. El ``mailto:`` de respaldo
+    # sirve a los clientes que no soportan la versión HTTP.
+    soporte = _soporte_email()
+    baja_url = str(contexto.get("baja_url") or "").strip()
+    cabeceras: dict[str, str] = {}
+    if baja_url:
+        cabeceras = {
+            "List-Unsubscribe": (
+                f"<{baja_url}>, <mailto:{soporte}?subject=Baja%20de%20marketing>"
+            ),
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
     # ``reply_to`` en soporte: responder al correo llega a un humano.
     envio_id = _post_resend(
-        settings, to=email, subject=asunto[:200], html=html, text=texto, reply_to=_soporte_email()
+        settings,
+        to=email,
+        subject=asunto[:200],
+        html=html,
+        text=texto,
+        reply_to=soporte,
+        headers=cabeceras,
     )
     logger.info("Marketing %s enviado a %s (id %s).", plantilla, email, envio_id)
     return envio_id
@@ -1182,9 +1253,9 @@ def enviar_bienvenida_por_email(*, email: str, contexto: dict, idioma: str = "es
     org = str(contexto.get("organizacion_nombre") or "").strip() or "tu empresa"
     en = str(idioma or "es").strip().lower() == "en"
     asunto = (
-        f"Welcome to {contexto.get('product_name', PRODUCT_NAME)} — your 7-day trial is ready"
+        f"{contexto.get('product_name', PRODUCT_NAME)}: your 7-day trial is ready"
         if en
-        else f"Bienvenido a {contexto.get('product_name', PRODUCT_NAME)} — tu prueba de 7 días ya está lista"
+        else f"{contexto.get('product_name', PRODUCT_NAME)}: tu prueba de 7 días ya está lista"
     )
     # CTA y copy de bienvenida vienen en el contexto del servicio de marketing.
     return _enviar_marketing(email=email, asunto=asunto, plantilla="bienvenida", contexto=contexto, idioma=idioma)
@@ -1193,9 +1264,9 @@ def enviar_bienvenida_por_email(*, email: str, contexto: dict, idioma: str = "es
 def enviar_marketing_consejo_tarifas(*, email: str, contexto: dict, idioma: str = "es") -> str:
     en = str(idioma or "es").strip().lower() == "en"
     asunto = (
-        "Your margins start here — review your rates in 2 minutes"
+        "Review your rates in 2 minutes"
         if en
-        else "Tus márgenes empiezan aquí — revisa tus tarifas en 2 minutos"
+        else "Revisa tus tarifas en 2 minutos"
     )
     return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_tarifas", contexto=contexto, idioma=idioma)
 
@@ -1213,9 +1284,9 @@ def enviar_marketing_consejo_presupuesto(*, email: str, contexto: dict, idioma: 
 def enviar_marketing_consejo_pdf(*, email: str, contexto: dict, idioma: str = "es") -> str:
     en = str(idioma or "es").strip().lower() == "en"
     asunto = (
-        "The PDF your client will sign — download & send it"
+        "The PDF your client will sign"
         if en
-        else "El PDF que tu cliente va a firmar — descárgalo y envíalo"
+        else "El PDF que tu cliente va a firmar"
     )
     return _enviar_marketing(email=email, asunto=asunto, plantilla="consejo_pdf", contexto=contexto, idioma=idioma)
 
@@ -1224,9 +1295,9 @@ def enviar_marketing_cierre_prueba(*, email: str, contexto: dict, idioma: str = 
     en = str(idioma or "es").strip().lower() == "en"
     dias = int(contexto.get("dias_restantes") or 1)
     asunto = (
-        f"Your trial ends in {dias} day{'s' if dias != 1 else ''} — keep your estimates"
+        f"Your trial ends in {dias} day{'s' if dias != 1 else ''}"
         if en
-        else f"Tu prueba vence en {dias} día{'s' if dias != 1 else ''} — conserva tus presupuestos"
+        else f"Tu prueba vence en {dias} día{'s' if dias != 1 else ''}"
     )
     return _enviar_marketing(email=email, asunto=asunto, plantilla="cierre_prueba", contexto=contexto, idioma=idioma)
 
@@ -1239,7 +1310,7 @@ def enviar_marketing_winback_7(*, email: str, contexto: dict, idioma: str = "es"
 
 def enviar_marketing_winback_30(*, email: str, contexto: dict, idioma: str = "es") -> str:
     en = str(idioma or "es").strip().lower() == "en"
-    asunto = "What's new in CotizaT — and why come back now" if en else "Novedades de CotizaT — por qué volver ahora"
+    asunto = "What's new in CotizaT" if en else "Novedades de CotizaT"
     return _enviar_marketing(email=email, asunto=asunto, plantilla="winback_30", contexto=contexto, idioma=idioma)
 
 
@@ -1253,7 +1324,7 @@ def enviar_marketing_novedades(*, email: str, contexto: dict, idioma: str = "es"
 def enviar_marketing_oferta(*, email: str, contexto: dict, idioma: str = "es") -> str:
     camp = str(contexto.get("titulo_campana") or "").strip()
     en = str(idioma or "es").strip().lower() == "en"
-    asunto = camp[:200] if camp else ("A special offer for you" if en else "Una oferta especial para ti")
+    asunto = camp[:200] if camp else ("A hand with your next estimate" if en else "Una mano con tu próximo presupuesto")
     return _enviar_marketing(email=email, asunto=asunto, plantilla="oferta", contexto=contexto, idioma=idioma)
 
 
@@ -1265,9 +1336,12 @@ def enviar_marketing_consejo_obra(*, email: str, contexto: dict, idioma: str = "
 
 
 def _soporte_email() -> str:
-    from ..branding import SUPPORT_EMAIL
+    """Buzón de respuesta por omisión para los correos al cliente.
 
-    return SUPPORT_EMAIL
+    Se lee en cada llamada, no al importar: cambiar ``COTIZAT_SUPPORT_EMAIL``
+    en el despliegue debe surtir efecto sin reiniciar el proceso.
+    """
+    return _env("COTIZAT_SUPPORT_EMAIL") or SUPPORT_EMAIL
 
 
 def estado_configuracion_email() -> tuple[str, str | None]:

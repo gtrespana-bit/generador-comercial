@@ -112,7 +112,9 @@ def recuperar_acceso_form(request: Request):
 async def solicitar_recuperacion(request: Request):
     form = await request.form()
     email = str(form.get("email") or "").strip()
-    mensaje = "Si la cuenta existe, Supabase enviará un enlace para restablecer la contraseña."
+    # «te enviaremos», no «Supabase enviará»: el proveedor es nuestro detalle
+    # interno y mencionarlo en la interfaz solo confunde a quien no lo conoce.
+    mensaje = "Si la cuenta existe, te enviaremos un enlace para restablecer la contraseña."
     try:
         settings = SupabaseAuthSettings.from_environment()
         redirect_to = password_reset_redirect_url()
@@ -172,6 +174,210 @@ async def restablecer_clave(request: Request):
         status_code=303,
     )
     clear_auth_cookies(response, settings.cookie_secure, request)
+    return response
+
+
+# --- Confirmación de email en el dominio propio ----------------------------
+#
+# Los correos de Supabase Auth llevaban al usuario a ``*.supabase.co``. Eso
+# rompía dos cosas: el enlace no mostraba la marca, y cualquier escáner de
+# enlaces (Microsoft SafeLinks en Outlook, Google en Gmail) lo abre antes que
+# la persona —consumiendo el token de un solo uso—, así que al pulsar de
+# verdad el enlace ya estaba gastado. Ahora la plantilla del correo apunta a
+# ``https://cotizat.online/confirmar-email`` y el token solo se canjea en el
+# POST: el GET pinta un botón inerte y no habla con GoTrue.
+_VARIANTES_CONFIRMACION = {
+    "recovery": "recovery",
+    "email_change": "cambio",
+    "magiclink": "acceso",
+}
+
+_SIN_CACHE_CONFIRMACION = {
+    # Un enlace con token no puede quedar en ningún caché intermedio ni en un
+    # índice de búsqueda: cambia con cada apertura y es de un solo uso.
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow",
+}
+
+
+def _variante_confirmacion(otp_type: object) -> str:
+    """Qué texto y qué botón muestra la plantilla para este tipo de OTP."""
+    return _VARIANTES_CONFIRMACION.get(
+        str(otp_type or "").strip().lower(), "alta"
+    )
+
+
+def _token_confirmacion(*fuentes) -> tuple[str, str, bool]:
+    """Extrae y valida ``token_hash`` y ``type`` de varias fuentes.
+
+    Devuelve ``(token, tipo, válido)``. Se acepta ``token_hash`` (formato
+    actual de las plantillas de Supabase) y ``token`` (el de los enlaces
+    antiguos ``{{ .ConfirmationURL }}``, que llegan con ``?token=…&type=…``):
+    así un correo enviado antes del cambio sigue aterrizando en una página de
+    la marca en vez de en un 404. El tipo por omisión es ``signup``, que es el
+    de la plantilla de alta.
+    """
+    token = ""
+    tipo = ""
+    for fuente in fuentes:
+        if not fuente:
+            continue
+        token = token or str(fuente.get("token_hash") or "").strip()
+        token = token or str(fuente.get("token") or "").strip()
+        tipo = tipo or str(fuente.get("type") or fuente.get("otp_type") or "").strip()
+    tipo = (tipo or "signup").strip().lower()
+    # Mismo criterio que ``SupabaseAuthClient.verify_otp``: se corta antes de
+    # gastar una petición en un valor imposible.
+    valido = 1 <= len(token) <= 256 and tipo in OTP_TYPES_VALIDOS
+    return token, tipo, valido
+
+
+def _destino_confirmacion(valor: object, defecto: str) -> str:
+    """Destino local tras confirmar; acepta el ``redirect_to`` de antes.
+
+    Los enlaces antiguos firmaban ``redirect_to`` como URL absoluta del propio
+    dominio. Se reduce a su ruta y se valida con :func:`_next_seguro`, así que
+    un valor manipulado nunca puede convertirse en un redirect abierto.
+    """
+    texto = str(valor or "").strip()
+    if texto.startswith(("http://", "https://")):
+        from urllib.parse import urlsplit
+
+        try:
+            partes = urlsplit(texto)
+        except ValueError:
+            return defecto
+        texto = (partes.path or "") + (f"?{partes.query}" if partes.query else "")
+    return _next_seguro(texto, defecto)
+
+
+def _contexto_confirmacion(token: str, tipo: str, destino: str, error: str = "") -> dict:
+    return {
+        "otp_type": tipo,
+        "variante": _variante_confirmacion(tipo),
+        "token_hash": token,
+        "next": destino,
+        "error": error,
+    }
+
+
+def _pagina_confirmacion(request: Request, contexto: dict, status_code: int = 200):
+    return TEMPLATES.TemplateResponse(
+        request,
+        "auth/confirm_email.html",
+        contexto,
+        status_code=status_code,
+        headers=_SIN_CACHE_CONFIRMACION,
+    )
+
+
+@router.get("/confirmar-email", response_class=HTMLResponse)
+def confirmar_email_form(request: Request):
+    """Página del enlace de confirmación: NO consume el token.
+
+    Cualquiera que abra la URL (una persona o el escáner de enlaces del correo)
+    ve el mismo HTML sin efectos: el canje ocurre solo al enviar el formulario.
+    """
+    token, tipo, valido = _token_confirmacion(request.query_params)
+    defecto = "/organizaciones/nueva" if tipo == "signup" else "/inicio"
+    destino = _destino_confirmacion(
+        request.query_params.get("next") or request.query_params.get("redirect_to"),
+        defecto,
+    )
+    error = "" if valido else mensaje_request(
+        request, "El enlace de confirmación no es válido o ha caducado."
+    )
+    return _pagina_confirmacion(
+        request,
+        # En la página de error no se repinta el token recibido: si alguien
+        # pega basura en la URL, la respuesta no la devuelve.
+        _contexto_confirmacion(token if valido else "", tipo, destino, error),
+        status_code=200 if valido else 400,
+    )
+
+
+@router.post("/confirmar-email", response_class=HTMLResponse)
+async def confirmar_email(request: Request):
+    """Canjea el token del correo con GoTrue (POST: solo lo pulsa una persona)."""
+    form = await request.form()
+    token, tipo, valido = _token_confirmacion(form, request.query_params)
+    defecto = "/organizaciones/nueva" if tipo == "signup" else "/inicio"
+    destino = _destino_confirmacion(
+        form.get("next")
+        or request.query_params.get("next")
+        or request.query_params.get("redirect_to"),
+        defecto,
+    )
+    contexto = _contexto_confirmacion(token if valido else "", tipo, destino)
+    if not valido:
+        contexto["error"] = mensaje_request(
+            request, "El enlace de confirmación no es válido o ha caducado."
+        )
+        return _pagina_confirmacion(request, contexto, status_code=400)
+
+    try:
+        settings = SupabaseAuthSettings.from_environment()
+        tokens = await run_in_threadpool(
+            common.SupabaseAuthClient(settings).verify_otp, token, tipo
+        )
+    except AuthError:
+        # El motivo real (``otp_expired``, token ya usado…) lo registra
+        # ``_request_json`` en el log del servidor. La página no lo repite: al
+        # usuario solo le sirve saber que el enlace ya no vale y qué hacer.
+        contexto["error"] = mensaje_request(
+            request, "El enlace de confirmación no es válido o ha caducado."
+        )
+        return _pagina_confirmacion(request, contexto, status_code=400)
+
+    if tipo == "recovery":
+        if tokens is None:
+            contexto["error"] = mensaje_request(
+                request, "El enlace de confirmación no es válido o ha caducado."
+            )
+            return _pagina_confirmacion(request, contexto, status_code=400)
+        # La contraseña se cambia en /restablecer-clave con el access token en
+        # un campo oculto: el token no viaja en la URL ni queda en el historial.
+        return TEMPLATES.TemplateResponse(
+            request,
+            "auth/reset_password.html",
+            {"error": "", "recovery_token": tokens.access_token},
+            headers=_SIN_CACHE_CONFIRMACION,
+        )
+
+    if tipo == "email_change":
+        if tokens is None:
+            # Primer clic del cambio de email: GoTrue confirma la mitad del
+            # proceso y pide abrir el segundo correo para cerrarlo.
+            return _redirect(
+                "/acceso",
+                msg=(
+                    "Revisa tu bandeja de entrada: hemos enviado un correo al "
+                    "email nuevo para terminar el cambio."
+                ),
+            )
+        response = RedirectResponse(
+            "/cuenta?msg=" + quote("Email de la cuenta actualizado."), status_code=303
+        )
+        set_auth_cookies(response, tokens, settings.cookie_secure)
+        return response
+
+    # signup / email / invite / magiclink: el enlace abre sesión.
+    if tokens is None:
+        return _redirect(
+            "/acceso",
+            msg=(
+                "No hemos podido abrir tu sesión con este enlace. Inicia sesión "
+                "con tu contraseña o pide uno nuevo desde «Olvidé mi contraseña»."
+            ),
+        )
+    response = RedirectResponse(destino, status_code=303)
+    set_auth_cookies(response, tokens, settings.cookie_secure)
+    encolar_evento_ga(response, "sign_up" if tipo == "signup" else "login")
+    auditoria.anotar_sesion(
+        "sesion.login",
+        email=getattr(getattr(tokens, "identity", None), "email", "") or "",
+        request=request,
+    )
     return response
 
 
@@ -975,7 +1181,15 @@ async def crear_organizacion_web(
     try:
         from ..services import marketing as _mkt
 
-        idioma_bienvenida = str(request.cookies.get("cotizat_idioma", "") or "").strip().lower()
+        # El idioma sale del middleware (``request.state.lang``, que resuelve
+        # el prefijo /en y la cookie ``cotizat_lang``) y no de una cookie
+        # inventada: ``cotizat_idioma`` no la escribe nadie, así que la
+        # bienvenida de un cliente inglés salía siempre en español.
+        from ..i18n import COOKIE_IDIOMA, normalizar_idioma
+
+        idioma_bienvenida = normalizar_idioma(
+            getattr(request.state, "lang", None) or request.cookies.get(COOKIE_IDIOMA)
+        )
         _mkt.enviar_bienvenida(
             db,
             organizacion_id=organizacion.id,

@@ -401,5 +401,12 @@
   "Abrir catálogo": "Open catalog",
   "Pon el nombre de tu cliente": "Add your client's name",
   "Crear cliente": "Create client",
-  "Supabase Auth todavía no está configurado en el servidor.": "Supabase Auth is not configured on this server yet."
+  "Supabase Auth todavía no está configurado en el servidor.": "Supabase Auth is not configured on this server yet.",
+  "Si la cuenta existe, te enviaremos un enlace para restablecer la contraseña.": "If the account exists, we will email you a link to reset your password.",
+  "El enlace de confirmación no es válido o ha caducado.": "The confirmation link is invalid or has expired.",
+  "Revisa tu bandeja de entrada: hemos enviado un correo al email nuevo para terminar el cambio.": "Check your inbox: we have emailed the new address to finish the change.",
+  "Email de la cuenta actualizado.": "Account email updated.",
+  "No hemos podido abrir tu sesión con este enlace. Inicia sesión con tu contraseña o pide uno nuevo desde «Olvidé mi contraseña».": "We could not sign you in with this link. Sign in with your password or request a new link from “Forgot my password”.",
+  "Enlace de baja no válido o caducado.": "Invalid or expired opt-out link.",
+  "No se pudo guardar la baja. Inténtalo de nuevo.": "The opt-out could not be saved. Please try again."
 }

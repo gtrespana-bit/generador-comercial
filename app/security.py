@@ -26,9 +26,15 @@ _UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 #: rate-limit resuelven aquí, para que ambas decisiones nunca divergan.
 _VALORES_VERDADEROS_PROXY = frozenset({"1", "true", "yes", "on", "si", "sí"})
 
-#: Escrituras que no vienen del navegador. El webhook de Stripe firma el
-#: cuerpo con ``Stripe-Signature``; exigirle Origin same-origin lo rompería.
-_CSRF_EXENTAS = frozenset({"/pago/stripe/webhook"})
+#: Escrituras que no vienen del navegador y se autentican de otra forma:
+#:
+#: - ``/pago/stripe/webhook``: Stripe firma el cuerpo con ``Stripe-Signature``;
+#:   exigirle Origin same-origin lo rompería.
+#: - ``/baja-marketing``: la baja en un clic de RFC 8058 la envía el cliente
+#:   de correo (Gmail, Apple Mail), sin Origin, sin Referer y sin cookies. La
+#:   puerta es el token HMAC del enlace: sin él la ruta solo devuelve un 400 y
+#:   no escribe nada.
+_CSRF_EXENTAS = frozenset({"/pago/stripe/webhook", "/baja-marketing"})
 
 
 def _antecesores_permitidos() -> tuple[bytes, bytes | None]:
@@ -171,6 +177,14 @@ class AuthRateLimitMiddleware:
         # Verifica la contraseña actual: sin límite, una sesión robada podría
         # usarse para adivinarla por fuerza bruta desde el propio panel.
         "/cuenta/clave": 10,
+        # Canje del token de un correo de Supabase. Cada intento es un viaje
+        # a GoTrue: sin límite, un bot podría probar tokens en serie.
+        "/confirmar-email": 15,
+        # Baja de marketing en un clic: el enlace del pie de cada correo la
+        # abre cualquiera, y con «One-Click» la petición la hace el cliente de
+        # correo. El límite evita que un bucle de reintentos del proveedor
+        # machaque la base; 20 por IP y ventana deja margen de sobra.
+        "/baja-marketing": 20,
         # Formulario público de demo: evita que un bot inunde el buzón de
         # soporte con solicitudes falsas.
         "/demo": 3,

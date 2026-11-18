@@ -1,0 +1,56 @@
+<!doctype html>{# Plantilla única ES/EN: los textos salen del catálogo app/locales vía
+   t(). No hay gemela *_en.html: el resolvedor cae a esta misma plantilla y
+   ``_idioma`` decide el idioma. #}
+{%- set tipo = (otp_type or 'signup') | string | lower -%}
+{%- set variante = 'recovery' if tipo == 'recovery' else ('cambio' if tipo == 'email_change' else ('acceso' if tipo == 'magiclink' else 'alta')) -%}
+<html lang="{{ _idioma }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Un enlace con token nunca debe acabar en un índice ni en un caché
+     intermedio: la cabecera repite la instrucción por si un proxy ignora la
+     meta. #}
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% if error %}{{ 'auth.confirmar.error_titulo' | t(_idioma) }}{% else %}{{ ('auth.confirmar.titulo_' ~ variante) | t(_idioma) }}{% endif %} · {{ product_name }}</title>
+  <link rel="icon" type="image/png" href="/static/icono.png">
+  <link rel="stylesheet" href="{{ 'css/fonts.css' | asset }}">
+  <link rel="stylesheet" href="{{ 'css/public.css' | asset }}">
+</head>
+<body>
+<div class="auth-stage">
+  <main class="auth-card">
+    <a class="brand" href="/">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h6.5L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1-1.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M13.5 3.5V8H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M9 14.5l2 2 4-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ product_name }}
+    </a>
+
+    {% if error %}
+      <h1>{{ 'auth.confirmar.error_titulo' | t(_idioma) }}</h1>
+      <p>{{ 'auth.confirmar.error_texto' | t(_idioma) }}</p>
+      <a class="btn btn-primary btn-block mt-2" href="/acceso">{{ 'auth.confirmar.error_boton' | t(_idioma) }}</a>
+    {% else %}
+      <h1>{{ ('auth.confirmar.encabezado_' ~ variante) | t(_idioma) }}</h1>
+      <p>{{ ('auth.confirmar.texto_' ~ variante) | t(_idioma) }}</p>
+      {# El token solo viaja en este formulario, nunca en una URL de la barra
+         de direcciones ni en un enlace que pueda preabrir un escáner: el
+         canje con Supabase ocurre en el POST. #}
+      <form method="post" action="/confirmar-email">
+        <input type="hidden" name="token_hash" value="{{ token_hash }}">
+        <input type="hidden" name="type" value="{{ tipo }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-primary btn-block">{{ ('auth.confirmar.boton_' ~ variante) | t(_idioma) }}</button>
+      </form>
+      <p class="small text-soft mt-2">{{ 'auth.confirmar.aviso' | t(_idioma) }}</p>
+    {% endif %}
+
+    <p class="auth-foot">{{ 'auth.confirmar.soporte' | t(_idioma, email=email_soporte) }}</p>
+  </main>
+</div>
+</body>
+</html>

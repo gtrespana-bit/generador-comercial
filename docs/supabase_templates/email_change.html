@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Confirma tu nuevo email · CotizaT</title>
+</head>
+<body style="margin:0;padding:0;background:#eef3f0;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#17211d;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+<!-- Preheader: lo que la bandeja muestra junto al asunto. Oculto en el cuerpo. -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#ffffff;opacity:0;">Confirma la nueva dirección de tu cuenta de CotizaT. Si no has sido tú, escríbenos.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef3f0;padding:28px 12px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #dce6e1;border-radius:18px;overflow:hidden;">
+
+        <!-- Cabecera de marca -->
+        <tr>
+          <td style="background:#0b5b38;padding:26px 36px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <div style="font-size:24px;font-weight:900;letter-spacing:-0.5px;color:#ffffff;line-height:1;">CotizaT</div>
+                  <div style="margin-top:6px;font-size:12px;font-weight:600;letter-spacing:1.5px;color:#bfe6d2;text-transform:uppercase;">Presupuestos de obra</div>
+                </td>
+                <td align="right" valign="top">
+                  <div style="display:inline-block;background:#0f6b43;border:1px solid #2f8a62;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#ffffff;">Cambio de email</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:34px 36px 8px;">
+            <h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:900;color:#17211d;">Confirma tu nuevo email</h1>
+
+            <p style="margin:0 0 24px;font-size:15px;line-height:1.65;color:#475a51;">
+              Has pedido cambiar el email de tu cuenta de CotizaT a esta dirección.
+              Pulsa el botón para confirmarlo.
+            </p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+              <tr>
+                <td align="center">
+                  <a href="{{ .SiteURL }}/confirmar-email?token_hash={{ .TokenHash }}&amp;type=email_change" style="display:inline-block;background:#0b5b38;border-radius:12px;padding:15px 38px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Confirmar el cambio</a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#566b61;text-align:center;">
+              El botón te lleva a <strong>cotizat.online</strong>. El cambio se cierra
+              cuando confirmas también el correo que te llega a la dirección anterior.
+            </p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
+              <tr>
+                <td style="border-radius:12px;background:#fdf6e7;border:1px solid #ecd9a8;padding:16px 20px;font-size:13.5px;line-height:1.55;color:#7a5410;">
+                  <strong>¿No has sido tú?</strong> Ignora este correo y escríbenos a
+                  <a href="mailto:soporte@cotizat.online" style="color:#7a5410;font-weight:700;text-decoration:underline;">soporte@cotizat.online</a>:
+                  tu cuenta seguirá con la dirección de siempre.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Pie -->
+        <tr>
+          <td style="background:#f7faf8;border-top:1px solid #dce6e1;padding:20px 36px;">
+            <p style="margin:0 0 6px;font-size:12px;line-height:1.6;color:#566b61;text-align:center;">© CotizaT · Presupuestos · cotizat.online</p>
+            <p style="margin:0;font-size:11px;line-height:1.6;color:#62776d;text-align:center;">
+              Este enlace es de un solo uso y caduca. ¿Dudas? Escríbenos a
+              <a href="mailto:soporte@cotizat.online" style="color:#0b5b38;text-decoration:underline;">soporte@cotizat.online</a>.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -385,6 +385,27 @@ def get_stripe_webhook_db():
         db.close()
 
 
+def get_baja_marketing_db():
+    """Sesión para la baja de marketing en un clic (RFC 8058).
+
+    Quien pulsa «Cancelar suscripción» en el cliente de correo no tiene sesión
+    de Supabase Auth y, por diseño, ni siquiera visita una página: la petición
+    es un POST del proveedor. La puerta de seguridad es el token HMAC firmado
+    que viaja en el propio enlace (y en la cabecera ``List-Unsubscribe``), así
+    que la sesión se marca como operador igual que la del webhook de Stripe:
+    ``bajas_marketing`` no está en el conjunto de tablas de una organización y
+    RLS solo la deja escribir con esa marca. Funciona también en SQLite para
+    que la suite pueda ejercitar el flujo completo.
+    """
+    db = SessionLocal()
+    try:
+        db.info["es_operador"] = True
+        db.info["auth_email"] = "baja-marketing@cotizat.local"
+        yield db
+    finally:
+        db.close()
+
+
 def get_cron_db():
     """Sesión para el trabajo programado (cron) del producto.
 
