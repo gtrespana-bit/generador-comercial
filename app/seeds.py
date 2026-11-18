@@ -534,17 +534,25 @@ PRODUCTOS_DEMO = [
 ]
 
 
-def sembrar_catalogo(db: Session):
+def sembrar_catalogo(db: Session, *, diferir_partidas: bool | None = None):
     """Siembra inicial del catálogo propio de partidas (solo una vez).
 
-    Carga las partidas y recursos de ``basedatos_partidas/`` (540 partidas
-    con descomposición completa y cuadro de precios). Tras la primera
-    siembra se marca ``semilla_catalogo_aplicada``: si el usuario borra
-    partidas preinstaladas no reaparecen. Las partidas existentes nunca se
-    sobrescriben.
+    Carga las partidas y recursos de ``basedatos_partidas/`` (partidas
+    con descomposición completa y cuadro de precios). En PostgreSQL, por
+    omisión (``COTIZAT_CATALOGO_BAJO_DEMANDA``), siembra al instante categorías
+    y recursos y difiere las ~3.000 partidas hasta la primera apertura del
+    catálogo o del editor, evitando llenar el disco con pruebas que nunca lo
+    abren. Tras la primera siembra se marca ``semilla_catalogo_aplicada``: si
+    el usuario borra partidas preinstaladas no reaparecen. Las partidas
+    existentes nunca se sobrescriben.
     """
     from .models import Configuracion
-    from .services.catalogo_propio import disponible, sembrar_catalogo_propio
+    from .services.catalogo_propio import (
+        disponible,
+        preparar_catalogo_bajo_demanda,
+        sembrar_catalogo_propio,
+    )
+    from .services.hibernacion_catalogo import catalogo_bajo_demanda_activado
 
     cfg = db.query(Configuracion).first()
     # Si ya se aplicó la semilla, no volver a inyectar
@@ -562,9 +570,21 @@ def sembrar_catalogo(db: Session):
         cfg.semilla_catalogo_aplicada = True
         db.commit()
         return
-    # Instalación fresca: cargar el catálogo propio (partidas + recursos).
+    # Instalación fresca: cargar el catálogo propio (completo o diferido).
     if disponible():
-        sembrar_catalogo_propio(db)
+        if diferir_partidas is None:
+            bind = db.get_bind()
+            es_sqlite = bind is None or bind.dialect.name == "sqlite"
+            diferir = catalogo_bajo_demanda_activado(es_sqlite=es_sqlite)
+        else:
+            diferir = bool(diferir_partidas)
+        res = (
+            preparar_catalogo_bajo_demanda(db)
+            if diferir
+            else sembrar_catalogo_propio(db)
+        )
+        if not res.get("ok"):
+            return
     else:
         # Una carga no realizada no puede darse por aplicada. Permite
         # reintentar tras corregir el empaquetado del catálogo.

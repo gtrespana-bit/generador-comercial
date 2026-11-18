@@ -15,12 +15,12 @@
 <div class="idioma-switch" role="group" aria-label="{{ 'common.language' | t(_idioma) }}">
   <a class="idioma-switch-opcion{% if _idioma == 'es' %} is-active{% endif %}"
      href="{{ url_cambio_idioma(_destino, 'es') }}"
-     lang="es" hreflang="es"
+     lang="es" hreflang="es" rel="nofollow"
      title="{{ 'idioma.cambiar_a' | t(_idioma, nombre=('idioma.es' | t(_idioma))) }}"
      aria-current="{{ 'true' if _idioma == 'es' else 'false' }}">ES</a>
   <a class="idioma-switch-opcion{% if _idioma == 'en' %} is-active{% endif %}"
      href="{{ url_cambio_idioma(_destino, 'en') }}"
-     lang="en" hreflang="en"
+     lang="en" hreflang="en" rel="nofollow"
      title="{{ 'idioma.cambiar_a' | t(_idioma, nombre=('idioma.en' | t(_idioma))) }}"
      aria-current="{{ 'true' if _idioma == 'en' else 'false' }}">EN</a>
 </div>

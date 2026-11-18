@@ -219,6 +219,36 @@ DEFINICIONES: tuple[Variable, ...] = (
         False,
         "tope por organización del paquete automático en MB (E4-021, 12 por omisión)",
     ),
+    Variable(
+        "COTIZAT_RESPALDO_SOLO_ACTIVAS",
+        False,
+        "respaldar a diario solo organizaciones activas con licencia vigente (true por omisión)",
+    ),
+    Variable(
+        "COTIZAT_AUDIENCIA_BD",
+        False,
+        "registrar visitas anónimas en visitas_pagina (true por omisión; false apaga escrituras)",
+    ),
+    Variable(
+        "COTIZAT_AUDIENCIA_RETENCION_DIAS",
+        False,
+        "días de histórico conservados en visitas_pagina antes de podar (30 por omisión)",
+    ),
+    Variable(
+        "COTIZAT_CATALOGO_BAJO_DEMANDA",
+        False,
+        "diferir la copia de partidas oficiales hasta el primer uso (true por omisión en PostgreSQL)",
+    ),
+    Variable(
+        "COTIZAT_CATALOGO_HIBERNAR_DIAS",
+        False,
+        "días tras el vencimiento de prueba para hibernar partidas oficiales intactas (7 por omisión; 0 apaga)",
+    ),
+    Variable(
+        "COTIZAT_CATALOGO_HIBERNAR_LIMITE",
+        False,
+        "máximo de organizaciones hibernadas por barrido diario del cron (10 por omisión)",
+    ),
     # --- Contador de intentos compartido (Upstash) ------------------------
     Variable(
         "UPSTASH_REDIS_REST_URL",

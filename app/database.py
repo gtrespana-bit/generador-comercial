@@ -925,6 +925,33 @@ def _asegurar_funciones_lectura_admin_postgres(eng) -> bool:
     return False
 
 
+def _asegurar_funcion_hibernacion_postgres(eng) -> bool:
+    """Instala/verifica idempotentemente la función de hibernación de catálogos."""
+    from .services.hibernacion_catalogo import (
+        funcion_hibernacion_disponible,
+        instalar_funcion_hibernacion,
+    )
+
+    try:
+        with eng.connect() as conn:
+            if funcion_hibernacion_disponible(conn):
+                return True
+    except Exception:
+        pass
+    try:
+        with eng.begin() as conn:
+            instalar_funcion_hibernacion(conn)
+        with eng.connect() as conn:
+            return bool(funcion_hibernacion_disponible(conn))
+    except Exception as exc:
+        logging.getLogger("cotizat").info(
+            "Función de hibernación de catálogos pendiente de instalar con "
+            "MIGRATION_DATABASE_URL: %s",
+            exc,
+        )
+        return False
+
+
 def _asegurar_esquema_postgres() -> None:
     """Intenta añadir columnas/permisos faltantes tras un deploy sin migrar (best-effort).
 
@@ -1036,6 +1063,7 @@ def _asegurar_esquema_postgres() -> None:
         # inexistente y PostgreSQL responde 500. Se comprueban/reparan con el
         # motor de migración, nunca con el usuario runtime.
         lectura_admin_lista = _asegurar_funciones_lectura_admin_postgres(eng)
+        _asegurar_funcion_hibernacion_postgres(eng)
         with eng.begin() as conn:
             # Si la versión sigue en el head anterior y ya añadimos la columna,
             # avanzamos la marca para que el próximo ``alembic upgrade head``

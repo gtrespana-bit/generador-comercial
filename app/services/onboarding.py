@@ -170,6 +170,12 @@ def estado_recorrido_inicial(db: Session, cfg: Configuracion | None = None) -> d
         .first()
     )
     partidas = db.query(Partida).count()
+    if int(getattr(cfg, "version_catalogo", 0) or 0) == -1:
+        # Catálogo oficial diferido/hibernado: las partidas están listas para
+        # materializarse al abrir /partidas o el editor sin cargar /inicio.
+        from .catalogo_propio import total_partidas_fuente
+
+        partidas = max(partidas, total_partidas_fuente())
 
     # Las tarifas mandan en el importe: el generador compone cada precio con
     # lo que cuesta aquí un oficial, un peón o el metro de arena. Una empresa

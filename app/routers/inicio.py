@@ -303,6 +303,9 @@ def busqueda_global(request: Request, q: str = "", db: Session = Depends(get_db)
             Factura.numero.ilike(like), Factura.titulo.ilike(like),
             Factura.direccion_obra.ilike(like), Cliente.nombre.ilike(like),
         )).order_by(Factura.id.desc()).limit(12).all()
+        from ..services.catalogo_propio import reactivar_si_hibernado
+
+        reactivar_si_hibernado(db)
         resultados["partidas"] = db.query(Partida).filter(
             Partida.oculta.is_(False)
         ).filter(or_(

@@ -45,11 +45,13 @@ from __future__ import annotations
 import hashlib
 import logging
 import os
-from datetime import date
+from collections import defaultdict
+from datetime import date, timedelta
 
 from ..database import SessionLocal, establecer_contexto_organizacion
-from ..models import Organizacion
+from ..models import Licencia, Organizacion
 from ..storage import StorageError, get_storage_backend, validate_tenant_object_key
+from .licencias import exigencia_licencia_activada
 from .respaldo import ErrorRespaldo, generar_respaldo
 
 logger = logging.getLogger("cotizat.mantenimiento")
@@ -67,6 +69,55 @@ def _respaldo_automatico_activado() -> bool:
     """Interruptor: `COTIZAT_RESPALDO_AUTOMATICO=false` apaga el barrido."""
     valor = os.environ.get("COTIZAT_RESPALDO_AUTOMATICO", "true").strip().lower()
     return valor not in {"0", "false", "no", "off"}
+
+
+def _solo_organizaciones_activas() -> bool:
+    """Interruptor: `COTIZAT_RESPALDO_SOLO_ACTIVAS=false` fuerza respaldar
+    también pruebas vencidas e inactivas. Por omisión está activo para no
+    gastar consultas, egress, Storage ni tiempo del cron en cuentas cerradas.
+    """
+    valor = os.environ.get("COTIZAT_RESPALDO_SOLO_ACTIVAS", "true").strip().lower()
+    return valor not in {"0", "false", "no", "off"}
+
+
+def _motivo_omision_organizacion(
+    organizacion: Organizacion,
+    licencias_org: list[Licencia],
+    *,
+    fecha: date,
+    exige_licencia: bool,
+) -> str | None:
+    """Devuelve el motivo para omitir el respaldo diario, o ``None`` si toca."""
+    if not getattr(organizacion, "activa", True):
+        return "Organización inactiva."
+    if getattr(organizacion, "es_test", False):
+        return "Organización marcada como prueba interna."
+
+    # Se deja 1 día de margen tras vencer para capturar la última foto del
+    # trabajo real antes de congelar las copias existentes.
+    corte = fecha - timedelta(days=1)
+    if licencias_org:
+        vigente_o_reciente = any(
+            lic.vigente(fecha)
+            or (
+                lic.estado in ("activa", "vencida")
+                and lic.inicio is not None
+                and lic.vence is not None
+                and lic.inicio <= fecha
+                and lic.vence >= corte
+            )
+            for lic in licencias_org
+        )
+        if not vigente_o_reciente:
+            return "Sin licencia vigente; se conservan las copias existentes."
+        return None
+
+    if exige_licencia:
+        creada = getattr(organizacion, "created_at", None)
+        fecha_alta = creada.date() if hasattr(creada, "date") else None
+        if fecha_alta is not None and fecha_alta < corte:
+            return "Sin licencia asignada; se conservan las copias existentes."
+    return None
 
 
 def _max_bytes() -> int:
@@ -194,9 +245,37 @@ def ejecutar_respaldo_automatico(db_operador) -> dict:
     organizaciones = (
         db_operador.query(Organizacion).order_by(Organizacion.id).all()
     )
-    resultados = [
-        _respaldo_de_organizacion(db_operador, org) for org in organizaciones
-    ]
+    filtrar = _solo_organizaciones_activas()
+    licencias_por_org: dict[int, list[Licencia]] = defaultdict(list)
+    if filtrar and organizaciones:
+        try:
+            for lic in db_operador.query(Licencia).all():
+                licencias_por_org[int(lic.organizacion_id)].append(lic)
+        except Exception:
+            db_operador.rollback()
+            licencias_por_org.clear()
+    fecha = date.today()
+    exige_licencia = exigencia_licencia_activada()
+
+    resultados = []
+    for org in organizaciones:
+        if filtrar:
+            motivo = _motivo_omision_organizacion(
+                org,
+                licencias_por_org.get(int(org.id), []),
+                fecha=fecha,
+                exige_licencia=exige_licencia,
+            )
+            if motivo:
+                resultados.append(
+                    {
+                        "organizacion": org.nombre or org.slug,
+                        "estado": "omitido",
+                        "motivo": motivo,
+                    }
+                )
+                continue
+        resultados.append(_respaldo_de_organizacion(db_operador, org))
     generados = sum(1 for r in resultados if r["estado"] == "ok")
     omitidos = sum(1 for r in resultados if r["estado"] == "omitido")
     fallidos = [r for r in resultados if r["estado"] == "error"]
